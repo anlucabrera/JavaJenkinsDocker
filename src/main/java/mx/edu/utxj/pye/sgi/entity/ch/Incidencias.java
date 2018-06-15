@@ -1,0 +1,167 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package mx.edu.utxj.pye.sgi.entity.ch;
+
+import java.io.Serializable;
+import java.util.Date;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+
+/**
+ *
+ * @author UTXJ
+ */
+@Entity
+@Table(name = "incidencias", catalog = "capital_humano", schema = "")
+@XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "Incidencias.findAll", query = "SELECT i FROM Incidencias i")
+    , @NamedQuery(name = "Incidencias.findByIncidenciaID", query = "SELECT i FROM Incidencias i WHERE i.incidenciaID = :incidenciaID")
+    , @NamedQuery(name = "Incidencias.findByNumeroOficio", query = "SELECT i FROM Incidencias i WHERE i.numeroOficio = :numeroOficio")
+    , @NamedQuery(name = "Incidencias.findByTipo", query = "SELECT i FROM Incidencias i WHERE i.tipo = :tipo")
+    , @NamedQuery(name = "Incidencias.findByFecha", query = "SELECT i FROM Incidencias i WHERE i.fecha = :fecha")
+    , @NamedQuery(name = "Incidencias.findByTiempo", query = "SELECT i FROM Incidencias i WHERE i.tiempo = :tiempo")
+    , @NamedQuery(name = "Incidencias.findByJustificacion", query = "SELECT i FROM Incidencias i WHERE i.justificacion = :justificacion")
+    , @NamedQuery(name = "Incidencias.findByEstatus", query = "SELECT i FROM Incidencias i WHERE i.estatus = :estatus")})
+public class Incidencias implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "incidencia_ID")
+    private Integer incidenciaID;
+    @Column(name = "numeroOficio")
+    private Integer numeroOficio;
+    @Size(max = 255)
+    @Column(name = "tipo")
+    private String tipo;
+    @Column(name = "fecha")
+    @Temporal(TemporalType.DATE)
+    private Date fecha;
+    @Size(max = 255)
+    @Column(name = "tiempo")
+    private String tiempo;
+    @Size(max = 300)
+    @Column(name = "justificacion")
+    private String justificacion;
+    @Size(max = 255)
+    @Column(name = "estatus")
+    private String estatus;
+    @JoinColumn(name = "clave_personal", referencedColumnName = "clave")
+    @ManyToOne(optional = false)
+    private Personal clavePersonal;
+
+    public Incidencias() {
+    }
+
+    public Incidencias(Integer incidenciaID) {
+        this.incidenciaID = incidenciaID;
+    }
+
+    public Integer getIncidenciaID() {
+        return incidenciaID;
+    }
+
+    public void setIncidenciaID(Integer incidenciaID) {
+        this.incidenciaID = incidenciaID;
+    }
+
+    public Integer getNumeroOficio() {
+        return numeroOficio;
+    }
+
+    public void setNumeroOficio(Integer numeroOficio) {
+        this.numeroOficio = numeroOficio;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public Date getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
+    }
+
+    public String getTiempo() {
+        return tiempo;
+    }
+
+    public void setTiempo(String tiempo) {
+        this.tiempo = tiempo;
+    }
+
+    public String getJustificacion() {
+        return justificacion;
+    }
+
+    public void setJustificacion(String justificacion) {
+        this.justificacion = justificacion;
+    }
+
+    public String getEstatus() {
+        return estatus;
+    }
+
+    public void setEstatus(String estatus) {
+        this.estatus = estatus;
+    }
+
+    public Personal getClavePersonal() {
+        return clavePersonal;
+    }
+
+    public void setClavePersonal(Personal clavePersonal) {
+        this.clavePersonal = clavePersonal;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (incidenciaID != null ? incidenciaID.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Incidencias)) {
+            return false;
+        }
+        Incidencias other = (Incidencias) object;
+        if ((this.incidenciaID == null && other.incidenciaID != null) || (this.incidenciaID != null && !this.incidenciaID.equals(other.incidenciaID))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "mx.edu.utxj.pye.sgi.entity.ch.Incidencias[ incidenciaID=" + incidenciaID + " ]";
+    }
+    
+}

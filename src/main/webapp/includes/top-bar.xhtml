@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <style type="text/css">
+        #layout-menu_menu {
+            z-index: 9997!important;
+        }
+        #layout-menu_menu span.ui-menuitem-text {
+            margin-left: 2px;
+        }
+    </style>
+
+    <!-- PROCESO ELECTORAL-->
+    <style type="text/css">
+        .bg-green, .callout.callout-success, .alert-success, .label-success, .modal-success .modal-body{
+            background-color:#333835 !important;
+        }
+    </style>
+    <!--  -->
+
+    <ul class="nav navbar-nav">
+        <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
+            <li class="dropdown messages-menu">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                    <i class="fa fa-envelope-o"></i>
+                    <span class="label label-success">#{controladorEmpleado.listaNotificaciones.size()}</span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li class="header align-center">Tienes #{controladorEmpleado.listaNotificaciones.size()} #{controladorEmpleado.listaNotificaciones.size() eq 1?"mensaje pendiente":"mensajes pendientes"}</li>
+                    <c:if test="#{controladorEmpleado.listaNotificaciones.size() != 0}">
+                        <li class="footer"><a href="../sii2/perfiEmpleado.xhtml">Ver todos los mensajes </a></li>
+                    </c:if>
+                </ul>
+            </li>
+            <!--li class="dropdown notifications-menu">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                    <i class="fa fa-bell-o"></i>
+                    <span class="label label-warning">2</span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li class="header align-center">You have 2 notifications.</li>
+                    <li>
+                        <ul class="menu">
+                            <li>
+                                Notification 1
+                            </li>
+    
+                            <li>
+                                Notification 2
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="footer"><a href="#">See all notifications</a></li>
+                </ul>
+            </li-->
+        </c:if>
+        <li class="dropdown user user-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <img id="userImage" src="https://www.gravatar.com/avatar/2813f85cc7212a31f7f2cfd4ce1eca3c.jpg" style="-webkit-filter: grayscale(100%);filter: grayscale(100%);"/>
+                <span class="hidden-xs">#{logonMB.usuarioAutenticado.personas.apellidoPat.concat(' ')}#{logonMB.usuarioAutenticado.personas.apellidoMat.concat(' ')}#{logonMB.usuarioAutenticado.personas.nombre.concat(' ')}</span>
+            </a>
+            <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
+                <ul class="dropdown-menu">
+                    <li class="user-header">
+                        <div class="hidden-xs"><img id="j_idt20" class="img-circle"  style="width: 100px; height: 100px;" src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{controladorEmpleado.nuevoOBJListaPersonal.clave}.jpg" />
+                        </div>
+                        <p>
+                            #{logonMB.usuarioAutenticado.personas.apellidoPat.concat(' ')}#{logonMB.usuarioAutenticado.personas.apellidoMat.concat(' ')}#{logonMB.usuarioAutenticado.personas.nombre.concat(' ')}
+                            <small> Numero de trabajador  #{controladorEmpleado.nuevoOBJListaPersonal.clave} </small>
+                        </p>
+                    </li>
+                </ul>
+            </c:if>
+        </li>
+
+        <li class="dropdown user user-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <span onclick="logout();">
+                    <p:spacer width="5" /><i class="fa fa-sign-out fa-lg" title="Cerrar sesión"></i>
+                </span>
+            </a>
+        </li>
+    </ul>
+
+    <!--li class="dropdown user user-menu">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <span class="hidden-xs">#{logonMB.usuarioAutenticado.personas.apellidoPat.concat(' ')}#{logonMB.usuarioAutenticado.personas.apellidoMat.concat(' ')}#{logonMB.usuarioAutenticado.personas.nombre.concat(' ')}</span>
+            <span onclick="logout();">
+                <p:spacer width="5" /><i class="fa fa-sign-out fa-lg" title="Cerrar sesión"></i>
+            </span>
+        </a>
+    </li>
+    </ul-->
+    <h:form prependId="false">
+        <p:remoteCommand name="logout" action="#{logoutMB.doLogout}" />
+    </h:form>
+</ui:composition>

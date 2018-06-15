@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="head-end">
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+
+        </style>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+    </ui:define>
+
+    <ui:define name="title">
+        Administración de grupo 
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Grupo : tutorado"/>
+        <h:form>
+            <div id="main-buttons"  >
+                <p:toolbar id="tb">
+                    <f:facet name="left">
+                        <p:outputLabel value="Administracion de Evaluaciones" />                            
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:selectOneButton value="#{administrativoEvaluacion.tipoEvaluacion}" id="sobEncuestaTipo" >
+                            <f:selectItem itemLabel="Evaluacion al docente" itemDescription="Seleccione si desea visualizar el abance de los alumnos en sus evaluaciones al docente" itemValue="1"/>
+                            <f:selectItem itemLabel="Evaluacion al tutor" itemDescription="Seleccione si desea visualizar el abance de los alumnos en sus evaluaciones al tutor" itemValue="2"/>
+                            <p:ajax   process="sobEncuestaTipo" />
+                        </p:selectOneButton>
+                        <p:commandButton value="Resultados" id="btnResultado" actionListener="#{administrativoEvaluacion.obtenerAlumnosPorGrupo()}" process="@this" icon="fa fa-refresh" styleClass="btn-primary"  update="@form"/>
+                    </f:facet>
+                </p:toolbar>
+                <p:sticky target="tb" />
+            </div>
+            <p:outputPanel>
+                <p:tabView>
+                    <p:tab  title="#{administrativoEvaluacion.listadoEstudiantesCompletado.size()} Estudiantes que concluyeron su evaluación">
+                        <p:panel toggleable="true">
+                            <p:dataTable id="tblEvaluacionesCompletas" lazy="false" value="#{administrativoEvaluacion.listadoEstudiantesCompletado}"   var="encuestaEstudiate" filterDelay="700" 
+                                         paginator="true" rows="10"
+                                         rowsPerPageTemplate="10,20,30,40,50"
+                                         emptyMessage="No se encontrarono registros"  >
+                                <f:facet name="footer">
+                                    Total de registros: #{administrativoEvaluacion.listadoEstudiantesCompletado.size()}
+                                </f:facet>
+                                <f:facet name="header">
+                                    <p:commandButton value="Exportar Excel" ajax="false" class="btn btn-primary " icon="fa-file-excel-o">
+                                        <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="csv" target="tblEvaluacionesCompletas" fileName="Reporte_evaluaciones_completas"/>
+                                    </p:commandButton>
+
+                                </f:facet>
+                                <p:column headerText="Matricula" filterBy="#{encuestaEstudiate.matricula}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.matricula}"   >                           
+                                    <h:outputText value="#{encuestaEstudiate.matricula}" />
+                                </p:column>
+                                <p:column headerText="Grado"  filterBy="#{encuestaEstudiate.grado}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.grado}"  >                           
+                                    <h:outputText value="#{encuestaEstudiate.grado}" />
+                                </p:column>
+
+                                <p:column headerText="Grupo" filterBy="#{encuestaEstudiate.idGrupo}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.idGrupo}"  >                           
+                                    <h:outputText value="#{encuestaEstudiate.idGrupo}" />
+                                </p:column>
+
+                                <p:column headerText="Carrera" filterBy="#{encuestaEstudiate.abreviatura}" filterMatchMode="contains"    sortBy="#{encuestaEstudiate.abreviatura}"  >                           
+                                    <h:outputText value="#{encuestaEstudiate.abreviatura}" title="#{encuestaEstudiate.nombreCarrera}" />
+                                </p:column>
+
+                                <p:column headerText="Nombre" filterBy="#{encuestaEstudiate.nombre}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.nombre}">                           
+                                    <h:outputText value="#{encuestaEstudiate.nombre} #{encuestaEstudiate.apellidoPat} #{encuestaEstudiate.apellidoMat}" />
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+
+                    </p:tab>
+                    <p:tab title="#{administrativoEvaluacion.listadoEstudiantesNC.size()} Estudiantes que no concluyeron su evaluación">
+                        <p:panel  toggleable="true">
+                            <p:dataTable id="tblEvaluacionesPendientes" lazy="false" value="#{administrativoEvaluacion.listadoEstudiantesNC}"   var="encuestaEstudiate" filterDelay="700" 
+                                         paginator="true" rows="10"
+                                         rowsPerPageTemplate="10,20,30,40,50"
+                                         emptyMessage="No se encontrarono registros" >
+                                <f:facet name="footer">
+                                    Total de registros: #{administrativoEvaluacion.listadoEstudiantesNC.size()}
+                                </f:facet>
+                                <f:facet name="header">
+                                    <p:commandButton value="Exportar Excel" ajax="false" class="btn btn-primary " icon="fa-file-excel-o">
+                                        <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="csv" target="tblEvaluacionesPendientes" fileName="Reporte_evaluaciones_no_completas"/>
+                                    </p:commandButton>
+                                </f:facet>
+                                <p:column headerText="Matricula" filterBy="#{encuestaEstudiate.matricula}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.matricula}"   >                           
+                                    <h:outputText value="#{encuestaEstudiate.matricula}" />
+                                </p:column>
+                                <p:column headerText="Grado"  filterBy="#{encuestaEstudiate.grado}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.grado}"  >                           
+                                    <h:outputText value="#{encuestaEstudiate.grado}" />
+                                </p:column>
+
+                                <p:column headerText="Grupo" filterBy="#{encuestaEstudiate.idGrupo}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.idGrupo}"  >                           
+                                    <h:outputText value="#{encuestaEstudiate.idGrupo}" />
+                                </p:column>
+
+                                <p:column headerText="Carrera" filterBy="#{encuestaEstudiate.abreviatura}" filterMatchMode="contains"    sortBy="#{encuestaEstudiate.abreviatura}"  >                           
+                                    <h:outputText value="#{encuestaEstudiate.abreviatura}" title="#{encuestaEstudiate.nombreCarrera}" />
+                                </p:column>
+
+                                <p:column headerText="Nombre" filterBy="#{encuestaEstudiate.nombre}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.nombre}">                           
+                                    <h:outputText value="#{encuestaEstudiate.nombre} #{encuestaEstudiate.apellidoPat} #{encuestaEstudiate.apellidoMat}" />
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </p:tab>
+                    <p:tab title="#{administrativoEvaluacion.listadoEstudiantesNA.size()} Estudiantes que no accedieron al sistema de evaluación">
+                        <p:panel  toggleable="true">
+                            <p:dataTable id="tblEvaluacionesSinAccesar" lazy="false" value="#{administrativoEvaluacion.listadoEstudiantesNA}"   var="encuestaEstudiate" filterDelay="700" 
+                                         paginator="false" rows="10"
+                                         rowsPerPageTemplate="10,20,30,40,50"
+                                         emptyMessage="No se encontrarono registros">
+                                <f:facet name="footer">
+                                    Total de registros: #{administrativoEvaluacion.listadoEstudiantesNA.size()}
+                                </f:facet>
+                                <f:facet name="header">
+                                    <p:commandButton value="Exportar Excel" ajax="false" class="btn btn-primary " icon="fa-file-excel-o">
+                                        <p:dataExporter pageOnly="true" encoding="ISO-8859-1"  type="csv" target="tblEvaluacionesSinAccesar" fileName="Reporte_de_estudiantes_que_no_accesaron_al_sistema_de_evaluacion"/>
+                                    </p:commandButton>
+                                </f:facet>
+                                <p:column headerText="Matricula" filterBy="#{encuestaEstudiate.matricula}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.matricula}"   >                           
+                                    <h:outputText value="#{encuestaEstudiate.matricula}" />
+                                </p:column>
+                                <p:column headerText="Grado"  filterBy="#{encuestaEstudiate.grado}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.grado}"  >                           
+                                    <h:outputText value="#{encuestaEstudiate.grado}" />
+                                </p:column>
+
+                                <p:column headerText="Grupo" filterBy="#{encuestaEstudiate.idGrupo}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.idGrupo}"  >                           
+                                    <h:outputText value="#{encuestaEstudiate.idGrupo}" />
+                                </p:column>
+
+                                <p:column headerText="Carrera" filterBy="#{encuestaEstudiate.abreviatura}" filterMatchMode="contains"    sortBy="#{encuestaEstudiate.abreviatura}"  >                           
+                                    <h:outputText value="#{encuestaEstudiate.abreviatura}" title="#{encuestaEstudiate.nombreCarrera}" />
+                                </p:column>
+
+                                <p:column headerText="Nombre" filterBy="#{encuestaEstudiate.nombre}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.nombre}">                           
+                                    <h:outputText value="#{encuestaEstudiate.nombre} #{encuestaEstudiate.apellidoPat} #{encuestaEstudiate.apellidoMat}" />
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </p:tab>
+                </p:tabView>
+
+
+            </p:outputPanel>
+        </h:form>
+    </ui:define>
+</ui:composition>

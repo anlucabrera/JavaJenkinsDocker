@@ -1,0 +1,933 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:o="http://omnifaces.org/ui"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <f:metadata>
+            <f:viewParam name="activa" value="#{controladorEducacion.pestaniaActiva}"/>
+        </f:metadata>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>  
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+
+        <!--adm:sidebar collapsed="true"/-->
+        <style>
+            .description-block{
+                text-align: justify;
+            }
+            .description-header{
+                text-align: center;
+            }
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            .aceptado{
+                background-color: #00a65a;
+            }
+            .denegado{
+                background-color: #f39c12;
+            }
+        </style>
+        <h:outputScript>
+            PrimeFaces.locales['es'] = {
+            closeText: 'Cerrar',
+            prevText: 'Anterior',
+            nextText: 'Siguiente',
+            monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+            dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+            dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+            dayNamesMin: ['D','L','M','M','J','V','S'],
+            weekHeader: 'Semana',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: '',
+            timeOnlyTitle: 'Sólo hora',
+            timeText: 'Tiempo',
+            hourText: 'Hora',
+            minuteText: 'Minuto',
+            secondText: 'Segundo',
+            currentText: 'Fecha actual',
+            ampm: false,
+            month: 'Mes',
+            week: 'Semana',
+            day: 'Día',
+            allDayText : 'Todo el día'
+            };
+        </h:outputScript>
+        <!--p:panel id="errort" header="Error de tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel-->
+        <c:if test="#{controladorEmpleado.mandos eq 'Superiores'}">
+            <div class="box box-primary">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Fecha límite</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">  
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="info-box">
+                                    <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                    <div class="info-box-content">
+                                        <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                        <span class="info-box-number">#{controladorEmpleado.fechaLimiteCurriculumVitae}.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                
+                    </div>
+                </div>
+            </div>
+        </c:if>
+        <p:panel id="informacion"   >
+            <section class="content">
+                <div class="row">
+                    <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                    <div class="col-md-9">
+                        <div class="nav-tabs-custom">
+                            <div class="row">
+                                <div class="col-lg-10 col-xs-10"/>
+                                <div class="col-lg-2 col-sm-2 col-xs-12">
+                                    <p:link outcome="perfilEmpleado">
+                                        <i class="fa fa-reply"></i>
+                                        <span>Regresar a mi perfil</span>
+                                    </p:link>
+                                </div>
+                            </div>
+                            <p:tabView activeIndex="#{controladorEducacion.pestaniaActiva}">
+                                <p:tab id="tab1" title="Formación académica">
+                                    <h:form id="frmForAc"  enctype="multipart/form-data"> 
+                                        <p:outputPanel id="registro" autoUpdate="#{controladorEducacion.claveR eq 0?false:true}" >
+                                            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                    <p:outputLabel for="estudio" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nivel de estudios" />
+                                                                                    <p:selectOneMenu id="estudio" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorEducacion.grado}" required="true">
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione Uno"/>
+                                                                                        <f:selectItems value="#{controladorEducacion.listaGrados}" var="grados" itemValue="#{grados.grado}" itemLabel="#{grados.nombre}" />
+                                                                                        <p:ajax listener="#{controladorEducacion.filtrarInfoEducacion()}" process="estudio" />
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="estudio" display="tooltip" />
+                                                                                    <hr/> 
+                                                                                </div>
+                                                                                <p:outputPanel autoUpdate="true">                                                                              
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                        <p:outputLabel for="titulacion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Forma titulación" />
+                                                                                        <p:selectOneMenu id="titulacion" disabled="#{!controladorEducacion.formaTyC}" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorEducacion.nuevoOBJFormacionAcademica.modoTitulacion}" >
+                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                            <f:selectItem itemValue="Tesis Individual y Examen Profesional" itemLabel="Tesis individual y examen profesional"/>
+                                                                                            <f:selectItem itemValue="Tesis Grupal y Examen Profesional" itemLabel="Tesis grupal y examen profesional"/>
+                                                                                            <f:selectItem itemValue="Tesis" itemLabel="Tesis"/>
+                                                                                            <f:selectItem itemValue="Examen Profesional" itemLabel="Examen profesional"/>
+                                                                                            <f:selectItem itemValue="Promedio" itemLabel="Promedio"/>
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="titulacion" display="tooltip" />                                                             
+                                                                                        <hr/>
+                                                                                    </div>                                                                                    
+                                                                                </p:outputPanel>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                    <p:outputLabel for="institucion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Institución" />
+                                                                                    <p:inputText id="institucion" style="height:100%; width: 100%; object-fit: contain; font-size: large" required="true" requiredMessage="No puede tener un campo vacío" placeholder="Institución" value="#{controladorEducacion.nuevoOBJFormacionAcademica.institucion}"/>
+                                                                                    <p:message for="institucion" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <p:outputPanel autoUpdate="true">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                        <p:outputLabel for="perfInst" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nombre de la carrera" />
+                                                                                        <p:inputText id="perfInst" disabled="#{!controladorEducacion.nomCarrera}" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Nombre de la carrera" value="#{controladorEducacion.nuevoOBJFormacionAcademica.nombreCarrera}"/>
+                                                                                        <p:message for="perfInst" display="tooltip" />
+                                                                                        <hr/>  
+                                                                                    </div>  
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                        <p:outputLabel for="cedula" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Número de cédula profesional" />
+                                                                                        <p:inputText id="cedula" disabled="#{!controladorEducacion.formaTyC}" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Número de cédula profesional" value="#{controladorEducacion.nuevoOBJFormacionAcademica.cedulaProfesional}"/>
+                                                                                        <p:message for="cedula" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>                                                                                    
+                                                                                </p:outputPanel>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                                                    <p:outputLabel for="fechaIn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de obtención" />
+                                                                                    <p:calendar navigator="true" locale="es" id="fechaIn" value="#{controladorEducacion.nuevoOBJFormacionAcademica.fechaObtencion}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Seleccione la fecha" />
+                                                                                    <p:message for="fechaIn" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                    <p:outputLabel for="messages" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo de evidencia a subir" />
+                                                                                    <br/>
+                                                                                    <p:outputPanel autoUpdate="true">
+                                                                                        <p:selectOneRadio id="rutas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorEducacion.evidencia}" layout="responsive" columns="1"> 
+                                                                                            <f:selectItem itemValue = "Cedula" itemDisabled="#{!controladorEducacion.formaTyC}" itemLabel = "Cedula #{controladorEducacion.nuevoOBJFormacionAcademica.evidenciaCedula eq null?'':'(ya cuenta con el archivo cargado)'}" /> 
+                                                                                            <f:selectItem itemValue = "EvidenciaTitulacion" itemLabel = "Evidencia titulacion / culminacion #{controladorEducacion.nuevoOBJFormacionAcademica.evidenciaTitulo eq null?'':'(ya cuenta con el archivo cargado)'}" />
+                                                                                        </p:selectOneRadio> 
+                                                                                    </p:outputPanel>
+                                                                                    <o:inputFile id="file" value="#{controladorEducacion.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                                    <br/>
+                                                                                    <h:message id="messageForFile" for="file" />
+                                                                                    <br/>
+                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{controladorEducacion.agregarEvidenciasEducacion()}"/>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr/>
+                                                                        <div class="row">
+                                                                            <p:outputPanel autoUpdate="true">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-12 col-md-4 col-lg-4"/>
+                                                                                    <div id="div1" class="col-sm-12 col-md-4 col-lg-4">
+                                                                                        <c:if test="#{controladorEducacion.claveR eq 0?true:false}">
+                                                                                            <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{controladorEducacion.createFormacion()}" disabled="#{controladorEducacion.direccionInt.toString() eq '0' ?true:false }"
+                                                                                                             icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('registro')update();" onsuccess="PF('frmListaFormacionAcademica')update();"
+                                                                                                             update="@form" process="@form" /> 
+                                                                                        </c:if>
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </p:outputPanel>
+                                                                            <p:outputPanel autoUpdate="true">
+                                                                                <c:if test="#{controladorEducacion.claveR eq 0?false:true}">
+                                                                                    <div class="col-sm-12 col-md-4 col-lg-4"/>
+                                                                                    <div id="div1" class="col-sm-12 col-md-4 col-lg-4">
+                                                                                        <p:commandButton id="btnBuscarActiuvidades" value="Actualizar información" actionListener="#{controladorEducacion.updateFormacion()}"
+                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('registro')update();" onsuccess="PF('frmListaFormacionAcademica')update();"
+                                                                                                         update="@form" process="@form" /> 
+                                                                                    </div>
+                                                                                </c:if>
+                                                                            </p:outputPanel>
+                                                                        </div>
+                                                                        <hr/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>                                                        
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </c:if>
+                                            <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
+                                                <div class="box-body">  
+                                                    <div class="row">
+                                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                                            <div class="info-box">
+                                                                <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                                                <div class="info-box-content">
+                                                                    <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de curriculum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>                
+                                                </div>
+                                            </c:if>
+                                        </p:outputPanel> 
+                                    </h:form>
+                                    <h:form id="frmListaFormacionAcademica">
+                                        <p:outputPanel>
+                                            <p:dataTable id="tblFormacion" value="#{controladorEducacion.nuevaListaFormacionAcademica}"
+                                                         paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron registros." rowStyleClass="#{formacion.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                                         selectionMode="single"  selection="#{controladorEducacion.nuevoOBJFormacionAcademica}" rowKey="#{formacion.formacion}"
+                                                         var="formacion" lazy="true">
+
+                                                <f:facet name="header">
+                                                    <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
+                                                    <p:spacer width="15px"/>
+                                                    <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
+                                                </f:facet>
+
+                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                    <p:ajax event="rowSelect"   update="delate update"/>
+                                                    <p:ajax event="rowUnselect" update="delate update"/>
+                                                </c:if>
+
+                                                <p:column headerText="Grado de estudio" 
+                                                          sortBy="#{formacion.nivelEscolaridad.nombre}" 
+                                                          filterBy="#{formacion.nivelEscolaridad.nombre}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{formacion.nivelEscolaridad.nombre}" />
+                                                </p:column>
+
+                                                <p:column headerText="Institución" 
+                                                          sortBy="#{formacion.institucion}" 
+                                                          filterBy="#{formacion.institucion}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{formacion.institucion}"/>
+                                                </p:column> 
+
+                                                <p:column headerText="Fecha de obtención" 
+                                                          sortBy="#{formacion.fechaObtencion}" 
+                                                          filterBy="#{formacion.fechaObtencion}" 
+                                                          filterMatchMode="contains"
+                                                          style="width: 15%">
+                                                    <h:outputText value="#{formacion.fechaObtencion}" >
+                                                        <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                                                    </h:outputText>
+                                                </p:column>  
+
+                                                <p:column headerText="Nombre de la carrera" 
+                                                          sortBy="#{formacion.nombreCarrera}" 
+                                                          filterBy="#{formacion.nombreCarrera}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{formacion.nombreCarrera}"/>
+                                                </p:column> 
+
+                                                <f:facet name="footer">
+                                                    <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                        <p:commandButton id="delate" value="Eliminar" icon="fa fa-eraser" class="btn btn-danger" 
+                                                                         oncomplete="PF('dlgDelate1').show();" disabled="#{empty controladorEducacion.nuevoOBJFormacionAcademica}"/>
+                                                        <p:commandButton id="update" value="Actualizar" icon="fa fa-pen" class="btn btn-info" onsuccess="PF('frmForAc')update();"
+                                                                         actionListener="#{controladorEducacion.asignaGrado()}" disabled="#{empty controladorEducacion.nuevoOBJFormacionAcademica}"/>
+                                                    </c:if>
+                                                </f:facet>
+
+                                                <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
+                                                    <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog1').show()" icon="ui-icon-search" title="View">
+                                                        <f:setPropertyActionListener value="#{formacion}" target="#{controladorEducacion.nuevoOBJFormacionAcademica}"/>
+                                                    </p:commandButton>
+                                                </p:column>
+
+                                            </p:dataTable>
+
+                                            <p:dialog id="dialog1" header="Evidencias" widgetVar="evidenciaDialog1" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
+                                                <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%" autoUpdate="true">
+                                                    <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty controladorEducacion.nuevoOBJFormacionAcademica}">
+                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorEducacion.convertirRutaFormaAT(controladorEducacion.nuevoOBJFormacionAcademica.evidenciaTitulo)}"/>       
+                                                        <c:if test="#{controladorEducacion.nuevoOBJFormacionAcademica.evidenciaCedula eq null ? false :(controladorEducacion.nuevoOBJFormacionAcademica.evidenciaCedula eq '' ?false:true)}">
+                                                            <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorEducacion.nuevoOBJFormacionAcademica.evidenciaCedula eq null ?'':(controladorEducacion.convertirRutaFormaAC(controladorEducacion.nuevoOBJFormacionAcademica.evidenciaCedula))}"/>
+                                                        </c:if>
+                                                    </p:panelGrid>
+                                                </p:outputPanel>
+                                            </p:dialog>
+
+                                        </p:outputPanel>       
+                                    </h:form>
+                                </p:tab>                               
+                                <p:tab id="tab2" title="Experiencia laboral">
+                                    <h:form id="frmExLab" enctype="multipart/form-data">
+                                        <p:outputPanel id="registro2" autoUpdate="#{controladorEducacion.claveREX eq 0?false:true}">
+                                            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                    <p:outputLabel for="institucion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Institución o empresa"/>
+                                                                                    <p:inputText id="institucion" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Institución o empresa" value="#{controladorEducacion.nuevoOBJExpeienciasLaborales.institucionEmpresa}"/>
+                                                                                    <p:message for="institucion" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                    <p:outputLabel for="puesto" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Puesto desempeñado" />
+                                                                                    <p:inputText id="puesto" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Puesto desempeñado" value="#{controladorEducacion.nuevoOBJExpeienciasLaborales.puestoDesepenado}"/>
+                                                                                    <p:message for="puesto" display="tooltip"/>                                                                         
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                                                    <p:outputLabel for="fechaIn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de inicio" />
+                                                                                    <p:calendar navigator="true" locale="es" id="fechaIn" value="#{controladorEducacion.nuevoOBJExpeienciasLaborales.fechaInicio}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                    <p:message for="fechaIn" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                                                    <p:outputLabel for="fechaFin" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha fin" />
+                                                                                    <p:calendar navigator="true" locale="es" id="fechaFin" value="#{controladorEducacion.nuevoOBJExpeienciasLaborales.fechaFin}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                    <p:message for="fechaFin" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                    <p:outputLabel for="funciones" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Funciones que desempeñó" />
+                                                                                    <p:inputTextarea id="funciones" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Funciones que desempeñó" value="#{controladorEducacion.nuevoOBJExpeienciasLaborales.funcionesDesempenio}"/>
+                                                                                    <p:message for="funciones" display="tooltip" />
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                    <p:outputPanel>            
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Comprobante #{controladorEducacion.nuevoOBJExpeienciasLaborales.evidenciaNombremiento eq null?'':'(ya cuenta con el archivo cargado)'}" />
+                                                                                    </p:outputPanel>
+                                                                                    <o:inputFile id="file" value="#{controladorEducacion.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                                    <br/>
+                                                                                    <h:message id="messageForFile4" for="file" />
+                                                                                    <br/>
+                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()" value="Subir archivo" class="btn-primary btn-info" action="#{controladorEducacion.agregarEvidenciaExperienciaLab}" />
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr/>
+                                                                        <div class="row">
+
+                                                                            <p:outputPanel>            
+                                                                                <p:autoUpdate/>
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-12 col-md-4 col-lg-4"/>
+                                                                                    <div class="col-sm-12 col-md-4 col-lg-4">                                                                                
+                                                                                        <p:commandButton id="btnBuscarActiuvidades" value="Guardar información"   
+                                                                                                         disabled="#{controladorEducacion.direccionInt3.toString() eq '0' ?true:false }"
+                                                                                                         actionListener="#{controladorEducacion.guardarEmpleo()}" 
+                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" 
+                                                                                                         update="@form" process="@form" oncomplete="PF('frmListaEmpleos')update();" /> 
+                                                                                    </div>
+                                                                                </div>
+                                                                            </p:outputPanel>
+
+                                                                            <p:outputPanel>            
+                                                                                <p:autoUpdate/>
+                                                                                <c:if test="#{controladorEducacion.claveREX eq 0?false:true}">
+                                                                                    <div class="col-sm-12 col-md-4 col-lg-4"/>
+                                                                                    <div id="div1" class="col-sm-12 col-md-4 col-lg-4">
+                                                                                        <p:commandButton id="btnactualizar" value="Actualizar información" actionListener="#{controladorEducacion.updateExperienciaLaboral()}"
+                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('registro2')update();" onsuccess="PF('frmListaEmpleos')update();"
+                                                                                                         update="@form" process="@form" /> 
+                                                                                    </div>
+                                                                                </c:if>
+                                                                            </p:outputPanel>
+                                                                        </div>
+                                                                        <hr/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>                                                        
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </c:if>
+                                            <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
+                                                <div class="box-body">  
+                                                    <div class="row">
+                                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                                            <div class="info-box">
+                                                                <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                                                <div class="info-box-content">
+                                                                    <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de curriculum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>                
+                                                </div>
+                                            </c:if>
+                                        </p:outputPanel>
+                                    </h:form>
+                                    <h:form id="frmListaEmpleos">
+                                        <p:outputPanel>
+                                            <p:dataTable id="tblEmpleos" value="#{controladorEducacion.nuevaListaExperienciasLaborales}"
+                                                         paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron registros." rendered="true" rowStyleClass="#{empleos.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                                         selectionMode="single"  selection="#{controladorEducacion.nuevoOBJExpeienciasLaborales}" rowKey="#{empleos.empleo}"
+                                                         var="empleos" lazy="true">
+
+
+                                                <f:facet name="header">
+                                                    <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
+                                                    <p:spacer width="15px"/>
+                                                    <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
+                                                </f:facet>
+                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                    <p:ajax event="rowSelect"   update="delate update"/>
+                                                    <p:ajax event="rowUnselect" update="delate update"/>
+                                                </c:if>
+                                                <p:column headerText="Puesto" 
+                                                          sortBy="#{empleos.puestoDesepenado}" 
+                                                          filterBy="#{empleos.puestoDesepenado}" 
+                                                          filterMatchMode="contains"
+                                                          style="width: 20%">
+                                                    <h:outputText value="#{empleos.puestoDesepenado}" />
+                                                </p:column>
+
+                                                <p:column headerText="Funciones" 
+                                                          sortBy="#{empleos.funcionesDesempenio}" 
+                                                          filterBy="#{empleos.funcionesDesempenio}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{empleos.funcionesDesempenio}" />
+                                                </p:column>     
+
+                                                <p:column headerText="Institucion o empresa" 
+                                                          sortBy="#{empleos.institucionEmpresa}" 
+                                                          filterBy="#{empleos.institucionEmpresa}" 
+                                                          filterMatchMode="contains"
+                                                          style="width: 20%">
+                                                    <h:outputText value="#{empleos.institucionEmpresa}" />
+                                                </p:column>
+
+                                                <f:facet name="footer">
+                                                    <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                        <p:commandButton id="delate" value="Eliminar" icon="fa fa-eraser" class="btn btn-danger" 
+                                                                         oncomplete="PF('dlgDelate3').show();"
+                                                                         disabled="#{empty controladorEducacion.nuevoOBJExpeienciasLaborales}"/>
+
+                                                        <p:commandButton id="update" value="Actualizar" icon="fa fa-pen" class="btn btn-info" onsuccess="PF('frmExLab')update();"
+                                                                         actionListener="#{controladorEducacion.asignaclaveREx()}" disabled="#{empty controladorEducacion.nuevoOBJExpeienciasLaborales}"/>
+                                                    </c:if>
+                                                </f:facet>
+
+                                                <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
+                                                    <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog2').show()" icon="ui-icon-search" title="View">
+                                                        <f:setPropertyActionListener value="#{empleos}" target="#{controladorEducacion.nuevoOBJExpeienciasLaborales}"/>
+                                                    </p:commandButton>
+                                                </p:column>
+
+                                            </p:dataTable>
+
+                                            <p:dialog header="Evidencias" widgetVar="evidenciaDialog2" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
+                                                <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
+                                                    <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty controladorEducacion.nuevoOBJExpeienciasLaborales}">
+                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorEducacion.convertirRutaExperienciaL(controladorEducacion.nuevoOBJExpeienciasLaborales.evidenciaNombremiento)}"/>       
+                                                    </p:panelGrid>
+                                                </p:outputPanel>
+                                            </p:dialog>
+                                        </p:outputPanel>  
+                                    </h:form>
+                                </p:tab>                              
+                                <p:tab id="tab3" title="Actualización profesional">
+                                    <h:form id="frmCapacit" enctype="multipart/form-data">
+                                        <p:outputPanel id="registro3" autoUpdate="#{controladorEducacion.claveRAP eq 0?false:true}">
+                                            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="row">
+                                                                            <h2>Revisar las actualizaciones profesionales que ya han sido precargadas, y agregar las faltantes.</h2>
+                                                                            <hr/>
+                                                                            <div class="form-group">
+                                                                                <div class="col-sm-12 col-md-6 col-lg-4">
+                                                                                    <p:outputLabel for="tipoCurso" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo de capacitación  tomada" />
+                                                                                    <p:selectOneMenu id="tipoCurso" style="height:100%; width: 100%; object-fit: contain; font-size: large" onchange="mostrarCaja(this.value);" value="#{controladorEducacion.tipoCur}" >
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItems value="#{controladorEducacion.listaCursos}" var="cursos" itemValue="#{cursos.tipo}" itemLabel="#{cursos.nombre}" />
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="tipoCurso" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-4">
+                                                                                    <p:outputLabel for="modalidad" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Modalidad del curso tomado" />
+                                                                                    <p:selectOneMenu id="modalidad" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorEducacion.modalida}" >
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItems value="#{controladorEducacion.listaModalidades}" var="modalidad" itemValue="#{modalidad.modalidad}" itemLabel="#{modalidad.nombre}" />
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="modalidad" display="tooltip" />
+                                                                                    <hr/>  
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-4">
+                                                                                    <p:outputLabel for="tipoAP" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo de actualizacion" />
+                                                                                    <p:selectOneMenu id="tipoAP" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorEducacion.nuevoOBJCapacitacionespersonal.tipoCapacitacion}" >
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItem itemValue="Externa" itemLabel="Externa"/>
+                                                                                        <f:selectItem itemValue="Interna" itemLabel="Interna"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="tipoAP" display="tooltip" />
+                                                                                    <hr/>   
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                    <div id="divPrincipal" >
+                                                                                        <div id="cursoOutputlabel">
+                                                                                            <p:outputLabel for="curso" style="height:100%; width: 100%; object-fit: contain; font-size: large" rendered="true" value="Nombre del curso" />
+                                                                                        </div> 
+                                                                                        <div id="tallerOutputlabel" style="display: none">
+                                                                                            <p:outputLabel for="curso" style="height:100%; width: 100%; object-fit: contain; font-size: large" rendered="true" value="Nombre del taller" />
+                                                                                        </div>    
+                                                                                        <div id="congresoOutputlabel" style="display: none">
+                                                                                            <p:outputLabel for="curso" style="height:100%; width: 100%; object-fit: contain; font-size: large" rendered="true" value="Nombre del congreso" />
+                                                                                        </div>    
+                                                                                        <div id="seminarioOutputlabel" style="display: none">
+                                                                                            <p:outputLabel for="curso" style="height:100%; width: 100%; object-fit: contain; font-size: large" rendered="true" value="Nombre del seminario" />
+                                                                                        </div>    
+                                                                                        <div id="cursoTallerOutputlabel" style="display: none">
+                                                                                            <p:outputLabel for="curso" style="height:100%; width: 100%; object-fit: contain; font-size: large" rendered="true" value="Nombre del curso-taller" />
+                                                                                        </div>    
+                                                                                        <div id="maestriaOutputlabel" style="display: none">
+                                                                                            <p:outputLabel for="curso" style="height:100%; width: 100%; object-fit: contain; font-size: large" rendered="true" value="Nombre de la maestría " />
+                                                                                        </div>    
+                                                                                        <div id="diplomadoOutputlabel" style="display: none">
+                                                                                            <p:outputLabel for="curso" style="height:100%; width: 100%; object-fit: contain; font-size: large" rendered="true" value="Nombre del diplomado" />
+                                                                                        </div>    
+                                                                                        <div id="simposioOutputlabel" style="display: none">
+                                                                                            <p:outputLabel for="curso" style="height:100%; width: 100%; object-fit: contain; font-size: large" rendered="true" value="Nombre del simposio" />
+                                                                                        </div>    
+                                                                                        <p:inputText id="curso" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Nombre" value="#{controladorEducacion.nuevoOBJCapacitacionespersonal.nombre}"/>
+                                                                                        <p:message for="curso" display="tooltip" />
+                                                                                    </div>                                                                                
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                                                    <p:outputLabel for="empresa" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Empresa impartidora" />
+                                                                                    <p:inputText id="empresa" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Empresa impartidora" value="#{controladorEducacion.nuevoOBJCapacitacionespersonal.empresaImpartidora}"/>
+                                                                                    <p:message for="empresa" display="tooltip" /> 
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                                                    <p:outputLabel for="lugar" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Lugar de la capacitación" />
+                                                                                    <p:inputText id="lugar" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Lugar de la capacitación" value="#{controladorEducacion.nuevoOBJCapacitacionespersonal.lugar}"/>
+                                                                                    <p:message for="lugar" display="tooltip"/>                                                                                                                                                                                                                                       
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-4 col-lg-2">
+                                                                                    <p:outputLabel for="durH" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Duración en horas" />
+                                                                                    <p:inputText id="durH" type="number" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Duracion en horas" value="#{controladorEducacion.nuevoOBJCapacitacionespersonal.duracionHoras}"/>
+                                                                                    <p:message for="durH" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-4 col-lg-2">
+                                                                                    <p:outputLabel for="fechaIn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de inicio" />
+                                                                                    <p:calendar navigator="true" locale="es" id="fechaIn" value="#{controladorEducacion.nuevoOBJCapacitacionespersonal.fechaInicio}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                    <p:message for="fechaIn" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-4 col-lg-2">
+                                                                                    <p:outputLabel for="fechaFin" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de fin" />
+                                                                                    <p:calendar navigator="true" locale="es" id="fechaFin" value="#{controladorEducacion.nuevoOBJCapacitacionespersonal.fechaFin}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                    <p:message for="fechaFin" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                    <p:outputLabel for="objetivo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Objetivo" />
+                                                                                    <p:inputTextarea id="objetivo" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Objetivo de la capacitación" value="#{controladorEducacion.nuevoOBJCapacitacionespersonal.objetivo}"/>
+                                                                                    <p:message for="objetivo" display="tooltip" />
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+
+                                                                                    <p:outputPanel>            
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Comprobante: #{controladorEducacion.nuevoOBJCapacitacionespersonal.evidenciaCapacitacion eq null?'':'(ya cuenta con el archivo cargado)'}" />
+                                                                                    </p:outputPanel>
+                                                                                    <o:inputFile id="file" value="#{controladorEducacion.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                                    <br/>
+                                                                                    <h:message id="messageForFile5" for="file" />
+                                                                                    <br/>
+                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorEducacion.agregarEvidenciaCapacitacion}" />
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr/>
+                                                                        <div class="row">
+
+                                                                            <p:outputPanel>            
+                                                                                <p:autoUpdate/>
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-12 col-md-4 col-lg-4"/>
+                                                                                    <div class="col-sm-12 col-md-4 col-lg-4">                                                                                
+                                                                                        <p:commandButton id="btnBuscarActiuvidades" value="Guardar información"       
+                                                                                                         disabled="#{controladorEducacion.direccionInt4.toString() eq '0' ?true:false }"
+                                                                                                         actionListener="#{controladorEducacion.guardarCapacitacion()}" 
+                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" 
+                                                                                                         update="@form" process="@form" oncomplete="PF('frmListaCapacitaciones')update();" /> 
+                                                                                    </div>
+                                                                                </div>
+                                                                            </p:outputPanel>
+
+                                                                            <p:outputPanel>            
+                                                                                <p:autoUpdate/>
+                                                                                <c:if test="#{controladorEducacion.claveRAP eq 0?false:true}">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4"/>
+                                                                                    <div id="div1" class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <p:commandButton id="btnactualizar" value="Actualizar información" actionListener="#{controladorEducacion.updateCapacitacion()}"
+                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('registro3')update();" onsuccess="PF('frmListaCapacitaciones')update();"
+                                                                                                         update="@form" process="@form" /> 
+                                                                                    </div>
+                                                                                </c:if>
+                                                                            </p:outputPanel>
+                                                                        </div>
+                                                                        <hr/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>                                                      
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </c:if>
+                                            <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
+                                                <div class="box-body">  
+                                                    <div class="row">
+                                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                                            <div class="info-box">
+                                                                <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                                                <div class="info-box-content">
+                                                                    <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de curriculum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>                
+                                                </div>
+                                            </c:if>
+                                        </p:outputPanel>  
+                                    </h:form>
+                                    <p:tabView >
+                                        <p:tab title="Actualizaciones profesionales otorgadas por la institución (UTXJ)" >
+                                            <h:form id="frmListaCapacitacionesInstitucionales" >
+                                                <p:outputPanel >
+
+                                                    <p:dataTable id="tblActualizacionesProfesionalesUTXJ" value="#{controladorEducacion.nuevaListaCapacitacionesInternas}"
+                                                                 paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron Registros." rendered="true" rowStyleClass="#{capacitacion.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                                                 selectionMode="single"  selection="#{controladorEducacion.nuevoOBJCapacitacionespersonal}" rowKey="#{capacitacion.cursoClave}"
+                                                                 var="capacitacion" lazy="true">
+
+                                                        <f:facet name="header">
+                                                            <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
+                                                            <p:spacer width="15px"/>
+                                                            <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
+                                                        </f:facet>
+                                                        <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                            <p:ajax event="rowSelect"   update="delate update"/>
+                                                            <p:ajax event="rowUnselect" update="delate update"/>
+                                                        </c:if>
+                                                        <p:column headerText="Tipo de curso" 
+                                                                  sortBy="#{capacitacion.tipo.nombre}" 
+                                                                  filterBy="#{capacitacion.tipo.nombre}" 
+                                                                  filterMatchMode="contains"
+                                                                  style="width: 10%">
+                                                            <h:outputText value="#{capacitacion.tipo.nombre}" />
+                                                        </p:column>
+
+                                                        <p:column headerText="Nombre del curso" 
+                                                                  sortBy="#{capacitacion.nombre}" 
+                                                                  filterBy="#{capacitacion.nombre}" 
+                                                                  filterMatchMode="contains"
+                                                                  style="width: 20%">
+                                                            <h:outputText value="#{capacitacion.nombre}" />
+                                                        </p:column>
+
+                                                        <p:column headerText="Objetivo" 
+                                                                  sortBy="#{capacitacion.objetivo}" 
+                                                                  filterBy="#{capacitacion.objetivo}" 
+                                                                  filterMatchMode="contains">
+                                                            <h:outputText value="#{capacitacion.objetivo}" />
+                                                        </p:column>
+
+                                                        <p:column headerText="Modalidad" 
+                                                                  sortBy="#{capacitacion.modalidad.nombre}" 
+                                                                  filterBy="#{capacitacion.modalidad.nombre}" 
+                                                                  filterMatchMode="contains"
+                                                                  style="width: 10%">
+                                                            <h:outputText value="#{capacitacion.modalidad.nombre}" />
+                                                        </p:column>        
+
+                                                        <p:column headerText="Fecha culminación" 
+                                                                  sortBy="#{capacitacion.fechaFin}" 
+                                                                  filterBy="#{capacitacion.fechaFin}" 
+                                                                  filterMatchMode="contains"
+                                                                  style="width: 10%">
+                                                            <h:outputText value="#{capacitacion.fechaFin}" >
+                                                                <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                                                            </h:outputText>
+                                                        </p:column>  
+
+                                                        <f:facet name="footer">
+                                                            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                                <p:commandButton id="delate" value="Eliminar" icon="fa fa-eraser" class="btn btn-danger" oncomplete="PF('dlgDelate4').show();" disabled="#{empty controladorEducacion.nuevoOBJCapacitacionespersonal}"/>
+                                                                <p:commandButton id="update" value="Actualizar" icon="fa fa-pen" class="btn btn-info" onsuccess="PF('frmCapacit')update();"
+                                                                                 actionListener="#{controladorEducacion.asignaclaveRAP()}" disabled="#{empty controladorEducacion.nuevoOBJCapacitacionespersonal}"/>
+                                                            </c:if>
+                                                        </f:facet>
+
+                                                        <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
+                                                            <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog3').show()" icon="ui-icon-search" title="View">
+                                                                <f:setPropertyActionListener value="#{capacitacion}" target="#{controladorEducacion.nuevoOBJCapacitacionespersonal}"/>
+                                                            </p:commandButton>
+                                                        </p:column>
+
+                                                    </p:dataTable>
+
+                                                    <p:dialog header="Evidencias" widgetVar="evidenciaDialog3" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
+                                                        <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
+                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty controladorEducacion.nuevoOBJCapacitacionespersonal}">
+                                                                <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorEducacion.convertirRutaActualizacionP(controladorEducacion.nuevoOBJCapacitacionespersonal.evidenciaCapacitacion)}"/>       
+                                                            </p:panelGrid>
+                                                        </p:outputPanel>
+                                                    </p:dialog>
+                                                </p:outputPanel>
+                                            </h:form>
+                                        </p:tab>
+                                        <p:tab title="Actualizaciones profesionales obtenidas externamente" >
+                                            <h:form id="frmListaCapacitaciones" >
+                                                <p:outputPanel >
+
+                                                    <p:dataTable id="tblActualizacionesProfesionales" value="#{controladorEducacion.nuevaListaCapacitacionesExternas}"
+                                                                 paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron Registros." rendered="true" rowStyleClass="#{capacitacion.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                                                 selectionMode="single"  selection="#{controladorEducacion.nuevoOBJCapacitacionespersonal}" rowKey="#{capacitacion.cursoClave}"
+                                                                 var="capacitacion" lazy="true">
+
+                                                        <f:facet name="header">
+                                                            <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
+                                                            <p:spacer width="15px"/>
+                                                            <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
+                                                        </f:facet>
+                                                        <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                            <p:ajax event="rowSelect"   update="delate update"/>
+                                                            <p:ajax event="rowUnselect" update="delate update"/>
+                                                        </c:if>
+                                                        <p:column headerText="Tipo de curso" 
+                                                                  sortBy="#{capacitacion.tipo.nombre}" 
+                                                                  filterBy="#{capacitacion.tipo.nombre}" 
+                                                                  filterMatchMode="contains"
+                                                                  style="width: 10%">
+                                                            <h:outputText value="#{capacitacion.tipo.nombre}" />
+                                                        </p:column>
+
+                                                        <p:column headerText="Nombre del curso" 
+                                                                  sortBy="#{capacitacion.nombre}" 
+                                                                  filterBy="#{capacitacion.nombre}" 
+                                                                  filterMatchMode="contains"
+                                                                  style="width: 20%">
+                                                            <h:outputText value="#{capacitacion.nombre}" />
+                                                        </p:column>
+
+                                                        <p:column headerText="Objetivo" 
+                                                                  sortBy="#{capacitacion.objetivo}" 
+                                                                  filterBy="#{capacitacion.objetivo}" 
+                                                                  filterMatchMode="contains">
+                                                            <h:outputText value="#{capacitacion.objetivo}" />
+                                                        </p:column>
+
+                                                        <p:column headerText="Modalidad" 
+                                                                  sortBy="#{capacitacion.modalidad.nombre}" 
+                                                                  filterBy="#{capacitacion.modalidad.nombre}" 
+                                                                  filterMatchMode="contains"
+                                                                  style="width: 10%">
+                                                            <h:outputText value="#{capacitacion.modalidad.nombre}" />
+                                                        </p:column>        
+
+                                                        <p:column headerText="Fecha de culminación" 
+                                                                  sortBy="#{capacitacion.fechaFin}" 
+                                                                  filterBy="#{capacitacion.fechaFin}" 
+                                                                  filterMatchMode="contains"
+                                                                  style="width: 10%">
+                                                            <h:outputText value="#{capacitacion.fechaFin}" >
+                                                                <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                                                            </h:outputText>
+                                                        </p:column>  
+
+                                                        <f:facet name="footer">
+                                                            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                                <p:commandButton id="delate" value="Eliminar" icon="fa fa-eraser" class="btn btn-danger" oncomplete="PF('dlgDelate4').show();" disabled="#{empty controladorEducacion.nuevoOBJCapacitacionespersonal}"/>
+                                                                <p:commandButton id="update" value="Actualizar" icon="fa fa-pen" class="btn btn-info" onsuccess="PF('frmCapacit')update();"
+                                                                                 actionListener="#{controladorEducacion.asignaclaveRAP()}" disabled="#{empty controladorEducacion.nuevoOBJCapacitacionespersonal}"/>
+                                                            </c:if>
+                                                        </f:facet>
+
+                                                        <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
+                                                            <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog4').show()" icon="ui-icon-search" title="View">
+                                                                <f:setPropertyActionListener value="#{capacitacion}" target="#{controladorEducacion.nuevoOBJCapacitacionespersonal}"/>
+                                                            </p:commandButton>
+                                                        </p:column>
+
+                                                    </p:dataTable>
+
+                                                    <p:dialog header="Evidencias" widgetVar="evidenciaDialog4" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
+                                                        <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
+                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty controladorEducacion.nuevoOBJCapacitacionespersonal}">
+                                                                <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorEducacion.convertirRutaActualizacionP(controladorEducacion.nuevoOBJCapacitacionespersonal.evidenciaCapacitacion)}"/>       
+                                                            </p:panelGrid>
+                                                        </p:outputPanel>
+                                                    </p:dialog>
+                                                </p:outputPanel>
+                                            </h:form>
+                                        </p:tab>                                        
+                                    </p:tabView>                                                                   
+                                </p:tab>
+                                <p:blockUI block="informacion" widgetVar="bloqueoCargaFile">
+                                    Cargando archivo espere por favor.<br />
+                                </p:blockUI>
+                            </p:tabView>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </p:panel>
+
+        <h:form id="frmDelate1" >
+            <p:dialog id="dlgDelate1" header="Eliminación" widgetVar="dlgDelate1" minimizable="true" maximizable="true" position="center" >
+                <f:facet name="footer">
+                    <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate1').hide();"/>
+                    <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorEducacion.deleteFormacion()}" 
+                                     icon="fa fa-check" process="@form" update="@form" onsuccess="PF('dlgDelate1').hide();" 
+                                     oncomplete="PF('tblFormacion')update();"/>
+                </f:facet>
+
+                <p:outputPanel>            
+                    <p:autoUpdate/>
+                    <h:panelGrid columns="1"  class="col-md-12">
+                        <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
+                    </h:panelGrid>
+                </p:outputPanel>
+            </p:dialog>
+        </h:form>    
+
+        <h:form id="frmDelate3" >
+            <p:dialog id="dlgDelate3" header="Eliminación" widgetVar="dlgDelate3" minimizable="true" maximizable="true" position="center">
+                <f:facet name="footer">
+                    <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate3').hide();"/>
+                    <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorEducacion.eliminarEmpleos()}" 
+                                     icon="fa fa-check" process="@form" update="@form" onsuccess="PF('dlgDelate3').hide();" oncomplete="PF('tblEmpleos')update();"/>
+                </f:facet>
+
+                <p:outputPanel>            
+                    <p:autoUpdate/>
+                    <h:panelGrid columns="1"  class="col-md-12">
+                        <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
+                    </h:panelGrid>
+                </p:outputPanel>
+            </p:dialog>
+        </h:form>    
+
+        <h:form id="frmDelate4" >
+            <p:dialog id="dlgDelate4" header="Eliminación" widgetVar="dlgDelate4" minimizable="true" maximizable="true" position="center" appendTo="@(tblActualizacionesProfesionales)">
+                <f:facet name="footer">
+                    <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate4').hide();"/>
+                    <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorEducacion.eliminarCapacitacion()}" icon="fa fa-check" process="@form" update="@form"
+                                     onsuccess="PF('dlgDelate4').hide();"  oncomplete="PF('tblActualizacionesProfesionales')update();"/>
+                </f:facet>
+
+                <p:outputPanel>            
+                    <p:autoUpdate/>
+                    <h:panelGrid columns="1"  class="col-md-12">
+                        <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
+                    </h:panelGrid>
+                </p:outputPanel>
+            </p:dialog>
+        </h:form>  
+        <script type="text/javascript" src="js/jquery.js"></script>
+
+        <h:outputScript library="js" name="funciones.js" />
+
+    </ui:define>
+
+</ui:composition>

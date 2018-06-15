@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+
+        <style>
+            .description-block{
+                text-align: justify;
+            }
+            .description-header{
+                text-align: center;
+            }
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            button, input, optgroup, select, textarea{
+                color: black;
+            }
+            .ui-tabs .ui-tabs-navscroller-btn-right{
+                right: .1em;
+                background: white;
+                block-size: 2.6em;
+            }
+            .ui-tabs .ui-tabs-navscroller-btn-left{
+                left: .1em;
+                background: white;
+                block-size: 2.6em;
+            }
+        </style>
+        <adm:sidebar collapsed="true"/>
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 34}">
+                <section class="content">
+                    <div class="row">
+                        <!--ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/-->
+                        <div class="col-md-12">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div>      
+                                </div>      
+
+                                <div class="col-sm-3">
+                                    <p:commandButton id="plantillaPersonal" value="Generar Historico" actionListener="#{historicoPlantillaPersonalEstadistica.generarPlantillaPersoanl()}" icon="fa fa-download" class="btn-primary btn-block col-md-3"/> 
+                                </div>
+
+                                <h:form id="frmBajas">
+                                    <p:dataTable id="dtbBajas" var="ByR" paginator="true" rows="10"
+                                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+                                                 rowsPerPageTemplate="5,10,15,20,25,30"
+                                                 value="#{controladorEstadisticaPersonal.nuevaVistaListaPersonal}">
+
+                                        <f:facet name="header">
+
+                                        </f:facet>
+
+                                        <f:facet name="{Exporters}">
+                                            <p:commandLink ajax="false">
+                                                <i class="fa fa-file-excel-o" /> Descargar
+                                                <pe:exporter type="xlsx" target="dtbBajas" fileName="PlantillaPersonalActivo" orientation="Landscape"  />
+                                            </p:commandLink>
+                                        </f:facet>
+
+                                        <p:columnGroup type="header">
+                                            <p:row class="success">
+                                                <p:column rowspan="2" headerText="" style="width: 40px;" />
+                                                <p:column rowspan="2" headerText="Nombre" style=" font-weight: bold; font-size: medium"/>
+                                                <p:column rowspan="2" headerText="Fecha Ingreso" style="width: 100px; font-weight: bold; font-size: medium"/>
+                                                <p:column rowspan="2" headerText="Fecha nacimiento" style="width: 100px; font-weight: bold; font-size: medium"/>
+                                                <p:column rowspan="2" headerText="Genero" style="width: 80px; font-weight: bold; font-size: medium"/>  
+                                                <p:column rowspan="2" headerText="Actividad" style="width: 100px; font-weight: bold; font-size: medium"/>                                                  
+                                                <p:column colspan="3" headerText="Áreas" style=" font-weight: bold; font-size: medium"/>
+                                                <p:column colspan="2" headerText="Categorías" style=" font-weight: bold; font-size: medium"/>
+                                                <p:column colspan="2" headerText="Experiencia" style="width: 160px; font-weight: bold; font-size: medium"/>
+                                                <p:column colspan="2" headerText="Preparación académica" style=" font-weight: bold; font-size: medium"/>
+                                                <p:column rowspan="2" headerText="Perfil PRODEP" style="width: 80px; font-weight: bold; font-size: medium"/>
+                                            </p:row>
+                                            <p:row class="success">
+                                                <p:column headerText="Operativa" style=" font-weight: bold; font-size: medium"/>
+                                                <p:column headerText="Superior" style=" font-weight: bold; font-size: medium"/>
+                                                <p:column headerText="Oficial" style=" font-weight: bold; font-size: medium"/>
+                                                <p:column headerText="Operativa" style=" font-weight: bold; font-size: medium"/>
+                                                <p:column headerText="Oficial" style=" font-weight: bold; font-size: medium"/>                                                    
+                                                <p:column headerText="Docente" style=" font-weight: bold; font-size: medium"/>
+                                                <p:column headerText="Laboral" style=" font-weight: bold; font-size: medium"/>
+                                                <p:column headerText="Grado de estudios" style=" font-weight: bold; font-size: medium"/>
+                                                <p:column headerText="Perfil profesional" style=" font-weight: bold; font-size: medium"/>
+                                            </p:row>
+                                        </p:columnGroup>
+
+                                        <p:column> <h:outputText value="#{ByR.clave}" /> </p:column>
+                                        <p:column> <h:outputText value="#{ByR.nombre}" /> </p:column>
+                                        <p:column> <h:outputText value="#{ByR.fechaIngreso}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
+                                        <p:column> <h:outputText value="#{ByR.fechaNacimiento}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
+                                        <p:column> <h:outputText value="#{ByR.generoNombre}" /> </p:column>
+                                        <p:column> <h:outputText value="#{ByR.actividadNombre}" /> </p:column>
+                                        <p:column> <h:outputText value="#{ByR.areaOperativaNombre}" /> </p:column>
+                                        <p:column> <h:outputText value="#{ByR.areaSuperiorNombre}" /> </p:column>
+                                        <p:column> <h:outputText value="#{ByR.areaOficialNombre}" /> </p:column>
+                                        <p:column> <h:outputText value="#{ByR.categoriaOperativaNombre}" /> </p:column>
+                                        <p:column> <h:outputText value="#{ByR.categoriaOficialNombre}" /> </p:column>
+                                        <p:column> <h:outputText value="#{ByR.experienciaDocente}" /> </p:column>
+                                        <p:column> <h:outputText value="#{ByR.experienciaLaboral}" /> </p:column>
+                                        <p:column> <h:outputText value="#{ByR.gradoNombre}" /> </p:column>
+                                        <p:column> <h:outputText value="#{ByR.perfilProfesional}" /> </p:column>
+                                        <p:column> <h:outputText value="#{ByR.perfilProdep eq true?'SI':'NO'}" /> </p:column>
+
+
+                                    </p:dataTable>
+                                </h:form>
+
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </c:if>
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa != 34}">
+                <h1>
+                    Esta página está disponible solo para personal adscrito al área de personal
+                </h1>
+            </c:if>
+        </p:panel>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

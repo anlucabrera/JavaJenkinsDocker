@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="#{layoutMB.template}">
+
+    <ui:param name="renderBreadCrumb" value="false"/>
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+
+        <link rel="stylesheet" type="text/css" href="resources/css/procesoElectoral.css" media="screen" />
+
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        <h2 class="align-center">
+            Bienvenido al Sistema Integral de Información
+        </h2>
+
+    </ui:define>
+    <ui:define name="body">
+        <c:set var="claseResumen" value="#{'col-lg-4 col-md-6 col-sm-12'}" />
+        <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
+            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                <div class="box box-primary">
+                    <div class="box box-solid">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Nota importante para el registro de evidencias del curriculum electrónico:</h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body">  
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <div class="info-box">
+                                        <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                        <div class="info-box-content">
+                                            <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                            <span class="info-box-number">Se recomienda que los archivos a subir sean escaneados de 400 o 400*400 DPI o PPP (según sea la configuración del escáner) en formato PDF.
+                                                <p>El nombre del archivo no deberá contener acentos ni caracteres especiales</p>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                
+                        </div>
+                        <hr/>
+                        <div class="box-body">  
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <div class="info-box">
+                                        <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                        <div class="info-box-content">
+                                            <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                            <span class="info-box-number">Solo se permite anexar un archivo por registro, en caso de que su evidencia este en dos archivos distintos, en la siguiente página se le permite unirlos a fin de que queden en un solo archivo.</span>
+                                            <p:link href="https://www.ilovepdf.com/es/unir_pdf" target="_blanck" style="color: #3a3030">
+                                                <i class="fa fa-file-pdf"></i>
+                                                <span>Unir archivos PDF</span>
+                                            </p:link>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                
+                        </div>
+                    </div>
+                </div>
+            </c:if>
+        </c:if>
+
+        <div class="box box-primary">
+            <div class="box box-solid">
+                <c:if test="#{logonMB.usuarioTipo eq 'ESTUDIANTE'}">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Evaluaciones por estudiantes:</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">  
+                        <div class="row">
+                            <c:if test="#{estudioEgresados.cargada}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="estudioEgresados();">
+                                            <h3>
+                                                <h:outputLabel value="#{estudioEgresados.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="estudioEgresados();" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Evaluación de seguimiento a egresados de las universidades tecnológicas<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa  fa-graduation-cap "></i>
+                                        </div>
+                                        <p:link outcome="evaluaciones/evaluacion/estudioEgresados"  class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="estudioEgr" action="evaluaciones/evaluacion/estudioEgresados" /></h:form>
+                                    </div>
+                                </div>                                
+                            </c:if>
+                            <c:if test="#{evaluacionTutor2.cargada}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="tutores();">
+                                            <h3>
+                                                <h:outputLabel value="#{evaluacionTutor2.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="tutores();" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Evaluación al tutor<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-legal"></i>
+                                        </div>
+                                        <p:link outcome="evaluaciones/evaluacion/tutores2"  class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="tutores" action="evaluaciones/evaluacion/tutores2" /></h:form>
+                                    </div>
+                                </div>                                
+                            </c:if>
+                            <c:if test="#{encuestaSatisfaccionEgresadosIng.cargada}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="satisfaccionEgresadosIng();">
+                                            <h3>
+                                                <h:outputLabel value="#{encuestaSatisfaccionEgresadosIng.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="satisfaccionEgresadosIng();" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Satisfacción de egresados de ingeniería<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-graduation-cap"></i>
+                                        </div>
+                                        <p:link outcome="satisfaccionEgresadosIng"  class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="satisfaccionEgresadosIng" action="satisfaccionEgresadosIng" /></h:form>
+                                    </div>
+                                </div>                                
+                            </c:if>
+                            <c:if test="#{evaluacionDoncenteMateriaControler.cargada}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="docentes();">
+                                            <h3>
+                                                <h:outputLabel value="#{evaluacionDoncenteMateriaControler.evaluados / evaluacionDoncenteMateriaControler.listaDocentesEvaluados.size() * 100}">
+                                                    <f:convertNumber pattern="###,###.##" />
+                                                </h:outputLabel>
+                                                <sup style="font-size: 20px">%</sup>
+                                            </h3>
+                                            <p>Evaluación al desempeño docente<br/>Periodo: #{evaluacionDoncenteMateriaControler.periodoEscolar.mesInicio.mes} - #{evaluacionDoncenteMateriaControler.periodoEscolar.mesFin.mes} #{evaluacionDoncenteMateriaControler.periodoEscolar.anio}</p>
+                                        </div>
+                                        <div class="icon"><i class="fa fa-cubes"></i></div>
+                                        <p:link outcome="evaluaciones/evaluacion/docentesMateria"  class="small-box-footer">
+                                            Mas información <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="docentes" action="evaluaciones/evaluacion/docentesMateria" /></h:form>
+                                    </div>
+                                </div>
+                            </c:if>
+                            <c:if test="#{encuestaServicios.cargada}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="servicios();">
+                                            <h3>
+                                                <h:outputLabel value="#{encuestaServicios.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="servicios();" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Satisfacción de servicios<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-tty"></i>
+                                        </div>
+                                        <p:link outcome="servicios"  class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="servicios" action="servicios" /></h:form>
+                                    </div>
+                                </div>                                
+                            </c:if>
+                            <c:if test="#{estudioEgresados.cargada and false}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="estudioEgresados();">
+                                            <h3>
+                                                <h:outputLabel value="#{estudioEgresados.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="servicios();" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Estudio de egresados<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-tty"></i>
+                                        </div>
+                                        <p:link outcome="evaluaciones/evaluacion/estudioEgresados"  class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="estudioEgresados" action="evaluaciones/evaluacion/estudioEgresados" /></h:form>
+                                    </div>
+                                </div>                                
+                            </c:if>
+                            <c:if test="#{encuestaSatisfaccionEgresadosTsu.cargada}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="satisfaccionEgresadosTsu();">
+                                            <h1>
+                                                <h:outputLabel value="#{encuestaSatisfaccionEgresadosTsu.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="satisfaccionEgresadosTsu();" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h1>
+                                            <p>Encuesta satisfacción de egresados de TSU<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-graduation-cap"></i>
+                                        </div>
+                                        <!--Cuando se haga la actualizacion quitar la parte //encuestasEstudiantes/\\ -->
+                                        <p:link outcome="encuestas/Estudiantes/satisfaccionEgresadosTsu"  class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="satisfaccionEgresadosTsu" action="satisfaccionEgresadosTsu" /></h:form>
+                                    </div>
+                                </div>                                
+                            </c:if>
+                        </div>
+                    </div>
+                </c:if>
+                <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Evaluaciones por el personal:</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">  
+                        <div class="row">
+                            <c:if test="#{evaluacionDesempenioAdmin.cargada}">
+                                <c:if test="#{evaluacionDesempenioAdmin.directivoSeleccionado.actividad eq 2 || evaluacionDesempenioAdmin.directivoSeleccionado.actividad eq 4 }">
+                                    <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-sm-12'}" />
+                                    <div class="#{claseResumen}" style="max-height: 154px;">
+                                        <div class="small-box bg-blue">
+                                            <div class="inner" style="cursor: pointer;" onclick="desempenio();">
+                                                <h3>
+                                                    <h:outputLabel value="#{evaluacionDesempenioAdmin.evaluados / evaluacionDesempenioAdmin.listaSubordinados.size() * 100}">
+                                                        <f:convertNumber pattern="###,###.##" />
+                                                    </h:outputLabel>
+                                                    <sup style="font-size: 20px">%</sup>
+                                                </h3>
+                                                <p>Evaluación del desempeño<br/>Periodo: #{evaluacionDesempenioAdmin.periodoEscolar.mesInicio.mes} - #{evaluacionDesempenioAdmin.periodoEscolar.mesFin.mes} #{evaluacionDesempenioAdmin.periodoEscolar.anio}</p>
+                                            </div>
+                                            <div class="icon">
+                                                <i class="fa fa-calendar-check-o"></i>
+                                            </div>
+                                            <p:link outcome="evaluaciones/evaluacion/desempenio"  class="small-box-footer">
+                                                Ingresar <i class="fa fa-arrow-circle-right"></i>
+                                            </p:link>
+                                            <h:form><p:remoteCommand name="desempenio" action="evaluaciones/evaluacion/desempenio" /></h:form>
+                                        </div>
+                                    </div>
+                                </c:if>
+                            </c:if>
+                            <c:if test="#{evaluacion360Admin1.cargada}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="360_1();">
+                                            <h3>
+                                                <h:outputLabel value="#{evaluacion360Admin1.evaluados / evaluacion360Admin1.listaPersonalEvaluado.size() * 100}">
+                                                    <f:convertNumber pattern="###,###.##" />
+                                                </h:outputLabel>
+                                                <sup style="font-size: 20px">%</sup>
+                                            </h3>
+                                            <p>Evaluación de 360°<br/>Periodo: #{evaluacion360Admin1.periodoEscolar.mesInicio.mes} - #{evaluacion360Admin1.periodoEscolar.mesFin.mes} #{evaluacion360Admin1.periodoEscolar.anio}</p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-users"></i>
+                                        </div>
+                                        <p:link outcome="evaluaciones/evaluacion/360_1"  class="small-box-footer">
+                                            Ingresar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="evaluaciones/evaluacion/360_1" action="360_1" /></h:form>
+                                    </div>
+                                </div>
+                            </c:if>
+                            <c:if test="#{evaluacionControlInterno.cargada}">
+                                <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-sm-12'}" />
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="evaControlInterno();">
+                                            <h3>
+                                                <h:outputLabel value="#{evaluacionControlInterno.finalizado?'Terminada':'Pendiente'}">
+                                                </h:outputLabel>
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Evaluación de Control Interno<br/>Periodo: #{evaluacionControlInterno.periodoEscolar.mesInicio.mes} - #{evaluacionControlInterno.periodoEscolar.mesFin.mes} #{evaluacionControlInterno.periodoEscolar.anio}</p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-calendar-check-o"></i>
+                                        </div>
+                                        <p:link outcome="evaluaciones/evaluacion/evaControlInterno"  class="small-box-footer">
+                                            Ingresar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="evaControlInterno" action="evaluaciones/evaluacion/evaControlInterno" /></h:form>
+                                    </div>
+                                </div>
+                            </c:if>
+                            <!--                            <c:if test="# {climaLaboral.cargada}">
+                                                            <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-sm-12'}" />
+                                                            <div class="# {claseResumen}" style="max-height: 154px;">
+                                                                <div class="small-box bg-blue">
+                                                                    <div class="inner" style="cursor: pointer;" onclick="climaLaboral();">
+                                                                        <h3>
+                                                                            <h:outputLabel value="# {climaLaboral.finalizado?'Terminada':'Pendiente'}">
+                                                                            </h:outputLabel>
+                                                                            <sup style="font-size: 20px"></sup>
+                                                                        </h3>
+                                                                        <p>Cuestionario de clima laboral<br/>Periodo: # {climaLaboral.periodoEscolar.mesInicio.mes} - # {climaLaboral.periodoEscolar.mesFin.mes} #{climaLaboral.periodoEscolar.anio}</p>
+                                                                    </div>
+                                                                    <div class="icon">
+                                                                        <i class="fa fa-calendar-check-o"></i>
+                                                                    </div>
+                                                                    <p:link outcome="evaluaciones/evaluacion/climaLaboral"  class="small-box-footer">
+                                                                        Ingresar <i class="fa fa-arrow-circle-right"></i>
+                                                                    </p:link>
+                                                                    <h:form><p:remoteCommand name="climaLaboral" action="evaluaciones/evaluacion/climaLaboral" /></h:form>
+                                                                </div>
+                                                            </div>
+                                                        </c:if>-->
+                            <c:if test="#{planeacionCuatrimestral.activa}">
+                                <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-sm-12'}" />
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="planeacionCuatrimestral();">
+                                            <h3>
+                                                <h:outputLabel value="#{planeacionCuatrimestral.mensajeStattusPlaneacion}">
+                                                </h:outputLabel>
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Planeación cuatrimestral<br/>Periodo: #{caster.periodoToString(planeacionCuatrimestral.periodo)}</p>
+                                        </div>                                        
+                                        <div class="icon">
+                                            <i class="fa fa-calendar-check-o"></i>
+                                        </div>                                        
+                                        <p:link outcome="#{planeacionCuatrimestral.outcome}"  class="small-box-footer">
+                                            Ingresar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="planeacionCuatrimestral" action="#{planeacionCuatrimestral.abrir()}" /></h:form>
+                                    </div>
+                                </div>
+                            </c:if>
+                        </div>
+                    </div>
+                </c:if>                
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

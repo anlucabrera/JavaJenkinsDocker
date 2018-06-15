@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:hf="http://highfaces.org">
+    <ui:define name="head-end">
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+
+        </style>
+        <h:outputStylesheet library="css" name="utilerias.css"/>
+    </ui:define> 
+    <h:head>
+        <title>Gráfica</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <p:outputPanel >
+                <p:growl autoUpdate="true" />
+                <!--                <center>
+                                    <div class="w3-col s12 m6 l8" >
+                                        <hf:chart type="pie" title="Respuesta de estudiantes por area"  width="600" height="400">
+                                            <hf:chartSerie name="Evaluaciuones # {point.terminadas} de un total de # {point.total}realizadas por area' " value="# {administrativoEvaluacion.utilAdmin.listaChartEvaluacionDocentes}" var="point" point="# {point.terminadas}"  tickLabel="# {point.siglas}"/>
+                                        </hf:chart>
+                                    </div>
+                                </center>
+                                <br/>-->
+                <hf:chart type="column" model="#{administrativoEvaluacion.utilAdmin.model}"  title="Respuesta de estudiantes por area"/> 
+                <!--<hf:chart type="column" model="# { charts.model}"  title="Respuesta de estudiantes por area"/>--> 
+               
+            </p:outputPanel>
+
+
+        </h:form>
+    </h:body>
+
+</ui:composition>

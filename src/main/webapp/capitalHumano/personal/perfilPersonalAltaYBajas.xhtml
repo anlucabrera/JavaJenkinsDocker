@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+
+        <style>
+            .description-block{
+                text-align: justify;
+            }
+            .description-header{
+                text-align: center;
+            }
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            button, input, optgroup, select, textarea{
+                color: black;
+            }
+            .ui-tabs .ui-tabs-navscroller-btn-right{
+                right: .1em;
+                background: white;
+                block-size: 2.6em;
+            }
+            .ui-tabs .ui-tabs-navscroller-btn-left{
+                left: .1em;
+                background: white;
+                block-size: 2.6em;
+            }
+        </style>
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 37}">
+                <section class="content">
+                    <div class="row">
+                        <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                        <div class="col-md-9">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div>      
+                                </div>
+                                <p:tabView>                                    
+                                    <p:tab title="Altas">
+                                        <h:form id="datosPer">
+                                            <p:outputPanel>
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">                                                           
+                                                                        <label class="col-sm-12 control-label"><h1 style="text-align: center">Datos personales</h1></label>
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="nombre" class="col-sm-12 control-label">Nombre</label>
+                                                                                <p:inputText class="form-control" id="nombre" placeholder="Nombre" value="#{controladorPersonalAltasYBajas.nuevOBJPersonalSubordinado.nombre}"/>
+                                                                                <hr/>                                                                     
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="fechaN" class="col-sm-12 control-label">Fecha de nacimiento</label>
+                                                                                <p:inputMask class="form-control" id="fechaN" placeholder="día-mes-año" mask="99/99/9999" value="#{controladorPersonalAltasYBajas.fechaN}"/>
+                                                                                <hr/>                                                                       
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="genero" class="col-sm-12 control-label">Sexo</label>
+                                                                                <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" id="genero" value="#{controladorPersonalAltasYBajas.genero}">
+                                                                                    <f:selectItems value="#{controladorPersonalAltasYBajas.listaGeneros}" var="gene" itemValue="#{gene.genero}" itemLabel="#{gene.nombre}" />
+                                                                                </p:selectOneMenu> 
+                                                                                <hr/>                                                                     
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="pais" class="col-sm-12 control-label">País</label>
+                                                                                <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" id="pais" value="#{controladorPersonalAltasYBajas.nuevOBJPersonalSubordinado.pais}">
+                                                                                    <f:selectItems value="#{controladorEmpleado.listaPaises}" var="paises" itemValue="#{paises}" itemLabel="#{paises}" />
+                                                                                </p:selectOneMenu> 
+                                                                                <hr/>                                                                     
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">                                                                              
+                                                                                <label for="estado" class="col-sm-12 control-label">Estado</label>
+                                                                                <p:inputText  class="form-control" id="estado" placeholder="Estado" value="#{controladorPersonalAltasYBajas.nuevOBJPersonalSubordinado.estado}"/>
+                                                                                <hr/>                                                                     
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="municipio" class="col-sm-12 control-label">Municipio</label>
+                                                                                <p:inputText  class="form-control" id="municipio" placeholder="Municipio" value="#{controladorPersonalAltasYBajas.nuevOBJPersonalSubordinado.municipio}"/>
+                                                                                <hr/>                                                                     
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="localidad" class="col-sm-12 control-label">Localidad</label>
+                                                                                <p:inputText  class="form-control" id="localidad" placeholder="Localidad" value="#{controladorPersonalAltasYBajas.nuevOBJPersonalSubordinado.localidad}"/>
+                                                                                <hr/>                                                                      
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="correo1" class="col-sm-12 control-label">Correo electrónico 2</label>
+                                                                                <p:inputText type="email"  class="form-control" id="correo2" placeholder="Correo electrónico 2" value="#{controladorPersonalAltasYBajas.nuevOBJPersonalSubordinado.correoElectronico2}"/>
+                                                                                <hr/>
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="correo1" class="col-sm-12 control-label">Correo electrónico</label>
+                                                                                <p:inputText type="email"  class="form-control" id="correo1" placeholder="Correo electrónico" value="#{controladorPersonalAltasYBajas.nuevOBJPersonalSubordinado.correoElectronico}"/>
+                                                                                <hr/>
+                                                                            </div>
+                                                                        </div>
+                                                                        <label class="col-sm-12 control-label"><h1 style="text-align: center">Datos de trabajo</h1></label>
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                                <label for="clave" class="col-sm-12 control-label">Clave (clave anterior: #{controladorPersonalAltasYBajas.claveUltimaEmpleado})</label>
+                                                                                <p:inputText class="form-control" id="clave" placeholder="Clave" value="#{controladorPersonalAltasYBajas.nuevOBJPersonalSubordinado.clave}"/>
+                                                                                <hr/>
+                                                                            </div>
+                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                                <label for="status" class="col-sm-12 control-label">Estatus</label>
+                                                                                <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" id="status" value="#{controladorPersonalAltasYBajas.nuevOBJPersonalSubordinado.status}">
+                                                                                    <f:selectItem itemValue="A" itemLabel="Alta"/>
+                                                                                </p:selectOneMenu> 
+                                                                                <hr/> 
+                                                                            </div>
+                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                                <label for="actividad" class="col-sm-12 control-label">Actividad</label>
+                                                                                <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" id="actividad" value="#{controladorPersonalAltasYBajas.actividad}">
+                                                                                    <f:selectItems value="#{controladorPersonalAltasYBajas.listaActividades}" var="activ" itemValue="#{activ.actividad}" itemLabel="#{activ.nombre}" />
+                                                                                </p:selectOneMenu> 
+                                                                                <hr/> 
+                                                                            </div>
+                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                                <label for="fechaI" class="col-sm-12 control-label">Fecha de Ingreso</label>
+                                                                                <p:inputMask class="form-control" id="fechaI" placeholder="día-mes-año" mask="99/99/9999" value="#{controladorPersonalAltasYBajas.fechaI}"/>
+                                                                                <hr/>
+                                                                            </div>
+                                                                            <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                <label for="categoriaOP" class="col-sm-12 control-label">Categoría operativa</label>
+                                                                                <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" id="categoriaOP" value="#{controladorPersonalAltasYBajas.categoriaOP}">
+                                                                                    <f:selectItems value="#{controladorPersonalAltasYBajas.listaPersonalCategorias}" var="caOP" itemValue="#{caOP.categoria}" itemLabel="#{caOP.nombre}" />
+                                                                                </p:selectOneMenu> 
+                                                                                <hr/> 
+                                                                            </div>
+                                                                            <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                <label for="areaOp" class="col-sm-12 control-label">Área operativa</label>
+                                                                                <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" id="areaOp" value="#{controladorPersonalAltasYBajas.nuevOBJPersonalSubordinado.areaOperativa}">
+                                                                                    <f:selectItems value="#{controladorPersonalAltasYBajas.listareasOperativas}" var="arOP" itemValue="#{arOP.clave}" itemLabel="#{arOP.nombre}"/>
+                                                                                </p:selectOneMenu> 
+                                                                                <hr/> 
+                                                                            </div>
+                                                                            <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                <label for="categoriaOf" class="col-sm-12 control-label">Categoría oficial</label>
+                                                                                <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" id="categoriaOf" value="#{controladorPersonalAltasYBajas.categoriaOF}">
+                                                                                    <f:selectItems value="#{controladorPersonalAltasYBajas.listaPersonalCategorias}" var="caOF" itemValue="#{caOF.categoria}" itemLabel="#{caOF.nombre}" />
+                                                                                </p:selectOneMenu> 
+                                                                                <hr/>
+                                                                            </div>
+                                                                            <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                <label for="areaOf" class="col-sm-12 control-label">Área oficial</label>
+                                                                                <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" id="areaOf" value="#{controladorPersonalAltasYBajas.nuevOBJPersonalSubordinado.areaOficial}">
+                                                                                    <f:selectItems value="#{controladorPersonalAltasYBajas.listareasOficiales}" var="arOF" itemValue="#{arOF.clave}" itemLabel="#{arOF.nombre}" />
+                                                                                </p:selectOneMenu> 
+                                                                                <hr/> 
+                                                                            </div>
+                                                                            <div class="col-sm-6 col-md-6 col-lg-6"> 
+                                                                                <label for="areaSu" class="col-sm-12 control-label">Área superior</label>
+                                                                                <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" id="areaSu" value="#{controladorPersonalAltasYBajas.nuevOBJPersonalSubordinado.areaSuperior}">
+                                                                                    <f:selectItems value="#{controladorPersonalAltasYBajas.listareasSuperiores}" var="arSP" itemValue="#{arSP.clave}" itemLabel="#{arSP.nombre}" />
+                                                                                </p:selectOneMenu> 
+                                                                                <hr/> 
+                                                                            </div>
+                                                                        </div>
+                                                                        <label class="col-sm-12 control-label"><h1 style="text-align: center">Estudios</h1></label>
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="grado" class="col-sm-12 control-label">Grado</label>
+                                                                                <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" id="grado" value="#{controladorPersonalAltasYBajas.grado}">
+                                                                                    <f:selectItems value="#{controladorPersonalAltasYBajas.listaGrados}" var="grad" itemValue="#{grad.grado}" itemLabel="#{grad.nombre}" />
+                                                                                </p:selectOneMenu> 
+                                                                                <hr/>
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="experienciadoc" class="col-sm-12 control-label">Experiencia docente</label>
+                                                                                <p:inputText  class="form-control" id="experienciadoc" placeholder="Experiencia docente" value="#{controladorPersonalAltasYBajas.nuevOBJPersonalSubordinado.experienciaDocente}"/>
+                                                                                <hr/>
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="experienciaLab" class="col-sm-12 control-label">Experiencia laboral</label>
+                                                                                <p:inputText  class="form-control" id="experienciaLab" placeholder="Experiencia laboral" value="#{controladorPersonalAltasYBajas.nuevOBJPersonalSubordinado.experienciaLaboral}"/>
+                                                                                <hr/>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                <label for="perfilPro" class="col-sm-12 control-label">Perfil profesional</label>
+                                                                                <p:inputText  class="form-control" id="perfilPro" placeholder="Perfil profesional" value="#{controladorPersonalAltasYBajas.nuevOBJPersonalSubordinado.perfilProfesional}"/>
+                                                                                <hr/>
+                                                                            </div>
+                                                                        </div>
+                                                                        <p:spacer height="50px"/>
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-offset-2 col-sm-10">
+                                                                                <p:commandButton id="btnActualizarPersonal" value="Agregar" type="submit" actionListener="#{controladorPersonalAltasYBajas.agregarEmpleado()}" icon="fa fa-paper-plane" class="btn-primary btn-block col-md-3" update="@form" process="@form" /> 
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p:outputPanel>
+                                        </h:form>
+                                    </p:tab>
+                                    <p:tab title="Bajas">
+                                        <h:form id="frmBajas">
+                                            <p:dataTable id="dtbBajas" var="ByR" paginator="true" rows="15"
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="5,10,15,20,25,30"
+                                                         value="#{controladorPersonalAltasYBajas.listaPersonalBajas}" editable="true" style="margin-bottom:20px">
+                                                <f:facet name="header">
+                                                    Personal dado de baja = #{controladorPersonalAltasYBajas.listaPersonalBajas.size()} 
+                                                </f:facet>
+
+                                                <p:ajax event="rowEdit" listener="#{controladorPersonalAltasYBajas.onRowEdit}" update="dtbBajas" />
+                                                <p:ajax event="rowEditCancel" listener="#{controladorPersonalAltasYBajas.onRowCancel}" update="dtbBajas" />
+
+                                                <p:column headerText="Clave"
+                                                          sortBy="#{ByR.clave}" 
+                                                          filterBy="#{ByR.clave}" 
+                                                          filterMatchMode="contains"
+                                                          style="width: 15%">
+                                                    <h:outputText value="#{ByR.clave}" />
+                                                </p:column>
+
+                                                <p:column headerText="Nombre"
+                                                          sortBy="#{ByR.nombre}" 
+                                                          filterBy="#{ByR.nombre}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{ByR.nombre}" />
+                                                </p:column>
+
+                                                <p:column headerText="Actividad"
+                                                          sortBy="#{ByR.actividad.nombre}" 
+                                                          filterBy="#{ByR.actividad.nombre}" 
+                                                          filterMatchMode="contains"
+                                                          style="width: 15%">
+                                                    <h:outputText value="#{ByR.actividad.nombre}" />
+                                                </p:column>
+
+                                                <p:column headerText="Fecha"
+                                                          sortBy="#{ByR.fechaIngreso}" 
+                                                          filterBy="#{ByR.fechaIngreso}" 
+                                                          filterMatchMode="contains"
+                                                          style="width: 15%">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"><h:outputText value="#{ByR.fechaIngreso}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></f:facet>
+                                                        <f:facet name="input"><p:inputText value="#{ByR.fechaIngreso}" style="width:100%" label="Year"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:inputText></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+
+                                                <p:column headerText="Estatus"
+                                                          sortBy="#{ByR.status}" 
+                                                          filterBy="#{ByR.status}" 
+                                                          filterMatchMode="contains"
+                                                          style="width: 15%">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"><h:outputText value="#{ByR.status}"/></f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{ByR.status}" style="width:100%">
+                                                                <f:selectItems value="#{controladorPersonalAltasYBajas.estatus}" var="estatus" itemLabel="#{estatus}" itemValue="#{estatus}" />
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+
+
+                                                <p:column style="width:32px">
+                                                    <p:rowEditor />
+                                                </p:column>
+                                            </p:dataTable>
+                                        </h:form>
+                                    </p:tab>
+                                </p:tabView>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </c:if>
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa != 37}">
+                <h1>
+                    Esta página está disponible solo para personal adscrito al área de personal
+                </h1>
+            </c:if>
+        </p:panel>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

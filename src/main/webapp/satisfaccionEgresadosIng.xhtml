@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.layout}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+    <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+    <ui:define name="head-end">
+        <style type="text/css">
+            .bg-red{
+                background:#374850 !important;
+            }
+            .bg-green{
+                background:#cccccc !important;
+            }
+
+            .bg-blue{
+                background:#666666 !important;
+            }
+            .btn-primary{
+                background-color: #333 !important;
+                border-color: #000000 !important;
+
+            }
+            .btn-danger{
+                background:#000000 !important;
+                border-color: #000000 !important;
+            }
+            .btn-info{
+                background:#999999 !important;
+                border-color: #000000 !important;
+            }
+            .btn-success{
+                background-color: #333 !important;
+                border-color: #000000 !important;
+            }
+
+            .btn-info.btn-primary{
+                background-color: #333 !important;
+                border-color: #000000 !important;
+            }
+            body .ui-tabs.ui-tabs-top .ui-tabs-nav.ui-widget-header li.ui-state-active{
+                border-top: 3px solid #333;
+            }
+            button.ui-button.btn-primary.ui-state-disabled:hover{
+                background-color: #000000 !important;
+            }
+            button.ui-button.btn-primary:hover{
+                background-color: #000000 !important;
+            }
+            button.ui-button.btn-danger:hover{
+                background-color: #333 !important;
+            }
+            button.ui-button.btn-info:hover{
+                background-color: #999999 !important;
+            }
+            button.ui-button.btn-success:hover{
+                background-color: #000000 !important;
+            }
+            .ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight, .form-control .ui-state-highlight{
+                background-color: #999999 !important;
+                background: #999999 !important;
+                border-color:#999999 !important;
+            }
+            .body .ui-datepicker tbody td.ui-datepicker-today a{
+                border:1px solid #333 !important;
+                background-color: #999999 !important;
+            }
+            body .ui-datepicker td.ui-datepicker-current-day a.ui-state-active, body .ui-datepicker td.ui-datepicker-current-day a.ui-state-default, body .ui-datepicker td.ui-datepicker-current-day a.ui-state-hover{
+                background-color: #999999 !important;
+                background: #999999 !important;
+            }
+            .ui-datepicker .ui-datepicker-header, .ui-datepicker .ui-timepicker-div>.ui-widget-header, .ui-datepicker-year, .ui-datepicker-month{
+                background-color: #999999 !important;
+                background: #999999 !important;
+                border-color:#999999 !important;
+            }
+            .ui-datepicker .ui-datepicker-header, .ui-datepicker .ui-timepicker-div>.ui-widget-header{
+                background-color: #999999 !important;
+                background: #999999 !important;
+            }
+            .ui-datepicker th{
+                background-color: #999999 !important;
+                background: #999999 !important;
+            }
+            .ui-state:focus,.ui-widget-content .ui-state-focus,.ui-widget-header .ui-state-focus{
+                border-color:#999999 !important;
+            }
+
+            div.ui-fileupload .ui-fileupload-buttonbar span.ui-fileupload-choose{
+                background: #999999 !important;
+            }
+            div.ui-fileupload:hover .ui-fileupload-buttonbar span.ui-fileupload-choose{
+                background: #999999 !important;
+            }
+            body .ui-radiobutton .ui-radiobutton-box.ui-state-active span.ui-radiobutton-icon{
+                background-color:#333 !important;
+            }
+            body .ui-paginator .ui-paginator-page.ui-state-active{
+                background-color: #999999 !important;
+                background: #999999 !important;
+                border-color: #999999 !important;
+            }
+            div.ui-messages-info{
+                background-color: #cccccc !important;
+                border-color: #cccccc !important;
+                color: #000000;
+            }
+            .ui-messages-info, .ui-message-info{
+                background-color: #cccccc !important;
+                border-color: #cccccc !important;
+                color: #000000;
+            }
+
+            div.ui-messages-warn{
+                background-color: #999999 !important;
+                border-color: #999999 !important;
+                color: #ffffff;
+            }
+            .ui-messages-warn, .ui-message-warn{
+                background-color: #999999 !important;
+                border-color: #999999 !important;
+                color: #ffffff;
+            }
+
+            div.ui-messages-error{
+                background-color: #666666 !important;
+                border-color: #666666 !important;
+                color: #ffffff;
+            }
+            .ui-messages-error, .ui-message-error{
+                background-color: #666666 !important;
+                border-color: #666666 !important;
+                color: #ffffff;
+            }
+
+            div.ui-messages-fatal{
+                background-color: #000000 !important;
+                border-color: #000000 !important;
+                color: #ffffff;
+            }
+            .ui-messages-fatal, .ui-message-fatal{
+                background-color: #000000 !important;
+                border-color: #000000 !important;
+                color: #ffffff;
+            }
+            .box.box-primary{
+                border-top-color: #000000 !important;
+            }
+            .label.label-primary{
+                background-color: #777 !important;
+            }
+            .aceptado{
+                background-color: #777 !important;
+            }
+            .denegado{
+                background-color: #ccc !important;
+            }
+            .noaccedio{
+                background-color: #999 !important;
+            }
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+            .description-block{
+                text-align: justify;
+            }
+
+            .description-header{
+                text-align: center;
+            }
+
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            .ui-progressbar{
+                position: relative;
+                height: 2em;
+            }
+
+            .ui-progressbar .ui-progressbar-label {
+                color: #000000;
+                text-align: center;
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                display: none;
+                font-weight: bold;
+            }
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+
+        </style>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+    </ui:define>
+
+    <ui:define name="title">
+        Indicador # 7	del MECASUT
+    </ui:define>
+
+    <ui:define name="description">
+        Cuestionario para medir la satisfacción de los egresados de la universidad (licenciatura o ingeniería)
+    </ui:define>
+
+    <ui:define name="body">
+            <h:form id="frm" prependId="false" class="form-inline">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <div id="main-buttons" class="hidden-sm hidden-xs" >
+                            <p:focus for="ayuda"/>
+
+                            <p:outputPanel id="ayuda" autoUpdate="true">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <h4>
+                                            <span class="label label-primary"><i class="fa fa-info-circle" />
+                                                Escala de valores de satisfacción: Muy Bien = MB, Bien = B, Regular = R, Mal = M y Pésimo = P; o bien No Aplica NA=0.
+                                            </span>
+                                        </h4>
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <c:if test="#{encuestaSatisfaccionEgresadosIng.finalizado}">
+                                            <h4><span class="label aceptado"><i class="fa fa-check" />Ha finalizado el cuestionario.</span></h4>                                 
+                                        </c:if>
+                                        <c:if test="#{!encuestaSatisfaccionEgresadosIng.finalizado}">
+                                            <h4><span class="label denegado"><i class="fa fa-close" />Debe responder todas las preguntas.</span></h4>
+                                        </c:if>
+                                    </f:facet>
+                                </p:toolbar>
+                                <p:sticky target="tb" />
+                            </p:outputPanel>
+                        </div>
+                        <div class="box box-solid">
+                            <div class="box-header">
+                                <div class="well well-md">
+                                    <p style="text-align: justify; font-size: larger;">
+                                        Con el propósito de conocer la opinión de los egresados de Licenciatura o Ingeniería de la Universidad acerca de la atención, servicios y preparación académica que recibieron a lo largo de su permanencia en la institución.
+                                    </p>
+                                    <p>
+                                        Usa la opción NO APLICA en caso no haber usado el servicio durante el ciclo escolar.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="box-body">                            
+                                <c:set var="index" value="#{1}" />
+                                <c:forEach items="#{encuestaSatisfaccionEgresadosIng.apartados}" var="apartado">
+                                    <div class="row">
+                                        <div class="panel panel-primary" style="max-width: 900px;margin: auto; font-size: large;">
+                                            <div class="panel-heading aceptado">
+                                                <h3 class="panel-title" style="text-align: justify;">
+                                                    #{apartado.contenido}
+                                                </h3>
+                                            </div>
+                                            <table class="table table-striped table-responsive">
+                                                <thead>
+                                                    <tr class="denegado">
+                                                        <th>#</th>
+                                                        <th>Pregunta</th>
+                                                        <th style="text-align: center; width: 280px;">Opción</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <c:forEach items="#{apartado.preguntas}" var="pregunta">
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                            <td class="danger text-center" style="min-width: 120px;">
+                                                                <f:ajax execute="p#{index}">
+                                                                    <c:set var="pos" value="#{'p'.concat(index)}" />
+                                                                    <p:selectOneButton id="p#{index}" value="#{encuestaSatisfaccionEgresadosIng.respuestas[pos]}" valueChangeListener="#{encuestaSatisfaccionEgresadosIng.guardarRespuesta}">
+                                                                        <f:selectItems value="#{encuestaSatisfaccionEgresadosIng.respuestasPosibles}" />
+                                                                    </p:selectOneButton>
+                                                                </f:ajax>
+                                                                <c:set var="index" value="#{index+1}" />
+                                                            </td>
+                                                        </tr>
+                                                    </c:forEach>                                                
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <p:separator style="max-width: 1000px;" />
+                                </c:forEach>                            
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </h:form>
+    </ui:define>
+</ui:composition>

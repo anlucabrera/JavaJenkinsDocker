@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:ice="http://www.icefaces.org/icefaces/core"
+                template="#{layoutMB.layout}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
+
+    <ui:define name="head-end">
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+            .description-block{
+                text-align: justify;
+            }
+
+            .description-header{
+                text-align: center;
+            }
+
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            .aceptado{
+                background-color: #00a7d0 !important;
+            }
+            .denegado{
+                background-color: #f39c12 !important;
+            }
+            .noaccedio{
+                background-color: #EF5350 !important;
+            }
+            .ui-progressbar{
+                position: relative;
+                height: 2em;
+            }
+
+            .ui-progressbar .ui-progressbar-label {
+                color: #000000;
+                text-align: center;
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                display: none;
+                font-weight: bold;
+            }
+        </style>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+    </ui:define>
+
+    <ui:define name="title">
+        Administración por carrera
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="body">
+        <!--adm:breadcrumb title="Grupo : tutorado"/-->
+        <div id="main-buttons"  >
+            <p:toolbar id="tb">
+                <f:facet name="left">
+                    <p:outputLabel value="Administracion de encuestas, satisfacción de egresados de Ingeniería" />                            
+                </f:facet>
+                <f:facet name="right"></f:facet>
+            </p:toolbar>
+            <p:sticky target="tb" />
+        </div>
+        <p:tabView>
+            <p:tab title="Estudiantes que han finalizado encuesta" titleStyleClass="aceptado" titletip="Estudiantes que han finalizado encuesta">
+                <h:form>
+                    <p:outputPanel>
+                        <p:dataTable id="tblEvaluacionesCompletas" lazy="false" value="#{administracionEncuesta.encuestaFinalizada}"   var="encuestaEstudiate" filterDelay="700" 
+                                     paginator="true" rows="7" selection="#{administracionEncuesta.objListaEncuesta}" rowKey="#{encuestaEstudiate.evaluador}"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                     rowsPerPageTemplate="10,20,30,40,50" 
+                                     emptyMessage="El cuerpo estudiantil aún no ha finalizado la encuesta, "  >
+
+                            <f:facet name="header">
+                                <p:commandLink  ajax="false" class="denegado btn">
+                                    <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
+                                    <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblEvaluacionesCompletas" 
+                                                    fileName="Reporte_encuesta_finalizadas"/>
+                                </p:commandLink>
+                            </f:facet>
+                            <p:column headerText="Matricula" 
+                                      filterBy="#{encuestaEstudiate.evaluador}" 
+                                      filterMatchMode="contains" 
+                                      sortBy="#{encuestaEstudiate.evaluador}"   >                           
+                                <h:outputText value="#{encuestaEstudiate.evaluador}" />
+                            </p:column>
+                            <p:column headerText="Nombre Completo" 
+                                      filterBy="#{encuestaEstudiate.nombre} #{encuestaEstudiate.apellidoPaterno} #{encuestaEstudiate.apellidoMaterno}" 
+                                      filterMatchMode="contains" 
+                                      sortBy="#{encuestaEstudiate.nombre} #{encuestaEstudiate.apellidoPaterno} #{encuestaEstudiate.apellidoMaterno}"   >                           
+                                <h:outputText value="#{encuestaEstudiate.nombre} #{encuestaEstudiate.apellidoPaterno} #{encuestaEstudiate.apellidoMaterno}" />
+                            </p:column >
+                            <p:column headerText="Carrera"
+                                      filterBy="#{encuestaEstudiate.siglas}"
+                                      filterMatchMode="contains"
+                                      sortBy="#{encuestaEstudiate.siglas}">
+                                <h:outputText value="#{encuestaEstudiate.siglas}"/>
+                            </p:column>
+                            <p:column headerText="Promedio">
+                                <p:progressBar value="#{encuestaEstudiate.promedio*20}"  interval="100" widgetVar="promedio"  
+                                               labelTemplate="#{encuestaEstudiate.promedio} %"/>
+                            </p:column>
+
+                            <f:facet name="footer">
+                                <p:commandButton id="actualizar" value="Actualizar tabla" icon="fa fa-refresh" class="btn btn-primary" 
+                                                 actionListener="#{administracionEncuesta.obtenerEncuesta()}" process="@form" update="@form"/>
+                            </f:facet>
+                        </p:dataTable>           
+                    </p:outputPanel>
+                </h:form>
+            </p:tab>
+            <p:tab title="Estudiantes que no han finalizado encuesta" titleStyleClass="denegado">
+                <h:form>
+                    <p:outputPanel>
+                        <p:dataTable id="tblEvaluacionesIncompletas" lazy="false" value="#{administracionEncuesta.encuestaIncompleta}"   var="encuestaEstudiate" filterDelay="700" 
+                                     paginator="true" rows="7" selection="#{administracionEncuesta.objListaEncuesta}" rowKey="#{encuestaEstudiate.evaluador}"  
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                     rowsPerPageTemplate="10,20,30,40,50" 
+                                     emptyMessage="No se encontrarono registros"  >
+
+
+                            <f:facet name="header">
+                                <p:commandLink  ajax="false" class="denegado btn">
+                                    <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
+                                    <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblEvaluacionesIncompletas" 
+                                                    fileName="Reporte_encuestas_incompletas"/>
+                                </p:commandLink>
+                            </f:facet>
+                            <p:column headerText="Matricula" 
+                                      filterBy="#{encuestaEstudiate.evaluador}" 
+                                      filterMatchMode="contains" 
+                                      sortBy="#{encuestaEstudiate.evaluador}"   >                           
+                                <h:outputText value="#{encuestaEstudiate.evaluador}" />
+                            </p:column>
+                            <p:column headerText="Nombre Completo" 
+                                      filterBy="#{encuestaEstudiate.nombre} #{encuestaEstudiate.apellidoPaterno} #{encuestaEstudiate.apellidoMaterno}" 
+                                      filterMatchMode="contains" 
+                                      sortBy="#{encuestaEstudiate.nombre} #{encuestaEstudiate.apellidoPaterno} #{encuestaEstudiate.apellidoMaterno}"   >                           
+                                <h:outputText value="#{encuestaEstudiate.nombre} #{encuestaEstudiate.apellidoPaterno} #{encuestaEstudiate.apellidoMaterno}" />
+                            </p:column >
+                            <p:column headerText="Carrera"
+                                      filterBy="#{encuestaEstudiate.siglas}"
+                                      filterMatchMode="contains"
+                                      sortBy="#{encuestaEstudiate.siglas}">
+                                <h:outputText value="#{encuestaEstudiate.siglas}"/>
+                            </p:column>
+                            <p:column headerText="Promedio">
+                                <p:progressBar value="#{encuestaEstudiate.promedio*20}"  interval="100" widgetVar="promedio"  
+                                               labelTemplate="#{encuestaEstudiate.promedio} %"/>
+                            </p:column>
+
+                            <f:facet name="footer">
+                                <p:commandButton id="actualizar" value="Actualizar tabla" icon="fa fa-refresh" class="btn btn-primary" 
+                                                 actionListener="#{administracionEncuesta.obtenerEncuesta()}" process="@form" update="@form"/>
+                            </f:facet>
+                        </p:dataTable>           
+                    </p:outputPanel>
+
+                </h:form>
+            </p:tab>
+
+            <p:tab title="Estudiantes que no han accedido" titleStyleClass="noaccedio">
+                <h:form>
+                    <p:outputPanel>
+                        <p:dataTable id="tblAlumnosNoAccedieron" lazy="false" value="#{administracionEncuesta.listadoEvaluacionIncompleta}"   var="alumnosNoAccedieron" filterDelay="700" 
+                                     paginator="true" rows="7" selection="#{administracionEncuesta.objAlumno}" rowKey="#{alumnosNoAccedieron.clave}"  
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                     rowsPerPageTemplate="10,20,30,40,50" 
+                                     emptyMessage="No se encontrarono registros"  >
+
+
+                            <f:facet name="header">
+                                <p:commandLink  ajax="false" class="denegado btn">
+                                    <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
+                                    <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblAlumnosNoAccedieron" 
+                                                    fileName="Reporte_alumnos_que_no_accedieron"/>
+                                </p:commandLink>
+
+                            </f:facet>
+                            <p:column headerText="Matricula" 
+                                      filterBy="#{alumnosNoAccedieron.clave}" 
+                                      filterMatchMode="contains" 
+                                      sortBy="#{alumnosNoAccedieron.clave}"   >                           
+                                <h:outputText value="#{alumnosNoAccedieron.clave}" />
+                            </p:column>
+                            <p:column headerText="Nombre Completo" 
+                                      filterBy="#{alumnosNoAccedieron.nombre}" 
+                                      filterMatchMode="contains" 
+                                      sortBy="#{alumnosNoAccedieron.nombre}"   >                           
+                                <h:outputText value="#{alumnosNoAccedieron.nombre}" />
+                            </p:column >
+                            <p:column headerText="Carrera"
+                                      filterBy="#{alumnosNoAccedieron.siglas}"
+                                      filterMatchMode="contains"
+                                      sortBy="#{alumnosNoAccedieron.siglas}">
+                                <h:outputText value="#{alumnosNoAccedieron.siglas}"/>
+                            </p:column>
+                            <p:column headerText="Promedio">
+                                <p:progressBar value="#{encuestaEstudiate.promedio*0}"  interval="100" widgetVar="promedio"  
+                                               labelTemplate="#{encuestaEstudiate.promedio*0} %"/>
+                            </p:column>
+
+                            <f:facet name="footer">
+                                <p:commandButton id="actualizar" value="Actualizar tabla" icon="fa fa-refresh" class="btn btn-primary" 
+                                                 actionListener="#{administracionEncuesta.obtenerEncuesta()}" process="@form" update="@form"/>
+                            </f:facet>
+                        </p:dataTable>           
+                    </p:outputPanel>
+
+                </h:form>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+</ui:composition>

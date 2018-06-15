@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
+
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>  
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <style>
+            .description-block{
+                text-align: justify;
+            }
+            .description-header{
+                text-align: center;
+            }
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            .ui-progressbar{
+                position: relative;
+                height: 2em;
+            }
+            .ui-progressbar .ui-progressbar-label {
+                color: #000000;
+                text-align: center;
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                display: none;
+                font-weight: bold;
+            }
+        </style>
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <section class="content">
+                <div class="row">
+                    <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                    <div class="col-md-9">
+                        <div class="nav-tabs-custom">
+                            <div class="row">
+                                <div class="col-lg-10 col-xs-10"/>
+                                <div class="col-lg-2 col-xs-2">
+                                    <p:link outcome="perfilEmpleado">
+                                        <i class="fa fa-reply"></i>
+                                        <span>Regresar a mi perfil</span>
+                                    </p:link>
+                                </div>      
+                            </div>
+                            <p:tabView>
+                                <p:tab title="Resultado de evaluaciones">
+                                    <h:form id="frmresEva">                                               
+                                        <p:outputPanel deferred="true" >
+
+                                            <p:dataTable id="tblActividades"  value="#{controladorResultadosEvaluaciones.listaResultadoEva}"  var="resultadoEva"
+                                                         paginator="true" rows="10"
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="5,10,15,20,25,30"
+                                                         emptyMessage="No se encontraron Registros." rendered="true">                                               
+
+                                                <p:column headerText="Evaluación" 
+                                                          sortBy="#{resultadoEva.tipoEvaluacion}" 
+                                                          filterBy="#{resultadoEva.tipoEvaluacion}" 
+                                                          filterMatchMode="contains"
+                                                          style="width: 25%">
+                                                    <h:outputText value="#{resultadoEva.tipoEvaluacion}" />
+                                                </p:column>
+
+                                                <p:column headerText="Periodo" 
+                                                          sortBy="#{resultadoEva.inicio}" 
+                                                          filterBy="#{resultadoEva.inicio}" 
+                                                          filterMatchMode="contains"
+                                                          style="width: 25%">
+                                                    <h:outputText value="#{resultadoEva.inicio} - #{resultadoEva.fin} #{resultadoEva.anio}" />
+                                                </p:column>
+
+                                                <p:column headerText="Promedio" 
+                                                          sortBy="#{resultadoEva.promedio}" 
+                                                          filterBy="#{resultadoEva.promedio}" 
+                                                          filterMatchMode="contains"
+                                                          style="width: 50%">
+
+                                                    <div class="progress" style=" #{resultadoEva.tipoEvaluacion eq 'Evaluación 360°'?'visibility: visible; ':'display:none;'}">
+
+                                                        <div style=" #{resultadoEva.tipoClas eq 'success'?'visibility: visible; ':'display:none;'}">
+                                                            <div class="progress-bar progress-bar-success progress-bar-striped active pgS" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 25}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 25}%">
+                                                                #{resultadoEva.promedio} de 4
+                                                            </div>
+                                                        </div>
+                                                        <div style=" #{resultadoEva.tipoClas eq 'info'?'visibility: visible; ':'display:none;'}">
+                                                            <div class="progress-bar progress-bar-info progress-bar-striped active pgI" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 25}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 25}%">
+                                                                #{resultadoEva.promedio} de 4
+                                                            </div>
+                                                        </div>
+                                                        <div style=" #{resultadoEva.tipoClas eq 'warning'?'visibility: visible; ':'display:none;'}">
+                                                            <div class="progress-bar progress-bar-warning progress-bar-striped active pgW" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 25}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 25}%">
+                                                                #{resultadoEva.promedio} de 4
+                                                            </div>
+                                                        </div>
+                                                        <div style=" #{resultadoEva.tipoClas eq 'danger'?'visibility: visible; ':'display:none;'}">
+                                                            <div class="progress-bar progress-bar-danger progress-bar-striped active pgD" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 25}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 25}%">
+                                                                #{resultadoEva.promedio} de 4
+                                                            </div>
+                                                        </div>
+                                                        <div style=" #{resultadoEva.tipoClas eq 'proceso'?'visibility: visible; ':'display:none;'}">
+                                                            En proceso de evaluación
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="progress" style="#{resultadoEva.tipoEvaluacion eq 'Evaluación Desempeño'?'visibility: visible; ':'display:none;'}">
+                                                        <div style=" #{resultadoEva.tipoClas eq 'success'?'visibility: visible; ':'display:none;'}">
+                                                            <div class="progress-bar progress-bar-success progress-bar-striped active pgS" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 20}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 20}%">
+                                                                #{resultadoEva.promedio} de 5
+                                                            </div>
+                                                        </div>
+                                                        <div style=" #{resultadoEva.tipoClas eq 'info'?'visibility: visible; ':'display:none;'}">
+                                                            <div class="progress-bar progress-bar-info progress-bar-striped active pgI" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 20}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 20}%">
+                                                                #{resultadoEva.promedio} de 5
+                                                            </div>
+                                                        </div>
+                                                        <div style=" #{resultadoEva.tipoClas eq 'warning'?'visibility: visible; ':'display:none;'}">
+                                                            <div class="progress-bar progress-bar-warning progress-bar-striped active pgW" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 20}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 20}%">
+                                                                #{resultadoEva.promedio} de 5
+                                                            </div>
+                                                        </div>
+                                                        <div style=" #{resultadoEva.tipoClas eq 'danger'?'visibility: visible; ':'display:none;'}">
+                                                            <div class="progress-bar progress-bar-danger progress-bar-striped active pgD" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 20}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 20}%">
+                                                                #{resultadoEva.promedio} de 5
+                                                            </div>
+                                                        </div>
+                                                        <div style=" #{resultadoEva.tipoClas eq 'proceso'?'visibility: visible; ':'display:none;'}">
+                                                            En proceso de evaluación
+                                                        </div>                                                        
+                                                    </div>
+                                                </p:column>    
+                                            </p:dataTable>  
+                                        </p:outputPanel>    
+                                    </h:form>
+                                </p:tab>
+                            </p:tabView>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </p:panel>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="head-end">
+        <!-- Inicio estilos par proceso electoral -->
+        <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        <!-- Fin estilos par proceso electoral -->
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+
+        </style>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+    </ui:define>
+
+    <ui:define name="title">
+        Evaluación a docente por materia
+    </ui:define>
+
+    <ui:define name="description">
+        Formulario de la evaluación
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Evaluación de docentes - Formulario"/>
+        <h:form id="frm" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="" >
+                        <p:toolbar id="tb">
+                            <f:facet name="left">
+                                <p:outputLabel value="Total a evualuar: #{evaluacionDoncenteMateriaControler.listaDatosEvaluacion.size()}" />
+                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                <p:outputLabel value="Evaluados:  #{evaluacionDoncenteMateriaControler.evaluados}" />
+                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                <p:outputLabel value="Evaluando: #{evaluacionDoncenteMateriaControler.evaluando}" />
+                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>                              
+                            </f:facet>
+                            <f:facet name="right">
+                                <p:commandButton value="Actualizar" id="btnActualizar" actionListener="#{evaluacionDoncenteMateriaControler.actualizar()}" process="@this" icon="fa fa-refresh" styleClass="btn-primary "  />
+                                <p:commandButton value="Siguiente" id="btnSiguiente" actionListener="#{evaluacionDoncenteMateriaControler.continuarEvaluando()}" process="@this" icon="fa fa-sign-in" styleClass="btn-primary"  update="@form"/>
+                            </f:facet>
+                        </p:toolbar>
+                        <p:sticky target="tb" />
+                    </div>
+                    <p:separator/>
+                    <div class="box box-solid">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">
+                                <c:if test="#{empty evaluacionDoncenteMateriaControler.evaluacion}">
+                                    Sin evaluaciones activas
+                                </c:if>
+                                <c:if test="#{!empty evaluacionDoncenteMateriaControler.evaluacion}">
+                                    Periodo: #{evaluacionDoncenteMateriaControler.periodoEscolar.mesInicio.mes} - #{evaluacionDoncenteMateriaControler.periodoEscolar.mesFin.mes} #{evaluacionDoncenteMateriaControler.periodoEscolar.anio}
+                                </c:if>
+                            </h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body">
+                            <c:if test="#{empty evaluacionDoncenteMateriaControler.evaluacion}">
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 text-info text-center">
+                                        <h5 style="margin-top: 0px; margin-bottom: 0px;">
+                                            Si considera que es un error notifique al administrador.
+                                        </h5>
+                                    </div>
+                                </div>
+                            </c:if>
+                            <c:if test="#{!empty evaluacionDoncenteMateriaControler.evaluacion}">
+                                <div jsf:id="filaHeader" class="row hidden-sm hidden-md hidden-sm hidden-xs" style="background-color: white;">
+                                    <div class="col-lg-4 text-center text-info" style="height: 230px; vertical-align: middle;">
+                                        <c:if test="#{evaluacionDoncenteMateriaControler.listaDatosEvaluacion.size() eq evaluacionDoncenteMateriaControler.evaluados}">
+                                            <div>
+                                                <h2 style="background-color: aliceblue;">Evaluación terminada</h2>
+                                                <p:graphicImage library="img" name="ok_azul.png" height="100" />
+                                                <h3 style="background-color: aliceblue;">Gracias por finalizar la evaluación docente: #{evaluacionDoncenteMateriaControler.evaluador.nombre}</h3>
+                                            </div>
+                                        </c:if>
+                                    </div>
+                                    <c:set var="index" value="#{caster.toInt(0)}" />
+                                    <c:forEach items="#{evaluacionDoncenteMateriaControler.listaDocentesEvaluando}" var="evaluado"> 
+
+                                        <div class="col-lg-2 text-center" style="padding-left: 2px; padding-right: 2px; background-color: aliceblue;">                                            
+                                            <p:outputPanel >
+                                                <p:autoUpdate/>
+                                                <h4 class="#{evaluado.completo?'text-info':'text-warn'} " style="margin: 0px;">#{evaluado.completo?'Finalizado':'Pendiente'}</h4>
+                                                <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{evaluado.pk.evaluado}.jpg" width="150" alt="#{evaluado.pk.evaluado}" title="Personal #{evaluado.pk.evaluado}" style="border-color: black; border-style: solid; border-width: 2px;" />
+                                                <br/>
+                                                <h:outputText class="#{evaluado.completo?'text-info':'text-warn'} " style="margin: 0px;" value="Promedio: " /> 
+                                                <h:outputText class="#{evaluado.completo?'text-info':'text-warn'} " style="margin: 0px;" value="#{evaluado.promedio}" >
+                                                    <f:convertNumber type="number" pattern="##.##"/>
+                                                </h:outputText>
+                                            </p:outputPanel>
+                                            <p:selectOneMenu id="opcion#{index}" class="form-control" autoWidth="false" 
+                                                             var="s" panelStyle="width:380px" effect="fade"
+                                                             valueChangeListener="#{evaluacionDoncenteMateriaControler.cambiarOpciones}">
+                                                <f:selectItems value="#{evaluacionDoncenteMateriaControler.opciones[index]}" var="docentes" itemValue="#{docentes.cveMateria}" itemLabel="#{docentes.nombreMateria}" itemDescription="#{docentes.nombreCompletoDocente}"  />
+                                                <p:ajax update="@form" />
+                                                <!--                                                <p:column>
+                                                                                                    <h:outputText value="# {s.nombreMateria}" />
+                                                                                                </p:column>
+                                                                                                <p:column>
+                                                                                                    <h:outputText value="# {s.nombreCompletoDocente}" />
+                                                                                                </p:column>
+                                                                                                <p:column>
+                                                                                                    <h:outputText value="# {s.numeroNomina}" />
+                                                                                                </p:column>-->
+                                            </p:selectOneMenu>
+                                            <br/>
+                                            #{evaluado.personal.nombre}
+                                        </div>
+                                        <c:set var="index" value="#{caster.toInt(index+1)}" />
+                                    </c:forEach>
+                                </div>
+                                <p:sticky target="filaHeader" margin="42" />
+                                <c:forEach items="#{evaluacionDoncenteMateriaControler.preguntas}" var="apartado">
+                                    <div class="row">
+                                        <p:separator />
+                                        <div class="col-lg-4 col-md-4 text-info text-center">
+                                            <h3 style="margin-top: 0px; margin-bottom: 0px;">
+                                                #{apartado.contenido}
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <c:forEach items="#{apartado.preguntas}" var="pregunta">
+                                        <div class="row">
+                                            <div class="col-lg-4 col-md-12 text-info text-justify" style="padding-top: 10px;">
+                                                <div class="row">
+                                                    <div class="col-md-1">
+                                                        <h3>
+                                                            <h:outputText value="#{pregunta.numero}">
+                                                                <f:convertNumber pattern="##.#" />
+                                                            </h:outputText>
+                                                        </h3>
+                                                    </div>
+                                                    <div class="col-md-11">
+                                                        #{pregunta.titulo}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <c:forEach items="#{evaluacionDoncenteMateriaControler.listaDocentesEvaluando}" var="evaluado2">
+                                                <div class="col-lg-2 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
+
+                                                    <c:set var="id" value="#{'r'.concat(pregunta.numero).replace('.','-').concat('_').concat(evaluado2.pk.cveMateria.toString())}" />
+                                                    <!--id # {id}-->
+                                                    <p:outputLabel id="lbl#{id}" for="#{id}" value="#{evaluado2.personal.nombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
+                                                    <c:if test="#{pregunta.tipo == 3}">
+                                                        <f:ajax id="ajx#{id}" execute="#{id}">
+                                                            <p:selectOneButton id="#{id}" value="#{evaluacionDoncenteMateriaControler.respuestas[evaluado2.pk.cveMateria][pregunta.numero]}"
+                                                                               required="true" requiredMessage="Falta respuesta"
+                                                                               valueChangeListener="#{evaluacionDoncenteMateriaControler.guardarRespuesta}"
+                                                                               style="font-size: small;" >
+                                                                <f:selectItems value="#{evaluacionDoncenteMateriaControler.respuestasPosibles}" />
+                                                            </p:selectOneButton>
+                                                            <p:message id="msj#{id}" for="#{id}" display="tooltip" />
+                                                        </f:ajax>
+                                                    </c:if>
+                                                    <c:if test="#{pregunta.tipo == 1}">
+                                                        <f:ajax execute="#{id}">
+                                                            <p:inputTextarea id="#{id}" class="form-control" 
+                                                                             value="#{evaluacionDoncenteMateriaControler.respuestas[evaluado2.pk.cveMateria][pregunta.numero]}"
+                                                                             rows="6" placeholder="Ingrese sus comentarios aquí..." maxlength="500" counter="display" counterTemplate="{0} Caracteres restantes."
+                                                                             valueChangeListener="#{evaluacionDoncenteMateriaControler.guardarRespuesta}" queryDelay="1500" />
+                                                            <br/><h:outputText id="display" />
+                                                            <p:message for="#{id}" display="tooltip" />
+                                                        </f:ajax>
+                                                    </c:if>
+                                                </div>
+                                            </c:forEach>
+                                        </div>
+                                    </c:forEach>
+                                </c:forEach>
+                            </c:if>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

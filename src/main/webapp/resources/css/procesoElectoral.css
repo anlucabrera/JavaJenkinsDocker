@@ -1,0 +1,237 @@
+.bg-aqua-active{
+    background:#374850 !important;
+}
+box-primary{
+    background:#374850 !important;
+}
+.bg-red{
+    background:#374850 !important;
+}
+.bg-green{
+    background:#cccccc !important;
+}
+.bg-blue{
+    background:#666666 !important;
+}
+.btn-primary{
+    background-color: #333 !important;
+    border-color: #000000 !important;
+}
+.btn-danger{
+    background:#000000 !important;
+    border-color: #000000 !important;
+}
+.btn-info{
+    background:#999999 !important;
+    border-color: #000000 !important;
+}
+.btn-success{
+    background-color: #333 !important;
+    border-color: #000000 !important;
+}
+.aceptado{
+    background-color: #ffffff !important;
+}
+.pendiente{
+    background-color: #cccccc !important;
+}
+.denegado{
+    background-color: #666666 !important;
+    color: white;
+}
+.pgS{
+    background-color: #999999 !important;
+}
+.pgI{
+    background-color: #666666 !important;
+}
+.pgW{
+    background-color: #000000 !important;
+}
+.pgD{
+    background-color: #cccccc !important;
+}
+.ui-organigram .ui-organigram-node.root {
+    background: #000000 !important;
+}
+.ui-organigram .ui-organigram-node.division3 {
+    background: #333333 !important;
+}
+.ui-organigram .ui-organigram-node.division {
+    background: #666666 !important;
+}
+.ui-organigram .ui-organigram-node.division2 {
+    background: #999999 !important;
+}
+.ui-organigram .ui-organigram-node.staff2 {
+    background: #434c52 !important;
+}
+.ui-organigram .ui-organigram-node.staff {
+    background: #cccccc !important;
+    color: #000000;
+}
+.ui-organigram .ui-organigram-node.arapo {
+    background: #434c52 !important;
+    color: #ffffff !important;
+}
+.ui-organigram .ui-organigram-node.employee {
+    background: #cccccc !important;
+}
+.msperior{
+    background: #000000 !important;
+}
+.mmsperior{
+    background: #666666 !important;
+}
+.aapoyo{
+    background: #434c52 !important;
+}
+.subordinado{
+    background: #cccccc !important;
+    color: #000000 !important;
+}
+.btn-info.btn-primary{
+    background-color: #333 !important;
+    border-color: #000000 !important;
+}
+body .ui-tabs.ui-tabs-top .ui-tabs-nav.ui-widget-header li.ui-state-active{
+    border-top: 3px solid #333;
+}
+button.ui-button.btn-primary.ui-state-disabled:hover{
+    background-color: #000000 !important;
+    border-color:  #000000 !important;
+}
+button.ui-button.btn-primary:hover{
+    background-color: #000000 !important;
+    border-color:  #000000 !important;
+}
+button.ui-button.btn-danger:hover{
+    background-color: #333 !important;
+    border-color:  #333 !important;
+}
+button.ui-button.btn-info:hover{
+    background-color: #999999 !important;
+    border-color:  #999999 !important;
+}
+button.ui-button.btn-success:hover{
+    background-color: #000000 !important; 
+    border-color:  #000000 !important;
+}
+button.ui-button.btn-primary:active{
+    background-color: #000000 !important;
+    border-color:  #000000 !important;
+}
+button.ui-button.btn-danger:active{
+    background-color: #333 !important;
+    border-color:  #333 !important;
+}
+button.ui-button.btn-info:active{
+    background-color: #999999 !important;
+    border-color:  #999999 !important;
+}
+button.ui-button.btn-success:active{
+    background-color: #000000 !important;
+    border-color:  #000000 !important;
+}
+button.ui-button.btn-primary:focus{
+    background-color: #000000 !important;
+    border-color:  #000000 !important;
+}
+button.ui-button.btn-danger:focus{
+    background-color: #333 !important;
+    border-color:  #333 !important;
+}
+button.ui-button.btn-info:focus{
+    background-color: #999999 !important;
+    border-color:  #999999 !important;
+}
+button.ui-button.btn-success:focus{
+    background-color: #000000 !important;
+    border-color:  #000000 !important;
+}
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight, .form-control .ui-state-highlight{
+    background-color: #999999 !important;
+    background: #999999 !important;
+    border-color:#999999 !important;
+}
+.body .ui-datepicker tbody td.ui-datepicker-today a{
+    border:1px solid #333 !important;
+    background-color: #999999 !important;
+}
+body .ui-datepicker td.ui-datepicker-current-day a.ui-state-active, body .ui-datepicker td.ui-datepicker-current-day a.ui-state-default, body .ui-datepicker td.ui-datepicker-current-day a.ui-state-hover{
+    background-color: #999999 !important;
+    background: #999999 !important;
+}
+.ui-datepicker .ui-datepicker-header, .ui-datepicker .ui-timepicker-div>.ui-widget-header, .ui-datepicker-year, .ui-datepicker-month{
+    background-color: #999999 !important;
+    background: #999999 !important;
+    border-color:#999999 !important;
+}
+.ui-datepicker .ui-datepicker-header, .ui-datepicker .ui-timepicker-div>.ui-widget-header{
+    background-color: #999999 !important;
+    background: #999999 !important;
+}
+.ui-datepicker th{
+    background-color: #999999 !important;
+    background: #999999 !important;
+}
+.ui-state:focus,.ui-widget-content .ui-state-focus,.ui-widget-header .ui-state-focus{
+    border-color:#999999 !important;
+}
+div.ui-fileupload .ui-fileupload-buttonbar span.ui-fileupload-choose{
+    background: #999999 !important;
+}
+div.ui-fileupload:hover .ui-fileupload-buttonbar span.ui-fileupload-choose{
+    background: #999999 !important;
+}
+body .ui-radiobutton .ui-radiobutton-box.ui-state-active span.ui-radiobutton-icon{
+    background-color:#333 !important;
+}
+body .ui-paginator .ui-paginator-page.ui-state-active{
+    background-color: #999999 !important;
+    background: #999999 !important;
+    border-color: #999999 !important;
+}
+div.ui-messages-info{
+    background-color: #cccccc !important;
+    border-color: #cccccc !important;
+    color: #000000;
+}
+.ui-messages-info, .ui-message-info{
+    background-color: #cccccc !important;
+    border-color: #cccccc !important;
+    color: #000000;
+}
+div.ui-messages-warn{
+    background-color: #999999 !important;
+    border-color: #999999 !important;
+    color: #ffffff;
+}
+.ui-messages-warn, .ui-message-warn{
+    background-color: #999999 !important;
+    border-color: #999999 !important;
+    color: #ffffff;
+}
+div.ui-messages-error{
+    background-color: #666666 !important;
+    border-color: #666666 !important;
+    color: #ffffff;
+}
+.ui-messages-error, .ui-message-error{
+    background-color: #666666 !important;
+    border-color: #666666 !important;
+    color: #ffffff;
+}
+div.ui-messages-fatal{
+    background-color: #000000 !important;
+    border-color: #000000 !important;
+    color: #ffffff;
+}
+.ui-messages-fatal, .ui-message-fatal{
+    background-color: #000000 !important;
+    border-color: #000000 !important;
+    color: #ffffff;
+}
+.box.box-primary{
+    border-top-color: #000000 !important;
+}

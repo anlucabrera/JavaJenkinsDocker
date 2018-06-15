@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <f:metadata>
+            <f:viewParam name="activa" value="#{controladorHabilidadesIIL.pestaniaActiva}"/>
+        </f:metadata>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>  
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+
+        <style>
+            .description-block{
+                text-align: justify;
+            }
+            .description-header{
+                text-align: center;
+            }
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            .aceptado{
+                background-color: #00a65a;
+            }
+            .denegado{
+                background-color: #f39c12;
+            }
+        </style>
+        <h:outputScript>
+            PrimeFaces.locales['es'] = {
+            closeText: 'Cerrar',
+            prevText: 'Anterior',
+            nextText: 'Siguiente',
+            monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+            dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+            dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+            dayNamesMin: ['D','L','M','M','J','V','S'],
+            weekHeader: 'Semana',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: '',
+            timeOnlyTitle: 'Sólo hora',
+            timeText: 'Tiempo',
+            hourText: 'Hora',
+            minuteText: 'Minuto',
+            secondText: 'Segundo',
+            currentText: 'Fecha actual',
+            ampm: false,
+            month: 'Mes',
+            week: 'Semana',
+            day: 'Día',
+            allDayText : 'Todo el día'
+            };
+        </h:outputScript>
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <c:if test="#{controladorEmpleado.mandos eq 'Superiores'}">
+            <div class="box box-primary">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Fecha límite</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">  
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="info-box">
+                                    <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                    <div class="info-box-content">
+                                        <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                        <span class="info-box-number">#{controladorEmpleado.fechaLimiteCurriculumVitae}.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                
+                    </div>
+                </div>
+            </div>
+        </c:if>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <section class="content">
+                <div class="row">
+                    <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                    <div class="col-md-9">
+                        <div class="nav-tabs-custom">
+                            <div class="row">
+                                <div class="col-lg-10 col-xs-10"/>
+                                <div class="col-lg-2 col-xs-2">
+                                    <p:link outcome="perfilEmpleado">
+                                        <i class="fa fa-reply"></i>
+                                        <span>Regresar a mi perfil</span>
+                                    </p:link>
+                                </div>      
+                            </div>
+                            <p:tabView activeIndex="#{controladorHabilidadesIIL.pestaniaActiva}">
+                                <p:tab title="Idiomas">
+                                    <h:form id="frmIdiom" enctype="multipart/form-data"> 
+                                        <p:outputPanel id="registro" autoUpdate="#{controladorHabilidadesIIL.nuevOBJIdiomas.idioma eq null?false:true}">
+                                            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-sm-12 col-md-6 col-lg-4"> 
+                                                                                    <p:outputLabel for="idioma" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Idioma" />
+                                                                                    <p:selectOneMenu id="idioma" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJIdiomas.idiomaHablado}" >
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItems value="#{controladorEmpleado.listaIdiomas}" var="idioma" itemValue="#{idioma}" itemLabel="#{idioma}" />
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="idioma" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-4"> 
+                                                                                    <p:outputLabel for="gradoD" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Grado de dominio" />
+                                                                                    <p:selectOneMenu id="gradoD" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJIdiomas.gradoDominio}" >
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItem itemValue="Básico" itemLabel="Básico"/>
+                                                                                        <f:selectItem itemValue="Intermedio" itemLabel="Intermedio"/>
+                                                                                        <f:selectItem itemValue="Avanzado" itemLabel="Avanzado"/>
+                                                                                        <f:selectItem itemValue="Nivel Universitario" itemLabel="Nivel Universitario"/>
+                                                                                        <f:selectItem itemValue="Nivel de Negocios" itemLabel="Nivel de Negocios"/>
+                                                                                        <f:selectItem itemValue="Lengua Materna" itemLabel="Lengua Materna"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="gradoD" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-4">  
+                                                                                    <p:outputLabel for="nivlConv" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nivel de conversación" />
+                                                                                    <p:selectOneMenu id="nivlConv" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJIdiomas.nivelConversacion}" >
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItem itemValue="Básico" itemLabel="Básico"/>
+                                                                                        <f:selectItem itemValue="Intermedio" itemLabel="Intermedio"/>
+                                                                                        <f:selectItem itemValue="Avanzado" itemLabel="Avanzado"/>
+                                                                                        <f:selectItem itemValue="Nivel Universitario" itemLabel="Nivel Universitario"/>
+                                                                                        <f:selectItem itemValue="Nivel de Negocios" itemLabel="Nivel de Negocios"/>
+                                                                                        <f:selectItem itemValue="Lengua Materna" itemLabel="Lengua Materna"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="nivlConv" display="tooltip" />
+                                                                                    <hr/>   
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-4"> 
+                                                                                    <p:outputLabel for="nivlEscr" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nivel de escritura" />
+                                                                                    <p:selectOneMenu id="nivlEscr" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJIdiomas.nivelEscritura}" >
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItem itemValue="Básico" itemLabel="Básico"/>
+                                                                                        <f:selectItem itemValue="Intermedio" itemLabel="Intermedio"/>
+                                                                                        <f:selectItem itemValue="Avanzado" itemLabel="Avanzado"/>
+                                                                                        <f:selectItem itemValue="Nivel Universitario" itemLabel="Nivel Universitario"/>
+                                                                                        <f:selectItem itemValue="Nivel de Negocios" itemLabel="Nivel de Negocios"/>
+                                                                                        <f:selectItem itemValue="Lengua Materna" itemLabel="Lengua Materna"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="nivlEscr" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-4"> 
+                                                                                    <p:outputLabel for="nivlLec" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nivel de lectura" />
+                                                                                    <p:selectOneMenu id="nivlLec" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJIdiomas.nivelLectura}" >
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItem itemValue="Básico" itemLabel="Básico"/>
+                                                                                        <f:selectItem itemValue="Intermedio" itemLabel="Intermedio"/>
+                                                                                        <f:selectItem itemValue="Avanzado" itemLabel="Avanzado"/>
+                                                                                        <f:selectItem itemValue="Nivel Universitario" itemLabel="Nivel Universitario"/>
+                                                                                        <f:selectItem itemValue="Nivel de Negocios" itemLabel="Nivel de Negocios"/>
+                                                                                        <f:selectItem itemValue="Lengua Materna" itemLabel="Lengua Materna"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="nivlLec" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-4">                                                                            
+                                                                                    <p:outputLabel for="certificacion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Certificación" />
+                                                                                    <p:selectOneMenu id="certificacion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJIdiomas.certificacion}" >
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItem itemValue="Si" itemLabel="Si"/>
+                                                                                        <f:selectItem itemValue="No" itemLabel="No"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="certificacion" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                    <p:outputLabel for="institucion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Institución otorgante" />
+                                                                                    <p:inputText id="institucion" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Institución otorgante" value="#{controladorHabilidadesIIL.nuevOBJIdiomas.institucionOtorgante}"/>
+                                                                                    <p:message for="institucion" display="tooltip"/>                                                                         
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-3"> 
+                                                                                    <p:outputLabel for="fechaotro" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de otorgación" />
+                                                                                    <p:calendar navigator="true" locale="es" id="fechaotro" value="#{controladorHabilidadesIIL.fechaO}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                    <p:message for="fechaotro" display="tooltip" />
+                                                                                    <br/>
+                                                                                    <hr/>   
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-3"> 
+                                                                                    <p:outputLabel for="fechasert" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de certificación" />
+                                                                                    <p:calendar navigator="true" locale="es" id="fechasert" value="#{controladorHabilidadesIIL.fechaC}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                    <p:message for="fechasert" display="tooltip" />
+                                                                                    <br/>
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-3"> 
+                                                                                    <p:outputLabel for="fechavigencia" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de vigencia" />
+                                                                                    <p:calendar navigator="true" locale="es" id="fechavigencia" value="#{controladorHabilidadesIIL.fechaF}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                    <p:message for="fechavigencia" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-9">  
+                                                                                    <p:outputPanel>            
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia #{controladorHabilidadesIIL.nuevOBJIdiomas.evidenciaDoc eq null?'':'(ya cuenta con el archivo cargado)'}" />
+                                                                                    </p:outputPanel>
+                                                                                        <o:inputFile id="file" value="#{controladorHabilidadesIIL.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                                        <br/>
+                                                                                        <h:message id="messageForFile" for="file" />
+                                                                                        <br/>
+                                                                                        <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorHabilidadesIIL.subirEvidenciaIdioma}" />
+                                                                                                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr/>
+                                                                        <div class="row">
+
+                                                                            <p:outputPanel>            
+                                                                                <p:autoUpdate/>
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-12 col-md-4 col-lg-4"/>
+                                                                                    <div class="col-sm-12 col-md-4 col-lg-4">
+                                                                                        <p:commandButton id="btnBuscarActiuvidades" disabled="#{controladorHabilidadesIIL.direccionInt.toString() eq '0' ?true:false}"  
+                                                                                                         value="Actualizar información" actionListener="#{controladorHabilidadesIIL.createIdioma()}" 
+                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('registro')update();" onsuccess="PF('frmIdiom')update();"
+                                                                                                         update="@form" process="@form" />   
+                                                                                    </div>
+                                                                                </div>
+                                                                            </p:outputPanel>
+                                                                        </div>
+                                                                        <hr/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>                                                        
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </c:if>
+                                            <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
+                                                <div class="box-body">  
+                                                    <div class="row">
+                                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                                            <div class="info-box">
+                                                                <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                                                <div class="info-box-content">
+                                                                    <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de curriculum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>                
+                                                </div>
+                                            </c:if>
+                                        </p:outputPanel>
+                                    </h:form>
+                                    <h:form id="frmLista1">
+                                        <p:outputPanel>
+
+                                            <p:dataTable id="tblIdiomas" value="#{controladorHabilidadesIIL.nuevaListaIdiomas}" var="habIdio" rowStyleClass="#{habIdio.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                         paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron Registros."
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                                         
+                                                         selectionMode="single" selection="#{controladorHabilidadesIIL.nuevOBJIdiomaSelectec}" rowKey="#{habIdio.idioma}" lazy="true">
+
+                                                <f:facet name="header">
+                                                    <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
+                                                    <p:spacer width="15px"/>
+                                                    <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
+                                                </f:facet>
+
+                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                    <p:ajax event="rowSelect"   update="delate update"/>
+                                                    <p:ajax event="rowUnselect" update="delate update"/>
+                                                </c:if>
+
+                                                <p:column headerText="Idioma" 
+                                                          sortBy="#{habIdio.idiomaHablado}" 
+                                                          filterBy="#{habIdio.idiomaHablado}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{habIdio.idiomaHablado}" />
+                                                </p:column>
+
+                                                <p:column headerText="Grado de dominio" 
+                                                          sortBy="#{habIdio.gradoDominio}" 
+                                                          filterBy="#{habIdio.gradoDominio}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{habIdio.gradoDominio}" />
+                                                </p:column>                                    
+
+                                                <p:column headerText="Instituto otorgante" 
+                                                          sortBy="#{habIdio.institucionOtorgante}" 
+                                                          filterBy="#{habIdio.institucionOtorgante}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{habIdio.institucionOtorgante}" />
+                                                </p:column>  
+
+                                                <f:facet name="footer">
+                                                    <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                        <p:commandButton id="delate" value="Eliminar" icon="fa fa-eraser" class="btn btn-danger" oncomplete="PF('dlgDelate3').show();" disabled="#{empty controladorHabilidadesIIL.nuevOBJIdiomaSelectec}"/>
+                                                        <p:commandButton id="update" value="Actualizar" icon="fa fa-pen" class="btn btn-info" update="@form tblIdiomas"
+                                                                         actionListener="#{controladorHabilidadesIIL.actualizarObjetosIdioma()}" disabled="#{empty controladorHabilidadesIIL.nuevOBJIdiomaSelectec}"/>
+                                                    </c:if>
+                                                </f:facet>
+
+                                                <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
+                                                    <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog1').show()" icon="ui-icon-search" title="View">
+                                                        <f:setPropertyActionListener value="#{habIdio}" target="#{controladorHabilidadesIIL.nuevOBJIdiomaSelectec}"/>
+                                                    </p:commandButton>
+                                                </p:column>
+
+                                            </p:dataTable>
+
+                                            <p:dialog header="Evidencias" widgetVar="evidenciaDialog1" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
+                                                <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
+                                                    <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty controladorHabilidadesIIL.nuevOBJIdiomaSelectec}">
+                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorHabilidadesIIL.convertirRuta(controladorHabilidadesIIL.nuevOBJIdiomaSelectec.evidenciaDoc)}"/>       
+                                                    </p:panelGrid>
+                                                </p:outputPanel>
+                                            </p:dialog>
+
+                                        </p:outputPanel>
+
+                                        <p:dialog id="dlgDelate3" header="Eliminación" widgetVar="dlgDelate3" minimizable="true" maximizable="true" position="center">
+                                            <f:facet name="footer">
+                                                <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form tblIdiomas"/>
+                                                <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorHabilidadesIIL.eliminaIdioma()}" icon="fa fa-check" process="@form" update="@form tblIdiomas" onsuccess="PF('dlgDelate3').hide();"/>
+                                            </f:facet>
+
+                                            <p:outputPanel>            
+                                                <p:autoUpdate/>
+                                                <h:panelGrid columns="1"  class="col-md-12">
+                                                    <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
+                                                </h:panelGrid>
+                                            </p:outputPanel>
+                                        </p:dialog>
+                                    </h:form>
+                                </p:tab>
+                                <p:tab title="Habilidades informáticas">
+                                    <h:form id="frmHbInf"> 
+                                        <p:outputPanel autoUpdate="#{controladorHabilidadesIIL.nuevOBJHabilidadesInformaticas.conocimiento eq null?false:true}">
+                                            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+
+                                                                                    <p:outputPanel>            
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:outputLabel for="conocimiento" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Conocimiento Informáticos" />
+                                                                                        <p:selectOneMenu id="conocimiento" widgetVar="conocimiento" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJHabilidadesInformaticas.tipoConocimiento}">
+                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                            <f:selectItem itemValue="Ofimática" itemLabel="Ofimática"/>
+                                                                                            <f:selectItem itemValue="Base de datos" itemLabel="Bases de datos"/>
+                                                                                            <f:selectItem itemValue="Diseño" itemLabel="Diseño"/>
+                                                                                            <f:selectItem itemValue="Herramientas de Gestión" itemLabel="Herramientas de Gestión"/>
+                                                                                            <f:selectItem itemValue="Lenguajes de Programación" itemLabel="Lenguajes de Programación"/>
+                                                                                            <f:selectItem itemValue="Paquetes Integrados" itemLabel="Paquetes Integrados"/>
+                                                                                            <f:selectItem itemValue="Sistemas Operativos" itemLabel="Sistemas Operativos"/>
+                                                                                            <f:selectItem itemValue="Comunicación" itemLabel="Comunicación"/>
+                                                                                            <f:selectItem itemValue="Internet" itemLabel="Internet"/>
+                                                                                            <p:ajax listener="#{controladorHabilidadesIIL.filtarConocimientos()}" process="conocimiento" />
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="conocimiento" display="tooltip" />
+                                                                                        <hr/>
+                                                                                        <p:outputLabel for="programas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Programas que domina" />
+                                                                                        <p:selectOneMenu id="programas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJHabilidadesInformaticas.programaDominante }">
+                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                            <f:selectItems value="#{controladorHabilidadesIIL.listaConocimiento}" var="cono" itemValue="#{cono}" itemLabel="#{cono}" />
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="programas" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </p:outputPanel>
+                                                                                    <p:outputLabel for="nivelCon" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nivel de Conocimiento" /> 
+                                                                                    <p:selectOneRadio id="nivelCon" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJHabilidadesInformaticas.nivelConocimiento}">
+                                                                                        <f:selectItem itemValue="Nivel Usuario" itemLabel="Nivel Usuario"/>
+                                                                                        <f:selectItem itemValue="Nivel Usuario Avanzado" itemLabel="Nivel Usuario Avanzado"/>
+                                                                                        <f:selectItem itemValue="Nivel Profesional" itemLabel="Nivel Profesional"/>
+                                                                                        <f:selectItem itemValue="Nivel Experto" itemLabel="Nivel Experto"/>
+                                                                                    </p:selectOneRadio> 
+                                                                                    <p:message for="nivelCon" display="tooltip" />
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr/>
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-sm-12 col-md-4 col-lg-4"/>
+                                                                                <div class="col-sm-12 col-md-4 col-lg-4">
+                                                                                    <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{controladorHabilidadesIIL.createrInformaticas()}" icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form tblInformaticas" process="@form" /> 
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>                                                        
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </c:if>
+                                            <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
+                                                <div class="box-body">  
+                                                    <div class="row">
+                                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                                            <div class="info-box">
+                                                                <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                                                <div class="info-box-content">
+                                                                    <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de curriculum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>                
+                                                </div>
+                                            </c:if>
+                                        </p:outputPanel>
+                                        <p:outputPanel>
+
+                                            <p:dataTable id="tblInformaticas" value="#{controladorHabilidadesIIL.nuevaListaHabilidadesInformaticas}" var="habInf"
+                                                         paginator="true" rows="5"
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="5,10,15,20,25,30"
+                                                         emptyMessage="No se encontraron Registros." rendered="true" rowStyleClass="#{habInf.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                         selectionMode="single" selection="#{controladorHabilidadesIIL.nuevOBJHabilidadesInformaticaSelectec}" rowKey="#{habInf.conocimiento}">
+
+                                                <f:facet name="header">
+                                                    <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
+                                                    <p:spacer width="15px"/>
+                                                    <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
+                                                </f:facet>
+                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                    <p:ajax event="rowSelect"   update="delate update"/>
+                                                    <p:ajax event="rowUnselect" update="delate update"/>
+                                                </c:if>
+                                                <p:column headerText="Tipo de conocimiento" 
+                                                          sortBy="#{habInf.tipoConocimiento}" 
+                                                          filterBy="#{habInf.tipoConocimiento}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{habInf.tipoConocimiento}" />
+                                                </p:column>
+
+                                                <p:column headerText="Programa dominado" 
+                                                          sortBy="#{habInf.programaDominante}" 
+                                                          filterBy="#{habInf.programaDominante}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{habInf.programaDominante}" />
+                                                </p:column>                                                
+
+                                                <p:column headerText="Nivel de dominio" 
+                                                          sortBy="#{habInf.nivelConocimiento}" 
+                                                          filterBy="#{habInf.nivelConocimiento}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{habInf.nivelConocimiento}" />
+                                                </p:column> 
+
+                                                <f:facet name="footer">
+                                                    <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                        <p:commandButton id="delate" value="Eliminar" icon="fa fa-eraser" class="btn btn-danger" oncomplete="PF('dlgDelate1').show();" disabled="#{empty controladorHabilidadesIIL.nuevOBJHabilidadesInformaticaSelectec}"/>
+                                                        <p:commandButton id="update" value="Actualizar" icon="fa fa-pen" class="btn btn-info" update="@form tblInformaticas"
+                                                                         actionListener="#{controladorHabilidadesIIL.actualizarObjetosHabilidadesInformaticas()}" disabled="#{empty controladorHabilidadesIIL.nuevOBJHabilidadesInformaticaSelectec}"/>
+                                                    </c:if>
+                                                </f:facet>
+
+                                            </p:dataTable>  
+
+                                        </p:outputPanel>
+
+                                        <p:dialog id="dlgDelate1" header="Eliminación" widgetVar="dlgDelate1" minimizable="true" maximizable="true" position="center">
+                                            <f:facet name="footer">
+                                                <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form tblInformaticas"/>
+                                                <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorHabilidadesIIL.eliminaInformaticas()}" icon="fa fa-check" process="@form" update="@form tblInformaticas" onsuccess="PF('dlgDelate1').hide();"/>
+                                            </f:facet>
+
+                                            <p:outputPanel>            
+                                                <p:autoUpdate/>
+                                                <h:panelGrid columns="1"  class="col-md-12">
+                                                    <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
+                                                </h:panelGrid>
+                                            </p:outputPanel>
+                                        </p:dialog>
+                                    </h:form>
+                                </p:tab>
+                                <p:tab title="Lenguas indígenas">
+                                    <h:form id="frmLengIndi"> 
+
+                                        <p:outputPanel>            
+                                            <p:autoUpdate/>
+                                            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                    <p:outputLabel for="lengua" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Lengua" />
+                                                                                    <p:selectOneMenu id="lengua" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJLenguas.tipoLengua}">
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItem itemValue="NA" itemLabel="No Aplica"/>
+                                                                                        <f:selectItems value="#{controladorEmpleado.listaLenguas}" var="idioma" itemValue="#{idioma}" itemLabel="#{idioma}" />
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="lengua" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-6 col-md-6 col-lg-6">  
+                                                                                    <p:outputLabel for="gradoD" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Grado de dominio" />
+                                                                                    <p:selectOneMenu id="gradoD" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJLenguas.gradoDominio}" >
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItem itemValue="Básico" itemLabel="Básico"/>
+                                                                                        <f:selectItem itemValue="Intermedio" itemLabel="Intermedio"/>
+                                                                                        <f:selectItem itemValue="Avanzado" itemLabel="Avanzado"/>
+                                                                                        <f:selectItem itemValue="Nivel Universitario" itemLabel="Nivel Universitario"/>
+                                                                                        <f:selectItem itemValue="Nivel de Negocios" itemLabel="Nivel de Negocios"/>
+                                                                                        <f:selectItem itemValue="Lengua Materna" itemLabel="Lengua Materna"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="gradoD" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-6 col-md-6 col-lg-6"> 
+                                                                                    <p:outputLabel for="nivlConv" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nivel de conversación" />
+                                                                                    <p:selectOneMenu id="nivlConv" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJLenguas.nivelConversacion}" >
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItem itemValue="Básico" itemLabel="Básico"/>
+                                                                                        <f:selectItem itemValue="Intermedio" itemLabel="Intermedio"/>
+                                                                                        <f:selectItem itemValue="Avanzado" itemLabel="Avanzado"/>
+                                                                                        <f:selectItem itemValue="Nivel Universitario" itemLabel="Nivel Universitario"/>
+                                                                                        <f:selectItem itemValue="Nivel de Negocios" itemLabel="Nivel de Negocios"/>
+                                                                                        <f:selectItem itemValue="Lengua Materna" itemLabel="Lengua Materna"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="nivlConv" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                    <p:outputLabel for="nivlEscr" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nivel de escritura" />
+                                                                                    <p:selectOneMenu id="nivlEscr" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJLenguas.nivelEscritura}" >
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItem itemValue="Básico" itemLabel="Básico"/>
+                                                                                        <f:selectItem itemValue="Intermedio" itemLabel="Intermedio"/>
+                                                                                        <f:selectItem itemValue="Avanzado" itemLabel="Avanzado"/>
+                                                                                        <f:selectItem itemValue="Nivel Universitario" itemLabel="Nivel Universitario"/>
+                                                                                        <f:selectItem itemValue="Nivel de Negocios" itemLabel="Nivel de Negocios"/>
+                                                                                        <f:selectItem itemValue="Lengua Materna" itemLabel="Lengua Materna"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="nivlEscr" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-6 col-md-6 col-lg-6"> 
+                                                                                    <p:outputLabel for="nivlLec" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nivel de lectura" />
+                                                                                    <p:selectOneMenu id="nivlLec" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJLenguas.nivelLectura}" >
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItem itemValue="Básico" itemLabel="Básico"/>
+                                                                                        <f:selectItem itemValue="Intermedio" itemLabel="Intermedio"/>
+                                                                                        <f:selectItem itemValue="Avanzado" itemLabel="Avanzado"/>
+                                                                                        <f:selectItem itemValue="Nivel Universitario" itemLabel="Nivel Universitario"/>
+                                                                                        <f:selectItem itemValue="Nivel de Negocios" itemLabel="Nivel de Negocios"/>
+                                                                                        <f:selectItem itemValue="Lengua Materna" itemLabel="Lengua Materna"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="nivlLec" display="tooltip" />
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr/>
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-sm-12 col-md-4 col-lg-4"/>
+                                                                                <div class="col-sm-12 col-md-4 col-lg-4">
+                                                                                    <p:commandButton id="btnBuscarActiuvidades"  value="Guardar información" actionListener="#{controladorHabilidadesIIL.createLengua()}" icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form tblLenguas" process="@form" /> 
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>                                                        
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </c:if>
+                                            <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
+                                                <div class="box-body">  
+                                                    <div class="row">
+                                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                                            <div class="info-box">
+                                                                <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                                                <div class="info-box-content">
+                                                                    <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de curriculum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>                
+                                                </div>
+                                            </c:if>
+                                        </p:outputPanel>
+                                        <p:outputPanel>
+
+                                            <p:dataTable id="tblLenguas" value="#{controladorHabilidadesIIL.nuevaListaLenguas}" var="habLeng"
+                                                         paginator="true" rows="5"
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="5,10,15,20,25,30"
+                                                         emptyMessage="No se encontraron Registros." rendered="true" rowStyleClass="#{habLeng.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                         selectionMode="single" selection="#{controladorHabilidadesIIL.nuevOBJLenguaSelectec}" rowKey="#{habLeng.lengua}">
+
+                                                <f:facet name="header">
+                                                    <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
+                                                    <p:spacer width="15px"/>
+                                                    <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
+                                                </f:facet>
+                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                    <p:ajax event="rowSelect"   update="delate update"/>
+                                                    <p:ajax event="rowUnselect" update="delate update"/>
+                                                </c:if>
+                                                <p:column headerText="Lengua" 
+                                                          sortBy="#{habLeng.tipoLengua}" 
+                                                          filterBy="#{habLeng.tipoLengua}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{habLeng.tipoLengua}" />
+                                                </p:column>
+
+                                                <p:column headerText="Grado de dominio" 
+                                                          sortBy="#{habLeng.gradoDominio}" 
+                                                          filterBy="#{habLeng.gradoDominio}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{habLeng.gradoDominio}" />
+                                                </p:column>                                               
+
+                                                <f:facet name="footer">
+                                                    <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                        <p:commandButton id="delate" value="Eliminar" icon="fa fa-eraser" class="btn btn-danger" oncomplete="PF('dlgDelate4').show();" disabled="#{empty controladorHabilidadesIIL.nuevOBJLenguaSelectec}"/>
+                                                        <p:commandButton id="update" value="Actualizar" icon="fa fa-pen" class="btn btn-info" update="@form tblLenguas"
+                                                                         actionListener="#{controladorHabilidadesIIL.actualizarObjetosLengua()}" disabled="#{empty controladorHabilidadesIIL.nuevOBJLenguaSelectec}"/>
+                                                    </c:if>
+                                                </f:facet>
+
+                                            </p:dataTable>  
+
+                                        </p:outputPanel>
+
+                                        <p:dialog id="dlgDelate4" header="Eliminación" widgetVar="dlgDelate4" minimizable="true" maximizable="true" position="center">
+                                            <f:facet name="footer">
+                                                <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form tblLenguas"/>
+                                                <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorHabilidadesIIL.eliminaLengua()}" icon="fa fa-check" process="@form" update="@form tblLenguas" onsuccess="PF('dlgDelate4').hide();"/>
+                                            </f:facet>
+
+                                            <p:outputPanel>            
+                                                <p:autoUpdate/>
+                                                <h:panelGrid columns="1"  class="col-md-12">
+                                                    <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
+                                                </h:panelGrid>
+                                            </p:outputPanel>
+                                        </p:dialog>
+
+                                    </h:form>
+                                </p:tab>
+                                <p:blockUI block="informacion" widgetVar="bloqueoCargaFile">
+                                    Cargando archivo espere por favor.<br />
+                                </p:blockUI>
+                            </p:tabView>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </p:panel> 
+
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

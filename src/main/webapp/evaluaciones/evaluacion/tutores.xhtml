@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="head-end">
+        <!-- Inicio estilos par proceso electoral -->
+        <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        <!-- Fin estilos par proceso electoral -->
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+
+        </style>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+    </ui:define>
+
+    <ui:define name="title">
+        Evaluación de tutores
+    </ui:define>
+
+    <ui:define name="description">
+        Formulario de la evaluación
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Evaluación de tutores - Formulario"/>
+        <h:form id="frm" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                        <p:toolbar id="tb">
+                            <f:facet name="left">
+                                <p:outputLabel value="Total a evualuar: #{evaluacionTutor.listaEvaluados.size()}" />
+                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                <p:outputLabel value="Evaluados: #{evaluacionTutor.evaluados}" />
+                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                <p:outputLabel value="Evaluando: #{evaluacionTutor.evaluando}" />
+                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>                              
+                            </f:facet>
+                            <f:facet name="right">
+                                <p:commandButton rendered="false" value="Siguiente" id="btnSiguiente" actionListener="#{evaluacionTutor.continuarEvaluando()}" process="@this" icon="fa fa-sign-in" styleClass="btn-primary"  update="@form"/>
+                            </f:facet>
+                        </p:toolbar>
+                        <p:sticky target="tb" />
+                    </div>
+                    <p:separator/>
+                    <div class="box box-solid">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">
+                                <c:if test="#{empty evaluacionTutor.evaluacion}">
+                                    Sin evaluaciones activas
+                                </c:if>
+                                <c:if test="#{!empty evaluacionTutor.evaluacion}">
+                                    Periodo: #{evaluacionTutor.periodoEscolar.mesInicio.mes} - #{evaluacionTutor.periodoEscolar.mesFin.mes} #{evaluacionTutor.periodoEscolar.anio}
+                                </c:if>
+                            </h3>
+
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body">
+                            <c:if test="#{empty evaluacionTutor.evaluacion}">
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 text-info text-center">
+                                        <h5 style="margin-top: 0px; margin-bottom: 0px;">
+                                            Si considera que es un error notifique al administrador.
+                                        </h5>
+                                    </div>
+                                </div>
+                            </c:if>
+                            <c:if test="#{!empty evaluacionTutor.evaluacion}">
+                                <div jsf:id="filaHeader" class="row hidden-sm hidden-md hidden-sm hidden-xs" style="background-color: white;margin: auto">
+                                    <div class="col-lg-4 col-md-6 col-lg-offset-2 text-center text-info" style="height: 230px; vertical-align: middle;">
+                                        <p:outputPanel >
+                                            <p:autoUpdate/>
+                                            <c:if test="#{evaluacionTutor.listaEvaluados.size() eq evaluacionTutor.evaluados}">
+                                                <div>
+                                                    <h2 style="background-color: aliceblue;">Evaluación terminada</h2>
+                                                    <p:graphicImage library="img" name="ok_azul.png" height="150" />
+                                                </div>
+                                            </c:if>
+                                        </p:outputPanel>
+                                    </div>
+                                    <c:set var="index" value="#{caster.toInt(0)}" />
+                                    <c:forEach items="#{evaluacionTutor.listaEvaluando}" var="evaluado">                                                                                
+                                        <div class="col-lg-4 text-center" style="padding-left: 2px; padding-right: 2px; background-color: aliceblue;">                                            
+                                            <p:outputPanel >
+                                                <p:autoUpdate/>
+                                                <h4 class="#{evaluacionTutor.completo(evaluado)?'text-info':'text-warn'} " style="margin: 0px;">#{evaluacionTutor.completo(evaluado)?'Finalizado':'Pendiente'}</h4>
+                                                <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{evaluado.pk.evaluado}.jpg" width="150" alt="#{evaluado.pk.evaluado}" title="Personal #{evaluado.pk.evaluado}" style="border-color: black; border-style: solid; border-width: 2px;" />
+                                            </p:outputPanel>
+                                            <p:selectOneMenu id="opcion#{index}" class="form-control" autoWidth="false" 
+                                                             var="s" panelStyle="width:380px" effect="fade"
+                                                             valueChangeListener="#{evaluacionTutor.cambiarOpciones}">
+                                                <f:selectItems value="#{evaluacionTutor.opciones[index]}" var="subordinados" itemValue="#{subordinados}" itemLabel="#{subordinados.personal.nombre}" itemDescription="#{subordinados.personal.categoriaOperativa.nombre}"  />
+                                                <p:ajax update="@form" />
+                                                <p:column>
+                                                    <h:outputText value="#{s.personal.categoriaOperativa.nombre}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{s.personal.nombre}" />
+                                                </p:column>
+                                            </p:selectOneMenu>
+                                            <br/>
+                                            #{evaluado.personal.categoriaOperativa.nombre}
+                                        </div>
+                                        <c:set var="index" value="#{caster.toInt(index+1)}" />
+                                    </c:forEach>
+                                </div>
+                                <p:sticky target="filaHeader" margin="42" />
+                                <c:forEach items="#{evaluacionTutor.apartados}" var="apartado">
+                                    <div class="row">
+                                        <p:separator />
+                                        <div class="col-lg-4 col-md-6 col-lg-offset-2 text-info text-center">
+                                            <h3 style="margin-top: 0px; margin-bottom: 0px;">
+                                                #{apartado.contenido}
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <c:forEach items="#{apartado.preguntas}" var="pregunta">
+                                        <div class="row">
+                                            <div class="col-lg-4 col-lg-offset-2 col-md-6 text-info text-justify" style="padding-top: 10px;">
+                                                <div class="row">
+                                                    <div class="col-md-1">
+                                                        <h3 style="margin-top: 5px; margin-bottom: 25px;">
+                                                            <h:outputText value="#{pregunta.numero}">
+                                                                <f:convertNumber pattern="##.#" />
+                                                            </h:outputText>
+                                                        </h3>
+                                                    </div>
+                                                    <div class="col-md-11">
+                                                        #{pregunta.titulo}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <c:forEach items="#{evaluacionTutor.listaEvaluando}" var="evaluado2">
+                                                <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
+                                                    <c:set var="id" value="#{'r'.concat(pregunta.numero).replace('.','-').concat('_').concat(evaluado2.pk.evaluado.toString())}" />
+                                                    <p:outputLabel id="lbl#{id}" for="#{id}" value="#{evaluado2.personal.nombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
+                                                    <c:if test="#{pregunta.tipo == 3}">
+                                                        <f:ajax execute="#{id}">
+                                                            <p:selectOneButton id="#{id}" value="#{evaluacionTutor.respuestas[caster.toInt(evaluado2.pk.evaluado)][pregunta.numero]}"
+                                                                               required="true" requiredMessage="Falta respuesta"
+                                                                               valueChangeListener="#{evaluacionTutor.guardarRespuesta}"
+                                                                               style="font-size: small;" >
+                                                                <f:selectItems value="#{evaluacionTutor.respuestasPosibles}" />
+                                                            </p:selectOneButton>
+                                                            <p:message id="msj#{id}" for="#{id}" display="tooltip" />
+                                                        </f:ajax>
+                                                    </c:if>
+                                                    <c:if test="#{pregunta.tipo == 1}">
+                                                        <f:ajax execute="#{id}">
+                                                            <p:inputTextarea id="#{id}" class="form-control" value="#{evaluacionTutor.respuestas[caster.toInt(evaluado2.pk.evaluado)][pregunta.numero]}"
+                                                                             rows="6" placeholder="Ingrese sus comentarios aquí..." maxlength="500" cols="40"
+                                                                             valueChangeListener="#{evaluacionTutor.guardarRespuesta}" queryDelay="1500" style="width: available;" />
+                                                        </f:ajax>
+                                                    </c:if>
+                                                </div>
+                                            </c:forEach>
+                                        </div>
+                                    </c:forEach>
+                                </c:forEach>
+                            </c:if>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>
