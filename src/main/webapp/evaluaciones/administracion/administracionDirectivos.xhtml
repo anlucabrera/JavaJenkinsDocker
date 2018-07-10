@@ -43,15 +43,20 @@
                 <p:autoUpdate/>
                 <div id="main-buttons"  >
                     <p:toolbar id="tb">
-                        <f:facet name="left">
-                            <p:outputLabel value="Administracion de Evaluaciones" />                            
+                        <f:facet name="left"><p:spacer width="15px"/>
+                            <p:commandButton value="Descargar Cedulas Desempeño" id="btnDescargar" 
+                                             title="Descarga las cedulas de desempeño de la ultima evaluación aplicada"
+                                             actionListener="#{evaluacionDesempenioAdmin.descargarCedulasDestiempo()}" 
+                                             process="@this" icon="fa fa-sign-in" styleClass="btn-primary"  update="@this"
+                                             rendered="#{administrativoEvaluacion.utilAdmin.desempenio}"/>
+                            <!--<p:outputLabel value="Administracion de Evaluaciones" />-->                            
                         </f:facet>
                         <f:facet name="right">
                             <h:panelGrid columns="12" style="margin-bottom:10px" cellpadding="5" >
                                 <h:outputText value="Selección de evaluaciones " />
                                 <p:spacer width="10"/>
                                 <f:ajax execute="selectDirectivo">
-                                    <p:selectOneButton value="#{administrativoEvaluacion.utilAdmin.evaluacionSeleccionada}" id="sobEncuestaDirectivo" 
+                                    <p:selectOneButton value="#{administrativoEvaluacion.utilAdmin.evaluacionSeleccionada}" id="sobEncuestaDirectivo"  style="margin-top: 4px; margin-bottom: -3px;"
                                                        rendered="#{administrativoEvaluacion.utilAdmin.directivo}" required="true">
                                         <f:selectItems value="#{administrativoEvaluacion.utilAdmin.selectItemEvaluacionesDirectivo}" var="selectDirectivo" 
                                                        itemValue="#{selectDirectivo.value}" itemLabel="#{selectDirectivo.label}" itemDescription="#{selectDirectivo.description}" />
@@ -60,7 +65,7 @@
                                 </f:ajax>
                                 <p:spacer width="10"/>
                                 <f:ajax execute="sobEncuestaDirector">
-                                    <p:selectOneButton value="#{administrativoEvaluacion.utilAdmin.evaluacionSeleccionada}" id="sobEncuestaDirector" 
+                                    <p:selectOneButton value="#{administrativoEvaluacion.utilAdmin.evaluacionSeleccionada}" id="sobEncuestaDirector" style="margin-top: 4px; margin-bottom: -3px;"
                                                        rendered="#{administrativoEvaluacion.utilAdmin.directorDeCarrera}"  required="true">
                                         <f:selectItems value="#{administrativoEvaluacion.utilAdmin.selectItemEvaluacionesDirectorCarrera}" var="selectDirectorCarrera" 
                                                        itemValue="#{selectDirectorCarrera.value}" itemLabel="#{selectDirectorCarrera.label}" itemDescription="#{selectDirectorCarrera.description}"  />
@@ -79,6 +84,8 @@
                                     </p:selectOneMenu>
                                 </f:ajax>
                                 <f:ajax execute="somPeriodoDesempenio">
+                                    
+                                    
                                     <p:selectOneMenu id="somPeriodoDesempenio" value="#{administrativoEvaluacion.utilAdmin.periodoSeleccionado}"  autoWidth="true" effect="fade" rendered="#{administrativoEvaluacion.utilAdmin.desempenio}">
                                         <f:selectItem itemLabel="Elija un periodo:  " itemValue="" />
                                         <f:selectItems value="#{administrativoEvaluacion.utilAdmin.selectItemPeriodoDesempenio}" 

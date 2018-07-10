@@ -38,5 +38,15 @@ public interface EjbEstudioEgresados {
     public Personas getPersonaSaiiut(Integer clave);
     
     public EvaluacionEstudioEgresadosResultados getResultadoIndividual(String evaluador);
+    /*
+     *Generacion de reportes estudio egresados 
+     */
+    public List<EvaluacionEstudioEgresadosResultados> getRestultadosEgresados();
+    
+    public List<EvaluacionEstudioEgresadosResultados> getResultadosPorGeneracionTSU(String generacion);
+    
+    public List<EvaluacionEstudioEgresadosResultados> getResultadosPorGeneracionING(String generacion);
+    
+    public List<EvaluacionEstudioEgresadosResultados> getResultadosPorSilgas(String siglas);
     
 }

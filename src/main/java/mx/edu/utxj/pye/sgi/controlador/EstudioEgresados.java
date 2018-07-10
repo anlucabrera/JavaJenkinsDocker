@@ -4,13 +4,14 @@ import com.github.adminfaces.starter.infra.security.LogonMB;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
@@ -22,7 +23,6 @@ import mx.edu.utxj.pye.sgi.ejb.EjbEstudioEgresados;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionEstudioEgresadosResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
-import mx.edu.utxj.pye.sgi.entity.sescolares.Alumno;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionEstudioEgresados;
@@ -47,16 +47,22 @@ public class EstudioEgresados implements Serializable {
     @Getter private Alumnos alumnos;
     @Getter private Evaluaciones evaluacion;
     @Getter private Integer evaluador;
-    @Getter @Setter private EvaluacionEstudioEgresadosResultados resultados;
+    
+    @Getter @Setter private String tipoFiltro="", nivelGeneraciones="";
+    @Getter @Setter private Short generacionSeleccionada;
+    @Getter @Setter private EvaluacionEstudioEgresadosResultados resultados;   
+    @Getter @Setter private Generaciones generacion = new Generaciones();
     
     @Getter @Setter Map<String,String> respuestas;
     @Getter private List<SelectItem> selectItemCarreras;
     @Getter private List<SelectItem> respuestasPosibles;
     @Getter private List<Apartado> apartados;
-    @Getter private List<Generaciones> generaciones;
+    @Getter private List<Generaciones> generaciones, listaGeneraciones;
+    
+    @Getter @Setter private List<EvaluacionEstudioEgresadosResultados> listaResultados, listaResultadosReporte;
     
     // administracion del modulo
-    @Getter @Setter private String matricula = "";
+    @Getter @Setter private String matricula = "", siglas;
     @Getter @Setter private List<ListaEstudiantesDtoTutor> listaEstudiante;
     @Getter @Setter private ListaEstudiantesDtoTutor Estudiante;
     @Getter @Setter private Integer nivel =0;
@@ -67,35 +73,35 @@ public class EstudioEgresados implements Serializable {
     
     @PostConstruct
     public void init() {
-        
+        selectItemCarreras = ejb.selectItemsProgramasEducativos();
+        listaGeneraciones = ejb.getGeneraciones();
         if (logonMB.getUsuarioTipo() == UsuarioTipo.ESTUDIANTE) {
             alumnos = ejb.getAlumnoPorMatricula(logonMB.getCurrentUser());
-            selectItemCarreras = ejb.selectItemsProgramasEducativos();
             if (alumnos.getGradoActual() == 11) {
                 ING = true;
-                System.out.println("Egreso de ING");
+//                System.out.println("Egreso de ING");
             } else  if (alumnos.getGradoActual() >=6 &&alumnos.getGradoActual() < 11) {
-                System.out.println("Egreso de TSU");
+//                System.out.println("Egreso de TSU");
                 TSU = false;
             }
             try {
-                System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.init() entra al try del init");
+                // modificar para aperturar a onceavos o sextos
                 if ( alumnos.getGradoActual() == 11 /*|| alumnos.getGradoActual() >=6 &&alumnos.getGradoActual() < 1*/ ) {
-                    System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.init()´pasa el if");
                     finalizado = false;
                     respuestas = new HashMap<>();
+                    generaciones = new ArrayList<>();
                     generaciones = ejb.getGeneraciones();
-                    System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.init() generaciones : " + generaciones);
+//                    System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.init() generaciones : " + generaciones);
                     evaluacion = ejb.geteEvaluacionActiva();
-                    System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.init() evaluacion ---:::> " + evaluacion);
+//                    System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.init() evaluacion ---:::> " + evaluacion);
                     evaluador = Integer.parseInt(logonMB.getCurrentUser());
-                    System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.init() usuario ---:::>> " + evaluador);
+//                    System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.init() usuario ---:::>> " + evaluador);
                     resultados = ejb.getResultados(evaluacion, evaluador);
                     finalizado = ejb.actualizarResultado(resultados);
-                    System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.init() se ah finalizado la evaluacion? : " + finalizado);
+//                    System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.init() se ah finalizado la evaluacion? : " + finalizado);
                     if (resultados != null) {
                         ejb.vaciarRespuestas(resultados, respuestas);
-                        System.out.println("Se crearon los resultados " + resultados);
+//                        System.out.println("Se crearon los resultados " + resultados);
                         cargada = true;
                     }
                 }
@@ -112,28 +118,20 @@ public class EstudioEgresados implements Serializable {
         }
     }
     
-    public void getResultados() {
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.getResultados() entra al metodo");
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.getResultados() obtiene la ultima evaluacion" +ejb.getLastEvaluacion());
-//        selectItemCarreras = ejb.selectItemsProgramasEducativos();
-        
+    public void obtieneResultados() {
         if(resultados == null){
             Messages.addGlobalWarn("Este usuario no cuenta con respuestas para mostrar");
         }else if (resultados != null) {
             ejb.vaciarRespuestas(resultados, respuestas);
-            System.out.println("Se crearon los resultados " + resultados);
         }else{
             Messages.addGlobalWarn("Este usuario no pertenece a la ultima evaluación");
         }
     }
 
     public void guardarRespuesta(ValueChangeEvent e) {
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.guardarRespuesta() ejecuta el metodo:::");
         UIComponent origen = (UIComponent) e.getSource();
         String valor = e.getNewValue().toString();
-//        ejb.actualizarRespuestaPorPregunta(resultados, origen.getId(), valor, respuestas);
         ejb.actualizarRespuestaPorPregunta(resultados, origen.getId(), valor);
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.guardarRespuesta() valor : " + valor+", id : " +origen.getId());
         finalizado = ejb.actualizarResultado(resultados);
         
     }  
@@ -141,12 +139,9 @@ public class EstudioEgresados implements Serializable {
     public void guardarRespuestaRemota(){
         
         String id = Faces. getRequestParameter("id");
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.guardarRespuestaRemota() requestParameter : " + id);
         String valor = Faces.getRequestParameter("valor");
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.guardarRespuestaRemota() requestParameter : " + valor);
         respuestas.put(id, valor);
         ejb.actualizarRespuestaPorPregunta(resultados, id, valor);
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.guardarRespuestaRemota() respuestas: " + respuestas);
         finalizado = ejb.actualizarResultado(resultados);
     }
     
@@ -192,6 +187,72 @@ public class EstudioEgresados implements Serializable {
                 completo = false;
                 noCompleto = false;
             }
+        }
+    }
+
+    public void validaReporte() {
+        System.out.println("Siglas : " + siglas);
+        System.out.println("Generacion : " + generacionSeleccionada);
+        System.out.println("nivel generacion : " + nivelGeneraciones);
+        System.out.println("fuiltro btn : " + tipoFiltro);
+        listaResultadosReporte = new ArrayList<>();
+        listaResultadosReporte.clear();
+        if (tipoFiltro.equalsIgnoreCase("completo")) {
+            System.out.println("Entra como reporte completo");
+            listaResultadosReporte = ejb.getRestultadosEgresados();
+            siglas = null;
+            generacionSeleccionada = null;
+//                if (listaResultadosReporte == null || listaResultadosReporte.isEmpty()) {
+//                    listaResultadosReporte.clear();
+//                    Messages.addGlobalInfo("No se encontraron registros de este estudio, si considera esto un error contacte con el administador ");
+//                } else {
+//                    Messages.addGlobalInfo("Se encontraron los registros");
+//                }
+        } else if (siglas != null) {
+            generacionSeleccionada = null;
+            System.out.println(" entra como siglas y las siglas son: " + siglas);
+            listaResultadosReporte = ejb.getResultadosPorSilgas(siglas);
+            siglas = null;
+            generacionSeleccionada = null;
+//            if (listaResultadosReporte == null || listaResultadosReporte.isEmpty()) {
+//                listaResultadosReporte.clear();
+//                Messages.addGlobalInfo("No se encontraron registros de este estudio pertenecientes a la carrera : " + siglas);
+//            } else {
+//                Messages.addGlobalInfo("Se encontraron los registros");
+//            }
+        } else if (generacionSeleccionada != null) {
+            siglas = "";
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.obtieneResultadosReporte() entra como generacion y la generacion es : " + generacionSeleccionada);
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.obtieneResultadosReporte() el nivel es : " + nivelGeneraciones);
+            if (nivelGeneraciones.equalsIgnoreCase("tsu")) {
+                System.out.println("Entra como tsu");
+                listaResultadosReporte = ejb.getResultadosPorGeneracionTSU(generacionSeleccionada.toString());
+                siglas = null;
+                generacionSeleccionada = null;
+//                if (listaResultadosReporte == null || listaResultadosReporte.isEmpty()) {
+//                    listaResultadosReporte.clear();
+//                    Messages.addGlobalInfo("No se encontraron registros de este estudio en la generacion : " + generacion);
+//                } else {
+//                    Messages.addGlobalInfo("Se encontraron los registros");
+//                }
+
+            } else if (nivelGeneraciones.equalsIgnoreCase("ing")) {
+                System.out.println("Entra como ing");
+                listaResultadosReporte = ejb.getResultadosPorGeneracionING(generacionSeleccionada.toString());
+                siglas = null;
+                generacionSeleccionada = null;
+//                if (listaResultadosReporte == null || listaResultadosReporte.isEmpty()) {
+//                    listaResultadosReporte.clear();
+//                    Messages.addGlobalInfo("No se encontraron registros de este estudio en la generacion : " + generacion);
+//                } else {
+//                    Messages.addGlobalInfo("Se encontraron los registros");
+//                }
+            } else {
+                Messages.addGlobalWarn("Debe seleccionar el nivel de la evaluacion");
+            }
+
+        } else {
+            Messages.addGlobalWarn("Debe completar correctamente el formulario");
         }
     }
 }

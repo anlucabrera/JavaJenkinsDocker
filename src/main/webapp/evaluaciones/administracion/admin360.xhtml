@@ -52,7 +52,7 @@
 
                                         <p:outputPanel id="pnl1" >
                                             <p:autoUpdate/>
-                                            <p:outputPanel rendered="#{adminEvaluacion360.nivelOperacion eq(2)}">
+                                            <p:outputPanel rendered="#{adminEvaluacion360.nivelOperacion eq(2)}" style="margin-top: 4px; margin-bottom: -3px;">
                                                 <p:spacer width="15px"/>
                                                 <f:ajax  execute="sobCombinaciones sobCombinaciones2">
                                                     <p:selectBooleanButton onLabel="360°" offLabel="360°" value="#{adminEvaluacion360.e360b}" />

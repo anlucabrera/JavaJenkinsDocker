@@ -148,7 +148,7 @@ public class ControladorEmpleado implements Serializable {
                     case "CV":
                         fechaLimiteCV = fechaActual.before(t.getFechaFin());
                         fechaCVBencimiento = dateFormat.format(t.getFechaFin());
-                        fechaLimiteCurriculumVitae = "La fecha límite para la actualización de curriculum vitae es el día " + dateFormat.format(t.getFechaFin()) + " a las " + dateFormatHora.format(t.getFechaFin());
+                        fechaLimiteCurriculumVitae = "La fecha límite para la actualización de currículum vitae es el día " + dateFormat.format(t.getFechaFin()) + " a las " + dateFormatHora.format(t.getFechaFin());
                         break;
                     case "Funciones":
                         fechaLimiteFunciones = fechaActual.before(t.getFechaFin());

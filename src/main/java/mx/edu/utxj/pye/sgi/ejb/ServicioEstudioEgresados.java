@@ -505,4 +505,58 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
         }
     }
 
+    @Override
+    public List<EvaluacionEstudioEgresadosResultados> getRestultadosEgresados() {
+        TypedQuery<EvaluacionEstudioEgresadosResultados> q = f.getEntityManager().createQuery("SELECT e FROM EvaluacionEstudioEgresadosResultados e", EvaluacionEstudioEgresadosResultados.class);
+        List<EvaluacionEstudioEgresadosResultados> l = q.getResultList();
+        if(l.isEmpty() || l == null){
+            return null;
+        }else{
+            return l;
+        }
+    }
+
+    @Override
+    public List<EvaluacionEstudioEgresadosResultados> getResultadosPorGeneracionTSU(String generacion) {
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEstudioEgresados.getResultadosPorGeneracionTSU() la generacion que entra ; " + generacion);  
+        TypedQuery<EvaluacionEstudioEgresadosResultados> q = f.getEntityManager().createQuery("SELECT e FROM EvaluacionEstudioEgresadosResultados e WHERE e.r2 = :generacion", EvaluacionEstudioEgresadosResultados.class);
+        q.setParameter("generacion", generacion);
+        List<EvaluacionEstudioEgresadosResultados> l = q.getResultList();
+        if(l.isEmpty() || l == null){
+            System.out.println("regresa null");
+            return null;
+        }else{
+            System.out.println("regresa la lista _ " + l.size());
+            return l;
+        }
+    }
+
+    @Override
+    public List<EvaluacionEstudioEgresadosResultados> getResultadosPorGeneracionING(String generacion) {
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEstudioEgresados.getResultadosPorGeneracionTSU() la generacion que entra ; " + generacion);  
+        TypedQuery<EvaluacionEstudioEgresadosResultados> q = f.getEntityManager().createQuery("SELECT e FROM EvaluacionEstudioEgresadosResultados e WHERE e.r3 = :generacion", EvaluacionEstudioEgresadosResultados.class);
+        q.setParameter("generacion", generacion);
+        List<EvaluacionEstudioEgresadosResultados> l = q.getResultList();
+        if(l.isEmpty() || l == null){
+            System.out.println("regresa null");
+            return null;
+        }else{
+            System.out.println("regresa la lista _ " + l.size());
+            return l;
+        }
+    }
+
+    @Override
+    public List<EvaluacionEstudioEgresadosResultados> getResultadosPorSilgas(String siglas) {
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEstudioEgresados.getResultadosPorSilgas() las siglas que entran son : " + siglas);
+        TypedQuery<EvaluacionEstudioEgresadosResultados> q = f.getEntityManager().createQuery("SELECT e FROM EvaluacionEstudioEgresadosResultados e WHERE e.r4 = :siglas", EvaluacionEstudioEgresadosResultados.class);
+        q.setParameter("siglas", siglas);
+        List<EvaluacionEstudioEgresadosResultados> l = q.getResultList();
+        if(l.isEmpty() || l == null){
+            return null;
+        }else{
+            return l;
+        }
+    }
+
 }

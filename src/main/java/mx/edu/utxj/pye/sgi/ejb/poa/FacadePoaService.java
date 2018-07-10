@@ -39,7 +39,7 @@ public class FacadePoaService<T> implements FacadePoa {
     @NonNull
     private Class<T> entityClass;
 
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb-poa_ejb_1.0PU")
+    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb-pye2_ejb_1.0PU")
     private EntityManager em;
 
     @Override

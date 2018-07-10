@@ -100,12 +100,12 @@
                                                                                     <hr/>
                                                                                 </div>
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                    <p:outputLabel for="categoria" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Categoria" />
+                                                                                    <p:outputLabel for="categoria" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Categoría" />
                                                                                     <p:selectOneMenu id="categoria" style="height: 100%; width: 100%; object-fit: contain" value="#{controladorPersonal.nuevOBJPersonalSubordinado.status}">
                                                                                         <f:selectItem itemValue="Administrador" itemLabel="Administrador"/>
                                                                                         <f:selectItem itemValue="Administrativa" itemLabel="Administrativa"/>
-                                                                                        <f:selectItem itemValue="Area Academica" itemLabel="Area Academica"/>
-                                                                                        <f:selectItem itemValue="Coordinacion" itemLabel="Coordinacion"/>
+                                                                                        <f:selectItem itemValue="Area Academica" itemLabel="Área Académica"/>
+                                                                                        <f:selectItem itemValue="Coordinacion" itemLabel="Coordinación"/>
                                                                                         <f:selectItem itemValue="Extra" itemLabel="Extra"/>
                                                                                         <f:selectItem itemValue="Oficial" itemLabel="Oficial"/>
                                                                                         <f:selectItem itemValue="Programa Educativo" itemLabel="Programa Educativo"/>
@@ -243,7 +243,7 @@
                                                                             <div class="form-group">
                                                                                 <div class="col-sm-12 col-md-12 col-lg-12">
                                                                                     <p:outputLabel for="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nombre" />
-                                                                                    <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Nombre de la categoria"
+                                                                                    <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Nombre de la categoría"
                                                                                                  value="#{controladorPersonalconfiguracion.nuevoOBJPersonalCategorias.nombre}"/>
                                                                                     <p:message for="nombre" display="tooltip" />
                                                                                     <hr/>
@@ -565,7 +565,7 @@
                                                         <h:outputText value="#{distincion.nombre}" />
                                                     </p:column>
 
-                                                    <p:column headerText="Fotografia" 
+                                                    <p:column headerText="Fotografía" 
                                                               filterBy="#{distincion.clave}" 
                                                               sortBy="#{distincion.clave}" 
                                                               filterMatchMode="contains" >

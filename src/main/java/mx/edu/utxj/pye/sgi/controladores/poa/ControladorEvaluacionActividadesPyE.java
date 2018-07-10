@@ -1,0 +1,607 @@
+package mx.edu.utxj.pye.sgi.controladores.poa;
+
+import java.io.File;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.annotation.ManagedBean;
+import javax.ejb.EJB;
+import javax.faces.event.ValueChangeEvent;
+import javax.inject.Inject;
+import org.omnifaces.cdi.ViewScoped;
+import javax.inject.Named;
+import javax.servlet.http.Part;
+import lombok.Getter;
+import lombok.Setter;
+import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbPoaSelectec;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
+import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
+import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
+import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
+import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
+import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
+import org.omnifaces.util.Messages;
+import org.omnifaces.util.Servlets;
+import org.primefaces.event.RowEditEvent;
+import org.primefaces.model.StreamedContent;
+
+@Named
+@ManagedBean
+@ViewScoped
+public class ControladorEvaluacionActividadesPyE implements Serializable {
+
+    private static final long serialVersionUID = -473305993584095094L;
+
+    @Getter    @Setter    private List<ActividadesPoa> actividadesPoasAreas = new ArrayList<>(), actividadesPoasAreasEjes = new ArrayList<>();
+    @Getter    @Setter    private List<EjesRegistro> ejesesFiltrado = new ArrayList<>(),ejeses = new ArrayList<>();
+    @Getter    @Setter    private List<CuadroMandoIntegral> cuadroMandoIntegrals = new ArrayList<>();
+    @Getter    @Setter    private List<Estrategias> estrategiases = new ArrayList<>();
+    @Getter    @Setter    private List<LineasAccion> lineasAccions = new ArrayList<>();
+    @Getter    @Setter    private List<ActividadesPoa> actividads=new ArrayList<>();
+    @Getter    @Setter    private List<Evidencias> evidenciases=new ArrayList<>();
+    @Getter    @Setter    private List<EvidenciasDetalle> evidenciasesDetalles=new ArrayList<>(),evidenciasesDe=new ArrayList<>();
+    
+    @Getter    @Setter    private List<listaEjesEsLaAp> ejesEsLaAp=new ArrayList<>();
+    @Getter    @Setter    private List<listaEjeEstrategia> listaListaEjeEstrategia=new ArrayList<>();
+    @Getter    @Setter    private List<listaEstrategiaActividades> listaEstrategiaActividadesesEje = new ArrayList<>();
+    @Getter    @Setter    private List<listaEstrategiaActividades> listaEstrategiaActividadesesEje2 = new ArrayList<>(), listaEstrategiaActividadesesEje3 = new ArrayList<>(), listaEstrategiaActividadesesEje4 = new ArrayList<>(), listaEstrategiaActividadesesEje5 = new ArrayList<>();
+
+    @Getter    @Setter    private ActividadesPoa actividadesPoaEditando = new ActividadesPoa(),actividadMadre=new ActividadesPoa();
+    @Getter    @Setter    private EjesRegistro ejes;
+    @Getter    @Setter    private Evidencias evidencias;
+    @Getter    @Setter    private EvidenciasDetalle evidenciasDetalle;
+    @Getter    @Setter    private Estrategias ultimaEstrategiaExpandida;
+    @Getter    @Setter    private String siglaArea="",mesNombre="";
+    @Getter    @Setter    private Short claveArea = 0, ejercicioFiscal = 0;
+    @Getter    @Setter    private Date fechaActual=new Date();
+    @Getter    @Setter    private Iterator<ActividadesPoa> poaActual;
+    @Getter    @Setter    private Integer claveEje=0,mes=0,cuatrimestre=0,mostradaL=0;
+    @Getter    @Setter    private Integer mes1=0,mes2=0,mes3=0,mes4=0,mes5=0,mes6=0,mes7=0,mes8=0,mes9=0,mes10=0,mes11=0,mes12=0;
+    
+    @Getter    @Setter    private Double totalPCuatrimestre=0D,totalACuatrimestre=0D,totalPCorte=0D,totalACorte=0D;
+    @Getter    @Setter    private Double porcentajeCuatrimestre=0D,porcentejeAlCorte=0D;
+    @Getter    @Setter    private String semaforoC="",semaforoG="";
+    
+    @Getter    @Setter    private Boolean archivoSC=false;
+    @Getter    @Setter    private Part file;
+    
+    @Getter    @Setter    private List<Part> files=new ArrayList<>();
+    @Getter    private String ruta;
+    @Getter    StreamedContent content;
+    
+    @EJB
+    EjbPoaSelectec poaSelectec;
+    @Inject
+    ControladorEmpleado controladorEmpleado;
+    @EJB    EjbCarga carga;
+
+    @PostConstruct
+    public void init() {
+        System.out.println("ControladorHabilidadesIIL Inicio: " + System.currentTimeMillis());
+        ejeses.clear();
+        ejesesFiltrado.clear();
+        actividadesPoasAreas.clear();
+        actividadesPoasAreasEjes.clear();
+                
+        ejes=new EjesRegistro(0);
+                
+        ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear()-101));
+        mes=fechaActual.getMonth();
+        
+        claveArea = 6;
+        siglaArea = "PyE";
+        switch(mes){
+            case 0: mesNombre="Enero"; break;
+            case 1: mesNombre="Febrero"; break;
+            case 2: mesNombre="Marzo"; break;
+            case 3: mesNombre="Abril"; break;
+            case 4: mesNombre="Mayo"; break;
+            case 5: mesNombre="Junio"; break;
+            case 6: mesNombre="Julio"; break;
+            case 7: mesNombre="Agosto"; break;
+            case 8: mesNombre="Septiembre"; break;
+            case 9: mesNombre="Octubre"; break;
+            case 10: mesNombre="Noviembre"; break;
+            case 11: mesNombre="Diciembre"; break;            
+        }
+        
+        consultarListas();
+        System.out.println(" ControladorHabilidadesIIL Fin: " + System.currentTimeMillis());
+    }
+
+    // ---------------------------------------------------------------- Listas -------------------------------------------------------------
+    public void consultarListas() {
+        ejesesFiltrado.clear();
+        ejesesFiltrado.add(new EjesRegistro(0, "Seleccione uno", "Seleccione uno", "", ""));
+
+        actividadesPoasAreas = poaSelectec.mostrarActividadesPoasArea(claveArea);
+        ejeses = poaSelectec.mostrarEjesRegistros();
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPyE.consultarListas()"+ejeses.size());
+        if (!actividadesPoasAreas.isEmpty()) {
+            actividadesPoasAreas.forEach((t) -> {
+                if (!cuadroMandoIntegrals.contains(t.getCuadroMandoInt())) {
+                    cuadroMandoIntegrals.add(t.getCuadroMandoInt());
+                }
+            });
+            cuadroMandoIntegrals.forEach((t) -> {
+                ejeses.forEach((e) -> {
+                    if (t.getEje().equals(e)) {
+                        if (!ejesesFiltrado.contains(e)) {
+                            ejesesFiltrado.add(e);
+                        }
+                    }
+                });
+            });
+            Collections.sort(ejesesFiltrado, (x, y) -> Integer.compare(x.getEje(), y.getEje()));
+        }
+    }
+
+    public void asignarArea(ValueChangeEvent event) {
+        claveArea = 0;
+        claveArea = Short.parseShort(event.getNewValue().toString());
+    }
+
+    public void actualizarNuavActividad() {
+        actividadesPoaEditando = poaSelectec.actualizaActividadesPoa(actividadesPoaEditando);
+        consultarListasValidacionFinal();
+    }
+    
+    public void obtnerMEs(String actual) {
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPyE.obtnerMEs()"+actual);
+        mes = 0;
+        mes = Integer.parseInt(actual);
+        switch (mes) {
+            case 0:  mesNombre = "Enero";      break;            case 1:  mesNombre = "Febrero";    break;
+            case 2:  mesNombre = "Marzo";      break;            case 3:  mesNombre = "Abril";      break;
+            case 4:  mesNombre = "Mayo";       break;            case 5:  mesNombre = "Junio";      break;
+            case 6:  mesNombre = "Julio";      break;            case 7:  mesNombre = "Agosto";     break;
+            case 8:  mesNombre = "Septiembre"; break;            case 9:  mesNombre = "Octubre";    break;
+            case 10: mesNombre = "Noviembre";  break;            case 11: mesNombre = "Diciembre";  break;
+        }
+        consultarListasValidacionFinal();
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPyE.obtnerMEs()"+mes);
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPyE.obtnerMEs()"+mesNombre);
+    }
+
+    public void consultarListasValidacionFinal() {
+        ejeses.clear();
+        ejesEsLaAp.clear();
+        ejesesFiltrado.clear();
+        cuadroMandoIntegrals.clear();
+        listaListaEjeEstrategia.clear();
+        listaEstrategiaActividadesesEje2.clear();
+        listaEstrategiaActividadesesEje3.clear();
+        listaEstrategiaActividadesesEje4.clear();
+        listaEstrategiaActividadesesEje5.clear();
+
+        if (mes <= 3) {
+            cuatrimestre = 1;
+        } else {
+            if (mes <= 7) {
+                cuatrimestre = 2;
+            } else {
+                cuatrimestre = 3;
+            }
+        }
+
+        actividadesPoasAreas = poaSelectec.mostrarActividadesPoasArea(claveArea);
+        ejeses = poaSelectec.mostrarEjesRegistros();
+
+        actividadesPoasAreas.forEach((t) -> {
+            if (!cuadroMandoIntegrals.contains(t.getCuadroMandoInt())) {
+                cuadroMandoIntegrals.add(t.getCuadroMandoInt());
+            }
+        });
+        cuadroMandoIntegrals.forEach((t) -> {
+            ejeses.forEach((e) -> {
+                if (t.getEje().getEje() == e.getEje()) {
+                    if (!ejesesFiltrado.contains(e)) {
+                        ejesesFiltrado.add(e);
+                    }
+                }
+            });
+        });
+
+        ejesesFiltrado.forEach((e) -> {
+            listaListaEjeEstrategia.add(new listaEjeEstrategia(e, poaSelectec.getEstarategiasPorEje(e, ejercicioFiscal, claveArea)));
+        });
+
+        listaListaEjeEstrategia.forEach((e) -> {
+            e.getListaEstrategiases1().forEach((t) -> {
+                switch (e.getEjess().getEje()) {
+                    case 1:
+                        listaEstrategiaActividadesesEje2.add(new listaEstrategiaActividades(t, aconsultarTotales(poaSelectec.getActividadesPoasporEstarategias(t, e.getEjess(), ejercicioFiscal, claveArea))));
+                        break;
+                    case 2:
+                        listaEstrategiaActividadesesEje3.add(new listaEstrategiaActividades(t, aconsultarTotales(poaSelectec.getActividadesPoasporEstarategias(t, e.getEjess(), ejercicioFiscal, claveArea))));
+                        break;
+                    case 3:
+                        listaEstrategiaActividadesesEje4.add(new listaEstrategiaActividades(t, aconsultarTotales(poaSelectec.getActividadesPoasporEstarategias(t, e.getEjess(), ejercicioFiscal, claveArea))));
+                        break;
+                    case 4:
+                        listaEstrategiaActividadesesEje5.add(new listaEstrategiaActividades(t, aconsultarTotales(poaSelectec.getActividadesPoasporEstarategias(t, e.getEjess(), ejercicioFiscal, claveArea))));
+                        break;
+                }
+            });
+        });
+
+        ejesesFiltrado.forEach((t) -> {
+            switch (t.getEje()) {
+                case 1:
+                    ejesEsLaAp.add(new listaEjesEsLaAp(t, listaEstrategiaActividadesesEje2));
+                    break;
+                case 2:
+                    ejesEsLaAp.add(new listaEjesEsLaAp(t, listaEstrategiaActividadesesEje3));
+                    break;
+                case 3:
+                    ejesEsLaAp.add(new listaEjesEsLaAp(t, listaEstrategiaActividadesesEje4));
+                    break;
+                case 4:
+                    ejesEsLaAp.add(new listaEjesEsLaAp(t, listaEstrategiaActividadesesEje5));
+                    break;
+            }
+        });
+            Collections.sort(ejesEsLaAp, (x, y) -> Integer.compare(x.getEjeA().getEje(), y.getEjeA().getEje()));
+    }
+
+    public List<actividad> aconsultarTotales(List<ActividadesPoa> actividadesPoas) {
+        List<actividad> actividades = new ArrayList<>();
+        actividades.clear();
+        actividadesPoas.forEach((t) -> {
+            semaforoC = "";
+            semaforoG = "";
+            totalACorte = 0D;
+            totalPCorte = 0D;
+            totalACuatrimestre = 0D;
+            totalPCuatrimestre = 0D;
+            porcentejeAlCorte = 0D;
+            porcentajeCuatrimestre = 0D;
+
+            switch (cuatrimestre) {
+                case 1:
+                    totalACuatrimestre = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril();
+                    totalPCuatrimestre = 0D + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril();
+                    break;
+                case 2:
+                    totalACuatrimestre = 0D + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto();
+                    totalPCuatrimestre = 0D + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto();
+                    break;
+                case 3:
+                    totalACuatrimestre = 0D + t.getNASeptiembre() + t.getNAOctubre() + t.getNANoviembre() + t.getNADiciembre();
+                    totalPCuatrimestre = 0D + t.getNPSeptiembre() + t.getNPOctubre() + t.getNPNoviembre() + t.getNPDiciembre();
+                    break;
+            }
+            switch (mes) {
+                case 0:
+                    totalACorte = 0D + t.getNAEnero();
+                    totalPCorte = 0D + t.getNPEnero();
+                    break;
+                case 1:
+                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero();
+                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero();
+                    break;
+                case 2:
+                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo();
+                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo();
+                    break;
+                case 3:
+                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril();
+                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril();
+                    break;
+                case 4:
+                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo();
+                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo();
+                    break;
+                case 5:
+                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio();
+                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio();
+                    break;
+                case 6:
+                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio();
+                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio();
+                    break;
+                case 7:
+                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto();
+                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto();
+                    break;
+                case 8:
+                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto() + t.getNASeptiembre();
+                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre();
+                    break;
+                case 9:
+                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto() + t.getNASeptiembre() + t.getNAOctubre();
+                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre() + t.getNPOctubre();
+                    break;
+                case 10:
+                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto() + t.getNASeptiembre() + t.getNAOctubre() + t.getNANoviembre();
+                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre() + t.getNPOctubre() + t.getNPNoviembre();
+                    break;
+                case 11:
+                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto() + t.getNASeptiembre() + t.getNAOctubre() + t.getNANoviembre() + t.getNADiciembre();
+                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre() + t.getNPOctubre() + t.getNPNoviembre() + t.getNPDiciembre();
+                    break;
+            }
+
+            if (totalPCuatrimestre.equals(totalACuatrimestre)) {
+                porcentajeCuatrimestre = 100.0;
+            } else {
+                if (totalPCuatrimestre == 0D) {
+
+                    if (totalPCuatrimestre == 1D) {
+                        porcentajeCuatrimestre = 84.99;
+                    } else if (totalPCuatrimestre == 2D) {
+                        porcentajeCuatrimestre = 74.99;
+                    } else if (totalPCuatrimestre == 3D) {
+                        porcentajeCuatrimestre = 69.99;
+                    }
+                } else {
+
+                    porcentajeCuatrimestre = (totalACuatrimestre / totalPCuatrimestre) * 100;
+                }
+                if (porcentajeCuatrimestre >= 116 && porcentajeCuatrimestre <= 165) {
+                    porcentajeCuatrimestre = 89.99;
+                } else if (porcentajeCuatrimestre >= 166 && porcentajeCuatrimestre <= 215) {
+                    porcentajeCuatrimestre = 84.99;
+                } else if (porcentajeCuatrimestre >= 216 && porcentajeCuatrimestre <= 265) {
+                    porcentajeCuatrimestre = 79.99;
+                } else if (porcentajeCuatrimestre >= 266 && porcentajeCuatrimestre <= 315) {
+                    porcentajeCuatrimestre = 74.99;
+                } else if (porcentajeCuatrimestre >= 316) {
+                    porcentajeCuatrimestre = 69.99;
+                }
+            }
+            if (totalPCorte.equals(totalACorte)) {
+                porcentejeAlCorte = 100.0;
+            } else {
+                if (totalPCuatrimestre == 0D || totalPCuatrimestre == 0D) {
+
+                    if (totalACorte == 1D) {
+                        porcentejeAlCorte = 84.99;
+                    } else if (totalACorte == 2D) {
+                        porcentejeAlCorte = 74.99;
+                    } else if (totalACorte == 3D) {
+                        porcentejeAlCorte = 69.99;
+                    }
+
+                } else {
+
+                    porcentejeAlCorte = (totalPCorte / totalACorte) * 100;
+                }
+                if (porcentejeAlCorte >= 116 && porcentejeAlCorte <= 165) {
+                    porcentejeAlCorte = 89.99;
+                } else if (porcentejeAlCorte >= 166 && porcentejeAlCorte <= 215) {
+                    porcentejeAlCorte = 84.99;
+                } else if (porcentejeAlCorte >= 216 && porcentejeAlCorte <= 265) {
+                    porcentejeAlCorte = 79.99;
+                } else if (porcentejeAlCorte >= 266 && porcentejeAlCorte <= 315) {
+                    porcentejeAlCorte = 74.99;
+                } else if (porcentejeAlCorte >= 316) {
+                    porcentejeAlCorte = 69.99;
+                }
+            }
+            if (porcentajeCuatrimestre >= 0D && porcentajeCuatrimestre <= 89.99) {
+                semaforoC = "semaforoRojo";
+            } else if (porcentajeCuatrimestre >= 90D && porcentajeCuatrimestre <= 94.99) {
+                semaforoC = "semaforoAmarillo";
+            } else if (porcentajeCuatrimestre >= 95D && porcentajeCuatrimestre <= 115.99) {
+                semaforoC = "semaforoVerde";
+            }
+
+            if (porcentejeAlCorte >= 0D && porcentejeAlCorte <= 89.99) {
+                semaforoG = "semaforoRojo";
+            } else if (porcentejeAlCorte >= 90D && porcentejeAlCorte <= 94.99) {
+                semaforoG = "semaforoAmarillo";
+            } else if (porcentejeAlCorte >= 95D && porcentejeAlCorte <= 115.99) {
+                semaforoG = "semaforoVerde";
+            }
+            actividades.add(new actividad(t, totalPCuatrimestre, totalACuatrimestre, totalPCorte, totalACorte, porcentajeCuatrimestre, porcentejeAlCorte, semaforoC, semaforoG));
+        });
+
+        return actividades;
+    }
+
+    public void onRowEdit(RowEditEvent event) {
+        ultimaEstrategiaExpandida = new Estrategias();
+        mes1 = 0;        mes2 = 0;        mes3 = 0;        mes4 = 0;        mes5 = 0;        mes6 = 0;
+        mes7 = 0;        mes8 = 0;        mes9 = 0;        mes10 = 0;        mes11 = 0;        mes12 = 0;
+        actividads.clear();
+        actividad editada = (actividad) event.getObject();
+        ActividadesPoa modificada = editada.getActividadesPoa();
+        ultimaEstrategiaExpandida = modificada.getCuadroMandoInt().getEstrategia();
+        poaSelectec.actualizaActividadesPoa(modificada);
+
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit()" + ultimaEstrategiaExpandida.getEstrategia());
+
+        if (modificada.getNumeroS() != 0) {
+            actividads = poaSelectec.getActividadesEvaluacionMadre(modificada.getCuadroMandoInt(), modificada.getNumeroP());
+            if (!actividads.isEmpty()) {
+                actividads.forEach((t) -> {
+                    if (t.getNumeroS() == 0) {
+                        actividadMadre = t;
+                    }
+                });
+
+                actividads.forEach((t) -> {
+                    if (t.getNumeroS() != 0) {
+                        mes1 = mes1 + t.getNAEnero();
+                        mes2 = mes2 + t.getNAFebrero();
+                        mes3 = mes3 + t.getNAMarzo();
+                        mes4 = mes4 + t.getNAAbril();
+                        mes5 = mes5 + t.getNAMayo();
+                        mes6 = mes6 + t.getNAJunio();
+                        mes7 = mes7 + t.getNAJulio();
+                        mes8 = mes8 + t.getNAAgosto();
+                        mes9 = mes9 + t.getNASeptiembre();
+                        mes10 = mes10 + t.getNAOctubre();
+                        mes11 = mes11 + t.getNANoviembre();
+                        mes12 = mes12 + t.getNADiciembre();
+                    }
+                });
+
+                actividadMadre.setNAEnero(Short.parseShort(mes1.toString()));
+                actividadMadre.setNAFebrero(Short.parseShort(mes2.toString()));
+                actividadMadre.setNAMarzo(Short.parseShort(mes3.toString()));
+                actividadMadre.setNAAbril(Short.parseShort(mes4.toString()));
+                actividadMadre.setNAMayo(Short.parseShort(mes5.toString()));
+                actividadMadre.setNAJunio(Short.parseShort(mes6.toString()));
+                actividadMadre.setNAJulio(Short.parseShort(mes7.toString()));
+                actividadMadre.setNAAgosto(Short.parseShort(mes8.toString()));
+                actividadMadre.setNASeptiembre(Short.parseShort(mes9.toString()));
+                actividadMadre.setNAOctubre(Short.parseShort(mes10.toString()));
+                actividadMadre.setNANoviembre(Short.parseShort(mes11.toString()));
+                actividadMadre.setNADiciembre(Short.parseShort(mes12.toString()));
+            }
+            poaSelectec.actualizaActividadesPoa(actividadMadre);
+        }
+        consultarListasValidacionFinal();
+    }
+
+    public void onRowCancel(RowEditEvent event) {
+        ultimaEstrategiaExpandida = new Estrategias(); 
+        actividad editada = (actividad) event.getObject();
+        ActividadesPoa modificada = editada.getActividadesPoa();
+        ultimaEstrategiaExpandida = modificada.getCuadroMandoInt().getEstrategia();
+        consultarListasValidacionFinal();
+    }
+    
+    public String convertirRutaMP(String ruta) {
+        File file = new File(ruta);
+        return "EVALUACION_POA".concat(file.toURI().toString().split("EVALUACION_POA")[1]);
+    }
+
+    public void consultarEvidencias(ActividadesPoa actividadesPoaEvidencias) {
+        evidenciases.clear();
+        evidenciasesDe.clear();
+        evidenciasesDetalles.clear();
+        ultimaEstrategiaExpandida = new Estrategias();
+        ultimaEstrategiaExpandida = actividadesPoaEvidencias.getCuadroMandoInt().getEstrategia();
+
+        evidenciases = poaSelectec.mostrarEvidenciases(actividadesPoaEvidencias);
+        if (!evidenciases.isEmpty()) {
+            evidenciases.forEach((t) -> {
+                evidenciasesDe = poaSelectec.mostrarEvidenciases(t);
+                if (!evidenciasesDe.isEmpty()) {
+                    evidenciasesDe.forEach((e) -> {
+                        e.setRuta(convertirRutaMP(e.getRuta()));
+                        evidenciasesDetalles.add(e);
+                    });
+                }
+            });
+        }
+    }
+
+    public void subirEvidenciaPOA() {
+        try {
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(1)");
+            ultimaEstrategiaExpandida = new Estrategias();
+            ultimaEstrategiaExpandida = actividadesPoaEditando.getCuadroMandoInt().getEstrategia();
+            archivoSC = true;
+            evidencias = new Evidencias();
+
+            if (files != null) {
+                System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(2)");
+                if (files.size() == 1) {
+                    evidencias.setCategoria("Única");
+                } else {
+                    evidencias.setCategoria("Múltiple");
+                }
+
+                poaSelectec.agregarEvidenciases(evidencias, actividadesPoaEditando);
+                for (Part file : files) {
+
+                    System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(3)");
+                    ruta = carga.subir(file, new File("2018".concat(File.separator).concat(siglaArea).concat(File.separator).concat(mesNombre).concat(File.separator).concat("EVALUACION_POA").concat(File.separator)));
+
+                    if (!"Error: No se pudo leer el archivo".equals(ruta)) {
+                        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(4)");
+                        String name = Servlets.getSubmittedFileName(file);
+                        String type = file.getContentType();
+                        long size = file.getSize();
+                        evidenciasDetalle = new EvidenciasDetalle();
+                        evidenciasDetalle.setEvidencia(evidencias);
+                        evidenciasDetalle.setRuta(ruta);
+                        evidenciasDetalle.setMime(type);
+                        evidenciasDetalle.setTamanioBytes(size);
+                        evidenciasDetalle.setMes(mesNombre);
+                        poaSelectec.agregarEvidenciasesEvidenciasDetalle(evidenciasDetalle);
+                    } else {
+                        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(4.1)");
+                    }
+                }
+                consultarEvidencias(actividadesPoaEditando);
+            } else {
+                Messages.addGlobalWarn("Es necesario seleccionar un archivo !!");
+            }
+            files.clear();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorEvaluacionActividadesPyE.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void imprimirValores() {
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.imprimirValores()");       
+    }
+    
+    public static class listaEjesEsLaAp {
+
+        @Getter        @Setter        private EjesRegistro ejeA;
+        @Getter        @Setter        private List<listaEstrategiaActividades> listalistaEstrategiaLaAp;
+
+        public listaEjesEsLaAp(EjesRegistro ejeA, List<listaEstrategiaActividades> listalistaEstrategiaLaAp) {
+            this.ejeA = ejeA;
+            this.listalistaEstrategiaLaAp = listalistaEstrategiaLaAp;
+        }
+    }
+    
+    public static class listaEjeEstrategia {
+
+        @Getter        @Setter        private EjesRegistro ejess;
+        @Getter        @Setter        private List<Estrategias> listaEstrategiases1;
+
+        public listaEjeEstrategia(EjesRegistro ejess, List<Estrategias> listaEstrategiases1) {
+            this.ejess = ejess;
+            this.listaEstrategiases1 = listaEstrategiases1;
+        }        
+    }
+    
+    public static class listaEstrategiaActividades {
+
+        @Getter        @Setter        private Estrategias estrategias;
+        @Getter        @Setter        private List<actividad> actividadesPoas;
+
+        public listaEstrategiaActividades(Estrategias estrategias, List<actividad> actividadesPoas) {
+            this.estrategias = estrategias;
+            this.actividadesPoas = actividadesPoas;
+        }       
+    }
+    
+    public static class actividad {
+
+        @Getter        @Setter        private ActividadesPoa actividadesPoa;
+        @Getter        @Setter        private Double totalPCuatrimestre, totalACuatrimestre, totalPCorte, totalACorte;
+        @Getter        @Setter        private Double porcentajeCuatrimestre, porcentejeAlCorte;
+        @Getter        @Setter        private String semaforoC, semaforoG;
+
+        public actividad(ActividadesPoa actividadesPoa, Double totalPCuatrimestre, Double totalACuatrimestre, Double totalPCorte, Double totalACorte, Double porcentajeCuatrimestre, Double porcentejeAlCorte, String semaforoC, String semaforoG) {
+            this.actividadesPoa = actividadesPoa;
+            this.totalPCuatrimestre = totalPCuatrimestre;
+            this.totalACuatrimestre = totalACuatrimestre;
+            this.totalPCorte = totalPCorte;
+            this.totalACorte = totalACorte;
+            this.porcentajeCuatrimestre = porcentajeCuatrimestre;
+            this.porcentejeAlCorte = porcentejeAlCorte;
+            this.semaforoC = semaforoC;
+            this.semaforoG = semaforoG;
+        }
+    }
+}

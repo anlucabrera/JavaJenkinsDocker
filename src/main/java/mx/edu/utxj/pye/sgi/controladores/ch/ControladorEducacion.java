@@ -90,7 +90,7 @@ public class ControladorEducacion implements Serializable {
         System.out.println("ControladorEducacion Fin: " + System.currentTimeMillis());
     }
 
-    ////////////////////////////////////////////Formacion Academica\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    ////////////////////////////////////////////Formación Académica\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     public void createFormacion() {
         try {
             nuevoOBJFormacionAcademica.setClavePersonal(new Personal());
@@ -100,7 +100,7 @@ public class ControladorEducacion implements Serializable {
             nuevoOBJFormacionAcademica.setEstatus("Denegado");
             if (nuevoOBJFormacionAcademica.getFormacion() == null) {
                 nuevoOBJFormacionAcademica = ejbEducacion.crearNuevoFormacionAcademica(nuevoOBJFormacionAcademica);
-                nombreTabla = "Formacion Academica";
+                nombreTabla = "Formación Académica";
                 numeroRegistro = nuevoOBJFormacionAcademica.getFormacion().toString();
                 accion = "Insert";
                 agregaBitacora();
@@ -114,7 +114,7 @@ public class ControladorEducacion implements Serializable {
             mostrarListas();
             direccionInt = 0;
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -127,23 +127,23 @@ public class ControladorEducacion implements Serializable {
             if (nuevoOBJFormacionAcademica.getEvidenciaTitulo() != null) {
                 CargaArchivosCH.eliminarArchivo(nuevoOBJFormacionAcademica.getEvidenciaTitulo());
             }
-            nombreTabla = "Formacion Academica";
+            nombreTabla = "Formación Académica";
             numeroRegistro = nuevoOBJFormacionAcademica.getFormacion().toString();
             accion = "Delate";
             agregaBitacora();
             nuevoOBJFormacionAcademica = ejbEducacion.eliminarFormacionAcademica(nuevoOBJFormacionAcademica);
-            Messages.addGlobalInfo("Informacion Actualizada con Exito!!");
+            Messages.addGlobalInfo("Información Actualizada con Éxito!!");
             nuevoOBJFormacionAcademica = new FormacionAcademica();
             mostrarListas();
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void updateFormacion() {
         try {
-            nombreTabla = "Formacion Academica";
+            nombreTabla = "Formación Académica";
             numeroRegistro = nuevoOBJFormacionAcademica.getFormacion().toString();
             accion = "Update";
             agregaBitacora();
@@ -151,14 +151,14 @@ public class ControladorEducacion implements Serializable {
             nuevoOBJFormacionAcademica = ejbEducacion.actualizarFormacionAcademica(nuevoOBJFormacionAcademica);
             nuevoOBJFormacionAcademica = null;
             claveR = 0;
-            Messages.addGlobalInfo("Informacion Actualizada con Exito!!");
+            Messages.addGlobalInfo("Información Actualizada con Éxito!!");
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    //////////////////////////////////////////////////////////Experincias Laborales\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ 
+    //////////////////////////////////////////////////////////Experiencias Laborales\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ 
     public void guardarEmpleo() {
         try {
             nuevoOBJExpeienciasLaborales.setClavePersonal(new Personal());
@@ -173,13 +173,13 @@ public class ControladorEducacion implements Serializable {
             } else {
                 updateExperienciaLaboral();
             }
-            Messages.addGlobalInfo("Informacion Actualizada con Exito!!");
+            Messages.addGlobalInfo("Información Actualizada con Éxito!!");
             nuevoOBJExpeienciasLaborales = null;
             mostrarListas();
             direccionInt3 = 0;
             pestaniaActiva = 1;
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -195,12 +195,12 @@ public class ControladorEducacion implements Serializable {
             accion = "Delate";
             agregaBitacora();
             nuevoOBJExpeienciasLaborales = ejbEducacion.eliminarExperienciasLaborales(nuevoOBJExpeienciasLaborales);
-            Messages.addGlobalInfo("Informacion Actualizada con Exito!!");
+            Messages.addGlobalInfo("Información Actualizada con Éxito!!");
             nuevoOBJExpeienciasLaborales = new ExperienciasLaborales();
             mostrarListas();
             pestaniaActiva = 1;
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -214,10 +214,10 @@ public class ControladorEducacion implements Serializable {
             nuevoOBJExpeienciasLaborales = ejbEducacion.actualizarExperienciasLaborales(nuevoOBJExpeienciasLaborales);
             nuevoOBJExpeienciasLaborales = null;
             claveREX = 0;
-            Messages.addGlobalInfo("Informacion Actualizada con Exito!!");
+            Messages.addGlobalInfo("Información Actualizada con Éxito!!");
             pestaniaActiva = 1;
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -234,7 +234,7 @@ public class ControladorEducacion implements Serializable {
             nuevoOBJCapacitacionespersonal.setEstatus("Denegado");
             if (nuevoOBJFormacionAcademica.getFormacion() == null) {
                 nuevoOBJCapacitacionespersonal = ejbEducacion.crearNuevoCapacitacionespersonal(nuevoOBJCapacitacionespersonal);
-                nombreTabla = "Capacitacion Personal";
+                nombreTabla = "Capacitación Personal";
                 numeroRegistro = nuevoOBJCapacitacionespersonal.getCursoClave().toString();
                 accion = "Insert";
                 agregaBitacora();
@@ -242,7 +242,7 @@ public class ControladorEducacion implements Serializable {
                 updateCapacitacion();
             }
 
-            Messages.addGlobalInfo("Informacion Actualizada con Exito!!");
+            Messages.addGlobalInfo("Información Actualizada con Éxito!!");
             nuevoOBJCapacitacionespersonal = new Capacitacionespersonal();
             tipoCur = 0;
             modalida = 0;
@@ -250,7 +250,7 @@ public class ControladorEducacion implements Serializable {
             direccionInt4 = 0;
             pestaniaActiva = 2;
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -260,24 +260,24 @@ public class ControladorEducacion implements Serializable {
             if (nuevoOBJCapacitacionespersonal.getEvidenciaCapacitacion() != null) {
                 CargaArchivosCH.eliminarArchivo(nuevoOBJCapacitacionespersonal.getEvidenciaCapacitacion());
             }
-            nombreTabla = "Capacitacion Personal";
+            nombreTabla = "Capacitación Personal";
             numeroRegistro = nuevoOBJCapacitacionespersonal.getCursoClave().toString();
             accion = "Delate";
             agregaBitacora();
             nuevoOBJCapacitacionespersonal = ejbEducacion.eliminarCapacitacionespersonal(nuevoOBJCapacitacionespersonal);
-            Messages.addGlobalInfo("Informacion Actualizada con Exito!!");
+            Messages.addGlobalInfo("Información Actualizada con Éxito!!");
             nuevoOBJCapacitacionespersonal = new Capacitacionespersonal();
             mostrarListas();
             pestaniaActiva = 2;
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void updateCapacitacion() {
         try {
-            nombreTabla = "Capacitacion Personal";
+            nombreTabla = "Capacitación Personal";
             numeroRegistro = nuevoOBJCapacitacionespersonal.getCursoClave().toString();
             accion = "Update";
             agregaBitacora();
@@ -286,10 +286,10 @@ public class ControladorEducacion implements Serializable {
             nuevoOBJCapacitacionespersonal = ejbEducacion.actualizarCapacitacionespersonal(nuevoOBJCapacitacionespersonal);
             nuevoOBJCapacitacionespersonal = null;
             claveRAP = 0;
-            Messages.addGlobalInfo("Informacion Actualizada con Exito!!");
+            Messages.addGlobalInfo("Información Actualizada con Éxito!!");
             pestaniaActiva = 2;
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -305,7 +305,7 @@ public class ControladorEducacion implements Serializable {
             listaModalidades = ejbDatosUsuarioLogeado.mostrarListaCursosModalidad();
             nuevaListaCapacitacionesExternas = ejbEducacion.mostrarCapacitacionespersonalTipo(usuario, "Externa");
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -334,7 +334,7 @@ public class ControladorEducacion implements Serializable {
             } else {
                 ruta = null;
                 file = null;
-                Messages.addGlobalWarn("No fue posible cargar el archivo, Intentelo nuevamente !!");
+                Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !!");
             }
         } else {
             Messages.addGlobalWarn("Es necesario seleccionar un archivo !!");
@@ -352,7 +352,7 @@ public class ControladorEducacion implements Serializable {
                 ruta = null;
             } else {
                 ruta = null;
-                Messages.addGlobalWarn("No fue posible cargar el archivo, Intentelo nuevamente !!");
+                Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !!");
             }
         } else {
             Messages.addGlobalWarn("Es necesario seleccionar un archivo !!");
@@ -372,7 +372,7 @@ public class ControladorEducacion implements Serializable {
                 ruta = null;
             } else {
                 ruta = null;
-                Messages.addGlobalWarn("No fue posible cargar el archivo, Intentelo nuevamente !!");
+                Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !!");
             }
         } else {
             Messages.addGlobalWarn("Es necesario seleccionar un archivo !!");

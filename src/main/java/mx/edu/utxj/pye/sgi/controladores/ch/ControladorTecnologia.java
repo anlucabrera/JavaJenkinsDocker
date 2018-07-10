@@ -74,7 +74,7 @@ public class ControladorTecnologia implements Serializable{
         System.out.println("ControladorTecnologia Fin: " + System.currentTimeMillis());
     }
 
-    //////////////////////////////Desarrollos Tecnologicos///////////////////////////////
+    //////////////////////////////Desarrollos Tecnológicos///////////////////////////////
     public void guardarDesarrolloTec() {
         try {
             nuevoOBJDesarrolloTecnologico.setClavePersonal(new Personal());
@@ -82,7 +82,7 @@ public class ControladorTecnologia implements Serializable{
             nuevoOBJDesarrolloTecnologico.setEstatus("Denegado");
 
             nuevoOBJDesarrolloTecnologico = ejbTecnologia.crearNuevoDesarrollosTecnologicos(nuevoOBJDesarrolloTecnologico);
-            nombreTabla = "Desarrollo Tecnologico";
+            nombreTabla = "Desarrollo Tecnológico";
             numeroRegistro = nuevoOBJDesarrolloTecnologico.getDesarrollo().toString();
             accion = "Insert";
             agregaBitacora();
@@ -91,7 +91,7 @@ public class ControladorTecnologia implements Serializable{
 
             listaConsultas();
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorTecnologia.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -101,7 +101,7 @@ public class ControladorTecnologia implements Serializable{
             if (nuevoOBJDesarrolloTecnologico.getDocumentoRespaldo() != null) {
                 CargaArchivosCH.eliminarArchivo(nuevoOBJDesarrolloTecnologico.getDocumentoRespaldo());
             }
-            nombreTabla = "Desarrollo Tecnologico";
+            nombreTabla = "Desarrollo Tecnológico";
             numeroRegistro = nuevoOBJDesarrolloTecnologico.getDesarrollo().toString();
             accion = "Delate";
             agregaBitacora();
@@ -111,14 +111,14 @@ public class ControladorTecnologia implements Serializable{
             nuevoOBJDesarrolloTecnologico = new DesarrollosTecnologicos();
             listaConsultas();
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorTecnologia.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void updateDesarrolloTecnologico() {
         try {
-            nombreTabla = "Desarrollo Tecnologico";
+            nombreTabla = "Desarrollo Tecnológico";
             numeroRegistro = nuevoOBJDesarrolloTecnologico.getDesarrollo().toString();
             accion = "Update";
             agregaBitacora();
@@ -148,7 +148,7 @@ public class ControladorTecnologia implements Serializable{
             listaConsultas();
             pestaniaActiva = 1;
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorTecnologia.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -165,7 +165,7 @@ public class ControladorTecnologia implements Serializable{
             listaConsultas();
             pestaniaActiva = 1;
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorTecnologia.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -193,7 +193,7 @@ public class ControladorTecnologia implements Serializable{
             nuevoOBJDesarrolloSoftware.setEstatus("Aceptado");
 
             nuevoOBJDesarrolloSoftware = ejbTecnologia.crearNuevoDesarrolloSoftware(nuevoOBJDesarrolloSoftware);
-            nombreTabla = "Derrollo de Software";
+            nombreTabla = "Desarrollo de Software";
             numeroRegistro = nuevoOBJDesarrolloSoftware.getDesarrollo().toString();
             accion = "Insert";
             agregaBitacora();
@@ -202,14 +202,14 @@ public class ControladorTecnologia implements Serializable{
             listaConsultas();
             pestaniaActiva = 2;
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorTecnologia.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void eliminarDesSoft() {
         try {
-            nombreTabla = "Derrollo de Software";
+            nombreTabla = "Desarrollo de Software";
             numeroRegistro = nuevoOBJDesarrolloSoftware.getDesarrollo().toString();
             accion = "Delate";
             agregaBitacora();
@@ -219,14 +219,14 @@ public class ControladorTecnologia implements Serializable{
             listaConsultas();
             pestaniaActiva = 2;
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorTecnologia.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void updateDesarrolloSoftware() {
         try {
-            nombreTabla = "Derrollo de Software";
+            nombreTabla = "Desarrollo de Software";
             numeroRegistro = nuevoOBJDesarrolloSoftware.getDesarrollo().toString();
             accion = "Update";
             agregaBitacora();
@@ -239,14 +239,14 @@ public class ControladorTecnologia implements Serializable{
         }
     }
 
-    /////////////////////////////Consultas de mostrado de informacion
+    /////////////////////////////Consultas de mostrado de información
     public void listaConsultas() {
         try {
             nuevaListaDesarrolloTecnologico = ejbTecnologia.mostrarDesarrollosTecnologicos(usuario);
             nuevaListaDesarrolloSoftware = ejbTecnologia.mostrarDesarrolloSoftware(usuario);
             nuevaListaInnovaciones = ejbTecnologia.mostrarInnovaciones(usuario);
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorTecnologia.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -261,7 +261,7 @@ public class ControladorTecnologia implements Serializable{
                 ruta = null;
             } else {
                 ruta = null;
-                Messages.addGlobalWarn("No fue posible cargar el archivo, Intentelo nuevamente !!");
+                Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !!");
             }
         } else {
             Messages.addGlobalWarn("Es necesario seleccionar un archivo !!");

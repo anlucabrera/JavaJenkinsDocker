@@ -141,7 +141,7 @@ public class ControladorHabilidadesIIL implements Serializable {
             Logger.getLogger(ControladorHabilidadesIIL.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-/////////////////////////////////////////////////////////////////////////////Ideomas\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\    
+/////////////////////////////////////////////////////////////////////////////Idiomas\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\    
 
     public void createIdioma() {
         try {
@@ -217,7 +217,7 @@ public class ControladorHabilidadesIIL implements Serializable {
                 actualizaInformaticas();
             } else {
                 nuevOBJHabilidadesInformaticas = habilidades.crearNuevoHabilidadesInformaticas(nuevOBJHabilidadesInformaticas);
-                nombreTabla = "Habilidades Informaticas";
+                nombreTabla = "Habilidades Informáticas";
                 numeroRegistro = nuevOBJHabilidadesInformaticas.getConocimiento().toString();
                 accion = "Insert";
                 agregaBitacora();
@@ -236,7 +236,7 @@ public class ControladorHabilidadesIIL implements Serializable {
 
     public void eliminaInformaticas() {
         try {
-            nombreTabla = "Habilidades Informaticas";
+            nombreTabla = "Habilidades Informáticas";
             numeroRegistro = nuevOBJHabilidadesInformaticaSelectec.getConocimiento().toString();
             accion = "Delate";
             agregaBitacora();
@@ -254,7 +254,7 @@ public class ControladorHabilidadesIIL implements Serializable {
     public void actualizaInformaticas() {
         try {
             nuevOBJHabilidadesInformaticaSelectec = nuevOBJHabilidadesInformaticas;
-            nombreTabla = "Habilidades Informaticas";
+            nombreTabla = "Habilidades Informáticas";
             numeroRegistro = nuevOBJHabilidadesInformaticaSelectec.getConocimiento().toString();
             accion = "Update";
             agregaBitacora();
@@ -281,7 +281,7 @@ public class ControladorHabilidadesIIL implements Serializable {
                 ruta = null;
             } else {
                 ruta = null;
-                Messages.addGlobalWarn("No fue posible cargar el archivo, Intentelo nuevamente !!");
+                Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !!");
             }
         } else {
             Messages.addGlobalWarn("Es necesario seleccionar un archivo !!");

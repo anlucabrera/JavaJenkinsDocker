@@ -205,7 +205,7 @@ public class ControladorPersonalAltasYBajas implements Serializable {
             obtenerEdad();
             nuevoOBJInformacionAdicionalPersonal.setEstatus("Aceptado");
             nuevoOBJInformacionAdicionalPersonal = ejbCreate.agregarInformacionAdicionalPersonal(nuevoOBJInformacionAdicionalPersonal);
-            nombreTabla = "Informacion Adicional";
+            nombreTabla = "Información Adicional";
             numeroRegistro = nuevoOBJInformacionAdicionalPersonal.getClave().toString();
             accion = "Create";
             agregaBitacora();

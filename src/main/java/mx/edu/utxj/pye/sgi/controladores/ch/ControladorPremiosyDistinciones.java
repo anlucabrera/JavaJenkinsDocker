@@ -93,7 +93,7 @@ public class ControladorPremiosyDistinciones implements Serializable{
                 ruta = null;
             } else {
                 ruta = null;
-                Messages.addGlobalWarn("No fue posible cargar el archivo, Intentelo nuevamente !!");
+                Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !!");
             }
         } else {
             Messages.addGlobalWarn("Es necesario seleccionar un archivo !!");
@@ -105,7 +105,7 @@ public class ControladorPremiosyDistinciones implements Serializable{
         try {
             nuevaListaDistinciones = ejbPremios.mostrarDistinciones(usuario);
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorPremiosyDistinciones.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -124,7 +124,7 @@ public class ControladorPremiosyDistinciones implements Serializable{
             Messages.addGlobalInfo("¡Operación exitosa!!");
             distincionesRegistradas();
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorPremiosyDistinciones.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

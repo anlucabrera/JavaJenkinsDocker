@@ -43,7 +43,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Capacitacionespersonal.findByEmpresaImpartidora", query = "SELECT c FROM Capacitacionespersonal c WHERE c.empresaImpartidora = :empresaImpartidora")
     , @NamedQuery(name = "Capacitacionespersonal.findByEvidenciaCapacitacion", query = "SELECT c FROM Capacitacionespersonal c WHERE c.evidenciaCapacitacion = :evidenciaCapacitacion")
     , @NamedQuery(name = "Capacitacionespersonal.findByEstatus", query = "SELECT c FROM Capacitacionespersonal c WHERE c.estatus = :estatus")
-    , @NamedQuery(name = "Capacitacionespersonal.findByTipoCapacitacion", query = "SELECT c FROM Capacitacionespersonal c WHERE c.tipoCapacitacion = :tipoCapacitacion")})
+    , @NamedQuery(name = "Capacitacionespersonal.findByTipoCapacitacion", query = "SELECT c FROM Capacitacionespersonal c WHERE c.tipoCapacitacion = :tipoCapacitacion")
+    , @NamedQuery(name = "Capacitacionespersonal.findByCategoriaCapacitacion", query = "SELECT c FROM Capacitacionespersonal c WHERE c.categoriaCapacitacion = :categoriaCapacitacion")})
 public class Capacitacionespersonal implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -101,6 +102,11 @@ public class Capacitacionespersonal implements Serializable {
     @Size(max = 8)
     @Column(name = "tipo_capacitacion")
     private String tipoCapacitacion;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 29)
+    @Column(name = "categoria_capacitacion")
+    private String categoriaCapacitacion;
     @JoinColumn(name = "modalidad", referencedColumnName = "modalidad")
     @ManyToOne(optional = false)
     private CursosModalidad modalidad;
@@ -118,7 +124,7 @@ public class Capacitacionespersonal implements Serializable {
         this.cursoClave = cursoClave;
     }
 
-    public Capacitacionespersonal(Integer cursoClave, String nombre, Date fechaInicio, Date fechaFin, short duracionHoras, String empresaImpartidora, String objetivo, String lugar, String estatus) {
+    public Capacitacionespersonal(Integer cursoClave, String nombre, Date fechaInicio, Date fechaFin, short duracionHoras, String empresaImpartidora, String objetivo, String lugar, String estatus, String categoriaCapacitacion) {
         this.cursoClave = cursoClave;
         this.nombre = nombre;
         this.fechaInicio = fechaInicio;
@@ -128,6 +134,7 @@ public class Capacitacionespersonal implements Serializable {
         this.objetivo = objetivo;
         this.lugar = lugar;
         this.estatus = estatus;
+        this.categoriaCapacitacion = categoriaCapacitacion;
     }
 
     public Integer getCursoClave() {
@@ -224,6 +231,14 @@ public class Capacitacionespersonal implements Serializable {
 
     public void setTipoCapacitacion(String tipoCapacitacion) {
         this.tipoCapacitacion = tipoCapacitacion;
+    }
+
+    public String getCategoriaCapacitacion() {
+        return categoriaCapacitacion;
+    }
+
+    public void setCategoriaCapacitacion(String categoriaCapacitacion) {
+        this.categoriaCapacitacion = categoriaCapacitacion;
     }
 
     public CursosModalidad getModalidad() {

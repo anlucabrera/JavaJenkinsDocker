@@ -133,7 +133,7 @@
                                         <p:dataTable id="tblColaboradores" value="#{planeacionCuatrimestral.planeaciones}" var="planeacion" rowKey="#{planeacion.planeacion}" widgetVar="tblColaboradores"
                                                      rows="5" paginator="true" rowsPerPageTemplate="5,10,15,20" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
                                                      tableStyleClass="table-condensed table-bordered table-hover table-responsive">
-                                             <f:facet name="header">
+                                            <f:facet name="header">
                                                 Lista de colaboradores
                                                 <hr/>
                                                 <p:outputLabel value="Validado por el Jefe de personal" style="font-weight: bold; background: #009688"/> 
@@ -239,14 +239,14 @@
                                                     <f:setPropertyActionListener target="#{planeacionCuatrimestral.editando}" value="#{planeacion}" />
                                                 </p:commandButton>
                                             </p:column>
-                                            
+
                                             <p:column style="#{planeacion.validacionSistema eq true ?
                                                                planeacion.validacionDirector eq true ?
                                                                planeacion.validacionSecretarioAdemico eq true ?
                                                                planeacion.validacionJefePersonal eq true ?'background: #009688':'background: #FEF200':'background: #f0ad4e'
                                                                :'background: #EF5350':''}">
                                             </p:column>
-                                            
+
                                         </p:dataTable>
                                     </div>
                                 </div>

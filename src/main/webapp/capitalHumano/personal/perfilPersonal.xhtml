@@ -303,7 +303,7 @@
                                                                                 <p:column style="width: 25%" headerText="Institución" >
                                                                                     <h:outputText value="#{formaAL.institucion}" />
                                                                                 </p:column>
-                                                                                <p:column style="width: 25%" headerText="Modo titulacion" >
+                                                                                <p:column style="width: 25%" headerText="Modo titulación" >
                                                                                     <h:outputText value="#{formaAL.modoTitulacion}" />
                                                                                 </p:column>
                                                                                 <p:column style="width: 15%" headerText="No. cédula profesional" >
@@ -484,7 +484,7 @@
                                                                                     <h4 style="font-weight: bold">Innovaciones</h4>
                                                                                 </f:facet>
 
-                                                                                <p:column headerText="Tipo de innovacion">
+                                                                                <p:column headerText="Tipo de innovación">
                                                                                     <h:outputText value="#{ino.tipoInnovacion}"/>
                                                                                 </p:column>
                                                                                 <p:column headerText="Cobertura">
@@ -582,7 +582,7 @@
                                                                                     <h4 style="font-weight: bold"> Artículos Publicados</h4>
                                                                                 </f:facet>
 
-                                                                                <p:column style="width: 15%" headerText="ISBN electrónio">
+                                                                                <p:column style="width: 15%" headerText="ISBN electrónico">
                                                                                     <h:outputText value="#{articulo.issnElectronico}"/>
                                                                                 </p:column>
                                                                                 <p:column style="width: 35%" headerText="Nombre">
@@ -726,7 +726,7 @@
                                             </p:outputPanel>    
                                         </h:form>
                                     </p:tab-->
-                                    <p:tab title="Configuracion">
+                                    <p:tab title="Configuración">
                                         <h:form id="datosPer">
                                             <p:outputPanel >
                                                 <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
@@ -1008,14 +1008,14 @@
                                                                             </p:dialog>
                                                                         </h:form>
                                                                     </p:tab>
-                                                                    <p:tab title="Actualización profecional" titletip="#{controladorPersonal.tv3} registros nuevos" titleStyle="#{controladorPersonal.tv3 eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaCapacitacionespersonal.size() eq 0 ?false:true}">
+                                                                    <p:tab title="Actualización profesional" titletip="#{controladorPersonal.tv3} registros nuevos" titleStyle="#{controladorPersonal.tv3 eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaCapacitacionespersonal.size() eq 0 ?false:true}">
                                                                         <h:form id="frmAcP"> 
                                                                             <p:dataTable id="acp" var="aP" value="#{controladorPersonal.listaCapacitacionespersonal}" editable="true" style="margin-bottom:20px" rowStyleClass="#{aP.estatus eq 'Denegado' ?'denegado':'aceptado'}"
                                                                                          paginator="true" rows="5"
                                                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                                                          rowsPerPageTemplate="5,10,15,20,25,30">
                                                                                 <f:facet name="header">
-                                                                                    Actualización profecional
+                                                                                    Actualización profesional
                                                                                 </f:facet>
 
                                                                                 <p:ajax event="rowEdit" listener="#{controladorPersonal.onRowEdit}" update="@this" />
@@ -1511,7 +1511,7 @@
                                             </div>
                                         </div>
                                     </p:tab>
-                                    <p:tab title="Datos Perosnales">
+                                    <p:tab title="Datos Personales">
                                         <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                             <div class="col-md-12">
                                                 <div class="box box-widget widget-user-2">
@@ -1523,7 +1523,7 @@
                                                                         <p:panelGrid columns="2">
                                                                             <p:outputLabel value="Lugar de procedencia" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
                                                                             <p:outputLabel value="#{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.lugarProcedencia}" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
-                                                                            <p:outputLabel value="Direccion" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
+                                                                            <p:outputLabel value="Dirección" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
                                                                             <p:outputLabel value="#{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.direccion}" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
                                                                             <p:outputLabel value="Edad" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
                                                                             <p:outputLabel value="#{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.edad} años" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
@@ -1531,9 +1531,9 @@
                                                                             <p:outputLabel value="#{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.curp}" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
                                                                             <p:outputLabel value="RFC" style="height:100%; width: 100%; object-fit: contain; font-size: large; text-transform: uppercase" />
                                                                             <p:outputLabel value="#{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.rfc}" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
-                                                                            <p:outputLabel value="Telefono movil" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
+                                                                            <p:outputLabel value="Teléfono móvil" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
                                                                             <p:outputLabel value="#{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.numTelMovil}" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
-                                                                            <p:outputLabel value="Telefono fijo" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
+                                                                            <p:outputLabel value="Teléfono fijo" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
                                                                             <p:outputLabel value="#{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.numTelFijo}" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
                                                                             <p:outputLabel value="Estado civil" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
                                                                             <p:outputLabel value="#{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.estadoCivil}" style="height:100%; width: 100%; object-fit: contain; font-size: large" />

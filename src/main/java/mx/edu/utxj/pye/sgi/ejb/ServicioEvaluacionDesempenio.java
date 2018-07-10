@@ -17,6 +17,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluacionResultadosPK;
 import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonalDesempenioEvaluacion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
 /**
@@ -357,5 +358,29 @@ public class ServicioEvaluacionDesempenio implements EjbEvaluacionDesempenio {
 
 //        return q.getResultList();
         return q.getResultList();
+    }
+
+    @Override
+    public DesempenioEvaluaciones getUltimaEvaluacionDesempenio() {
+        TypedQuery<DesempenioEvaluaciones> q = f.getEntityManager().createQuery("SELECT e FROM DesempenioEvaluaciones e ORDER BY e.evaluacion DESC", DesempenioEvaluaciones.class);
+        List<DesempenioEvaluaciones> l = q.getResultList();
+        if(l==null || l.isEmpty()){
+            return null;
+        }else{
+            return  l.get(0);
+        }
+    }
+
+    @Override
+    public PeriodosEscolares getPeriodoDeLaEvaluacionDesempenio(Integer periodo) {
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDesempenio.getPeriodoDeLaEvaluacion() el periodo es = " +periodo);
+        TypedQuery<PeriodosEscolares> q = f.getEntityManager().createQuery("SELECT p FROM PeriodosEscolares p WHERE p.periodo = :periodo", PeriodosEscolares.class);
+        q.setParameter("periodo", periodo);
+        List<PeriodosEscolares> l = q.getResultList();
+        if( l== null || l.isEmpty()){
+            return null;
+        }else{
+            return l.get(0);
+        }
     }
 }

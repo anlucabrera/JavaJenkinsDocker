@@ -4,27 +4,22 @@
         <jta-data-source>java:app/jdbc/capital_humano</jta-data-source>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <properties>            
-            <!--            <property name="eclipselink.logging.level" value="FINE"/>
-            <property name="eclipselink.logging.level.sql" value="FINE"/>
-            <property name="eclipselink.logging.parameters" value="true"/>-->
-            <property name="eclipselink.weaving.changetracking" value="true"/>
-            <property name="eclipselink.weaving.lazy" value="true"/>
-            <property name="eclipselink.weaving.eager" value="true"/>
-            <property name="eclipselink.weaving.fetchgroups" value="true"/>
-            <property name="eclipselink.weaving.internal" value="false"/>
         </properties>
     </persistence-unit>
     <persistence-unit name="mx.edu.utxj.pye_sgi-ejb-saiiut_ejb_1.0PU" transaction-type="JTA">
         <jta-data-source>java:app/jdbc/saiiut</jta-data-source>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <properties>            
-            <!--            <property name="eclipselink.logging.level" value="FINE"/>
-            <property name="eclipselink.logging.level.sql" value="FINE"/>
-            <property name="eclipselink.logging.parameters" value="true"/>-->
         </properties>
     </persistence-unit>
-    <persistence-unit name="mx.edu.utxj.pye_sgi-ejb-poa_ejb_1.0PU" transaction-type="JTA">
-        <jta-data-source>java:app/poa</jta-data-source>
+    <persistence-unit name="mx.edu.utxj.pye_sgi-ejb-pye2_ejb_1.0PU" transaction-type="JTA">
+        <jta-data-source>java:app/jdbc/pye2</jta-data-source>
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
+        <properties>
+        </properties>
+    </persistence-unit>
+    <persistence-unit name="mx.edu.utxj.pye_sgi-ejb-pro_ejb_1.0PU" transaction-type="JTA">
+        <jta-data-source>java:app/jdbc/prontuario</jta-data-source>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <properties>
         </properties>

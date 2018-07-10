@@ -53,21 +53,15 @@ public class ServicioCarga implements EjbCarga {
             Matcher m = p.matcher(nombreArchivo);
             StringBuffer sb = new StringBuffer();
             valida = m.find();
-
 //            System.out.println("mx.edu.utxj.pye.sgi.ch.servicio.ServicioCarga.subir()" + caracteresEspeciales);
-
             while (valida) {
                 m.appendReplacement(sb, "");
                 valida = m.find();
 //                System.out.println("mx.edu.utxj.pye.sgi.ch.servicio.ServicioCarga.subir() nombreArchivo " + nombreArchivo);
             }
-
             m.appendTail(sb);
             nombreArchivo = sb.toString();
-
 //            System.out.println("mx.edu.utxj.pye.sgi.ch.servicio.ServicioCarga.subir() nombreArchivoFinal " + nombreArchivo);
-
-            
                 for (int i = 1; i <= 10; i++) {
                     int numero = (int) Math.round(Math.random() * 35);
 //                    System.out.println("mx.edu.utxj.pye.sgi.ch.servicio.ServicioCarga.subir() numero: " + numero);

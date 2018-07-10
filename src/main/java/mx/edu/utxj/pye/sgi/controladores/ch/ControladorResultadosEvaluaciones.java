@@ -117,7 +117,7 @@ public class ControladorResultadosEvaluaciones implements Serializable {
                 }
             }
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorResultadosEvaluaciones.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

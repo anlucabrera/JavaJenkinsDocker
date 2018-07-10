@@ -52,7 +52,7 @@
                             <h:panelGrid columns="12" style="margin-bottom:10px" cellpadding="5"  rendered="#{administrativoEvaluacion.utilAdmin.secretariaAc}">
                                 <h:outputText value="Selección de evaluaciones " />
                                 <f:ajax execute="sobSecretariaAc">
-                                    <p:selectOneButton value="#{administrativoEvaluacion.utilAdmin.evaluacionSeleccionada}" id="sobSecretariaAc" required="true">
+                                    <p:selectOneButton style="margin-top: 4px; margin-bottom: -3px;" value="#{administrativoEvaluacion.utilAdmin.evaluacionSeleccionada}" id="sobSecretariaAc" required="true">
                                         <f:selectItems value="#{administrativoEvaluacion.utilAdmin.selectItemEvaluacionesPersonalSA}" var="selectDirectivo" 
                                                        itemValue="#{selectDirectivo.value}" itemLabel="#{selectDirectivo.label}" itemDescription="#{selectDirectivo.description}" />
                                         <p:ajax  listener="#{administrativoEvaluacion.utilAdmin.obtenerPeriodosPorEvaluacion()}" process="sobSecretariaAc" />
@@ -116,7 +116,7 @@
                                 <h:outputText value="Selección de evaluaciones " />
                                 <p:spacer width="10"/>
                                 <f:ajax execute="sobPersonal">
-                                    <p:selectOneButton value="#{administrativoEvaluacion.utilAdmin.evaluacionSeleccionada}" id="sobPersonal" required="true">
+                                    <p:selectOneButton value="#{administrativoEvaluacion.utilAdmin.evaluacionSeleccionada}" id="sobPersonal" required="true" style="margin-top: 4px; margin-bottom: -3px;">
                                         <f:selectItems value="#{administrativoEvaluacion.utilAdmin.selectItemEvaluacionesPersonal}" var="selectDirectorCarrera" 
                                                        itemValue="#{selectDirectorCarrera.value}" itemLabel="#{selectDirectorCarrera.label}" itemDescription="#{selectDirectorCarrera.description}"  />
                                         <p:ajax  listener="#{administrativoEvaluacion.utilAdmin.obtenerPeriodosPorEvaluacion()}" process="sobPersonal" />

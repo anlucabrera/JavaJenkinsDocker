@@ -454,7 +454,7 @@ public class OrganigramView4 implements Serializable {
                 }
             }
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(OrganigramView4.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -567,7 +567,7 @@ public class OrganigramView4 implements Serializable {
                 }
             }
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(OrganigramView4.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -582,7 +582,7 @@ public class OrganigramView4 implements Serializable {
             buscaSubordinados();
             buscaFunciones();
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(OrganigramView4.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -602,7 +602,7 @@ public class OrganigramView4 implements Serializable {
             categoria = nuevoEmpleado.getCategoriaOperativa();
             buscaFunciones();
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(OrganigramView4.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -630,7 +630,7 @@ public class OrganigramView4 implements Serializable {
             }
             listaDFunciones.clear();
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(OrganigramView4.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -668,7 +668,7 @@ public class OrganigramView4 implements Serializable {
                 }
             }
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(OrganigramView4.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

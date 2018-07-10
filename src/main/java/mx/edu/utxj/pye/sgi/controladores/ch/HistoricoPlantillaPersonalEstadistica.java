@@ -69,7 +69,7 @@ public class HistoricoPlantillaPersonalEstadistica implements Serializable {
 
     public void generarPlantillaPersoanl() {
         // Creamos el archivo donde almacenaremos la hoja
-        // de calculo, recuerde usar la extension correcta,
+        // de calculo, recuerde usar la extensión correcta,
         // en este caso .xlsx
         File archivo = new File("PlantillaPersonal" + dateFormat2.format(actual) + ".xlsx");
 
@@ -88,17 +88,17 @@ public class HistoricoPlantillaPersonalEstadistica implements Serializable {
 
         String[] titulos = {"Clave del trabajador", "Nombre", "Fecha Ingreso", "Estatus", "Género", "Área Superior de Directivos", "Área Operativa", "Puesto Operativo", "Actividad", "Área Oficial", "Puesto Oficial", "Grado máximo estudios", "Perfil Profesional ", " Experiencia docente", "Experiencia laboral", "Fecha Nacimiento", "Localidad ", "Municipio", "Estado", "País", "S N I", "Perfil PRODEP", "Correo Electrónico", "Correo Electrónico 2",};
 
-        // Creamos una fila en la hoja en la posicion 0
+        // Creamos una fila en la hoja en la posición 0
         Row fila = pagina.createRow(0);
 
         // Creamos el encabezado
         for (int i = 0; i < titulos.length; i++) {
-            // Creamos una celda en esa fila, en la posicion 
+            // Creamos una celda en esa fila, en la posición 
             // indicada por el contador del ciclo
             Cell celda = fila.createCell(i);
 
             // Indicamos el estilo que deseamos 
-            // usar en la celda, en este caso el unico 
+            // usar en la celda, en este caso el único 
             // que hemos creado
             celda.setCellStyle(style);
             celda.setCellValue(titulos[i]);
@@ -142,13 +142,13 @@ public class HistoricoPlantillaPersonalEstadistica implements Serializable {
                 nuevoOBJListaListaPersonal.getCorreoElectronico(),
                 nuevoOBJListaListaPersonal.getCorreoElectronico2(),};
 
-            // Ahora creamos una fila en la posicion 1
+            // Ahora creamos una fila en la posición 1
             fila = pagina.createRow(i + 1);
 
             // Y colocamos los datos en esa fila
             for (int j = 0; j < datos.length; j++) {
                 // Creamos una celda en esa fila, en la
-                // posicion indicada por el contador del ciclo
+                // posición indicada por el contador del ciclo
                 Cell celda = fila.createCell(j);
 
                 celda.setCellValue(datos[j]);
@@ -166,7 +166,7 @@ public class HistoricoPlantillaPersonalEstadistica implements Serializable {
             FileOutputStream salida = new FileOutputStream("C:\\archivos\\evidenciasCapitalHumano\\PlantillaPersonal\\" + archivo);
 
             // Almacenamos el libro de 
-            // Excel via ese 
+            // Excel vía ese 
             // flujo de datos
             for (int i = 0; i <= 23; i++) {
                 pagina.autoSizeColumn((short) i);
@@ -178,7 +178,7 @@ public class HistoricoPlantillaPersonalEstadistica implements Serializable {
             // Cerramos el libro para concluir operaciones
             workbook.close();
 
-            LOGGER.log(Level.INFO, "Archivo creado existosamente en {0}", archivo.getAbsolutePath());
+            LOGGER.log(Level.INFO, "Archivo creado exitosamente en {0}", archivo.getAbsolutePath());
             System.out.println("mx.edu.utxj.pye.sgi.ch.controladores.HistoricoPlantillaPersonalEstadistica.generarPlantillaPersoanl(archivo.getAbsolutePath())"+archivo.getAbsolutePath());
             direccionDescarga = convertirRuta(archivo);
         } catch (FileNotFoundException ex) {

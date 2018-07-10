@@ -173,7 +173,7 @@ public class DatosPersonales implements Serializable {
             } else {
                 ruta = null;
                 file = null;
-                Messages.addGlobalWarn("No fue posible cargar el archivo, Intentelo nuevamente !!");
+                Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !!");
             }
         } else {
             Messages.addGlobalWarn("Es necesario seleccionar un archivo !!");

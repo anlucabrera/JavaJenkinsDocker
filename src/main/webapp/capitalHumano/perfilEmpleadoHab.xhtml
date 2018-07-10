@@ -235,12 +235,12 @@
                                                                                         <p:autoUpdate/>
                                                                                         <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia #{controladorHabilidadesIIL.nuevOBJIdiomas.evidenciaDoc eq null?'':'(ya cuenta con el archivo cargado)'}" />
                                                                                     </p:outputPanel>
-                                                                                        <o:inputFile id="file" value="#{controladorHabilidadesIIL.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
-                                                                                        <br/>
-                                                                                        <h:message id="messageForFile" for="file" />
-                                                                                        <br/>
-                                                                                        <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorHabilidadesIIL.subirEvidenciaIdioma}" />
-                                                                                                                                                                </div>
+                                                                                    <o:inputFile id="file" value="#{controladorHabilidadesIIL.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                                    <br/>
+                                                                                    <h:message id="messageForFile" for="file" />
+                                                                                    <br/>
+                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorHabilidadesIIL.subirEvidenciaIdioma}" />
+                                                                                </div>
                                                                             </div>
                                                                         </div>
                                                                         <hr/>
@@ -251,7 +251,7 @@
                                                                                 <div class="form-group">
                                                                                     <div class="col-sm-12 col-md-4 col-lg-4"/>
                                                                                     <div class="col-sm-12 col-md-4 col-lg-4">
-                                                                                        <p:commandButton id="btnBuscarActiuvidades" disabled="#{controladorHabilidadesIIL.direccionInt.toString() eq '0' ?true:false}"  
+                                                                                        <p:commandButton id="btnBuscarActiuvidades" 
                                                                                                          value="Actualizar información" actionListener="#{controladorHabilidadesIIL.createIdioma()}" 
                                                                                                          icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('registro')update();" onsuccess="PF('frmIdiom')update();"
                                                                                                          update="@form" process="@form" />   
@@ -277,7 +277,7 @@
 
                                                                 <div class="info-box-content">
                                                                     <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                                                    <span class="info-box-number">La fecha límite para la actualización de curriculum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -445,7 +445,7 @@
 
                                                                 <div class="info-box-content">
                                                                     <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                                                    <span class="info-box-number">La fecha límite para la actualización de curriculum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -627,7 +627,7 @@
 
                                                                 <div class="info-box-content">
                                                                     <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                                                    <span class="info-box-number">La fecha límite para la actualización de curriculum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
                                                                 </div>
                                                             </div>
                                                         </div>

@@ -153,7 +153,7 @@
                                                                                 <p:outputPanel>            
                                                                                     <p:autoUpdate/>
                                                                                     <div class="col-sm-12 col-md-6 col-lg-6">                                                                                
-                                                                                        <p:outputLabel for="traduccion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Cuenta con traduccion" />
+                                                                                        <p:outputLabel for="traduccion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Cuenta con traducción" />
                                                                                         <p:selectOneMenu id="traduccion" style="height:100%; width: 100%; object-fit: contain; font-size: large" filter="true" filterMatchMode="contains" value="#{controladorProduccionPersonal.traduccion}" >
                                                                                             <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                             <f:selectItem itemValue="0" itemLabel="No"/>
@@ -308,7 +308,7 @@
 
                                                                 <div class="info-box-content">
                                                                     <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                                                    <span class="info-box-number">La fecha límite para la actualización de curriculum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -535,7 +535,7 @@
 
                                                                 <div class="info-box-content">
                                                                     <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                                                    <span class="info-box-number">La fecha límite para la actualización de curriculum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -744,7 +744,7 @@
 
                                                                 <div class="info-box-content">
                                                                     <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                                                    <span class="info-box-number">La fecha límite para la actualización de curriculum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -835,7 +835,7 @@
                                                                             <h4>Incluye movilidad y estancia</h4>
                                                                             <div class="form-group">                                                                                
                                                                                 <div class="col-sm-12 col-md-12 col-lg-6"> 
-                                                                                    <p:outputLabel for="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Título de la investigacion" />
+                                                                                    <p:outputLabel for="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Título de la investigación" />
                                                                                     <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Titulo de la investigacion" value="#{controladorProduccionPersonal.nombre}"/>
                                                                                     <p:message for="nombre" display="tooltip" />
                                                                                     <hr/>
@@ -869,7 +869,7 @@
                                                                                     <hr/>
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-6 col-lg-6"> 
-                                                                                    <p:outputLabel for="fechaFin" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de fin, vacio si esta en proceso" />
+                                                                                    <p:outputLabel for="fechaFin" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de fin, vació si esta en proceso" />
                                                                                     <p:calendar navigator="true" title="En caso de estar en proceso dejar vacío el campo" locale="es" id="fechaFin" value="#{controladorProduccionPersonal.fechaF}" pattern="dd-MM-yyyy" mask="true" />
                                                                                     <p:message for="fechaFin" display="tooltip" />
                                                                                     <hr/>
@@ -921,7 +921,7 @@
                                                                  selectionMode="single" selection="#{controladorProduccionPersonal.nuevOBJInvestigacionesSelectec}" rowKey="#{proyIn.proyecto}">
 
                                                         <f:facet name="header">
-                                                            Proyectos de investigacion
+                                                            Proyectos de investigación
                                                             <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
                                                             <p:spacer width="15px"/>
                                                             <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
@@ -930,14 +930,14 @@
                                                             <p:ajax event="rowSelect"   update="delate"/>
                                                             <p:ajax event="rowUnselect" update="delate"/>
                                                         </c:if>
-                                                        <p:column headerText="Título de investigacion" 
+                                                        <p:column headerText="Título de investigación" 
                                                                   sortBy="#{proyIn.nombreInvestigacion}" 
                                                                   filterBy="#{proyIn.nombreInvestigacion}" 
                                                                   filterMatchMode="contains">
                                                             <h:outputText value="#{proyIn.nombreInvestigacion}" />
                                                         </p:column>
 
-                                                        <p:column headerText="Institucion" 
+                                                        <p:column headerText="Institución" 
                                                                   sortBy="#{proyIn.institucion}" 
                                                                   filterBy="#{proyIn.institucion}" 
                                                                   filterMatchMode="contains">
@@ -970,7 +970,7 @@
                                                                  selectionMode="single" selection="#{controladorProduccionPersonal.nuevOBJInvestigacionesSelectec}" rowKey="#{trabIn.trabajo}">
 
                                                         <f:facet name="header">
-                                                            Trabajo de investigacion
+                                                            Trabajo de investigación
                                                             <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
                                                             <p:spacer width="15px"/>
                                                             <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
@@ -979,14 +979,14 @@
                                                             <p:ajax event="rowSelect"   update="delate"/>
                                                             <p:ajax event="rowUnselect" update="delate"/>
                                                         </c:if>
-                                                        <p:column headerText="Título de investigacion" 
+                                                        <p:column headerText="Título de investigación" 
                                                                   sortBy="#{trabIn.nombreInvestigacion}" 
                                                                   filterBy="#{trabIn.nombreInvestigacion}" 
                                                                   filterMatchMode="contains">
                                                             <h:outputText value="#{trabIn.nombreInvestigacion}" />
                                                         </p:column>
 
-                                                        <p:column headerText="Institucion" 
+                                                        <p:column headerText="Institución" 
                                                                   sortBy="#{trabIn.institucion}" 
                                                                   filterBy="#{trabIn.institucion}" 
                                                                   filterMatchMode="contains">
@@ -1114,7 +1114,7 @@
 
                                                                 <div class="info-box-content">
                                                                     <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                                                    <span class="info-box-number">La fecha límite para la actualización de curriculum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
                                                                 </div>
                                                             </div>
                                                         </div>

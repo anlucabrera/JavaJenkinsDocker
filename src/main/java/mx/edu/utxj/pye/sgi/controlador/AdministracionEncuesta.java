@@ -93,31 +93,31 @@ public class AdministracionEncuesta implements Serializable{
         
         Long inicio=System.currentTimeMillis();
         System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuesta.init()"+ inicio);
-        try {
-            if (logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
-                claveTrabajador = Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
-                cveMaestro = logonMB.getListaUsuarioClaveNomina().getCvePersona();
-                cveDirector = cveMaestro.toString();
-                if (!ejbAdmEncuesta.esDirectorDeCarrera(28, 2, 18, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
-                    director = true;
-                    initSeguimientoEncuestasDirector();
-                    datosTablaAvance();
-                }
-                if (claveTrabajador != null && claveTrabajador.equals(148) || claveTrabajador.equals(240) || claveTrabajador.equals(28) ) {
-                    //|| claveTrabajador.equals(579) esta parte va dentro del if de arriba
-                    esDeInformacionYEst = true;
-                    initSeguimientoEncuetasEstadistica();
-                    datosTablaAvance();
-                }
-            }
-            datosTablaAvance();
-//            contarAlumnosPorCarDeEncSer();
-//            contarAlumnosPorCarrera();
-        } catch (Throwable ex) {
-            director = false;
-            esDeInformacionYEst = false;
-            Logger.getLogger(AdministracionEncuesta.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            if (logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+//                claveTrabajador = Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
+//                cveMaestro = logonMB.getListaUsuarioClaveNomina().getCvePersona();
+//                cveDirector = cveMaestro.toString();
+//                if (!ejbAdmEncuesta.esDirectorDeCarrera(28, 2, 18, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
+//                    director = true;
+//                    initSeguimientoEncuestasDirector();
+//                    datosTablaAvance();
+//                }
+//                if (claveTrabajador != null && claveTrabajador.equals(148) || claveTrabajador.equals(240) || claveTrabajador.equals(28) ) {
+//                    //|| claveTrabajador.equals(579) esta parte va dentro del if de arriba
+//                    esDeInformacionYEst = true;
+//                    initSeguimientoEncuetasEstadistica();
+//                    datosTablaAvance();
+//                }
+//            }
+//            datosTablaAvance();
+////            contarAlumnosPorCarDeEncSer();
+////            contarAlumnosPorCarrera();
+//        } catch (Throwable ex) {
+//            director = false;
+//            esDeInformacionYEst = false;
+//            Logger.getLogger(AdministracionEncuesta.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         Long fin=System.currentTimeMillis();
         System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuesta.init()"+ fin);
         

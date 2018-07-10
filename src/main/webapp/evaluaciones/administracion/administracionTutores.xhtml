@@ -41,7 +41,7 @@
                         <p:outputLabel value="Administracion de Evaluaciones" />                            
                     </f:facet>
                     <f:facet name="right">
-                        <p:selectOneButton value="#{administrativoEvaluacion.tipoEvaluacion}" id="sobEncuestaTipo" >
+                        <p:selectOneButton style="margin-top: 4px; margin-bottom: -3px;" value="#{administrativoEvaluacion.tipoEvaluacion}" id="sobEncuestaTipo" >
                             <f:selectItem itemLabel="Evaluacion al docente" itemDescription="Seleccione si desea visualizar el abance de los alumnos en sus evaluaciones al docente" itemValue="1"/>
                             <f:selectItem itemLabel="Evaluacion al tutor" itemDescription="Seleccione si desea visualizar el abance de los alumnos en sus evaluaciones al tutor" itemValue="2"/>
                             <p:ajax   process="sobEncuestaTipo" />

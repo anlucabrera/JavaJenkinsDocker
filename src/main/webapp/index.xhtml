@@ -14,9 +14,11 @@
         <ui:param name="renderBreadCrumb" value="false"/>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css"/>
         <!-- Inicio estilos par proceso electoral -->
-
-        <link rel="stylesheet" type="text/css" href="resources/css/procesoElectoral.css" media="screen" />
-
+        <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
+            <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+                <link rel="stylesheet" type="text/css" href="resources/css/procesoElectoral.css" media="screen" />
+            </c:if>
+        </c:if>
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
@@ -29,6 +31,30 @@
     <ui:define name="body">
         <c:set var="claseResumen" value="#{'col-lg-4 col-md-6 col-sm-12'}" />
         <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
+            <c:if test="#{evaluacionDesempenioAdmin.directivoSeleccionado.actividad eq 2 || evaluacionDesempenioAdmin.directivoSeleccionado.actividad eq 4 }">
+                <div class="box box-primary">
+                    <div class="box box-solid">
+                        <div class="box-header with-border" title="Solo se realiza la descarga de las cedulas de la ultima evaluación">
+                            <span class="info-box-icon bg-aqua" ><i class="fa fa-exclamation"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-number">NOTA</span>
+                                <span class="info-box-number">Usted ya puede descargar sus cedulas de desempeño laboral en el apartado:
+                                    <h:form>
+                                        <c:if test="#{!utilidadesAdministracionEvaluaciones.directorDeCarrera}">
+                                            <p> Admin Evaluaciones  <i class="fa fa-arrow-circle-right " />Resultados subordinados  <i class="fa fa-arrow-circle-right " /> hacer click  <i class="fa fa-hand-pointer-o " /> en boton desempelo y en el boton <i class="fa fa-arrow-circle-right " />  
+                                                <p:spacer width="15"/><p:commandButton value="Descargar Cedulas Desempeño" disabled="true" icon="fa fa-sign-in" styleClass="btn-primary" /> </p>
+                                        </c:if>
+                                        <c:if test="#{utilidadesAdministracionEvaluaciones.directorDeCarrera }">
+                                            <p> Admin Evaluaciones <i class="fa fa-arrow-circle-right " /> Administración evaluaciones  <i class="fa fa-arrow-circle-right " />  hacer click <i class="fa fa-hand-pointer-o " /> en boton desempelo y en el boton <i class="fa fa-arrow-circle-right " /> 
+                                                <p:spacer width="15"/> <p:commandButton value="Descargar Cedulas Desempeño" disabled="true" icon="fa fa-sign-in" styleClass="btn-primary" /> </p>
+                                        </c:if> 
+                                    </h:form>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </c:if>
             <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                 <div class="box box-primary">
                     <div class="box box-solid">
@@ -49,7 +75,7 @@
                                             <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
                                             <span class="info-box-number">Se recomienda que los archivos a subir sean escaneados de 400 o 400*400 DPI o PPP (según sea la configuración del escáner) en formato PDF.
                                                 <p>El nombre del archivo no deberá contener acentos ni caracteres especiales</p>
-                                            </span>
+                                            </span> 
                                         </div>
                                     </div>
                                 </div>

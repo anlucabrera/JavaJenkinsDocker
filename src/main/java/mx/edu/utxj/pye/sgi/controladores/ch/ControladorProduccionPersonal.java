@@ -148,7 +148,7 @@ public class ControladorProduccionPersonal implements Serializable {
             nuevOBJArticulosp.getClavePersonal().setClave(personal);
 
             nuevOBJArticulosp = ejbProduccionProfecional.crearNuevoArticulosp(nuevOBJArticulosp);
-            nombreTabla = "Articulos Publicados";
+            nombreTabla = "Artículos Publicados";
             numeroRegistro = nuevOBJArticulosp.getArticuloId().toString();
             accion = "Insert";
             agregaBitacora();
@@ -169,7 +169,7 @@ public class ControladorProduccionPersonal implements Serializable {
             if (selcNuevOBJArticulosp.getEvidencia() != null) {
                 CargaArchivosCH.eliminarArchivo(selcNuevOBJArticulosp.getEvidencia());
             }
-            nombreTabla = "Articulos Publicados";
+            nombreTabla = "Artículos Publicados";
             numeroRegistro = selcNuevOBJArticulosp.getArticuloId().toString();
             accion = "Delate";
             agregaBitacora();
@@ -320,7 +320,7 @@ public class ControladorProduccionPersonal implements Serializable {
                 ruta = null;
             } else {
                 ruta = null;
-                Messages.addGlobalWarn("No fue posible cargar el archivo, Intentelo nuevamente !!");
+                Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !!");
             }
         } else {
             Messages.addGlobalWarn("Es necesario seleccionar un archivo !!");
@@ -338,7 +338,7 @@ public class ControladorProduccionPersonal implements Serializable {
                 pestaniaActiva = 2;
             } else {
                 ruta = null;
-                Messages.addGlobalWarn("No fue posible cargar el archivo, Intentelo nuevamente !!");
+                Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !!");
             }
         } else {
             Messages.addGlobalWarn("Es necesario seleccionar un archivo !!");
@@ -356,7 +356,7 @@ public class ControladorProduccionPersonal implements Serializable {
                 pestaniaActiva = 3;
             } else {
                 ruta = null;
-                Messages.addGlobalWarn("No fue posible cargar el archivo, Intentelo nuevamente !!");
+                Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !!");
             }
         } else {
             Messages.addGlobalWarn("Es necesario seleccionar un archivo !!");

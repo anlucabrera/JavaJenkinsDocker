@@ -242,7 +242,7 @@
 
                                                                 <div class="info-box-content">
                                                                     <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                                                    <span class="info-box-number">La fecha límite para la actualización de curriculum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -432,7 +432,7 @@
 
                                                                 <div class="info-box-content">
                                                                     <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                                                    <span class="info-box-number">La fecha límite para la actualización de curriculum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -474,7 +474,7 @@
                                                     <h:outputText value="#{empleos.funcionesDesempenio}" />
                                                 </p:column>     
 
-                                                <p:column headerText="Institucion o empresa" 
+                                                <p:column headerText="Institución o empresa" 
                                                           sortBy="#{empleos.institucionEmpresa}" 
                                                           filterBy="#{empleos.institucionEmpresa}" 
                                                           filterMatchMode="contains"
@@ -525,7 +525,7 @@
                                                                             <h2>Revisar las actualizaciones profesionales que ya han sido precargadas, y agregar las faltantes.</h2>
                                                                             <hr/>
                                                                             <div class="form-group">
-                                                                                <div class="col-sm-12 col-md-6 col-lg-4">
+                                                                                <div class="col-sm-12 col-md-6 col-lg-3">
                                                                                     <p:outputLabel for="tipoCurso" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo de capacitación  tomada" />
                                                                                     <p:selectOneMenu id="tipoCurso" style="height:100%; width: 100%; object-fit: contain; font-size: large" onchange="mostrarCaja(this.value);" value="#{controladorEducacion.tipoCur}" >
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
@@ -534,7 +534,7 @@
                                                                                     <p:message for="tipoCurso" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-4">
+                                                                                <div class="col-sm-12 col-md-6 col-lg-3">
                                                                                     <p:outputLabel for="modalidad" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Modalidad del curso tomado" />
                                                                                     <p:selectOneMenu id="modalidad" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorEducacion.modalida}" >
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
@@ -543,14 +543,25 @@
                                                                                     <p:message for="modalidad" display="tooltip" />
                                                                                     <hr/>  
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-4">
-                                                                                    <p:outputLabel for="tipoAP" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo de actualizacion" />
+                                                                                <div class="col-sm-12 col-md-6 col-lg-3">
+                                                                                    <p:outputLabel for="tipoAP" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo de actualización" />
                                                                                     <p:selectOneMenu id="tipoAP" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorEducacion.nuevoOBJCapacitacionespersonal.tipoCapacitacion}" >
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                         <f:selectItem itemValue="Externa" itemLabel="Externa"/>
                                                                                         <f:selectItem itemValue="Interna" itemLabel="Interna"/>
                                                                                     </p:selectOneMenu> 
                                                                                     <p:message for="tipoAP" display="tooltip" />
+                                                                                    <hr/>   
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-3">
+                                                                                    <p:outputLabel for="categoriaAP" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Categoria de actualización" />
+                                                                                    <p:selectOneMenu id="categoriaAP" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorEducacion.nuevoOBJCapacitacionespersonal.categoriaCapacitacion}" >
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItem itemValue="pedagógica" itemLabel="pedagógica"/>
+                                                                                        <f:selectItem itemValue="profesional" itemLabel="profesional"/>
+                                                                                        <f:selectItem itemValue="Tecnologías de la información" itemLabel="Tecnologías de la información"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="categoriaAP" display="tooltip" />
                                                                                     <hr/>   
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-12 col-lg-6">
@@ -679,7 +690,7 @@
 
                                                                 <div class="info-box-content">
                                                                     <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                                                    <span class="info-box-number">La fecha límite para la actualización de curriculum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
                                                                 </div>
                                                             </div>
                                                         </div>

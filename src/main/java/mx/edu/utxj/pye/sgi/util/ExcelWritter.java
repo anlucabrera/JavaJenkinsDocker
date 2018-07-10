@@ -119,7 +119,7 @@ public class ExcelWritter implements Serializable {
 
     public void editarLibro() {
         int index = 1;
-        
+        System.out.println("mx.edu.utxj.pye.sgi.util.ExcelWritter.editarLibro() periodo escolar : " + periodoEscolar.getPeriodo());
         if (tipo == EvaluacionesTipo.EVALUACION_DESEMPENIO) {
             for (ListaPersonalDesempenioEvaluacion rd : resultadosDesempenio.stream().filter(item -> item.isCompleto()).collect(Collectors.toList())) {
                 libro.cloneSheet(0, String.valueOf(rd.getPk().getEvaluado()));
@@ -286,7 +286,7 @@ public class ExcelWritter implements Serializable {
     public String enviarLibro() {
 //        System.out.println("jvv.aldesa.sgot.util.ExcelWritter.enviarLibro() ruta: " + base.concat(salida));
         File file = new File(base.concat(salida));
-        String ruta = "media".concat(file.toURI().toString().split("archivos")[1]);
+        String ruta = "/sii2/media".concat(file.toURI().toString().split("archivos")[1]);
 //        System.out.println("jvv.aldesa.sgot.util.ExcelWritter.enviarLibro() ruta 2: " + ruta);
         return ruta;
 //        return new File(base.concat(salida));

@@ -104,7 +104,7 @@
                                 <div class="row">
                                     <!--widgets-->
                                     <c:if test="#{estudioEgresados.completo}">
-                                        <p:commandButton value="Detalle de evaluacion" class="btn btn-primary" actionListener="#{estudioEgresados.getResultados()}" 
+                                        <p:commandButton value="Detalle de evaluacion" class="btn btn-primary" actionListener="#{estudioEgresados.obtieneResultados()}" 
                                                          process="@this" update="modalD"
                                                          oncomplete="PF('modalDetalle').show()"/>
                                         <div class="col-lg-4" style="max-height: 154px;">
@@ -130,7 +130,7 @@
 
                                     <!--Incompleto-->
                                     <c:if test="#{estudioEgresados.noCompleto}">
-                                        <p:commandButton value="Detalle de evaluacion" class="btn btn-primary" actionListener="#{estudioEgresados.getResultados()}" 
+                                        <p:commandButton value="Detalle de evaluacion" class="btn btn-primary" actionListener="#{estudioEgresados.obtieneResultados()}" 
                                                          process="@this" update="modalD"
                                                          oncomplete="PF('modalDetalle').show()" rendered="#{!estudioEgresados.sinRespuestas}"/>
                                         <p:outputLabel value="El usuario no tiene respuestas para mostrar" rendered="#{estudioEgresados.sinRespuestas}"/>
@@ -158,7 +158,7 @@
                                     <c:if test="#{estudioEgresados.noAccedio}">
                                         <div class="col-lg-4" style="max-height: 154px;">
                                             <div class="small-box bg-red">
-                                                <div class="inner" style="cursor: null;" onclick="rc()">
+                                                <div class="inner" style="cursor: none;" onclick="rc()">
                                                     <h3>
                                                         <h:outputLabel value="">
                                                             <f:convertNumber pattern="##.##" />
@@ -183,6 +183,8 @@
                     </div>
                 </section>
             </p:panel>
+            
+            
             <p:dialog id="modalD" widgetVar="modalDetalle" modal="true" showEffect="fade" hideEffect="fade" resizable="false" header="Resultado Evaluacion" width="80%" height="600px">
                 <div class="box-body">
                     <c:set var="panelStyle" value="#{'max-width: 1200px;margin: auto; font-size: large;'}" />

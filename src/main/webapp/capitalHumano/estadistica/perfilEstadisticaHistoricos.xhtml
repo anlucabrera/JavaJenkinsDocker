@@ -66,25 +66,25 @@
                                         </p:link>
                                     </div>      
                                 </div>    
-                                    
+
                                 <p:tabView>
                                     <p:tab title="Currículum vitae">
-                                <h:form id="frmBajas">
-                                    <p:dataTable id="dtbBajas" var="historico" paginator="true" rows="10"
-                                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
-                                                 rowsPerPageTemplate="5,10,15,20,25,30"
-                                                 value="#{historicoPlantillaPersonalEstadistica.nuevaListaHistoricoplantillapersonal}">
+                                        <h:form id="frmBajas">
+                                            <p:dataTable id="dtbBajas" var="historico" paginator="true" rows="10"
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+                                                         rowsPerPageTemplate="5,10,15,20,25,30"
+                                                         value="#{historicoPlantillaPersonalEstadistica.nuevaListaHistoricoplantillapersonal}">
 
-                                        <p:column> <h:outputText value="#{historico.historico}" /> </p:column>
-                                        <p:column headerText="Mes"> <h:outputText value="#{historico.mes}" /> </p:column>
-                                        <p:column headerText="Año"> <h:outputText value="#{historico.año}" /> </p:column>
-                                        <p:column headerText="Descargar"> <p:link href="http://siip.utxj.edu.mx/archivos/#{historico.rutaArchivo}" target="_blank">
-                                                <i class="fa fa-download"></i>
-                                                <span>Descargar plantilla</span>
-                                            </p:link></p:column>
+                                                <p:column> <h:outputText value="#{historico.historico}" /> </p:column>
+                                                <p:column headerText="Mes"> <h:outputText value="#{historico.mes}" /> </p:column>
+                                                <p:column headerText="Año"> <h:outputText value="#{historico.año}" /> </p:column>
+                                                <p:column headerText="Descargar"> <p:link href="http://siip.utxj.edu.mx/archivos/#{historico.rutaArchivo}" target="_blank">
+                                                        <i class="fa fa-download"></i>
+                                                        <span>Descargar plantilla</span>
+                                                    </p:link></p:column>
 
-                                    </p:dataTable>
-                                </h:form>
+                                            </p:dataTable>
+                                        </h:form>
                                     </p:tab>
                                 </p:tabView>
 
