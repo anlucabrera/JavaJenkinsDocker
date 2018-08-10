@@ -1,0 +1,185 @@
+.bg-green, .callout.callout-success, .alert-success, .label-success, .modal-success .modal-body{
+    background-color:#00a65a !important;
+}
+.bg-green{
+    background:#00a65a !important;
+}
+.description-block{
+    text-align: justify;
+}
+.description-header{
+    text-align: center;
+}
+.ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+    width: 100%;
+}
+.mp{
+    background: #00a65a !important;
+}
+.ci{
+    background: #00a7d0 !important
+}
+.aceptado{
+    background-color: #00a65a !important;
+}
+.pendiente{
+    background-color: #f39c12 !important;
+}
+.denegado{
+    background-color: #f39c12 !important;
+}
+.ui-progressbar{
+    position: relative;
+    height: 2em;
+}
+.ui-progressbar .ui-progressbar-label {
+    color: #000000;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    display: none;
+    font-weight: bold;
+}
+button, input, optgroup, select, textarea{
+    color: black;
+}
+.ui-tabs .ui-tabs-navscroller-btn-right{
+    right: .1em;
+    background: white;
+    block-size: 2.6em;
+}
+.ui-tabs .ui-tabs-navscroller-btn-left{
+    left: .1em;
+    background: white;
+    block-size: 2.6em;
+}
+.ui-organigram .ui-organigram-node.root {
+    background: #043191;
+    font-family: roboto,bitter;
+    width: 150px;
+}
+.ui-organigram .ui-organigram-node.division {
+    background: #045491;
+    font-family: roboto,bitter;
+    width: 150px;
+}
+.ui-organigram .ui-organigram-node.division2 {
+    background: #045491;
+    font-family: roboto,bitter;
+    width: 150px;
+}
+.ui-organigram .ui-organigram-node.division3 {
+    background: #045491;
+    font-family: roboto,bitter;
+    width: 150px;
+}
+.ui-organigram .ui-organigram-node.staff2 {
+    background: #0675ca;
+    font-family: roboto,bitter;
+    width: 150px;
+}
+.ui-organigram .ui-organigram-node.staff {
+    background: #434c52;
+    font-family: roboto,bitter;
+    width: 100px;
+    height:  100px;
+}
+.ui-organigram .ui-organigram-node.arapo {
+    background: #0675ca;
+    font-family: roboto,bitter;
+    width: 150px;
+}
+.ui-organigram .ui-organigram-node.employee {
+    background: #434c52;
+}
+.ui-organigram .line.down{
+    height: 25px;
+}
+.ui-row-editor ui-helper-clearfix{
+    -webkit-column-count: 2; /* Chrome, Safari, Opera */
+    -moz-column-count: 2; /* Firefox */
+    column-count: 2;
+
+    -webkit-column-gap: 40px; /* Chrome, Safari, Opera */
+    -moz-column-gap: 40px; /* Firefox */
+    column-gap: 40px;
+
+    -webkit-column-rule: 4px solid #000000; /* Chrome, Safari, Opera */
+    -moz-column-rule: 4px solid #000000; /* Firefox */
+    column-rule: 4px solid #000000;
+
+    column-rule-style:groove;
+}
+.msperior{
+    background: #043191; 
+    font-weight: bold;
+    color: #ffffff;
+}
+.mmsperior{
+    background: #045491; 
+    font-weight: bold;
+    color: #ffffff;
+}
+.aapoyo{
+    background: #0675ca; 
+    font-weight: bold;
+    color: #ffffff;
+}
+.subordinado{
+    background: #434c52; 
+    font-weight: bold;
+    color: #ffffff;
+}
+
+
+.principal{
+}
+
+.eje{
+    background-color: #0081c2;
+}
+.est{
+    background-color: #999999;
+}
+.lac{
+    background-color: #cccccc;
+}
+body .ui-datatable th[role="columnheader"].ui-state-default, body .ui-treetable th[role="columnheader"].ui-state-default{
+    background-color: #cccccc;
+}
+
+.ui-steps .ui-steps-item {
+    width: 24%;
+}
+
+.ui-state-highlight {
+    text-shadow: none !important;
+}
+
+.ui-steps.custom {
+    margin-bottom: 30px;
+}
+
+.ui-steps.custom .ui-steps-item .ui-menuitem-link {
+    height: 10px;
+    padding: 0 1em;
+}
+
+.ui-steps.custom .ui-steps-item .ui-steps-number {
+    background-color: #0081c2;
+    color: #FFFFFF;
+    display: inline-block;
+    width: 30px;
+    border-radius: 10px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+.ui-steps.custom .ui-steps-item.ui-state-highlight .ui-steps-title {
+    color: #555;
+}
+
+.ui-panelgrid .ui-panelgrid-cell{
+    padding: 12px 10px;
+}

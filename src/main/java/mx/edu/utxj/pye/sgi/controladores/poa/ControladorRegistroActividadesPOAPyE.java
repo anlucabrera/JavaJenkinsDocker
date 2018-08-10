@@ -63,8 +63,8 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
                 
         ejes=new EjesRegistro(0);
                 
-        claveArea = 6;
-        ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear()-101));
+        claveArea = 62;
+        ejercicioFiscal = Short.parseShort("19");
         
         System.out.println(" ControladorHabilidadesIIL Fin: " + System.currentTimeMillis());
     }

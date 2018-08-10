@@ -227,6 +227,7 @@ public class AdminEvaluacion360 implements Serializable {
         if (e360b) {
             personalActivo = new ArrayList<>();
             listaCombinacion360 = new ArrayList<>();
+            listaEvaluacionDesempeñoFiltro = new ArrayList<>();
             personalActivo = ejbEvaluacion360Combinaciones.getPersonalActivo();
             personalActivo.forEach(p -> {
                 System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.getListaCombinaciones() persona en cuestion : " + p.getNombre() + " nomina: " + p.getClave());
@@ -242,6 +243,7 @@ public class AdminEvaluacion360 implements Serializable {
                         listaCombinacion360.add(new ListaEvaluacion360Combinaciones(Integer.parseInt(claveLista), evaluacion, lr360.getTipo(),
                                 p.getClave(), p.getNombre(), ejbEvaluacion360Combinaciones.getAreaPorClave(p.getAreaOperativa()).getNombre(),
                                 ejbEvaluacion360Combinaciones.getCategoriaPorClave(Integer.parseInt(p.getCategoriaOperativa().getCategoria().toString())).getNombre(),
+                                ejbEvaluacion360Combinaciones.getCategoriaPorClave(Integer.parseInt(p.getCategoria360().getCategoria().toString())).getNombre(),
                                 evaluador.getClave(), evaluador.getNombre(), ejbEvaluacion360Combinaciones.getAreaPorClave(evaluador.getAreaOperativa()).getNombre(),
                                 ejbEvaluacion360Combinaciones.getCategoriaPorClave(Integer.parseInt(evaluador.getCategoriaOperativa().getCategoria().toString())).getNombre()));
                     });
@@ -261,7 +263,7 @@ public class AdminEvaluacion360 implements Serializable {
                         String clavegenerada = evaluacion + "" + evaluador.getClave() + "" + p.getClave();
                         listadoEvaluacionDesempenio.add(new ListaEvaluacionDesempenio(Integer.parseInt(clavegenerada),evaluacion,
                                 evaluador.getClave(), evaluador.getNombre(),
-                                rd.getPersonal().getClave(), rd.getPersonal().getNombre(), rd.getPersonal().getAreaOperativa(), 
+                                rd.getPersonal().getClave(), rd.getPersonal().getNombre(), (int)rd.getPersonal().getAreaOperativa(), 
                                 ejbEvaluacion360Combinaciones.getAreaPorClave(rd.getPersonal().getAreaOperativa()).getNombre()));
                     });
                 }

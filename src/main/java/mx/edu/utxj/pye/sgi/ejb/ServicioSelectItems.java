@@ -11,11 +11,12 @@ import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.faces.model.SelectItem;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMaterias;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360;
-import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
+//import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Listaperiodosescolares;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
@@ -163,12 +164,11 @@ public class ServicioSelectItems implements EJBSelectItems {
         return lpe;
     }
 
-    public List<Areas> getAreasAcademicas(String area) {
-        TypedQuery<Areas> q = f.getEntityManager().createQuery("SELECT a from Areas a WHERE a.tipo = :tipo OR a.idareas = :area ", Areas.class);
-        q.setParameter("tipo", area);
-        q.setParameter("area", 47);
+    public List<AreasUniversidad> getAreasAcademicas() {
+        TypedQuery<AreasUniversidad> q = f.getEntityManager().createQuery("SELECT a from AreasUniversidad a WHERE a.categoria.categoria = :categoria", AreasUniversidad.class);
+        q.setParameter("categoria", 9);
         System.out.println("Listado de areas academicas : " + q.getResultList());
-        List<Areas> l = q.getResultList();
+        List<AreasUniversidad> l = q.getResultList();
         if (l.isEmpty() || l == null) {
             return null;
         } else {
@@ -179,8 +179,8 @@ public class ServicioSelectItems implements EJBSelectItems {
     @Override
     public List<SelectItem> itemAreasAcademicas() {
         List<SelectItem> lac = new ArrayList<>();
-        for(Areas a: getAreasAcademicas("Area Academica")){
-            lac.add(new SelectItem(a.getClave(), a.getAbreveviacion(), a.getTipo()+": "+a.getNombre()));
+        for(AreasUniversidad a: getAreasAcademicas()){
+            lac.add(new SelectItem(a.getArea(), a.getSiglas(), a.getNombre()));
         }
         return lac;
     }

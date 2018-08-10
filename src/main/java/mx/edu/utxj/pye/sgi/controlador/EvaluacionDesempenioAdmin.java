@@ -303,7 +303,7 @@ public class EvaluacionDesempenioAdmin implements Serializable {
 //        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulas() ruta: " + ruta);
     }
 
-    public void descargarCedulasDestiempo() {
+    public void descargarCedulasDestiempo() throws IOException {
         listaPersonalEvaluadoAntes = new ArrayList<>();
         
         DesempenioEvaluaciones ultimaEvaluacion = evaluacionDesempenioEJB.getUltimaEvaluacionDesempenio();
@@ -334,6 +334,39 @@ public class EvaluacionDesempenioAdmin implements Serializable {
         ew.escribirLibro();
         String ruta = ew.enviarLibro();
         Ajax.oncomplete("descargar('" + ew.enviarLibro() + "');");
+
+    }
+    public void descargarCedulasDestiempoIndex() throws IOException {
+        listaPersonalEvaluadoAntes = new ArrayList<>();
+        
+        DesempenioEvaluaciones ultimaEvaluacion = evaluacionDesempenioEJB.getUltimaEvaluacionDesempenio();
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() la ultima evaluacion es : "+ ultimaEvaluacion);
+        
+        directivoSeleccionado = (ListaPersonal) facade.find(Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() el directivo es : "+ directivoSeleccionado);
+        
+        listaSubordinados = evaluacionDesempenioEJB.getListaSubordinados(directivoSeleccionado);
+        
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() los subordinados actuales son : " + listaSubordinados);
+        evaluacionDesempenioEJB.cargarResultadosAlmacenados(ultimaEvaluacion, directivoSeleccionado, listaSubordinados);
+        
+        
+        PeriodosEscolares periodoSeleccionado = evaluacionDesempenioEJB.getPeriodoDeLaEvaluacionDesempenio(ultimaEvaluacion.getPeriodo());
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() el periodo seleccionado = : " + periodoSeleccionado);
+        List<ListaPersonalDesempenioEvaluacion> l =
+        /*listaPersonalEvaluadoAntes =*/ evaluacionDesempenioEJB.obtenerListaResultadosPorEvaluacionEvaluador(ultimaEvaluacion, directivoSeleccionado);
+        l.forEach(System.out::println);
+        l.forEach(x -> {
+            if(x.isCompleto()){
+                listaPersonalEvaluadoAntes.add(x);
+            }
+        });
+        ExcelWritter ew = new ExcelWritter(directivoSeleccionado, ultimaEvaluacion, getListaPersonalEvaluadoAntes(), periodoSeleccionado);
+        ew.obtenerLibro();
+        ew.editarLibro();
+        ew.escribirLibro();
+        String ruta = ew.enviarLibro();
+        ew.descargaCedulasOmnifaces();
 
     }
 }

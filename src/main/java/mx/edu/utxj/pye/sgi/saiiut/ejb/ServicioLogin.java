@@ -10,10 +10,10 @@ import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulos;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisos;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
-import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Listaperiodosescolares;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -157,8 +157,8 @@ public class ServicioLogin implements EjbLogin {
     }
 
     @Override
-    public Areas getAreaByClave(Integer area) {
-        TypedQuery<Areas> q = f2.getEntityManager().createQuery("SELECT a from Areas a WHERE a.idareas = :area", Areas.class);
+    public AreasUniversidad getAreaByClave(Short area) {
+        TypedQuery<AreasUniversidad> q = f2.getEntityManager().createQuery("SELECT a from AreasUniversidad a WHERE a.area = :area", AreasUniversidad.class);
         q.setParameter("area", area);
         if (q.getResultList().isEmpty() || q.getResultList() == null) {
             System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getAreaByClave() es nulo");

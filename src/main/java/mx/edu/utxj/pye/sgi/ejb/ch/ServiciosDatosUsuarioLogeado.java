@@ -161,8 +161,7 @@ public class ServiciosDatosUsuarioLogeado implements EjbDatosUsuarioLogeado {
     }
 @Override
     public List<PersonalCategorias> mostrarListaPersonalCategorias() throws Throwable {
-        TypedQuery<PersonalCategorias> q = em.createQuery("SELECT p FROM PersonalCategorias p WHERE p.tipo = :tipo", PersonalCategorias.class);
-        q.setParameter("tipo", "Genérica");
+        TypedQuery<PersonalCategorias> q = em.createQuery("SELECT p FROM PersonalCategorias p", PersonalCategorias.class);
         List<PersonalCategorias> pr = q.getResultList();
         return pr;
     }

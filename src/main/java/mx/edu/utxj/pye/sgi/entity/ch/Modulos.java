@@ -39,14 +39,22 @@ public class Modulos implements Serializable {
 
     @Basic(optional = false)
     @NotNull
-    @Column(name = "activo")
-    private boolean activo;
+    @Size(min = 1, max = 50)
+    @Column(name = "nombre")
+    private String nombre;
 
+    @Size(max = 1000)
+    @Column(name = "descripcion")
+    private String descripcion;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "icono")
     private String icono;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "activo")
+    private boolean activo;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -54,14 +62,6 @@ public class Modulos implements Serializable {
     @Basic(optional = false)
     @Column(name = "modulo")
     private Integer modulo;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 50)
-    @Column(name = "nombre")
-    private String nombre;
-    @Size(max = 1000)
-    @Column(name = "descripcion")
-    private String descripcion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "modulo")
     private List<Permisos> permisosList;
 
@@ -85,21 +85,6 @@ public class Modulos implements Serializable {
         this.modulo = modulo;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
 
     @XmlTransient
     public List<Permisos> getPermisosList() {
@@ -133,6 +118,22 @@ public class Modulos implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Modulos[ modulo=" + modulo + " ]";
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public String getIcono() {

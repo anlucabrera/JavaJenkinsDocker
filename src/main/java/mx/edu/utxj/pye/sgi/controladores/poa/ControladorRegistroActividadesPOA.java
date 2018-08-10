@@ -105,8 +105,8 @@ public class ControladorRegistroActividadesPOA implements Serializable {
         lineasAccions.add(lineasAccion);
         estrategiases.add(estrategias);
 
-        claveArea = 6;
-        ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear()-101));
+        claveArea = 62;
+        ejercicioFiscal = Short.parseShort("19");
 
         consultarListas();
 
@@ -114,6 +114,7 @@ public class ControladorRegistroActividadesPOA implements Serializable {
 
     // ---------------------------------------------------------------- Listas -------------------------------------------------------------
     public void consultarListas() {
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.consultarListas()"+claveArea);
         ejeses = poaSelectec.mostrarEjesRegistros();
         if (FacesContext.getCurrentInstance().getExternalContext().getRequestServletPath().equals("/poa/areas/registro.xhtml")) {
             cuadroMandoIntegrals = poaSelectec.mostrarCuadroMandoIntegrals(ejercicioFiscal);
@@ -135,7 +136,7 @@ public class ControladorRegistroActividadesPOA implements Serializable {
         listaActividadesPoasFiltroEje.clear();
         listaActividadesPrincipales.clear();
         listaActividadesSecundarias.clear();
-        
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.consultarActividadesPorParametros()"+listaActividadesPoas.size());
         listaActividadesPoas.forEach((t) -> {
             if (t.getCuadroMandoInt().equals(cuadroMandoIntegral)) {
                 if (!listaActividadesPoasFiltroEje.contains(t)) {
@@ -259,7 +260,7 @@ public class ControladorRegistroActividadesPOA implements Serializable {
         actividadesPoa.setCuadroMandoInt(new CuadroMandoIntegral(cuadroMandoIntegral.getCuadroMandoInt()));
         actividadesPoa.setUnidadMedida(new UnidadMedidas(unidadDMedida));
         actividadesPoa.setBandera("y");
-        actividadesPoa.setArea(Short.parseShort(String.valueOf(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa())));
+        actividadesPoa.setArea(claveArea);
 
         actividadesPoa = poaSelectec.agregarActividadesPoa(actividadesPoa);
 
@@ -621,6 +622,7 @@ public class ControladorRegistroActividadesPOA implements Serializable {
                 cuadroMandoIntegral = t;
             }
         });
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.asignaCuadroMando()"+cuadroMandoIntegral);
         consultarActividadesPorParametros();
     }
 
@@ -674,6 +676,7 @@ public class ControladorRegistroActividadesPOA implements Serializable {
         partidasesSumatorias.clear();
         totalCaptituloPartida = 0D;
 
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.obteneroTotalesCapitulo2000()"+listaActividadesPoas.size());
         listaActividadesPoas.forEach((a) -> {
             a.getRecursosActividadList().forEach((t) -> {
                 if (t.getProductoArea().getCapitulo().getCapituloTipo()== 2) {
@@ -683,6 +686,7 @@ public class ControladorRegistroActividadesPOA implements Serializable {
                 }
             });
         });
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.obteneroTotalesCapitulo2000()"+listaActividadesPoas.size());
         partidasesSumatorias.forEach((p) -> {
             listaActividadesPoas.forEach((a) -> {
                 a.getRecursosActividadList().forEach((r) -> {

@@ -47,10 +47,10 @@ public class ControladorFunciones implements Serializable {
     @Getter    @Setter    private listaCat nuevOBJlistaCat, nuevOBJlistaCat2;
     @Getter    @Setter    private List<listaAre> listalistaAreas = new ArrayList<>();
     @Getter    @Setter    private listaAre nuevOBJlistaAre, nuevOBJlistaAre2;
-    @Getter    @Setter    private Short claveCategoria = 0, claveCategoria2 = 1;
+    @Getter    @Setter    private Short claveCategoria = 0, claveCategoria2 = 1,claveArea=0;
     @Getter    @Setter    private List<Funciones> listaFunciones = new ArrayList<>();
     @Getter    @Setter    private Funciones nuevoOBJFunciones = new Funciones(), nuevoOBJFuncionesSelect;
-    @Getter    @Setter    private Integer usuario, contiene = 0,claveArea=0,totalC=0,claveEmpleado=0;
+    @Getter    @Setter    private Integer usuario, contiene = 0,totalC=0,claveEmpleado=0;
 
     @Getter    @Setter    private List<String> listaClavesEmpleados = new ArrayList<>();
     @Getter    @Setter    private List<Categoriasespecificasfunciones> listaCategoriasespecificasfuncioneses = new ArrayList<>();
@@ -174,11 +174,11 @@ public class ControladorFunciones implements Serializable {
                     contiene = 0;
                 }
             }
-            listalistaAreas.add(new listaAre(0, "Sin áreas subordinadas"));
+            listalistaAreas.add(new listaAre(Short.parseShort("0"), "Sin áreas subordinadas"));
             listaCategoriasEspecificas.add(new listaCat(Short.parseShort("1"), "Sin categoría especifica"));
             listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaOperativo(nuevoOBJListaPersonalLogeado.getAreaOperativa(), nuevoOBJListaPersonalLogeado.getCategoriaOperativa());
             listaCategoriasespecificasfuncioneses = ejbSelectec.mostrarCategoriasespecificasfuncionesArea(nuevoOBJListaPersonalLogeado.getAreaOperativa());
-            Categoriasespecificasfuncionesnullo = new Categoriasespecificasfunciones(Short.parseShort("1"), "Sin categoría especifica", 83);
+            Categoriasespecificasfuncionesnullo = new Categoriasespecificasfunciones(Short.parseShort("1"), "Sin categoría especifica", Short.parseShort("61"));
             listaCategoriasespecificasfuncioneses.add(Categoriasespecificasfuncionesnullo);
             mostrarComentariosfunciones();
         } catch (Throwable ex) {
@@ -190,38 +190,39 @@ public class ControladorFunciones implements Serializable {
     public void consultarFuncnPorAyC() {
         try {
             listaFunciones.clear();
+            
             switch (claveCategoria) {
                 case 0:
-                    if (nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 1 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 26) {
-                        listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaOperativo(83, nuevoOBJListaPersonalLogeado.getCategoriaOperativa());
+                    if (nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 24 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 56) {
+                        listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaOperativo(Short.parseShort("61"), nuevoOBJListaPersonalLogeado.getCategoriaOperativa());
                     } else {
                         listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaOperativo(nuevoOBJListaPersonalLogeado.getAreaOperativa(), nuevoOBJListaPersonalLogeado.getCategoriaOperativa());
                     }
                     break;
                 case 30:
-                    if ((nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 1 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 26) || nuevoOBJListaPersonalLogeado.getAreaOperativa() == 28 || nuevoOBJListaPersonalLogeado.getAreaOperativa() == 47) {
-                        listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(83, claveCategoria, nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
+                    if ((nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 24 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 56) || nuevoOBJListaPersonalLogeado.getAreaOperativa() == 28 || nuevoOBJListaPersonalLogeado.getAreaOperativa() == 47) {
+                        listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), claveCategoria, nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
                     } else {
                         listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(nuevoOBJListaPersonalLogeado.getAreaOperativa(), claveCategoria, nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
                     }
                     break;
                 case 41:
-                    if ((nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 1 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 26) || nuevoOBJListaPersonalLogeado.getAreaOperativa() == 28 || nuevoOBJListaPersonalLogeado.getAreaOperativa() == 47) {
-                        listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(83, claveCategoria, nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
+                    if ((nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 24 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 56) || nuevoOBJListaPersonalLogeado.getAreaOperativa() == 28 || nuevoOBJListaPersonalLogeado.getAreaOperativa() == 47) {
+                        listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), claveCategoria, nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
                     } else {
                         listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(nuevoOBJListaPersonalLogeado.getAreaOperativa(), claveCategoria, nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
                     }
                     break;
                 case 32:
-                    if ((nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 1 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 26) || nuevoOBJListaPersonalLogeado.getAreaOperativa() == 28 || nuevoOBJListaPersonalLogeado.getAreaOperativa() == 47) {
-                        listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(83, claveCategoria, nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
+                    if ((nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 24 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 56) || nuevoOBJListaPersonalLogeado.getAreaOperativa() == 28 || nuevoOBJListaPersonalLogeado.getAreaOperativa() == 47) {
+                        listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), claveCategoria, nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
                     } else {
                         listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(nuevoOBJListaPersonalLogeado.getAreaOperativa(), claveCategoria, nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
                     }
                     break;
                 default:
-                    if (nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 1 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 26) {
-                        listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(83, claveCategoria, nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
+                    if (nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 24 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 56) {
+                        listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), claveCategoria, nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
                     } else {
                         listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(nuevoOBJListaPersonalLogeado.getAreaOperativa(), claveCategoria, nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
                     }
@@ -297,14 +298,14 @@ public class ControladorFunciones implements Serializable {
 //            System.out.println("mx.edu.utxj.pye.sgi.ch.controladores.ControladorFunciones.consultarFuncnPorAC() claveCategoria2 " + claveCategoria2);
             listaFunciones.clear();
             if (claveCategoria == 0) {
-                if (nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 1 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 26) {
-                    listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaOperativo(83, nuevoOBJListaPersonalLogeado.getCategoriaOperativa());
+                if (nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 24 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 56) {
+                    listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaOperativo(Short.parseShort("61"), nuevoOBJListaPersonalLogeado.getCategoriaOperativa());
                 } else {
                     listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaOperativo(nuevoOBJListaPersonalLogeado.getAreaOperativa(), nuevoOBJListaPersonalLogeado.getCategoriaOperativa());
                 }
             } else {
-                if ((nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 1 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 26) || (claveArea >= 1 && claveArea <= 26)) {
-                    listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(83, claveCategoria, claveCategoria2);
+                if ((nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 24 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 56) || (claveArea >= 24 && claveArea <= 56)) {
+                    listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), claveCategoria, claveCategoria2);
                 } else {
                     listaFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(claveArea, claveCategoria, claveCategoria2);
                 }
@@ -395,27 +396,27 @@ public class ControladorFunciones implements Serializable {
 //            System.out.println("claveCategoria "+claveCategoria);
 //            System.out.println("claveCategoria2 "+claveCategoria2);
             if (claveArea != 0) {
-                if (claveArea >= 1 && claveArea <= 26) {
-                    nuevoOBJFunciones.setAreaOperativa(83);
+                if (claveArea >= 24 && claveArea <= 56) {
+                    nuevoOBJFunciones.setAreaOperativa(Short.parseShort("61"));
                 } else {
                     nuevoOBJFunciones.setAreaOperativa(claveArea);
                 }
             } else {
-                if (nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 1 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 26) {
-                    nuevoOBJFunciones.setAreaOperativa(83);
+                if (nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 24 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 56) {
+                    nuevoOBJFunciones.setAreaOperativa(Short.parseShort("61"));
                 } else {
                     if (nuevoOBJListaPersonalLogeado.getAreaOperativa() != 28) {
                         nuevoOBJFunciones.setAreaOperativa(nuevoOBJListaPersonalLogeado.getAreaOperativa());
                     } else {
                         switch (claveCategoria) {
                             case 30:
-                                nuevoOBJFunciones.setAreaOperativa(83);
+                                nuevoOBJFunciones.setAreaOperativa(Short.parseShort("61"));
                                 break;
                             case 32:
-                                nuevoOBJFunciones.setAreaOperativa(83);
+                                nuevoOBJFunciones.setAreaOperativa(Short.parseShort("61"));
                                 break;
                             case 41:
-                                nuevoOBJFunciones.setAreaOperativa(83);
+                                nuevoOBJFunciones.setAreaOperativa(Short.parseShort("61"));
                                 break;
                         }
                     }
@@ -516,10 +517,10 @@ public class ControladorFunciones implements Serializable {
 
     public static class listaAre {
 
-        @Getter        @Setter        private Integer clave;
+        @Getter        @Setter        private Short clave;
         @Getter        @Setter        private String nombre;
 
-        private listaAre(Integer _clave, String _nombre) {
+        private listaAre(Short _clave, String _nombre) {
             clave = _clave;
             nombre = _nombre;
         }

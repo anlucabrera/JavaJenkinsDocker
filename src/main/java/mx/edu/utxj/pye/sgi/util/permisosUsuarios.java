@@ -19,11 +19,12 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulos;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisos;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
-import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
+//import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.saiiut.ejb.EjbLogin;
 
@@ -41,7 +42,7 @@ public class permisosUsuarios implements Serializable{
     @Getter @Setter private List<Personal> listaPersonal;
     @Getter @Setter private List<Integer> listaNumeroNominaTutor, listaTutores;
     
-    @Getter @Setter private Integer uAreaOp , uAreaSup;
+    @Getter @Setter private Short uAreaOp , uAreaSup;
     @Getter @Setter private Short uAct,uCatOp;
     @Getter @Setter private Boolean tutor, expDocente;
        
@@ -90,19 +91,19 @@ public class permisosUsuarios implements Serializable{
             listaPermisosGeneral.forEach(p -> {
                 if (p.getClave() == null) {
                     if (p.getArea() != null) {
-                        Areas areaP = ejbLogin.getAreaByClave(p.getArea());
+                        AreasUniversidad areaP = ejbLogin.getAreaByClave(p.getArea());
                         if (areaP == null) {
                             System.out.println("sin area");
                         } else {
                             /*Permisos para grupos de Areas operativas*/
-                            if (areaP.getIdareas().equals(uAreaOp)
+                            if (areaP.getArea().equals(uAreaOp)
                                     && p.getCategoria() == null
                                     && p.getAreaSuperior() == null
                                     && p.getActividad() == null) {
 //                            System.out.println("departamento personal / psicopedagogia");
                                 listaPermisosPorUsuario.add(p);
                             }
-                            if (areaP.getIdareas().equals(uAreaOp)
+                            if (areaP.getArea().equals(uAreaOp)
                                     && p.getCategoria() == null
                                     && p.getAreaSuperior() == null
                                     && uAct.equals(p.getActividad())) {

@@ -14,6 +14,9 @@
         <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
         </c:if>
+        <c:if test="#{!controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
@@ -21,30 +24,6 @@
 
     <ui:define name="body">
 
-        <style>
-            .description-block{
-                text-align: justify;
-            }
-            .description-header{
-                text-align: center;
-            }
-            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
-                width: 100%;
-            }
-            button, input, optgroup, select, textarea{
-                color: black;
-            }
-            .ui-tabs .ui-tabs-navscroller-btn-right{
-                right: .1em;
-                background: white;
-                block-size: 2.6em;
-            }
-            .ui-tabs .ui-tabs-navscroller-btn-left{
-                left: .1em;
-                background: white;
-                block-size: 2.6em;
-            }
-        </style>
         <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
             <h1>
                 Esta página está disponible solo para pantallas superiores a 1024px.
@@ -472,8 +451,8 @@
                                             </p:outputPanel>    
                                         </h:form>
                                     </p:tab>
-                                    <!--p:tab title="Incidencias" titletip="#{controladorSubordinados.listaIncidencias.size()} incidencias pendientes" titleStyle="#{controladorSubordinados.listaIncidencias.size() eq 0 ?'':'background: #00a7d0 !important;' }">
-                                        <h:form id="frmExLab">                                               
+                                    <p:tab title="Incidencias" titletip="#{controladorSubordinados.listaIncidencias.size()} incidencias pendientes" titleStyle="#{controladorSubordinados.listaIncidencias.size() eq 0 ?'':'background: #00a7d0 !important;' }">
+                                        <h:form id="frminci">                                               
                                             <p:outputPanel >
                                                 <p:dataTable id="tblActividades"  value="#{controladorSubordinados.listaIncidencias}"  var="incidencias"
                                                              paginator="true" rows="10"
@@ -527,7 +506,7 @@
                                             </p:outputPanel>    
                                         </h:form>
                                     </p:tab>
-                                    <p:tab title="Tarjeta de asistencia">
+                                    <!--p:tab title="Tarjeta de asistencia">
                                         <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                             <div class="col-md-12">
                                                 <div class="box box-widget widget-user-2">

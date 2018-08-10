@@ -5,7 +5,7 @@
                 xmlns:adm="http://github.com/adminfaces"
                 xmlns:jsf="http://xmlns.jcp.org/jsf"
                 xmlns:o="http://omnifaces.org/ui"
-                template="#{layoutMB.template}"
+                template="/WEB-INF/templates/template.xhtml"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 xmlns:pe="http://primefaces.org/ui/extensions">
 
@@ -28,6 +28,7 @@
         <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
         </c:if>        
+        <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
@@ -40,61 +41,7 @@
     </ui:define>
 
     <ui:define name="body">
-        <style>
-            .eje{
-                background-color: #006666;
-            }
-            .est{
-                background-color: #00ffff;
-            }
-            .lac{
-                background-color: #99ffff;
-            }
-            .table-bordered{
-                border: 1px solid #000000;
-            }
-            body .ui-datatable th[role="columnheader"].ui-state-default, body .ui-treetable th[role="columnheader"].ui-state-default{
-                border: 1px solid #000000;
-            }
-            .table-bordered>thead>tr>th, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .table-bordered>tfoot>tr>td{
-                border: 1px solid #000000;
-            }
-
-            .ui-steps .ui-steps-item {
-                width: 24%;
-            }
-
-            .ui-state-highlight {
-                text-shadow: none !important;
-            }
-
-            .ui-steps.custom {
-                margin-bottom: 30px;
-            }
-
-            .ui-steps.custom .ui-steps-item .ui-menuitem-link {
-                height: 10px;
-                padding: 0 1em;
-            }
-
-            .ui-steps.custom .ui-steps-item .ui-steps-number {
-                background-color: #0081c2;
-                color: #FFFFFF;
-                display: inline-block;
-                width: 30px;
-                border-radius: 10px;
-                margin-top: -10px;
-                margin-bottom: 10px;
-            }
-
-            .ui-steps.custom .ui-steps-item.ui-state-highlight .ui-steps-title {
-                color: #555;
-            }
-
-            .ui-panelgrid .ui-panelgrid-cell{
-                padding: 12px 10px;
-            }
-        </style>
+       
 
         <adm:breadcrumb title=" Plan de Trabajo Anual - Descripción y Justificación"/>
         <adm:sidebar collapsed="true"/>
@@ -157,13 +104,13 @@
                                                 <p:columnGroup type="header">
                                                     <p:row class="success">
                                                         <p:column rowspan="2" style="width:30px"/>
-                                                        <p:column rowspan="2" headerText="No." style="width: 50px; font-weight: bold; font-size: medium"/>
-                                                        <p:column rowspan="2" headerText="Actividad" style=" font-weight: bold; font-size: medium"/>
-                                                        <p:column rowspan="2" headerText="Unidad de medida" style="width: 150px; font-weight: bold; font-size: medium"/>
-                                                        <p:column rowspan="2" headerText="Meta" style="width: 100px; font-weight: bold; font-size: medium"/>
-                                                        <p:column colspan="4" headerText="Calendarización de Metas: #{controladorEvaluacionActividadesPOA.cuatrimestre eq 1?'Enero - Abril':(controladorEvaluacionActividadesPOA.cuatrimestre eq 2?'Mayo - Agosto':'Septiembre - Diciembre')}" style="width: 400px; font-weight: bold; font-size: medium"/> 
-                                                        <p:column colspan="3" headerText="Avance cuatrimestral" style="width: 250px; font-weight: bold; font-size: medium"/> 
-                                                        <p:column colspan="3" headerText="Avance general al mes de #{controladorEvaluacionActividadesPOA.mesNombre}" style="width: 250px; font-weight: bold; font-size: medium"/>
+                                                        <p:column rowspan="2" headerText="No." style="width: 50px;"/>
+                                                        <p:column rowspan="2" headerText="Actividad" />
+                                                        <p:column rowspan="2" headerText="Unidad de medida" style="width: 150px;"/>
+                                                        <p:column rowspan="2" headerText="Meta" style="width: 100px;"/>
+                                                        <p:column colspan="4" headerText="Calendarización de Metas: #{controladorEvaluacionActividadesPOA.cuatrimestre eq 1?'Enero - Abril':(controladorEvaluacionActividadesPOA.cuatrimestre eq 2?'Mayo - Agosto':'Septiembre - Diciembre')}" style="width: 400px;"/> 
+                                                        <p:column colspan="3" headerText="Avance cuatrimestral" style="width: 250px;"/> 
+                                                        <p:column colspan="3" headerText="Avance general al mes de #{controladorEvaluacionActividadesPOA.mesNombre}" style="width: 250px;"/>
                                                         <p:column rowspan="2" headerText="Evaluar" style="width:80px; "/>
                                                         <p:column rowspan="2" headerText="Evidencia" style="width:80px; "/>
                                                         <p:column rowspan="2" headerText="Justificacion" style="width:80px;" rendered="#{controladorEvaluacionActividadesPOA.mes eq 3?true:
@@ -171,24 +118,24 @@
                                                                                                                                          controladorEvaluacionActividadesPOA.mes eq 11?true:false}"/>
                                                     </p:row>
                                                     <p:row class="success">
-                                                        <p:column headerText="Ene" style=" font-weight: bold; font-size: medium" rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 1?true:false}"/>
-                                                        <p:column headerText="Feb" style=" font-weight: bold; font-size: medium" rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 1?true:false}"/>
-                                                        <p:column headerText="Mar" style=" font-weight: bold; font-size: medium" rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 1?true:false}"/>
-                                                        <p:column headerText="Abr" style=" font-weight: bold; font-size: medium" rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 1?true:false}"/>
-                                                        <p:column headerText="May" style=" font-weight: bold; font-size: medium" rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 2?true:false}"/>                                                    
-                                                        <p:column headerText="Jun" style=" font-weight: bold; font-size: medium" rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 2?true:false}"/>
-                                                        <p:column headerText="Jul" style=" font-weight: bold; font-size: medium" rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 2?true:false}"/>
-                                                        <p:column headerText="Ago" style=" font-weight: bold; font-size: medium" rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 2?true:false}"/>
-                                                        <p:column headerText="Sep" style=" font-weight: bold; font-size: medium" rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 3?true:false}"/>
-                                                        <p:column headerText="Oct" style=" font-weight: bold; font-size: medium" rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 3?true:false}"/>
-                                                        <p:column headerText="Nov" style=" font-weight: bold; font-size: medium" rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 3?true:false}"/>
-                                                        <p:column headerText="Dic" style=" font-weight: bold; font-size: medium" rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 3?true:false}"/>
-                                                        <p:column headerText="Total" style=" font-weight: bold; font-size: medium"/>
-                                                        <p:column headerText="%" style=" font-weight: bold; font-size: medium"/>
-                                                        <p:column headerText="Semaforo" style=" font-weight: bold; font-size: medium" />
-                                                        <p:column headerText="Total" style=" font-weight: bold; font-size: medium"/>
-                                                        <p:column headerText="%" style=" font-weight: bold; font-size: medium"/>
-                                                        <p:column headerText="Semaforo" style=" font-weight: bold; font-size: medium" />
+                                                        <p:column headerText="Ene"  rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 1?true:false}"/>
+                                                        <p:column headerText="Feb"  rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 1?true:false}"/>
+                                                        <p:column headerText="Mar"  rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 1?true:false}"/>
+                                                        <p:column headerText="Abr"  rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 1?true:false}"/>
+                                                        <p:column headerText="May"  rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 2?true:false}"/>                                                    
+                                                        <p:column headerText="Jun"  rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 2?true:false}"/>
+                                                        <p:column headerText="Jul"  rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 2?true:false}"/>
+                                                        <p:column headerText="Ago"  rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 2?true:false}"/>
+                                                        <p:column headerText="Sep"  rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 3?true:false}"/>
+                                                        <p:column headerText="Oct"  rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 3?true:false}"/>
+                                                        <p:column headerText="Nov"  rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 3?true:false}"/>
+                                                        <p:column headerText="Dic"  rendered="#{controladorEvaluacionActividadesPOA.cuatrimestre eq 3?true:false}"/>
+                                                        <p:column headerText="Total" />
+                                                        <p:column headerText="%" />
+                                                        <p:column headerText="Semáforo"  />
+                                                        <p:column headerText="Total" />
+                                                        <p:column headerText="%" />
+                                                        <p:column headerText="Semáforo"  />
                                                     </p:row>
                                                 </p:columnGroup>
 
@@ -405,19 +352,19 @@
                                                 <p:rowExpansion>
                                                     <p:panelGrid  columns="13">
                                                         <h:outputText value="." />
-                                                        <h:outputText value="Enero" style=" font-weight: bold; font-size: medium"/>
-                                                        <h:outputText value="Febrero" style=" font-weight: bold; font-size: medium"/>
-                                                        <h:outputText value="Marzo" style=" font-weight: bold; font-size: medium"/>
-                                                        <h:outputText value="Abril" style=" font-weight: bold; font-size: medium"/>
-                                                        <h:outputText value="Mayo" style=" font-weight: bold; font-size: medium"/>                                                    
-                                                        <h:outputText value="Junio" style=" font-weight: bold; font-size: medium"/>
-                                                        <h:outputText value="Julio" style=" font-weight: bold; font-size: medium"/>
-                                                        <h:outputText value="Agosto" style=" font-weight: bold; font-size: medium"/>
-                                                        <h:outputText value="Septiembre" style=" font-weight: bold; font-size: medium"/>
-                                                        <h:outputText value="Octubre" style=" font-weight: bold; font-size: medium"/>
-                                                        <h:outputText value="Noviembre" style=" font-weight: bold; font-size: medium"/>
-                                                        <h:outputText value="Diciembre" style=" font-weight: bold; font-size: medium"/>
-                                                        <h:outputText value="Planeadas" style=" font-weight: bold; font-size: medium"/>
+                                                        <h:outputText value="Enero" />
+                                                        <h:outputText value="Febrero" />
+                                                        <h:outputText value="Marzo" />
+                                                        <h:outputText value="Abril" />
+                                                        <h:outputText value="Mayo" />                                                    
+                                                        <h:outputText value="Junio" />
+                                                        <h:outputText value="Julio" />
+                                                        <h:outputText value="Agosto" />
+                                                        <h:outputText value="Septiembre" />
+                                                        <h:outputText value="Octubre" />
+                                                        <h:outputText value="Noviembre" />
+                                                        <h:outputText value="Diciembre" />
+                                                        <h:outputText value="Planeadas" />
 
                                                         <h:outputText value="#{poa.actividadesPoa.NPEnero}" />
                                                         <h:outputText value="#{poa.actividadesPoa.NPFebrero}" />
@@ -432,7 +379,7 @@
                                                         <h:outputText value="#{poa.actividadesPoa.NPNoviembre}" />
                                                         <h:outputText value="#{poa.actividadesPoa.NPDiciembre}" />
 
-                                                        <h:outputText value="Alcanzadas" style=" font-weight: bold; font-size: medium"/>
+                                                        <h:outputText value="Alcanzadas" />
                                                         <h:outputText value="#{poa.actividadesPoa.NAEnero}" />
                                                         <h:outputText value="#{poa.actividadesPoa.NAFebrero}" />
                                                         <h:outputText value="#{poa.actividadesPoa.NAMarzo}" />

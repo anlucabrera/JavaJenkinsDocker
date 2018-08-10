@@ -6,13 +6,13 @@ import java.util.Map;
 import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.dto.ListaEvaluacion360Combinaciones;
 import mx.edu.utxj.pye.sgi.dto.ListaEvaluacionDesempenio;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluacionResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360Resultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
-import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Listaperiodosescolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
@@ -83,7 +83,7 @@ public interface EjbEvaluacion360Combinaciones {
 
     public Personal getPersonalEvaluador(Integer evaluador);
 
-    public Areas getAreaPorClave(Integer area);
+    public AreasUniversidad getAreaPorClave(Short area);
 
     public PersonalCategorias getCategoriaPorClave(Integer categoria);
 

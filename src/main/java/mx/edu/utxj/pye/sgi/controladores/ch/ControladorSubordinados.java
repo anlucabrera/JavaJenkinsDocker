@@ -145,16 +145,16 @@ public class ControladorSubordinados implements Serializable {
             nuevaListaFuncionesEspecificas.clear();
             switch (nuevoOBJListaPersonal.getCategoriaOperativa()) {
                 case 30:
-                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(83, nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
                 case 32:
-                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(83, nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
                 case 34:
-                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(83, nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
                 case 41:
-                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(83, nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
                 default:
                     listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(nuevoOBJListaPersonal.getAreaOperativa(), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());

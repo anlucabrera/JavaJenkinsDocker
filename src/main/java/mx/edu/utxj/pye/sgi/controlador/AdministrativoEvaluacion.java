@@ -9,7 +9,6 @@ import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -24,7 +23,6 @@ import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultadosPK;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaEvaluacionDocentesResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
-import mx.edu.utxj.pye.sgi.entity.logueo.Pe;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Grupos;
@@ -34,8 +32,8 @@ import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuestas;
 import mx.edu.utxj.pye.sgi.ejb.EjbEvaluacionTutor2;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesTutoresResultados;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.sescolares.Alumno;
-import mx.edu.utxj.pye.sgi.entity.sescolares.AlumnoPK;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionTutor;
 import mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones;
@@ -59,7 +57,7 @@ public class AdministrativoEvaluacion implements Serializable {
     @Getter @Setter private List<Alumno> listaEstudiantesSES;
     @Getter @Setter private List<ListaEstudiantesDtoTutor>  listadoEstudiantesCompletadoSES, listadoEstudiantesNCSES, listadoEstudiantesNASES;
     @Getter @Setter private List<String> listaEstudiantesE, listaEstudiantesNE;
-    @Getter @Setter private List<Pe> listaCarreras;
+    @Getter @Setter private List<AreasUniversidad> listaCarreras;
     @Getter @Setter private List<ListaEvaluacionDocentesResultados> listaDeResultadosEvaluaciones;
     @Inject LogonMB logonMB;
     @Inject EvaluacionDesempenioAdmin desempenioAdmin;
@@ -190,9 +188,9 @@ public class AdministrativoEvaluacion implements Serializable {
         listaDeResultadosEvaluaciones = new ArrayList<>();
         desempenioAdmin.getDirectivoSeleccionado();
 //        System.out.println("Director Seleccionado : " + desempenioAdmin.getDirectivoSeleccionado());
-        Integer area = desempenioAdmin.getDirectivoSeleccionado().getAreaOperativa();
+        Short area = desempenioAdmin.getDirectivoSeleccionado().getAreaOperativa();
 //        System.out.println("area operativa : " + desempenioAdmin.getDirectivoSeleccionado().getAreaOperativa());
-        listaCarreras = eJBAdministracionEncuestas.obtenerAreasDirector(area, "Vigente");
+        listaCarreras = eJBAdministracionEncuestas.obtenerAreasDirector(area, "1");
 //        System.out.println("Lista de carreras : " + listaCarreras);
         listaCarreras.stream().forEach(c -> {
             listaDeResultadosEvaluaciones.addAll(eJBAdministracionEncuestas.resultadosEvaluacionGlobalDirector(c.getSiglas(), 1));
@@ -239,7 +237,8 @@ public class AdministrativoEvaluacion implements Serializable {
 //            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadosTutoresPs() la evaluacion es : " + ejbTutor.evaluacionActiva().getEvaluacion());
             Integer matricula = e.getAlumnoPK().getMatricula();
             EvaluacionesTutoresResultados resultado = ejbTutor.getSoloResultados(ejbTutor.evaluacionActiva(), matricula);
-            Pe carrera = eJBAdministracionEncuestas.getProgramaPorClave(e.getPe());
+            Integer clave =  e.getPe();
+            AreasUniversidad carrera = eJBAdministracionEncuestas.getProgramaPorClave(Short.parseShort(clave.toString()));
             if (resultado != null) {
                     Comparador<EvaluacionesTutoresResultados> comparador = new ComparadorEvaluacionTutor();
                     boolean finalizado = comparador.isCompleto(resultado);

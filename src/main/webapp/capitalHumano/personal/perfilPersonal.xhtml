@@ -86,7 +86,7 @@
             </h1>
         </p:panel>
         <p:panel id="informacion" class="hidden-xs hidden-sm">
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 37}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13}">
                 <div class="row">
                     <h:form id="frmFunciones">
                         <p:outputLabel value="Subordinados(as)" for="clave" class="col-sm-2 control-label"/>
@@ -102,6 +102,9 @@
                         </div>
                         <div class="col-sm-3">
                             <p:commandButton id="plantillaPersonal" value="Descargar plantilla del personal activo" actionListener="#{exelPlantillaPersonal.generarPlantillaPersoanl()}" icon="fa fa-download" class="btn-primary btn-block col-md-3"/> 
+                        </div>
+                        <div class="col-sm-2">
+                            <p:commandButton id="zip" value="Descargar evidencias" actionListener="#{controladorPersonal.listaArchivos()}" icon="fa fa-download" class="btn-primary btn-block col-md-3"/> 
                         </div>
                     </h:form>
                 </div> 
@@ -690,7 +693,7 @@
                                             </div>
                                         </div>
                                     </p:tab>
-                                    <!--p:tab title="Incidencias" titletip="#{controladorPersonal.listaIncidencias.size()} incidencias pendientes" titleStyle="#{controladorPersonal.listaIncidencias.size() eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}">
+                                    <p:tab title="Incidencias" titletip="#{controladorPersonal.listaIncidencias.size()} incidencias pendientes" titleStyle="#{controladorPersonal.listaIncidencias.size() eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}">
                                         <h:form id="frmExLab">                                               
                                             <p:outputPanel >
                                                 <p:dataTable id="tblActividades"  value="#{controladorPersonal.listaIncidencias}"  var="incidencias"
@@ -725,7 +728,7 @@
                                                 </p:dataTable>  
                                             </p:outputPanel>    
                                         </h:form>
-                                    </p:tab-->
+                                    </p:tab>
                                     <p:tab title="Configuración">
                                         <h:form id="datosPer">
                                             <p:outputPanel >
@@ -1627,7 +1630,7 @@
                 </h:form>
 
             </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa != 37}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa != 13}">
                 <h1>
                     Esta página está disponible solo para personal adscrito al área de personal
                 </h1>

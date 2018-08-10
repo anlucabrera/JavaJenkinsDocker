@@ -36,6 +36,7 @@ import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuestas;
 import mx.edu.utxj.pye.sgi.ejb.EjbEvaluacion3601;
 import mx.edu.utxj.pye.sgi.ejb.EjbEvaluacion360Combinaciones;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluacionResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados;
@@ -46,7 +47,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360Resultados;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesTutoresResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaEvaluacionDocentesResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
-import mx.edu.utxj.pye.sgi.entity.logueo.Pe;
+//import mx.edu.utxj.pye.sgi.entity.logueo.Pe;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.funcional.Calculable;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
@@ -80,7 +81,8 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
     @Getter @Setter private Boolean renderReporte = false, renderReportePersonal = false, renderReporteGenrealPersonal = false;
     @Getter @Setter private Double promedioGeneral, promedioDesempenio;
     @Getter @Setter private Integer evaluacionSeleccionada;
-    @Getter @Setter private Integer periodoSeleccionado, areaEducativa;
+    @Getter @Setter private Integer periodoSeleccionado;
+    @Getter @Setter private Short areaEducativa;
     @Getter @Setter private String tipoEvaluacion;
     // select items
     @Getter @Setter private List<SelectItem> selectItemEvaluacionesDirectivo, selectItemEvaluacionesDirectorCarrera,selectItemEvaluacionesPersonal ,
@@ -96,7 +98,7 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
     @Getter @Setter private List<ListadoGeneralEvaluacionesPersonal> listaEvaluacionGeneral;
     // entitites
     @Getter @Setter private List<ListaPersonal> ListaSubordinadosAdmin, listaPersonalGeneral;
-    @Getter @Setter private List<Pe> listaCarreras;
+    @Getter @Setter private List<AreasUniversidad> listaCarreras;
     @Getter @Setter private List<ListaEvaluacionDocentesResultados> listaDeResultadosEvaluacionDocente;
 //    @Getter @Setter private List<EvaluacionDocentesMateriaResultados> listaDocentesEvaluadosGeneral;
     
@@ -111,13 +113,14 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
     public void init() {
 
         if (logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
-            if (!eJBAdministracionEncuestas.esDirectorDeCarrera(28, 2, 18, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
+//            if (!eJBAdministracionEncuestas.esDirectorDeCarrera(Short.parseShort("28"), 2, 18, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
+            if(logonMB.getPersonal().getCategoriaOperativa().getCategoria() == 18 && logonMB.getPersonal().getAreaSuperior() == 2){
                 directorDeCarrera = true;
                 listaCarreras = eJBAdministracionEncuestas.obtenerAreasDirector(desempenioAdmin.getDirectivoSeleccionado().getAreaOperativa(), "Vigente");
                 System.out.println("Lista de carreras del directivo" + listaCarreras);
                 selectItemEvaluacionesDirectorCarrera = eJBSelectItems.itemsEvaluacionDirectores();
                 ListaSubordinadosAdmin = desempenioAdmin.getListaSubordinados();
-            } else if (/*!directorDeCarrera &&*/desempenioAdmin.getListaSubordinados().size() > 0) {
+            } else if (/*!directorDeCarrera &&*/logonMB.getPersonal().getActividad().getActividad() == 4 || logonMB.getPersonal().getActividad().getActividad() == 2) {
                 System.out.println("directivo o coordinador");
                 selectItemEvaluacionesDirectivo = eJBSelectItems.itemsEvaluacionesDirectivos();
                 ListaSubordinadosAdmin = desempenioAdmin.getListaSubordinados();
@@ -129,7 +132,7 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
                     System.out.println("Secretaria Academica");
                     renderReporte = false;
                     renderReportePersonal = false;
-                } else if (logonMB.getPersonal().getAreaOperativa() == 37 && logonMB.getPersonal().getCategoriaOperativa().getCategoria() == 24) {
+                } else if (logonMB.getPersonal().getAreaOperativa() == 13 && logonMB.getPersonal().getCategoriaOperativa().getCategoria() == 24) {
                     directivo = true;
                     personal = true;
                     selectItemEvaluacionesPersonal = eJBSelectItems.itemsEvaluacionPersonal();
@@ -425,7 +428,7 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
         EvaluacionDocentesMaterias evaluacionDocente = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoSeleccionado);
         listaDeResultadosEvaluacionDocente = new ArrayList<>();
         desempenioAdmin.getDirectivoSeleccionado();
-        Integer area = desempenioAdmin.getDirectivoSeleccionado().getAreaOperativa();
+        Short area = desempenioAdmin.getDirectivoSeleccionado().getAreaOperativa();
         listaCarreras = eJBAdministracionEncuestas.obtenerAreasDirector(area, "Vigente");
         listaCarreras.stream().forEach(c -> {
             listaDeResultadosEvaluacionDocente.addAll(eJBAdministracionEncuestas.resultadosEvaluacionGlobalDirector(c.getSiglas(), evaluacionDocente.getEvaluacion()));

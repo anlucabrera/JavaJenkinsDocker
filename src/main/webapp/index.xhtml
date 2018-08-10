@@ -41,12 +41,16 @@
                                 <span class="info-box-number">Usted ya puede descargar sus cedulas de desempeño laboral en el apartado:
                                     <h:form>
                                         <c:if test="#{!utilidadesAdministracionEvaluaciones.directorDeCarrera}">
-                                            <p> Admin Evaluaciones  <i class="fa fa-arrow-circle-right " />Resultados subordinados  <i class="fa fa-arrow-circle-right " /> hacer click  <i class="fa fa-hand-pointer-o " /> en boton desempelo y en el boton <i class="fa fa-arrow-circle-right " />  
-                                                <p:spacer width="15"/><p:commandButton value="Descargar Cedulas Desempeño" disabled="true" icon="fa fa-sign-in" styleClass="btn-primary" /> </p>
+                                            <p> Admin Evaluaciones  <i class="fa fa-arrow-circle-right " />Resultados subordinados  <i class="fa fa-arrow-circle-right " /> Hacer clic  <i class="fa fa-hand-pointer-o " /> en botón desempeño y en el botón <i class="fa fa-arrow-circle-right " />  
+                                                <p:spacer width="15"/>
+                                                <p:commandLink class="btn btn-primary"  value="Descargar cédulas desempeño" ajax="false" action="#{evaluacionDesempenioAdmin.descargarCedulasDestiempoIndex()}" target="_blank" title="Descargar cedulas."><i class="fa fa-download" /></p:commandLink>
+                                            </p>
                                         </c:if>
                                         <c:if test="#{utilidadesAdministracionEvaluaciones.directorDeCarrera }">
-                                            <p> Admin Evaluaciones <i class="fa fa-arrow-circle-right " /> Administración evaluaciones  <i class="fa fa-arrow-circle-right " />  hacer click <i class="fa fa-hand-pointer-o " /> en boton desempelo y en el boton <i class="fa fa-arrow-circle-right " /> 
-                                                <p:spacer width="15"/> <p:commandButton value="Descargar Cedulas Desempeño" disabled="true" icon="fa fa-sign-in" styleClass="btn-primary" /> </p>
+                                            <p> Admin Evaluaciones <i class="fa fa-arrow-circle-right " /> Administración evaluaciones  <i class="fa fa-arrow-circle-right " />  Hacer clic <i class="fa fa-hand-pointer-o " /> en botón desempeño y en el botón <i class="fa fa-arrow-circle-right " /> 
+                                                <p:spacer width="15"/> 
+                                                <p:commandLink class="btn btn-primary"  value="Descargar cédulas desempeño" ajax="false" action="#{evaluacionDesempenioAdmin.descargarCedulasDestiempoIndex()}" target="_blank" title="Descargar cedulas."><i class="fa fa-download" /></p:commandLink>
+                                            </p>
                                         </c:if> 
                                     </h:form>
                                 </span>

@@ -118,23 +118,26 @@ public class ControladorEducacion implements Serializable {
             Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-    public void deleteFormacion() {
+    
+    public void deleteFormacion(FormacionAcademica formacionAcademica) {
         try {
-            if (nuevoOBJFormacionAcademica.getEvidenciaCedula() != null) {
-                CargaArchivosCH.eliminarArchivo(nuevoOBJFormacionAcademica.getEvidenciaCedula());
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEducacion.deleteFormacion(1)");
+            if (formacionAcademica.getEvidenciaCedula() != null) {
+                CargaArchivosCH.eliminarArchivo(formacionAcademica.getEvidenciaCedula());
             }
-            if (nuevoOBJFormacionAcademica.getEvidenciaTitulo() != null) {
-                CargaArchivosCH.eliminarArchivo(nuevoOBJFormacionAcademica.getEvidenciaTitulo());
+            if (formacionAcademica.getEvidenciaTitulo() != null) {
+                CargaArchivosCH.eliminarArchivo(formacionAcademica.getEvidenciaTitulo());
             }
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEducacion.deleteFormacion(2)");
             nombreTabla = "Formación Académica";
-            numeroRegistro = nuevoOBJFormacionAcademica.getFormacion().toString();
+            numeroRegistro = formacionAcademica.getFormacion().toString();
             accion = "Delate";
-            agregaBitacora();
-            nuevoOBJFormacionAcademica = ejbEducacion.eliminarFormacionAcademica(nuevoOBJFormacionAcademica);
+            agregaBitacora();            
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEducacion.deleteFormacion(3)");
+            ejbEducacion.eliminarFormacionAcademica(formacionAcademica);
             Messages.addGlobalInfo("Información Actualizada con Éxito!!");
-            nuevoOBJFormacionAcademica = new FormacionAcademica();
             mostrarListas();
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEducacion.deleteFormacion(4)");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
@@ -185,18 +188,17 @@ public class ControladorEducacion implements Serializable {
 
     }
 
-    public void eliminarEmpleos() {
+    public void eliminarEmpleos(ExperienciasLaborales experienciasLaborales) {
         try {
-            if (nuevoOBJExpeienciasLaborales.getEvidenciaNombremiento() != null) {
-                CargaArchivosCH.eliminarArchivo(nuevoOBJExpeienciasLaborales.getEvidenciaNombremiento());
+            if (experienciasLaborales.getEvidenciaNombremiento() != null) {
+                CargaArchivosCH.eliminarArchivo(experienciasLaborales.getEvidenciaNombremiento());
             }
             nombreTabla = "Experiencia Laboral";
-            numeroRegistro = nuevoOBJExpeienciasLaborales.getEmpleo().toString();
+            numeroRegistro = experienciasLaborales.getEmpleo().toString();
             accion = "Delate";
             agregaBitacora();
-            nuevoOBJExpeienciasLaborales = ejbEducacion.eliminarExperienciasLaborales(nuevoOBJExpeienciasLaborales);
+            ejbEducacion.eliminarExperienciasLaborales(experienciasLaborales);
             Messages.addGlobalInfo("Información Actualizada con Éxito!!");
-            nuevoOBJExpeienciasLaborales = new ExperienciasLaborales();
             mostrarListas();
             pestaniaActiva = 1;
         } catch (Throwable ex) {
@@ -255,18 +257,17 @@ public class ControladorEducacion implements Serializable {
         }
     }
 
-    public void eliminarCapacitacion() {
+    public void eliminarCapacitacion(Capacitacionespersonal capacitacionespersonal) {
         try {
-            if (nuevoOBJCapacitacionespersonal.getEvidenciaCapacitacion() != null) {
-                CargaArchivosCH.eliminarArchivo(nuevoOBJCapacitacionespersonal.getEvidenciaCapacitacion());
+            if (capacitacionespersonal.getEvidenciaCapacitacion() != null) {
+                CargaArchivosCH.eliminarArchivo(capacitacionespersonal.getEvidenciaCapacitacion());
             }
             nombreTabla = "Capacitación Personal";
-            numeroRegistro = nuevoOBJCapacitacionespersonal.getCursoClave().toString();
+            numeroRegistro = capacitacionespersonal.getCursoClave().toString();
             accion = "Delate";
             agregaBitacora();
-            nuevoOBJCapacitacionespersonal = ejbEducacion.eliminarCapacitacionespersonal(nuevoOBJCapacitacionespersonal);
+            ejbEducacion.eliminarCapacitacionespersonal(capacitacionespersonal);
             Messages.addGlobalInfo("Información Actualizada con Éxito!!");
-            nuevoOBJCapacitacionespersonal = new Capacitacionespersonal();
             mostrarListas();
             pestaniaActiva = 2;
         } catch (Throwable ex) {
@@ -498,5 +499,9 @@ public class ControladorEducacion implements Serializable {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void metodoBase() {
+        
     }
 }

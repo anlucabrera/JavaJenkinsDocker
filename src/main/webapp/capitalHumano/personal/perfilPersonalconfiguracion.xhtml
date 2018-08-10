@@ -58,7 +58,7 @@
             </h1>
         </p:panel>
         <p:panel id="informacion" class="hidden-xs hidden-sm">
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 37}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13}">
                 <section class="content">
                     <div class="row">
                         <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
@@ -88,34 +88,46 @@
                                                                                 <div class="col-sm-12 col-md-12 col-lg-12">
                                                                                     <p:outputLabel for="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nombre del Área" />
                                                                                     <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Nombre del Área"
-                                                                                                 value="#{controladorPremiosyDistinciones.nuevoOBJDistinciones.nombreDistincion}"/>
+                                                                                                 value="#{controladorPersonalconfiguracion.nuevoOBJAreasUniversidad.nombre}"/>
                                                                                     <p:message for="nombre" display="tooltip" />
                                                                                     <hr/>
+                                                                                </div> 
+                                                                                <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                    <p:outputLabel for="arS" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Área superior" />
+                                                                                    <p:selectOneMenu id="arS" filter="true" filterMatchMode="contains" style="height: 100%; width: 100%; object-fit: contain" value="#{controladorPersonalconfiguracion.nuevoOBJAreasUniversidad.areaSuperior}">
+                                                                                        <f:selectItems value="#{controladorPersonalconfiguracion.nuevaListaAreasUniversidads}" var="area" itemValue="#{area.area}" itemLabel="#{area.nombre}" />
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="arS" display="tooltip"/>     
+                                                                                    <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                    <p:outputLabel for="siglas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Siglas" />
-                                                                                    <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="siglas" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Siglas"
-                                                                                                 value="#{controladorPremiosyDistinciones.nuevoOBJDistinciones.institucion}"/>
-                                                                                    <p:message for="siglas" display="tooltip"/>     
+                                                                                <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                    <p:outputLabel for="resp" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Responsable" />
+                                                                                    <p:selectOneMenu id="resp" style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" value="#{controladorPersonalconfiguracion.nuevoOBJAreasUniversidad.responsable}">
+                                                                                        <f:selectItems itemValue="#{null}" itemLabel="Sin responsable" />
+                                                                                        <f:selectItems value="#{controladorPersonalconfiguracion.nuevaListaPersonals}" var="res" itemValue="#{res.clave}" itemLabel="#{res.nombre} -- #{res.categoriaOperativaNombre}" />
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="resp" display="tooltip"/>     
                                                                                     <hr/>
                                                                                 </div>
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputLabel for="categoria" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Categoría" />
-                                                                                    <p:selectOneMenu id="categoria" style="height: 100%; width: 100%; object-fit: contain" value="#{controladorPersonal.nuevOBJPersonalSubordinado.status}">
-                                                                                        <f:selectItem itemValue="Administrador" itemLabel="Administrador"/>
-                                                                                        <f:selectItem itemValue="Administrativa" itemLabel="Administrativa"/>
-                                                                                        <f:selectItem itemValue="Area Academica" itemLabel="Área Académica"/>
-                                                                                        <f:selectItem itemValue="Coordinacion" itemLabel="Coordinación"/>
-                                                                                        <f:selectItem itemValue="Extra" itemLabel="Extra"/>
-                                                                                        <f:selectItem itemValue="Oficial" itemLabel="Oficial"/>
-                                                                                        <f:selectItem itemValue="Programa Educativo" itemLabel="Programa Educativo"/>
+                                                                                    <p:selectOneMenu id="categoria" style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" value="#{controladorPersonalconfiguracion.claveCatagoria}">
+                                                                                        <f:selectItems value="#{controladorPersonalconfiguracion.nuevaListaCategoriases}" var="categoria" itemValue="#{categoria.categoria}" itemLabel="#{categoria.descripcion}" />
                                                                                     </p:selectOneMenu> 
                                                                                     <p:message for="categoria" display="tooltip"/>     
                                                                                     <hr/>
                                                                                 </div>
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                    <p:outputLabel for="vigente" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Es área superior?" />
-                                                                                    <p:selectOneMenu id="vigente" style="height: 100%; width: 100%; object-fit: contain" value="#{controladorPersonal.nuevOBJPersonalSubordinado.status}">
+                                                                                    <p:outputLabel for="siglas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Siglas" />
+                                                                                    <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="siglas" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Siglas"
+                                                                                                 value="#{controladorPersonalconfiguracion.nuevoOBJAreasUniversidad.siglas}"/>
+                                                                                    <p:message for="siglas" display="tooltip"/>     
+                                                                                    <hr/>
+                                                                                </div>
+
+                                                                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                    <p:outputLabel for="vigente" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Vigente?" />
+                                                                                    <p:selectOneMenu id="vigente" style="height: 100%; width: 100%; object-fit: contain" value="#{controladorPersonalconfiguracion.nuevoOBJAreasUniversidad.vigente}">
                                                                                         <f:selectItem itemValue="0" itemLabel="NO"/>
                                                                                         <f:selectItem itemValue="1" itemLabel="SI"/>
                                                                                     </p:selectOneMenu> 
@@ -125,14 +137,12 @@
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
-
-                                                                            <p:outputPanel>            
-                                                                                <p:autoUpdate/>
-                                                                                <div class="form-group"> 
+                                                                            <p:outputPanel>        
+                                                                                <div classs="form-group"> 
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                        <p:commandButton id="btnGuardarDistinciones" value="Guardar información" actionListener="#{controladorPremiosyDistinciones.createDistincion()}" 
-                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmListaDistinciones')update();"
+                                                                                        <p:commandButton id="btnGuardarDistinciones" value="Guardar información" actionListener="#{controladorPersonalconfiguracion.crearNuevasAreaUnivercidad()}" 
+                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmareas1')update();"
                                                                                                          update="@form"  process="@form" />
                                                                                     </div>
                                                                                 </div>
@@ -147,87 +157,41 @@
                                             </p:outputPanel>
                                         </h:form>
                                         <p:tabView >
-                                            <p:tab title="Áreas oficiales" >
+                                            <p:tab title="Áreas Vigentes" >
                                                 <h:form id="frmareas1">
                                                     <p:outputPanel >
-                                                        <p:dataTable id="tblDistinciones" value="#{controladorPersonalconfiguracion.listareasOficiales}"
+                                                        <p:dataTable id="tblDistinciones" value="#{controladorPersonalconfiguracion.nuevaListaAreasUniversidads}"
                                                                      paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron registros" rendered="true"
                                                                      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                                                     var="distincion" lazy="true">
+                                                                     var="area">
 
-                                                            <p:column headerText="Fecha de obtención" 
-                                                                      filterBy="#{distincion.clave}" 
-                                                                      sortBy="#{distincion.clave}" 
+                                                            <p:column headerText="Clave" 
+                                                                      filterBy="#{area.area}" 
+                                                                      sortBy="#{area.area}" 
                                                                       filterMatchMode="contains"
                                                                       style="width: 15%">
-                                                                <h:outputText value="#{distincion.clave}"/>
+                                                                <h:outputText value="#{area.area}"/>
                                                             </p:column>
 
-                                                            <p:column headerText="Nombre de la distinción" 
-                                                                      filterBy="#{distincion.nombre}" 
-                                                                      sortBy="#{distincion.nombre}" 
+                                                            <p:column headerText="Nombre" 
+                                                                      filterBy="#{area.nombre}" 
+                                                                      sortBy="#{area.nombre}" 
                                                                       filterMatchMode="contains">
-                                                                <h:outputText value="#{distincion.nombre}" />
+                                                                <h:outputText value="#{area.nombre}" />
+                                                            </p:column> 
+                                                            <p:column headerText="Categoria" 
+                                                                      filterBy="#{area.categoria.descripcion}" 
+                                                                      sortBy="#{area.categoria.descripcion}" 
+                                                                      filterMatchMode="contains"
+                                                                      style="width: 20%">
+                                                                <h:outputText value="#{area.categoria.descripcion}" />
                                                             </p:column>
 
                                                         </p:dataTable>     
                                                     </p:outputPanel>
                                                 </h:form>
                                             </p:tab>
-                                            <p:tab title="Áreas operativas" >
-                                                <h:form id="frmareas2">
-                                                    <p:outputPanel >                                                        
-                                                        <p:dataTable id="tblDistinciones" value="#{controladorPersonalconfiguracion.listareasOperativas}"
-                                                                     paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron registros" rendered="true"
-                                                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                                                     var="distincion" lazy="true">
 
-                                                            <p:column headerText="Fecha de obtención" 
-                                                                      filterBy="#{distincion.clave}" 
-                                                                      sortBy="#{distincion.clave}" 
-                                                                      filterMatchMode="contains"
-                                                                      style="width: 15%">
-                                                                <h:outputText value="#{distincion.clave}"/>
-                                                            </p:column>
-
-                                                            <p:column headerText="Nombre de la distinción" 
-                                                                      filterBy="#{distincion.nombre}" 
-                                                                      sortBy="#{distincion.nombre}" 
-                                                                      filterMatchMode="contains">
-                                                                <h:outputText value="#{distincion.nombre}" />
-                                                            </p:column>
-
-                                                        </p:dataTable>     
-                                                    </p:outputPanel>
-                                                </h:form>
-                                            </p:tab>                                            
-                                            <p:tab title="Áreas superiores" >
-                                                <h:form id="frmareas3">
-                                                    <p:outputPanel >
-                                                        <p:dataTable id="tblDistinciones" value="#{controladorPersonalconfiguracion.listareasSuperiores}"
-                                                                     paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron registros" rendered="true"
-                                                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                                                     var="distincion" lazy="true">
-
-                                                            <p:column headerText="Fecha de obtención" 
-                                                                      filterBy="#{distincion.clave}" 
-                                                                      sortBy="#{distincion.clave}" 
-                                                                      filterMatchMode="contains"
-                                                                      style="width: 15%">
-                                                                <h:outputText value="#{distincion.clave}"/>
-                                                            </p:column>
-
-                                                            <p:column headerText="Nombre de la distinción" 
-                                                                      filterBy="#{distincion.nombre}" 
-                                                                      sortBy="#{distincion.nombre}" 
-                                                                      filterMatchMode="contains">
-                                                                <h:outputText value="#{distincion.nombre}" />
-                                                            </p:column>
-
-                                                        </p:dataTable>     
-                                                    </p:outputPanel>
-                                                </h:form>
-                                            </p:tab>
                                         </p:tabView>
                                     </p:tab>
                                     <p:tab title="Categorías">  
@@ -249,16 +213,23 @@
                                                                                     <hr/>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                    <p:outputLabel for="categoria" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Categoria" />
+                                                                                    <p:selectOneMenu id="categoria" style="height: 100%; width: 100%; object-fit: contain" value="#{controladorPersonalconfiguracion.nuevoOBJPersonalCategorias.tipo}">
+                                                                                        <f:selectItem itemValue="Genérica" itemLabel="Genérica"/>
+                                                                                        <f:selectItem itemValue="Específica" itemLabel="360°"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="categoria" display="tooltip"/> 
+                                                                                    <hr/>
+                                                                                </div>
                                                                         </div>
                                                                         <div class="row">
-
-                                                                            <p:outputPanel>            
-                                                                                <p:autoUpdate/>
+                                                                            <p:outputPanel>       
                                                                                 <div class="form-group"> 
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                        <p:commandButton id="btnGuardarDistinciones" value="Guardar información" actionListener="#{controladorPersonalconfiguracion.crearNuevasCategorias()}" 
-                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmListaDistinciones')update();"
+                                                                                        <p:commandButton id="btnGuardarDistinciones" value="Guardar información" actionListener="#{controladorPersonalconfiguracion.crearNuevasPersonalCategorias()}" 
+                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmcategorias1')update();"
                                                                                                          update="@form"  process="@form" />
                                                                                     </div>
                                                                                 </div>
@@ -277,10 +248,10 @@
                                         </h:form>
                                         <h:form id="frmcategorias1">
                                             <p:outputPanel>
-                                                <p:dataTable id="tblDistinciones" value="#{controladorPersonalconfiguracion.nuevaListaPersonalCategorias}"
+                                                <p:dataTable id="tblDistinciones" value="#{controladorPersonalconfiguracion.nuevaListaPersonalCategoriases}"
                                                              paginator="true" rows="10" rowsPerPageTemplate="10,15,20,25,30" emptyMessage="No se encontraron registros" rendered="true"
                                                              paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                                             var="distincion" lazy="true">
+                                                             var="distincion">
 
                                                     <p:column headerText="Clave" 
                                                               filterBy="#{distincion.categoria}" 
@@ -296,294 +267,26 @@
                                                               filterMatchMode="contains" >
                                                         <h:outputText value="#{distincion.nombre}" />
                                                     </p:column>
-
-                                                </p:dataTable>     
-                                            </p:outputPanel>
-                                        </h:form>
-                                    </p:tab>
-                                    <p:tab title="Contratos y nombramientos">  
-                                        <h:form id="frmContratos" enctype="multipart/form-data">
-                                            <p:outputPanel id="form3">
-                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                    <div class="col-md-12">
-                                                        <div class="box box-widget widget-user-2">
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block">
-                                                                        <div class="row">
-                                                                            <div class="form-group">
-                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                                    <p:outputLabel for="perosnal" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Personal" />
-                                                                                    <p:selectOneMenu id="perosnal" style="height: 100%; width: 100%; object-fit: contain" value="#{controladorPersonal.nuevOBJPersonalSubordinado.status}">
-                                                                                        <f:selectItems value="#{controladorPersonalconfiguracion.nuevaVistaListaPersonalAreas}" var="caOP" itemValue="#{caOP.clave}" itemLabel="#{caOP.nombre}" />
-                                                                                    </p:selectOneMenu> 
-                                                                                    <p:message for="perosnal" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                    <p:outputLabel for="periodo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Periodo" />
-                                                                                    <p:selectOneMenu id="periodo" style="height: 100%; width: 100%; object-fit: contain" value="#{controladorPersonal.nuevOBJPersonalSubordinado.status}">
-                                                                                        <f:selectItem itemValue="Septiembre-Diciembre" itemLabel="Septiembre - Diciembre"/>
-                                                                                        <f:selectItem itemValue="Enero-Abril" itemLabel="Enero - Abril"/>
-                                                                                        <f:selectItem itemValue="Mayo-Agosto" itemLabel="Mayo - Agosto"/>
-                                                                                    </p:selectOneMenu> 
-                                                                                    <p:message for="periodo" display="tooltip"/> 
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-6 col-md-6 col-lg-6">
-
-                                                                                    <p:outputPanel>            
-                                                                                        <p:autoUpdate/>
-                                                                                        <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Comprobante: #{controladorEducacion.nuevoOBJCapacitacionespersonal.evidenciaCapacitacion eq null?'':'(ya cuenta con el archivo cargado)'}" />
-                                                                                    </p:outputPanel>
-                                                                                    <h:form id="cargaArchivo5" >
-                                                                                        <o:inputFile id="file" value="#{controladorEducacion.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
-                                                                                        <br/>
-                                                                                        <h:message id="messageForFile5" for="file" />
-                                                                                        <br/>
-                                                                                        <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorEducacion.agregarEvidenciaCapacitacion}" />
-                                                                                    </h:form>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-
-                                                                            <p:outputPanel>            
-                                                                                <p:autoUpdate/>
-                                                                                <div class="form-group"> 
-                                                                                    <div class="col-sm-4 col-md-4 col-lg-4"/>
-                                                                                    <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                        <p:commandButton id="btnGuardarDistinciones" value="Guardar información"
-                                                                                                         actionListener="#{controladorPremiosyDistinciones.createDistincion()}" 
-                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" 
-                                                                                                         update="@form" process="@form" oncomplete="PF('frmcontratos')update();" /> 
-                                                                                    </div>
-                                                                                </div>
-                                                                            </p:outputPanel>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>                                                  
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </p:outputPanel>
-                                        </h:form>
-                                        <h:form id="frmcontratos">
-                                            <p:outputPanel>
-                                                <p:dataTable id="tblDistinciones" value="#{controladorPremiosyDistinciones.nuevaListaDistinciones}"
-                                                             paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron registros" rendered="true" rowStyleClass="#{distincion.estatus eq 'Aceptado'?'aceptado':'denegado'}"
-                                                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                                             selectionMode="single"  selection="#{controladorPremiosyDistinciones.nuevoOBJDistinciones}" rowKey="#{distincion.distincion}"
-                                                             var="distincion" lazy="true">
-
-                                                    <p:column headerText="Clave" 
-                                                              filterBy="#{distincion.distincion}" 
-                                                              sortBy="#{distincion.distincion}" 
-                                                              filterMatchMode="contains"
-                                                              style="width: 10%">
-                                                        <h:outputText value="#{distincion.distincion}" />
-                                                    </p:column>
-
-                                                    <p:column headerText="Nombre" 
-                                                              filterBy="#{distincion.motivoDescripcion}" 
-                                                              sortBy="#{distincion.motivoDescripcion}" 
-                                                              filterMatchMode="contains" >
-                                                        <h:outputText value="#{distincion.motivoDescripcion}" />
+                                                    
+                                                    <p:column headerText="Tipo" 
+                                                              filterBy="#{distincion.tipo}" 
+                                                              sortBy="#{distincion.tipo}" 
+                                                              filterMatchMode="contains" 
+                                                              style="width: 20%">
+                                                        <h:outputText value="#{distincion.tipo}" />
                                                     </p:column>
 
                                                 </p:dataTable>     
                                             </p:outputPanel>
                                         </h:form>
                                     </p:tab>
-                                    <p:tab title="Tarjetas asistencia">  
-                                        <h:form id="frmtarjetAs" enctype="multipart/form-data">
-                                            <p:outputPanel id="form4">
-                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                    <div class="col-md-12">
-                                                        <div class="box box-widget widget-user-2">
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block">
-                                                                        <div class="row">
-                                                                            <div class="form-group">
-                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                                    <p:outputLabel for="perosnal" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Personal" />
-                                                                                    <p:selectOneMenu id="perosnal" style="height: 100%; width: 100%; object-fit: contain" value="#{controladorPersonal.nuevOBJPersonalSubordinado.status}">
-                                                                                        <f:selectItems value="#{controladorPersonalconfiguracion.nuevaVistaListaPersonalAreas}" var="caOP" itemValue="#{caOP.clave}" itemLabel="#{caOP.nombre}" />
-                                                                                    </p:selectOneMenu> 
-                                                                                    <p:message for="perosnal" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-6 col-md-6 col-lg-6">
-
-                                                                                    <p:outputPanel>            
-                                                                                        <p:autoUpdate/>
-                                                                                        <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Comprobante: #{controladorEducacion.nuevoOBJCapacitacionespersonal.evidenciaCapacitacion eq null?'':'(ya cuenta con el archivo cargado)'}" />
-                                                                                    </p:outputPanel>
-                                                                                    <h:form id="cargaArchivo5" >
-                                                                                        <o:inputFile id="file" value="#{controladorEducacion.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
-                                                                                        <br/>
-                                                                                        <h:message id="messageForFile5" for="file" />
-                                                                                        <br/>
-                                                                                        <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorEducacion.agregarEvidenciaCapacitacion}" />
-                                                                                    </h:form>
-                                                                                </div>                                                                                
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-
-                                                                            <p:outputPanel>            
-                                                                                <p:autoUpdate/>
-                                                                                <div class="form-group"> 
-                                                                                    <div class="col-sm-4 col-md-4 col-lg-4"/>
-                                                                                    <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                        <p:commandButton id="btnGuardarDistinciones" value="Guardar información" actionListener="#{controladorPremiosyDistinciones.createDistincion()}" 
-                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmtar')update();"
-                                                                                                         update="@form"  process="@form" />
-                                                                                    </div>
-                                                                                </div>
-                                                                            </p:outputPanel>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>                                                  
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </p:outputPanel>
-                                        </h:form>
-                                        <h:form id="frmtar">
-                                            <p:outputPanel>
-                                                <p:dataTable id="tblDistinciones" value="#{controladorPremiosyDistinciones.nuevaListaDistinciones}"
-                                                             paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron registros" rendered="true" rowStyleClass="#{distincion.estatus eq 'Aceptado'?'aceptado':'denegado'}"
-                                                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                                             selectionMode="single"  selection="#{controladorPremiosyDistinciones.nuevoOBJDistinciones}" rowKey="#{distincion.distincion}"
-                                                             var="distincion" lazy="true">
-
-                                                    <p:column headerText="Clave" 
-                                                              filterBy="#{distincion.distincion}" 
-                                                              sortBy="#{distincion.distincion}" 
-                                                              filterMatchMode="contains"
-                                                              style="width: 10%">
-                                                        <h:outputText value="#{distincion.distincion}" />
-                                                    </p:column>
-
-                                                    <p:column headerText="Nombre" 
-                                                              filterBy="#{distincion.motivoDescripcion}" 
-                                                              sortBy="#{distincion.motivoDescripcion}" 
-                                                              filterMatchMode="contains" >
-                                                        <h:outputText value="#{distincion.motivoDescripcion}" />
-                                                    </p:column>
-
-                                                </p:dataTable>     
-                                            </p:outputPanel>
-                                        </h:form>
-                                    </p:tab>
-
-                                    <p:tab title="Fotografias Personal">  
-                                        <h:form id="frmIma" enctype="multipart/form-data">
-                                            <p:outputPanel id="form4">
-                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                    <div class="col-md-12">
-                                                        <div class="box box-widget widget-user-2">
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block">
-                                                                        <div class="row">
-                                                                            <div class="form-group">
-                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                                    <p:outputLabel for="perosnal" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Personal" />
-                                                                                    <p:selectOneMenu id="perosnal" style="height: 100%; width: 100%; object-fit: contain" value="#{controladorPersonal.nuevOBJPersonalSubordinado.status}">
-                                                                                        <f:selectItems value="#{controladorPersonalconfiguracion.nuevaVistaListaPersonalAreas}" var="caOP" itemValue="#{caOP.clave}" itemLabel="#{caOP.nombre}" />
-                                                                                    </p:selectOneMenu> 
-                                                                                    <p:message for="perosnal" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-6 col-md-6 col-lg-6">
-
-                                                                                    <p:outputPanel>            
-                                                                                        <p:autoUpdate/>
-                                                                                        <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Comprobante: #{controladorEducacion.nuevoOBJCapacitacionespersonal.evidenciaCapacitacion eq null?'':'(ya cuenta con el archivo cargado)'}" />
-                                                                                    </p:outputPanel>
-                                                                                    <h:form id="cargaArchivo5" >
-                                                                                        <o:inputFile id="file" value="#{controladorEducacion.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
-                                                                                        <br/>
-                                                                                        <h:message id="messageForFile5" for="file" />
-                                                                                        <br/>
-                                                                                        <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorEducacion.agregarEvidenciaCapacitacion}" />
-                                                                                    </h:form>
-                                                                                </div>                                                                                
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-
-                                                                            <p:outputPanel>            
-                                                                                <p:autoUpdate/>
-                                                                                <div class="form-group"> 
-                                                                                    <div class="col-sm-4 col-md-4 col-lg-4"/>
-                                                                                    <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                        <p:commandButton id="btnGuardarDistinciones" value="Guardar información" actionListener="#{controladorPremiosyDistinciones.createDistincion()}" 
-                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmtar')update();"
-                                                                                                         update="@form"  process="@form" />
-                                                                                    </div>
-                                                                                </div>
-                                                                            </p:outputPanel>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>                                                  
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </p:outputPanel>
-                                        </h:form>
-                                        <h:form id="frmImagenes">
-                                            <p:outputPanel>
-                                                <p:dataTable id="tblDistinciones" value="#{controladorPersonalconfiguracion.nuevaVistaListaPersonalAreas}"
-                                                             emptyMessage="No se encontraron registros" rendered="true"
-                                                             var="distincion" lazy="true"  sortBy="#{distincion.areaOperativaNombre}" expandableRowGroups="true" scrollable="true" scrollHeight="500"> 
-
-                                                    <p:headerRow>
-                                                        <p:column colspan="3">
-                                                            <h:outputText value="#{distincion.areaOperativaNombre}" />
-                                                        </p:column>
-                                                    </p:headerRow>
-
-                                                    <p:column headerText="Clave" 
-                                                              filterBy="#{distincion.clave}" 
-                                                              sortBy="#{distincion.clave}" 
-                                                              filterMatchMode="contains"
-                                                              style="width: 10%">
-                                                        <h:outputText value="#{distincion.clave}" />
-                                                    </p:column>
-
-                                                    <p:column headerText="Nombre" 
-                                                              filterBy="#{distincion.nombre}" 
-                                                              sortBy="#{distincion.nombre}" 
-                                                              filterMatchMode="contains" >
-                                                        <h:outputText value="#{distincion.nombre}" />
-                                                    </p:column>
-
-                                                    <p:column headerText="Fotografía" 
-                                                              filterBy="#{distincion.clave}" 
-                                                              sortBy="#{distincion.clave}" 
-                                                              filterMatchMode="contains" >
-                                                        <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{distincion.clave}.jpg" class="img-circle" alt="#{distincion.clave}" title="Personal #{distincion.clave}" style="width: 100px; height: 100px;"/>
-                                                    </p:column>
-
-                                                </p:dataTable>     
-                                            </p:outputPanel>
-                                        </h:form>
-                                    </p:tab>
-
                                 </p:tabView>
                             </div>
                         </div>
                     </div>
                 </section>
             </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa != 37}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa != 13}">
                 <h1>
                     Esta página está disponible solo para personal adscrito al área de personal
                 </h1>

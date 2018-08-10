@@ -56,17 +56,18 @@ public class AdministracionEncuestaTsu implements Serializable{
     public void init(){
         Long inicio= System.currentTimeMillis();
         System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuestaTsu.init() inicio de componentes:"+inicio);
-        
+        String verdadero = "Verdadero";
         try {
             if(logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)){
                 usuarioNomina=Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
                 cveTrabajador= logonMB.getListaUsuarioClaveNomina().getCvePersona();
                 cveDirector = cveTrabajador.toString();
-                if (!ejbAdmEncuesta.esDirectorDeCarrera(28, 2, 18, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
+                if (!ejbAdmEncuesta.esDirectorDeCarrera(2, 2, 18, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
+                    System.out.println("Es director de carrera:"+ verdadero);
                     director = true;
                     seguimientoEncuestaDirectores();
                 }
-                if (logonMB.getPersonal().getAreaOperativa() == 34 || usuarioNomina.equals(579) ) {
+                if (logonMB.getPersonal().getAreaOperativa() == 9 || usuarioNomina.equals(579) ) {
                     //|| claveTrabajador.equals(579) esta parte va dentro del if de arriba
                     esDeIyE = true;
                     seguimientoEncuestaIyE();

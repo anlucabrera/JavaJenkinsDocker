@@ -147,13 +147,19 @@ public class ServicioPlaneacionCuatrimestral implements EjbPlaneacionCuatrimestr
 
     @Override
     public List<PlaneacionesCuatrimestrales> inicializarPlaneaciones(@NonNull List<Personal> colaboradores, PeriodosEscolares periodo, Personal director) {
-        List<PlaneacionesCuatrimestrales> l = new ArrayList<>();
-        colaboradores.stream().forEach(p -> {
-//            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioPlaneacionCuatrimestral.inicializarPlaneaciones() p: " + p);
-            PlaneacionesCuatrimestrales pc = agregarDocente(colaboradores, director, p, periodo);
-//            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioPlaneacionCuatrimestral.inicializarPlaneaciones() pc: " + pc);
-            l.add(pc);
-        });
+        final List<PlaneacionesCuatrimestrales> l = f.getEntityManager().createQuery("SELECT pc FROM PlaneacionesCuatrimestrales pc WHERE pc.periodo=:periodo AND pc.director.clave=:director", PlaneacionesCuatrimestrales.class)
+                .setParameter("periodo", periodo.getPeriodo())
+                .setParameter("director", director.getClave())
+                .getResultList();
+        
+        if(l.isEmpty()){
+            colaboradores.stream().forEach(p -> {
+    //            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioPlaneacionCuatrimestral.inicializarPlaneaciones() p: " + p);
+                PlaneacionesCuatrimestrales pc = agregarDocente(colaboradores, director, p, periodo);
+    //            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioPlaneacionCuatrimestral.inicializarPlaneaciones() pc: " + pc);
+                l.add(pc);
+            });
+        }
 
         return l;
     }
@@ -192,7 +198,7 @@ public class ServicioPlaneacionCuatrimestral implements EjbPlaneacionCuatrimestr
                 if (lpc.isEmpty()) {
                     final short asignacionPTCActividadesVariasMaximo = (short) (ep.leerPropiedadEntera("asignacionPTCActividadesVariasMaximo").getAsInt() - 2);
                     final short asignacionPTCAsesoriaClaseMaximo = (short) ep.leerPropiedadEntera("asignacionPTCAsesoriaClaseMaximo").getAsInt();
-                    final short asignacionPTCHorasClaseMinimo = (short) (ep.leerPropiedadEntera("asignacionPTCHorasClaseMinimo").getAsInt() / 2 + 1);
+                    final short asignacionPTCHorasClaseMinimo =(short) (ep.leerPropiedadEntera("asignacionPTCHorasClaseMinimo").getAsInt() / 2 + 1);
                     final short asignacionPTCProyectoInvestigacionMinimo = (short) (ep.leerPropiedadEntera("asignacionPTCProyectoInvestigacionMinimo").getAsInt());
 //                        final short asignacionPTCReunionAcademiaMaximo = (short) ep.leerPropiedadEntera("asignacionPTCReunionAcademiaMaximo").getAsInt();
                     final short asignacionPTCTutoriaIndividualMaximo = (short) ep.leerPropiedadEntera("asignacionPTCTutoriaIndividualMaximo").getAsInt();

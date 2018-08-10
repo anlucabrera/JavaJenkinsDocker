@@ -27,6 +27,7 @@ public class ListaEvaluacion360Combinaciones {
     @Getter @Setter private String nombreEvaluado;
     @Getter @Setter private String aOperativaEvaluado;
     @Getter @Setter private String cOperativaEvaluado;
+    @Getter @Setter private String habilidadEvaluado;
     
     @Getter @Setter private Integer nominaEvaluador;
     @Getter @Setter private String nombreEvaluador;

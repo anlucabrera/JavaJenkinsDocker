@@ -7,10 +7,11 @@ package mx.edu.utxj.pye.sgi.saiiut.ejb;
 
 import java.util.List;
 import javax.ejb.Local;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulos;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisos;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
-import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
+//import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.saiiut.entity.ListaUsuarioClaveNomina;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Usuarios;
@@ -39,7 +40,7 @@ public interface EjbLogin {
      
     public List<Permisos>  getPermisosModulos();
     
-    public Areas getAreaByClave(Integer area);
+    public AreasUniversidad getAreaByClave(Short area);
     
     public PersonalCategorias getCategoriaPersonalByarea(Short categoria);
     

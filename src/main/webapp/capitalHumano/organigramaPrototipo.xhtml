@@ -1,0 +1,588 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+
+        <!--link rel="stylesheet" href="../resources/demo/js/jquery/ui-lightness/jquery-ui-1.10.2.custom.css" /-->
+        <script type="text/javascript" src="../resources/demo/js/jquery/jquery-1.9.1.js"></script>
+        <script type="text/javascript" src="../resources/demo/js/jquery/jquery-ui-1.10.2.custom.min.js"></script>
+
+        <script  type="text/javascript" src="../resources/demo/js/primitives.min.js?219"></script>
+        <link href="../resources/demo/css/primitives.latest.css?219" media="screen" rel="stylesheet" type="text/css" />
+
+        <c:if test="#{!controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>
+    </ui:define>
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+
+        <h:form id="frmParametros"> 
+            <p:panel id="informacion" class="hidden-xs hidden-sm">
+                <section class="content">
+                    <div class="row" >
+                        <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                        <!--#{organigrama.jassonList.size()}-->
+                        <p:outputLabel  value="Mando superior" class="msperior"/>
+                        <p:spacer width="15px"/>
+                        <p:outputLabel  value="Mandos medios superior" class="mmsperior"/>
+                        <p:spacer width="15px"/>
+                        <p:outputLabel  value="Áreas de apoyo" class="aapoyo"/>
+                        <p:spacer width="15px"/>
+                        <p:outputLabel  value="Subordinado" class="subordinado"/>
+                        <div id="basicdiagram" class="col-md-9" style="height: 1000px;"/>
+                    </div>
+                </section>
+            </p:panel>    
+            <p:dialog header="Seleccionar parámetros de registro" widgetVar="dlgParametros"
+                      showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true"
+                      visible="false">
+                <p:autoUpdate/>
+                <p:tabView style="max-width: 600px; max-height: 550px;">
+                    <p:tab title="Datos personales">
+                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                            <div class="col-md-12">
+                                <div class="box box-widget widget-user-2">
+                                    <div class="widget-user-header bg-aqua-active">
+                                        <div class="widget-user-image">
+                                            <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/.jpg" class="img-circle" style="width: 100px; height: 100px;"/>
+                                        </div>
+                                        <h3 class="widget-user-username">nombre Empleado</h3>
+                                        <h5 class="widget-user-desc">categoria Operativa Nombre</h5>
+                                    </div>
+                                    <div class="box-footer">
+                                        <div class="row">
+                                            <div class="col-sm-12 border-right">
+                                                <div class="description-block">
+                                                    <h5 class="description-header">Fecha de ingreso:</h5>
+                                                    <span class="description-text"><p style="text-align: center"></p></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 border-right">
+                                                <div class="description-block">
+                                                    <h5 class="description-header">Grado de estudios:</h5>
+                                                    <span class="description-text"><p style="text-align: center">perfil Profesional</p></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="description-block">
+                                                    <h5 class="description-header">Área de adscripción:</h5>
+                                                    <span class="description-text"><p style="text-align: center">area Operativa Nombre</p></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </p:tab>
+                    <p:tab title="Subordinados" >
+                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                            <div class="col-md-12">
+                                <div class="box box-widget widget-user-2">
+                                    <div class="widget-user-header bg-aqua-active">
+                                        <div class="widget-user-image">
+                                            <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/.jpg" class="img-circle" style="width: 100px; height: 100px;"/>
+                                        </div>
+                                        <h3 class="widget-user-username">nombre Empleado</h3>
+                                        <h5 class="widget-user-desc">categoria Operativa Nombre</h5>
+                                    </div>
+                                    <div class="box-footer">
+                                        <div class="row">
+                                            <c:choose>
+                                                <c:when test="#{organigramView4.sec != 0}">
+                                                    <div class="col-sm-6 border-right">
+                                                        <div class="description-block">
+                                                            <h5 class="description-header">Secretaria(s):</h5>
+                                                            <span class="description-text"><p style="text-align: center"></p></span>
+                                                        </div>
+                                                    </div>
+                                                </c:when>
+                                                <c:when test="#{organigramView4.sec == 0}"/>
+                                            </c:choose>
+                                            <c:choose>
+                                                <c:when test="#{organigramView4.ptc!= 0}">
+                                                    <div class="col-sm-6 border-right">
+                                                        <div class="description-block">
+                                                            <h5 class="description-header">Profesor(es) de tiempo completo:</h5>
+                                                            <span class="description-text"><p style="text-align: center"></p></span>
+                                                        </div>
+                                                    </div>
+                                                </c:when>
+                                                <c:when test="#{organigramView4.ptc == 0}"/>
+                                            </c:choose>
+                                            <c:choose>
+                                                <c:when test="#{organigramView4.pda != 0}">
+                                                    <div class="col-sm-6">
+                                                        <div class="description-block">
+                                                            <h5 class="description-header">Profesor(es) de asignatura:</h5>
+                                                            <span class="description-text"><p style="text-align: center"></p></span>
+                                                        </div>
+                                                    </div>
+                                                </c:when>
+                                                <c:when test="#{organigramView4.pda == 0}"/>
+                                            </c:choose>
+                                            <c:choose>
+                                                <c:when test="#{organigramView4.lab != 0}">
+                                                    <div class="col-sm-6">
+                                                        <div class="description-block">
+                                                            <h5 class="description-header">Laboratorista(s):</h5>
+                                                            <span class="description-text"><p style="text-align: center"></p></span>
+                                                        </div>
+                                                    </div>
+                                                </c:when>
+                                                <c:when test="#{organigramView4.lab == 0}"/>
+                                            </c:choose>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </p:tab>
+                    <p:tab title="Funciones generales">
+                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                            <div class="col-md-12">
+                                <div class="box box-widget widget-user-2">
+                                    <div class="widget-user-header bg-aqua-active">
+                                        <div class="widget-user-image">
+                                            <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/.jpg" class="img-circle" style="width: 100px; height: 100px;"/>
+                                        </div>
+                                        <h3 class="widget-user-username">nombre Empleado</h3>
+                                        <h5 class="widget-user-desc">categoria Operativa Nombre</h5>
+                                    </div>
+                                    <div class="box-footer">
+                                        <div class="row">
+                                            <div class="col-sm-12 border-right">
+                                                <div class="description-block">
+                                                    <h5 class="description-header">Función genérica</h5>
+                                                    <c:forEach var = "i" begin = "0" end = "10">
+                                                        <span class="description-text" style="text-align: justify"></span>
+                                                        <br/>
+                                                        <br/>
+                                                    </c:forEach>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </p:tab>
+                    <p:tab title="Funciones específicas">
+                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                            <div class="col-md-12">
+                                <div class="box box-widget widget-user-2">
+                                    <div class="widget-user-header bg-aqua-active">
+                                        <div class="widget-user-image">
+                                            <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/.jpg" class="img-circle" style="width: 100px; height: 100px;"/>
+                                        </div>
+                                        <h3 class="widget-user-username">nombre Empleado</h3>
+                                        <h5 class="widget-user-desc">categoria Operativa Nombre</h5>
+                                    </div>
+                                    <div class="box-footer">
+                                        <div class="row">
+                                            <div class="col-sm-12 border-right">
+                                                <div class="description-block">
+                                                    <h5 class="description-header">Funciones específicas</h5>
+                                                    <c:forEach var = "i" begin = "0" end = "10">
+                                                        <span class="description-text" style="text-align: justify"></span>
+                                                        <br/>
+                                                        <br/>
+                                                    </c:forEach>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </p:tab>
+                </p:tabView>
+                <p:commandButton id="btnAceptarParametro" value="Aceptar"
+                                 icon="fa fa-chek" styleClass="btn-primary"
+                                 onsuccess="PF('dlgParametros').hide()" />
+            </p:dialog>
+
+        </h:form>
+
+        <script type='text/javascript'>//<![CDATA[ 
+
+            jQuery(window).load(function () {
+                var options = new primitives.orgdiagram.Config();
+                var items = [
+                    new primitives.orgdiagram.ItemConfig({id: 0, clave: 360, parent: null, title: "Rectoría", description: "Santos Picazo Jesús ______________________________ Encargado del Despacho de los Asuntos de Rectoría", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/360.jpg", templateName: "contactTemplate", itemTitleColor: "#043191"}),
+                    new primitives.orgdiagram.ItemConfig({id: 1, parent: 0, title: "Secretaría Académica", description: "Montiel Meza Roberto ______________________________ Secretario/a Académico", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/323.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 2, parent: 0, title: "Abogado General", description: "Castillo Vergara Elizabeth ______________________________ Encargado/a del despacho de los asuntos de la Oficina del Abogado General", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/563.jpg", itemType: primitives.orgdiagram.ItemType.Assistant, adviserPlacementType: primitives.common.AdviserPlacementType.Right, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 3, parent: 0, title: "Administración y Finanzas", description: "Melo Hernández Gema Francisca ______________________________ Director/a de Área", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/196.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 4, parent: 0, title: "Extensión y Vinculación", description: "Vargas Carballo Dianne ______________________________ Director/a de Área", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/114.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 5, parent: 0, title: "Planeación y Evaluación", description: "Carrillo Parra Altagracia ______________________________ Director/a de Área", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/30.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 6, parent: 3, title: "Recursos Financieros", description: "Rivera Lombardía Arantxa Montserrat ______________________________ Subdirector/a de área", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/302.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 7, parent: 5, title: "Informática y Educación a Distancia", description: "Arroyo López Jorge ______________________________ Jefe/a de Departamento", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/128.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 8, parent: 5, title: "Información y Estadística", description: "Sánchez Polo Miguel Angel ______________________________ Jefe/a de Departamento", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/148.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 9, parent: 1, title: "Servicios Escolares", description: "García Ortiz Rita Argelia ______________________________ Jefe/a de Departamento", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/56.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 10, parent: 1, title: "Servicios Estudiantiles", description: "López Rodríguez Julio César ______________________________ Jefe/a de Departamento", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/227.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 11, parent: 1, title: "Fortalecimiento de Desarrollo Académico", description: "Castro Ortega Julia Aide ______________________________ Jefe/a de Departamento", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/53.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 12, parent: 3, title: "Personal", description: "Santamaría Barrera Claudia ______________________________ Jefe/a de Departamento", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/49.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 13, parent: 3, title: "Recursos Materiales y Servicios Generales", description: "Martinez Cuautenco Sebastian ______________________________ Jefe/a de Departamento", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/395.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 14, parent: 6, title: "Departamento de Programación y Contabilidad", description: "Velasco Cabrera GiselaJe ______________________________ fe/a de Departamento", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/403.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 15, parent: 4, title: "Prensa, Difusión y Actividades Culturales", description: "Márquez Cabrera Dulce María ______________________________ Encargado/a de Jefe/a de Departamento", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/555.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 16, parent: 4, title: "Servicios Tecnológicos y Convenios", description: "Maldonado Escamilla Alba Josefina ______________________________ Jefe/a de Departamento", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/179.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 17, parent: 10, title: "Psicopedagogía", description: "Grajeda Ramírez Clara ______________________________ Coordinador/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/232.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#0675ca"}),
+                    new primitives.orgdiagram.ItemConfig({id: 18, parent: 4, title: "Movilidad e Internacionalización", description: "González Marquina César ______________________________ Coordinador/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/343.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#0675ca"}),
+                    new primitives.orgdiagram.ItemConfig({id: 19, parent: 4, title: "Sistema de Gestión de la Calidad", description: "Vega Arroyo Noemi ______________________________ Coordinador/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/409.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#0675ca"}),
+                    new primitives.orgdiagram.ItemConfig({id: 20, parent: 4, title: "Centro de Emprendimiento y Desarrollo Empresarial", description: "Hernández Cazares Ericka ______________________________ Coordinador/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/97.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#0675ca"}),
+                    new primitives.orgdiagram.ItemConfig({id: 21, parent: 4, title: "Actividades Deportivas", description: "León Franco Marco Antonio ______________________________ Coordinador/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/83.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#0675ca"}),
+                    new primitives.orgdiagram.ItemConfig({id: 22, parent: 1, title: "Idiomas", description: "Saavedra Reyes Luly Taryn ______________________________ Coordinador/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/63.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#0675ca"}),
+                    new primitives.orgdiagram.ItemConfig({id: 23, parent: 1, title: "Área Económico Administrativa", description: "Alvarado Fosado Marco Antonio ______________________________ Director/a de Área", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/526.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 24, parent: 1, title: "Área Agro-Industrial Alimentaria", description: "Pérez Escamilla Leonardo Isidro ______________________________ Director/a de Área", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/231.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 25, parent: 1, title: "Área Mantenimiento Industrial", description: "Ortega Patricio Javier ______________________________ Director/a de Área", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/371.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 26, parent: 1, title: "Área Mecatrónica Automatización", description: "Martínez Domínguez José Antonio ______________________________ Director/a de Área", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/266.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 27, parent: 1, title: "Área Tecnologías de la Información y Comunicación", description: "Chirinos Lechuga Raúl ______________________________ Director/a de Área", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/72.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 28, parent: 1, title: "Área Salud", description: "García Cid Ma. Concepción ______________________________ Director/a de Área", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/339.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#045491"}),
+                    new primitives.orgdiagram.ItemConfig({id: 59, parent: 9, title: "Titulación", description: "Rivera García Andrea Soledad ______________________________ Coordinador/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/488.jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: "#0675ca"}),
+                    new primitives.orgdiagram.ItemConfig({id: 60, parent: 3, title: "Segimiento de Recursos Extraordinarios", description: "Albin Gutierrez Maria Lorena ______________________________ Encargado/a de la Comprobación Financiera de Recursos Extraordinarios", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/390.jpg", templateName: "contactTemplate", itemTitleColor: "#0675ca"}),
+                    new primitives.orgdiagram.ItemConfig({id: 61, parent: 22, title: "Vázquez Sánchez Gabriela", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/62.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 62, parent: 22, title: "Linares Cisneros Beatríz", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/109.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 63, parent: 22, title: "Vargas Cuervo Flor Cecilia", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/164.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 64, parent: 22, title: "Bautista Quiroz Adriana", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/269.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 65, parent: 22, title: "Pérez Olivares Raul Arturo", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/277.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 66, parent: 22, title: "Viveros Lechuga Eslim", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/319.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 67, parent: 22, title: "Lucas Hernández Baltazar", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/333.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 68, parent: 22, title: "Ojeda Martínez Raul", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/335.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 69, parent: 22, title: "Silva Luna Eloisa", description: "Secretaria/o de Director de Área  ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/350.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 70, parent: 22, title: "García Saldivar José Francisco", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/453.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 71, parent: 22, title: "Lechuga Cuevas Adriana", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/475.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 72, parent: 22, title: "Gomez Paniagua Jorge Armando", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/509.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 73, parent: 22, title: "Santos Martínez Rocio", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/520.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 74, parent: 22, title: "Márquez Silva Lilia", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/576.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 75, parent: 22, title: "Matlacala Román Mayra Lorena", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/577.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 76, parent: 22, title: "Lange André", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/592.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 77, parent: 23, title: "Fosado Cuevas Azareel", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/14.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 78, parent: 23, title: "Carmona González Juan Carlos", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/57.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 79, parent: 23, title: "Arellano Solís Sonia", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/85.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 80, parent: 23, title: "Rivera Vera Andres", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/96.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 81, parent: 23, title: "Gonzalez Leal Maria Azucena", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/163.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 82, parent: 23, title: "Cruz Cabrera Clotilde", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/169.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 83, parent: 23, title: "Cruz Suárez Silvia Denisse", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/173.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 84, parent: 23, title: "Velazquez Vargas José Rubén", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/212.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 85, parent: 23, title: "Islas Lechuga Celia", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/213.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 86, parent: 23, title: "Martínez Salazar Julián", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/272.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 87, parent: 23, title: "García Vite Isabel", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/308.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 88, parent: 23, title: "Méndez Castillo Gabino", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/311.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 89, parent: 23, title: "Ortega Sampayo Flor de María", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/348.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 90, parent: 23, title: "Vázquez Arroyo Felipe", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/376.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 91, parent: 23, title: "Hernández Manzano Francisco", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/411.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 92, parent: 23, title: "González Flores Monsserrath", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/478.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 93, parent: 23, title: "Escobar Rodríguez Blanca Edith", description: "Secretaria/o de Director de Área  ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/556.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 94, parent: 23, title: "Vargas Zamarripa Dora Concepción", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/560.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 95, parent: 24, title: "Morales Guzmán Victor", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/70.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 96, parent: 24, title: "Gallardo Sandoval Aracelí", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/198.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 97, parent: 24, title: "González López Julio", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/239.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 98, parent: 24, title: "Valderrabano del Villar Jazmín", description: "Secretaria/o de Director de Área  ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/253.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 99, parent: 24, title: "Ortega Rangel Leticia", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/279.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 100, parent: 24, title: "Díaz Cruz Marcelino", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/354.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 101, parent: 24, title: "Cazarez Vargas Cesar", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/355.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 102, parent: 24, title: "Garrido Hernández Yaradenice", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/363.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 103, parent: 24, title: "Gómez Sampayo Baltazar", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/373.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 104, parent: 24, title: "Mariano Tellez Felix", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/382.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 105, parent: 24, title: "Vazquez Garcìa Jamnia", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/443.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 106, parent: 24, title: "Cabrera Quiroz Evelyn", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/445.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 107, parent: 24, title: "Pérez Becerra Hugo Isidro", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/510.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 108, parent: 24, title: "Bautista Calva Eloy", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/518.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 109, parent: 24, title: "Ríos Alvarez Nely", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/532.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 110, parent: 24, title: "Capulín Valencia Juan Carlos", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/536.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 111, parent: 24, title: "Torres Rodríguez Araceli", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/562.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 112, parent: 24, title: "Rivera López Lorena", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/574.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 113, parent: 24, title: "Morales Calva Esteban", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/69.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 114, parent: 24, title: "Vázquez Sánchez Alma Yolanda", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/310.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 115, parent: 24, title: "Ríos Torres Ana María", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/410.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 116, parent: 24, title: "Fosado Cuevas Aridaid", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/412.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 117, parent: 24, title: "González de los Montero Sierra María José", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/364.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 118, parent: 24, title: "Vergara Herrera Francisco Javier", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/368.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 119, parent: 24, title: "Arteaga Hernández  Erandi", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/513.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 120, parent: 24, title: "González Urbina Anahid", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/544.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 121, parent: 25, title: "Arroyo López Carlos", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/21.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 122, parent: 25, title: "Vergara Calva Gil", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/77.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 123, parent: 25, title: "Guzmán Salas Sofia Adamina", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/93.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 124, parent: 25, title: "Martínez Martínez Arístides", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/140.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 125, parent: 25, title: "Ramos Santos Tomás", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/149.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 126, parent: 25, title: "Hernández Domínguez Juan Daniel", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/168.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 127, parent: 25, title: "Santos Rivera Chester Deybids", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/181.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 128, parent: 25, title: "Sandoval Hernández Marco Antonio", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/187.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 129, parent: 25, title: "Aparício Maldonado Jenny", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/195.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 130, parent: 25, title: "Hernández Briones Benjamín Manuel", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/197.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 131, parent: 25, title: "Fosado Ramos Gerardo", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/223.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 132, parent: 25, title: "Morato González Mariela", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/243.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 133, parent: 25, title: "López Pacheco Karla Paola", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/250.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 134, parent: 25, title: "González Rosales José Luis", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/259.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 135, parent: 25, title: "Flores Valderrabano Fermín", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/261.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 136, parent: 25, title: "Ortega Sampayo José Manuel", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/262.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 137, parent: 25, title: "Ibarra Robles Gabriel Ted", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/265.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 138, parent: 25, title: "Sampallo Carballo Nazario", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/268.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 139, parent: 25, title: "Valdez Aparicio María Magdalena", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/270.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 140, parent: 25, title: "Bonilla Jiménez Luis Antonio", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/273.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 141, parent: 25, title: "Garrido Orozco Victor", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/275.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 142, parent: 25, title: "Morales Domínguez Yuval", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/306.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 143, parent: 25, title: "Sánchez Melo Juan", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/307.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 144, parent: 25, title: "Rangel Ríos Oliveria", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/315.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 145, parent: 25, title: "Melo Ortega Oscar", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/334.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 146, parent: 25, title: "Hernández López Ubaldo Emmanuel", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/401.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 147, parent: 25, title: "Rojas Balbuena Dorian", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/414.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 148, parent: 25, title: "Aldana Gayosso Bernardino", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/417.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 149, parent: 25, title: "Cruz Sampayo Jeanneth", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/432.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 150, parent: 25, title: "Hernández López Angel Emmanuel", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/433.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 151, parent: 25, title: "Carbajal Fosado Arely", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/437.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 152, parent: 25, title: "Cruz Gómez Angela", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/446.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 153, parent: 25, title: "Hernàndez Velazquez Joel", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/455.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 154, parent: 25, title: "Licona González Marlon", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/458.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 155, parent: 25, title: "Marcelo Solís Montserrat", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/473.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 156, parent: 25, title: "Saavedra Arellano Dennis Abril", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/506.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 157, parent: 25, title: "Islas Arroyo Jazmín", description: "Secretaria/o de Director de Área  ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/572.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 158, parent: 25, title: "Díaz Espinosa Emmanuel Alejandro", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/578.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 159, parent: 25, title: "Briones Serena Zaida", description: "Secretaria/o de Director de Área  ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/585.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 160, parent: 26, title: "Alpizar Garrido Luis Octavio", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/170.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 161, parent: 26, title: "Manzo Reyes José Luis", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/271.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 162, parent: 26, title: "Vargas Ramírez Jonathan", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/303.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 163, parent: 26, title: "Gutierrez Mayer Guadalupe Belem", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/393.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 164, parent: 26, title: "Gonzalez Galindo María", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/397.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 165, parent: 26, title: "Hernández Vigueras Ana Laura", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/438.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 166, parent: 26, title: "Carrera Muñoz Irasema", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/467.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 167, parent: 26, title: "Salas Lozano Blanca Estela", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/480.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 168, parent: 26, title: "Ortíz Eslava José Antonio", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/481.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 169, parent: 26, title: "Trejo Reyes Pedro Enrique", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/483.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 170, parent: 26, title: "Álvarez Simón Luis Carlos", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/496.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 171, parent: 26, title: "Castro Cruz Guadalupe", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/497.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 172, parent: 26, title: "León Islas Hugo Margarito", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/499.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 173, parent: 26, title: "Cazares Bobadilla Adriana", description: "Secretaria/o de Director de Área  ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/503.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 174, parent: 26, title: "Vargas Ferrer Juan", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/580.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 175, parent: 27, title: "González López Anayetzi", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/98.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 176, parent: 27, title: "Santos Quiroz Randolfo A.", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/104.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 177, parent: 27, title: "Reyes Fuentes Matilde", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/139.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 178, parent: 27, title: "Ramírez Hernández Marco Antonio", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/161.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 179, parent: 27, title: "Ibarra Santos Mayra", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/165.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 180, parent: 27, title: "Gaspar Aranda Beatriz", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/167.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 181, parent: 27, title: "García Romero Francisco", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/183.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 182, parent: 27, title: "Guzmán Flores Erik Omar", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/189.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 183, parent: 27, title: "Luna Santos Ricardo", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/202.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 184, parent: 27, title: "Mendoza Clemente Adán", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/247.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 185, parent: 27, title: "Valderrabano González Héctor", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/352.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 186, parent: 27, title: "Valderrabano Hernández Juan Carlos", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/353.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 187, parent: 27, title: "Garcia Quintero Iván Eduardo", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/385.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 188, parent: 27, title: "Marquez Hernandez Virginia", description: "Secretaria/o de Director de Área  ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/386.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 189, parent: 27, title: "Anaya Salas Susana del Carmen", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/448.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 190, parent: 27, title: "Castillo Vazquez Dulce Maria", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/493.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 191, parent: 27, title: "Licona González Janis", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/534.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 192, parent: 27, title: "Reyes Ontiveros José Manuel", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/550.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 193, parent: 27, title: "García Trejo Tito", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/551.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 194, parent: 27, title: "Perera Góngora Glendy Marisol", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/552.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 195, parent: 28, title: "Amador Mendoza Evelin", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/172.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 196, parent: 28, title: "Quiroz Ramírez Isabel", description: "Secretaria/o de Director de Área  ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/258.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 197, parent: 28, title: "García Vite Rosalba", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/295.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 198, parent: 28, title: "Ortega Enriquez Jorge Arturo", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/324.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 199, parent: 28, title: "Romero Bello Juan Ignacio Eduardo", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/326.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 200, parent: 28, title: "Silva Velázquez Rodolfo", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/340.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 201, parent: 28, title: "Garcia Romero Norma", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/341.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 202, parent: 28, title: "Palestina Fernández Gustavo", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/372.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 203, parent: 28, title: "Rojas Velázquez Aurelio", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/374.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 204, parent: 28, title: "Ortega Vargas Leticia", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/391.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 205, parent: 28, title: "Ortíz Hernández Anel", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/392.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 206, parent: 28, title: "Lira Fuentes Nelly", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/423.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 207, parent: 28, title: "Aranda González Lizbeth", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/429.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 208, parent: 28, title: "Garrido Valderrabano Carolina", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/441.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 209, parent: 28, title: "López Morales Guadalupe", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/450.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 210, parent: 28, title: "Tolentino Castillo Guadalupe", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/451.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 211, parent: 28, title: "Valencia Melo Stephany", description: "Prof. Inv. T.C. Asociado C", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/495.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 212, parent: 28, title: "Cruz García Laura Yalín", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/517.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 213, parent: 28, title: "Cabrera González Felipe de Jesús", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/548.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 214, parent: 28, title: "Thomé Flores Teresa", description: "Profesor/a de Asignatura", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/549.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 215, parent: 28, title: "García Islas Erandi Aradi", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/561.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 216, parent: 28, title: "Lechuga Cenobio Lina", description: "Secretaria/o de Director de Área  ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/581.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 217, parent: 0, title: "Serena Ibarra Fidela", description: "Secretaria/o de Rector/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/2.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 219, parent: 0, title: "Sampayo Gomez Jose Luis", description: "Analista Administrativo/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/456.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 220, parent: 0, title: "Santos Uranga Angelica", description: "Secretaria/o de Rector/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/538.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 221, parent: 1, title: "Chavarria Maldonado Sonia", description: "Secretaria/o de Secretaría Académica", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/435.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 222, parent: 2, title: "Hérnandez Fonseca Gabriela", description: "Secretaria/o de Director de Área  ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/199.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 223, parent: 2, title: "Lechuga Hernández Ivonne", description: "Secretaria/o de Encargado/a de la Comprobación Financiera de Recursos Extraordinarios", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/591.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 224, parent: 3, title: "Palomino Jiménez José Rigoberto", description: "Analista Administrativo/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/241.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 225, parent: 3, title: "Ortega Patricio Raul", description: "Analista Administrativo/a de Control de Inventarios", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/356.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 226, parent: 3, title: "Ortiz Valentín Wendolyne", description: "Analista Administrativo/a de la Unidad Administrativa de Acceso a la Información", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/389.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 227, parent: 3, title: "Gómez Guzmán María Estela", description: "Analista Administrativo/a de Control de Inventarios", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/420.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 228, parent: 3, title: "López Martínez Josefina", description: "Secretaria/o de Director de Área  ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/529.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 229, parent: 4, title: "González González Alberto Benito", description: "Coordinador/a de Estadías", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/43.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 230, parent: 4, title: "Sampayo Quiroz Armando", description: "Profesor/a de música", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/48.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 231, parent: 4, title: "Moreno Romero Flor", description: "Secretaria/o de Director de Área  ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/113.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 232, parent: 4, title: "Fosado Rabling Andrea María", description: "Jefe/a de Oficina de Cultura       ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/361.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 233, parent: 4, title: "García Mendoza Melissa Ivonne", description: "Encargada/o de Seguimiento de Egresados y Bolsa de Trabajo", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/462.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 234, parent: 4, title: "Téllez Huachina Maleny", description: "Analista Administrativo/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/491.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 235, parent: 4, title: "Carballo García Berenice ", description: "Analista Administrativo/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/588.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 236, parent: 4, title: "Castelán Rosas Estefanía Galílea", description: "Analista Administrativo/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/594.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 237, parent: 5, title: "Valderrabano Virgen Jonny", description: "Coordinador/a de Sistemas", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/203.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 238, parent: 5, title: "Vargas Galindo María de Los Angeles", description: "Coordinador/a de Evaluación Institucional", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/284.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 239, parent: 5, title: "Cabrera Salas Ana Luisa", description: "Coordinador/a de Sistemas", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/349.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 240, parent: 5, title: "Castillo Sanchez Eduardo", description: "Jefe/a de Oficina de Sistemas", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/511.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 241, parent: 5, title: "Vargas Galindo Carlos Alfredo", description: "Analista Administrativo/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/541.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 242, parent: 5, title: "Islas González Amarilis", description: "Analista Administrativo/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/558.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 243, parent: 5, title: "Pérez Morales Zabdiel", description: "Analista Administrativo/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/564.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 244, parent: 5, title: "López Miguel Marcelino", description: "Analista Administrativo/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/579.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 245, parent: 6, title: "Gayosso Amador Manuel", description: "Encargado/a de Ingresos Propios", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/297.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 246, parent: 7, title: "Luna Santos Heriberto", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/207.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 247, parent: 7, title: "Flores Cruz Raúl", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/383.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 248, parent: 7, title: "Hurtado Zavaleta Laura Misia", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/424.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 249, parent: 7, title: "Ortega Garrido Valentin", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/425.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 250, parent: 7, title: "Lazcano Mendoza Omar", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/426.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 251, parent: 7, title: "Hernàndez Santos Francisco Armando", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/444.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 252, parent: 7, title: "Diego Clemente Yovani", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/508.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 253, parent: 7, title: "Aldana Cruz Arnulfo", description: "Técnico/a Laboratorista         ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/554.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 254, parent: 8, title: "Guadalupe Rosas Reyna", description: "Secretaria/o de Jefe/a de Departamento    ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/28.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 255, parent: 8, title: "Hernández Bautista Enrique", description: "Jefe/a de Oficina               ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/240.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 256, parent: 9, title: "Sánchez González Juan Alberto", description: "Jefe/a de Oficina Administrador/a del SAIIUT", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/287.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 257, parent: 9, title: "Quiroga Espinosa Rodrigo Mauricio", description: "Secretaria/o de Jefe/a de Departamento    ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/566.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 258, parent: 10, title: "Toral Martínez Guadalupe Celinda", description: "Analista Administrativo/a de Becas", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/111.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 259, parent: 10, title: "Maldonado Paredes Mariana", description: "Enfermera/o", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/388.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 260, parent: 10, title: "Vega Hernández Juana Yolanda", description: "Enfermera/o", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/463.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 261, parent: 10, title: "González García Teresa", description: "Secretaria/o de Jefe/a de Departamento    ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/521.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 262, parent: 10, title: "Rodríguez Vargas Leticia", description: "Técnico/a Bibliotecario/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/546.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 263, parent: 11, title: "Santos Robles Jeimy", description: "Analista Administrativo/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/150.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 264, parent: 11, title: "Melo Hernández María Baraquicia", description: "Jefe/a de Oficina               ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/362.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 265, parent: 12, title: "Rosas Santos Clara", description: "Secretaria/o de Jefe/a de Departamento    ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/288.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 266, parent: 12, title: "Olvera Garrido Yessica", description: "Analista Administrativo/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/477.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 267, parent: 12, title: "Cortez Benitez Lucero", description: "Coordinador/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/501.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 268, parent: 12, title: "Morales González Estela", description: "Jefe/a de Oficina               ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/530.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 269, parent: 13, title: "Quiroga Escamilla Inocencio", description: "Asistente de Servicios de Mantenimiento", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/4.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 270, parent: 13, title: "Hernández Morales Florente", description: "Asistente de Servicios de Mantenimiento", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/38.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 271, parent: 13, title: "Calderón Cruz David", description: "Chofer", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/229.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 272, parent: 13, title: "Martínez Barrios Emilio", description: "Analista Administrativo/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/244.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 273, parent: 13, title: "Picazo San Agustin Fabiola", description: "Analista Administrativo/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/282.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 274, parent: 13, title: "Vargas Bonilla Claudia Romina", description: "Analista Administrativo/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/329.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 275, parent: 13, title: "Ortega Patricio Manuel", description: "Chofer de Rector/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/428.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 276, parent: 13, title: "Ortega Perez Francisco David", description: "Chofer", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/459.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 277, parent: 13, title: "Hernández Carballo Claudia", description: "Secretaria/o de Jefe/a de Departamento    ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/487.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 278, parent: 13, title: "Gayosso Bonilla Yarumi Anel", description: "Analista Administrativo/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/489.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 279, parent: 13, title: "Barrios Carballo Francisco Augusto", description: "Jefe de Servicios de Mantenimiento", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/498.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 280, parent: 13, title: "Vargas Cortes Edmar", description: "Asistente de Servicios de Mantenimiento", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/535.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 281, parent: 13, title: "Alonso Mendoza Faustino", description: "Jefe de Servicios de Mantenimiento", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/553.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 282, parent: 13, title: "Cruz Ortega Bonifacio", description: "Asistente de Servicios de Mantenimiento", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/559.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 283, parent: 13, title: "Picazo San Agustin Javier", description: "Asistente de Servicios de Mantenimiento", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/586.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 284, parent: 14, title: "Ramírez Calva Miriam", description: "Coordinador/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/301.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 285, parent: 14, title: "Tellez Corona Alma Rubi", description: "Analista Administrativo/a Técnico/a en Contabilidad", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/328.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 286, parent: 14, title: "Vite Sosa Rocio", description: "Encargado/a de Contabilidad", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/387.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 287, parent: 14, title: "Vargas Lechuga Guadalupe", description: "Jefe/a de Oficina               ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/407.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 288, parent: 14, title: "Soto Hernández Ivonne", description: "Analista Administrativo/a Técnico/a en Contabilidad", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/466.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 289, parent: 15, title: "Martínez Espinoza Javier", description: "Secretaria/o de Jefe/a de Departamento    ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/582.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 290, parent: 16, title: "Quiroz Rodriguez Laura", description: "Jefe/a de Oficina de Visitas Industriales  ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/291.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 291, parent: 16, title: "Hernández Lecona Laura Elena", description: "Secretaria/o de Jefe/a de Departamento    ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/394.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 292, parent: 17, title: "Maldonado Vázquez María del Rosario", description: "Jefe/a de Oficina               ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/289.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 293, parent: 17, title: "Carmona Ríos Marisela", description: "Analista Administrativo/a Psicólogo/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/298.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 294, parent: 17, title: "Santos Mote Matthias Azareel", description: "Analista Administrativo/a Psicólogo/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/533.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 295, parent: 19, title: "Borbolla Sosa Maribel", description: "Secretaria/o de Jefe/a de Departamento    ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/116.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 296, parent: 20, title: "González Flores María Guadalupe", description: "Secretaria/o de Jefe/a de Departamento    ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/567.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 297, parent: 21, title: "Sampayo Zuluaga Gisela", description: "Secretaria/o de Jefe/a de Departamento    ", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/545.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 298, parent: 21, title: "Amador Galindo Edith", description: "Analista Administrativo/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/573.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 299, parent: 21, title: "Carbajal Avalos Beatriz", description: "Analista Administrativo/a", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/593.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 300, parent: 59, title: "Gómez Garrido Keith", description: "Jefe/a de Oficina", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/228.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 301, parent: 59, title: "Morales Santos Araceli", description: "Analista Administrativo/a de Titulación", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/283.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 302, parent: 59, title: "Nava Ortiz Hubert Ismael", description: "Analista Administrativo/a de Titulación", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/399.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 303, parent: 59, title: "Vargas Ortíz Hermilo", description: "Analista Administrativo/a de Titulación", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/522.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                    new primitives.orgdiagram.ItemConfig({id: 304, parent: 59, title: "Castillo Olvera Betzabe", description: "Analista Administrativo/a de Titulación", image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/570.jpg", templateName: "contactTemplate", itemTitleColor: "#434c52"}),
+                ];
+
+                var buttons = [];
+
+                buttons.push(new primitives.orgdiagram.ButtonConfig("properties", "ui-icon-person", "Info"));
+
+                options.buttons = buttons;
+                options.hasButtons = primitives.common.Enabled.True;
+                options.hasSelectorCheckbox = primitives.common.Enabled.False;
+                options.items = items;
+                options.cursorItem = 0;
+                options.templates = [getContactTemplate()];
+                options.onItemRender = onTemplateRender;
+                options.hasButtons = primitives.common.Enabled.True;
+                options.onButtonClick = function (e, data) {
+                    var message = "User clicked '" + data.name + "' button for item '" + data.context.clave + "'.";
+                    PF('dlgParametros').show();
+
+                    message += (data.parentItem != null ? " Parent item '" + data.parentItem.title + "'" : "");
+                    alert(message);
+
+                };
+
+                jQuery("#basicdiagram").orgDiagram(options);
+
+
+                function onTemplateRender(event, data) {
+                    switch (data.renderingMode) {
+                        case primitives.common.RenderingMode.Create:
+                            /* Initialize widgets here */
+                            break;
+                        case primitives.common.RenderingMode.Update:
+                            /* Update widgets here */
+                            break;
+                    }
+
+                    var itemConfig = data.context;
+
+                    if (data.templateName == "contactTemplate") {
+                        data.element.find("[name=photo]").attr({"src": itemConfig.image, "alt": itemConfig.title});
+                        data.element.find("[name=titleBackground]").css({"background": itemConfig.itemTitleColor});
+
+                        var fields = ["title", "description", "phone", "email"];
+                        for (var index = 0; index < fields.length; index++) {
+                            var field = fields[index];
+
+                            var element = data.element.find("[name=" + field + "]");
+                            if (element.text() != itemConfig[field]) {
+                                element.text(itemConfig[field]);
+                            }
+                        }
+                    }
+                }
+
+                function getContactTemplate() {
+                    var result = new primitives.orgdiagram.TemplateConfig();
+                    result.name = "contactTemplate";
+
+                    var buttons = [];
+                    buttons.push(new primitives.orgdiagram.ButtonConfig("notice", "ui-icon-notice", "Info"));
+                    result.buttons = buttons;
+
+                    result.itemSize = new primitives.common.Size(220, 120);
+                    result.minimizedItemSize = new primitives.common.Size(3, 3);
+                    result.highlightPadding = new primitives.common.Thickness(2, 2, 2, 2);
+
+
+                    var itemTemplate = jQuery(
+                            '<div class="bp-item bp-corner-all bt-item-frame">'
+                            + '<div name="titleBackground" class="bp-item bp-corner-all bp-title-frame" style="top: 2px; left: 2px; width: 216px; height: 42px;">'
+                            + '<div name="title" class="bp-item" style="top: 3px; left: 6px; width: 208px; height: 40px;text-align: center;">'
+                            + '</div>'
+                            + '</div>'
+                            + '<div class="bp-item bp-photo-frame" style="top: 46px; left: 2px; width: 50px; height: 60px;">'
+                            + '<img name="photo" style="height:60px; width:50px;" />'
+                            + '</div>'
+                            + '<div name="description" class="bp-item" style="top: 46px; left: 56px; width: 162px; height: 80px; font-size: 10px;"></div>'
+                            + '</div>'
+                            ).css({
+                        width: result.itemSize.width + "px",
+                        height: result.itemSize.height + "px"
+                    }).addClass("bp-item bp-corner-all bt-item-frame");
+                    result.itemTemplate = itemTemplate.wrap('<div>').parent().html();
+
+                    return result;
+                }
+
+            }); //]]>  
+
+        </script>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

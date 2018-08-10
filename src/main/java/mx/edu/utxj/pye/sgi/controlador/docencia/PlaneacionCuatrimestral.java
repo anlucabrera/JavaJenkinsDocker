@@ -193,8 +193,16 @@ public class PlaneacionCuatrimestral implements Serializable{
     }
 
     public void agregarPlaneacion() {
-        planeaciones.add(ejb.agregarDocente(colaboradores, director, nuevo, periodo));
-        ejb.ordenarPlaneaciones(planeaciones);
+        PlaneacionesCuatrimestrales pl = ejb.agregarDocente(colaboradores, director, nuevo, periodo);
+        Boolean existe = !planeaciones.stream()
+                .filter(p -> Objects.equals(p.getDirector().getClave(), pl.getDirector().getClave()) && Objects.equals(p.getDocente().getClave(), pl.getDocente().getClave()) && p.getPeriodo() == pl.getPeriodo())
+                .collect(Collectors.toList())
+                .isEmpty();
+        
+        if(!existe){
+            planeaciones.add(pl);
+            ejb.ordenarPlaneaciones(planeaciones);
+        }
     }
 
     public void eliminarPlaneacion(PlaneacionesCuatrimestrales planeacion) {

@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.sgi.ejb;
 
 import java.util.List;
 import javax.ejb.Local;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluacionResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados;
@@ -18,7 +19,6 @@ import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesTutoresResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaEvaluacionDocentesResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.entity.logueo.Pe;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.sescolares.Alumno;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
@@ -72,14 +72,14 @@ public interface EjbAdministracionEncuestas {
      * @param clave
      * @return 
      */
-    public List<Personal> esDirectorDeCarrera(Integer areaSup, Integer actividad, Integer catOp, Integer clave);
+    public List<Personal> esDirectorDeCarrera(Short areaSup, Integer actividad, Integer catOp, Integer clave);
     /**
      * obtiene las areas que tiene a cargo el director de carrera
      * @param identificador 
      * @param estatus
      * @return 
      */
-    public List<Pe> obtenerAreasDirector(Integer identificador, String estatus);
+    public List<AreasUniversidad> obtenerAreasDirector(Short identificador, String estatus);
     /**
      * 
      * @param siglas
@@ -161,7 +161,7 @@ public interface EjbAdministracionEncuestas {
      * @param area <- area seleccionada en la intrefaz grafica y por la cual se busca al personal docente
      * @return 
      */
-    public List<ListaPersonal> getListadoDocentesPorArea(Integer area);
+    public List<ListaPersonal> getListadoDocentesPorArea(Short area);
     
     /**
      * obtiene todos los resultados de la evaluación seleccionada
@@ -205,5 +205,5 @@ public interface EjbAdministracionEncuestas {
     
     public List<Alumno> getEstudiantePorMatricula(Integer matricula);
     
-    public Pe getProgramaPorClave(Integer clave);
+    public AreasUniversidad getProgramaPorClave(Short clave);
 }

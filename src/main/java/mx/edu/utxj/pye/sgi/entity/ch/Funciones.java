@@ -49,7 +49,7 @@ public class Funciones implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "area_operativa")
-    private int areaOperativa;
+    private short areaOperativa;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2500)
@@ -76,7 +76,7 @@ public class Funciones implements Serializable {
         this.funcion = funcion;
     }
 
-    public Funciones(Integer funcion, int areaOperativa, String nombre, String tipo) {
+    public Funciones(Integer funcion, short areaOperativa, String nombre, String tipo) {
         this.funcion = funcion;
         this.areaOperativa = areaOperativa;
         this.nombre = nombre;
@@ -91,11 +91,11 @@ public class Funciones implements Serializable {
         this.funcion = funcion;
     }
 
-    public int getAreaOperativa() {
+    public short getAreaOperativa() {
         return areaOperativa;
     }
 
-    public void setAreaOperativa(int areaOperativa) {
+    public void setAreaOperativa(short areaOperativa) {
         this.areaOperativa = areaOperativa;
     }
 

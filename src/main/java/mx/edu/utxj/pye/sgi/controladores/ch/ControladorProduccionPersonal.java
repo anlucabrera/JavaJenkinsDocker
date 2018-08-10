@@ -118,16 +118,16 @@ public class ControladorProduccionPersonal implements Serializable {
         }
     }
 
-    public void eliminaLibros() {
+    public void eliminaLibros(LibrosPub librosPub) {
         try {
-            if (selcNuevOBJLibrosPub.getEvidencia() != null) {
-                CargaArchivosCH.eliminarArchivo(selcNuevOBJLibrosPub.getEvidencia());
+            if (librosPub.getEvidencia() != null) {
+                CargaArchivosCH.eliminarArchivo(librosPub.getEvidencia());
             }
             nombreTabla = "Libros Publicados";
-            numeroRegistro = selcNuevOBJLibrosPub.getLibrosp().toString();
+            numeroRegistro = librosPub.getLibrosp().toString();
             accion = "Delate";
             agregaBitacora();
-            selcNuevOBJLibrosPub = ejbProduccionProfecional.eliminarLibrosPub(selcNuevOBJLibrosPub);
+            ejbProduccionProfecional.eliminarLibrosPub(librosPub);
             Messages.addGlobalInfo("¡Operación exitosa!!");
             mostrarListas();
         } catch (Throwable ex) {
@@ -164,16 +164,16 @@ public class ControladorProduccionPersonal implements Serializable {
         }
     }
 
-    public void eliminaArticulos() {
+    public void eliminaArticulos(Articulosp articulosp) {
         try {
-            if (selcNuevOBJArticulosp.getEvidencia() != null) {
-                CargaArchivosCH.eliminarArchivo(selcNuevOBJArticulosp.getEvidencia());
+            if (articulosp.getEvidencia() != null) {
+                CargaArchivosCH.eliminarArchivo(articulosp.getEvidencia());
             }
             nombreTabla = "Artículos Publicados";
-            numeroRegistro = selcNuevOBJArticulosp.getArticuloId().toString();
+            numeroRegistro = articulosp.getArticuloId().toString();
             accion = "Delate";
             agregaBitacora();
-            selcNuevOBJArticulosp = ejbProduccionProfecional.eliminarArticulosp(selcNuevOBJArticulosp);
+            ejbProduccionProfecional.eliminarArticulosp(articulosp);
             Messages.addGlobalInfo("¡Operación exitosa!!");
             mostrarListas();
             pestaniaActiva = 1;
@@ -208,16 +208,16 @@ public class ControladorProduccionPersonal implements Serializable {
         }
     }
 
-    public void eliminaMemorias() {
+    public void eliminaMemorias(Memoriaspub memoriaspub) {
         try {
-            if (selcNuevOBJMemoriaspub.getEvidencia() != null) {
-                CargaArchivosCH.eliminarArchivo(selcNuevOBJMemoriaspub.getEvidencia());
+            if (memoriaspub.getEvidencia() != null) {
+                CargaArchivosCH.eliminarArchivo(memoriaspub.getEvidencia());
             }
             nombreTabla = "Memorias Publicadas";
-            numeroRegistro = selcNuevOBJMemoriaspub.getMemoriaID().toString();
+            numeroRegistro = memoriaspub.getMemoriaID().toString();
             accion = "Delate";
             agregaBitacora();
-            selcNuevOBJMemoriaspub = ejbProduccionProfecional.eliminarMemoriaspub(selcNuevOBJMemoriaspub);
+            ejbProduccionProfecional.eliminarMemoriaspub(memoriaspub);
             Messages.addGlobalInfo("¡Operación exitosa!!");
             mostrarListas();
             pestaniaActiva = 2;
@@ -254,13 +254,13 @@ public class ControladorProduccionPersonal implements Serializable {
         }
     }
 
-    public void eliminaInvestigacion() {
+    public void eliminaInvestigacion(Investigaciones investigaciones) {
         try {
             nombreTabla = "Investigaciones";
-            numeroRegistro = nuevOBJInvestigacionesSelectec.getInvestigacion().toString();
+            numeroRegistro = investigaciones.getInvestigacion().toString();
             accion = "Delate";
             agregaBitacora();
-            nuevOBJInvestigacionesSelectec = ejbProduccionProfecional.actualizarInvestigacion(nuevOBJInvestigacionesSelectec);
+            ejbProduccionProfecional.actualizarInvestigacion(investigaciones);
             Messages.addGlobalInfo("¡Operación exitosa!!");
             mostrarListas();
             pestaniaActiva = 3;
@@ -293,13 +293,13 @@ public class ControladorProduccionPersonal implements Serializable {
         }
     }
 
-    public void eliminaCongreso() {
+    public void eliminaCongreso(Congresos congresos) {
         try {
             nombreTabla = "Congresos";
-            numeroRegistro = nuevoOBJCongresoSelectec.getCongreso().toString();
+            numeroRegistro = congresos.getCongreso().toString();
             accion = "Delate";
             agregaBitacora();
-            nuevoOBJCongresoSelectec = ejbProduccionProfecional.eliminarCongresos(nuevoOBJCongresoSelectec);
+            ejbProduccionProfecional.eliminarCongresos(congresos);
             Messages.addGlobalInfo("¡Operación exitosa!!");
             mostrarListas();
             pestaniaActiva = 4;
@@ -486,5 +486,9 @@ public class ControladorProduccionPersonal implements Serializable {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public void metodoBase() {
+
     }
 }

@@ -72,18 +72,19 @@ public class administracionAvanceEncSatTsu  implements Serializable{
                 claveTrabajador = Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
                 cveMaestro = logonMB.getListaUsuarioClaveNomina().getCvePersona();
                 cveDirector = cveMaestro.toString();
-                if (!ejbAdmEncuesta.esDirectorDeCarrera(28, 2, 18, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
+                //Se necesita saber su area superior, su actividad y su categoria operativa
+                if (!ejbAdmEncuesta.esDirectorDeCarrera(2, 2, 18, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
                     director = true;
 //                    System.out.println("mx.edu.utxj.pye.sgi.controlador.controladorDatosAvance.init() es director");
                     mostrarAvanceEncSatTsu();
                 }
-                if (logonMB.getPersonal().getAreaOperativa() == 34 || claveTrabajador.equals(579) ) {
+                if (logonMB.getPersonal().getAreaOperativa() == 9 || claveTrabajador.equals(579) ) {
                     //|| claveTrabajador.equals(579) esta parte va dentro del if de arriba
                     esDeInformacionYEst = true;
                     System.out.println("mx.edu.utxj.pye.sgi.controlador.administracionAvanceEncSatTsu.init() es de estadistica e informacion");
                     mostrarAvanceEncSatTsu();
                 }
-                if(!ejbAdmEncuesta.esSecretarioAcademico(27, Short.parseShort("2"), Short.parseShort("38"), Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()){
+                if(!ejbAdmEncuesta.esSecretarioAcademico(1, Short.parseShort("2"), Short.parseShort("38"), Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()){
                     esSecretario=true;
 //                    System.out.println("mx.edu.utxj.pye.sgi.controlador.controladorDatosAvance.init() es Secretario Academico");
                     mostrarAvanceEncSatTsu();

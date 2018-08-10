@@ -17,6 +17,9 @@
         <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
         </c:if>  
+        <c:if test="#{!controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
+        </c:if> 
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
@@ -24,23 +27,6 @@
 
     <ui:define name="body">
 
-        <style>
-            .description-block{
-                text-align: justify;
-            }
-            .description-header{
-                text-align: center;
-            }
-            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
-                width: 100%;
-            }
-            .aceptado{
-                background-color: #00a65a;
-            }
-            .denegado{
-                background-color: #f39c12;
-            }
-        </style>
         <h:outputScript>
             PrimeFaces.locales['es'] = {
             closeText: 'Cerrar',
@@ -74,7 +60,7 @@
                 Esta página está disponible solo para pantallas superiores a 1024px.
             </h1>
         </p:panel>
-        <c:if test="#{controladorEmpleado.mandos eq 'Superiores'}">
+        <c:if test="#{controladorEmpleado.mandos eq 'Otro'}">
             <div class="box box-primary">
                 <div class="box box-solid">
                     <div class="box-header with-border">
@@ -105,7 +91,7 @@
             <section class="content">
                 <div class="row">
                     <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
-                    <div class="col-md-9">
+                    <div class="col-md-10">
                         <div class="nav-tabs-custom">
                             <div class="row">
                                 <div class="col-lg-10 col-xs-10"/>
@@ -179,13 +165,11 @@
                                                                                     <h:message id="messageForFile" for="file" />
                                                                                     <br/>
                                                                                     <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorTecnologia.agregarEvidenciaDesTec}" />
-                                                                                    <hr/>
-                                                                                </div>
+                                                                                                                                                                   </div>
                                                                             </div>
                                                                         </div>
                                                                         <hr/>
                                                                         <div class="row">
-
                                                                             <p:outputPanel>            
                                                                                 <p:autoUpdate/>
                                                                                 <div class="form-group">
@@ -199,11 +183,9 @@
                                                                                 </div>
                                                                             </p:outputPanel>
                                                                         </div>
-                                                                        <hr/>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                            <hr/>                                                        
+                                                            </div>                                               
                                                         </div>
                                                     </div>
                                                 </div>
@@ -214,7 +196,6 @@
                                                         <div class="col-md-12 col-sm-12 col-xs-12">
                                                             <div class="info-box">
                                                                 <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
-
                                                                 <div class="info-box-content">
                                                                     <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
                                                                     <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
@@ -228,7 +209,7 @@
                                     </h:form>
                                     <h:form id="frmListaDesarrolloTecnologicos">
                                         <p:outputPanel>
-
+                                            <p:remoteCommand name="actualizarTabla" actionListener="#{controladorTecnologia.metodoBase()}" update="tbldesarrollosTec" />
                                             <p:dataTable id="tbldesarrollosTec" value="#{controladorTecnologia.nuevaListaDesarrolloTecnologico}"
                                                          paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron registros." rendered="true" rowStyleClass="#{desTec.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                          selectionMode="single" selection="#{controladorTecnologia.nuevoOBJDesarrolloTecnologico}" rowKey="#{desTec.desarrollo}"
@@ -239,10 +220,12 @@
                                                     <p:spacer width="15px"/>
                                                     <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
                                                 </f:facet>
-                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                    <p:ajax event="rowSelect"   update="eliminaF"/>
-                                                    <p:ajax event="rowUnselect"   update="eliminaF"/>
-                                                </c:if>
+
+                                                <p:column style="width: 50px;">
+                                                    <p:commandButton actionListener="#{controladorTecnologia.eliminarDesTec(desTec)}" update="tbldesarrollosTec" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{desTec.tipoDesarrollo}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                </p:column>
 
                                                 <p:column headerText="Tipo desarrollo"
                                                           sortBy="#{desTec.tipoDesarrollo}" 
@@ -266,12 +249,7 @@
                                                     <h:outputText  value="#{desTec.resumenDesarrollo}" />
                                                 </p:column>     
 
-                                                <f:facet name="footer">
-                                                    <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                        <p:commandButton id="eliminaF" value="Eliminar" icon="fa fa-eraser" class="btn btn-danger" 
-                                                                         oncomplete="PF('dlgDelate3').show();" disabled="#{empty controladorTecnologia.nuevoOBJDesarrolloTecnologico}"/>
-                                                    </c:if>
-                                                </f:facet>
+
                                                 <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
                                                     <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog1').show()" icon="ui-icon-search" title="View">
                                                         <f:setPropertyActionListener value="#{desTec}" target="#{controladorTecnologia.nuevoOBJDesarrolloTecnologico}"/>
@@ -288,6 +266,11 @@
                                                 </p:outputPanel>
                                             </p:dialog>
                                         </p:outputPanel>
+
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>   
                                     </h:form>
                                 </p:tab>
                                 <p:tab title="Innovaciones">
@@ -302,7 +285,7 @@
                                                                     <div class="description-block">
                                                                         <div class="row">
                                                                             <div class="form-group">
-                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                     <p:outputLabel for="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo de innovación" />
                                                                                     <p:selectOneMenu id="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
                                                                                                      required="true" value="#{controladorTecnologia.nuevoOBJInnovaciones.tipoInnovacion}" >
@@ -313,7 +296,7 @@
                                                                                     <p:message for="tipo" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-12 col-lg-6"> 
+                                                                                <div class="col-sm-12 col-md-12 col-lg-4"> 
                                                                                     <p:outputLabel for="cobertura" style="height:100%; width: 100%; object-fit: contain; font-size: large"  value="Cobertura" />
                                                                                     <p:selectOneMenu id="cobertura" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
                                                                                                      required="true" value="#{controladorTecnologia.nuevoOBJInnovaciones.potencialCobertura}" >
@@ -325,18 +308,7 @@
                                                                                     <p:message for="cobertura" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-12 col-lg-6"> 
-                                                                                    <p:outputLabel for="apoyo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="¿Recibió apoyo por parte de la institución?" />
-                                                                                    <p:selectOneMenu id="apoyo" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
-                                                                                                     required="true" value="#{controladorTecnologia.nuevoOBJInnovaciones.apoyoRecibidoo}" >
-                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                                                                        <f:selectItem itemValue="Si" itemLabel="Si"/>
-                                                                                        <f:selectItem itemValue="No" itemLabel="No"/>
-                                                                                    </p:selectOneMenu> 
-                                                                                    <p:message for="apoyo" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-12 col-lg-6"> 
+                                                                                <div class="col-sm-12 col-md-12 col-lg-4"> 
                                                                                     <p:outputLabel for="aplicacion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Aplicación de innovación" />
                                                                                     <p:selectOneMenu id="aplicacion" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
                                                                                                      required="true" value="#{controladorTecnologia.nuevoOBJInnovaciones.aplicacionInnovacion}" >
@@ -347,6 +319,16 @@
                                                                                     </p:selectOneMenu> 
                                                                                     <p:message for="aplicacion" display="tooltip" />                                                                 
                                                                                     <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-6"> 
+                                                                                    <p:outputLabel for="apoyo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="¿Recibió apoyo por parte de la institución?" />
+                                                                                    <p:selectOneMenu id="apoyo" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
+                                                                                                     required="true" value="#{controladorTecnologia.nuevoOBJInnovaciones.apoyoRecibidoo}" >
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItem itemValue="Si" itemLabel="Si"/>
+                                                                                        <f:selectItem itemValue="No" itemLabel="No"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="apoyo" display="tooltip" />
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-12 col-lg-6"> 
                                                                                     <p:outputLabel for="proteccion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Protección" />
@@ -377,11 +359,9 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                        <hr/>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                            <hr/>                                                        
+                                                            </div>                                               
                                                         </div>
                                                     </div>
                                                 </div>
@@ -406,6 +386,7 @@
                                     </h:form>
                                     <h:form id="frmlistaInnocaciones">
                                         <p:outputPanel>
+                                            <p:remoteCommand name="actualizarTabla2" actionListener="#{controladorTecnologia.metodoBase()}" update="tblInnovacion" />
                                             <p:dataTable id="tblInnovacion" value="#{controladorTecnologia.nuevaListaInnovaciones}"
                                                          paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron registros." rendered="true" 
                                                          rowStyleClass="#{innovacion.estatus eq 'Aceptado'?'aceptado':'denegado'}"
@@ -418,10 +399,13 @@
                                                     <p:spacer width="15px"/>
                                                     <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
                                                 </f:facet>
-                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                    <p:ajax event="rowSelect"   update="eliminaF"/>
-                                                    <p:ajax event="rowUnselect"   update="eliminaF"/>
-                                                </c:if>
+
+                                                <p:column style="width: 50px;">
+                                                    <p:commandButton actionListener="#{controladorTecnologia.eliminarInnovacion(innovacion)}" update="tblInnovacion" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{innovacion.tipoInnovacion}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                </p:column>
+
                                                 <p:column headerText="Tipo innovación"
                                                           sortBy="#{innovacion.tipoInnovacion}" 
                                                           filterBy="#{innovacion.tipoInnovacion}" 
@@ -443,16 +427,15 @@
                                                     <h:outputText value="#{innovacion.aplicacionInnovacion}" />
                                                 </p:column>
 
-                                                <f:facet name="footer">
-                                                    <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                        <p:commandButton id="eliminaF" update="tblInnovacion" process="@this" value="Eliminar" 
-                                                                         icon="fa fa-eraser" class="btn btn-danger"
-                                                                         oncomplete="PF('dlgDelate1').show();"
-                                                                         disabled="#{empty controladorTecnologia.nuevoOBJInnovaciones}"/>
-                                                    </c:if>
-                                                </f:facet>
+
                                             </p:dataTable>
                                         </p:outputPanel>
+
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>   
+
                                     </h:form>
                                 </p:tab>
                                 <p:tab title="Desarrollo de software">
@@ -467,7 +450,7 @@
                                                                     <div class="description-block">
                                                                         <div class="row">
                                                                             <div class="form-group">
-                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                     <p:outputLabel for="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo" />
                                                                                     <p:selectOneMenu id="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
                                                                                                      value="#{controladorTecnologia.nuevoOBJDesarrolloSoftware.tipoDesarrollo}" >
@@ -485,7 +468,7 @@
                                                                                     <p:message for="tipo" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-12 col-lg-6"> 
+                                                                                <div class="col-sm-12 col-md-12 col-lg-4"> 
                                                                                     <p:outputLabel for="apoyoR" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="¿Recibió apoyo por parte de la institución?" />
                                                                                     <p:selectOneMenu id="apoyoR" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
                                                                                                      value="#{controladorTecnologia.nuevoOBJDesarrolloSoftware.apoyoRecibido}" >
@@ -496,40 +479,7 @@
                                                                                     <p:message for="apoyoR" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-6">                                                                               
-                                                                                    <p:outputLabel for="lugar" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Lugar de desarrollo" />
-                                                                                    <p:inputText id="lugar" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
-                                                                                                 placeholder="Lugar de desarrollo" value="#{controladorTecnologia.nuevoOBJDesarrolloSoftware.lugar}"/>
-                                                                                    <p:message for="lugar" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-6">                                                                             
-                                                                                    <p:outputLabel for="horash" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Horas persona" />
-                                                                                    <p:inputText id="horash" type="number" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
-                                                                                                 placeholder="Horas persona" value="#{controladorTecnologia.nuevoOBJDesarrolloSoftware.horasHombre}"/>
-                                                                                    <p:message for="horash" display="tooltip"/>                                                                         
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-4 col-lg-6"> 
-                                                                                    <p:outputLabel for="fechaIn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de inicio" />
-                                                                                    <p:calendar navigator="true" locale="es" id="fechaIn" value="#{controladorTecnologia.nuevoOBJDesarrolloSoftware.fechaInicio}" pattern="dd-MM-yyyy" mask="true" />
-                                                                                    <p:message for="fechaIn" display="tooltip" />                                                                                
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-4 col-lg-6"> 
-                                                                                    <p:outputLabel for="fechaFin" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de fin" />
-                                                                                    <p:calendar navigator="true" locale="es" id="fechaFin" value="#{controladorTecnologia.nuevoOBJDesarrolloSoftware.fechaFin}" pattern="dd-MM-yyyy" mask="true" />
-                                                                                    <p:message for="fechaFin" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-4 col-lg-6"> 
-                                                                                    <p:outputLabel for="costo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Costo" />
-                                                                                    <p:inputText id="costo" type="number" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
-                                                                                                 placeholder="Costo" value="#{controladorTecnologia.nuevoOBJDesarrolloSoftware.costo}"/>
-                                                                                    <p:message for="costo" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-12 col-lg-6"> 
+                                                                                <div class="col-sm-12 col-md-12 col-lg-4"> 
                                                                                     <p:outputLabel for="derechosA" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="¿Cuenta con derechos de autor?" />
                                                                                     <p:selectOneMenu id="derechosA" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
                                                                                                      value="#{controladorTecnologia.nuevoOBJDesarrolloSoftware.derechosAutor}" >
@@ -540,6 +490,13 @@
                                                                                     <p:message for="derechosA" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-6">                                                                               
+                                                                                    <p:outputLabel for="lugar" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Lugar de desarrollo" />
+                                                                                    <p:inputText id="lugar" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
+                                                                                                 placeholder="Lugar de desarrollo" value="#{controladorTecnologia.nuevoOBJDesarrolloSoftware.lugar}"/>
+                                                                                    <p:message for="lugar" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
                                                                                 <div class="col-sm-12 col-md-12 col-lg-6"> 
                                                                                     <p:outputLabel for="nombreB" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nombre beneficiario" />
                                                                                     <p:inputText id="nombreB" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
@@ -547,14 +504,38 @@
                                                                                     <p:message for="nombreB" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-3">                                                                             
+                                                                                    <p:outputLabel for="horash" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Horas persona" />
+                                                                                    <p:inputText id="horash" type="number" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
+                                                                                                 placeholder="Horas persona" value="#{controladorTecnologia.nuevoOBJDesarrolloSoftware.horasHombre}"/>
+                                                                                    <p:message for="horash" display="tooltip"/>                                                                         
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-4 col-lg-3"> 
+                                                                                    <p:outputLabel for="costo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Costo" />
+                                                                                    <p:inputText id="costo" type="number" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
+                                                                                                 placeholder="Costo" value="#{controladorTecnologia.nuevoOBJDesarrolloSoftware.costo}"/>
+                                                                                    <p:message for="costo" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-4 col-lg-3"> 
+                                                                                    <p:outputLabel for="fechaIn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de inicio" />
+                                                                                    <p:calendar navigator="true" locale="es" id="fechaIn" value="#{controladorTecnologia.nuevoOBJDesarrolloSoftware.fechaInicio}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                    <p:message for="fechaIn" display="tooltip" />                                                                                
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-4 col-lg-3"> 
+                                                                                    <p:outputLabel for="fechaFin" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de fin" />
+                                                                                    <p:calendar navigator="true" locale="es" id="fechaFin" value="#{controladorTecnologia.nuevoOBJDesarrolloSoftware.fechaFin}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                    <p:message for="fechaFin" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
                                                                                 <div class="col-sm-12 col-md-12 col-lg-6"> 
                                                                                     <p:outputLabel for="logros" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Logros" />
                                                                                     <p:inputTextarea id="logros" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
                                                                                                      placeholder="Logros" value="#{controladorTecnologia.nuevoOBJDesarrolloSoftware.logros}"/>
                                                                                     <p:message for="logros" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div>
-
+                                                                                                                                                                    </div>
                                                                             </div>
                                                                         </div>
                                                                         <hr/>
@@ -568,11 +549,9 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                        <hr/>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                            <hr/>                                                        
+                                                            </div>                                            
                                                         </div>
                                                     </div>
                                                 </div>
@@ -597,6 +576,7 @@
                                     </h:form>
                                     <h:form id="frmListaDesarrolloSoft"> 
                                         <p:outputPanel>
+                                            <p:remoteCommand name="actualizarTabla3" actionListener="#{controladorTecnologia.metodoBase()}" update="tbldesarrollosSoft" />
                                             <p:dataTable id="tbldesarrollosSoft" value="#{controladorTecnologia.nuevaListaDesarrolloSoftware}"
                                                          paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron registros." rendered="true" rowStyleClass="#{desSoft.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                          selectionMode="single" selection="#{controladorTecnologia.nuevoOBJDesarrolloSoftware}" rowKey="#{desSoft.desarrollo }"
@@ -607,10 +587,13 @@
                                                     <p:spacer width="15px"/>
                                                     <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
                                                 </f:facet>
-                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                    <p:ajax event="rowSelect"   update="eliminaF"/>
-                                                    <p:ajax event="rowUnselect"   update="eliminaF"/>
-                                                </c:if>
+
+                                                <p:column style="width: 50px;">
+                                                    <p:commandButton actionListener="#{controladorTecnologia.eliminarDesSoft(desSoft)}" update="tbldesarrollosSoft" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{desSoft.tipoDesarrollo}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                </p:column>
+
                                                 <p:column headerText="Tipo software" 
                                                           filterBy="#{desSoft.tipoDesarrollo}"
                                                           sortBy="#{desSoft.tipoDesarrollo}" 
@@ -657,14 +640,15 @@
                                                     <h:outputText value="#{desSoft.nombreBeneficiario}" />
                                                 </p:column>
 
-                                                <f:facet name="footer">
-                                                    <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                        <p:commandButton id="eliminaF" value="Eliminar" icon="fa fa-eraser" class="btn btn-danger" oncomplete="PF('dlgDelate2').show();" 
-                                                                         disabled="#{empty controladorTecnologia.nuevoOBJDesarrolloSoftware}"/>
-                                                    </c:if>
-                                                </f:facet>
+
                                             </p:dataTable>
                                         </p:outputPanel>
+
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>   
+
                                     </h:form>
                                 </p:tab>
 
@@ -677,54 +661,7 @@
                 </div>
             </section>
         </p:panel>
-        <h:form id="frmDelate3" >
-            <p:dialog id="dlgDelate3" header="Eliminación" widgetVar="dlgDelate3" minimizable="true" maximizable="true" position="center">
-                <f:facet name="footer">
-                    <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate3').hide();"/>
-                    <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorTecnologia.eliminarDesTec()}" icon="fa fa-check" 
-                                     process="@form" update="@form" onsuccess="PF('dlgDelate3').hide();" oncomplete="PF('tblDistinciones')update();"/>
-                </f:facet>
 
-                <p:outputPanel>            
-                    <p:autoUpdate/>
-                    <h:panelGrid columns="1"  class="col-md-12">
-                        <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
-                    </h:panelGrid>
-                </p:outputPanel>
-            </p:dialog>
-        </h:form>
-        <h:form id="frmDelate1" >
-            <p:dialog id="dlgDelate1" header="Eliminación" widgetVar="dlgDelate1" minimizable="true" maximizable="true" position="center">
-                <f:facet name="footer">
-                    <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate1').hide();"/>
-                    <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorTecnologia.eliminarInnovacion()}" icon="fa fa-check" 
-                                     process="@form" update="@form" onsuccess="PF('dlgDelate1').hide();" oncomplete="PF('tblInnovacion')update();"/>
-                </f:facet>
-
-                <p:outputPanel>            
-                    <p:autoUpdate/>
-                    <h:panelGrid columns="1"  class="col-md-12">
-                        <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
-                    </h:panelGrid>
-                </p:outputPanel>
-            </p:dialog>
-        </h:form>
-        <h:form id="frmDelate2" >
-            <p:dialog id="dlgDelate2" header="Eliminación" widgetVar="dlgDelate2" minimizable="true" maximizable="true" position="center">
-                <f:facet name="footer">
-                    <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate2').hide();"/>
-                    <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorTecnologia.eliminarDesSoft()}" icon="fa fa-check" 
-                                     process="@form" update="@form" onsuccess="PF('dlgDelate2').hide();" oncomplete="PF('tblInnovacion')update();"/>
-                </f:facet>
-
-                <p:outputPanel>            
-                    <p:autoUpdate/>
-                    <h:panelGrid columns="1"  class="col-md-12">
-                        <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
-                    </h:panelGrid>
-                </p:outputPanel>
-            </p:dialog>
-        </h:form>
     </ui:define>
     <h:outputScript library="js" name="funciones.js" />
 

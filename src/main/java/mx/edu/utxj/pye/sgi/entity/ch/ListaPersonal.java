@@ -67,7 +67,7 @@ import lombok.ToString;
     , @NamedQuery(name = "ListaPersonal.findByCorreoElectronico", query = "SELECT l FROM ListaPersonal l WHERE l.correoElectronico = :correoElectronico")
     , @NamedQuery(name = "ListaPersonal.findByCorreoElectronico2", query = "SELECT l FROM ListaPersonal l WHERE l.correoElectronico2 = :correoElectronico2")})
 public class ListaPersonal implements Serializable {
-   
+
     @Id
     @NonNull
     @Basic(optional = false)
@@ -106,7 +106,7 @@ public class ListaPersonal implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "area_operativa", nullable = false)
-    private int areaOperativa;
+    private short areaOperativa;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 150)
@@ -120,11 +120,11 @@ public class ListaPersonal implements Serializable {
     @NotNull
     @Size(min = 1, max = 100)
     @Column(name = "categoria_operativa_nombre", nullable = false, length = 100)
-    private String categoriaOperativaNombre;    
+    private String categoriaOperativaNombre;
     @Basic(optional = false)
     @NotNull
     @Column(name = "area_superior")
-    private int areaSuperior;
+    private short areaSuperior;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 150)
@@ -133,7 +133,7 @@ public class ListaPersonal implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "area_oficial", nullable = false)
-    private int areaOficial;
+    private short areaOficial;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 150)
@@ -268,11 +268,11 @@ public class ListaPersonal implements Serializable {
         this.generoNombre = generoNombre;
     }
 
-    public int getAreaOperativa() {
+    public short getAreaOperativa() {
         return areaOperativa;
     }
 
-    public void setAreaOperativa(int areaOperativa) {
+    public void setAreaOperativa(short areaOperativa) {
         this.areaOperativa = areaOperativa;
     }
 
@@ -300,11 +300,11 @@ public class ListaPersonal implements Serializable {
         this.categoriaOperativaNombre = categoriaOperativaNombre;
     }
 
-    public int getAreaOficial() {
+    public short getAreaOficial() {
         return areaOficial;
     }
 
-    public void setAreaOficial(int areaOficial) {
+    public void setAreaOficial(short areaOficial) {
         this.areaOficial = areaOficial;
     }
 
@@ -459,20 +459,20 @@ public class ListaPersonal implements Serializable {
     public void setCorreoElectronico2(String correoElectronico2) {
         this.correoElectronico2 = correoElectronico2;
     }
-
+    
     public Integer getClave() {
         return clave;
-    }
+}
 
     public void setClave(Integer clave) {
         this.clave = clave;
     }
 
-    public int getAreaSuperior() {
+    public short getAreaSuperior() {
         return areaSuperior;
     }
 
-    public void setAreaSuperior(int areaSuperior) {
+    public void setAreaSuperior(short areaSuperior) {
         this.areaSuperior = areaSuperior;
     }
 

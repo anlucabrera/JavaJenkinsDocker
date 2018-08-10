@@ -2,6 +2,8 @@ package mx.edu.utxj.pye.sgi.controladores.ch;
 
 import java.io.File;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -67,7 +69,7 @@ public class ControladorPersonal implements Serializable {
     @Getter    @Setter    private List<Memoriaspub> listaMemoriaspub = new ArrayList<>();
     @Getter    @Setter    private List<Investigaciones> listaInvestigacion = new ArrayList<>();
     @Getter    @Setter    private List<Congresos> listaCongresos = new ArrayList<>();
-    @Getter    @Setter    private List<String> nuevaListaFuncionesEspecificas = new ArrayList<>(), nuevaListaFuncionesGenerales = new ArrayList<>(), estatus = new ArrayList<>();
+    @Getter    @Setter    private List<String> nuevaListaFuncionesEspecificas = new ArrayList<>(), nuevaListaFuncionesGenerales = new ArrayList<>(), estatus = new ArrayList<>(),rutasEvidencias=new ArrayList<>();
     @Getter    @Setter    private List<Incidencias> listaIncidencias = new ArrayList<>();
     @Getter    @Setter    private List<Personal> listaPersonal = new ArrayList<>(), listaPersonalSubordinado = new ArrayList<>();
     @Getter    @Setter    private List<ListaPersonal> nuevaListaListaPersonaSubordinado = new ArrayList<>(), nuevaVistaListaPersonalAreas = new ArrayList<>();
@@ -261,27 +263,27 @@ public class ControladorPersonal implements Serializable {
 //            System.out.println("mx.edu.utxj.pye.sgi.ch.controladores.ControladorPersonal.mostrarFuncioneSubordinado() nuevoOBJListaPersonal.getCategoriaEspecifica() " + nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
             switch (nuevoOBJListaPersonal.getCategoriaOperativa()) {
                 case 30:
-                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(83, nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
                 case 32:
-                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(83, nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
                 case 34:
-                    if (nuevoOBJListaPersonal.getAreaOperativa() <= 26) {
-                        listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(83, nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
+                    if (nuevoOBJListaPersonal.getAreaOperativa() >= 24 && nuevoOBJListaPersonal.getAreaOperativa() <= 56) {
+                        listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
                     } else {
                         listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(nuevoOBJListaPersonal.getAreaOperativa(), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
                     }
                     break;
                 case 18:
-                    if (nuevoOBJListaPersonal.getAreaOperativa() <= 26) {
-                        listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(83, nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
+                    if (nuevoOBJListaPersonal.getAreaOperativa() >= 24 && nuevoOBJListaPersonal.getAreaOperativa() <= 56) {
+                        listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
                     } else {
                         listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(nuevoOBJListaPersonal.getAreaOperativa(), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
                     }
                     break;
                 case 41:
-                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(83, nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
                 default:
                     listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(nuevoOBJListaPersonal.getAreaOperativa(), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
@@ -665,4 +667,19 @@ public class ControladorPersonal implements Serializable {
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    public void listaArchivos() {
+        try {
+            Files.walk(Paths.get("C:\\archivos\\evidenciasCapitalHumano\\" + contactoDestino)).forEach(ruta -> {
+                if (Files.isRegularFile(ruta)) {
+                    System.out.println(ruta);
+                    rutasEvidencias.add(ruta.toString());
+                }
+            });
+            ZipWritter.generar(rutasEvidencias, contactoDestino);
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
 }

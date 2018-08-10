@@ -176,20 +176,20 @@ public class ControladorEmpleadoLogeado implements Serializable {
             nuevaListaFuncionesEspecificas.clear();
             switch (nuevoOBJListaListaPersonal.getCategoriaOperativa()) {
                 case 30:
-                    listaFuncionesLogeado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(83, nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncionesLogeado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
                 case 32:
-                    listaFuncionesLogeado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(83, nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncionesLogeado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
                 case 34:
-                    if (nuevoOBJListaListaPersonal.getAreaOperativa() >= 1 && nuevoOBJListaListaPersonal.getAreaOperativa() <= 26) {
-                        listaFuncionesLogeado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(83, nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
+                    if (nuevoOBJListaListaPersonal.getAreaOperativa() >= 24 && nuevoOBJListaListaPersonal.getAreaOperativa() <= 56) {
+                        listaFuncionesLogeado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
                     } else {
                         listaFuncionesLogeado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(nuevoOBJListaListaPersonal.getAreaOperativa(), nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
                     }
                     break;
                 case 41:
-                    listaFuncionesLogeado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(83, nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncionesLogeado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
                 default:
                     listaFuncionesLogeado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(nuevoOBJListaListaPersonal.getAreaOperativa(), nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());

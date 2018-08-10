@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Planeacion
  */
 @Entity
 @Table(name = "permisos", catalog = "capital_humano", schema = "")
@@ -48,11 +48,11 @@ public class Permisos implements Serializable {
     @Column(name = "permiso")
     private Integer permiso;
     @Column(name = "area")
-    private Integer area;
+    private Short area;
     @Column(name = "areaSuperior")
-    private Integer areaSuperior;
+    private Short areaSuperior;
     @Column(name = "actividad")
-    private Short actividad;
+    private Integer actividad;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 500)
@@ -65,7 +65,7 @@ public class Permisos implements Serializable {
     private String etiqueta;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 56)
+    @Size(min = 1, max = 82)
     @Column(name = "alcance")
     private String alcance;
     @Basic(optional = false)
@@ -111,27 +111,27 @@ public class Permisos implements Serializable {
         this.permiso = permiso;
     }
 
-    public Integer getArea() {
+    public Short getArea() {
         return area;
     }
 
-    public void setArea(Integer area) {
+    public void setArea(Short area) {
         this.area = area;
     }
 
-    public Integer getAreaSuperior() {
+    public Short getAreaSuperior() {
         return areaSuperior;
     }
 
-    public void setAreaSuperior(Integer areaSuperior) {
+    public void setAreaSuperior(Short areaSuperior) {
         this.areaSuperior = areaSuperior;
     }
 
-    public Short getActividad() {
+    public Integer getActividad() {
         return actividad;
     }
 
-    public void setActividad(Short actividad) {
+    public void setActividad(Integer actividad) {
         this.actividad = actividad;
     }
 

@@ -45,13 +45,15 @@ public interface EjbSelectec {
 
     public List<ListaPersonal> mostrarListaDeEmpleados() throws Throwable;
 
-    public List<ListaPersonal> mostrarListaDeEmpleadosParaJefes(Integer area) throws Throwable;
+    public List<ListaPersonal> mostrarListaSubordinados(ListaPersonal perosona);
 
-    public List<Personal> mostrarListaDePersonalParaJefes(Integer area) throws Throwable;
+    public List<ListaPersonal> mostrarListaDeEmpleadosParaJefes(Short area) throws Throwable;
+
+    public List<Personal> mostrarListaDePersonalParaJefes(Short area) throws Throwable;
 
     public List<ListaPersonal> mostrarListaDeEmpleadosN(String nombre) throws Throwable;
 
-    public List<ListaPersonal> mostrarListaDeEmpleadosAr(Integer area) throws Throwable;
+    public List<ListaPersonal> mostrarListaDeEmpleadosAr(Short area) throws Throwable;
 
     public List<Personal> mostrarListaDeEmpleadosPorClave(Integer clave) throws Throwable;
 
@@ -65,11 +67,11 @@ public interface EjbSelectec {
 
     public List<InformacionAdicionalPersonal> mostrarListaDeInformacionAdicionalPersonal(Integer clave) throws Throwable;
 
-    public List<Funciones> mostrarListaDeFuncionesXAreaOperativo(Integer area, Short categoria) throws Throwable;
+    public List<Funciones> mostrarListaDeFuncionesXAreaOperativo(Short area, Short categoria) throws Throwable;
 
-    public List<Funciones> mostrarListaDeFuncionesXAreaYPuestoOperativo(Integer area, Short puesto, Short catEspecifica) throws Throwable;
+    public List<Funciones> mostrarListaDeFuncionesXAreaYPuestoOperativo(Short area, Short puesto, Short catEspecifica) throws Throwable;
 
-    public List<Funciones> mostrarListaDeFuncionesXAreaYPuestoEspecifico(Integer area, Short puesto) throws Throwable;
+    public List<Funciones> mostrarListaDeFuncionesXAreaYPuestoEspecifico(Short area, Short puesto) throws Throwable;
 
     public List<Notificaciones> mostrarListaDenotificacionesPorUsuario(Integer clave) throws Throwable;
 
@@ -154,9 +156,9 @@ public interface EjbSelectec {
 
     public List<Comentariosfunciones> mostrarComentariosfunciones() throws Throwable;
 
-    public List<Categoriasespecificasfunciones> mostrarCategoriasespecificasfunciones(String nombre, Integer area) throws Throwable;
+    public List<Categoriasespecificasfunciones> mostrarCategoriasespecificasfunciones(String nombre, Short area) throws Throwable;
 
-    public List<Categoriasespecificasfunciones> mostrarCategoriasespecificasfuncionesArea(Integer area) throws Throwable;
+    public List<Categoriasespecificasfunciones> mostrarCategoriasespecificasfuncionesArea(Short area) throws Throwable;
 
     public List<CursosPersonal> mostrarCursosPersonal(Integer claveTrabajador) throws Throwable;
 
@@ -164,6 +166,6 @@ public interface EjbSelectec {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////proceso elecrtoral\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     public List<Eventos> mostrarEventosRegistro(String tipo, String nombre) throws Throwable;
-    
+
     public List<Historicoplantillapersonal> mostrarHistoricoplantillapersonal() throws Throwable;
 }

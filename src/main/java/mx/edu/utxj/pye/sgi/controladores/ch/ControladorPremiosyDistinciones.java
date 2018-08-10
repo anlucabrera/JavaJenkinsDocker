@@ -110,17 +110,16 @@ public class ControladorPremiosyDistinciones implements Serializable{
         }
     }
 
-    public void delDistincion() {
+    public void delDistincion(Distinciones distinciones) {
         try {
-            if (nuevoOBJDistinciones.getEvidenciaDistincion() != null) {
-                CargaArchivosCH.eliminarArchivo(nuevoOBJDistinciones.getEvidenciaDistincion());
+            if (distinciones.getEvidenciaDistincion() != null) {
+                CargaArchivosCH.eliminarArchivo(distinciones.getEvidenciaDistincion());
             }
             nombreTabla = "Distinciones";
-            numeroRegistro = nuevoOBJDistinciones.getDistincion().toString();
+            numeroRegistro = distinciones.getDistincion().toString();
             accion = "Delate";
             agregaBitacora();
-            nuevoOBJDistinciones = ejbPremios.eliminarDistinciones(nuevoOBJDistinciones);
-            nuevoOBJDistinciones = new Distinciones();
+            ejbPremios.eliminarDistinciones(distinciones);
             Messages.addGlobalInfo("¡Operación exitosa!!");
             distincionesRegistradas();
         } catch (Throwable ex) {
@@ -171,5 +170,9 @@ public class ControladorPremiosyDistinciones implements Serializable{
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+public void metodoBase() {
+        
     }
 }

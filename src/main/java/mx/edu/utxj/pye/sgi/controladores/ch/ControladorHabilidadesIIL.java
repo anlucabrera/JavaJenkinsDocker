@@ -107,14 +107,13 @@ public class ControladorHabilidadesIIL implements Serializable {
         }
     }
 
-    public void eliminaLengua() {
+    public void eliminaLengua(Lenguas lenguas) {
         try {
             nombreTabla = "Lenguas";
-            numeroRegistro = nuevOBJLenguaSelectec.getLengua().toString();
+            numeroRegistro = lenguas.getLengua().toString();
             accion = "Delate";
             agregaBitacora();
-            nuevOBJLenguaSelectec = habilidades.eliminarLenguas(nuevOBJLenguaSelectec);
-            nuevOBJLenguaSelectec = null;
+            habilidades.eliminarLenguas(lenguas);
             Messages.addGlobalInfo("¡Operación exitosa!!");
             mostrarListas();
             pestaniaActiva = 2;
@@ -171,17 +170,16 @@ public class ControladorHabilidadesIIL implements Serializable {
         }
     }
 
-    public void eliminaIdioma() {
+    public void eliminaIdioma(Idiomas idiomas) {
         try {
-            if (nuevOBJIdiomaSelectec.getEvidenciaDoc() != null) {
-                CargaArchivosCH.eliminarArchivo(nuevOBJIdiomaSelectec.getEvidenciaDoc());
+            if (idiomas.getEvidenciaDoc() != null) {
+                CargaArchivosCH.eliminarArchivo(idiomas.getEvidenciaDoc());
             }
             nombreTabla = "Idiomas";
-            numeroRegistro = nuevOBJIdiomaSelectec.getIdioma().toString();
+            numeroRegistro = idiomas.getIdioma().toString();
             accion = "Delate";
             agregaBitacora();
-            nuevOBJIdiomaSelectec = habilidades.eliminarIdiomas(nuevOBJIdiomaSelectec);
-            nuevOBJIdiomaSelectec = null;
+            habilidades.eliminarIdiomas(idiomas);
             Messages.addGlobalInfo("¡Operación exitosa!!");
             mostrarListas();
         } catch (Throwable ex) {
@@ -234,14 +232,13 @@ public class ControladorHabilidadesIIL implements Serializable {
         }
     }
 
-    public void eliminaInformaticas() {
+    public void eliminaInformaticas(HabilidadesInformaticas habilidadesInformaticas) {
         try {
             nombreTabla = "Habilidades Informáticas";
-            numeroRegistro = nuevOBJHabilidadesInformaticaSelectec.getConocimiento().toString();
+            numeroRegistro = habilidadesInformaticas.getConocimiento().toString();
             accion = "Delate";
             agregaBitacora();
-            nuevOBJHabilidadesInformaticaSelectec = habilidades.eliminarHabilidadesInformaticas(nuevOBJHabilidadesInformaticaSelectec);
-            nuevOBJHabilidadesInformaticaSelectec = null;
+            habilidades.eliminarHabilidadesInformaticas(habilidadesInformaticas);
             Messages.addGlobalInfo("¡Operación exitosa!!");
             mostrarListas();
             pestaniaActiva = 1;
@@ -442,5 +439,9 @@ public class ControladorHabilidadesIIL implements Serializable {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+public void metodoBase() {
+        
     }
 }

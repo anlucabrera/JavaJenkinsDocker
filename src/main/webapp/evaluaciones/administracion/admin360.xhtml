@@ -247,10 +247,8 @@
         <p:dialog  id="modalcombinaciones" widgetVar="modalCombioonacione" modal="true" showEffect="fade" hideEffect="fade" resizable="false" header="Listado de combinaciones" >
 
             <p:outputPanel id="pnlCombinacion" >
-                <p:autoUpdate/>
                 <h:form>
                     <p:outputPanel id="pnlAE360"  rendered="#{adminEvaluacion360.e360b }" >
-                        <p:autoUpdate/>
                         <p:dataTable id="tblCombinacion360" lazy="false" value="#{adminEvaluacion360.listaCombinacion360}"   
                                      filteredValue="#{adminEvaluacion360.listaCombinaciones360Filtro}"
                                      var="listaEncuesta" filterDelay="700" 
@@ -276,6 +274,9 @@
                             </p:column>
                             <p:column headerText="Puesto evaluado" filterBy="#{listaEncuesta.COperativaEvaluado}" filterMatchMode="contains" sortBy="#{listaEncuesta.COperativaEvaluado}"   >                           
                                 <h:outputText value="#{listaEncuesta.COperativaEvaluado}" />
+                            </p:column>
+                            <p:column headerText="Habilidad del evaluado" filterBy="#{listaEncuesta.habilidadEvaluado}" filterMatchMode="contains" sortBy="#{listaEncuesta.habilidadEvaluado}"   >                           
+                                <h:outputText value="#{listaEncuesta.habilidadEvaluado}" />
                             </p:column>
                             <p:column headerText="Tipo evaluacion" filterBy="#{listaEncuesta.tipo}" filterMatchMode="contains" sortBy="#{listaEncuesta.tipo}"   >                           
                                 <h:outputText value="#{listaEncuesta.tipo}" />

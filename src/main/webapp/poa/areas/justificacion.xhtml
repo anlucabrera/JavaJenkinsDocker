@@ -4,7 +4,7 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:adm="http://github.com/adminfaces"
                 xmlns:jsf="http://xmlns.jcp.org/jsf"
-                template="#{layoutMB.template}"
+                template="/WEB-INF/templates/template.xhtml"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 xmlns:pe="http://primefaces.org/ui/extensions">
 
@@ -27,6 +27,7 @@
         <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
         </c:if>        
+        <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
@@ -39,55 +40,7 @@
     </ui:define>
 
     <ui:define name="body">
-        <style>
-            .principal{
-                background-color: #03A9F4;
-            }
-            .table-bordered{
-                border: 1px solid #000000;
-            }
-            body .ui-datatable th[role="columnheader"].ui-state-default, body .ui-treetable th[role="columnheader"].ui-state-default{
-                border: 1px solid #000000;
-            }
-            .table-bordered>thead>tr>th, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .table-bordered>tfoot>tr>td{
-                border: 1px solid #000000;
-            }
-
-            .ui-steps .ui-steps-item {
-                width: 24%;
-            }
-
-            .ui-state-highlight {
-                text-shadow: none !important;
-            }
-
-            .ui-steps.custom {
-                margin-bottom: 30px;
-            }
-
-            .ui-steps.custom .ui-steps-item .ui-menuitem-link {
-                height: 10px;
-                padding: 0 1em;
-            }
-
-            .ui-steps.custom .ui-steps-item .ui-steps-number {
-                background-color: #0081c2;
-                color: #FFFFFF;
-                display: inline-block;
-                width: 30px;
-                border-radius: 10px;
-                margin-top: -10px;
-                margin-bottom: 10px;
-            }
-
-            .ui-steps.custom .ui-steps-item.ui-state-highlight .ui-steps-title {
-                color: #555;
-            }
-
-            .ui-panelgrid .ui-panelgrid-cell{
-                padding: 12px 10px;
-            }
-        </style>
+        
 
         <adm:breadcrumb title=" Plan de Trabajo Anual - Descripción y Justificación"/>
         <adm:sidebar collapsed="true"/>
@@ -140,28 +93,28 @@
 
                                         <p:columnGroup type="header">
                                             <p:row class="success">
-                                                <p:column rowspan="2" headerText="No." style="width: 50px; font-weight: bold; font-size: medium"/>
-                                                <p:column rowspan="2" headerText="Actividad" style=" font-weight: bold; font-size: medium"/>
-                                                <p:column rowspan="2" headerText="Unidad de medida" style=" font-weight: bold; font-size: medium"/>
-                                                <p:column colspan="12" headerText="Calendarización de Metas" style="width: 1200px; font-weight: bold; font-size: medium"/>  
-                                                <p:column rowspan="2" headerText="Total" style="width: 80px; font-weight: bold; font-size: medium"/>
-                                                <p:column rowspan="2" headerText="" style="width: 50px; font-weight: bold; font-size: medium"/>
-                                                <p:column rowspan="2" headerText="" style="width: 50px; font-weight: bold; font-size: medium"/>
-                                                <p:column rowspan="2" headerText="Validado por el sistema" style="width: 100px; font-weight: bold; font-size: medium"/>
+                                                <p:column rowspan="2" headerText="No." style="width: 50px;"/>
+                                                <p:column rowspan="2" headerText="Actividad" />
+                                                <p:column rowspan="2" headerText="Unidad de medida" />
+                                                <p:column colspan="12" headerText="Calendarización de Metas" style="width: 1200px;"/>  
+                                                <p:column rowspan="2" headerText="Total" style="width: 80px;"/>
+                                                <p:column rowspan="2" headerText="" style="width: 50px;"/>
+                                                <p:column rowspan="2" headerText="" style="width: 50px;"/>
+                                                <p:column rowspan="2" headerText="Validado por el sistema" style="width: 100px;"/>
                                             </p:row>
                                             <p:row class="success">
-                                                <p:column headerText="Enero" style=" font-weight: bold; font-size: medium"/>
-                                                <p:column headerText="Febrero" style=" font-weight: bold; font-size: medium"/>
-                                                <p:column headerText="Marzo" style=" font-weight: bold; font-size: medium"/>
-                                                <p:column headerText="Abril" style=" font-weight: bold; font-size: medium"/>
-                                                <p:column headerText="Mayo" style=" font-weight: bold; font-size: medium"/>                                                    
-                                                <p:column headerText="Junio" style=" font-weight: bold; font-size: medium"/>
-                                                <p:column headerText="Julio" style=" font-weight: bold; font-size: medium"/>
-                                                <p:column headerText="Agosto" style=" font-weight: bold; font-size: medium"/>
-                                                <p:column headerText="Septiembre" style=" font-weight: bold; font-size: medium"/>
-                                                <p:column headerText="Octubre" style=" font-weight: bold; font-size: medium"/>
-                                                <p:column headerText="Noviembre" style=" font-weight: bold; font-size: medium"/>
-                                                <p:column headerText="Diciembre" style=" font-weight: bold; font-size: medium"/>
+                                                <p:column headerText="Enero" />
+                                                <p:column headerText="Febrero" />
+                                                <p:column headerText="Marzo" />
+                                                <p:column headerText="Abril" />
+                                                <p:column headerText="Mayo" />                                                    
+                                                <p:column headerText="Junio" />
+                                                <p:column headerText="Julio" />
+                                                <p:column headerText="Agosto" />
+                                                <p:column headerText="Septiembre" />
+                                                <p:column headerText="Octubre" />
+                                                <p:column headerText="Noviembre" />
+                                                <p:column headerText="Diciembre" />
                                             </p:row>
                                         </p:columnGroup>
 
@@ -262,23 +215,23 @@
 
                         <p:columnGroup type="header">
                             <p:row class="success">
-                                <p:column rowspan="2" headerText="Producto" style=" font-weight: bold; font-size: medium"/>
-                                <p:column colspan="12" headerText="Calendarización de Metas" style="width: 700px; font-weight: bold; font-size: medium"/>  
-                                <p:column rowspan="2" headerText="Total" style="width: 80px; font-weight: bold; font-size: medium"/>
+                                <p:column rowspan="2" headerText="Producto" />
+                                <p:column colspan="12" headerText="Calendarización de Metas" style="width: 700px;"/>  
+                                <p:column rowspan="2" headerText="Total" style="width: 80px;"/>
                             </p:row>
                             <p:row class="success">
-                                <p:column headerText="Ene" style=" font-weight: bold; font-size: medium"/>
-                                <p:column headerText="Feb" style=" font-weight: bold; font-size: medium"/>
-                                <p:column headerText="Mar" style=" font-weight: bold; font-size: medium"/>
-                                <p:column headerText="Abr" style=" font-weight: bold; font-size: medium"/>
-                                <p:column headerText="May" style=" font-weight: bold; font-size: medium"/>                                                    
-                                <p:column headerText="Jun" style=" font-weight: bold; font-size: medium"/>
-                                <p:column headerText="Jul" style=" font-weight: bold; font-size: medium"/>
-                                <p:column headerText="Ago" style=" font-weight: bold; font-size: medium"/>
-                                <p:column headerText="Sep" style=" font-weight: bold; font-size: medium"/>
-                                <p:column headerText="Oct" style=" font-weight: bold; font-size: medium"/>
-                                <p:column headerText="Nov" style=" font-weight: bold; font-size: medium"/>
-                                <p:column headerText="Dic" style=" font-weight: bold; font-size: medium"/>
+                                <p:column headerText="Ene" />
+                                <p:column headerText="Feb" />
+                                <p:column headerText="Mar" />
+                                <p:column headerText="Abr" />
+                                <p:column headerText="May" />                                                    
+                                <p:column headerText="Jun" />
+                                <p:column headerText="Jul" />
+                                <p:column headerText="Ago" />
+                                <p:column headerText="Sep" />
+                                <p:column headerText="Oct" />
+                                <p:column headerText="Nov" />
+                                <p:column headerText="Dic" />
                             </p:row>
                         </p:columnGroup>
 

@@ -96,7 +96,7 @@ public class LogonMB extends AdminSession implements Serializable {
                     personal = (Personal) f.find(Integer.parseInt(listaUsuarioClaveNomina.getNumeroNomina()));
                     listaUsuarioClaveNomina.getNumeroNomina();
 //                    agregaBitacora();
-                    getPermisosAcceso();
+//                    getPermisosAcceso();
                 }
                 System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login() tipo: " + usuarioTipo);
                 addDetailMessage("Bienvenido <b>" + usuario.getPersonas().getNombre() + "</b>");

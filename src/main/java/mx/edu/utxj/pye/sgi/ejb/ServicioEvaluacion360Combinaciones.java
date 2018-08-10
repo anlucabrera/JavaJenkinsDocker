@@ -17,6 +17,7 @@ import javax.persistence.TypedQuery;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.ListaEvaluacion360Combinaciones;
 import mx.edu.utxj.pye.sgi.dto.ListaEvaluacionDesempenio;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluacionResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360;
@@ -24,7 +25,6 @@ import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360Resultados;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonalEvaluacion360;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
-import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Listaperiodosescolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -52,7 +52,7 @@ public class ServicioEvaluacion360Combinaciones implements EjbEvaluacion360Combi
             if (superior.getPk().getEvaluador() != 0) {
                 superior.setTipo("Superior");
                 f.setEntityClass(PersonalCategorias.class);
-                PersonalCategorias categoria = f.getEntityManager().find(PersonalCategorias.class, (short) 50);
+                PersonalCategorias categoria = f.getEntityManager().find(PersonalCategorias.class, evaluado.getCategoria360().getCategoria());
                 superior.setCategoria(categoria);//superior.setCategoria((short)50);
 
                 l.add(superior);
@@ -65,7 +65,7 @@ public class ServicioEvaluacion360Combinaciones implements EjbEvaluacion360Combi
                     subordinado.setTipo("Subordinado");
                 }
                 f.setEntityClass(PersonalCategorias.class);
-                PersonalCategorias categoria = f.getEntityManager().find(PersonalCategorias.class, (short) 50);
+                PersonalCategorias categoria = f.getEntityManager().find(PersonalCategorias.class, evaluado.getCategoria360().getCategoria());
                 subordinado.setCategoria(categoria);//subordinado.setCategoria((short)50);
                 l.add(subordinado);
             }
@@ -73,7 +73,7 @@ public class ServicioEvaluacion360Combinaciones implements EjbEvaluacion360Combi
             if (igual.getPk().getEvaluador() != 0) {
                 igual.setTipo("Igual");
                 f.setEntityClass(PersonalCategorias.class);
-                PersonalCategorias categoria = f.getEntityManager().find(PersonalCategorias.class, (short) 50);
+                PersonalCategorias categoria = f.getEntityManager().find(PersonalCategorias.class, evaluado.getCategoria360().getCategoria());
                 igual.setCategoria(categoria);//igual.setCategoria((short)50);
                 l.add(igual);
             }
@@ -357,10 +357,10 @@ public class ServicioEvaluacion360Combinaciones implements EjbEvaluacion360Combi
     }
 
     @Override
-    public Areas getAreaPorClave(Integer area) {
-        TypedQuery<Areas> q = f.getEntityManager().createQuery("SELECT a from Areas a WHERE a.clave = :area", Areas.class);
+    public AreasUniversidad getAreaPorClave(Short area) {
+        TypedQuery<AreasUniversidad> q = f.getEntityManager().createQuery("SELECT a from AreasUniversidad a WHERE a.area  = :area", AreasUniversidad.class);
         q.setParameter("area", area);
-        List<Areas> l = q.getResultList();
+        List<AreasUniversidad> l = q.getResultList();
         if (l == null || l.isEmpty()) {
             return null;
         } else {

@@ -17,29 +17,16 @@
         <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
         </c:if>  
+        <c:if test="#{!controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
+        </c:if> 
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
     <ui:define name="title"/>
 
     <ui:define name="body">
-        <style>
-            .description-block{
-                text-align: justify;
-            }
-            .description-header{
-                text-align: center;
-            }
-            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
-                width: 100%;
-            }
-            .aceptado{
-                background-color: #00a65a;
-            }
-            .denegado{
-                background-color: #f39c12;
-            }
-        </style>
+
         <h:outputScript>
             PrimeFaces.locales['es'] = {
             closeText: 'Cerrar',
@@ -73,7 +60,7 @@
                 Esta página está disponible solo para pantallas superiores a 1024px.
             </h1>
         </p:panel>
-        <c:if test="#{controladorEmpleado.mandos eq 'Superiores'}">
+        <c:if test="#{controladorEmpleado.mandos eq 'Otro'}">
             <div class="box box-primary">
                 <div class="box box-solid">
                     <div class="box-header with-border">
@@ -104,7 +91,7 @@
             <section class="content">
                 <div class="row">
                     <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
-                    <div class="col-md-9">
+                    <div class="col-md-10">
                         <div class="nav-tabs-custom">
                             <div class="row">
                                 <div class="col-lg-10 col-xs-10"/>
@@ -128,19 +115,28 @@
                                                                     <div class="description-block">
                                                                         <div class="row">
                                                                             <div class="form-group">
-                                                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                                                <div class="col-sm-12 col-md-6 col-lg-4">
                                                                                     <p:outputLabel for="isbn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="ISBN:" />
                                                                                     <p:inputText id="isbn" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="ISBN" value="#{controladorProduccionPersonal.nuevOBJLibrosPub.isbn}"/>
                                                                                     <p:message for="isbn" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-6"> 
+                                                                                <div class="col-sm-12 col-md-6 col-lg-4"> 
                                                                                     <p:outputLabel for="titulo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Título" />
                                                                                     <p:inputText id="titulo" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Título" value="#{controladorProduccionPersonal.nuevOBJLibrosPub.titulo}"/>
                                                                                     <p:message for="titulo" display="tooltip"/>                                                                         
                                                                                     <hr/>
+                                                                                </div>                                                                           
+                                                                                <div class="col-sm-12 col-md-6 col-lg-4">         
+                                                                                    <p:outputLabel for="pais" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="País" />
+                                                                                    <p:selectOneMenu id="pais" style="height:100%; width: 100%; object-fit: contain; font-size: large" filter="true" filterMatchMode="contains" value="#{controladorProduccionPersonal.nuevOBJLibrosPub.pasi}" >
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItems value="#{controladorEmpleado.listaPaises}" var="paises" itemValue="#{paises}" itemLabel="#{paises}" />
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="pais" display="tooltip" />
+                                                                                    <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-6">                                                                                
+                                                                                <div class="col-sm-12 col-md-6 col-lg-4">                                                                                
                                                                                     <p:outputLabel for="idioma" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Idioma:" />
                                                                                     <p:selectOneMenu id="idioma" style="height:100%; width: 100%; object-fit: contain; font-size: large" filter="true" filterMatchMode="contains" value="#{controladorProduccionPersonal.nuevOBJLibrosPub.idioma}" >
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
@@ -152,7 +148,7 @@
 
                                                                                 <p:outputPanel>            
                                                                                     <p:autoUpdate/>
-                                                                                    <div class="col-sm-12 col-md-6 col-lg-6">                                                                                
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-4">                                                                                
                                                                                         <p:outputLabel for="traduccion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Cuenta con traducción" />
                                                                                         <p:selectOneMenu id="traduccion" style="height:100%; width: 100%; object-fit: contain; font-size: large" filter="true" filterMatchMode="contains" value="#{controladorProduccionPersonal.traduccion}" >
                                                                                             <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
@@ -162,20 +158,8 @@
                                                                                         </p:selectOneMenu> 
                                                                                         <p:message for="traduccion" display="tooltip" />
                                                                                         <hr/>
-                                                                                    </div>
+                                                                                    </div>  
                                                                                     <c:if test="#{controladorProduccionPersonal.traduccion eq 1}">
-                                                                                        <div class="col-sm-12 col-md-6 col-lg-6">                                                                               
-                                                                                            <p:outputLabel for="isbntraducido" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="ISBN traducido" />
-                                                                                            <p:inputText id="isbntraducido" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="ISBN traducido" value="#{controladorProduccionPersonal.nuevOBJLibrosPub.isbnTraducido}"/>
-                                                                                            <p:message for="isbntraducido" display="tooltip" />
-                                                                                            <hr/>
-                                                                                        </div>
-                                                                                        <div class="col-sm-12 col-md-6 col-lg-6">                                                                              
-                                                                                            <p:outputLabel for="titulotraducido" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Título traducido" />
-                                                                                            <p:inputText id="titulotraducido" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Título traducido" value="#{controladorProduccionPersonal.nuevOBJLibrosPub.tituloTraducido}"/>
-                                                                                            <p:message for="titulotraducido" display="tooltip" />
-                                                                                            <hr/>  
-                                                                                        </div>
                                                                                         <div class="col-sm-4 col-md-4 col-lg-4">         
                                                                                             <p:outputLabel for="idiomatraducido" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Idioma traducido" />
                                                                                             <p:selectOneMenu id="idiomatraducido" style="height:100%; width: 100%; object-fit: contain; font-size: large" filter="true" filterMatchMode="contains" value="#{controladorProduccionPersonal.nuevOBJLibrosPub.idiomaTraducido}" >
@@ -185,17 +169,20 @@
                                                                                             <p:message for="idiomatraducido" display="tooltip" />
                                                                                             <hr/>
                                                                                         </div>
-                                                                                    </c:if>                                                                                
-                                                                                    <div class="#{controladorProduccionPersonal.traduccion eq 1 ?'col-sm-4 col-md-4 col-lg-4':'col-sm-12 col-md-6 col-lg-6'}">         
-                                                                                        <p:outputLabel for="pais" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="País" />
-                                                                                        <p:selectOneMenu id="pais" style="height:100%; width: 100%; object-fit: contain; font-size: large" filter="true" filterMatchMode="contains" value="#{controladorProduccionPersonal.nuevOBJLibrosPub.pasi}" >
-                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                                                                            <f:selectItems value="#{controladorEmpleado.listaPaises}" var="paises" itemValue="#{paises}" itemLabel="#{paises}" />
-                                                                                        </p:selectOneMenu> 
-                                                                                        <p:message for="pais" display="tooltip" />
-                                                                                        <hr/>
-                                                                                    </div>
-                                                                                    <div class="#{controladorProduccionPersonal.traduccion eq 1 ?'col-sm-4 col-md-4 col-lg-4':'col-sm-12 col-md-6 col-lg-6'}">       
+                                                                                        <div class="col-sm-12 col-md-6 col-lg-4">                                                                               
+                                                                                            <p:outputLabel for="isbntraducido" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="ISBN traducido" />
+                                                                                            <p:inputText id="isbntraducido" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="ISBN traducido" value="#{controladorProduccionPersonal.nuevOBJLibrosPub.isbnTraducido}"/>
+                                                                                            <p:message for="isbntraducido" display="tooltip" />
+                                                                                            <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-6 col-lg-4">                                                                              
+                                                                                            <p:outputLabel for="titulotraducido" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Título traducido" />
+                                                                                            <p:inputText id="titulotraducido" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Título traducido" value="#{controladorProduccionPersonal.nuevOBJLibrosPub.tituloTraducido}"/>
+                                                                                            <p:message for="titulotraducido" display="tooltip" />
+                                                                                            <hr/>  
+                                                                                        </div>
+                                                                                    </c:if>   
+                                                                                    <div class="#{controladorProduccionPersonal.traduccion eq 1 ?'col-sm-4 col-md-4 col-lg-4':'col-sm-12 col-md-6 col-lg-4'}">       
                                                                                         <p:outputLabel for="apoyo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="¿Recibió apoyo de la universidad?" />
                                                                                         <p:selectOneMenu id="apoyo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorProduccionPersonal.nuevOBJLibrosPub.apoyoUni}" >
                                                                                             <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
@@ -206,55 +193,55 @@
                                                                                         <hr/>
                                                                                     </div>
                                                                                 </p:outputPanel>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-6"> 
+                                                                                <div class="col-sm-12 col-md-6 col-lg-5"> 
                                                                                     <p:outputLabel for="editorial" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Editorial" />
                                                                                     <p:inputText id="editorial" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Editorial" value="#{controladorProduccionPersonal.nuevOBJLibrosPub.editorial}"/>
                                                                                     <p:message for="editorial" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-6">                                                                                
+                                                                                <div class="col-sm-12 col-md-6 col-lg-5">                                                                                
                                                                                     <p:outputLabel for="lugarEdi" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Lugar de edición" />
                                                                                     <p:inputText id="lugarEdi" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Lugar de edición" value="#{controladorProduccionPersonal.nuevOBJLibrosPub.lugarEdicion}"/>
                                                                                     <p:message for="lugarEdi" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-3">         
+                                                                                <div class="col-sm-12 col-md-6 col-lg-2">         
                                                                                     <p:outputLabel for="anio" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Año de publicación" />
                                                                                     <p:inputText id="anio" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Año de publicación" value="#{controladorProduccionPersonal.anioPub}"/>
                                                                                     <p:message for="anio" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-3">                                                                                    
+                                                                                <div class="col-sm-12 col-md-6 col-lg-2">                                                                                    
                                                                                     <p:outputLabel for="anioedi" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Año de edición" />
                                                                                     <p:inputText id="anioedi" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Año de edición" value="#{controladorProduccionPersonal.anioEdi}"/>
                                                                                     <p:message for="anioedi" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-3">         
+                                                                                <div class="col-sm-12 col-md-6 col-lg-2">         
                                                                                     <p:outputLabel for="numedi" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Número de edición" />
                                                                                     <p:inputText id="numedi" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Número de edición" value="#{controladorProduccionPersonal.nuevOBJLibrosPub.numEdicion}"/>
                                                                                     <p:message for="numedi" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-3">            
+                                                                                <div class="col-sm-12 col-md-6 col-lg-2">            
                                                                                     <p:outputLabel for="tiraje" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tiraje" />
                                                                                     <p:inputText id="tiraje" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Tiraje" value="#{controladorProduccionPersonal.nuevOBJLibrosPub.tiraje}"/>
                                                                                     <p:message for="tiraje" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-3">          
+                                                                                <div class="col-sm-12 col-md-6 col-lg-2">          
                                                                                     <p:outputLabel for="volumen" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Volumen" />
                                                                                     <p:inputText id="volumen" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Volumen" value="#{controladorProduccionPersonal.nuevOBJLibrosPub.volumen}"/>
                                                                                     <p:message for="volumen" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-3">           
+                                                                                <div class="col-sm-12 col-md-6 col-lg-2">           
                                                                                     <p:outputLabel for="tomo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tomo" />
                                                                                     <p:inputText id="tomo" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Tomo" value="#{controladorProduccionPersonal.nuevOBJLibrosPub.tomo}"/>
                                                                                     <p:message for="tomo" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-3">   
+                                                                                <div class="col-sm-12 col-md-6 col-lg-2">   
                                                                                     <p:outputLabel for="nump" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Número de páginas" />
                                                                                     <p:inputText id="nump" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Número de páginas" value="#{controladorProduccionPersonal.nuevOBJLibrosPub.numPag}"/>
                                                                                     <p:message for="nump" display="tooltip" />
@@ -270,13 +257,11 @@
                                                                                     <h:message id="messageForFile" for="file" />
                                                                                     <br/>
                                                                                     <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorProduccionPersonal.agregarEvidenciaLibro}" />
-                                                                                    <hr/>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                         <hr/>
                                                                         <div class="row">
-
                                                                             <p:outputPanel>            
                                                                                 <p:autoUpdate/>
                                                                                 <div class="form-group">
@@ -290,11 +275,9 @@
                                                                                 </div>
                                                                             </p:outputPanel>
                                                                         </div>
-                                                                        <hr/>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                            <hr/>                                                        
+                                                            </div>                                               
                                                         </div>
                                                     </div>
                                                 </div>
@@ -319,7 +302,7 @@
                                     </h:form>
                                     <h:form id="frmLista1">
                                         <p:outputPanel >
-
+                                            <p:remoteCommand name="actualizarTabla" actionListener="#{controladorTecnologia.metodoBase()}" update="tblActividades" />
                                             <p:dataTable id="tblActividades" value="#{controladorProduccionPersonal.nuevaListaLibrosPub}" var="lib"
                                                          paginator="true" rows="5"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -332,10 +315,13 @@
                                                     <p:spacer width="15px"/>
                                                     <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
                                                 </f:facet>
-                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                    <p:ajax event="rowSelect"   update="delate"/>
-                                                    <p:ajax event="rowUnselect" update="delate"/>
-                                                </c:if>
+
+                                                <p:column style="width: 50px;">
+                                                    <p:commandButton actionListener="#{controladorPremiosyDistinciones.delDistincion(distincion)}" update="tblActividades" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{desSoft.tipoDesarrollo}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                </p:column>
+
                                                 <p:column headerText="ISBM" 
                                                           sortBy="#{lib.isbn}" 
                                                           filterBy="#{lib.isbn}" 
@@ -371,7 +357,6 @@
                                                     <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                                                     <!--p:commandButton id="selectet" value="Ver datalles" icon="fa fa-search-plus" class="btn btn-primary" oncomplete="PF('dlgSelect').show();" disabled="#{empty controladorProduccionPersonal.selcNuevOBJLibrosPub}"/>
                                                     <p:commandButton id="update" value="Actualizar" icon="fa fa-pencil-square-o" class="btn btn-primary" oncomplete="PF('dlgUpdate').show();" disabled="#{empty controladorProduccionPersonal.selcNuevOBJLibrosPub}"/-->
-                                                        <p:commandButton id="delate" value="Eliminar" icon="fa fa-eraser" class="btn btn-danger" oncomplete="PF('dlgDelate1').show();" disabled="#{empty controladorProduccionPersonal.selcNuevOBJLibrosPub}"/>
                                                     </c:if>
                                                 </f:facet>
 
@@ -392,6 +377,11 @@
                                             </p:dialog>      
 
                                         </p:outputPanel>
+
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>   
                                     </h:form>
                                 </p:tab>
                                 <p:tab title="Artículos">
@@ -455,6 +445,15 @@
                                                                                     <hr/>
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-6 col-lg-3"> 
+                                                                                    <p:outputLabel for="pais" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="País" />
+                                                                                    <p:selectOneMenu id="pais" style="height:100%; width: 100%; object-fit: contain; font-size: large" filter="true" filterMatchMode="contains" value="#{controladorProduccionPersonal.nuevOBJArticulosp.pais}" >
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItems value="#{controladorEmpleado.listaPaises}" var="paises" itemValue="#{paises}" itemLabel="#{paises}" />
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="pais" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-3"> 
                                                                                     <p:outputLabel for="anioPub" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Año de publicación" />
                                                                                     <p:inputText id="anioPub" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Año de publicación" value="#{controladorProduccionPersonal.anioPub}"/>
                                                                                     <p:message for="anioPub" display="tooltip" />
@@ -464,15 +463,6 @@
                                                                                     <p:outputLabel for="anioEdicion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Año de edición" />
                                                                                     <p:inputText id="anioEdicion" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Año de edición" value="#{controladorProduccionPersonal.anioEdi}"/>
                                                                                     <p:message for="anioEdicion" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-3"> 
-                                                                                    <p:outputLabel for="pais" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="País" />
-                                                                                    <p:selectOneMenu id="pais" style="height:100%; width: 100%; object-fit: contain; font-size: large" filter="true" filterMatchMode="contains" value="#{controladorProduccionPersonal.nuevOBJArticulosp.pais}" >
-                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                                                                        <f:selectItems value="#{controladorEmpleado.listaPaises}" var="paises" itemValue="#{paises}" itemLabel="#{paises}" />
-                                                                                    </p:selectOneMenu> 
-                                                                                    <p:message for="pais" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-6 col-lg-3"> 
@@ -497,13 +487,11 @@
                                                                                     <h:message id="messageForFile" for="file" />
                                                                                     <br/>
                                                                                     <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorProduccionPersonal.agregarEvidenciaArticulo}" />
-                                                                                    <hr/>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                         <hr/>
                                                                         <div class="row">
-
                                                                             <p:outputPanel>            
                                                                                 <p:autoUpdate/>
                                                                                 <div class="form-group">
@@ -517,11 +505,9 @@
                                                                                 </div>
                                                                             </p:outputPanel>
                                                                         </div>
-                                                                        <hr/>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                            <hr/>                                                        
+                                                            </div>                                              
                                                         </div>
                                                     </div>
                                                 </div>
@@ -546,7 +532,7 @@
                                     </h:form>
                                     <h:form id="frmLista2">
                                         <p:outputPanel >
-
+                                            <p:remoteCommand name="actualizarTabla2" actionListener="#{controladorTecnologia.metodoBase()}" update="tblActividades" />
                                             <p:dataTable id="tblActividades" value="#{controladorProduccionPersonal.nuevaListaArticulosp}" var="articulos"
                                                          paginator="true" rows="5"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -559,10 +545,12 @@
                                                     <p:spacer width="15px"/>
                                                     <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
                                                 </f:facet>
-                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                    <p:ajax event="rowSelect"   update="delate"/>
-                                                    <p:ajax event="rowUnselect" update="delate"/>
-                                                </c:if>
+
+                                                <p:column style="width: 50px;">
+                                                    <p:commandButton actionListener="#{controladorPremiosyDistinciones.delDistincion(distincion)}" update="tblActividades" oncomplete="actualizarTabla2()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{desSoft.tipoDesarrollo}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                </p:column>
 
                                                 <p:column headerText="ISSN Electrónico" 
                                                           sortBy="#{articulos.issnElectronico}" 
@@ -598,7 +586,6 @@
                                                     <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                                                     <!--p:commandButton id="selectet" value="Ver datalles" icon="fa fa-search-plus" class="btn btn-primary" oncomplete="PF('dlgSelect').show();" disabled="#{empty controladorProduccionPersonal.selcNuevOBJArticulosp}"/>
                                                     <p:commandButton id="update" value="Actualizar" icon="fa fa-pencil-square-o" class="btn btn-primary" oncomplete="PF('dlgUpdate').show();" disabled="#{empty controladorProduccionPersonal.selcNuevOBJArticulosp}"/-->
-                                                        <p:commandButton id="delate" value="Eliminar" icon="fa fa-eraser" class="btn btn-danger" oncomplete="PF('dlgDelate2').show();" disabled="#{empty controladorProduccionPersonal.selcNuevOBJArticulosp}"/>
                                                     </c:if> 
                                                 </f:facet>
 
@@ -619,6 +606,10 @@
                                             </p:dialog>      
 
                                         </p:outputPanel>
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>   
                                     </h:form>
                                 </p:tab>
                                 <p:tab title="Memorias">
@@ -633,19 +624,19 @@
                                                                     <div class="description-block">
                                                                         <div class="row">
                                                                             <div class="form-group">
-                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                     <p:outputLabel for="tituloO" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="ISSN electrónico" />
                                                                                     <p:inputText id="tituloO" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="ISSN electrónico" value="#{controladorProduccionPersonal.nuevOBJMemoriaspub.tituloDeObra}"/>
                                                                                     <p:message for="tituloO" display="tooltip"/>                                                                         
                                                                                     <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                     <p:outputLabel for="tituloM" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Título de la memoria" />
                                                                                     <p:inputText id="tituloM" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Título de la memoria" value="#{controladorProduccionPersonal.nuevOBJMemoriaspub.tituloDeMemoria}"/>
                                                                                     <p:message for="tituloM" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-12 col-lg-12"> 
+                                                                                <div class="col-sm-12 col-md-12 col-lg-4"> 
                                                                                     <p:outputLabel for="tituloP" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Título de la publicación" />
                                                                                     <p:inputText id="tituloP" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Título de la publicación" value="#{controladorProduccionPersonal.nuevOBJMemoriaspub.tituloDePublicacion}"/>
                                                                                     <p:message for="tituloP" display="tooltip" />
@@ -669,25 +660,25 @@
                                                                                     <p:message for="pC3" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-4">  
+                                                                                <div class="col-sm-12 col-md-6 col-lg-3">  
                                                                                     <p:outputLabel for="anioPub" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Año de publicación" />
                                                                                     <p:inputText id="anioPub" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Año de publicación" value="#{controladorProduccionPersonal.anioPub}"/>
                                                                                     <p:message for="anioPub" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-4"> 
+                                                                                <div class="col-sm-12 col-md-6 col-lg-3"> 
                                                                                     <p:outputLabel for="hojaIni" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Página de inicio" />
                                                                                     <p:inputText id="hojaIni" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Página de inicio" value="#{controladorProduccionPersonal.nuevOBJMemoriaspub.paginaInicio}"/>
                                                                                     <p:message for="hojaIni" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-4"> 
+                                                                                <div class="col-sm-12 col-md-6 col-lg-3"> 
                                                                                     <p:outputLabel for="pagF" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Página de fin" />
                                                                                     <p:inputText id="pagF" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Página de fin" value="#{controladorProduccionPersonal.nuevOBJMemoriaspub.paginaFin}"/>
                                                                                     <p:message for="pagF" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-4"> 
+                                                                                <div class="col-sm-12 col-md-6 col-lg-3"> 
                                                                                     <p:outputLabel for="pais" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="País" />
                                                                                     <p:selectOneMenu id="pais" style="height:100%; width: 100%; object-fit: contain; font-size: large" filter="true" filterMatchMode="contains" value="#{controladorProduccionPersonal.nuevOBJMemoriaspub.pais}" >
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
@@ -706,13 +697,11 @@
                                                                                     <h:message id="messageForFile" for="file" />
                                                                                     <br/>
                                                                                     <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorProduccionPersonal.agregarEvidenciaMemoria}" />
-                                                                                    <hr/>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                         <hr/>
                                                                         <div class="row">
-
                                                                             <p:outputPanel>            
                                                                                 <p:autoUpdate/>
                                                                                 <div class="form-group">
@@ -726,11 +715,9 @@
                                                                                 </div>
                                                                             </p:outputPanel>  
                                                                         </div>
-                                                                        <hr/>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                            <hr/>                                                        
+                                                            </div>                                             
                                                         </div>
                                                     </div>
                                                 </div>
@@ -755,7 +742,7 @@
                                     </h:form>
                                     <h:form id="frmLista3">
                                         <p:outputPanel >
-
+                                            <p:remoteCommand name="actualizarTabla3" actionListener="#{controladorTecnologia.metodoBase()}" update="tblActividades" />
                                             <p:dataTable id="tblActividades" value="#{controladorProduccionPersonal.nuevaListaMemoriaspub}" var="memorias"
                                                          paginator="true" rows="5"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -768,10 +755,13 @@
                                                     <p:spacer width="15px"/>
                                                     <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
                                                 </f:facet>
-                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                    <p:ajax event="rowSelect"   update="delate"/>
-                                                    <p:ajax event="rowUnselect" update="delate"/>
-                                                </c:if>
+
+                                                <p:column style="width: 50px;">
+                                                    <p:commandButton actionListener="#{controladorPremiosyDistinciones.delDistincion(distincion)}" update="tblActividades" oncomplete="actualizarTabla3()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{desSoft.tipoDesarrollo}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                </p:column>
+
                                                 <p:column headerText="ISSN electrónico" 
                                                           sortBy="#{memorias.tituloDeObra}" 
                                                           filterBy="#{memorias.tituloDeObra}" 
@@ -798,7 +788,6 @@
                                                     <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                                                     <!--p:commandButton id="selectet" value="Ver datalles" icon="fa fa-search-plus" class="btn btn-primary" oncomplete="PF('dlgSelect').show();" disabled="#{empty controladorProduccionPersonal.selcNuevOBJMemoriaspub}"/>
                                                     <p:commandButton id="update" value="Actualizar" icon="fa fa-pencil-square-o" class="btn btn-primary" oncomplete="PF('dlgUpdate').show();" disabled="#{empty controladorProduccionPersonal.selcNuevOBJMemoriaspub}"/-->
-                                                        <p:commandButton id="delate" value="Eliminar" icon="fa fa-eraser" class="btn btn-danger" oncomplete="PF('dlgDelate3').show();" disabled="#{empty controladorProduccionPersonal.selcNuevOBJMemoriaspub}"/>
                                                     </c:if>
                                                 </f:facet>
 
@@ -819,6 +808,10 @@
                                             </p:dialog>      
 
                                         </p:outputPanel>
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>   
                                     </h:form>
                                 </p:tab>
                                 <p:tab title="Investigaciones">
@@ -832,7 +825,7 @@
                                                                 <div class="col-sm-12 border-right">
                                                                     <div class="description-block">
                                                                         <div class="row">
-                                                                            <h4>Incluye movilidad y estancia</h4>
+                                                                            <h4>*Incluye movilidad y estancia</h4>
                                                                             <div class="form-group">                                                                                
                                                                                 <div class="col-sm-12 col-md-12 col-lg-6"> 
                                                                                     <p:outputLabel for="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Título de la investigación" />
@@ -865,14 +858,12 @@
                                                                                 <div class="col-sm-12 col-md-6 col-lg-6"> 
                                                                                     <p:outputLabel for="fechaIn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de inicio" />
                                                                                     <p:calendar navigator="true" locale="es" required="true" requiredMessage="No puede tener un campo vacío" id="fechaIn" value="#{controladorProduccionPersonal.fechaI}" pattern="dd-MM-yyyy" mask="true" />
-                                                                                    <p:message for="fechaIn" display="tooltip" />                                                                                                                                                             
-                                                                                    <hr/>
+                                                                                    <p:message for="fechaIn" display="tooltip" />      
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-6 col-lg-6"> 
                                                                                     <p:outputLabel for="fechaFin" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de fin, vació si esta en proceso" />
                                                                                     <p:calendar navigator="true" title="En caso de estar en proceso dejar vacío el campo" locale="es" id="fechaFin" value="#{controladorProduccionPersonal.fechaF}" pattern="dd-MM-yyyy" mask="true" />
                                                                                     <p:message for="fechaFin" display="tooltip" />
-                                                                                    <hr/>
                                                                                 </div>
                                                                             </div>                                                                 
                                                                         </div>
@@ -913,6 +904,7 @@
                                         <p:outputPanel >
                                             <p:tabView >
                                                 <p:tab title="Proyectos" >
+                                                    <p:remoteCommand name="actualizarTabla4" actionListener="#{controladorTecnologia.metodoBase()}" update="tblActividades" />
                                                     <p:dataTable id="tblActividades" value="#{controladorProduccionPersonal.nuevaListatInvestigaciones}" var="proyIn"
                                                                  paginator="true" rows="5"
                                                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -926,10 +918,13 @@
                                                             <p:spacer width="15px"/>
                                                             <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
                                                         </f:facet>
-                                                        <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                            <p:ajax event="rowSelect"   update="delate"/>
-                                                            <p:ajax event="rowUnselect" update="delate"/>
-                                                        </c:if>
+
+                                                        <p:column style="width: 50px;">
+                                                            <p:commandButton actionListener="#{controladorPremiosyDistinciones.delDistincion(distincion)}" update="tblActividades" oncomplete="actualizarTabla4()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                                <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{desSoft.tipoDesarrollo}?" icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                        </p:column>
+
                                                         <p:column headerText="Título de investigación" 
                                                                   sortBy="#{proyIn.nombreInvestigacion}" 
                                                                   filterBy="#{proyIn.nombreInvestigacion}" 
@@ -955,13 +950,13 @@
                                                             <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                                                             <!--p:commandButton id="selectet" value="Ver datalles" icon="fa fa-search-plus" class="btn btn-primary" oncomplete="PF('dlgSelect').show();" disabled="#{empty controladorProduccionPersonal.nuevOBJInvestigacionesSelectec}"/>
                                                             <p:commandButton id="update" value="Actualizar" icon="fa fa-pencil-square-o" class="btn btn-primary" oncomplete="PF('dlgUpdate').show();" disabled="#{empty controladorProduccionPersonal.nuevOBJInvestigacionesSelectec}"/-->
-                                                                <p:commandButton id="delate" value="Eliminar" icon="fa fa-eraser" class="btn btn-danger" oncomplete="PF('dlgDelate5').show();" disabled="#{empty controladorProduccionPersonal.nuevOBJInvestigacionesSelectec}"/>
                                                             </c:if>
                                                         </f:facet>
 
                                                     </p:dataTable>  
                                                 </p:tab>
                                                 <p:tab title="Trabajos" >
+                                                    <p:remoteCommand name="actualizarTabla5" actionListener="#{controladorTecnologia.metodoBase()}" update="tblInvestigaciones" />
                                                     <p:dataTable id="tblInvestigaciones" value="#{controladorProduccionPersonal.nuevaListatInvestigaciones}" var="trabIn"
                                                                  paginator="true" rows="5"
                                                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -975,10 +970,13 @@
                                                             <p:spacer width="15px"/>
                                                             <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
                                                         </f:facet>
-                                                        <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                            <p:ajax event="rowSelect"   update="delate"/>
-                                                            <p:ajax event="rowUnselect" update="delate"/>
-                                                        </c:if>
+
+                                                        <p:column style="width: 50px;">
+                                                            <p:commandButton actionListener="#{controladorPremiosyDistinciones.delDistincion(distincion)}" update="tblInvestigaciones" oncomplete="actualizarTabla5()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                                <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{desSoft.tipoDesarrollo}?" icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                        </p:column>
+
                                                         <p:column headerText="Título de investigación" 
                                                                   sortBy="#{trabIn.nombreInvestigacion}" 
                                                                   filterBy="#{trabIn.nombreInvestigacion}" 
@@ -1004,7 +1002,6 @@
                                                             <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                                                             <!--p:commandButton id="selectet" value="Ver datalles" icon="fa fa-search-plus" class="btn btn-primary" oncomplete="PF('dlgSelect').show();" disabled="#{empty controladorProduccionPersonal.nuevOBJInvestigacionesSelectec}"/>
                                                             <p:commandButton id="update" value="Actualizar" icon="fa fa-pencil-square-o" class="btn btn-primary" oncomplete="PF('dlgUpdate').show();" disabled="#{empty controladorProduccionPersonal.nuevOBJInvestigacionesSelectec}"/-->
-                                                                <p:commandButton id="delate" value="Eliminar" icon="fa fa-eraser" class="btn btn-danger" oncomplete="PF('dlgDelate7').show();" disabled="#{empty controladorProduccionPersonal.nuevOBJInvestigacionesSelectec}"/>
                                                             </c:if>
                                                         </f:facet>
 
@@ -1012,6 +1009,10 @@
                                                 </p:tab>
                                             </p:tabView>                                        
                                         </p:outputPanel>
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>   
                                     </h:form>
                                 </p:tab>
                                 <p:tab title="Congresos">
@@ -1123,7 +1124,7 @@
                                             </c:if>
                                         </p:outputPanel>        
                                         <p:outputPanel >
-
+                                            <p:remoteCommand name="actualizarTabla6" actionListener="#{controladorTecnologia.metodoBase()}" update="tblActividades" />
                                             <p:dataTable id="tblActividades" value="#{controladorProduccionPersonal.nuevaListaCongresos}" var="congre"
                                                          paginator="true" rows="5"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -1136,10 +1137,13 @@
                                                     <p:spacer width="15px"/>
                                                     <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
                                                 </f:facet>
-                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                    <p:ajax event="rowSelect"   update="delate"/>
-                                                    <p:ajax event="rowUnselect" update="delate"/>
-                                                </c:if>
+
+                                                <p:column style="width: 50px;">
+                                                    <p:commandButton actionListener="#{controladorPremiosyDistinciones.delDistincion(distincion)}" update="tblActividades" oncomplete="actualizarTabla6()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{desSoft.tipoDesarrollo}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                </p:column>
+
                                                 <p:column headerText="Nombre del congreso" 
                                                           sortBy="#{congre.nombreCongreso}" 
                                                           filterBy="#{congre.nombreCongreso}" 
@@ -1174,13 +1178,16 @@
                                                     <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                                                     <!--p:commandButton id="selectet" value="Ver datalles" icon="fa fa-search-plus" class="btn btn-primary" oncomplete="PF('dlgSelect').show();" disabled="#{empty controladorProduccionPersonal.nuevoOBJCongresoSelectec}"/>
                                                     <p:commandButton id="update" value="Actualizar" icon="fa fa-pencil-square-o" class="btn btn-primary" oncomplete="PF('dlgUpdate').show();" disabled="#{empty controladorProduccionPersonal.nuevoOBJCongresoSelectec}"/-->
-                                                        <p:commandButton id="delate" value="Eliminar" icon="fa fa-eraser" class="btn btn-danger" oncomplete="PF('dlgDelate6').show();" disabled="#{empty controladorProduccionPersonal.nuevoOBJCongresoSelectec}"/>
                                                     </c:if>
                                                 </f:facet>
 
                                             </p:dataTable>  
 
                                         </p:outputPanel>
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>   
                                     </h:form>
                                 </p:tab>
                                 <p:blockUI block="informacion" widgetVar="bloqueoCargaFile">
@@ -1192,117 +1199,6 @@
                 </div>
             </section>
         </p:panel>
-
-        <h:form id="frmDelate1" >
-            <p:dialog id="dlgDelate1" header="Eliminación" widgetVar="dlgDelate1" minimizable="true" maximizable="true" position="center">
-                <f:facet name="footer">
-                    <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate1').hide();"/>
-                    <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorProduccionPersonal.eliminaLibros()}" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate1')hide();"/>
-                </f:facet>
-
-                <p:outputPanel>            
-                    <p:autoUpdate/>
-                    <h:panelGrid columns="1"  class="col-md-12">
-                        <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
-                    </h:panelGrid>
-                </p:outputPanel>
-            </p:dialog>
-        </h:form>     
-
-        <h:form id="frmDelate2" >
-            <p:dialog id="dlgDelate2" header="Eliminación" widgetVar="dlgDelate2" minimizable="true" maximizable="true" position="center">
-                <f:facet name="footer">
-                    <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate2').hide();"/>
-                    <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorProduccionPersonal.eliminaArticulos()}" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate2')hide();"/>
-                </f:facet>
-
-                <p:outputPanel>            
-                    <p:autoUpdate/>
-                    <h:panelGrid columns="1"  class="col-md-12">
-                        <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
-                    </h:panelGrid>
-                </p:outputPanel>
-            </p:dialog>
-        </h:form>     
-
-        <h:form id="frmDelate3" >
-            <p:dialog id="dlgDelate3" header="Eliminación" widgetVar="dlgDelate3" minimizable="true" maximizable="true" position="center">
-                <f:facet name="footer">
-                    <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate3').hide();"/>
-                    <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorProduccionPersonal.eliminaMemorias()}" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate3')hide();"/>
-                </f:facet>
-
-                <p:outputPanel>            
-                    <p:autoUpdate/>
-                    <h:panelGrid columns="1"  class="col-md-12">
-                        <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
-                    </h:panelGrid>
-                </p:outputPanel>
-            </p:dialog>
-        </h:form>     
-
-        <h:form id="frmDelate4" >
-            <p:dialog id="dlgDelate4" header="Eliminación" widgetVar="dlgDelate4" minimizable="true" maximizable="true" position="center">
-                <f:facet name="footer">
-                    <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate4').hide();"/>
-                    <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorProduccionPersonal.eliminaTrabajo()}" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate4')hide();"/>
-                </f:facet>
-
-                <p:outputPanel>            
-                    <p:autoUpdate/>
-                    <h:panelGrid columns="1"  class="col-md-12">
-                        <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
-                    </h:panelGrid>
-                </p:outputPanel>
-            </p:dialog>
-        </h:form>     
-
-        <h:form id="frmDelate5" >
-            <p:dialog id="dlgDelate5" header="Eliminación" widgetVar="dlgDelate5" minimizable="true" maximizable="true" position="center">
-                <f:facet name="footer">
-                    <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate5').hide();"/>
-                    <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorProduccionPersonal.eliminaProyecto()}" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate5')hide();"/>
-                </f:facet>
-
-                <p:outputPanel>            
-                    <p:autoUpdate/>
-                    <h:panelGrid columns="1"  class="col-md-12">
-                        <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
-                    </h:panelGrid>
-                </p:outputPanel>
-            </p:dialog>
-        </h:form>     
-        <h:form id="frmDelate7" >
-            <p:dialog id="dlgDelate7" header="Eliminación" widgetVar="dlgDelate7" minimizable="true" maximizable="true" position="center">
-                <f:facet name="footer">
-                    <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate7').hide();"/>
-                    <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorProduccionPersonal.eliminaTrabajo()}" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate7')hide();"/>
-                </f:facet>
-
-                <p:outputPanel>            
-                    <p:autoUpdate/>
-                    <h:panelGrid columns="1"  class="col-md-12">
-                        <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
-                    </h:panelGrid>
-                </p:outputPanel>
-            </p:dialog>
-        </h:form>
-        <h:form id="frmDelate6" >
-            <p:dialog id="dlgDelate6" header="Eliminación" widgetVar="dlgDelate6" minimizable="true" maximizable="true" position="center">
-                <f:facet name="footer">
-                    <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate6').hide();"/>
-                    <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorProduccionPersonal.eliminaCongreso()}" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate6')hide();"/>
-                </f:facet>
-
-                <p:outputPanel>            
-                    <p:autoUpdate/>
-                    <h:panelGrid columns="1"  class="col-md-12">
-                        <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
-                    </h:panelGrid>
-                </p:outputPanel>
-            </p:dialog>
-        </h:form>     
-
     </ui:define>
     <h:outputScript library="js" name="funciones.js" />
 

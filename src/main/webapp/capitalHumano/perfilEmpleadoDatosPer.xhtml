@@ -14,29 +14,22 @@
         <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
         </c:if>  
+        <c:if test="#{!controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
+        </c:if> 
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
     <ui:define name="title"/>
 
     <ui:define name="body">
-        <style>
-            .description-block{
-                text-align: justify;
-            }
-            .description-header{
-                text-align: center;
-            }
-            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
-                width: 100%;
-            }
-        </style>
+
         <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
             <h1>
                 Esta página está disponible solo para pantallas superiores a 1024px.
             </h1>
         </p:panel>
-        <c:if test="#{controladorEmpleado.mandos eq 'Superiores'}">
+        <c:if test="#{controladorEmpleado.mandos eq 'Otro'}">
             <div class="box box-primary">
                 <div class="box box-solid">
                     <div class="box-header with-border">
@@ -67,7 +60,7 @@
             <section class="content">
                 <div class="row">
                     <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
-                    <div class="col-md-9">
+                    <div class="col-md-10">
                         <div class="nav-tabs-custom">
                             <div class="row">
                                 <div class="col-lg-10 col-xs-10"/>
@@ -89,43 +82,43 @@
                                                         <div class="box box-widget widget-user-2">
                                                             <div class="row">
                                                                 <div class="form-group">
-                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <div class="col-sm-12 col-md-12 col-lg-3">
                                                                         <p:outputLabel for="nombre" style="font-size: large" value="Nombre completo"/>                                
                                                                         <p:inputText id="nombre" class="form-control" disabled="true" value="#{datosPersonales.nuevoOBJPersonal.nombre}"/>
                                                                         <p:message for="nombre" display="tooltip" />
                                                                         <hr/>
                                                                     </div>
-                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <div class="col-sm-12 col-md-12 col-lg-3">
                                                                         <p:outputLabel for="lugar" style="font-size: large" value="Lugar de procedencia:"/>
                                                                         <p:inputText id="lugar" class="form-control" disabled="true" value="#{datosPersonales.procedencia}"/>
                                                                         <p:message for="lugar" display="tooltip" />
                                                                         <hr/>
                                                                     </div>
-                                                                    <div class="col-sm-12 col-md-4 col-lg-4">
+                                                                    <div class="col-sm-12 col-md-4 col-lg-3">
                                                                         <p:outputLabel value="Sexo " for="genero" style="font-size: large" />
                                                                         <p:inputText id="genero" disabled="true" class="form-control" value="#{datosPersonales.nuevoOBJPersonal.genero.nombre}"/>
                                                                         <p:message for="genero" display="tooltip" />
                                                                         <hr/>
                                                                     </div>
-                                                                    <div class="col-sm-12 col-md-4 col-lg-4">
+                                                                    <div class="col-sm-12 col-md-4 col-lg-3">
                                                                         <p:outputLabel for="clave" style="font-size: large" value="Nomina" />
                                                                         <p:inputText id="clave" class="form-control" disabled="true" value="#{datosPersonales.nuevoOBJPersonal.clave}"/> 
                                                                         <p:message for="clave" display="tooltip" />
                                                                         <hr/>
                                                                     </div>
-                                                                    <div class="col-sm-12 col-md-4 col-lg-4">
+                                                                    <div class="col-sm-12 col-md-4 col-lg-3">
                                                                         <p:outputLabel for="edad" style="font-size: large" value="Edad"/>
                                                                         <p:inputText id="edad" class="form-control" placeholder="Edad" value="#{datosPersonales.nuevoOBJInformacionAdicionalPersonal.edad}"/> 
                                                                         <p:message for="edad" display="tooltip" />
                                                                         <hr/>
                                                                     </div>
-                                                                    <div class="col-sm-12 col-md-6 col-lg-4">
+                                                                    <div class="col-sm-12 col-md-6 col-lg-3">
                                                                         <p:outputLabel value="Fecha de nacimiento:" for="fecgaN" style="font-size: large"/>
                                                                         <p:inputText id="fecgaN" class="form-control" value="#{datosPersonales.fechaN}"/> 
                                                                         <p:message for="fecgaN" display="tooltip" />
                                                                         <hr/>
                                                                     </div>
-                                                                    <div class="col-sm-12 col-md-6 col-lg-4">
+                                                                    <div class="col-sm-12 col-md-6 col-lg-3">
                                                                         <p:outputLabel value="Estado civil: " for="estado" style="font-size: large" />
                                                                         <p:selectOneMenu id="estado" value="#{datosPersonales.nuevoOBJInformacionAdicionalPersonal.estadoCivil}" >
                                                                             <f:selectItem itemValue="Soltero (a)" itemLabel="Soltero (a)"/>
@@ -138,33 +131,33 @@
                                                                         <p:message for="estado" display="tooltip"/>
                                                                         <hr/>
                                                                     </div>
-                                                                    <div class="col-sm-12 col-md-6 col-lg-4">
+                                                                    <div class="col-sm-12 col-md-6 col-lg-3">
                                                                         <p:outputLabel for="curp" style="font-size: large" value="CURP " />
                                                                         <p:inputText id="curp" class="form-control" placeholder="CURP" maxlength="18" 
                                                                                      requiredMessage="Debe contener 18 caracteres" style="text-transform: uppercase" value="#{datosPersonales.nuevoOBJInformacionAdicionalPersonal.curp}"/> 
                                                                         <p:message for="curp" display="tooltip" />
                                                                         <hr/>
                                                                     </div>
-                                                                    <div class="col-sm-12 col-md-6 col-lg-4">
+                                                                    <div class="col-sm-12 col-md-6 col-lg-3">
                                                                         <p:outputLabel for="rfc" style="font-size: large" value="RFC."/>
                                                                         <p:inputText class="form-control" id="rfc" placeholder="RFC" maxlength="13" style="text-transform: uppercase" value="#{datosPersonales.nuevoOBJInformacionAdicionalPersonal.rfc}"/> 
                                                                         <p:message for="rfc" display="tooltip" />
                                                                         <hr/>
                                                                     </div>
-                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <div class="col-sm-12 col-md-12 col-lg-3">
                                                                         <p:outputLabel for="email" value="Correo electrónico:" style="font-size: large"/>
                                                                         <p:inputText id="email" class="form-control" disabled="true" value="#{datosPersonales.nuevoOBJPersonal.correoElectronico}"/>
                                                                         <p:message for="email" display="tooltip" />
                                                                         <hr/>
                                                                     </div>
-                                                                    <div class="col-sm-12 col-md-6 col-lg-4">
+                                                                    <div class="col-sm-12 col-md-6 col-lg-3">
                                                                         <p:outputLabel for="numTelefono" value="Teléfono móvil:" style="font-size: large"/>
                                                                         <p:inputMask id="numTelefono" class="form-control" size="45" mask="(999) 999-9999" 
                                                                                      placeholder="(000) 000-0000" value="#{datosPersonales.nuevoOBJInformacionAdicionalPersonal.numTelMovil}"/>
                                                                         <p:message for="numTelefono" display="tooltip" />
                                                                         <hr/>
                                                                     </div>
-                                                                    <div class="col-sm-12 col-md-6 col-lg-4">
+                                                                    <div class="col-sm-12 col-md-6 col-lg-3">
                                                                         <p:outputLabel for="celular" value="Teléfono fijo: " style="font-size: large"/> 
                                                                         <p:inputMask id="celular" class="form-control" size="45" mask="(999) 999-9999" 
                                                                                      placeholder="(000 000-0000)" value="#{datosPersonales.nuevoOBJInformacionAdicionalPersonal.numTelFijo}"/><hr/>
@@ -186,10 +179,9 @@
                                                                     <div class="col-sm-12 col-md-12 col-lg-12">
                                                                         <p:outputLabel for="messages" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo de evidencia a subir" />
                                                                         <br/>
-
                                                                         <p:outputPanel>            
                                                                             <p:autoUpdate/>
-                                                                            <p:selectOneRadio id="rutas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{datosPersonales.evidencia}" layout="responsive" columns="1"> 
+                                                                            <p:selectOneRadio id="rutas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{datosPersonales.evidencia}" layout="responsive" columns="2"> 
                                                                                 <f:selectItem itemValue = "ComprobanteDomicilio" itemLabel = "Comprobante de domicilio #{datosPersonales.nuevoOBJInformacionAdicionalPersonal.evidenciaDomicilio eq null?'':'(ya cuenta con el archivo cargado)'}" /> 
                                                                                 <f:selectItem itemValue = "CURP" itemLabel = "CURP #{datosPersonales.nuevoOBJInformacionAdicionalPersonal.evidenciaCurp eq null?'':'(ya cuenta con el archivo cargado)'}" />
                                                                                 <f:selectItem itemValue = "INE" itemLabel = "INE #{datosPersonales.nuevoOBJInformacionAdicionalPersonal.evidenciaIne eq null?'':'(ya cuenta con el archivo cargado)'}" /> 
@@ -202,7 +194,6 @@
                                                                         <h:message id="messageForFile" for="file" />
                                                                         <br/>
                                                                         <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{datosPersonales.agregarEvidencias()}"/>
-                                                                        <hr/>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -218,7 +209,6 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <hr/>
                                                         </div>
                                                     </div>
                                                 </div>

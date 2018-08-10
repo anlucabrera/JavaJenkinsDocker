@@ -7,7 +7,9 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,31 +34,26 @@ public class OrganigramView4 implements Serializable {
     private static final long serialVersionUID = -390301450241823347L;
     @Getter    @Setter    private OrganigramNode REC,SAC,DAF,DEV,DPE,ABO,SRF,AEA,TIC,AMA,AAA,AMI,ASS,DSE,FDA,DES,COT;
     @Getter    @Setter    private OrganigramNode RMS,DEP,PAC,STC,IED,DIE,DPC,EDE,CMI,CPS,CID,CAD,SGC,CON,selection;
-
-    private OrganigramNode employee1, employee4, employee11, employee16, employee20, employee24, employee27, employee28;
-    private OrganigramNode employee29, employee30, employee31, employee32, employee33, employee34, employee35, employee36;
-    private OrganigramNode employee37, employee39, employee40, employee41, employee42, employee44, employee46, employee47;
-    private OrganigramNode employee48, employee49, employee51, employee52, employee53, employee54;
+    
+    private OrganigramNode employee1;
 
     @Getter    @Setter    private boolean zoom = true;
     @Getter    @Setter    private String style = "height:100%; width: 100%; object-fit: contain; align-content: center;";
     @Getter    @Setter    private int leafNodeConnectorHeight;
     @Getter    @Setter    private boolean autoScrollToSelection = true;
-    @Getter    @Setter    private String employeeName;
-    @Getter    @Setter    private String fechaI, nomb, fun_G, fun_E;
-    @Getter    @Setter    private Short categoria;
+    @Getter    @Setter    private String fechaI, nomb;
+    @Getter    @Setter    private Short areaOpe = 0,categoria, area = 0;
     @Getter    @Setter    private String[] nombreAr;
     @Getter    @Setter    private List<String> nuevaListaFuncionesEspecificas = new ArrayList<>();
     @Getter    @Setter    private List<String> nuevaListaFuncionesGenerales = new ArrayList<>();
     @Getter    @Setter    private List<ListaPersonal> nuevaListaPersonal = new ArrayList<>();
-    @Getter    @Setter    private List<ListaPersonal> nuevaListaPersonalPer = new ArrayList<>();
-    @Getter    @Setter    private List<ListaPersonal> nuevaListaPersonalPer2 = new ArrayList<>();
     @Getter    @Setter    private ListaPersonal nuevoEmpleado;
     @Getter    @Setter    private Personal nuevoEmpleadoFunciones;
     @Getter    @Setter    private List<Funciones> listaDFunciones;
     @Getter    @Setter    private Funciones nuevaFunciones;
     @Getter    @Setter    private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    @Getter    @Setter    private Integer areaOpe = 0, sub = 0, sec = 0, ptc = 0, pda = 0, lab = 0, area = 0;
+    @Getter    @Setter    private Integer  sub = 0, sec = 0, ptc = 0, pda = 0, lab = 0;
+    @Getter    @Setter    private Iterator<ListaPersonal> empleadoActual;
 
     @EJB
     private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
@@ -85,273 +82,61 @@ public class OrganigramView4 implements Serializable {
 
     public void organigrama() {
         try {
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.OrganigramView4.organigrama()");
             nuevaListaPersonal = ejbSelectec.mostrarListaDeEmpleados();
-            if (nuevaListaPersonal.isEmpty()) {
-                Messages.addGlobalInfo("No hay empleados.");
-            } else {
-// nodo principal
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 27 && nuevoEmpleado.getActividad() == 2) {
-                        REC = new DefaultOrganigramNode("root", nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre(), null);
-                        REC.setCollapsible(true);
-                        REC.setDroppable(true);
-                        REC.setSelectable(true);
-                        nuevaListaPersonal.remove(i);
+            Collections.sort(nuevaListaPersonal, (x, y) -> Short.compare(x.getAreaOperativa(), y.getAreaOperativa()));
+
+            System.out.println("nuevaListaPersonal(1)" + nuevaListaPersonal.size());
+            empleadoActual = nuevaListaPersonal.iterator();
+            while (empleadoActual.hasNext()) {
+                ListaPersonal next = empleadoActual.next();
+                if (next.getActividad() == 2 || next.getActividad() == 4 || next.getClave() == 343) {
+                    switch (next.getAreaOperativa()) {
+                        case 1:
+                            if (next.getClave() != 390) {
+                                REC = new DefaultOrganigramNode("root", next.getAreaOperativaNombre() + " ____________________ " + next.getNombre(), null);
+                                REC.setCollapsible(true);
+                                REC.setDroppable(true);
+                                REC.setSelectable(true);
+                            }
+                            break;
+                        case 2:                            SAC = addDivision(REC, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 3:                            ABO = addDivision(REC, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 4:                            DAF = addDivision(REC, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 5:                            DEV = addDivision(REC, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 6:                            DPE = addDivision(REC, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 7:                            SRF = addDivision(DAF, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 8:                            IED = addDivision(DPE, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 9:                            DIE = addDivision(DPE, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 10:                            DSE = addDivision(SAC, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 11:                            DES = addDivision(SAC, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 12:                            FDA = addDivision(SAC, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 13:                            DEP = addDivision(DAF, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 14:                            RMS = addDivision(DAF, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 15:                            DPC = addDivision(SRF, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 16:                            PAC = addDivision(DEV, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 17:                            STC = addDivision(DEV, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 18:                            CPS = addArAp(DES, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 19:                            CMI = addStaff2(DEV, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre(), "");                            break;
+                        case 20:                            SGC = addArAp(DEV, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 21:                            EDE = addArAp(DEV, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 22:                            CAD = addArAp(DEV, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 23:                            CID = addArAp(SAC, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 24:                            AEA = addDivision(SAC, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 25:                            AAA = addDivision(SAC, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 26:                            AMI = addDivision(SAC, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 27:                            AMA = addDivision(SAC, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 28:                            TIC = addDivision(SAC, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 29:                            ASS = addDivision(SAC, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
+                        case 60:                            COT = addArAp(DSE, next.getAreaOperativaNombre() + " ____________________ " + next.getNombre());                            break;
                     }
+                    empleadoActual.remove();
                 }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 29 && nuevoEmpleado.getActividad() == 2) {
-                        ABO = addDivision(REC, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-// areas sub-periores
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 28 && nuevoEmpleado.getActividad() == 2) {
-                        SAC = addDivision(REC, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-//direcciones
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 30 && nuevoEmpleado.getActividad() == 2) {
-                        DAF = addDivision(REC, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 31 && nuevoEmpleado.getActividad() == 2) {
-                        DEV = addDivision(REC, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 32 && nuevoEmpleado.getActividad() == 2) {
-                        DPE = addDivision(REC, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-//subdirecciones
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 53 && nuevoEmpleado.getActividad() == 2) {
-                        SRF = addDivision(DAF, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }//sub areas   
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 1 && nuevoEmpleado.getActividad() == 2) {
-                        AEA = addDivision(SAC, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 20 && nuevoEmpleado.getActividad() == 2) {
-                        TIC = addDivision(SAC, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 16 && nuevoEmpleado.getActividad() == 2) {
-                        AMA = addDivision(SAC, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 4 && nuevoEmpleado.getActividad() == 2) {
-                        AAA = addDivision(SAC, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 11 && nuevoEmpleado.getActividad() == 2) {
-                        AMI = addDivision(SAC, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 24 && nuevoEmpleado.getActividad() == 2) {
-                        ASS = addDivision(SAC, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-//departamentos
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 40 && nuevoEmpleado.getActividad() == 2) {
-                        DSE = addDivision(SAC, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 52 && nuevoEmpleado.getActividad() == 2) {
-                        FDA = addDivision(SAC, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 51 && nuevoEmpleado.getActividad() == 2) {
-                        DES = addDivision(SAC, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 54 && nuevoEmpleado.getActividad() == 2) {
-                        DPC = addDivision(SRF, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 39 && nuevoEmpleado.getActividad() == 2) {
-                        RMS = addDivision(DAF, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 37 && nuevoEmpleado.getActividad() == 2) {
-                        DEP = addDivision(DAF, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + "Santamaría Barrera Claudia");
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 35 && nuevoEmpleado.getActividad() == 2) {
-                        PAC = addDivision(DEV, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 36 && nuevoEmpleado.getActividad() == 2) {
-                        STC = addDivision(DEV, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 34 && nuevoEmpleado.getActividad() == 2) {
-                        DIE = addDivision(DPE, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 33 && nuevoEmpleado.getActividad() == 2) {
-                        IED = addDivision(DPE, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-//cordinaciones
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 41 && nuevoEmpleado.getActividad() == 4) {
-                        CPS = addArAp(DES, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 47 && nuevoEmpleado.getActividad() == 4) {
-                        CID = addArAp(SAC, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 48 && nuevoEmpleado.getActividad() == 4) {
-                        EDE = addArAp(DEV, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 42 && (nuevoEmpleado.getActividad() == 4 || nuevoEmpleado.getCategoriaOperativa()==14) ) {
-                        CMI = addStaff2(DEV, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre(), "");
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 49 && nuevoEmpleado.getActividad() == 4) {
-                        CAD = addArAp(DEV, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 46 && nuevoEmpleado.getActividad() == 4) {
-                        SGC = addArAp(DEV, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaOperativa() == 86 && nuevoEmpleado.getActividad() == 4) {
-                        COT = addArAp(DSE, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-//staff
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if ((nuevoEmpleado.getAreaOperativa() == 44 && nuevoEmpleado.getActividad() == 2) || (nuevoEmpleado.getAreaOperativa() == 85 && nuevoEmpleado.getCategoriaOperativa() == 112) || nuevoEmpleado.getCategoriaOperativa() == 112) {
-                        if (nuevoEmpleado.getAreaOperativa() == 27) {
-                            CON = addArAp(DAF, "Comprobación Financiera de Recursos Extraordinarios" + " ____________________ " + nuevoEmpleado.getNombre());
-                        } else {
-                            CON = addArAp(DAF, nuevoEmpleado.getAreaOperativaNombre() + " ____________________ " + nuevoEmpleado.getNombre());
-                        }
-                        nuevaListaPersonal.remove(i);
-                    }
-                }
-                if (SAC == null) {                    SAC = addDivision(REC, "Secretaría Académica ____________________ Temporalmente sin responsable");                }
+            }
+
+            CON = addStaff2(DAF, "Segimiento de Recursos Extraordinarios" + " ____________________ " + "Albin Gutierrez Maria Lorena");
+            
+            if (SAC == null) {                    SAC = addDivision(REC, "Secretaría Académica ____________________ Temporalmente sin responsable");                }
                 if (DAF == null) {                    DAF = addDivision(REC, "Dirección de Administración y Finanzas ____________________ Temporalmente sin responsable");                }
                 if (DEV == null) {                    DEV = addDivision(REC, "Dirección de Extensión y Vinculación ____________________ Temporalmente sin responsable");                }
                 if (DPE == null) {                    DPE = addDivision(REC, "Dirección de Planeación y Evaluación ____________________ Temporalmente sin responsable");                }
@@ -379,80 +164,73 @@ public class OrganigramView4 implements Serializable {
                 if (CID == null) {                    CID = addDivision(SAC, "Coordinación de Idiomas ____________________ Temporalmente sin responsable");                }
                 if (CAD == null) {                    CAD = addDivision(DEV, "Coordinación de Actividades Deportivas ____________________ Temporalmente sin responsable");                }
                 if (SGC == null) {                    SGC = addDivision(DEV, "Coordinación del Sistema de Gestión de la Calidad ____________________ Temporalmente sin responsable");                }
-                if (CON == null) {                    CON = addDivision(DAF, "Contraloría ____________________ Temporalmente sin responsable");                }
-//empleados
-                for (int i = 0; i <= nuevaListaPersonal.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonal.get(i);
-                    if (nuevoEmpleado.getAreaSuperior() != 83) {
-                        nuevaListaPersonalPer.add(nuevoEmpleado);
-                    } else {
-                        nuevaListaPersonalPer2.add(nuevoEmpleado);
+                if (CON == null) {                    CON = addDivision(DAF, "Contraloría ____________________ Temporalmente sin responsable");                }            
+            
+            System.out.println("nuevaListaPersonal(2)" + nuevaListaPersonal.size());
+            
+            empleadoActual = nuevaListaPersonal.iterator();
+            while (empleadoActual.hasNext()) {
+                ListaPersonal next = empleadoActual.next();
+                if (next.getActividad() == 3 || next.getCategoriaOperativa() == 34) {
+                    if (next.getAreaSuperior() >= 23 && next.getAreaSuperior() <= 50) {
+                        switch (next.getAreaSuperior()) {
+                            case 23:  employee1 = addStaff(CID, next.getNombre(), "");   break;
+                            case 24:  employee1 = addStaff(AEA, next.getNombre(), "");   break;
+                            case 25:  employee1 = addStaff(AAA, next.getNombre(), "");   break;
+                            case 26:  employee1 = addStaff(AMI, next.getNombre(), "");   break;
+                            case 27:  employee1 = addStaff(AMA, next.getNombre(), "");   break;
+                            case 28:  employee1 = addStaff(TIC, next.getNombre(), "");   break;
+                            case 29:  employee1 = addStaff(ASS, next.getNombre(), "");   break;
+                        }
+                        empleadoActual.remove();
                     }
-                }
-                for (int i = 0; i <= nuevaListaPersonalPer2.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonalPer2.get(i);
-                    switch (nuevoEmpleado.getAreaOperativa()) {
-                        case 27:
-                            if (nuevoEmpleado.getCategoriaOperativa() == 113) {
-                                employee54 = addStaff(CON, nuevoEmpleado.getNombre(), "");
-                            } else {
-                                employee27 = addStaff(REC, nuevoEmpleado.getNombre(), "");
-                            }
-                            break;
-                        case 28:                            employee28 = addStaff(SAC, nuevoEmpleado.getNombre(), "");                            break;
-                        case 29:                            employee29 = addStaff(ABO, nuevoEmpleado.getNombre(), "");                            break;
-                        case 30:                            employee30 = addStaff(DAF, nuevoEmpleado.getNombre(), "");                            break;
-                        case 31:                            employee31 = addStaff(DEV, nuevoEmpleado.getNombre(), "");                            break;
-                        case 32:                            employee32 = addStaff(DPE, nuevoEmpleado.getNombre(), "");                            break;
-                        case 33:                            employee33 = addStaff(IED, nuevoEmpleado.getNombre(), "");                            break;
-                        case 34:                            employee34 = addStaff(DIE, nuevoEmpleado.getNombre(), "");                            break;
-                        case 35:                            employee35 = addStaff(PAC, nuevoEmpleado.getNombre(), "");                            break;
-                        case 36:                            employee36 = addStaff(STC, nuevoEmpleado.getNombre(), "");                            break;
-                        case 37:                            employee37 = addStaff(DEP, nuevoEmpleado.getNombre(), "");                            break;
-                        case 39:                            employee39 = addStaff(RMS, nuevoEmpleado.getNombre(), "");                            break;
-                        case 40:                            employee40 = addStaff(DSE, nuevoEmpleado.getNombre(), "");                            break;
-                        case 41:                            employee41 = addStaff(CPS, nuevoEmpleado.getNombre(), "");                            break;
-                        case 42:                            employee42 = addStaff(CMI, nuevoEmpleado.getNombre(), "");                            break;
-                        case 44:                            employee44 = addStaff(CON, nuevoEmpleado.getNombre(), "");                            break;
-                        case 46:                            employee46 = addStaff(SGC, nuevoEmpleado.getNombre(), "");                            break;
-                        case 47:                            employee47 = addStaff(CID, nuevoEmpleado.getNombre(), "");                            break;
-                        case 48:                            employee48 = addStaff(EDE, nuevoEmpleado.getNombre(), "");                            break;
-                        case 49:                            employee49 = addStaff(CAD, nuevoEmpleado.getNombre(), "");                            break;
-                        case 51:                            employee51 = addStaff(DES, nuevoEmpleado.getNombre(), "");                            break;
-                        case 52:                            employee52 = addStaff(FDA, nuevoEmpleado.getNombre(), "");                            break;
-                        case 53:                            employee53 = addStaff(SRF, nuevoEmpleado.getNombre(), "");                            break;
-                        case 54:                            employee54 = addStaff(DPC, nuevoEmpleado.getNombre(), "");                            break;
-                        case 85:                            employee54 = addStaff(CON, nuevoEmpleado.getNombre(), "");                            break;
-                        case 86:                            employee54 = addStaff(COT, nuevoEmpleado.getNombre(), "");                            break;
-                    }
-                }
 
-                for (int i = 0; i <= nuevaListaPersonalPer.size() - 1; i++) {
-                    nuevoEmpleado = new ListaPersonal();
-                    nuevoEmpleado = nuevaListaPersonalPer.get(i);
-                    switch (nuevoEmpleado.getAreaSuperior()) {
-                        case 1:                            employee1 = addStaff(AEA, nuevoEmpleado.getNombre(), "");                            break;
-                        case 4:                            employee4 = addStaff(AAA, nuevoEmpleado.getNombre(), "");                            break;
-                        case 11:                            employee11 = addStaff(AMI, nuevoEmpleado.getNombre(), "");                            break;
-                        case 16:                            employee16 = addStaff(AMA, nuevoEmpleado.getNombre(), "");                            break;
-                        case 20:                            employee20 = addStaff(TIC, nuevoEmpleado.getNombre(), "");                            break;
-                        case 24:                            employee24 = addStaff(ASS, nuevoEmpleado.getNombre(), "");                            break;
-                        case 31:
-                            if (nuevoEmpleado.getClave() == 567) {
-                                employee48 = addStaff(EDE, nuevoEmpleado.getNombre(), "");
-                            } else {
-                                if (nuevoEmpleado.getClave() == 116) {
-                                    employee46 = addStaff(SGC, nuevoEmpleado.getNombre(), "");
-                                } else {
-                                    employee31 = addStaff(DEV, nuevoEmpleado.getNombre(), "");
-                                }
-                            }
-                            break;
-                    }
                 }
             }
+
+            System.out.println("nuevaListaPersonal(3)" + nuevaListaPersonal.size());
+            
+            empleadoActual = nuevaListaPersonal.iterator();
+            while (empleadoActual.hasNext()) {
+                ListaPersonal next = empleadoActual.next();
+                if (next.getActividad() == 1) {
+                    switch (next.getAreaOperativa()) {
+                        case 1:                            employee1 = addStaff(REC, next.getNombre(), "");                            break;
+                        case 2:                            employee1 = addStaff(SAC, next.getNombre(), "");                            break;
+                        case 3:                            employee1 = addStaff(ABO, next.getNombre(), "");                            break;
+                        case 4:                            employee1 = addStaff(DAF, next.getNombre(), "");                            break;
+                        case 5:                            employee1 = addStaff(DEV, next.getNombre(), "");                            break;
+                        case 6:                            employee1 = addStaff(DPE, next.getNombre(), "");                            break;
+                        case 7:                            employee1 = addStaff(SRF, next.getNombre(), "");                            break;
+                        case 8:                            employee1 = addStaff(IED, next.getNombre(), "");                            break;
+                        case 9:                            employee1 = addStaff(DIE, next.getNombre(), "");                            break;
+                        case 10:                           employee1 = addStaff(DSE, next.getNombre(), "");                            break;
+                        case 11:                           employee1 = addStaff(DES, next.getNombre(), "");                            break;
+                        case 12:                           employee1 = addStaff(FDA, next.getNombre(), "");                            break;
+                        case 13:                           employee1 = addStaff(DEP, next.getNombre(), "");                            break;
+                        case 14:                           employee1 = addStaff(RMS, next.getNombre(), "");                            break;
+                        case 15:                           employee1 = addStaff(DPC, next.getNombre(), "");                            break;
+                        case 16:                           employee1 = addStaff(PAC, next.getNombre(), "");                            break;
+                        case 17:                           employee1 = addStaff(STC, next.getNombre(), "");                            break;
+                        case 18:                           employee1 = addStaff(CPS, next.getNombre(), "");                            break;
+                        case 19:                           employee1 = addStaff(CMI, next.getNombre(), "");                            break;
+                        case 20:                           employee1 = addStaff(SGC, next.getNombre(), "");                            break;
+                        case 21:                           employee1 = addStaff(EDE, next.getNombre(), "");                            break;
+                        case 22:                           employee1 = addStaff(CAD, next.getNombre(), "");                            break;
+                        case 23:                           employee1 = addStaff(CID, next.getNombre(), "");                            break;
+                        case 24:                           employee1 = addStaff(AEA, next.getNombre(), "");                            break;
+                        case 25:                           employee1 = addStaff(AAA, next.getNombre(), "");                            break;
+                        case 26:                           employee1 = addStaff(AMI, next.getNombre(), "");                            break;
+                        case 27:                           employee1 = addStaff(AMA, next.getNombre(), "");                            break;
+                        case 28:                           employee1 = addStaff(TIC, next.getNombre(), "");                            break;
+                        case 29:                           employee1 = addStaff(ASS, next.getNombre(), "");                            break;
+                        case 60:                           employee1 = addStaff(COT, next.getNombre(), "");                            break;
+                    }                    
+                    empleadoActual.remove();
+                }                
+            }
+            System.out.println("nuevaListaPersonal(4)" + nuevaListaPersonal.size());
+                       
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(OrganigramView4.class.getName()).log(Level.SEVERE, null, ex);
@@ -575,7 +353,7 @@ public class OrganigramView4 implements Serializable {
     public void buscaAreaJefes() {
         try {
             nuevoEmpleadoFunciones = new Personal();
-            area = 83;
+            area = 61;
             categoria = 18;
             areaOpe = nuevoEmpleado.getAreaOperativa();
             nuevoEmpleadoFunciones = ejbSelectec.mostrarEmpleadosPorClave(nuevoEmpleado.getClave());
@@ -594,8 +372,8 @@ public class OrganigramView4 implements Serializable {
             nuevoEmpleado = nuevaListaPersonal.get(0);
             nuevoEmpleadoFunciones = ejbSelectec.mostrarEmpleadosPorClave(nuevoEmpleado.getClave());
             fechaI = dateFormat.format(nuevoEmpleado.getFechaIngreso());
-            if (nuevoEmpleado.getAreaSuperior() <= 24 || (nuevoEmpleado.getAreaOperativa() == 47 && (nuevoEmpleado.getCategoriaOperativa() == 30 || nuevoEmpleado.getCategoriaOperativa() == 32))) {
-                area = 83;
+            if ((nuevoEmpleado.getAreaSuperior() >= 23 && nuevoEmpleado.getAreaSuperior() <= 50)) {
+                area = 61;
             } else {
                 area = nuevoEmpleado.getAreaOperativa();
             }

@@ -94,10 +94,10 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
                 
         ejes=new EjesRegistro(0);
                 
-        ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear()-101));
+        ejercicioFiscal = Short.parseShort("19");
         mes=fechaActual.getMonth();
         
-        claveArea = 6;
+        claveArea = 62;
         siglaArea = "PyE";
         switch(mes){
             case 0: mesNombre="Enero"; break;

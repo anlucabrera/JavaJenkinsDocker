@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package mx.edu.utxj.pye.sgi.entity.ch;
 
 import java.io.Serializable;
@@ -93,7 +94,7 @@ public class ListaPersonalEvaluacion360Promedios implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
-    @Getter @Setter @NonNull private EvaluacionEvaluadoPK pk;
+    @NonNull private EvaluacionEvaluadoPK pk; 
     @Basic(optional = false)
     @NotNull
     @Column(name = "anio")
@@ -280,6 +281,14 @@ public class ListaPersonalEvaluacion360Promedios implements Serializable {
     private Double promedio;
 
     public ListaPersonalEvaluacion360Promedios() {
+}
+
+    public EvaluacionEvaluadoPK getPk() {
+        return pk;
+    }
+
+    public void setPk(EvaluacionEvaluadoPK pk) {
+        this.pk = pk;
     }
 
     public int getAnio() {

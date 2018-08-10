@@ -16,6 +16,8 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import org.omnifaces.util.Messages;
 
 @Named
@@ -25,91 +27,90 @@ public class ControladorPersonalconfiguracion implements Serializable {
 
     private static final long serialVersionUID = 1736039029781733869L;
 
-    @Getter    @Setter    private List<areas> listareasOperativas = new ArrayList<areas>(),listareasOficiales = new ArrayList<areas>(),listareasSuperiores = new ArrayList<areas>();
-    @Getter    @Setter    private List<ListaPersonal> nuevaVistaListaPersonalAreas = new ArrayList<>();
-    @Getter    @Setter    private List<PersonalCategorias> nuevaListaPersonalCategorias = new ArrayList<>();
-    @Getter    @Setter    private ListaPersonal nuevoOBJListaPersonalFiltroAreas;
-     @Getter    @Setter    private PersonalCategorias nuevoOBJPersonalCategorias;
+    @Getter    @Setter    private List<ListaPersonal> nuevaListaPersonals = new ArrayList<>();
+    @Getter    @Setter    private List<AreasUniversidad> nuevaListaAreasUniversidads = new ArrayList<>();
+    @Getter    @Setter    private List<Categorias> nuevaListaCategoriases = new ArrayList<>();
+    @Getter    @Setter    private List<PersonalCategorias> nuevaListaPersonalCategoriases = new ArrayList<>();
     
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    @Getter    @Setter    private PersonalCategorias nuevoOBJPersonalCategorias;
+    @Getter    @Setter    private AreasUniversidad nuevoOBJAreasUniversidad;
+    @Getter    @Setter    private Categorias nuevoOBJCategorias;
+    
+    @Getter    @Setter    private Short claveCatagoria=0;    
+    
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
-    
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+ 
     @PostConstruct
     public void init() {
-        generarListasAreas();
-//        System.out.println("estatus.size() " + estatus.size());
+        nuevoOBJAreasUniversidad = new AreasUniversidad();
+        nuevoOBJPersonalCategorias=new PersonalCategorias();
+        generarListas();
     }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public void generarListasAreas() {
+    public void generarListas() {
         try {
-            listareasOperativas.clear();
-            listareasOficiales.clear();
-            listareasSuperiores.clear();
-            nuevaVistaListaPersonalAreas.clear();
-            nuevaListaPersonalCategorias.clear();
+            nuevoOBJAreasUniversidad = new AreasUniversidad();
+            nuevoOBJPersonalCategorias = new PersonalCategorias();
+            nuevoOBJCategorias = new Categorias();
 
-            for (int i = 1; i <= 3; i++) {
-                nuevaVistaListaPersonalAreas.clear();
-                switch (i) {
-                    case 1:
-                        nuevaVistaListaPersonalAreas = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeadoAreaOfi();
-                        break;
-                    case 2:
-                        nuevaVistaListaPersonalAreas = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeadoAreaOpe();
-                        break;
-                    case 3:
-                        nuevaVistaListaPersonalAreas = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeadoAreaSup();
-                        break;
-                }
-                for (int j = 0; j <= nuevaVistaListaPersonalAreas.size() - 1; j++) {
-                    nuevoOBJListaPersonalFiltroAreas = nuevaVistaListaPersonalAreas.get(j);
-                    switch (i) {
-                        case 1:
-                            listareasOficiales.add(new areas(nuevoOBJListaPersonalFiltroAreas.getAreaOficial(), nuevoOBJListaPersonalFiltroAreas.getAreaOficialNombre()));
-                            break;
-                        case 2:
-                            listareasOperativas.add(new areas(nuevoOBJListaPersonalFiltroAreas.getAreaOperativa(), nuevoOBJListaPersonalFiltroAreas.getAreaOperativaNombre()));
-                            break;
-                        case 3:
-                            listareasSuperiores.add(new areas(nuevoOBJListaPersonalFiltroAreas.getAreaSuperior(), nuevoOBJListaPersonalFiltroAreas.getAreaSuperiorNombre()));
-                            break;
-                    }
-                }
-                nuevaVistaListaPersonalAreas.clear();
-            }
-            nuevaVistaListaPersonalAreas = ejbSelectec.mostrarListaDeEmpleados();
-            Collections.sort(nuevaVistaListaPersonalAreas, (x, y) -> x.getAreaOperativaNombre().compareToIgnoreCase(y.getAreaOperativaNombre()));
-            nuevaListaPersonalCategorias = ejbDatosUsuarioLogeado.mostrarListaPersonalCategorias();
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonalconfiguracion.generarListas()");
+            nuevaListaAreasUniversidads.clear();
+            nuevaListaCategoriases.clear();
+            nuevaListaPersonals.clear();
+            nuevaListaPersonalCategoriases.clear();
+
+            nuevaListaPersonals = ejbSelectec.mostrarListaDeEmpleados();
+            nuevaListaPersonalCategoriases = ejbDatosUsuarioLogeado.mostrarListaPersonalCategorias();
+            nuevaListaCategoriases = ejbAreasLogeo.mostrarCategorias();
+            nuevaListaAreasUniversidads = ejbAreasLogeo.mostrarAreasUniversidad();
+
+            Collections.sort(nuevaListaAreasUniversidads, (x, y) -> x.getCategoria().getCategoria().compareTo(y.getCategoria().getCategoria()));
+            Collections.sort(nuevaListaPersonalCategoriases, (x, y) -> x.getTipo().compareTo(y.getTipo()));
+            Collections.sort(nuevaListaPersonals, (x, y) -> Short.compare(x.getCategoriaOperativa(),y.getCategoriaOperativa()));
+            
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorPersonalconfiguracion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void crearNuevasCategorias() {
+    public void crearNuevasAreaUnivercidad() {
         try {
-            nuevoOBJPersonalCategorias.setTipo("Genérica");
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonalconfiguracion.crearNuevasAreaUnivercidad(claveCatagoria)"+claveCatagoria);
+            nuevoOBJAreasUniversidad.setCategoria(new Categorias(claveCatagoria));
+            nuevoOBJAreasUniversidad = ejbAreasLogeo.agregarAreasUniversidad(nuevoOBJAreasUniversidad);
+            Messages.addGlobalInfo("¡Operación exitosa!!");
+            generarListas();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorPersonalconfiguracion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void actualizarAreaUnivercidad() {
+        try {            
+            nuevoOBJAreasUniversidad = ejbAreasLogeo.actualizarAreasUniversidad(nuevoOBJAreasUniversidad);
+            Messages.addGlobalInfo("¡Operación exitosa!!");
+            generarListas();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorPersonalconfiguracion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void crearNuevasPersonalCategorias() {
+        try {
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonalconfiguracion.crearNuevasPersonalCategorias(nuevoOBJPersonalCategorias)"+nuevoOBJPersonalCategorias);
             nuevoOBJPersonalCategorias = ejbDatosUsuarioLogeado.crearNuevoPersonalCategorias(nuevoOBJPersonalCategorias);
             Messages.addGlobalInfo("¡Operación exitosa!!");
+            generarListas();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorPersonalconfiguracion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-    public static class areas {
-
-        @Getter
-        @Setter
-        private int clave;
-        @Getter
-        @Setter
-        private String nombre;
-
-        private areas(int _clave, String _nombre) {
-            clave = _clave;
-            nombre = _nombre;
-        }
-    }
+    
 }

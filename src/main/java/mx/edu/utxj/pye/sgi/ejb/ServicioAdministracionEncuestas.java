@@ -11,6 +11,7 @@ import javax.ejb.Stateful;
 import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluacionResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados;
@@ -22,7 +23,6 @@ import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesTutoresResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaEvaluacionDocentesResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.entity.logueo.Pe;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.sescolares.Alumno;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -104,7 +104,7 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
     }
 
     @Override
-    public List<Personal> esDirectorDeCarrera(Integer areaSup, Integer actividad, Integer catOp, Integer clave) {
+    public List<Personal> esDirectorDeCarrera(Short areaSup, Integer actividad, Integer catOp, Integer clave) {
         TypedQuery<Personal> q = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE  p.areaSuperior = :areaSuperior and p.actividad.actividad = :actividad and  p.categoriaOperativa.categoria= :categoria AND p.clave = :clave", Personal.class);
         q.setParameter("areaSuperior", areaSup);
         q.setParameter("actividad", actividad);
@@ -115,13 +115,13 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
     }
 
     @Override
-    public List<Pe> obtenerAreasDirector(Integer identificador, String estatus) {
+    public List<AreasUniversidad> obtenerAreasDirector(Short identificador, String estatus) {
         System.out.println("parametro identificador : " + identificador + " parametro estatus : " + estatus);
-        TypedQuery<Pe> q = f.getEntityManager().createQuery("SELECT p FROM Pe p WHERE p.claveArea.idareas = :identificador and p.estatus = :estatus", Pe.class);
-        q.setParameter("identificador", identificador);
-        q.setParameter("estatus", estatus);
+        TypedQuery<AreasUniversidad> q = f.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a WHERE a.area = :area and a.vigente = :vigente", AreasUniversidad.class);
+        q.setParameter("area", identificador);
+        q.setParameter("vigente", estatus);
         System.out.println("resultado de la consulta " + q);
-        List<Pe> lp = q.getResultList();
+        List<AreasUniversidad> lp = q.getResultList();
         if (lp == null || lp.isEmpty()) {
             return null;
         } else {
@@ -288,7 +288,7 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
     }
 
     @Override
-    public List<ListaPersonal> getListadoDocentesPorArea(Integer area) {
+    public List<ListaPersonal> getListadoDocentesPorArea(Short area) {
         System.out.println("area seleccionada : " + area);
         if (area == 47) {
             TypedQuery<ListaPersonal> q = f.getEntityManager().createQuery("SELECT p FROM ListaPersonal p WHERE p.areaOperativa = :area ", ListaPersonal.class);
@@ -462,10 +462,10 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
     }
 
     @Override
-    public Pe getProgramaPorClave(Integer clave) {
-        TypedQuery<Pe> q = f.getEntityManager().createQuery("SELECT p from Pe as p WHERE p.idpe = :pe", Pe.class);
+    public AreasUniversidad getProgramaPorClave(Short clave) {
+        TypedQuery<AreasUniversidad> q = f.getEntityManager().createQuery("SELECT p from AreasUniversidad as p WHERE p.area = :pe", AreasUniversidad.class);
         q.setParameter("pe", clave);
-        List<Pe> l = q.getResultList();
+        List<AreasUniversidad> l = q.getResultList();
         if (l == null || l.isEmpty()) {
             return null;
         } else {

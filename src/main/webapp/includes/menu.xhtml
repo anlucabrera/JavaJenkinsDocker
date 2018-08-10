@@ -111,7 +111,7 @@
                     <c:if test="#{utilidadesAdministracionEvaluaciones.personal}"><li><p:link href="/evaluaciones/administracion/admin360.xhtml" ><i class="fa fa-clipboard"></i><span>Genera Evaluaciones</span></p:link></li></c:if>
                     <c:if test="#{utilidadesAdministracionEvaluaciones.personal}"><li><p:link href="/evaluaciones/administracion/administracionPersonalSA.xhtml" ><i class="fa fa-clipboard"></i><span>Resultados generales</span></p:link></li></c:if>
                     <!--Equipo de psicopedagogia-->
-                    <c:if test="#{logonMB.personal.areaOperativa eq 41}"><li><p:link href="/evaluaciones/administracion/administracionPsicopedagogia.xhtml" ><i class="fa fa-clipboard"></i><span>Resultados generales</span></p:link></li></c:if>
+                    <c:if test="#{logonMB.personal.areaOperativa eq 18}"><li><p:link href="/evaluaciones/administracion/administracionPsicopedagogia.xhtml" ><i class="fa fa-clipboard"></i><span>Resultados generales</span></p:link></li></c:if>
                     <!--Seguimiento a egresados-->
                     <c:if test="#{logonMB.personal.categoriaOperativa.categoria eq 19}"><li><p:link href="/evaluaciones/administracion/estudioEgresadosAdministrador.xhtml" ><i class="fa fa-clipboard"></i><span>Estudio egresado</span></p:link></li></c:if>
                     <c:if test="#{logonMB.personal.categoriaOperativa.categoria eq 19}"><li><p:link href="/evaluaciones/administracion/estudioEgresadosReportes.xhtml" ><i class="fa fa-clipboard"></i><span>Reporte egresados</span></p:link></li></c:if>
@@ -165,7 +165,7 @@
                     </ul>
                 </li>  
             </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 37}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13}">
                 <li class="treeview">
                     <a href="#">
                         <i class="fa fa-users"></i> <span>Personal</span>
@@ -174,22 +174,30 @@
                         </span>
                     </a>
                     <ul class="treeview-menu" style="display: none;">
-                        <li><p:link href="/capitalHumano/personal/perfilPersonal.xhtml"><i class="fa fa-user-circle-o"></i>
+                        <li> 
+                            <p:link href="/capitalHumano/personal/perfilPersonal.xhtml"><i class="fa fa-user-circle-o"></i>
                                 <span>Activo</span>
                             </p:link>
                         </li>
-                        <li><p:link href="/capitalHumano/personal/perfilPersonalAltaYBajas.xhtml"><i class="fa fa-user-times"></i>
+                        <li>
+                            <p:link href="/capitalHumano/personal/perfilPersonalAltaYBajas.xhtml"><i class="fa fa-user-times"></i>
                                 <span>Altas y bajas</span>
                             </p:link>
                         </li>
-                        <li><p:link href="/capitalHumano/personal/perfilPersonalReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
+                        <li>
+                            <p:link href="/capitalHumano/personal/perfilPersonalReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
                                 <span>Reporte de Registros</span>
+                            </p:link>
+                        </li>
+                        <li>
+                            <p:link href="/capitalHumano/personal/perfilPersonalconfiguracion.xhtml"><i class="fa fa-wrench"></i>
+                                <span>Configuracion</span>
                             </p:link>
                         </li>
                     </ul>
                 </li>
             </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 34}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9}">
                 <li class="treeview">
                     <a href="#">
                         <i class="fa fa-history"></i> <span>Estadistica</span>
@@ -262,7 +270,7 @@
                 </li>
             </c:if>
 
-            <c:if test="#{controladorEmpleado.clavePersonalLogeado  eq '564' }">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 6 }">
                 <li class="treeview">
 
                     <a href="#">
@@ -326,14 +334,20 @@
                                 <span>Evaluación</span>
                             </p:link>
                         </li>
-                        <li>
+                        <!--li>
                             <p:link href="/poa/pye/cmi.xhtml"><i class="fa fa-check-square"></i>
                                 <span>CMI</span>
                             </p:link>
-                        </li>
+                        </li-->
                     </ul>
                 </li>               
 
+                <li>
+                    <p:link href="/capitalHumano/organigramaPrototipo.xhtml">
+                        <i class="fa fa-wrench"></i>
+                        <span>Prototipo Organigrama</span>
+                    </p:link>
+                </li>
             </c:if>
             <!--li class="treeview">
                 <a href="#"><i class="fa fa-money"></i><span>Finanzas</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
@@ -365,6 +379,12 @@
                     </li>
                 </ul>
             </li-->
+            <li>
+                <p:link href="/capitalHumano/perfilEmpleadoIn.xhtml">
+                    <i class="fa fa-hourglass-2"></i>
+                    <span>Incidencias</span>
+                </p:link>
+            </li>
             <li>
                 <p:link href="/soporteTecnico.xhtml">
                     <i class="fa fa-wrench"></i>

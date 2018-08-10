@@ -59,24 +59,27 @@
                     <div id="main-buttons" class="hidden-sm hidden-xs" >
                         <p:toolbar id="tb">
                             <f:facet name="left">
-                                <p:outputPanel autoUpdate="true">
+                                <p:outputPanel >
+                                    <p:autoUpdate/>
+                                    <p:autoUpdate/>
                                     <p:outputLabel value="Total de colaboradores: #{planeacionCuatrimestral.planeaciones.size()}" />
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:outputLabel value="Correctos: #{planeacionCuatrimestral.directorCorrectas}" />
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:outputLabel value="Validados: #{planeacionCuatrimestral.directorValidados}" />
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <!--span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:outputLabel value="Estudiantes en estadía: #{planeacionCuatrimestral.detalles.estudiantesEstadia}" />
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:outputLabel value="Estudiantes en estadía asignados: #{planeacionCuatrimestral.totalEstudiantesAsigandos}" />
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:outputLabel value="Proyectos de estadía: #{planeacionCuatrimestral.detalles.proyectosEstadia}" />
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:outputLabel value="Proyectos de estadía asignados: #{planeacionCuatrimestral.totalProyuectosAsigandos}"/>
+                                    <p:outputLabel value="Proyectos de estadía asignados: #{planeacionCuatrimestral.totalProyuectosAsigandos}"/-->
                                 </p:outputPanel>
                             </f:facet>
                             <f:facet name="right">
-                                <p:outputPanel autoUpdate="true">
+                                <p:outputPanel >
+                                    <p:autoUpdate/>
                                     <p:commandButton value="Reglas de validación" id="btnRdV" actionListener="#{planeacionCuatrimestral.agregarDocente()}"  oncomplete="PF('dlgRdVPC').show()" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="pnlAgregarDocente" />
                                     <p:commandButton value="Agregar" id="btnSiguiente" actionListener="#{planeacionCuatrimestral.agregarDocente()}"  oncomplete="PF('dlgAgregarDocente').show()" process="@this" icon="fa fa-plus" styleClass="btn-primary" update=":pnlAgregarDocente" disabled="#{planeacionCuatrimestral.planeacionesliberadasD}" />
                                     <p:commandButton value="Liberar planeación" id="btnLPC" actionListener="#{planeacionCuatrimestral.liberarPlaneacionesCuatrimestralesDirector()}" disabled="#{planeacionCuatrimestral.planeacionesliberadasD eq true?true:!planeacionCuatrimestral.planeacionesFinalizadas}" process="@this" icon="fa fa-check" styleClass="btn-primary" update="tblColaboradores" />
@@ -141,7 +144,7 @@
                                                     <p:column rowspan="2" headerText="Tipo" style=" font-weight: bold; font-size: medium"/>
                                                     <p:column rowspan="2" headerText="Nombre" style=" font-weight: bold; font-size: medium"/>
                                                     <p:column colspan="2" headerText="Horas clase" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column colspan="3" headerText="Estadías" style=" font-weight: bold; font-size: medium"/>                                                    
+                                                    <!--p:column colspan="3" headerText="Estadías" style=" font-weight: bold; font-size: medium"/-->                                                    
                                                     <p:column rowspan="2" headerText="Proyecto de investigación" style=" font-weight: bold; font-size: medium"/>
                                                     <p:column rowspan="2" headerText="Asesorías clase" style=" font-weight: bold; font-size: medium"/>
                                                     <p:column colspan="2" headerText="Tutoría" style=" font-weight: bold; font-size: medium"/>
@@ -156,9 +159,9 @@
                                                 <p:row class="success">
                                                     <p:column headerText="TSU" style=" font-weight: bold; font-size: medium"/>
                                                     <p:column headerText="ING" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column headerText="Horas" style=" font-weight: bold; font-size: medium"/>
+                                                    <!--p:column headerText="Horas" style=" font-weight: bold; font-size: medium"/>
                                                     <p:column headerText="Estudiantes asignados" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column headerText="Proyectos asignados" style=" font-weight: bold; font-size: medium"/>                                                    
+                                                    <p:column headerText="Proyectos asignados" style=" font-weight: bold; font-size: medium"/-->                                                    
                                                     <p:column headerText="Individual" style=" font-weight: bold; font-size: medium"/>
                                                     <p:column headerText="Grupal" style=" font-weight: bold; font-size: medium"/>
                                                 </p:row>
@@ -187,7 +190,7 @@
                                                     <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" maxValue="30" value="#{planeacion.horasClaseIng}" disabled="#{planeacion.validacionDirector}" title="#{planeacion.validacionDirector?'No se puede editar porque ya se marcó como validada.':''}" /></f:facet>
                                                 </p:cellEditor>
                                             </p:column>
-                                            <p:column>
+                                            <!--p:column>
                                                 <p:cellEditor>
                                                     <f:facet name="output"><h:outputText value="#{planeacion.estadias}" /></f:facet>
                                                     <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" maxValue="30" value="#{planeacion.estadias}" disabled="#{planeacionCuatrimestral.proximosAEstadia eq false?true:planeacion.validacionDirector}" title="#{planeacion.validacionDirector?'No se puede editar porque ya se marcó como validada.':''}" /></f:facet>
@@ -204,7 +207,7 @@
                                                     <f:facet name="output"><h:outputText value="#{planeacion.proyectosEstadia}" /></f:facet>
                                                     <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" maxValue="30" value="#{planeacion.proyectosEstadia}" disabled="#{planeacionCuatrimestral.proximosAEstadia eq false?true:planeacion.validacionDirector}" title="#{planeacion.validacionDirector?'No se puede editar porque ya se marcó como validada.':''}" /></f:facet>
                                                 </p:cellEditor>
-                                            </p:column>
+                                            </p:column-->
                                             <p:column>
                                                 <p:cellEditor>
                                                     <f:facet name="output"><h:outputText value="#{planeacion.proyectoInvestigacion}" /></f:facet>
@@ -404,7 +407,8 @@
 
         <h:form id="frmActividadesVarias">
             <p:dialog id="dlg1" header="Asignación de actividades varias" widgetVar="dlg1" minHeight="40" width="650">
-                <p:outputPanel autoUpdate="true">
+                <p:outputPanel >
+                    <p:autoUpdate/>
                     <c:if test="#{planeacionCuatrimestral.superaAsigacion}">
                         <div class="box-body">  
                             <div class="row">
@@ -506,7 +510,8 @@
             </p:dialog>
         </h:form>
         <h:form id="frmEstadias">
-            <p:dialog header="Agregar detalles de Estadías" widgetVar="dlgEstadias" visible="#{planeacionCuatrimestral.proximosAEstadia eq false?false:(planeacionCuatrimestral.detalles.estudiantesEstadia eq 0?(planeacionCuatrimestral.detalles.proyectosEstadia eq 0?true:true):(planeacionCuatrimestral.detalles.proyectosEstadia eq 0?true:false))}" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
+            <!--p:dialog header="Agregar detalles de Estadías" widgetVar="dlgEstadias" visible="#{planeacionCuatrimestral.proximosAEstadia eq false?false:(planeacionCuatrimestral.detalles.estudiantesEstadia eq 0?(planeacionCuatrimestral.detalles.proyectosEstadia eq 0?true:true):(planeacionCuatrimestral.detalles.proyectosEstadia eq 0?true:false))}" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true"-->
+            <p:dialog header="Agregar detalles de Estadías" widgetVar="dlgEstadias" visible="false" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
                 <div class="col-sm-12 col-md-12 col-lg-12">
                     <p:outputLabel for="estuduantes" style="font-size: large" value="Total de estudiantes en estadía"/>                                
                     <p:outputLabel id="estuduantes" class="form-control" value="#{planeacionCuatrimestral.detalles.estudiantesEstadia}"/>

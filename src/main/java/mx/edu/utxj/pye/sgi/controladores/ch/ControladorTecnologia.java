@@ -96,19 +96,18 @@ public class ControladorTecnologia implements Serializable{
         }
     }
 
-    public void eliminarDesTec() {
+    public void eliminarDesTec(DesarrollosTecnologicos desarrollosTecnologicos) {
         try {
-            if (nuevoOBJDesarrolloTecnologico.getDocumentoRespaldo() != null) {
-                CargaArchivosCH.eliminarArchivo(nuevoOBJDesarrolloTecnologico.getDocumentoRespaldo());
+            if (desarrollosTecnologicos.getDocumentoRespaldo() != null) {
+                CargaArchivosCH.eliminarArchivo(desarrollosTecnologicos.getDocumentoRespaldo());
             }
             nombreTabla = "Desarrollo Tecnológico";
-            numeroRegistro = nuevoOBJDesarrolloTecnologico.getDesarrollo().toString();
+            numeroRegistro = desarrollosTecnologicos.getDesarrollo().toString();
             accion = "Delate";
             agregaBitacora();
             Messages.addGlobalInfo("¡Operación exitosa!!");
-            nuevoOBJDesarrolloTecnologico = ejbTecnologia.eliminarDesarrollosTecnologicos(nuevoOBJDesarrolloTecnologico);
+            ejbTecnologia.eliminarDesarrollosTecnologicos(desarrollosTecnologicos);
             Messages.addGlobalInfo("¡Operación exitosa!!");
-            nuevoOBJDesarrolloTecnologico = new DesarrollosTecnologicos();
             listaConsultas();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
@@ -153,15 +152,14 @@ public class ControladorTecnologia implements Serializable{
         }
     }
 
-    public void eliminarInnovacion() {
+    public void eliminarInnovacion(Innovaciones innovaciones) {
         try {
             nombreTabla = "Innovaciones";
-            numeroRegistro = nuevoOBJInnovaciones.getInnovacion().toString();
+            numeroRegistro = innovaciones.getInnovacion().toString();
             accion = "Delate";
             agregaBitacora();
-            nuevoOBJInnovaciones = ejbTecnologia.eliminarInnovaciones(nuevoOBJInnovaciones);
+            ejbTecnologia.eliminarInnovaciones(innovaciones);
             Messages.addGlobalInfo("¡Operación exitosa!!");
-            nuevoOBJInnovaciones = new Innovaciones();
             listaConsultas();
             pestaniaActiva = 1;
         } catch (Throwable ex) {
@@ -207,15 +205,14 @@ public class ControladorTecnologia implements Serializable{
         }
     }
 
-    public void eliminarDesSoft() {
+    public void eliminarDesSoft(DesarrolloSoftware desarrolloSoftware) {
         try {
             nombreTabla = "Desarrollo de Software";
-            numeroRegistro = nuevoOBJDesarrolloSoftware.getDesarrollo().toString();
+            numeroRegistro = desarrolloSoftware.getDesarrollo().toString();
             accion = "Delate";
             agregaBitacora();
-            nuevoOBJDesarrolloSoftware = ejbTecnologia.eliminarDesarrolloSoftware(nuevoOBJDesarrolloSoftware);
+            ejbTecnologia.eliminarDesarrolloSoftware(desarrolloSoftware);
             Messages.addGlobalInfo("¡Operación exitosa!!");
-            nuevoOBJDesarrolloSoftware = new DesarrolloSoftware();
             listaConsultas();
             pestaniaActiva = 2;
         } catch (Throwable ex) {
@@ -296,5 +293,9 @@ public class ControladorTecnologia implements Serializable{
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+public void metodoBase() {
+        
     }
 }

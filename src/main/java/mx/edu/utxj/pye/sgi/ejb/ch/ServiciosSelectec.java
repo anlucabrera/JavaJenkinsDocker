@@ -67,9 +67,19 @@ public class ServiciosSelectec implements EjbSelectec {
         List<ListaPersonal> pr = q.getResultList();
         return pr;
     }
+    
+    @Override
+    public List<ListaPersonal> mostrarListaSubordinados(ListaPersonal perosona) {
+       TypedQuery<ListaPersonal> q = em.createQuery("SELECT l FROM ListaPersonal l WHERE (l.areaOperativa = :areaOperativa OR l.areaSuperior=:areaSuperior) AND l.clave!=:clave ORDER BY l.clave", ListaPersonal.class);
+        q.setParameter("areaOperativa", perosona.getAreaOperativa());
+        q.setParameter("areaSuperior", perosona.getAreaOperativa());
+        q.setParameter("clave", perosona.getClave());
+        List<ListaPersonal> pr = q.getResultList();
+        return pr;
+    }
 
     @Override
-    public List<ListaPersonal> mostrarListaDeEmpleadosParaJefes(Integer area) throws Throwable {
+    public List<ListaPersonal> mostrarListaDeEmpleadosParaJefes(Short area) throws Throwable {
         TypedQuery<ListaPersonal> q = em.createQuery("SELECT l FROM ListaPersonal l WHERE l.areaOperativa = :areaOperativa OR l.areaSuperior=:areaSuperior ORDER BY l.clave", ListaPersonal.class);
         q.setParameter("areaOperativa", area);
         q.setParameter("areaSuperior", area);
@@ -78,7 +88,7 @@ public class ServiciosSelectec implements EjbSelectec {
     }
 
     @Override
-    public List<Personal> mostrarListaDePersonalParaJefes(Integer area) throws Throwable {
+    public List<Personal> mostrarListaDePersonalParaJefes(Short area) throws Throwable {
         TypedQuery<Personal> q = em.createQuery("SELECT p FROM Personal p WHERE p.areaOperativa = :areaOperativa OR p.areaSuperior=:areaSuperior AND  p.status <> :status ORDER BY p.clave", Personal.class);
         q.setParameter("status", 'B');
         q.setParameter("areaOperativa", area);
@@ -112,7 +122,7 @@ public class ServiciosSelectec implements EjbSelectec {
     }
 
     @Override
-    public List<Funciones> mostrarListaDeFuncionesXAreaOperativo(Integer area, Short categoria) throws Throwable {
+    public List<Funciones> mostrarListaDeFuncionesXAreaOperativo(Short area, Short categoria) throws Throwable {
         TypedQuery<Funciones> q = em.createQuery("SELECT f FROM Funciones f JOIN f.categoriaOperativa co WHERE f.areaOperativa = :areaOperativa AND co.categoria  <> :categoriaOperativa", Funciones.class);
         q.setParameter("areaOperativa", area);
         q.setParameter("categoriaOperativa", categoria);
@@ -121,7 +131,7 @@ public class ServiciosSelectec implements EjbSelectec {
     }
 
     @Override
-    public List<Funciones> mostrarListaDeFuncionesXAreaYPuestoOperativo(Integer area, Short puesto, Short catEspecifica) throws Throwable {
+    public List<Funciones> mostrarListaDeFuncionesXAreaYPuestoOperativo(Short area, Short puesto, Short catEspecifica) throws Throwable {
         TypedQuery<Funciones> q = em.createQuery("SELECT f FROM Funciones f JOIN f.categoriaOperativa co JOIN f.categoriaEspesifica ce WHERE f.areaOperativa = :areaOperativa AND co.categoria = :categoria AND ce.categoriaEspecifica=:categoriaEspecifica", Funciones.class);
         q.setParameter("areaOperativa", area);
         q.setParameter("categoria", puesto);
@@ -131,7 +141,7 @@ public class ServiciosSelectec implements EjbSelectec {
     }
 
     @Override
-    public List<Funciones> mostrarListaDeFuncionesXAreaYPuestoEspecifico(Integer area, Short puesto) throws Throwable {
+    public List<Funciones> mostrarListaDeFuncionesXAreaYPuestoEspecifico(Short area, Short puesto) throws Throwable {
         TypedQuery<Funciones> q = em.createQuery("SELECT f FROM Funciones f JOIN f.categoriaEspesifica co WHERE f.areaOperativa = :areaOperativa AND co.categoriaEspecifica = :categoriaEspecifica", Funciones.class);
         q.setParameter("areaOperativa", area);
         q.setParameter("categoriaEspecifica", puesto);
@@ -285,7 +295,7 @@ public class ServiciosSelectec implements EjbSelectec {
     }
 
     @Override
-    public List<ListaPersonal> mostrarListaDeEmpleadosAr(Integer area) throws Throwable {
+    public List<ListaPersonal> mostrarListaDeEmpleadosAr(Short area) throws Throwable {
         TypedQuery<ListaPersonal> q = em.createQuery("SELECT l FROM ListaPersonal l WHERE l.areaSuperior = :areaSuperior", ListaPersonal.class);
         q.setParameter("areaSuperior", area);
         List<ListaPersonal> pr = q.getResultList();
@@ -482,7 +492,7 @@ public class ServiciosSelectec implements EjbSelectec {
     }
 
     @Override
-    public List<Categoriasespecificasfunciones> mostrarCategoriasespecificasfunciones(String nombre, Integer area) throws Throwable {
+    public List<Categoriasespecificasfunciones> mostrarCategoriasespecificasfunciones(String nombre, Short area) throws Throwable {
         TypedQuery<Categoriasespecificasfunciones> q = em.createQuery("SELECT c FROM Categoriasespecificasfunciones c WHERE c.nombreCategoria=:nombreCategoria AND c.area=:area", Categoriasespecificasfunciones.class);
         q.setParameter("nombreCategoria", nombre);
         q.setParameter("area", area);
@@ -491,7 +501,7 @@ public class ServiciosSelectec implements EjbSelectec {
     }
 
     @Override
-    public List<Categoriasespecificasfunciones> mostrarCategoriasespecificasfuncionesArea(Integer area) throws Throwable {
+    public List<Categoriasespecificasfunciones> mostrarCategoriasespecificasfuncionesArea(Short area) throws Throwable {
         TypedQuery<Categoriasespecificasfunciones> q = em.createQuery("SELECT c FROM Categoriasespecificasfunciones c WHERE c.area=:area", Categoriasespecificasfunciones.class);
         q.setParameter("area", area);
         List<Categoriasespecificasfunciones> pr = q.getResultList();

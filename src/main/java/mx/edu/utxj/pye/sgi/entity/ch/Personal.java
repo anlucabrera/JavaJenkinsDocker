@@ -58,44 +58,34 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Personal.findByCorreoElectronico2", query = "SELECT p FROM Personal p WHERE p.correoElectronico2 = :correoElectronico2")})
 public class Personal implements Serializable {
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
-    private List<PlaneacionesDetalles> planeacionesDetallesList;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
-    private List<PlaneacionesLiberaciones> planeacionesLiberacionesList;
-
-    private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "clave")
-    private Integer clave;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 250)
     @Column(name = "nombre")
     private String nombre;
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "fecha_ingreso")
     @Temporal(TemporalType.DATE)
     private Date fechaIngreso;
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "status")
     private Character status;
     @Basic(optional = false)
-    @NotNull
+    @NotNull()
     @Column(name = "area_operativa")
-    private int areaOperativa;
+    private short areaOperativa;
     @Basic(optional = false)
     @NotNull
     @Column(name = "area_superior")
-    private int areaSuperior;
+    private short areaSuperior;
     @Basic(optional = false)
     @NotNull
     @Column(name = "area_oficial")
-    private int areaOficial;
+    private short areaOficial;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 150)
@@ -148,6 +138,19 @@ public class Personal implements Serializable {
     @Size(max = 200)
     @Column(name = "correo_electronico2")
     private String correoElectronico2;
+    @JoinColumn(name = "categoria_360", referencedColumnName = "categoria")
+    @ManyToOne
+    private PersonalCategorias categoria360;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
+    private List<PlaneacionesDetalles> planeacionesDetallesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
+    private List<PlaneacionesLiberaciones> planeacionesLiberacionesList;
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "clave")
+    private Integer clave;
     @ManyToMany(mappedBy = "personalList")
     private List<Eventos> eventosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
@@ -246,7 +249,7 @@ public class Personal implements Serializable {
         this.clave = clave;
     }
 
-    public Personal(Integer clave, String nombre, Date fechaIngreso, Character status, int areaOperativa, int areaSuperior, int areaOficial, String perfilProfesional, short experienciaDocente, short experienciaLaboral, Date fechaNacimiento, String estado, String municipio, String localidad, String pais, boolean sni, boolean perfilProdep) {
+    public Personal(Integer clave, String nombre, Date fechaIngreso, Character status, short areaOperativa, short areaSuperior, short areaOficial, String perfilProfesional, short experienciaDocente, short experienciaLaboral, Date fechaNacimiento, String estado, String municipio, String localidad, String pais, boolean sni, boolean perfilProdep) {
         this.clave = clave;
         this.nombre = nombre;
         this.fechaIngreso = fechaIngreso;
@@ -274,14 +277,6 @@ public class Personal implements Serializable {
         this.clave = clave;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
     public Date getFechaIngreso() {
         return fechaIngreso;
     }
@@ -290,35 +285,27 @@ public class Personal implements Serializable {
         this.fechaIngreso = fechaIngreso;
     }
 
-    public Character getStatus() {
-        return status;
-    }
-
-    public void setStatus(Character status) {
-        this.status = status;
-    }
-
-    public int getAreaOperativa() {
+    public short getAreaOperativa() {
         return areaOperativa;
     }
 
-    public void setAreaOperativa(int areaOperativa) {
+    public void setAreaOperativa(short areaOperativa) {
         this.areaOperativa = areaOperativa;
     }
 
-    public int getAreaSuperior() {
+    public short getAreaSuperior() {
         return areaSuperior;
     }
 
-    public void setAreaSuperior(int areaSuperior) {
+    public void setAreaSuperior(short areaSuperior) {
         this.areaSuperior = areaSuperior;
     }
 
-    public int getAreaOficial() {
+    public short getAreaOficial() {
         return areaOficial;
     }
 
-    public void setAreaOficial(int areaOficial) {
+    public void setAreaOficial(short areaOficial) {
         this.areaOficial = areaOficial;
     }
 
@@ -352,46 +339,6 @@ public class Personal implements Serializable {
 
     public void setFechaNacimiento(Date fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public String getMunicipio() {
-        return municipio;
-    }
-
-    public void setMunicipio(String municipio) {
-        this.municipio = municipio;
-    }
-
-    public String getLocalidad() {
-        return localidad;
-    }
-
-    public void setLocalidad(String localidad) {
-        this.localidad = localidad;
-    }
-
-    public String getPais() {
-        return pais;
-    }
-
-    public void setPais(String pais) {
-        this.pais = pais;
-    }
-
-    public boolean getSni() {
-        return sni;
-    }
-
-    public void setSni(boolean sni) {
-        this.sni = sni;
     }
 
     public boolean getPerfilProdep() {
@@ -762,14 +709,6 @@ public class Personal implements Serializable {
         this.permisosList = permisosList;
     }
 
-    public EvidenciaContratosPersonal getEvidenciaContratosPersonal() {
-        return evidenciaContratosPersonal;
-    }
-
-    public void setEvidenciaContratosPersonal(EvidenciaContratosPersonal evidenciaContratosPersonal) {
-        this.evidenciaContratosPersonal = evidenciaContratosPersonal;
-    }
-
     @XmlTransient
     public List<DesarrolloSoftware> getDesarrolloSoftwareList() {
         return desarrolloSoftwareList;
@@ -830,5 +769,69 @@ public class Personal implements Serializable {
     public void setPlaneacionesDetallesList(List<PlaneacionesDetalles> planeacionesDetallesList) {
         this.planeacionesDetallesList = planeacionesDetallesList;
     }
-    
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public Character getStatus() {
+        return status;
+    }
+
+    public void setStatus(Character status) {
+        this.status = status;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public String getMunicipio() {
+        return municipio;
+    }
+
+    public void setMunicipio(String municipio) {
+        this.municipio = municipio;
+    }
+
+    public String getLocalidad() {
+        return localidad;
+    }
+
+    public void setLocalidad(String localidad) {
+        this.localidad = localidad;
+    }
+
+    public String getPais() {
+        return pais;
+    }
+
+    public void setPais(String pais) {
+        this.pais = pais;
+    }
+
+    public boolean getSni() {
+        return sni;
+    }
+
+    public void setSni(boolean sni) {
+        this.sni = sni;
+    }
+
+    public PersonalCategorias getCategoria360() {
+        return categoria360;
+    }
+
+    public void setCategoria360(PersonalCategorias categoria360) {
+        this.categoria360 = categoria360;
+    }
+
 }

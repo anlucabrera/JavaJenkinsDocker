@@ -43,6 +43,7 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Faces;
 
 /**
  *
@@ -284,12 +285,18 @@ public class ExcelWritter implements Serializable {
     }
 
     public String enviarLibro() {
-//        System.out.println("jvv.aldesa.sgot.util.ExcelWritter.enviarLibro() ruta: " + base.concat(salida));
+        System.err.println("jvv.aldesa.sgot.util.ExcelWritter.enviarLibro() ruta: " + base.concat(salida));
         File file = new File(base.concat(salida));
         String ruta = "/sii2/media".concat(file.toURI().toString().split("archivos")[1]);
-//        System.out.println("jvv.aldesa.sgot.util.ExcelWritter.enviarLibro() ruta 2: " + ruta);
+        System.err.println("jvv.aldesa.sgot.util.ExcelWritter.enviarLibro() ruta 2: " + ruta);
         return ruta;
 //        return new File(base.concat(salida));
+    }
+    
+    // descarga cedulas a destiempo
+    public void descargaCedulasOmnifaces() throws IOException{
+        File f = new File(base.concat(salida));
+        Faces.sendFile(f, true);
     }
     
     private Double redondear(Double valor){

@@ -71,24 +71,26 @@
                     <div id="main-buttons" class="hidden-sm hidden-xs" >
                         <p:toolbar id="tb">
                             <f:facet name="left">
-                                <p:outputPanel autoUpdate="true">
+                                <p:outputPanel >
+                                    <p:autoUpdate/>
                                     <p:outputLabel value="Total de colaboradores: #{planeacionCuatrimestral.planeaciones.size()}" />
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:outputLabel value="Correctos: #{planeacionCuatrimestral.jefePersonalCorrectas}" />
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:outputLabel value="Validados: #{planeacionCuatrimestral.jefePersonalValidados}" />
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <!--span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:outputLabel value="Estudiantes en estadía: #{planeacionCuatrimestral.detalles.estudiantesEstadia}" />
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:outputLabel value="Estudiantes en estadía asignados: #{planeacionCuatrimestral.totalEstudiantesAsigandos}" />
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:outputLabel value="Proyectos de estadía: #{planeacionCuatrimestral.detalles.proyectosEstadia}" />
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:outputLabel value="Proyectos de estadía asignados: #{planeacionCuatrimestral.totalProyuectosAsigandos}"/>
+                                    <p:outputLabel value="Proyectos de estadía asignados: #{planeacionCuatrimestral.totalProyuectosAsigandos}"/-->
                                 </p:outputPanel>
                             </f:facet>
                             <f:facet name="right">
-                                <p:outputPanel autoUpdate="true">
+                                <p:outputPanel >
+                                    <p:autoUpdate/>
                                     <p:commandButton value="Reglas de validación" id="btnRdV" actionListener="#{planeacionCuatrimestral.imprimirPlaneaciones()}"  oncomplete="PF('dlgRdVPC').show()" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" />
                                     <p:commandButton value="Liberar planeación" id="btnLPC" actionListener="#{planeacionCuatrimestral.liberarPlaneacionesCuatrimestralesJefePersonal()}" disabled="#{planeacionCuatrimestral.planeacionesliberadasP eq true?true:!planeacionCuatrimestral.planeacionesFinalizadas}" process="@this" icon="fa fa-check" styleClass="btn-primary" update="tblColaboradores" />
                                     <p:commandButton value="Denegar planeación" id="btnDPC" actionListener="#{planeacionCuatrimestral.denegarPlaneacionesCuatrimestralesJefePersonal()}" disabled="#{planeacionCuatrimestral.planeacionesliberadasP eq true?true:planeacionCuatrimestral.planeacionesFinalizadas}" process="@this" icon="fa fa-times" styleClass="btn-primary" update="tblColaboradores" />
@@ -104,7 +106,8 @@
                                 <c:if test="#{!planeacionCuatrimestral.activa}">
                                     Sin planeaciones activas
                                 </c:if>
-                                <p:outputPanel autoUpdate="true">
+                                <p:outputPanel >
+                                    <p:autoUpdate/>
                                     <c:if test="#{planeacionCuatrimestral.activa}">
                                         Periodo: #{caster.periodoToString(planeacionCuatrimestral.periodo)} -- Director: #{planeacionCuatrimestral.director.nombre}
                                     </c:if>
@@ -155,7 +158,7 @@
                                                     <p:column rowspan="2" headerText="Tipo" style=" font-weight: bold; font-size: medium"/>
                                                     <p:column rowspan="2" headerText="Nombre" style=" font-weight: bold; font-size: medium"/>
                                                     <p:column colspan="2" headerText="Horas clase" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column colspan="3" headerText="Estadías" style=" font-weight: bold; font-size: medium"/>    
+                                                    <!--p:column colspan="3" headerText="Estadías" style=" font-weight: bold; font-size: medium"/-->    
                                                     <p:column rowspan="2" headerText="Proyecto de investigación" style=" font-weight: bold; font-size: medium"/>
                                                     <p:column rowspan="2" headerText="Asesorías clase" style=" font-weight: bold; font-size: medium"/>
                                                     <p:column colspan="2" headerText="Tutoría" style=" font-weight: bold; font-size: medium"/>
@@ -170,9 +173,9 @@
                                                 <p:row class="success">
                                                     <p:column headerText="TSU" style=" font-weight: bold; font-size: medium"/>
                                                     <p:column headerText="ING" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column headerText="Horas" style=" font-weight: bold; font-size: medium"/>
+                                                    <!--p:column headerText="Horas" style=" font-weight: bold; font-size: medium"/>
                                                     <p:column headerText="Estudiantes asignados" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column headerText="Proyectos asignados" style=" font-weight: bold; font-size: medium"/>  
+                                                    <p:column headerText="Proyectos asignados" style=" font-weight: bold; font-size: medium"/-->  
                                                     <p:column headerText="Individual" style=" font-weight: bold; font-size: medium"/>
                                                     <p:column headerText="Grupal" style=" font-weight: bold; font-size: medium"/>
                                                 </p:row>
@@ -189,15 +192,15 @@
                                             <p:column>
                                                 <h:outputText value="#{planeacion.horasClaseIng}" />
                                             </p:column>
-                                            <p:column>
+                                            <!--p:column>
                                                 <h:outputText value="#{planeacion.estadias}" />
                                             </p:column>
                                             <p:column>
                                                 <h:outputText value="#{planeacion.estudiantesEstadia}" />
                                             </p:column>
                                             <p:column>
-                                                <h:outputText value="#{planeacion.proyectoInvestigacion}" />
-                                            </p:column>
+                                                <h:outputText value="#{planeacion.proyectosEstadia}" />
+                                            </p:column-->
                                             <p:column>
                                                 <h:outputText value="#{planeacion.proyectoInvestigacion}" />
                                             </p:column>

@@ -17,6 +17,9 @@
         <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
         </c:if>  
+        <c:if test="#{!controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
+        </c:if> 
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
@@ -24,24 +27,6 @@
 
     <ui:define name="body">
 
-        <!--adm:sidebar collapsed="true"/-->
-        <style>
-            .description-block{
-                text-align: justify;
-            }
-            .description-header{
-                text-align: center;
-            }
-            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
-                width: 100%;
-            }
-            .aceptado{
-                background-color: #00a65a;
-            }
-            .denegado{
-                background-color: #f39c12;
-            }
-        </style>
         <h:outputScript>
             PrimeFaces.locales['es'] = {
             closeText: 'Cerrar',
@@ -75,7 +60,7 @@
                 Esta página está disponible solo para pantallas superiores a 1024px.
             </h1>
         </p:panel-->
-        <c:if test="#{controladorEmpleado.mandos eq 'Superiores'}">
+        <c:if test="#{controladorEmpleado.mandos eq 'Otro'}">
             <div class="box box-primary">
                 <div class="box box-solid">
                     <div class="box-header with-border">
@@ -106,7 +91,7 @@
             <section class="content">
                 <div class="row">
                     <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
-                    <div class="col-md-9">
+                    <div class="col-md-10">
                         <div class="nav-tabs-custom">
                             <div class="row">
                                 <div class="col-lg-10 col-xs-10"/>
@@ -181,11 +166,11 @@
                                                                                     <p:message for="fechaIn" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
-                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
                                                                                     <p:outputLabel for="messages" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo de evidencia a subir" />
                                                                                     <br/>
                                                                                     <p:outputPanel autoUpdate="true">
-                                                                                        <p:selectOneRadio id="rutas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorEducacion.evidencia}" layout="responsive" columns="1"> 
+                                                                                        <p:selectOneRadio id="rutas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorEducacion.evidencia}" layout="responsive" columns="2"> 
                                                                                             <f:selectItem itemValue = "Cedula" itemDisabled="#{!controladorEducacion.formaTyC}" itemLabel = "Cedula #{controladorEducacion.nuevoOBJFormacionAcademica.evidenciaCedula eq null?'':'(ya cuenta con el archivo cargado)'}" /> 
                                                                                             <f:selectItem itemValue = "EvidenciaTitulacion" itemLabel = "Evidencia titulacion / culminacion #{controladorEducacion.nuevoOBJFormacionAcademica.evidenciaTitulo eq null?'':'(ya cuenta con el archivo cargado)'}" />
                                                                                         </p:selectOneRadio> 
@@ -224,7 +209,6 @@
                                                                                 </c:if>
                                                                             </p:outputPanel>
                                                                         </div>
-                                                                        <hr/>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -253,6 +237,7 @@
                                     </h:form>
                                     <h:form id="frmListaFormacionAcademica">
                                         <p:outputPanel>
+                                            <p:remoteCommand name="actualizarTabla" actionListener="#{controladorEducacion.metodoBase()}" update="tblFormacion" />
                                             <p:dataTable id="tblFormacion" value="#{controladorEducacion.nuevaListaFormacionAcademica}"
                                                          paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron registros." rowStyleClass="#{formacion.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                          paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
@@ -266,9 +251,15 @@
                                                 </f:facet>
 
                                                 <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                    <p:ajax event="rowSelect"   update="delate update"/>
-                                                    <p:ajax event="rowUnselect" update="delate update"/>
+                                                    <p:ajax event="rowSelect"   update="update"/>
+                                                    <p:ajax event="rowUnselect" update="update"/>
                                                 </c:if>
+
+                                                <p:column style="width: 50px;">
+                                                    <p:commandButton actionListener="#{controladorEducacion.deleteFormacion(formacion)}" update="tblFormacion" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{formacion.nivelEscolaridad.nombre}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                </p:column>
 
                                                 <p:column headerText="Grado de estudio" 
                                                           sortBy="#{formacion.nivelEscolaridad.nombre}" 
@@ -303,8 +294,6 @@
 
                                                 <f:facet name="footer">
                                                     <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                        <p:commandButton id="delate" value="Eliminar" icon="fa fa-eraser" class="btn btn-danger" 
-                                                                         oncomplete="PF('dlgDelate1').show();" disabled="#{empty controladorEducacion.nuevoOBJFormacionAcademica}"/>
                                                         <p:commandButton id="update" value="Actualizar" icon="fa fa-pen" class="btn btn-info" onsuccess="PF('frmForAc')update();"
                                                                          actionListener="#{controladorEducacion.asignaGrado()}" disabled="#{empty controladorEducacion.nuevoOBJFormacionAcademica}"/>
                                                     </c:if>
@@ -329,7 +318,13 @@
                                                 </p:outputPanel>
                                             </p:dialog>
 
-                                        </p:outputPanel>       
+                                        </p:outputPanel> 
+
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>   
+
                                     </h:form>
                                 </p:tab>                               
                                 <p:tab id="tab2" title="Experiencia laboral">
@@ -415,7 +410,6 @@
                                                                                 </c:if>
                                                                             </p:outputPanel>
                                                                         </div>
-                                                                        <hr/>
                                                                     </div>
                                                                 </div>
                                                             </div>                                                        
@@ -443,6 +437,7 @@
                                     </h:form>
                                     <h:form id="frmListaEmpleos">
                                         <p:outputPanel>
+                                            <p:remoteCommand name="actualizarTabla2" actionListener="#{controladorEducacion.metodoBase()}" update="tblEmpleos" />
                                             <p:dataTable id="tblEmpleos" value="#{controladorEducacion.nuevaListaExperienciasLaborales}"
                                                          paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron registros." rendered="true" rowStyleClass="#{empleos.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                          paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
@@ -456,9 +451,14 @@
                                                     <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
                                                 </f:facet>
                                                 <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                    <p:ajax event="rowSelect"   update="delate update"/>
-                                                    <p:ajax event="rowUnselect" update="delate update"/>
+                                                    <p:ajax event="rowSelect"   update="update"/>
+                                                    <p:ajax event="rowUnselect" update="update"/>
                                                 </c:if>
+                                                <p:column style="width: 50px;">
+                                                    <p:commandButton actionListener="#{controladorEducacion.eliminarEmpleos(empleos)}" update="tblEmpleos" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{empleos.puestoDesepenado}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                </p:column>
                                                 <p:column headerText="Puesto" 
                                                           sortBy="#{empleos.puestoDesepenado}" 
                                                           filterBy="#{empleos.puestoDesepenado}" 
@@ -484,10 +484,6 @@
 
                                                 <f:facet name="footer">
                                                     <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                        <p:commandButton id="delate" value="Eliminar" icon="fa fa-eraser" class="btn btn-danger" 
-                                                                         oncomplete="PF('dlgDelate3').show();"
-                                                                         disabled="#{empty controladorEducacion.nuevoOBJExpeienciasLaborales}"/>
-
                                                         <p:commandButton id="update" value="Actualizar" icon="fa fa-pen" class="btn btn-info" onsuccess="PF('frmExLab')update();"
                                                                          actionListener="#{controladorEducacion.asignaclaveREx()}" disabled="#{empty controladorEducacion.nuevoOBJExpeienciasLaborales}"/>
                                                     </c:if>
@@ -509,6 +505,10 @@
                                                 </p:outputPanel>
                                             </p:dialog>
                                         </p:outputPanel>  
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>   
                                     </h:form>
                                 </p:tab>                              
                                 <p:tab id="tab3" title="Actualización profesional">
@@ -673,7 +673,6 @@
                                                                                 </c:if>
                                                                             </p:outputPanel>
                                                                         </div>
-                                                                        <hr/>
                                                                     </div>
                                                                 </div>
                                                             </div>                                                      
@@ -703,7 +702,7 @@
                                         <p:tab title="Actualizaciones profesionales otorgadas por la institución (UTXJ)" >
                                             <h:form id="frmListaCapacitacionesInstitucionales" >
                                                 <p:outputPanel >
-
+                                                    <p:remoteCommand name="actualizarTabla3" actionListener="#{controladorEducacion.metodoBase()}" update="tblActualizacionesProfesionalesUTXJ" />
                                                     <p:dataTable id="tblActualizacionesProfesionalesUTXJ" value="#{controladorEducacion.nuevaListaCapacitacionesInternas}"
                                                                  paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron Registros." rendered="true" rowStyleClass="#{capacitacion.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                                  paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
@@ -715,10 +714,18 @@
                                                             <p:spacer width="15px"/>
                                                             <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
                                                         </f:facet>
+
                                                         <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                            <p:ajax event="rowSelect"   update="delate update"/>
-                                                            <p:ajax event="rowUnselect" update="delate update"/>
+                                                            <p:ajax event="rowSelect"   update="update"/>
+                                                            <p:ajax event="rowUnselect" update="update"/>
                                                         </c:if>
+
+                                                        <p:column style="width: 50px;">
+                                                            <p:commandButton actionListener="#{controladorEducacion.eliminarCapacitacion(capacitacion)}" update="tblActualizacionesProfesionalesUTXJ" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                                <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{capacitacion.nombre}?" icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                        </p:column>
+
                                                         <p:column headerText="Tipo de curso" 
                                                                   sortBy="#{capacitacion.tipo.nombre}" 
                                                                   filterBy="#{capacitacion.tipo.nombre}" 
@@ -748,21 +755,32 @@
                                                                   filterMatchMode="contains"
                                                                   style="width: 10%">
                                                             <h:outputText value="#{capacitacion.modalidad.nombre}" />
-                                                        </p:column>        
+                                                        </p:column>   
+
+                                                        <p:column headerText="Categoría" 
+                                                                  sortBy="#{capacitacion.categoriaCapacitacion}" 
+                                                                  filterBy="#{capacitacion.categoriaCapacitacion}" 
+                                                                  filterMatchMode="contains"
+                                                                  style="width: 10%">
+                                                            <h:outputText value="#{capacitacion.categoriaCapacitacion}" />
+                                                        </p:column> 
 
                                                         <p:column headerText="Fecha culminación" 
                                                                   sortBy="#{capacitacion.fechaFin}" 
                                                                   filterBy="#{capacitacion.fechaFin}" 
                                                                   filterMatchMode="contains"
                                                                   style="width: 10%">
-                                                            <h:outputText value="#{capacitacion.fechaFin}" >
+                                                            <h:outputText value="#{capacitacion.fechaInicio}" >
+                                                                <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                                                            </h:outputText>
+                                                             <hr/>
+                                                             <h:outputText value="#{capacitacion.fechaFin}" >
                                                                 <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
                                                             </h:outputText>
                                                         </p:column>  
 
                                                         <f:facet name="footer">
                                                             <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                                <p:commandButton id="delate" value="Eliminar" icon="fa fa-eraser" class="btn btn-danger" oncomplete="PF('dlgDelate4').show();" disabled="#{empty controladorEducacion.nuevoOBJCapacitacionespersonal}"/>
                                                                 <p:commandButton id="update" value="Actualizar" icon="fa fa-pen" class="btn btn-info" onsuccess="PF('frmCapacit')update();"
                                                                                  actionListener="#{controladorEducacion.asignaclaveRAP()}" disabled="#{empty controladorEducacion.nuevoOBJCapacitacionespersonal}"/>
                                                             </c:if>
@@ -784,12 +802,16 @@
                                                         </p:outputPanel>
                                                     </p:dialog>
                                                 </p:outputPanel>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                </p:confirmDialog>   
                                             </h:form>
                                         </p:tab>
                                         <p:tab title="Actualizaciones profesionales obtenidas externamente" >
                                             <h:form id="frmListaCapacitaciones" >
                                                 <p:outputPanel >
-
+                                                    <p:remoteCommand name="actualizarTabla4" actionListener="#{controladorEducacion.metodoBase()}" update="tblActualizacionesProfesionales" />
                                                     <p:dataTable id="tblActualizacionesProfesionales" value="#{controladorEducacion.nuevaListaCapacitacionesExternas}"
                                                                  paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron Registros." rendered="true" rowStyleClass="#{capacitacion.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                                  paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
@@ -802,9 +824,16 @@
                                                             <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
                                                         </f:facet>
                                                         <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                            <p:ajax event="rowSelect"   update="delate update"/>
-                                                            <p:ajax event="rowUnselect" update="delate update"/>
+                                                            <p:ajax event="rowSelect"   update="update"/>
+                                                            <p:ajax event="rowUnselect" update="update"/>
                                                         </c:if>
+
+                                                        <p:column style="width: 50px;">
+                                                            <p:commandButton actionListener="#{controladorEducacion.eliminarCapacitacion(capacitacion)}" update="tblActualizacionesProfesionales" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                                <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{capacitacion.nombre}?" icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                        </p:column>
+
                                                         <p:column headerText="Tipo de curso" 
                                                                   sortBy="#{capacitacion.tipo.nombre}" 
                                                                   filterBy="#{capacitacion.tipo.nombre}" 
@@ -834,13 +863,25 @@
                                                                   filterMatchMode="contains"
                                                                   style="width: 10%">
                                                             <h:outputText value="#{capacitacion.modalidad.nombre}" />
-                                                        </p:column>        
+                                                        </p:column> 
+
+                                                        <p:column headerText="Categoría" 
+                                                                  sortBy="#{capacitacion.categoriaCapacitacion}" 
+                                                                  filterBy="#{capacitacion.categoriaCapacitacion}" 
+                                                                  filterMatchMode="contains"
+                                                                  style="width: 10%">
+                                                            <h:outputText value="#{capacitacion.categoriaCapacitacion}" />
+                                                        </p:column>
 
                                                         <p:column headerText="Fecha de culminación" 
                                                                   sortBy="#{capacitacion.fechaFin}" 
                                                                   filterBy="#{capacitacion.fechaFin}" 
                                                                   filterMatchMode="contains"
                                                                   style="width: 10%">
+                                                            <h:outputText value="#{capacitacion.fechaInicio}" >
+                                                                <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                                                            </h:outputText>
+                                                            <hr/>
                                                             <h:outputText value="#{capacitacion.fechaFin}" >
                                                                 <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
                                                             </h:outputText>
@@ -848,7 +889,6 @@
 
                                                         <f:facet name="footer">
                                                             <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                                <p:commandButton id="delate" value="Eliminar" icon="fa fa-eraser" class="btn btn-danger" oncomplete="PF('dlgDelate4').show();" disabled="#{empty controladorEducacion.nuevoOBJCapacitacionespersonal}"/>
                                                                 <p:commandButton id="update" value="Actualizar" icon="fa fa-pen" class="btn btn-info" onsuccess="PF('frmCapacit')update();"
                                                                                  actionListener="#{controladorEducacion.asignaclaveRAP()}" disabled="#{empty controladorEducacion.nuevoOBJCapacitacionespersonal}"/>
                                                             </c:if>
@@ -870,6 +910,10 @@
                                                         </p:outputPanel>
                                                     </p:dialog>
                                                 </p:outputPanel>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                </p:confirmDialog>   
                                             </h:form>
                                         </p:tab>                                        
                                     </p:tabView>                                                                   
@@ -884,57 +928,6 @@
             </section>
         </p:panel>
 
-        <h:form id="frmDelate1" >
-            <p:dialog id="dlgDelate1" header="Eliminación" widgetVar="dlgDelate1" minimizable="true" maximizable="true" position="center" >
-                <f:facet name="footer">
-                    <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate1').hide();"/>
-                    <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorEducacion.deleteFormacion()}" 
-                                     icon="fa fa-check" process="@form" update="@form" onsuccess="PF('dlgDelate1').hide();" 
-                                     oncomplete="PF('tblFormacion')update();"/>
-                </f:facet>
-
-                <p:outputPanel>            
-                    <p:autoUpdate/>
-                    <h:panelGrid columns="1"  class="col-md-12">
-                        <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
-                    </h:panelGrid>
-                </p:outputPanel>
-            </p:dialog>
-        </h:form>    
-
-        <h:form id="frmDelate3" >
-            <p:dialog id="dlgDelate3" header="Eliminación" widgetVar="dlgDelate3" minimizable="true" maximizable="true" position="center">
-                <f:facet name="footer">
-                    <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate3').hide();"/>
-                    <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorEducacion.eliminarEmpleos()}" 
-                                     icon="fa fa-check" process="@form" update="@form" onsuccess="PF('dlgDelate3').hide();" oncomplete="PF('tblEmpleos')update();"/>
-                </f:facet>
-
-                <p:outputPanel>            
-                    <p:autoUpdate/>
-                    <h:panelGrid columns="1"  class="col-md-12">
-                        <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
-                    </h:panelGrid>
-                </p:outputPanel>
-            </p:dialog>
-        </h:form>    
-
-        <h:form id="frmDelate4" >
-            <p:dialog id="dlgDelate4" header="Eliminación" widgetVar="dlgDelate4" minimizable="true" maximizable="true" position="center" appendTo="@(tblActualizacionesProfesionales)">
-                <f:facet name="footer">
-                    <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgDelate4').hide();"/>
-                    <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorEducacion.eliminarCapacitacion()}" icon="fa fa-check" process="@form" update="@form"
-                                     onsuccess="PF('dlgDelate4').hide();"  oncomplete="PF('tblActualizacionesProfesionales')update();"/>
-                </f:facet>
-
-                <p:outputPanel>            
-                    <p:autoUpdate/>
-                    <h:panelGrid columns="1"  class="col-md-12">
-                        <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
-                    </h:panelGrid>
-                </p:outputPanel>
-            </p:dialog>
-        </h:form>  
         <script type="text/javascript" src="js/jquery.js"></script>
 
         <h:outputScript library="js" name="funciones.js" />
