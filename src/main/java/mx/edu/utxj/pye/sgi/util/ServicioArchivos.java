@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.Year;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FilenameUtils;
@@ -109,5 +110,14 @@ public class ServicioArchivos implements Serializable{
         if (!file.exists()) {
             file.mkdirs();
         }
+    }
+    
+    /**
+     * Genera una ruta relativa por año, para subida de datos atraves de técnica servlet y alojar en una carpeta denominada archivos ubicada sobre la carpeta raíz     * 
+     * @param categoria Categoría de la subida
+     * @return 
+     */
+    public static String genRutaRelativa(String categoria){
+        return categoria.concat(File.separator).concat(Year.now().toString()).concat(File.separator);
     }
 }

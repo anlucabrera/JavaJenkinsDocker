@@ -45,6 +45,9 @@
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
+        <multipart-config>
+            <location>C:\archivos\</location>
+        </multipart-config>
     </servlet>
 
     <filter>
