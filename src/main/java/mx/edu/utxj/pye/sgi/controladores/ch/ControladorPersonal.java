@@ -669,12 +669,15 @@ public class ControladorPersonal implements Serializable {
     }
     public void listaArchivos() {
         try {
+            rutasEvidencias.clear();
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.listaArchivos()"+contactoDestino);
             Files.walk(Paths.get("C:\\archivos\\evidenciasCapitalHumano\\" + contactoDestino)).forEach(ruta -> {
                 if (Files.isRegularFile(ruta)) {
                     System.out.println(ruta);
                     rutasEvidencias.add(ruta.toString());
                 }
             });
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.listaArchivos()"+rutasEvidencias.size());
             ZipWritter.generar(rutasEvidencias, contactoDestino);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
