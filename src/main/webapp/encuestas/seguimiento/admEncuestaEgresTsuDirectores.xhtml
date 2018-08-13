@@ -175,12 +175,12 @@
                                       sortBy="#{encuestaEstudiate.grupo}">
                                 <h:outputText value="#{encuestaEstudiate.grupo}"/>
                             </p:column>
-                            <p:column headerText="Tutor"
+                            <!--p:column headerText="Tutor"
                                       filterBy="#{encuestaEstudiate.tutor}"
                                       filterMatchMode="contains"
                                       sortBy="#{encuestaEstudiate.tutor}">
                                 <h:outputText value="#{encuestaEstudiate.tutor}"/>
-                            </p:column>
+                            </p:column-->
                             <f:facet name="footer">
                                 <p:commandButton actionListener="#{administracionEncuestaTsu.seguimientoEncuestaDirectores()}" value="Actualizar información"
                                                  icon="fa fa-refresh" class="btn btn-primary" update="@this" process="@this"/>
@@ -230,18 +230,18 @@
                                       sortBy="#{encuestaEstudiate.grado}">
                                 <h:outputText value="#{encuestaEstudiate.grado}"/>
                             </p:column>
-                            <p:column headerText="Carrera"
+                            <p:column headerText="Grupo"
                                       filterBy="#{encuestaEstudiate.grupo}"
                                       filterMatchMode="contains"
                                       sortBy="#{encuestaEstudiate.grupo}">
                                 <h:outputText value="#{encuestaEstudiate.grupo}"/>
                             </p:column>
-                            <p:column headerText="Carrera"
+                            <!--p:column headerText="Carrera"
                                       filterBy="#{encuestaEstudiate.tutor}"
                                       filterMatchMode="contains"
                                       sortBy="#{encuestaEstudiate.tutor}">
                                 <h:outputText value="#{encuestaEstudiate.tutor}"/>
-                            </p:column>
+                            </p:column-->
                             <f:facet name="footer">
                                 <p:commandButton actionListener="#{administracionEncuestaTsu.seguimientoEncuestaDirectores()}" value="Actualizar información"
                                                  icon="fa fa-refresh" class="btn btn-primary" update="@this" process="@this"/>
@@ -300,12 +300,12 @@
                                       sortBy="#{alumnosNoAccedieron.grupo}">
                                 <h:outputText value="#{alumnosNoAccedieron.grupo}"/>
                             </p:column>
-                            <p:column headerText="Grupo"
+                            <!--p:column headerText="Grupo"
                                       filterBy="#{alumnosNoAccedieron.tutor}"
                                       filterMatchMode="contains"
                                       sortBy="#{alumnosNoAccedieron.tutor}">
                                 <h:outputText value="#{alumnosNoAccedieron.tutor}"/>
-                            </p:column>
+                            </p:column-->
                             <f:facet name="footer">
                                 <p:commandButton actionListener="#{administracionEncuestaTsu.seguimientoEncuestaDirectores()}" value="Actualizar información"
                                                  icon="fa fa-refresh" class="btn btn-primary" update="@this" process="@this"/>
