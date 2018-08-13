@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" 
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="comisionMapa.css" />
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Seguimiento a trámites
+    </ui:define>
+
+    <ui:define name="description">
+        Fiscalización
+    </ui:define>
+
+    <ui:define name="body">        
+        <adm:breadcrumb title="Seguimiento a trámites"/>
+        <o:importConstants type="mx.edu.utxj.pye.sgi.enums.FiscalizacionEtapa" var="fe" />
+        <div class="contenedor">
+        <p:outputPanel id="contenedor" class="contenedor">
+            <pe:switch id="switch" value="#{fiscalizacion.etapa}" class="switch">
+                <pe:case value="#{fe.CONSULTA}"><ui:include src="tramites_tabla.xhtml" rendered="false" /></pe:case>
+                <pe:case value="#{fe.OFICIO_COMISION}"><ui:include src="tramites_nuevo.xhtml" rendered="false" /></pe:case>
+                <pe:case value="#{fe.FACTURAS}"><ui:include src="tramites_facturas.xhtml"  /></pe:case>
+            </pe:switch>
+        </p:outputPanel>
+            </div>
+        <script>
+            //collapseSidebar();
+        </script>
+    </ui:define>
+</ui:composition>
