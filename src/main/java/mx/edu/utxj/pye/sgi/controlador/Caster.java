@@ -7,8 +7,10 @@ package mx.edu.utxj.pye.sgi.controlador;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.ApplicationScoped;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.PlaneacionesCuatrimestrales;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
@@ -20,6 +22,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 @ApplicationScoped
 public class Caster {
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+    @EJB EjbPropiedades ep;
     public Caster() {
     }
     
@@ -48,5 +51,9 @@ public class Caster {
     
     public static short planeacionToTotal(PlaneacionesCuatrimestrales pc){
         return (short)(pc.getHorasClaseTsu() + pc.getHorasClaseIng() + pc.getEstadias() + pc.getProyectoInvestigacion() + pc.getAsesoriaClase() + pc.getTutoriaIndividual() + pc.getTutoriaGrupal() + pc.getReunionAcademia() + pc.getActividadesVarias());
+    }
+    
+    public String getEjercicioFiscal(){
+        return String.valueOf(ep.leerPropiedadEntera("finanzasEjercicioFiscal").getAsInt());
     }
 }
