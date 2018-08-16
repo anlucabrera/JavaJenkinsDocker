@@ -30,7 +30,10 @@
     <ui:define name="body">
         <adm:breadcrumb title="Comisionar a personal"/>
         <adm:sidebar collapsed="true"/>
-        <h:form id="frmAgregarTramite" class="form-horizontal" prependId="true">            
+        <h:form id="frmAgregarTramite" class="form-horizontal" prependId="true">
+            <p:messages showSummary="true" showDetail="true" >
+                <p:autoUpdate />
+            </p:messages>
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <div id="main-buttons" class="hidden-sm hidden-xs" >
@@ -38,8 +41,8 @@
                             <f:facet name="left">
                             </f:facet>
                             <f:facet name="right">
-                                <p:commandButton id="btnAgregar" action="tramites_comisionar?faces-redirect=true" actionListener="#{comisionar.guardarComisión()}"
-                                                 value="Guardar" process="@this" icon="fa fa-save" styleClass="btn-primary" />
+                                <p:commandButton id="btnAgregar" actionListener="#{comisionar.guardarComisión()}"
+                                                 process="@form" update="@(.ui-message)" value="Guardar" icon="fa fa-save" styleClass="btn-primary"/>
                             </f:facet>
                         </p:toolbar>
                         <p:sticky target="tb2" />
@@ -92,11 +95,11 @@
                                                     <p:selectOneMenu id="area" required="true" value="#{comisionar.comision.alineacionArea}" valueChangeListener="#{comisionar.actualizarEjes}" var="a" converter="entidadConverter2">
                                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
                                                         <f:selectItems value="#{comisionar.comision.areas}" var="area" itemValue="#{area}" itemLabel="#{area.nombre}" itemDescription="#{area.nombre}" />
-                                                        <p:ajax process="area" update="eje,estrategia,lineaAccion,actividad" />
+                                                        <p:ajax process="area" update="eje,estrategia,lineaAccion,actividad,comisionado" />
                                                         <p:column>#{a.categoria.descripcion}</p:column>
                                                         <p:column>#{a.nombre}</p:column>
                                                     </p:selectOneMenu>
-                                                    <p:message for="eje" />
+                                                    <p:message for="area"><p:autoUpdate /></p:message>
                                                 </div>
                                             </div>
                                             <div class="row" style="#{fila}">
@@ -107,7 +110,7 @@
                                                         <f:selectItems value="#{comisionar.comision.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
                                                         <p:ajax process="eje" update="estrategia,lineaAccion,actividad" />
                                                     </p:selectOneMenu>
-                                                    <p:message for="eje" />
+                                                    <p:message for="eje"><p:autoUpdate /></p:message>
                                                 </div>
                                             </div>
                                             <div class="row" style="#{fila}">
@@ -118,7 +121,7 @@
                                                         <f:selectItems value="#{comisionar.comision.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
                                                         <p:ajax process="estrategia" update="lineaAccion,actividad" />
                                                     </p:selectOneMenu>
-                                                    <p:message for="estrategia" />
+                                                    <p:message for="estrategia"><p:autoUpdate /></p:message>
                                                 </div>
                                             </div>
                                             <div class="row" style="#{fila}">
@@ -129,7 +132,7 @@
                                                         <f:selectItems value="#{comisionar.comision.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
                                                         <p:ajax process="lineaAccion" update="actividad" />
                                                     </p:selectOneMenu>
-                                                    <p:message for="lineaAccion" />
+                                                    <p:message for="lineaAccion"><p:autoUpdate /></p:message>
                                                 </div>
                                             </div>
                                             <div class="row" style="#{fila}">
@@ -140,7 +143,7 @@
                                                         <f:selectItems value="#{comisionar.comision.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
                                                         <p:ajax process="actividad" />
                                                     </p:selectOneMenu>
-                                                    <p:message for="actividad" />
+                                                    <p:message for="actividad"><p:autoUpdate /></p:message>
                                                 </div>
                                             </div>
                                         </div>
@@ -158,7 +161,7 @@
                                                     <f:selectItems value="#{comisionar.comision.posiblesComisionados}" var="comisionado" itemValue="#{comisionado}" itemLabel="#{comisionado.nombre}" itemDescription="#{comisionado.nombre}" />
                                                     <p:ajax process="comisionado" update="@this" />                                                    
                                                 </p:selectOneMenu>
-                                                <p:message for="eje" />
+                                                <p:message for="comisionado" />
                                             </div>
                                         </div>
                                         <div class="row">
@@ -192,15 +195,16 @@
                                         <div class="row" style="#{fila}">
                                             <div class="col-md-1"><p:outputLabel value="Dependencia: " for="dependencia" /></div>
                                             <div class="col-md-11">
-                                                <p:inputText id="dependencia" value="#{comisionar.comision.tramite.comisionOficios.dependencia}" class="form-control" required="true" placeholder="Dependencia, organización o lugar donde se realizará la comisión." />
+                                                <p:inputText id="dependencia" value="#{comisionar.comision.tramite.comisionOficios.dependencia}" class="form-control" required="true" requiredMessage="Debe especificar la dependencia, organización o lugar donde se realizará la comisión." placeholder="Dependencia, organización o lugar donde se realizará la comisión." />
                                                 <p:message for="dependencia" />
                                             </div>
                                         </div>                                        
                                         <div class="row" style="#{fila}">
                                             <div class="col-md-1"><p:outputLabel for="actividades" value="Actividades: "/></div>
                                             <div class="col-md-11">
-                                                <p:inputTextarea id="actividades" value="#{comisionar.comision.tramite.comisionOficios.actividades}" placeholder="Actividades a realizar durante la comisión."
+                                                <p:inputTextarea id="actividades" value="#{comisionar.comision.tramite.comisionOficios.actividades}" required="true" requiredMessage="Debe ingresar las actividades a realizar por el comisionado." placeholder="Actividades a realizar durante la comisión."
                                                                  label="actividades" rows="2" cols="140" class="form-control" maxlength="1000" autoResize="true" />
+                                                <p:message for="actividades" />
                                             </div>
                                         </div>
                                         <div class="row">
@@ -249,7 +253,10 @@
                                                     <div class="col-md-12">
                                                         <div class="row">
                                                             <div class="col-md-8"><p:outputLabel for="sabados" value="Solicitar sábados: "/></div>
-                                                            <div class="col-md-4"><p:selectBooleanCheckbox id="sabados" value="#{comisionar.comision.tramite.comisionOficios.sabadosSolicitados}" label="Sábados" /></div>
+                                                            <div class="col-md-4">
+                                                                <p:selectBooleanCheckbox id="sabados" value="#{comisionar.comision.tramite.comisionOficios.sabadosSolicitados}" label="Sábados" />
+                                                                <p:message for="sabados" />
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -257,7 +264,10 @@
                                                     <div class="col-md-12">
                                                         <div class="row">
                                                             <div class="col-md-8"><p:outputLabel for="domingos" value="Solicitar domingos: "/></div>
-                                                            <div class="col-md-4"><p:selectBooleanCheckbox id="domingos" value="#{comisionar.comision.tramite.comisionOficios.domingosSolicitados}" label="Domingos" /></div>
+                                                            <div class="col-md-4">
+                                                                <p:selectBooleanCheckbox id="domingos" value="#{comisionar.comision.tramite.comisionOficios.domingosSolicitados}" label="Domingos" />
+                                                                <p:message for="domingos" />
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -267,13 +277,19 @@
                                                     <div class="col-md-4">
                                                         <div class="row">
                                                             <div class="col-md-6"><p:outputLabel for="pasajes" value="Pasajes: "/></div>
-                                                            <div class="col-md-6"><p:selectBooleanCheckbox id="pasajes" value="#{comisionar.comision.tramite.comisionOficios.comisionAvisos.pasajes}" label="pasajes" /></div>
+                                                            <div class="col-md-6">
+                                                                <p:selectBooleanCheckbox id="pasajes" value="#{comisionar.comision.tramite.comisionOficios.comisionAvisos.pasajes}" label="pasajes" />
+                                                                <p:message for="pasajes" />
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <div class="row">
                                                             <div class="col-md-6"><p:outputLabel for="casetas" value="Casetas: "/></div>
-                                                            <div class="col-md-6"><p:selectBooleanCheckbox id="casetas" value="#{comisionar.comision.tramite.comisionOficios.comisionAvisos.casetas}" label="casetas" /></div>
+                                                            <div class="col-md-6">
+                                                                <p:selectBooleanCheckbox id="casetas" value="#{comisionar.comision.tramite.comisionOficios.comisionAvisos.casetas}" label="casetas" />
+                                                                <p:message for="casetas" />
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -284,6 +300,7 @@
                                                             <div class="input-group">
                                                                 <div class="input-group-addon">$</div>
                                                                 <p:inputNumber id="otros" value="#{comisionar.comision.tramite.comisionOficios.comisionAvisos.otros}" label="otros" decimalPlaces="2" inputStyle="width: 117px;" />
+                                                                <p:message for="otros" />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -295,54 +312,57 @@
                                             <div class="col-md-11">
                                                 <p:inputTextarea id="comentarios" value="#{comisionar.comision.tramite.comisionOficios.comisionAvisos.comentarios}" placeholder="Justificar otros gastos o ingresar comentarios hacia el área de Fiscalización."
                                                                  label="comentarios" rows="2" cols="140" class="form-control" maxlength="1500" autoResize="true" />
+                                                <p:message for="comentarios" />
                                             </div>
                                         </div>
-                                        <div class="row" style="display: none;">
-                                            <div class="col-md-12 col-lg-8">
-                                                <div class="row" style="#{fila}">
-                                                    <div class="col-md-1"><p:outputLabel value="Origen: " for="origen" /></div>
-                                                    <div class="col-md-11">
-                                                        <p:inputText id="origen" value="#{comisionar.origen}" class="form-control origen" required="true" style="width: 870px;"  />
-                                                        <p:message for="origen" />
+                                        <c:if test="#{false}">
+                                            <div class="row" style="display: none;">
+                                                <div class="col-md-12 col-lg-8">
+                                                    <div class="row" style="#{fila}">
+                                                        <div class="col-md-1"><p:outputLabel value="Origen: " for="origen" /></div>
+                                                        <div class="col-md-11">
+                                                            <p:inputText id="origen" value="#{comisionar.origen}" class="form-control origen" required="true" requiredMessage="Origen" style="width: 870px;"  />
+                                                            <p:message for="origen" />
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row" style="display: none;">
-                                            <div class="col-md-12 col-lg-8">
-                                                <div class="row" style="#{fila}">
-                                                    <div class="col-md-1"><p:outputLabel value="Destino: " for="destino" /></div>
-                                                    <div class="col-md-8">
-                                                        <p:inputText id="destino" value="#{comisionar.destino}" class="form-control destino" required="true" style="width: 870px;" />
-                                                        <p:message for="destino" />
+                                            <div class="row" style="display: none;">
+                                                <div class="col-md-12 col-lg-8">
+                                                    <div class="row" style="#{fila}">
+                                                        <div class="col-md-1"><p:outputLabel value="Destino: " for="destino" /></div>
+                                                        <div class="col-md-8">
+                                                            <p:inputText id="destino" value="#{comisionar.destino}" class="form-control destino" required="true" requiredMessage="Destino" style="width: 870px;" />
+                                                            <p:message for="destino" />
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row" style="display: none;">
-                                            <div class="col-md-12 col-lg-3">
-                                                <p:commandButton styleClass="btn-info pull-right" value="Consultar" process="origen, destino" update="@form"
-                                                                 onsuccess="buscar();"/>
+                                            <div class="row" style="display: none;">
+                                                <div class="col-md-12 col-lg-3">
+                                                    <p:commandButton styleClass="btn-info pull-right" value="Consultar" process="origen, destino" update="@form"
+                                                                     onsuccess="buscar();"/>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="row" style="display: none;">
-                                            <div class="col-md-4">
-                                                <p:outputLabel value="Distancia: " />
+                                            <div class="row" style="display: none;">
+                                                <div class="col-md-4">
+                                                    <p:outputLabel value="Distancia: " />
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <p:outputLabel id="distancia" value="#{comisionar.distancia}" /> Km
+                                                </div>
                                             </div>
-                                            <div class="col-md-4">
-                                                <p:outputLabel id="distancia" value="#{comisionar.distancia}" /> Km
+                                            <div class="row" style="display: none;">
+                                                <div class="col-md-12" style="height: 500px;">
+                                                    <iframe id="winMapa" name="winMapa" 
+                                                            src="#{request.contextPath}/servletMap/#{comisionar.origen}/##{comisionar.destino}" width="100%"
+                                                            height="100%" frameborder="0" />
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="row" style="display: none;">
-                                            <div class="col-md-12" style="height: 500px;">
-                                                <iframe id="winMapa" name="winMapa" 
-                                                        src="#{request.contextPath}/servletMap/#{comisionar.origen}/##{comisionar.destino}" width="100%"
-                                                        height="100%" frameborder="0" />
-                                            </div>
-                                        </div>
-                                        <p:remoteCommand name="rcActualizarDistancia" actionListener="#{comisionar.actualizarDistancia()}" process="@this" update="distancia" />
-                                        <p:remoteCommand name="rcActualizarOrigen" actionListener="#{comisionar.actualizarOrigen()}" process="@this" update="origen" />
-                                        <p:remoteCommand name="rcActualizarDestino" actionListener="#{comisionar.actualizarDestino()}" process="@this" update="destino" />
+                                            <p:remoteCommand name="rcActualizarDistancia" actionListener="#{comisionar.actualizarDistancia()}" process="@this" update="distancia" />
+                                            <p:remoteCommand name="rcActualizarOrigen" actionListener="#{comisionar.actualizarOrigen()}" process="@this" update="origen" />
+                                            <p:remoteCommand name="rcActualizarDestino" actionListener="#{comisionar.actualizarDestino()}" process="@this" update="destino" />                                        
+                                        </c:if>
                                     </c:if>
                                     <c:if test="#{comisionar.comision.tipo eq comisionar.tramiteTipoProductoServicio}">
                                         <div class="row" style="#{fila}">

@@ -21,8 +21,8 @@ import org.apache.poi.xwpf.usermodel.XWPFTableRow;
  * @author UTXJ
  */
 public class DocxReplacer implements Runnable{
-    private Map<String, String> reemplazos;
-    private XWPFDocument document;
+    private final Map<String, String> reemplazos;
+    private final XWPFDocument document;
 
     public DocxReplacer(Map<String, String> reemplazos, XWPFDocument document) {
         this.reemplazos = reemplazos;
@@ -32,7 +32,7 @@ public class DocxReplacer implements Runnable{
     @Override
     public void run() {
         try {
-            System.out.println("mx.edu.utxj.pye.sgi.funcional.DocxReplacer.run()");
+//            System.out.println("mx.edu.utxj.pye.sgi.funcional.DocxReplacer.run()");
             iterateThroughParagraphs(document, reemplazos);
             iterateThroughFooters(document, reemplazos);
             iterateThroughTables(document, reemplazos);
@@ -44,6 +44,7 @@ public class DocxReplacer implements Runnable{
     
     private void iterateThroughParagraphs(XWPFDocument doc, Map<String, String> fieldsForReport) throws NotFoundException {
         for (XWPFParagraph paragraph : doc.getParagraphs()) {
+//            System.out.println("mx.edu.utxj.pye.sgi.funcional.DocxReplacer.iterateThroughParagraphs(): " + paragraph.getText());
             iterateThroughRuns(paragraph, fieldsForReport);
         }
     }
@@ -53,6 +54,7 @@ public class DocxReplacer implements Runnable{
             for (XWPFTableRow row : tbl.getRows()) {
                 for (XWPFTableCell cell : row.getTableCells()) {
                     for (XWPFParagraph paragraph : cell.getParagraphs()) {
+//                        System.out.println("mx.edu.utxj.pye.sgi.funcional.DocxReplacer.iterateThroughTables(): " + paragraph.getText());
                         iterateThroughRuns(paragraph, fieldsForReport);
                     }
                 }
@@ -63,15 +65,17 @@ public class DocxReplacer implements Runnable{
     private void iterateThroughFooters(XWPFDocument doc, Map<String, String> fieldsForReport) throws NotFoundException {
         for (XWPFFooter footer : doc.getFooterList()) {
             for (XWPFParagraph paragraph : footer.getParagraphs()) {
+//                System.out.println("mx.edu.utxj.pye.sgi.funcional.DocxReplacer.iterateThroughFooters(): " + paragraph.getText());
                 iterateThroughRuns(paragraph, fieldsForReport);
             }
         }
     }
 
     private void iterateThroughHeaders(XWPFDocument doc, Map<String, String> fieldsForReport) throws NotFoundException {
-        System.out.println("mx.edu.utxj.pye.sgi.funcional.DocxReplacer.iterateThroughHeaders()");
+//        System.out.println("mx.edu.utxj.pye.sgi.funcional.DocxReplacer.iterateThroughHeaders()");
         for (XWPFHeader header : doc.getHeaderList()) {
             for (XWPFParagraph paragraph : header.getParagraphs()) {
+//                System.out.println("mx.edu.utxj.pye.sgi.funcional.DocxReplacer.iterateThroughHeaders(): " + paragraph.getText());
                 iterateThroughRuns(paragraph, fieldsForReport);
             }
         }
@@ -86,10 +90,10 @@ public class DocxReplacer implements Runnable{
             for (int index = 0; index < runsSize; index++) {
                 XWPFRun currentRun = runs.get(index);
                 String text = currentRun.getText(0);
-
-                if (text != null && text.contains("#")) {
-                    if (text.matches("(?i).*#[a-zA-Z0-9]+#.*")) {
-                        Matcher m = Pattern.compile("#[a-zA-Z0-9]+#")
+                if(text != null && !text.trim().isEmpty()){
+                    if(text.matches("^[0-9]{4}$")){
+//                        System.out.println("mx.edu.utxj.pye.sgi.funcional.DocxReplacer.iterateThroughRuns() text: " + text);
+                        Matcher m = Pattern.compile("^[0-9]{4}$")
                                 .matcher(text);
 
                         while (m.find()) {
@@ -103,19 +107,39 @@ public class DocxReplacer implements Runnable{
                             String newText = currentRun.getText(0).replace(variableWithHash, fieldsForReport.get(variableWithoutHash));
                             currentRun.setText(newText, 0);
                         }
-                        continue;
-                    }
-
-                    if (("#".equals(text) || " #".equals(text)) && index + 1 < runsSize) {
-                        replaceVariableBetweenDifferentRuns(index, runs, fieldsForReport);
-                        index += 2;
                     }
                 }
+
+//                if (text != null && text.contains("#")) {
+//                    if (text.matches("(?i).*#[a-zA-Z0-9]+#.*")) {
+//                        Matcher m = Pattern.compile("#[a-zA-Z0-9]+#")
+//                                .matcher(text);
+//
+//                        while (m.find()) {
+//                            String variableWithHash = m.group();
+//                            String variableWithoutHash = variableWithHash.replace("#", "");
+//
+//                            if (fieldsForReport.get(variableWithoutHash) == null) {
+//                                continue;
+//                            }
+//
+//                            String newText = currentRun.getText(0).replace(variableWithHash, fieldsForReport.get(variableWithoutHash));
+//                            currentRun.setText(newText, 0);
+//                        }
+//                        continue;
+//                    }
+//
+//                    if (("#".equals(text) || " #".equals(text)) && index + 1 < runsSize) {
+//                        replaceVariableBetweenDifferentRuns(index, runs, fieldsForReport);
+//                        index += 2;
+//                    }
+//                }
             }
         }
     }
     
     private void replaceVariableBetweenDifferentRuns(int index, List<XWPFRun> runs, Map<String, String> fieldsForReport) throws NotFoundException {
+        System.out.println("mx.edu.utxj.pye.sgi.funcional.DocxReplacer.replaceVariableBetweenDifferentRuns(" + index + ") run: " + runs.get(index).getText(0));
         XWPFRun currentRun = runs.get(index);
         String text = currentRun.getText(0);
 
@@ -125,7 +149,8 @@ public class DocxReplacer implements Runnable{
         String newVariableValue = fieldsForReport.get(middleText);
 
         if (newVariableValue == null) {
-            throw new NotFoundException("Variable: " + middleText + " is not presented in the data from DB during report prepared.");
+            System.out.println("mx.edu.utxj.pye.sgi.funcional.DocxReplacer.replaceVariableBetweenDifferentRuns() la variable es nula: " + newVariableValue);
+            //throw new NotFoundException("Variable: " + middleText + " is not presented in the data from DB during report prepared.");
         }
 
         XWPFRun lastRun = runs.get(index + 2);
@@ -136,7 +161,8 @@ public class DocxReplacer implements Runnable{
             middleRun.setText(newVariableValue, 0);
             lastRun.setText("", 0);
         } else {
-            throw new NotFoundException("Problems were occurred during variable replacement");
+            System.out.println("mx.edu.utxj.pye.sgi.funcional.DocxReplacer.replaceVariableBetweenDifferentRuns() no se encontró la variable: " + newVariableValue + ":" + middleText);
+            //throw new NotFoundException("Problems were occurred during variable replacement");
         }
     }
 }

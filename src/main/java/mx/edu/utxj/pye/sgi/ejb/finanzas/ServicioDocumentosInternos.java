@@ -2,9 +2,11 @@
 package mx.edu.utxj.pye.sgi.ejb.finanzas;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
@@ -25,9 +27,12 @@ import javax.persistence.NoResultException;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.finanzas.ComisionOficios;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
+import mx.edu.utxj.pye.sgi.entity.pye2.MunicipioPK;
 import mx.edu.utxj.pye.sgi.exception.DocumentoInternoNoSoportadoException;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.funcional.DocxReplacer;
+import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -40,6 +45,7 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 @Stateless
 public class ServicioDocumentosInternos implements EjbDocumentosInternos {
     @EJB Facade f;
+    @EJB EjbFiscalizacion ejb;
     @Resource ManagedExecutorService exe;
     SimpleDateFormat sdfWord = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -52,9 +58,16 @@ public class ServicioDocumentosInternos implements EjbDocumentosInternos {
                         .setMaxResults(1)
                         .getResultList();
                 
-                String numeroOficio = l.isEmpty()?"":l.get(0).getOficio();
-                Short numero = getNumeroEnOficio(numeroOficio, ComisionOficios.class);
-                return String.format("UTXJ-%s/%04d/%s", area.getSiglas(),numero,Year.now().format(DateTimeFormatter.ofPattern("yy")));
+                System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioDocumentosInternos.generarNumeroOficio() l: " + l);
+                
+                if(l.isEmpty()){                    
+                    return String.format("UTXJ-%s/%04d/%s", area.getSiglas(),1,Year.now().format(DateTimeFormatter.ofPattern("yy")));
+                }else{
+                    String numeroOficio = l.get(0).getOficio();
+                    Short numeroExistente = (getNumeroEnOficio(numeroOficio, ComisionOficios.class));
+                    Short numero = (short)(numeroExistente + 1);
+                    return String.format("UTXJ-%s/%04d/%s", area.getSiglas(),numero,Year.now().format(DateTimeFormatter.ofPattern("yy")));
+                }
             default: 
                 throw new DocumentoInternoNoSoportadoException(clase);
         }        
@@ -141,34 +154,47 @@ public class ServicioDocumentosInternos implements EjbDocumentosInternos {
 //                Localidad localidad = f.getEntityManager().find(Localidad.class, new LocalidadPK(comisionOficio.getEstado(), comisionOficio.getMunicipio(), comisionOficio.getLocalidad()));
                 
                 try {
-                    XWPFDocument document = new XWPFDocument(OPCPackage.open(new File("C:\\archivos\\plantillas\\oficio_comision.docx")));
-                    Map<String, String> reemplazos = new HashMap<>();
-                    reemplazos.put("numeroOficio", comisionOficio.getOficio());
-                    reemplazos.put("COMISIONADO", comisionado.getNombre().toUpperCase());
-                    reemplazos.put("COMISIONADO_CATEGORIA", comisionado.getCategoriaOficial().getNombre().toUpperCase());
-                    reemplazos.put("actividades", comisionOficio.getActividades());
-                    reemplazos.put("dependencia", comisionOficio.getDependencia());
-//                    reemplazos.put("municipio", localidad.getMunicipio().getNombre());
-//                    reemplazos.put("estado", localidad.getMunicipio().getEstado().getNombre());
-                    reemplazos.put("pais", "México");
-                    reemplazos.put("fechaComision", sdfWord.format(comisionOficio.getFechaComisionInicio()));
-                    reemplazos.put("fechaActual", sdfWord.format(comisionOficio.getFechaGeneracion()));
-                    reemplazos.put("SUPERIOR", superior.getNombre().toUpperCase());
-                    reemplazos.put("SUPERIOR_CATEGORIA", superior.getCategoriaOficial().getNombre().toUpperCase());
-                    
-
-                    exe.submit((Runnable) new DocxReplacer(reemplazos, document));
-                    while (!exe.isTerminated()) {
-                        Thread.sleep(50);
+                    Municipio municipio = f.getEntityManager().find(Municipio.class, new MunicipioPK(comisionOficio.getEstado(), comisionOficio.getMunicipio()));
+                    File original = new File("C:\\archivos\\plantillas\\oficio_comision.docx");
+                    char[] chars = comisionOficio.getOficio().toCharArray();
+                    chars[9] = '_';
+                    chars[14] = '_';
+                    File copia = new File(String.format("C:\\archivos\\plantillas\\oficio_comision_%s.docx",String.valueOf(chars)));
+//                    Path destino = ServicioArchivos.copiarArchivo(original, copia);
+//                    System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioDocumentosInternos.construirOficio() copia: " + destino.toString());
+                    try(XWPFDocument document0 = new XWPFDocument(new FileInputStream(original))){
+                        ServicioArchivos.eliminarArchivo(copia.toString());
+                        FileOutputStream fos0 = new FileOutputStream(copia);
+                        document0.write(fos0);                        
                     }
+                    
+                    Thread.sleep(2500);
+                    
+                    try (XWPFDocument document = new XWPFDocument(new FileInputStream(copia))) {                       
+                        Map<String, String> reemplazos = new HashMap<>();
+                        reemplazos.put("0001", comisionOficio.getOficio());
+                        reemplazos.put("0002", comisionado.getNombre().toUpperCase());
+                        reemplazos.put("0003", comisionado.getCategoriaOficial().getNombre().toUpperCase());
+                        reemplazos.put("0004", comisionOficio.getActividades());
+                        reemplazos.put("0005", comisionOficio.getDependencia());
+                        reemplazos.put("0006", municipio.getNombre());
+                        reemplazos.put("0007", municipio.getEstado().getNombre());
+                        reemplazos.put("0008", "México");
+                        reemplazos.put("0009", sdfWord.format(comisionOficio.getFechaComisionInicio()));
+                        reemplazos.put("0010", sdfWord.format(comisionOficio.getFechaGeneracion()));
+                        reemplazos.put("0011", superior.getNombre().toUpperCase());
+                        reemplazos.put("0012", superior.getCategoriaOficial().getNombre().toUpperCase());
 
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HHmm");
-                    String ruta = String.format("C:\\archivos\\plantillas\\oficio_comision%s.docx", sdf.format(new Date()));
-                    File file = new File(ruta);
-                    FileOutputStream fos = new FileOutputStream(file);
-                    document.write(fos);
-                    return URI.create(ruta).getPath();
-                } catch (InvalidFormatException | IOException | InterruptedException ex) {
+//                        System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioDocumentosInternos.construirOficio() reemplazos: " + reemplazos);
+
+                        exe.submit((Runnable) new DocxReplacer(reemplazos, document));
+                        Thread.sleep(2500);
+                        
+                        FileOutputStream fos = new FileOutputStream(copia);
+                        document.write(fos);
+                    }
+                    return copia.toString();//URI.create(ruta).getPath();
+                } catch (IOException | InterruptedException ex) {
                     Logger.getLogger(ServicioDocumentosInternos.class.getName()).log(Level.SEVERE, null, ex);
                 }
 

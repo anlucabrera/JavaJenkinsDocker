@@ -71,9 +71,8 @@ public class ComisionAvisos implements Serializable {
     @Column(name = "otros")
     private double otros;
     @Basic(optional = false)
-    @NotNull
     @Lob
-    @Size(min = 1, max = 65535)
+    @Size(min = 0, max = 65535)
     @Column(name = "comentarios")
     private String comentarios;
     @Basic(optional = false)

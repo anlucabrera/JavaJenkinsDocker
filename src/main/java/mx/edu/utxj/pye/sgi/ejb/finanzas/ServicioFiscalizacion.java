@@ -31,18 +31,21 @@ import org.xml.sax.SAXException;
 import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Stream;
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedExecutorService;
+import javax.inject.Inject;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.Part;
+import mx.edu.utxj.pye.sgi.controlador.Caster;
+import mx.edu.utxj.pye.sgi.dto.Comision;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Actividades;
-import mx.edu.utxj.pye.sgi.entity.finanzas.Tarifas;
+import mx.edu.utxj.pye.sgi.entity.finanzas.AlineacionTramites;
+import mx.edu.utxj.pye.sgi.entity.finanzas.ComisionAvisos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
@@ -50,11 +53,16 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
+import mx.edu.utxj.pye.sgi.entity.pye2.MunicipioPK;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAreas;
 import mx.edu.utxj.pye.sgi.entity.pye2.UsuariosRegistros;
+import mx.edu.utxj.pye.sgi.enums.ComisionOficioEstatus;
+import mx.edu.utxj.pye.sgi.enums.GastoTipo;
+import mx.edu.utxj.pye.sgi.enums.TramiteTipo;
 import mx.edu.utxj.pye.sgi.funcional.Validador;
 import mx.edu.utxj.pye.sgi.funcional.ValidadorFactura;
 import mx.edu.utxj.pye.sgi.funcional.ValidadorFacturaPDF;
+import mx.edu.utxj.pye.sgi.util.DateUtils;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.sgi.util.XMLReader;
 import nl.lcs.qrscan.core.QrPdf;
@@ -68,16 +76,15 @@ import org.apache.commons.io.FilenameUtils;
 @MultipartConfig()
 public class ServicioFiscalizacion implements EjbFiscalizacion {
 
-    @EJB
-    Facade f;
-    @EJB
-    EjbPropiedades ep;
-    @Resource
-    ManagedExecutorService exe;
+    @EJB Facade f;
+    @EJB EjbPropiedades ep;
+    @EJB EjbDocumentosInternos ejbDocumentosInternos;
+    @Inject Caster caster;
+    @Resource ManagedExecutorService exe;
 
     @Override
     public List<Tramites> getTramitesAcargo(Personal personal) {
-        return f.getEntityManager().createQuery("SELECT t FROM Tramites t LEFT JOIN t.comisionOficios oc where t.clave=:clave OR oc.comisionado = :clave ORDER BY t.fechaInicio DESC", Tramites.class)
+        return f.getEntityManager().createQuery("SELECT t FROM Tramites t LEFT JOIN t.comisionOficios oc where t.clave=:clave OR oc.comisionado = :clave ORDER BY oc.oficio DESC", Tramites.class)
                 .setParameter("clave", personal.getClave())
                 .getResultList();
     }
@@ -91,68 +98,136 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
                 .map(p -> p.getClave())
                 .collect(Collectors.toList());
 
-        return f.getEntityManager().createQuery("SELECT t FROM Tramites t LEFT JOIN t.comisionOficios oc where t.clave IN :claves OR oc.comisionado in :claves ORDER BY t.fechaInicio DESC", Tramites.class)
+        return f.getEntityManager().createQuery("SELECT t FROM Tramites t LEFT JOIN t.comisionOficios oc where t.clave IN :claves OR oc.comisionado in :claves ORDER BY oc.oficio DESC", Tramites.class)
                 .setParameter("claves", claves)
                 .getResultList();
     }
 
+
+
+    @Override
+    public Comision inicializarComision(Personal generador) {
+        Comision comision = new Comision(new Tramites());        
+        comision.getTramite().setAlineacionTramites(new AlineacionTramites());
+        comision.getTramite().setComisionOficios(new ComisionOficios());
+        comision.getTramite().getComisionOficios().setComisionAvisos(new ComisionAvisos());
+        comision.setTipo(TramiteTipo.COMISION);
+        comision.setGastoTipo(GastoTipo.ANTICIPADO);
+        comision.getTramite().getComisionOficios().setFechaGeneracion(new Date());
+        comision.getTramite().getComisionOficios().getComisionAvisos().setZona((short)0);
+        comision.getTramite().setFolio((short)0);
+        comision.getTramite().getComisionOficios().getComisionAvisos().setComentarios("");
+        comision.getTramite().setEstatus(TramiteEstatus.SOLICITADO.getLabel());
+        comision.getTramite().setFechaInicio(new Date());
+        comision.getTramite().getComisionOficios().setObservaciones("");
+        comision.getTramite().getComisionOficios().setEstatus(ComisionOficioEstatus.SOLICITADO_POR_COMISIONADO.getLabel());
+        comision.getTramite().getComisionOficios().setRuta("");
+        comision.getTramite().setFechaLimite(DateUtils.asDate(LocalDate.now().plusDays(5)));
+        comision.getTramite().setAnio((short)Year.now().getValue());
+        comision.getTramite().setFolio((short)0);
+        
+        comision.setAlineacionArea(f.getEntityManager().find(AreasUniversidad.class, (short)generador.getAreaOperativa()));
+        comision.setAreas(getAreasConPOA(Short.valueOf(caster.getEjercicioFiscal())));
+        comision.setEjes(getEjes(Short.valueOf(caster.getEjercicioFiscal()), comision.getAlineacionArea().getArea()));
+        comision.setEstados(getEstados());
+        comision.setComisionado(generador);
+        comision.setPosiblesComisionados(getPosiblesComisionados((short)generador.getAreaOperativa(), (short)comision.getComisionado().getAreaOperativa()));
+        comision.getTramite().getComisionOficios().setGenerador(generador.getClave());
+        comision.getTramite().getComisionOficios().setOficio("");
+        comision.getTramite().getComisionOficios().setSuperior(getSuperior(generador).getClave());
+        comision.getTramite().getComisionOficios().setVistoBueno(null);
+        comision.getTramite().setClave(generador.getClave()); //clave de la persona que da el seguimiento, puede o no ser la misma que el comisionado
+        
+        comision.setInicio(DateUtils.asDate(LocalDate.now().plusDays(1)));
+        comision.setFin(comision.getInicio());
+        comision.setPernoctando((short)0);
+        comision.setSinPernoctar((short)1);
+        comision.calcularDias();
+        comision.setMunicipio(new Municipio(new MunicipioPK(21, 197)));
+        comision.setEstado(new Estado(21));
+        comision.setMunicipios(getMunicipiosPorEstado(comision.getEstado()));
+        
+        return comision;
+    }
+
+
     @Override
     public void guardarTramite(Tramites tramite, Double distancia) {
-        final Double tramitesTabuladorKilometrosMaximo = ep.leerPropiedadDecimal("tramitesTabuladorKilometrosMaximo").orElse(397);
-        Tarifas tarifaViatico = null;
-        if(distancia <= tramitesTabuladorKilometrosMaximo){
-            List<Tarifas> l = f.getEntityManager().createQuery("SELECT t FROM Tarifas t INNER JOIN t.tarifasPorKilometro tk WHERE (:distancia BETWEEN tk.minimo AND tk.maximo) AND (t.fechaCancelacion IS NULL or t.fechaCancelacion <= :fechaActual)", Tarifas.class)
-                    .setParameter("distancia", distancia)
-                    .setParameter("fechaActual", (new Date()))
-                    .getResultList();
-            if(!l.isEmpty()) tarifaViatico = l.get(0);
-        }else{
-            final Integer rectorAreaOficial = ep.leerPropiedadEntera("rectorAreaOficial").orElse(1);
-            final Short directivoActividad = (short)ep.leerPropiedadEntera("directivoActividad").orElse(2);
-            final Integer tramitesNivelRestoPersonal = ep.leerPropiedadEntera("tramitesNivelRestoPersonal").orElse(3);
-            
-            Personal comisionado = f.getEntityManager().find(Personal.class, tramite.getComisionOficios().getComisionado());
-            Integer nivel = tramitesNivelRestoPersonal;
-//            Boolean esLocal = false;
-            
-            if(Objects.equals(comisionado.getActividad().getActividad(), directivoActividad)){//si es directivo
-                if(comisionado.getAreaOficial() == rectorAreaOficial){//si es el rector
-                    nivel = 1;
-                }else{
-                    nivel = 2;
-                }
-            }
-            
-//            if(oficio.getEstado() == 21){//si la comision es en puebla
-//                esLocal = true;
+//        final Double tramitesTabuladorKilometrosMaximo = ep.leerPropiedadDecimal("tramitesTabuladorKilometrosMaximo").orElse(397);
+//        Tarifas tarifaViatico = null;
+//        if(distancia <= tramitesTabuladorKilometrosMaximo){
+//            List<Tarifas> l = f.getEntityManager().createQuery("SELECT t FROM Tarifas t INNER JOIN t.tarifasPorKilometro tk WHERE (:distancia BETWEEN tk.minimo AND tk.maximo) AND (t.fechaCancelacion IS NULL or t.fechaCancelacion <= :fechaActual)", Tarifas.class)
+//                    .setParameter("distancia", distancia)
+//                    .setParameter("fechaActual", (new Date()))
+//                    .getResultList();
+//            if(!l.isEmpty()) tarifaViatico = l.get(0);
+//        }else{
+//            final Integer rectorAreaOficial = ep.leerPropiedadEntera("rectorAreaOficial").orElse(1);
+//            final Short directivoActividad = (short)ep.leerPropiedadEntera("directivoActividad").orElse(2);
+//            final Integer tramitesNivelRestoPersonal = ep.leerPropiedadEntera("tramitesNivelRestoPersonal").orElse(3);
+//
+//            Personal comisionado = f.getEntityManager().find(Personal.class, tramite.getComisionOficios().getComisionado());
+//            Integer nivel = tramitesNivelRestoPersonal;
+////            Boolean esLocal = false;
+//
+//            if(Objects.equals(comisionado.getActividad().getActividad(), directivoActividad)){//si es directivo
+//                if(comisionado.getAreaOficial() == rectorAreaOficial){//si es el rector
+//                    nivel = 1;
+//                }else{
+//                    nivel = 2;
+//                }
 //            }
-            
-            List<Tarifas> l = f.getEntityManager().createQuery("SELECT t FROM Tarifas t INNER JOIN t.tarifasPorZona tz WHERE tz.nivel=:nivel", Tarifas.class)
-                    .setParameter("nivel", nivel)
-                    .getResultList();
-            
-            if(!l.isEmpty()){
-                tarifaViatico = l.get(0);
-            }
-        }
-        
-        if(tarifaViatico != null){
-            tramite.getComisionOficios().getComisionAvisos().setTarifaViaticos(tarifaViatico);
-        }
+//
+////            if(oficio.getEstado() == 21){//si la comision es en puebla
+////                esLocal = true;
+////            }
+//
+//            List<Tarifas> l = f.getEntityManager().createQuery("SELECT t FROM Tarifas t INNER JOIN t.tarifasPorZona tz WHERE tz.nivel=:nivel", Tarifas.class)
+//                    .setParameter("nivel", nivel)
+//                    .getResultList();
+//
+//            if(!l.isEmpty()){
+//                tarifaViatico = l.get(0);
+//            }
+//        }
+//
+//        if(tarifaViatico != null){
+//            tramite.getComisionOficios().getComisionAvisos().setTarifaViaticos(tarifaViatico);
+//        }
+        AlineacionTramites alineacion = tramite.getAlineacionTramites();
+        ComisionOficios oficio = tramite.getComisionOficios();
+        ComisionAvisos aviso = oficio.getComisionAvisos();
 
-        if (buscarPorAnioFolio(Year.parse(String.valueOf(tramite.getAnio())), tramite.getFolio()) == null) {
-            f.create(tramite);
-//            tramite.setComisionOficios(tramite.getComisionOficios());
-//            f.edit(tramite);
-            f.flush();
-            f.create(tramite.getComisionOficios());
-            f.flush();
-//            oficio.setComisionAvisos(aviso);
-            f.create(tramite.getComisionOficios().getComisionAvisos());
+        if (buscarPorOficio(tramite.getComisionOficios().getOficio()) == null) {
+            try {
+                tramite.setAlineacionTramites(null);
+                tramite.setComisionOficios(null);
+                oficio.setComisionAvisos(null);
+
+                f.create(tramite);
+                f.refresh(tramite);
+                alineacion.setTramite(tramite.getTramite());
+                f.create(alineacion);
+                oficio.setOficio(ejbDocumentosInternos.generarNumeroOficio(f.getEntityManager().find(AreasUniversidad.class, alineacion.getArea()), ComisionOficios.class));
+                oficio.setTramite(tramite.getTramite());
+                f.create(oficio);
+                aviso.setTramite(tramite.getTramite());
+                f.create(aviso);
+
+                oficio.setComisionAvisos(aviso);
+                tramite.setAlineacionTramites(alineacion);
+                tramite.setComisionOficios(oficio);
+            } catch (Exception ex) {
+                oficio.setComisionAvisos(aviso);
+                tramite.setAlineacionTramites(alineacion);
+                tramite.setComisionOficios(oficio);                
+                LOG.log(Level.SEVERE, null, ex);
+            }
         } else {
             f.edit(tramite);
         }
     }
+    private static final Logger LOG = Logger.getLogger(ServicioFiscalizacion.class.getName());
 
     @Override
     public void transferirTramite(Tramites tramite, Personal personal) {
@@ -197,11 +272,14 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     }
 
     @Override
-    public Tramites buscarPorAnioFolio(Year anio, Short folio) {
+    public Tramites buscarPorOficio(String oficio) {
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion.buscarPorAnioFolio() oficio: " + oficio);
+        if(oficio.trim().isEmpty())
+            return null;
+        
         try {
-            return f.getEntityManager().createQuery("SELECT t FROM Tramites t WHERE t.anio=:anio AND t.folio=:folio", Tramites.class)
-                    .setParameter("anio", (short) anio.getValue())
-                    .setParameter("folio", folio)
+            return f.getEntityManager().createQuery("SELECT t FROM Tramites t INNER JOIN FETCH t.comisionOficios WHERE t.comisionOficios.oficio=:oficio", Tramites.class)
+                    .setParameter("oficio", oficio)
                     .getSingleResult();
         } catch (NoResultException ex) {
             return null;
@@ -222,12 +300,12 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());
-        
+
         return  f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au INNER JOIN FETCH au.categoria WHERE au.area in :claves order by au.categoria.descripcion, au.nombre", AreasUniversidad.class)
                 .setParameter("claves", clavesAreas)
                 .getResultList();
     }
-    
+
     @Override
     public List<EjesRegistro> getEjes(Short ejercicio, Short area) {
         return f.getEntityManager()
@@ -667,7 +745,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     public List<Municipio> getMunicipiosPorEstado(Estado estado) {
         if(estado == null)
             return Collections.EMPTY_LIST;
-        
+
         return f.getEntityManager().createQuery("SELECT m FROM Municipio m WHERE m.estado.idestado=:estado ORDER BY m.nombre", Municipio.class)
                 .setParameter("estado", estado.getIdestado())
                 .getResultList();
@@ -679,7 +757,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
                 .setParameter("area", subordinado.getAreaOperativa())
                 .setParameter("actividades", Stream.of(2,4).collect(Collectors.toList()))
                 .getResultList();
-        
+
         if(l.isEmpty())
             return null;
         else
@@ -692,6 +770,5 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
                 .setParameter("areas", Stream.of(areaAlineacion, areaSeguimiento).collect(Collectors.toList()))
                 .getResultList();
     }
-
 
 }
