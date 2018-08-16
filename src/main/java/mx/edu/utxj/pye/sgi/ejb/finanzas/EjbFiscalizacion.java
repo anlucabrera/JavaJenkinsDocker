@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import javax.ejb.Local;
 import javax.servlet.http.Part;
+import mx.edu.utxj.pye.sgi.dto.Comision;
 import mx.edu.utxj.pye.sgi.entity.ch.Actividades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.finanzas.ComisionOficios;
@@ -45,6 +46,13 @@ public interface EjbFiscalizacion {
     public List<Tramites> getTramitesArea(Short area);
     
     /**
+     * Inicializa una instancia de comisión con entidades persitentes.
+     * @param generador Persona que genera la comisión y que automáticamente se trata como comisionado.
+     * @return Comisión inicializada.
+     */
+    public Comision inicializarComision(Personal generador);
+    
+    /**
      * Guarda en base de datos el tramite solicitado desde la interface gráfica.
      * @param tramite Trámite a generar.
      * @param distancia Distancia redonda entre el origen y destino de la comisón.
@@ -80,12 +88,11 @@ public interface EjbFiscalizacion {
     public void registrarOficioComision(Tramites tramite, ComisionOficios comisionOficio);
     
     /**
-     * Busca un trámite por anio y folio.
-     * @param anio Año del trámite
-     * @param folio Folio del trámite
-     * @return Regresa la instancia dle trámite en caso de existir o NULL de lo contrario.
+     * Busca un trámite número de oficio.
+     * @param oficio Número de oficio
+     * @return Regresa la instancia del trámite en caso de existir o NULL de lo contrario.
      */
-    public Tramites buscarPorAnioFolio(Year anio, Short folio);
+    public Tramites buscarPorOficio(String oficio);
     
     /**
      * Consulta la lista de areas con POA del eejercicio fiscal especificado.

@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
  * @author UTXJ
  */
 @RequiredArgsConstructor
-public enum OficioComisionEstatus {
+public enum ComisionOficioEstatus {
     SOLICITADO_POR_COMISIONADO("Solicitado_por_comisionado"),
     AUTORIZADO_POR_SUPERIOR("Autorizador_por_superior"), 
     REVISADO_POR_FISCALIZACION("Revisado_por_fiscalización"), 

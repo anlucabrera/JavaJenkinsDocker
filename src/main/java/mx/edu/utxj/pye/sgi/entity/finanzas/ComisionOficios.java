@@ -108,9 +108,8 @@ public class ComisionOficios implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date fechaGeneracion;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "visto_bueno")
-    private int vistoBueno;
+    private Integer vistoBueno;
     @Basic(optional = false)
     @NotNull
     @Column(name = "superior")
@@ -126,12 +125,12 @@ public class ComisionOficios implements Serializable {
     private String estatus;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 500)
+    @Size(min = 0, max = 500)
     @Column(name = "observaciones")
     private String observaciones;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 1000)
+    @Size(min = 0, max = 1000)
     @Column(name = "ruta")
     private String ruta;
     @Basic(optional = false)
@@ -163,7 +162,7 @@ public class ComisionOficios implements Serializable {
         this.tramite = tramite;
     }
 
-    public ComisionOficios(Integer tramite, String oficio, short area, int comisionado, String actividades, String dependencia, int estado, int municipio, Date fechaComisionInicio, Date fechaComisionFin, Date fechaGeneracion, int vistoBueno, int superior, int generador, String estatus, String observaciones, String ruta, boolean sabadosSolicitados, boolean sabadosAutorizados, boolean domingosSolicitados, boolean domingosAutorizados) {
+    public ComisionOficios(Integer tramite, String oficio, short area, int comisionado, String actividades, String dependencia, int estado, int municipio, Date fechaComisionInicio, Date fechaComisionFin, Date fechaGeneracion, int vistoBueno, int superior, Integer generador, String estatus, String observaciones, String ruta, boolean sabadosSolicitados, boolean sabadosAutorizados, boolean domingosSolicitados, boolean domingosAutorizados) {
         this.tramite = tramite;
         this.oficio = oficio;
         this.area = area;
@@ -275,11 +274,11 @@ public class ComisionOficios implements Serializable {
         this.fechaGeneracion = fechaGeneracion;
     }
 
-    public int getVistoBueno() {
+    public Integer getVistoBueno() {
         return vistoBueno;
     }
 
-    public void setVistoBueno(int vistoBueno) {
+    public void setVistoBueno(Integer vistoBueno) {
         this.vistoBueno = vistoBueno;
     }
 

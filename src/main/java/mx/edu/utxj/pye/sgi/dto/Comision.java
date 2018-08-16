@@ -1,9 +1,7 @@
 package mx.edu.utxj.pye.sgi.dto;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.Period;
-import java.time.Year;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -11,9 +9,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.entity.finanzas.AlineacionTramites;
-import mx.edu.utxj.pye.sgi.entity.finanzas.ComisionAvisos;
-import mx.edu.utxj.pye.sgi.entity.finanzas.ComisionOficios;
 import mx.edu.utxj.pye.sgi.entity.finanzas.Tramites;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
@@ -22,7 +17,6 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
-import mx.edu.utxj.pye.sgi.entity.pye2.MunicipioPK;
 import mx.edu.utxj.pye.sgi.enums.GastoTipo;
 import mx.edu.utxj.pye.sgi.enums.TramiteTipo;
 import mx.edu.utxj.pye.sgi.util.DateUtils;
@@ -68,19 +62,6 @@ public class Comision implements Serializable{
 
     public Comision(Tramites tramites) {
         this.tramite = tramites;
-        tramite.setAnio((short)Year.now().getValue());
-        tramite.setFolio((short)0);
-        tramites.setAlineacionTramites(new AlineacionTramites());
-        tramites.setComisionOficios(new ComisionOficios());
-        tramites.getComisionOficios().setComisionAvisos(new ComisionAvisos());
-        inicio = DateUtils.asDate(LocalDate.now().plusDays(1)); //Date.from(LocalDate.now().plusDays(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
-        fin = inicio;
-        pernoctando = 0;
-        sinPernoctar = 1;
-        calcularDias();
-        municipio = new Municipio(new MunicipioPK(21, 197));
-        municipio.setEstado(new Estado(21));
-//        System.out.println("mx.edu.utxj.pye.sgi.dto.Comision.<init>()");
     }
 
     public void setAlineacionArea(AreasUniversidad alineacionArea) {
@@ -229,13 +210,28 @@ public class Comision implements Serializable{
     public void setTipo(TramiteTipo tipo) {
         this.tipo = tipo;
         tramite.setTipo(tipo.getLabel());
+        if(tramite.getFechaInicio()==null){
+            tramite.setFechaInicio(new Date());
+        }
+        
+        if(tipo.equals(TramiteTipo.COMISION)){
+            tramite.setFechaLimite(DateUtils.asDate(DateUtils.agregarDiasHabiles(DateUtils.asLocalDate(tramite.getFechaInicio()), 3)));  
+        }else{            
+            tramite.setFechaLimite(DateUtils.asDate(DateUtils.agregarDiasHabiles(DateUtils.asLocalDate(tramite.getFechaInicio()), 5)));  
+        }
     }
 
     public void setInicio(Date inicio) {
 //        System.out.println("mx.edu.utxj.pye.sgi.dto.Comision.setInicio(): " + inicio);
         this.inicio = inicio;
-        if(inicio.getTime()>fin.getTime())
+        tramite.getComisionOficios().setFechaComisionInicio(inicio);
+        if(fin==null){
+            fin=inicio;
+        }
+        if(inicio.getTime()>fin.getTime()){
             fin = inicio;
+            tramite.getComisionOficios().setFechaComisionFin(inicio);
+        }
         
         calcularDias();
     }
@@ -243,13 +239,16 @@ public class Comision implements Serializable{
     public void setFin(Date fin) {
 //        System.out.println("mx.edu.utxj.pye.sgi.dto.Comision.setFin(): " + fin);
         this.fin = fin;
-        if(fin.getTime() < inicio.getTime())
+        tramite.getComisionOficios().setFechaComisionFin(fin);
+        if(fin.getTime() < inicio.getTime()){
             inicio = fin;
+            tramite.getComisionOficios().setFechaComisionInicio(fin);
+        }
         
         calcularDias();
     }
     
-    private void calcularDias(){
+    public void calcularDias(){
         int dias = calcularDiasTranscurridos();
         if(dias > 1){
             pernoctando = (short)(dias - 1);

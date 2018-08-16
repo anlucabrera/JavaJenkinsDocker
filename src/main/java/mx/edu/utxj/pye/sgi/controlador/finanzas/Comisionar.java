@@ -8,8 +8,11 @@ package mx.edu.utxj.pye.sgi.controlador.finanzas;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Named;
@@ -21,6 +24,7 @@ import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.dto.Comision;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbDocumentosInternos;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion;
 import mx.edu.utxj.pye.sgi.entity.finanzas.ComisionOficios;
 import mx.edu.utxj.pye.sgi.entity.finanzas.Tramites;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -59,28 +63,14 @@ public class Comisionar implements Serializable{
     
     @PostConstruct
     public void init(){
-        comision = new Comision(new Tramites());
-        comision.setTipo(TramiteTipo.COMISION);
-        comision.setGastoTipo(GastoTipo.ANTICIPADO);
-        comision.setAlineacionArea(f.getEntityManager().find(AreasUniversidad.class, (short)logon.getPersonal().getAreaOperativa()));
-        comision.setAreas(ejb.getAreasConPOA(Short.valueOf(caster.getEjercicioFiscal())));
-        comision.setEjes(ejb.getEjes(Short.valueOf(caster.getEjercicioFiscal()), comision.getAlineacionArea().getArea()));
-        comision.setEstados(ejb.getEstados());
-        comision.setComisionado(logon.getPersonal());
-        comision.setPosiblesComisionados(ejb.getPosiblesComisionados((short)logon.getPersonal().getAreaOperativa(), (short)comision.getComisionado().getAreaOperativa()));
-        comision.getTramite().getComisionOficios().setGenerador(logon.getPersonal().getClave());
-        comision.getTramite().getComisionOficios().setOficio(ejbDocumentosInternos.generarNumeroOficio(comision.getAlineacionArea(), ComisionOficios.class));
-        comision.getTramite().getComisionOficios().setFechaGeneracion(new Date());
-        comision.getTramite().getComisionOficios().setSuperior(ejb.getSuperior(logon.getPersonal()).getClave());
-        comision.getTramite().getComisionOficios().getComisionAvisos().setZona((short)0);
-        comision.getTramite().setClave(logon.getPersonal().getClave());
-        comision.getTramite().setFolio((short)0);
+        comision = ejb.inicializarComision(logon.getPersonal()); 
         Ajax.update("area","eje");
         Faces.setSessionAttribute("ejes", comision.getEjes());
         Faces.setSessionAttribute("areas", comision.getAreas());
         Faces.setSessionAttribute("estados", comision.getEstados());
+        Faces.setSessionAttribute("municipios", comision.getMunicipios());
         Faces.setSessionAttribute("docentesActivos", comision.getPosiblesComisionados());
-        comision.getTramite().setClave(logon.getPersonal().getClave()); //clave de la persona que da el seguimiento, puede o no ser la misma que el comisionado
+        
     }
     
     public void actualizarActividades(ValueChangeEvent event){
@@ -95,6 +85,7 @@ public class Comisionar implements Serializable{
         if(!comision.getEjes().isEmpty()){
             comision.setAlineacionEje(comision.getEjes().get(0));
             comision.setEstrategias(ejb.getEstrategiasPorEje(comision.getAlineacionEje(), comision.getAlineacionArea().getArea()));
+            comision.setPosiblesComisionados(ejb.getPosiblesComisionados(logon.getPersonal().getAreaOperativa(), comision.getAlineacionArea().getArea()));
         }
         comision.setAlineacionEje(null);
         Faces.setSessionAttribute("ejes", comision.getEjes());
@@ -133,6 +124,27 @@ public class Comisionar implements Serializable{
     }
     
     public void guardarComisión(){
-        ejb.guardarTramite(comision.getTramite(), distancia);
+        try{
+            ejb.guardarTramite(comision.getTramite(), distancia);
+            Faces.redirect("finanzas/tramites.xhtml");
+//            return "tramites?faces-redirect=true";
+        }catch(EJBException ex){
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.finanzas.Comisionar.guardarComisión() No se pudo guardar el trámite.");
+            LOG.log(Level.SEVERE, null, ex);
+        }
+//        return null;
     }
+    
+    public String guardarComisión2(){
+        try{
+            ejb.guardarTramite(comision.getTramite(), distancia);
+//            Faces.redirect("tramites.xhtml");
+            return "tramites?faces-redirect=true";
+        }catch(EJBException ex){
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.finanzas.Comisionar.guardarComisión() No se pudo guardar el trámite.");
+            LOG.log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    private static final Logger LOG = Logger.getLogger(Comisionar.class.getName());
 }

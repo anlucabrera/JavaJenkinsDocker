@@ -32,7 +32,10 @@ public class EntityConverter implements Converter{
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
 //        System.out.println("mx.edu.utxj.pye.sgi.converter.EntityConverter.getAsObject() f: " + f);
 //        System.out.println("mx.edu.utxj.pye.sgi.converter.EntityConverter.getAsObject() id: " + component.getId());
-        
+//        System.out.println("mx.edu.utxj.pye.sgi.converter.EntityConverter.getAsObject() value: " + value);
+        if(value == null || value.equals("- Seleccione -")){
+            throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Debe elegir un valor."));
+        }
         try{
             switch(component.getId()){
                 case "eje":

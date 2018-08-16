@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.sgi.util;
 
+import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,5 +32,24 @@ public class DateUtils {
 
     public static LocalDateTime asLocalDateTime(Date date) {
         return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+    }
+    
+    public static LocalDate agregarDiasHabiles(LocalDate inicio, Integer dias){
+        Integer habiles = 0;
+        LocalDate fin = inicio;
+        while(habiles < dias){
+            if(!fin.getDayOfWeek().equals(DayOfWeek.SATURDAY) && !fin.getDayOfWeek().equals(DayOfWeek.SUNDAY)){
+                habiles++;
+            }            
+            fin = fin.plusDays(1);
+        }
+        
+        return fin;
+    }
+    
+    public static void main(String[] args) {
+        LocalDate hoy = LocalDate.now();
+        LocalDate diezDias = DateUtils.agregarDiasHabiles(hoy, 10);
+        System.out.println("mx.edu.utxj.pye.sgi.util.DateUtils.main() 10: " + diezDias);
     }
 }

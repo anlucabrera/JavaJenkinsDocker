@@ -48,24 +48,25 @@
                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive" tableStyle="vertical-align: middle;">
                                     <p:columnGroup type="header">
                                         <p:row>
-                                            <p:column headerText="No." />
+                                            <p:column headerText="Oficio de comisión"/>
                                             <p:column headerText="Ejercicio" />
                                             <p:column headerText="Folio"/>
                                             <p:column headerText="Clave"/>
                                             <p:column headerText="Inicio"/>
                                             <p:column headerText="Límite"/>
-                                            <p:column headerText="Oficio de comisión"/>
-                                            <p:column headerText=""/>
+                                            <p:column headerText="Operaciones"/>
                                         </p:row>
                                     </p:columnGroup>
-                                    <p:column><h:outputText value="#{tramite.tramite}" /></p:column>
+                                    <p:column><h:outputText value="#{tramite.comisionOficios.oficio}" /></p:column>
                                     <p:column><h:outputText value="#{tramite.anio}" /></p:column>
                                     <p:column><h:outputText value="#{tramite.folio}" /></p:column>
                                     <p:column><h:outputText value="#{tramite.clave}" /></p:column>
                                     <p:column><h:outputText value="#{tramite.fechaInicio}" ><f:convertDateTime pattern="yyyy-MM-dd" /></h:outputText></p:column>
                                     <p:column><h:outputText value="#{tramite.fechaLimite}" ><f:convertDateTime pattern="yyyy-MM-dd" /></h:outputText></p:column>
-                                    <p:column><h:outputText value="#{tramite.comisionOficios.oficio}" /></p:column>
-                                    <p:column><p:commandButton actionListener="#{fiscalizacion.initTramiteFacturas(tramite)}" update="@(.contenedor)"  process="@this" icon="fa fa-ticket" class="btn-primary" title="Registrar facturas." /></p:column>
+                                    <p:column>
+                                        <p:commandButton actionListener="#{fiscalizacion.initTramiteFacturas(tramite)}"        process="@this" icon="fa fa-ticket"      class="btn btn-info btn-sm" title="Registrar facturas." update="@(.contenedor)" />
+                                        <p:commandLink ajax="false" action="#{documentoInterno.descargarComisionOficio(tramite)}" target="_blank" disabled="#{false}" class="#{empty false?'btn btn-warning btn-sm':'btn btn-info btn-sm'}" title="Descargar oficio de comisión."><i class="fa fa-external-link-square" /></p:commandLink>
+                                    </p:column>
                                 </p:dataTable>
                             </div>
                         </div>

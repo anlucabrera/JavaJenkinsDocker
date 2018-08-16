@@ -6,8 +6,10 @@
 package mx.edu.utxj.pye.sgi.util;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -119,5 +121,26 @@ public class ServicioArchivos implements Serializable{
      */
     public static String genRutaRelativa(String categoria){
         return categoria.concat(File.separator).concat(Year.now().toString()).concat(File.separator);
+    }
+    
+    /**
+     * Genera una copia del archivo, si la ubicación de la copia ya existe, lo sobre escribe.
+     * @param original Ruta del archivo original
+     * @param copia Ruta de la copia del archivo.
+     * @return Path del archivo destino.
+     */
+    public static Path copiarArchivo(File original, File copia){
+        System.out.println("mx.edu.utxj.pye.sgi.util.ServicioArchivos.copiarArchivo() original: " + original);
+        System.out.println("mx.edu.utxj.pye.sgi.util.ServicioArchivos.copiarArchivo() copia: " + copia);
+        System.out.println("mx.edu.utxj.pye.sgi.util.ServicioArchivos.copiarArchivo() existe original: " + (original.exists()));
+        if(original.exists()){
+            try {
+                return Files.copy(original.toPath(), copia.toPath());
+            } catch (IOException ex) {
+                Logger.getLogger(ServicioArchivos.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+            
+        return null;
     }
 }
