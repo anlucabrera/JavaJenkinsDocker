@@ -55,8 +55,9 @@ public class OrganigramView4 implements Serializable {
     @Getter    @Setter    private Integer  sub = 0, sec = 0, ptc = 0, pda = 0, lab = 0;
     @Getter    @Setter    private Iterator<ListaPersonal> empleadoActual;
 
-    @EJB
-    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbFunciones ejbFunciones;
 
     @PostConstruct
     public void init() {
@@ -82,11 +83,8 @@ public class OrganigramView4 implements Serializable {
 
     public void organigrama() {
         try {
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.OrganigramView4.organigrama()");
             nuevaListaPersonal = ejbSelectec.mostrarListaDeEmpleados();
             Collections.sort(nuevaListaPersonal, (x, y) -> Short.compare(x.getAreaOperativa(), y.getAreaOperativa()));
-
-            System.out.println("nuevaListaPersonal(1)" + nuevaListaPersonal.size());
             empleadoActual = nuevaListaPersonal.iterator();
             while (empleadoActual.hasNext()) {
                 ListaPersonal next = empleadoActual.next();
@@ -165,9 +163,7 @@ public class OrganigramView4 implements Serializable {
                 if (CAD == null) {                    CAD = addDivision(DEV, "Coordinación de Actividades Deportivas ____________________ Temporalmente sin responsable");                }
                 if (SGC == null) {                    SGC = addDivision(DEV, "Coordinación del Sistema de Gestión de la Calidad ____________________ Temporalmente sin responsable");                }
                 if (CON == null) {                    CON = addDivision(DAF, "Contraloría ____________________ Temporalmente sin responsable");                }            
-            
-            System.out.println("nuevaListaPersonal(2)" + nuevaListaPersonal.size());
-            
+                        
             empleadoActual = nuevaListaPersonal.iterator();
             while (empleadoActual.hasNext()) {
                 ListaPersonal next = empleadoActual.next();
@@ -187,8 +183,6 @@ public class OrganigramView4 implements Serializable {
 
                 }
             }
-
-            System.out.println("nuevaListaPersonal(3)" + nuevaListaPersonal.size());
             
             empleadoActual = nuevaListaPersonal.iterator();
             while (empleadoActual.hasNext()) {
@@ -229,7 +223,6 @@ public class OrganigramView4 implements Serializable {
                     empleadoActual.remove();
                 }                
             }
-            System.out.println("nuevaListaPersonal(4)" + nuevaListaPersonal.size());
                        
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -356,7 +349,7 @@ public class OrganigramView4 implements Serializable {
             area = 61;
             categoria = 18;
             areaOpe = nuevoEmpleado.getAreaOperativa();
-            nuevoEmpleadoFunciones = ejbSelectec.mostrarEmpleadosPorClave(nuevoEmpleado.getClave());
+            nuevoEmpleadoFunciones = ejbDatosUsuarioLogeado.mostrarPersonalLogeado(nuevoEmpleado.getClave());
             buscaSubordinados();
             buscaFunciones();
         } catch (Throwable ex) {
@@ -370,7 +363,7 @@ public class OrganigramView4 implements Serializable {
             nuevoEmpleadoFunciones = new Personal();
             nuevoEmpleado = new ListaPersonal();
             nuevoEmpleado = nuevaListaPersonal.get(0);
-            nuevoEmpleadoFunciones = ejbSelectec.mostrarEmpleadosPorClave(nuevoEmpleado.getClave());
+            nuevoEmpleadoFunciones = ejbDatosUsuarioLogeado.mostrarPersonalLogeado(nuevoEmpleado.getClave());
             fechaI = dateFormat.format(nuevoEmpleado.getFechaIngreso());
             if ((nuevoEmpleado.getAreaSuperior() >= 23 && nuevoEmpleado.getAreaSuperior() <= 50)) {
                 area = 61;
@@ -392,7 +385,7 @@ public class OrganigramView4 implements Serializable {
             if (categoria == 111) {
                 categoria = 33;
             }
-            listaDFunciones = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(area, categoria, nuevoEmpleadoFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
+            listaDFunciones = ejbFunciones.mostrarListaFuncionesPersonalLogeado(area, categoria, nuevoEmpleadoFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
             if (listaDFunciones.isEmpty()) {
                 Messages.addGlobalWarn("Sin información de funciones");
             } else {

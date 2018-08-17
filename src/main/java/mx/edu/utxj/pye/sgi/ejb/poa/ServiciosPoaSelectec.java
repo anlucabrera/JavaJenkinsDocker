@@ -30,6 +30,13 @@ public class ServiciosPoaSelectec implements EjbPoaSelectec {
 
 //  -------------------------------------------- ActividadesPoa -------------------------------------------------
     @Override
+    public List<ActividadesPoa> mostrarAreasQueRegistraronActividades() {
+        TypedQuery<ActividadesPoa> q = em.createQuery("SELECT a FROM ActividadesPoa a GROUP BY a.area", ActividadesPoa.class);
+        List<ActividadesPoa> pr = q.getResultList();
+        return pr;
+    }
+
+    @Override
     public List<ActividadesPoa> mostrarActividadesPoasArea(Short area) {
         TypedQuery<ActividadesPoa> q = em.createQuery("SELECT a FROM ActividadesPoa a WHERE a.area = :area", ActividadesPoa.class);
         q.setParameter("area", area);

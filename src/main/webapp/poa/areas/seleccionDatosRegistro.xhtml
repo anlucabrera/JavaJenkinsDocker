@@ -42,7 +42,7 @@
         <p:outputPanel id="linea">            
             <p:autoUpdate/>
             <p:outputLabel for="lineaAccion"  value="Linea de acción" />
-            <p:selectOneMenu filter="true" filterMatchMode="contains" id="lineaAccion" value="#{controladorRegistroActividadesPOA.lineasAccion.numero}" valueChangeListener="#{controladorRegistroActividadesPOA.asignaLineaAccionSeleccionada}">
+            <p:selectOneMenu filter="true" style="max-width: 650px;alignment-baseline: middle " filterMatchMode="contains" id="lineaAccion" value="#{controladorRegistroActividadesPOA.lineasAccion.numero}" valueChangeListener="#{controladorRegistroActividadesPOA.asignaLineaAccionSeleccionada}">
                 <f:selectItems value="#{controladorRegistroActividadesPOA.lineasAccions}" var="lineasAccion" itemValue="#{lineasAccion.lineaAccion}" itemLabel="#{lineasAccion.numero} -- #{lineasAccion.nombre}" />
                 <p:ajax update="linea" listener="#{controladorRegistroActividadesPOA.imprimirValores()}"/>
             </p:selectOneMenu> 

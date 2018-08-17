@@ -78,8 +78,7 @@ public class ControladorEvaluacionActividadesPOA implements Serializable {
     
     @EJB
     EjbPoaSelectec poaSelectec;
-    @Inject
-    ControladorEmpleado controladorEmpleado;
+    @Inject    ControladorEmpleado controladorEmpleado;
     @EJB    EjbCarga carga;
 
     @PostConstruct
@@ -92,10 +91,10 @@ public class ControladorEvaluacionActividadesPOA implements Serializable {
                 
         ejes=new EjesRegistro(0);
                 
-        ejercicioFiscal = Short.parseShort("19");
+        ejercicioFiscal = Short.parseShort("17");
         mes=fechaActual.getMonth();
         
-        claveArea = 62;
+        claveArea = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
         siglaArea = "PyE";
         switch(mes){
             case 0: mesNombre="Enero"; break;

@@ -88,7 +88,6 @@ public class ControladorPremiosyDistinciones implements Serializable{
             ruta = carga.subir(file, new File(claveTrabajador.concat(File.separator).concat("premiosDistinciones").concat(File.separator)));
             if (!"Error: No se pudo leer el archivo".equals(ruta)) {
                 nuevoOBJDistinciones.setEvidenciaDistincion(ruta);
-//                System.out.println("mx.edu.utxj.pye.subir.controlador.Subir.upload() res:" + nuevoOBJDistinciones.getEvidenciaDistincion());
                 direccionInt = 1;
                 ruta = null;
             } else {
@@ -168,7 +167,7 @@ public class ControladorPremiosyDistinciones implements Serializable{
             accion = "";
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorPremiosyDistinciones.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

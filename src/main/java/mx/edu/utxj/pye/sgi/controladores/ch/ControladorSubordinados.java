@@ -37,8 +37,7 @@ public class ControladorSubordinados implements Serializable {
 
     private static final long serialVersionUID = 1736039029781733869L;
 
-    @Getter    @Setter    private List<InformacionAdicionalPersonal> nuevaListaInformacionAdicionalPersonalSubordinado = new ArrayList<>();
-    @Getter    @Setter    private List<ListaPersonal> nuevaListaListaPersonaSubordinado = new ArrayList<>(), nuevaListaListaPersonalLogeado = new ArrayList<>(), nuevaListaListaPersonal = new ArrayList<>(), nuevaListaListaPersonalJefes = new ArrayList<>();
+    @Getter    @Setter    private List<ListaPersonal> nuevaListaListaPersonal = new ArrayList<>(), nuevaListaListaPersonalJefes = new ArrayList<>();
     @Getter    @Setter    private List<Funciones> listaFuncioneSubordinado = new ArrayList<>();
     @Getter    @Setter    private List<Idiomas> listaIdiomas = new ArrayList<>();
     @Getter    @Setter    private List<FormacionAcademica> listaFormacionAcademica = new ArrayList<>();
@@ -59,8 +58,15 @@ public class ControladorSubordinados implements Serializable {
     @Getter    @Setter    private ListaPersonal nuevoOBJListaPersonal, nuevoOBJListaPersonalFiltro, nuevoOBJListaPersonalLogeado;
     @Getter    @Setter    private Personal nuevoOBJPersonal;
 
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUpdate ejbUpdate;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbFunciones ejbFunciones;
+    
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbEducacion ejbEducacion;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbHabilidades ejbHabilidades;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbTecnologia ejbTecnologia;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPremios ejbPremios;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbProduccionProfecional ejbProduccionProfecional;
 
     @Inject    ControladorEmpleado controladorEmpleado;
 
@@ -73,7 +79,6 @@ public class ControladorSubordinados implements Serializable {
         estatus.add("Pendiente");
 
         empleadoLogeado = controladorEmpleado.getEmpleadoLogeado();
-//        System.out.println("empleadoLogeado " + empleadoLogeado);
         nuevaListaFuncionesEspecificas.clear();
         nuevaListaFuncionesGenerales.clear();
         nuevoOBJFunciones = new Funciones();
@@ -83,33 +88,15 @@ public class ControladorSubordinados implements Serializable {
 
     public void mostrarPerfilSubordinado() {
         try {
-            nuevaListaInformacionAdicionalPersonalSubordinado.clear();
-            nuevaListaListaPersonaSubordinado.clear();
             nuevoOBJPersonal = new Personal();
 
-            nuevaListaInformacionAdicionalPersonalSubordinado = ejbSelectec.mostrarListaDeInformacionAdicionalPersonal(contactoDestino);
-            nuevaListaListaPersonaSubordinado = ejbSelectec.mostrarListaDeEmpleadosXClave(contactoDestino);
-
-            if (nuevaListaInformacionAdicionalPersonalSubordinado.isEmpty() || nuevaListaListaPersonaSubordinado.isEmpty()) {
-
-                nuevoOBJListaPersonal = nuevaListaListaPersonaSubordinado.get(0);
-                nuevoOBJInformacionAdicionalPersonal = new InformacionAdicionalPersonal();
-
-                listaFormacionAcademica.clear();
-                listaExperienciasLaborales.clear();
-                listaCapacitacionespersonal.clear();
-                listaIdiomas.clear();
-                listaHabilidadesInformaticas.clear();
-                listaInvestigaciones.clear();
-
-            } else {
-                nuevoOBJInformacionAdicionalPersonal = nuevaListaInformacionAdicionalPersonalSubordinado.get(0);
-                nuevoOBJListaPersonal = nuevaListaListaPersonaSubordinado.get(0);
-                nuevoOBJPersonal = ejbSelectec.mostrarEmpleadosPorClave(contactoDestino);
-                informacionCV();
-                mostrarFuncioneSubordinado();
-                mostrarIncidencias();
-            }
+            nuevoOBJInformacionAdicionalPersonal = ejbDatosUsuarioLogeado.mostrarInformacionAdicionalPersonalLogeado(contactoDestino);
+            nuevoOBJListaPersonal = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeado(contactoDestino);
+            nuevoOBJPersonal = ejbDatosUsuarioLogeado.mostrarPersonalLogeado(contactoDestino);
+            informacionCV();
+            mostrarFuncioneSubordinado();
+            mostrarIncidencias();
+            
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
@@ -126,13 +113,13 @@ public class ControladorSubordinados implements Serializable {
             listaInvestigaciones.clear();
             listaDocencias.clear();
 
-            listaFormacionAcademica = ejbSelectec.mostrarFormacionAcademica(contactoDestino);
-            listaExperienciasLaborales = ejbSelectec.mostrarExperienciasLaborales(contactoDestino);
-            listaCapacitacionespersonal = ejbSelectec.mostrarCapacitacionespersonal(contactoDestino);
-            listaIdiomas = ejbSelectec.mostrarHabilidadesIdiomasPorClaveTrabajador(contactoDestino);
-            listaHabilidadesInformaticas = ejbSelectec.mostrarHabilidadesInformaticasPorClaveTrabajador(contactoDestino);
-            listaInvestigaciones = ejbSelectec.mostrarInvestigacionPorClaveTrabajador(contactoDestino);
-            listaDocencias = ejbSelectec.mostrarDocencias(contactoDestino);
+            listaFormacionAcademica = ejbEducacion.mostrarFormacionAcademica(contactoDestino);
+            listaExperienciasLaborales = ejbEducacion.mostrarExperienciasLaborales(contactoDestino);
+            listaCapacitacionespersonal = ejbEducacion.mostrarCapacitacionespersonal(contactoDestino);
+            listaIdiomas = ejbHabilidades.mostrarIdiomas(contactoDestino);
+            listaHabilidadesInformaticas = ejbHabilidades.mostrarHabilidadesInformaticas(contactoDestino);
+            listaInvestigaciones = ejbProduccionProfecional.mostrarInvestigacion(contactoDestino);
+            listaDocencias = ejbDatosUsuarioLogeado.mostrarListaDocencias(contactoDestino);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
@@ -145,19 +132,19 @@ public class ControladorSubordinados implements Serializable {
             nuevaListaFuncionesEspecificas.clear();
             switch (nuevoOBJListaPersonal.getCategoriaOperativa()) {
                 case 30:
-                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
                 case 32:
-                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
                 case 34:
-                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
                 case 41:
-                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
                 default:
-                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(nuevoOBJListaPersonal.getAreaOperativa(), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(nuevoOBJListaPersonal.getAreaOperativa(), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
             }
             if (listaFuncioneSubordinado.isEmpty()) {
@@ -182,12 +169,10 @@ public class ControladorSubordinados implements Serializable {
 
     public void mostrarContactosParaNotificacion() {
         try {
-            nuevaListaListaPersonalLogeado.clear();
             nuevoOBJListaPersonalLogeado = new ListaPersonal();
-            nuevaListaListaPersonalLogeado = ejbSelectec.mostrarListaDeEmpleadosXClave(empleadoLogeado);
-            nuevoOBJListaPersonalLogeado = nuevaListaListaPersonalLogeado.get(0);
+            nuevoOBJListaPersonalLogeado = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeado(empleadoLogeado);
 
-            nuevaListaListaPersonal = ejbSelectec.mostrarListaDeEmpleadosParaJefes(nuevoOBJListaPersonalLogeado.getAreaOperativa());
+            nuevaListaListaPersonal = ejbDatosUsuarioLogeado.mostrarListaSubordinados(nuevoOBJListaPersonalLogeado);
             for (int i = 0; i <= nuevaListaListaPersonal.size() - 1; i++) {
                 nuevoOBJListaPersonalFiltro = nuevaListaListaPersonal.get(i);
                 if (Objects.equals(nuevoOBJListaPersonalFiltro.getClave(), nuevoOBJListaPersonalLogeado.getClave())) {
@@ -203,7 +188,11 @@ public class ControladorSubordinados implements Serializable {
 
     public void mostrarIncidencias() {
         try {
-            listaIncidencias = ejbSelectec.mostrarIncidenciasPorEstatus(contactoDestino, "Pendiente");
+            ejbNotificacionesIncidencias.mostrarIncidencias(contactoDestino).forEach((t) -> {
+                if (t.getEstatus().equals("Pendiente")) {
+                    listaIncidencias.add(t);
+                }
+            });
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
@@ -212,7 +201,7 @@ public class ControladorSubordinados implements Serializable {
 
     public void onRowEdit(RowEditEvent event) {
         try {
-            ejbUpdate.actualizarIncidencias((Incidencias) event.getObject());
+            ejbNotificacionesIncidencias.actualizarIncidencias((Incidencias) event.getObject());
             Messages.addGlobalInfo("¡Operación exitosa!!");
             informacionCV();
         } catch (Throwable ex) {

@@ -59,54 +59,7 @@
                     </div>
                 </div>
             </c:if>
-            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                <div class="box box-primary">
-                    <div class="box box-solid">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">Nota importante para el registro de evidencias del curriculum electrónico:</h3>
-                            <div class="box-tools pull-right">
-                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="box-body">  
-                            <div class="row">
-                                <div class="col-md-12 col-sm-12 col-xs-12">
-                                    <div class="info-box">
-                                        <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
-
-                                        <div class="info-box-content">
-                                            <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                            <span class="info-box-number">Se recomienda que los archivos a subir sean escaneados de 400 o 400*400 DPI o PPP (según sea la configuración del escáner) en formato PDF.
-                                                <p>El nombre del archivo no deberá contener acentos ni caracteres especiales</p>
-                                            </span> 
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>                
-                        </div>
-                        <hr/>
-                        <div class="box-body">  
-                            <div class="row">
-                                <div class="col-md-12 col-sm-12 col-xs-12">
-                                    <div class="info-box">
-                                        <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
-
-                                        <div class="info-box-content">
-                                            <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                            <span class="info-box-number">Solo se permite anexar un archivo por registro, en caso de que su evidencia este en dos archivos distintos, en la siguiente página se le permite unirlos a fin de que queden en un solo archivo.</span>
-                                            <p:link href="https://www.ilovepdf.com/es/unir_pdf" target="_blanck" style="color: #3a3030">
-                                                <i class="fa fa-file-pdf"></i>
-                                                <span>Unir archivos PDF</span>
-                                            </p:link>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>                
-                        </div>
-                    </div>
-                </div>
-            </c:if>
+            
         </c:if>
 
         <div class="box box-primary">

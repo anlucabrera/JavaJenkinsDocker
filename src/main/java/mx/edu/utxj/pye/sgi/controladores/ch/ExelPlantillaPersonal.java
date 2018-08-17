@@ -55,7 +55,7 @@ public class ExelPlantillaPersonal implements Serializable {
             nuevaListaListaPersonal = ejbSelectec.mostrarListaDeEmpleados();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ExelPlantillaPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
         System.out.println("ExelPlantillaPersonal Fin: " + System.currentTimeMillis());
     }
@@ -163,7 +163,6 @@ public class ExelPlantillaPersonal implements Serializable {
             // flujo de datos
             for (int i = 0; i <= 23; i++) {
                 pagina.autoSizeColumn((short) i);
-//                System.out.println("mx.edu.utxj.pye.sgi.ch.controladores.ExelPlantillaPersonal.generarPlantillaPersoanl() " + i);
             }
 
             workbook.write(salida);
@@ -184,7 +183,6 @@ public class ExelPlantillaPersonal implements Serializable {
     }
 
     public String convertirRuta(File file) {
-//        System.out.println("evidencias2/evidenciasCapitalHumano/PlantillaPersonal/" + "evidencias2/evidanciasCapitalHuano/PlantillaPersonal/".concat(file.toURI().toString().split("config")[1]));
         return "evidencias2/evidenciasCapitalHumano/PlantillaPersonal".concat(file.toURI().toString().split("config")[1]);
     }
 }

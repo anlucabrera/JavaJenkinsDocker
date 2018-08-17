@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -41,6 +42,8 @@ import mx.edu.utxj.pye.sgi.entity.ch.Memoriaspub;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.ch.Investigaciones;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.RowEditEvent;
 
@@ -51,7 +54,7 @@ public class ControladorPersonal implements Serializable {
 
     private static final long serialVersionUID = 1736039029781733869L;
 
-    @Getter    @Setter    private List<areas> listareasOperativas = new ArrayList<areas>(),listareasOficiales = new ArrayList<areas>(),listareasSuperiores = new ArrayList<areas>();
+    @Getter    @Setter    private List<AreasUniversidad> listaAreasUniversidads = new ArrayList<>(),listareasSuperiores = new ArrayList<>();
     @Getter    @Setter    private List<InformacionAdicionalPersonal> nuevaListaInformacionAdicionalPersonalSubordinado = new ArrayList<>();
     @Getter    @Setter    private List<Funciones> listaFuncioneSubordinado = new ArrayList<>();
     @Getter    @Setter    private List<FormacionAcademica> listaFormacionAcademica = new ArrayList<>();
@@ -72,10 +75,11 @@ public class ControladorPersonal implements Serializable {
     @Getter    @Setter    private List<String> nuevaListaFuncionesEspecificas = new ArrayList<>(), nuevaListaFuncionesGenerales = new ArrayList<>(), estatus = new ArrayList<>(),rutasEvidencias=new ArrayList<>();
     @Getter    @Setter    private List<Incidencias> listaIncidencias = new ArrayList<>();
     @Getter    @Setter    private List<Personal> listaPersonal = new ArrayList<>(), listaPersonalSubordinado = new ArrayList<>();
-    @Getter    @Setter    private List<ListaPersonal> nuevaListaListaPersonaSubordinado = new ArrayList<>(), nuevaVistaListaPersonalAreas = new ArrayList<>();
+    @Getter    @Setter    private List<ListaPersonal> nuevaListaListaPersonaSubordinado = new ArrayList<>();
     @Getter    @Setter    private List<PersonalCategorias> listaPersonalCategorias = new ArrayList<>();
     @Getter    @Setter    private List<Grados> listaGrados = new ArrayList<>();
     @Getter    @Setter    private List<Actividades> listaActividades = new ArrayList<>();
+    @Getter    @Setter    private List<Short> listaClaveAS = new ArrayList<>();
 
     @Getter    @Setter    private Short actividad=0,categoriaOP=0,categoriaOF=0,grado=0;
     @Getter    @Setter    private String clase = "";
@@ -100,12 +104,15 @@ public class ControladorPersonal implements Serializable {
     
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
     
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbFunciones ejbFunciones;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbEducacion ejbEducacion;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbHabilidades ejbHabilidades;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPremios ejbPremios;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbTecnologia ejbTecnologia;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbProduccionProfecional ejbProduccionProfecional;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
     
     @Inject    ControladorEmpleado controladorEmpleado;
      
@@ -128,43 +135,29 @@ public class ControladorPersonal implements Serializable {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public void generarListasAreas() {
         try {
-            nuevaVistaListaPersonalAreas.clear();
-            listaPersonalCategorias.clear();
-            listaActividades.clear();
             listaGrados.clear();
-
-            for (int i = 1; i <= 3; i++) {
-                nuevaVistaListaPersonalAreas.clear();
-                switch (i) {
-                    case 1:
-                        nuevaVistaListaPersonalAreas = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeadoAreaOfi();
-                        break;
-                    case 2:
-                        nuevaVistaListaPersonalAreas = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeadoAreaOpe();
-                        break;
-                    case 3:
-                        nuevaVistaListaPersonalAreas = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeadoAreaSup();
-                        break;
-                }
-                for (int j = 0; j <= nuevaVistaListaPersonalAreas.size() - 1; j++) {
-                    nuevoOBJListaPersonalFiltroAreas = nuevaVistaListaPersonalAreas.get(j);
-                    switch (i) {
-                        case 1:
-                            listareasOficiales.add(new areas(nuevoOBJListaPersonalFiltroAreas.getAreaOficial(), nuevoOBJListaPersonalFiltroAreas.getAreaOficialNombre()));
-                            break;
-                        case 2:
-                            listareasOperativas.add(new areas(nuevoOBJListaPersonalFiltroAreas.getAreaOperativa(), nuevoOBJListaPersonalFiltroAreas.getAreaOperativaNombre()));
-                            break;
-                        case 3:
-                            listareasSuperiores.add(new areas(nuevoOBJListaPersonalFiltroAreas.getAreaSuperior(), nuevoOBJListaPersonalFiltroAreas.getAreaSuperiorNombre()));
-                            break;
+            listaClaveAS.clear();
+            listaActividades.clear();
+            listareasSuperiores.clear();
+            listaAreasUniversidads.clear();
+            listaPersonalCategorias.clear();
+            
+            listaAreasUniversidads=ejbAreasLogeo.mostrarAreasUniversidad();
+            listaAreasUniversidads.forEach((t) -> {
+                if(!listaClaveAS.contains(t.getAreaSuperior())){
+                   listaClaveAS.add(t.getAreaSuperior()); 
+                }                
+            });
+            listaAreasUniversidads.forEach((t) -> {
+                listaClaveAS.forEach((c) -> {
+                    if(Objects.equals(t.getArea(), c) || t.getArea()==61){
+                        listareasSuperiores.add(t);
                     }
-                }
-
-            }
-
-            listaActividades = ejbDatosUsuarioLogeado.mostrarListaActividades();
+                });
+            });
+                                   
             listaGrados = ejbDatosUsuarioLogeado.mostrarListaGrados();
+            listaActividades = ejbDatosUsuarioLogeado.mostrarListaActividades();
             listaPersonalCategorias = ejbDatosUsuarioLogeado.mostrarListaPersonalCategorias();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -172,54 +165,21 @@ public class ControladorPersonal implements Serializable {
         }
     }
 
-    public static class areas {
-
-        @Getter        @Setter        private int clave;
-        @Getter        @Setter        private String nombre;
-
-        private areas(int _clave, String _nombre) {
-            clave = _clave;
-            nombre = _nombre;
-        }
-    }
-
     public void mostrarPerfilSubordinado() {
         try {
-//            System.out.println("contactoDestino " + contactoDestino);
             nuevaListaListaPersonaSubordinado.clear();
             nuevaListaInformacionAdicionalPersonalSubordinado.clear();
             listaPersonalSubordinado.clear();
-            nuevaListaInformacionAdicionalPersonalSubordinado = ejbSelectec.mostrarListaDeInformacionAdicionalPersonal(contactoDestino);
-            listaPersonalSubordinado = ejbSelectec.mostrarListaDeEmpleadosPorClave(contactoDestino);
-            nuevaListaListaPersonaSubordinado = ejbSelectec.mostrarListaDeEmpleadosXClave(contactoDestino);
-//            System.out.println("nuevaListaInformacionAdicionalPersonalSubordinado.size() " + nuevaListaInformacionAdicionalPersonalSubordinado.size());
-//            System.out.println("nuevaListaListaPersonaSubordinado.size() " + nuevaListaListaPersonaSubordinado.size());
-//            System.out.println("listaPersonalSubordinado.size() " + listaPersonalSubordinado.size());
-            if (nuevaListaInformacionAdicionalPersonalSubordinado.isEmpty()) {
-//                System.out.println("mx.edu.utxj.pye.sgi.ch.controladores.ControladorPersonal.mostrarPerfilSubordinado() 1");
-                if (listaPersonalSubordinado.isEmpty()) {
-//                    System.out.println("mx.edu.utxj.pye.sgi.ch.controladores.ControladorPersonal.mostrarPerfilSubordinado() 2");
-                    nuevoOBJInformacionAdicionalPersonal = new InformacionAdicionalPersonal();
-                } else {
-//                    System.out.println("mx.edu.utxj.pye.sgi.ch.controladores.ControladorPersonal.mostrarPerfilSubordinado() 3");
-                    nuevOBJPersonalSubordinado = listaPersonalSubordinado.get(0);
-                    nuevoOBJListaPersonal = nuevaListaListaPersonaSubordinado.get(0);
 
-                    informacionCV();
-                    mostrarFuncioneSubordinado();
-                    mostrarIncidencias();
-                }
-            } else {
-//                System.out.println("mx.edu.utxj.pye.sgi.ch.controladores.ControladorPersonal.mostrarPerfilSubordinado() 4");
-                nuevoOBJInformacionAdicionalPersonal = nuevaListaInformacionAdicionalPersonalSubordinado.get(0);
-                nuevOBJPersonalSubordinado = listaPersonalSubordinado.get(0);
-                nuevoOBJListaPersonal = nuevaListaListaPersonaSubordinado.get(0);
+            nuevoOBJInformacionAdicionalPersonal = ejbDatosUsuarioLogeado.mostrarInformacionAdicionalPersonalLogeado(contactoDestino);
+            nuevOBJPersonalSubordinado = ejbDatosUsuarioLogeado.mostrarPersonalLogeado(contactoDestino);
+            nuevoOBJListaPersonal = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeado(contactoDestino);
 
-                informacionCV();
-                mostrarFuncioneSubordinado();
-                mostrarIncidencias();
-                convertirRutaDatosPersonales();
-            }
+            informacionCV();
+            mostrarFuncioneSubordinado();
+            mostrarIncidencias();
+            convertirRutaDatosPersonales();
+            
             actividad = nuevOBJPersonalSubordinado.getActividad().getActividad();
             categoriaOP = nuevOBJPersonalSubordinado.getCategoriaOperativa().getCategoria();
             categoriaOF = nuevOBJPersonalSubordinado.getCategoriaOficial().getCategoria();
@@ -247,7 +207,11 @@ public class ControladorPersonal implements Serializable {
 
     public void mostrarIncidencias() {
         try {
-            listaIncidencias = ejbSelectec.mostrarIncidenciasPorEstatus(contactoDestino, "Aceptado");
+            ejbNotificacionesIncidencias.mostrarIncidencias(contactoDestino).forEach((t) -> {
+                if (t.getEstatus().equals("Aceptado")) {
+                    listaIncidencias.add(t);
+                }
+            });
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorPersonal.class.getName()).log(Level.SEVERE, null, ex);
@@ -258,38 +222,34 @@ public class ControladorPersonal implements Serializable {
         try {
             nuevaListaFuncionesGenerales.clear();
             nuevaListaFuncionesEspecificas.clear();
-//            System.out.println("mx.edu.utxj.pye.sgi.ch.controladores.ControladorPersonal.mostrarFuncioneSubordinado() nuevoOBJListaPersonal.getAreaOperativa() " + nuevoOBJListaPersonal.getAreaOperativa());
-//            System.out.println("mx.edu.utxj.pye.sgi.ch.controladores.ControladorPersonal.mostrarFuncioneSubordinado() nuevoOBJListaPersonal.getCategoriaOperativa() " + nuevoOBJListaPersonal.getCategoriaOperativa());
-//            System.out.println("mx.edu.utxj.pye.sgi.ch.controladores.ControladorPersonal.mostrarFuncioneSubordinado() nuevoOBJListaPersonal.getCategoriaEspecifica() " + nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
             switch (nuevoOBJListaPersonal.getCategoriaOperativa()) {
                 case 30:
-                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
                 case 32:
-                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
                 case 34:
                     if (nuevoOBJListaPersonal.getAreaOperativa() >= 24 && nuevoOBJListaPersonal.getAreaOperativa() <= 56) {
-                        listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
+                        listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
                     } else {
-                        listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(nuevoOBJListaPersonal.getAreaOperativa(), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
+                        listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(nuevoOBJListaPersonal.getAreaOperativa(), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
                     }
                     break;
                 case 18:
                     if (nuevoOBJListaPersonal.getAreaOperativa() >= 24 && nuevoOBJListaPersonal.getAreaOperativa() <= 56) {
-                        listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
+                        listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
                     } else {
-                        listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(nuevoOBJListaPersonal.getAreaOperativa(), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
+                        listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(nuevoOBJListaPersonal.getAreaOperativa(), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
                     }
                     break;
                 case 41:
-                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
                 default:
-                    listaFuncioneSubordinado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(nuevoOBJListaPersonal.getAreaOperativa(), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(nuevoOBJListaPersonal.getAreaOperativa(), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
             }
-//            System.out.println("mx.edu.utxj.pye.sgi.ch.controladores.ControladorPersonal.mostrarFuncioneSubordinado() listaFuncioneSubordinado " + listaFuncioneSubordinado.size());
             if (listaFuncioneSubordinado.isEmpty()) {
             } else {
                 for (int i = 0; i <= listaFuncioneSubordinado.size() - 1; i++) {
@@ -633,11 +593,6 @@ public class ControladorPersonal implements Serializable {
             } else {
                 ruta5 = "";
             }
-//            System.out.println("ruta1 " + ruta1);
-//            System.out.println("ruta2 " + ruta2);
-//            System.out.println("ruta3 " + ruta3);
-//            System.out.println("ruta4 " + ruta4);
-//            System.out.println("ruta5 " + ruta5);
         } else {
             ruta1 = "";
             ruta2 = "";
@@ -664,24 +619,31 @@ public class ControladorPersonal implements Serializable {
             accion = "";
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     public void listaArchivos() {
         try {
             rutasEvidencias.clear();
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.listaArchivos()"+contactoDestino);
-            Files.walk(Paths.get("C:\\archivos\\evidenciasCapitalHumano\\" + contactoDestino)).forEach(ruta -> {
-                if (Files.isRegularFile(ruta)) {
-                    System.out.println(ruta);
-                    rutasEvidencias.add(ruta.toString());
+            File evidencias = new File("C:" + File.separator + "archivos" + File.separator + "evidenciasCapitalHumano" + File.separator + contactoDestino);
+            if (evidencias.exists()) {
+                File[] evidenciaList = evidencias.listFiles();
+                for (int i = 0; i <= evidenciaList.length - 1; i++) {
+                    rutasEvidencias.add(evidenciaList[i].getPath());
                 }
-            });
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.listaArchivos()"+rutasEvidencias.size());
+            }
+
+//            Files.walk(Paths.get("C:\\archivos\\evidenciasCapitalHumano\\" + contactoDestino)).forEach(ruta -> {
+//                if (Files.isRegularFile(ruta)) {
+//                    rutasEvidencias.add(ruta.toString());
+//                }
+//            });
             ZipWritter.generar(rutasEvidencias, contactoDestino);
+            Ajax.oncomplete("PF('dlgEvidencias').show();");
+            Ajax.oncomplete("PF('dlgEvidencias').show();");
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     

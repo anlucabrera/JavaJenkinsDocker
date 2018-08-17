@@ -31,12 +31,14 @@ public class Organigrama implements Serializable {
     @Getter    @Setter    Integer clave=60;
 
     
-    @EJB
-    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
+    
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
 
     @PostConstruct
     public void init() {
         try {
+        System.out.println("ExelPlantillaPersonal Inicio: " + System.currentTimeMillis());
             personalGeneral = ejbSelectec.mostrarListaDeEmpleados();
             Collections.sort(personalGeneral, (x, y) -> Short.compare(x.getAreaOperativa(), y.getAreaOperativa()));
             empleadoActual = personalGeneral.iterator();
@@ -73,37 +75,24 @@ public class Organigrama implements Serializable {
                     empleadoActual.remove();
                 }
             }
-
-            
-
-            if (!jassonList.isEmpty()) {
-                jassonList.forEach((j) -> {
-                    System.out.println(" Id: " + j.getId() + " ,parent: " + j.getParent() + " ,title: " + j.getTitle() + " ,description: " + j.getDescription() + " ,image: " + j.getImage());
-                });
-            }
+        System.out.println("Organigrama Fin: " + System.currentTimeMillis());
 
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(OrganigramView4.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Organigrama.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public List<ListaPersonal> personalPorArea(ListaPersonal personalActual) {
         List<ListaPersonal> subordinados = new ArrayList<>();
-        subordinados = ejbSelectec.mostrarListaSubordinados(personalActual);
+        subordinados = ejbDatosUsuarioLogeado.mostrarListaSubordinados(personalActual);
         return subordinados;
     }
    
     public void llenaJasson(List<ListaPersonal> personasActuales) {
         personasActuales.forEach((p) -> {
             jassonList.add(new jasson(String.valueOf(p.getAreaOperativa()), String.valueOf(p.getAreaSuperior()), p.getAreaOperativaNombre(), p.getNombre() + "" + p.getCategoriaOperativaNombre(), p.getClave()));
-        });
-        
-        if(!jassonList.isEmpty()){
-            jassonList.forEach((j) -> {
-                System.out.println("Id "+j.getId()+" -parent- "+j.getParent()+" -title- "+j.getTitle()+" -description- "+j.getDescription()+" -image- "+j.getImage());
-            });
-        }
+        });            
     }
     
     public static class jasson {

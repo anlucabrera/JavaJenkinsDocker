@@ -302,7 +302,7 @@
                                     </h:form>
                                     <h:form id="frmLista1">
                                         <p:outputPanel >
-                                            <p:remoteCommand name="actualizarTabla" actionListener="#{controladorTecnologia.metodoBase()}" update="tblActividades" />
+                                            <p:remoteCommand name="actualizarTabla" actionListener="#{controladorProduccionPersonal.metodoBase()}" update="tblActividades" />
                                             <p:dataTable id="tblActividades" value="#{controladorProduccionPersonal.nuevaListaLibrosPub}" var="lib"
                                                          paginator="true" rows="5"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -317,8 +317,8 @@
                                                 </f:facet>
 
                                                 <p:column style="width: 50px;">
-                                                    <p:commandButton actionListener="#{controladorPremiosyDistinciones.delDistincion(distincion)}" update="tblActividades" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{desSoft.tipoDesarrollo}?" icon="ui-icon-alert" />
+                                                    <p:commandButton actionListener="#{controladorProduccionPersonal.eliminaLibros(lib)}" update="tblActividades" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{lib.titulo}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
 
@@ -532,7 +532,7 @@
                                     </h:form>
                                     <h:form id="frmLista2">
                                         <p:outputPanel >
-                                            <p:remoteCommand name="actualizarTabla2" actionListener="#{controladorTecnologia.metodoBase()}" update="tblActividades" />
+                                            <p:remoteCommand name="actualizarTabla2" actionListener="#{controladorProduccionPersonal.metodoBase()}" update="tblActividades" />
                                             <p:dataTable id="tblActividades" value="#{controladorProduccionPersonal.nuevaListaArticulosp}" var="articulos"
                                                          paginator="true" rows="5"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -547,8 +547,8 @@
                                                 </f:facet>
 
                                                 <p:column style="width: 50px;">
-                                                    <p:commandButton actionListener="#{controladorPremiosyDistinciones.delDistincion(distincion)}" update="tblActividades" oncomplete="actualizarTabla2()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{desSoft.tipoDesarrollo}?" icon="ui-icon-alert" />
+                                                    <p:commandButton actionListener="#{controladorProduccionPersonal.eliminaArticulos(articulos)}" update="tblActividades" oncomplete="actualizarTabla2()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{articulos.tituloArticulo}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
 
@@ -742,7 +742,7 @@
                                     </h:form>
                                     <h:form id="frmLista3">
                                         <p:outputPanel >
-                                            <p:remoteCommand name="actualizarTabla3" actionListener="#{controladorTecnologia.metodoBase()}" update="tblActividades" />
+                                            <p:remoteCommand name="actualizarTabla3" actionListener="#{controladorProduccionPersonal.metodoBase()}" update="tblActividades" />
                                             <p:dataTable id="tblActividades" value="#{controladorProduccionPersonal.nuevaListaMemoriaspub}" var="memorias"
                                                          paginator="true" rows="5"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -757,8 +757,8 @@
                                                 </f:facet>
 
                                                 <p:column style="width: 50px;">
-                                                    <p:commandButton actionListener="#{controladorPremiosyDistinciones.delDistincion(distincion)}" update="tblActividades" oncomplete="actualizarTabla3()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{desSoft.tipoDesarrollo}?" icon="ui-icon-alert" />
+                                                    <p:commandButton actionListener="#{controladorProduccionPersonal.eliminaMemorias(memorias)}" update="tblActividades" oncomplete="actualizarTabla3()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{memorias.tituloDeMemoria}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
 
@@ -904,13 +904,13 @@
                                         <p:outputPanel >
                                             <p:tabView >
                                                 <p:tab title="Proyectos" >
-                                                    <p:remoteCommand name="actualizarTabla4" actionListener="#{controladorTecnologia.metodoBase()}" update="tblActividades" />
+                                                    <p:remoteCommand name="actualizarTabla4" actionListener="#{controladorProduccionPersonal.metodoBase()}" update="tblActividades" />
                                                     <p:dataTable id="tblActividades" value="#{controladorProduccionPersonal.nuevaListatInvestigaciones}" var="proyIn"
                                                                  paginator="true" rows="5"
                                                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                                  rowsPerPageTemplate="5,10,15,20,25,30"
-                                                                 emptyMessage="No se encontraron Registros." rendered="true" rowStyleClass="#{proyIn.estatus eq 'Aceptado'?'aceptado':'denegado'}"
-                                                                 selectionMode="single" selection="#{controladorProduccionPersonal.nuevOBJInvestigacionesSelectec}" rowKey="#{proyIn.proyecto}">
+                                                                 emptyMessage="No se encontraron Registros." rendered="true" rowStyleClass="aceptado"
+                                                                 selectionMode="single" selection="#{controladorProduccionPersonal.nuevOBJInvestigacionesSelectec}" rowKey="#{proyIn.investigacion}">
 
                                                         <f:facet name="header">
                                                             Proyectos de investigación
@@ -920,8 +920,8 @@
                                                         </f:facet>
 
                                                         <p:column style="width: 50px;">
-                                                            <p:commandButton actionListener="#{controladorPremiosyDistinciones.delDistincion(distincion)}" update="tblActividades" oncomplete="actualizarTabla4()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                                <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{desSoft.tipoDesarrollo}?" icon="ui-icon-alert" />
+                                                            <p:commandButton actionListener="#{controladorProduccionPersonal.eliminaInvestigacion(proyIn)}" update="tblActividades" oncomplete="actualizarTabla4()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                                <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{proyIn.nombreInvestigacion}?" icon="ui-icon-alert" />
                                                             </p:commandButton>
                                                         </p:column>
 
@@ -956,13 +956,13 @@
                                                     </p:dataTable>  
                                                 </p:tab>
                                                 <p:tab title="Trabajos" >
-                                                    <p:remoteCommand name="actualizarTabla5" actionListener="#{controladorTecnologia.metodoBase()}" update="tblInvestigaciones" />
+                                                    <p:remoteCommand name="actualizarTabla5" actionListener="#{controladorProduccionPersonal.metodoBase()}" update="tblInvestigaciones" />
                                                     <p:dataTable id="tblInvestigaciones" value="#{controladorProduccionPersonal.nuevaListatInvestigaciones}" var="trabIn"
                                                                  paginator="true" rows="5"
                                                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                                  rowsPerPageTemplate="5,10,15,20,25,30"
-                                                                 emptyMessage="No se encontraron Registros." rendered="true" rowStyleClass="#{trabIn.estatus eq 'Aceptado'?'aceptado':'denegado'}"
-                                                                 selectionMode="single" selection="#{controladorProduccionPersonal.nuevOBJInvestigacionesSelectec}" rowKey="#{trabIn.trabajo}">
+                                                                 emptyMessage="No se encontraron Registros." rendered="true" rowStyleClass="aceptado"
+                                                                 selectionMode="single" selection="#{controladorProduccionPersonal.nuevOBJInvestigacionesSelectec}" rowKey="#{trabIn.investigacion}">
 
                                                         <f:facet name="header">
                                                             Trabajo de investigación
@@ -972,8 +972,8 @@
                                                         </f:facet>
 
                                                         <p:column style="width: 50px;">
-                                                            <p:commandButton actionListener="#{controladorPremiosyDistinciones.delDistincion(distincion)}" update="tblInvestigaciones" oncomplete="actualizarTabla5()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                                <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{desSoft.tipoDesarrollo}?" icon="ui-icon-alert" />
+                                                            <p:commandButton actionListener="#{controladorProduccionPersonal.eliminaInvestigacion(trabIn)}" update="tblInvestigaciones" oncomplete="actualizarTabla5()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                                <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{trabIn.nombreInvestigacion}?" icon="ui-icon-alert" />
                                                             </p:commandButton>
                                                         </p:column>
 
@@ -1124,7 +1124,7 @@
                                             </c:if>
                                         </p:outputPanel>        
                                         <p:outputPanel >
-                                            <p:remoteCommand name="actualizarTabla6" actionListener="#{controladorTecnologia.metodoBase()}" update="tblActividades" />
+                                            <p:remoteCommand name="actualizarTabla6" actionListener="#{controladorProduccionPersonal.metodoBase()}" update="tblActividades" />
                                             <p:dataTable id="tblActividades" value="#{controladorProduccionPersonal.nuevaListaCongresos}" var="congre"
                                                          paginator="true" rows="5"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -1139,8 +1139,8 @@
                                                 </f:facet>
 
                                                 <p:column style="width: 50px;">
-                                                    <p:commandButton actionListener="#{controladorPremiosyDistinciones.delDistincion(distincion)}" update="tblActividades" oncomplete="actualizarTabla6()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{desSoft.tipoDesarrollo}?" icon="ui-icon-alert" />
+                                                    <p:commandButton actionListener="#{controladorProduccionPersonal.eliminaCongreso(congre)}" update="tblActividades" oncomplete="actualizarTabla6()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{congre.nombreCongreso}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
 

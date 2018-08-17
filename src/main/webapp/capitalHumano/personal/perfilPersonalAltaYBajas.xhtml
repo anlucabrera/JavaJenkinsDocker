@@ -164,7 +164,7 @@
                                                                             <div class="col-sm-6 col-md-6 col-lg-6">
                                                                                 <label for="areaOp" class="col-sm-12 control-label">Área operativa</label>
                                                                                 <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" id="areaOp" value="#{controladorPersonalAltasYBajas.nuevOBJPersonalSubordinado.areaOperativa}">
-                                                                                    <f:selectItems value="#{controladorPersonalAltasYBajas.listareasOperativas}" var="arOP" itemValue="#{arOP.clave}" itemLabel="#{arOP.nombre}"/>
+                                                                                    <f:selectItems value="#{controladorPersonalAltasYBajas.listaAreasUniversidads}" var="arOP" itemValue="#{arOP.area}" itemLabel="#{arOP.nombre}"/>
                                                                                 </p:selectOneMenu> 
                                                                                 <hr/> 
                                                                             </div>
@@ -178,14 +178,14 @@
                                                                             <div class="col-sm-6 col-md-6 col-lg-6">
                                                                                 <label for="areaOf" class="col-sm-12 control-label">Área oficial</label>
                                                                                 <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" id="areaOf" value="#{controladorPersonalAltasYBajas.nuevOBJPersonalSubordinado.areaOficial}">
-                                                                                    <f:selectItems value="#{controladorPersonalAltasYBajas.listareasOficiales}" var="arOF" itemValue="#{arOF.clave}" itemLabel="#{arOF.nombre}" />
+                                                                                    <f:selectItems value="#{controladorPersonalAltasYBajas.listaAreasUniversidads}" var="arOF" itemValue="#{arOF.area}" itemLabel="#{arOF.nombre}" />
                                                                                 </p:selectOneMenu> 
                                                                                 <hr/> 
                                                                             </div>
                                                                             <div class="col-sm-6 col-md-6 col-lg-6"> 
                                                                                 <label for="areaSu" class="col-sm-12 control-label">Área superior</label>
                                                                                 <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" id="areaSu" value="#{controladorPersonalAltasYBajas.nuevOBJPersonalSubordinado.areaSuperior}">
-                                                                                    <f:selectItems value="#{controladorPersonalAltasYBajas.listareasSuperiores}" var="arSP" itemValue="#{arSP.clave}" itemLabel="#{arSP.nombre}" />
+                                                                                    <f:selectItems value="#{controladorPersonalAltasYBajas.listareasSuperiores}" var="arSP" itemValue="#{arSP.area}" itemLabel="#{arSP.nombre}" />
                                                                                 </p:selectOneMenu> 
                                                                                 <hr/> 
                                                                             </div>

@@ -60,7 +60,7 @@ public class ControladorRegistroActividadesPOA implements Serializable {
     @Getter    @Setter    private EjesRegistro ejes;
     
     @Getter    @Setter    private Short unidadDMedida = 0, claveArea = 0, ejercicioFiscal = 0;
-    @Getter    @Setter    private String tipo = "",claseP2="",claseP3="",claseP4="",claseP5="",clasePC="";
+    @Getter    @Setter    private String tipo = "",claseP2="",claseP3="",claseP4="",claseP5="",clasePC="",actividadP="";
     @Getter    @Setter    private Integer claveEje=0,numeroP = 1, numeroS = 1, numeroPEliminado = 1, numeroSEliminado = 1, totalNP = 0, totalActividadPrincipal;
     @Getter    @Setter    private Integer mes1 = 0, mes2 = 0, mes3 = 0, mes4 = 0, mes5 = 0, mes6 = 0, mes7 = 0, mes8 = 0, mes9 = 0, mes10 = 0, mes11 = 0, mes12 = 0;
     @Getter    @Setter    private Double pretecho2000=0D,pretecho3000=0D,pretecho4000=0D,pretecho5000=0D,pretechoCPDD=0D,totalPretecho=0D;
@@ -105,8 +105,8 @@ public class ControladorRegistroActividadesPOA implements Serializable {
         lineasAccions.add(lineasAccion);
         estrategiases.add(estrategias);
 
-        claveArea = 62;
-        ejercicioFiscal = Short.parseShort("19");
+        claveArea = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
+        ejercicioFiscal = Short.parseShort("17");
 
         consultarListas();
 
@@ -136,6 +136,8 @@ public class ControladorRegistroActividadesPOA implements Serializable {
         listaActividadesPoasFiltroEje.clear();
         listaActividadesPrincipales.clear();
         listaActividadesSecundarias.clear();
+        listaActividadesPoas.clear();
+        listaActividadesPoas = poaSelectec.mostrarActividadesPoasArea(claveArea);
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.consultarActividadesPorParametros()"+listaActividadesPoas.size());
         listaActividadesPoas.forEach((t) -> {
             if (t.getCuadroMandoInt().equals(cuadroMandoIntegral)) {
@@ -169,6 +171,7 @@ public class ControladorRegistroActividadesPOA implements Serializable {
         obteneroTotalesCapituloCPDD();
         obtenerPretechos();
         obteneroTotalesFinales();
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.consultarActividadesPorParametros()"+listaActividadesPoasFiltroEje.size());
     }
     
     public void consultarParametrosRegistrados() {
@@ -319,6 +322,7 @@ public class ControladorRegistroActividadesPOA implements Serializable {
     }
 
     public void eliminarActividad(ActividadesPoa pOa) {
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.eliminarActividad()"+pOa.getActividadPoa());
         mes1 = 0;        mes2 = 0;        mes3 = 0;        mes4 = 0;        mes5 = 0;        mes6 = 0;
         mes7 = 0;        mes8 = 0;        mes9 = 0;        mes10 = 0;        mes11 = 0;        mes12 = 0;
         totalActividadPrincipal = 0;

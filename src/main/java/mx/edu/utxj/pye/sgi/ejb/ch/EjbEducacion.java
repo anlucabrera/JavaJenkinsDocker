@@ -3,6 +3,7 @@ package mx.edu.utxj.pye.sgi.ejb.ch;
 import java.util.List;
 import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.ch.Capacitacionespersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.CursosPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ExperienciasLaborales;
 import mx.edu.utxj.pye.sgi.entity.ch.FormacionAcademica;
 
@@ -38,4 +39,6 @@ public interface EjbEducacion {
 
     public Capacitacionespersonal eliminarCapacitacionespersonal(Capacitacionespersonal nuevoCapacitacionespersonal) throws Throwable;
 
+////////////////////////////////////////////////////////////////////////////////Cursos Personal
+    public List<CursosPersonal> mostrarCursosPersonal(Integer claveTrabajador) throws Throwable;
 }

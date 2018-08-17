@@ -75,7 +75,7 @@ public class ControladorProduccionPersonal implements Serializable {
     public void init() {
         System.out.println("ControladorProduccionPersonal Inicio: " + System.currentTimeMillis());
         personal = controladorEmpleado.getEmpleadoLogeado();
-//        System.out.println("personal " + personal);
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorProduccionPersonal.init()"+personal);
         nuevaListaArticulosp.clear();
         nuevaListaLibrosPub.clear();
         nuevaListaMemoriaspub.clear();
@@ -113,7 +113,7 @@ public class ControladorProduccionPersonal implements Serializable {
             anioEdi = "";
             anioPub = "";
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorProduccionPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -131,7 +131,7 @@ public class ControladorProduccionPersonal implements Serializable {
             Messages.addGlobalInfo("¡Operación exitosa!!");
             mostrarListas();
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorProduccionPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -159,7 +159,7 @@ public class ControladorProduccionPersonal implements Serializable {
             anioPub = "";
             pestaniaActiva = 1;
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorProduccionPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -178,7 +178,7 @@ public class ControladorProduccionPersonal implements Serializable {
             mostrarListas();
             pestaniaActiva = 1;
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorProduccionPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -186,11 +186,12 @@ public class ControladorProduccionPersonal implements Serializable {
 //////////////////////////////////////////////////////////////////////////Memorias\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     public void createrMemorias() {
         try {
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorProduccionPersonal.createrMemorias()"+personal);
             nuevOBJArticulosp.setClavePersonal(new Personal());
             anio1 = dateFormat.parse("01/01/" + anioPub);
             nuevOBJMemoriaspub.setAnioDePublicacion(anio1);
             nuevOBJMemoriaspub.setEstatus("Denegado");
-            nuevOBJMemoriaspub.getClavePersonal().setClave(personal);
+            nuevOBJMemoriaspub.setClavePersonal(new Personal(personal));
             nuevOBJMemoriaspub = ejbProduccionProfecional.crearNuevoMemoriaspub(nuevOBJMemoriaspub);
             nombreTabla = "Memorias Publicadas";
             numeroRegistro = nuevOBJMemoriaspub.getMemoriaID().toString();
@@ -203,7 +204,7 @@ public class ControladorProduccionPersonal implements Serializable {
             anioPub = "";
             pestaniaActiva = 2;
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorProduccionPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -222,7 +223,7 @@ public class ControladorProduccionPersonal implements Serializable {
             mostrarListas();
             pestaniaActiva = 2;
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorProduccionPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -249,7 +250,7 @@ public class ControladorProduccionPersonal implements Serializable {
             nuevOBJInvestigaciones = new Investigaciones();
             pestaniaActiva = 3;
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorProduccionPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -265,7 +266,7 @@ public class ControladorProduccionPersonal implements Serializable {
             mostrarListas();
             pestaniaActiva = 3;
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorProduccionPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -274,8 +275,8 @@ public class ControladorProduccionPersonal implements Serializable {
     public void createrCongreso() {
         try {
             nuevoOBJCongresos.setClavePersonal(new Personal());
-            nuevoOBJCongresos.setFechaCongreso(dateFormat.format(fechaF));
-            nuevoOBJCongresos.getClavePersonal().setClave(personal);
+            nuevoOBJCongresos.setFechaCongreso(dateFormat.format(fechaI));
+            nuevoOBJCongresos.setClavePersonal(new Personal(personal));
             nuevoOBJCongresos.setEstatus("Aceptado");
 
             nuevoOBJCongresos = ejbProduccionProfecional.crearNuevoCongresos(nuevoOBJCongresos);
@@ -288,7 +289,7 @@ public class ControladorProduccionPersonal implements Serializable {
             mostrarListas();
             pestaniaActiva = 4;
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorProduccionPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -304,7 +305,7 @@ public class ControladorProduccionPersonal implements Serializable {
             mostrarListas();
             pestaniaActiva = 4;
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorProduccionPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -315,7 +316,6 @@ public class ControladorProduccionPersonal implements Serializable {
             ruta = carga.subir(file, new File(personal.toString().concat(File.separator).concat("ProduccionPersonal").concat(File.separator).concat("Libros").concat(File.separator)));
             if (!"Error: No se pudo leer el archivo".equals(ruta)) {
                 nuevOBJLibrosPub.setEvidencia(ruta);
-//                System.out.println("mx.edu.utxj.pye.subir.controlador.Subir.upload() res:" + nuevOBJLibrosPub.getEvidencia());
                 direccionInt1 = 1;
                 ruta = null;
             } else {
@@ -332,10 +332,9 @@ public class ControladorProduccionPersonal implements Serializable {
             ruta = carga.subir(file, new File(personal.toString().concat(File.separator).concat("ProduccionPersonal").concat(File.separator).concat("Articulos").concat(File.separator)));
             if (!"Error: No se pudo leer el archivo".equals(ruta)) {
                 nuevOBJArticulosp.setEvidencia(ruta);
-//                System.out.println("mx.edu.utxj.pye.subir.controlador.Subir.upload() res:" + nuevOBJArticulosp.getEvidencia());
                 direccionInt2 = 1;
                 ruta = null;
-                pestaniaActiva = 2;
+                pestaniaActiva = 1;
             } else {
                 ruta = null;
                 Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !!");
@@ -350,10 +349,9 @@ public class ControladorProduccionPersonal implements Serializable {
             ruta = carga.subir(file, new File(personal.toString().concat(File.separator).concat("ProduccionPersonal").concat(File.separator).concat("Memorias").concat(File.separator)));
             if (!"Error: No se pudo leer el archivo".equals(ruta)) {
                 nuevOBJMemoriaspub.setEvidencia(ruta);
-//                System.out.println("mx.edu.utxj.pye.subir.controlador.Subir.upload() res:" + nuevOBJMemoriaspub.getEvidencia());
                 direccionInt3 = 1;
                 ruta = null;
-                pestaniaActiva = 3;
+                pestaniaActiva = 2;
             } else {
                 ruta = null;
                 Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !!");
@@ -379,7 +377,7 @@ public class ControladorProduccionPersonal implements Serializable {
             nuevaListatInvestigaciones = ejbProduccionProfecional.mostrarInvestigacion(personal);
 
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorProduccionPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -483,8 +481,8 @@ public class ControladorProduccionPersonal implements Serializable {
             numeroRegistro = "";
             accion = "";
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorProduccionPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

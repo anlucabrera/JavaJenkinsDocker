@@ -44,8 +44,6 @@ public class ControladorEmpleadoLogeado implements Serializable {
 
     private static final long serialVersionUID = 1736039029781733869L;
 
-    @Getter    @Setter    private List<InformacionAdicionalPersonal> nuevaListaInformacionAdicionalPersonalLogeado = new ArrayList<>();
-    @Getter    @Setter    private List<ListaPersonal> nuevaListaListaPersonalLogeado = new ArrayList<>();
     @Getter    @Setter    private List<Personal> nuevaListaPersonalContacto = new ArrayList<>();
     @Getter    @Setter    private List<Funciones> listaFuncionesLogeado = new ArrayList<>();
     @Getter    @Setter    private List<Notificaciones> listaNotificacionesLogeado = new ArrayList<>(),listaNotificacionesContacto = new ArrayList<>(),listaNotificacionesChat = new ArrayList<>();
@@ -87,8 +85,15 @@ public class ControladorEmpleadoLogeado implements Serializable {
     @Getter    @Setter    private Personal nuevoOBJListaPersonalContacto,nuevoOBJListaPersonal;
     
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbCreate ejbCreate;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUpdate ejbUpdate;
+    
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbFunciones ejbFunciones;    
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbEducacion ejbEducacion;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbHabilidades ejbHabilidades;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbTecnologia ejbTecnologia;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPremios ejbPremios;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbProduccionProfecional ejbProduccionProfecional;
 
     @Inject    ControladorEmpleado controladorEmpleado;
 
@@ -107,7 +112,7 @@ public class ControladorEmpleadoLogeado implements Serializable {
     public void listaDoc() {
         try {
             listaDocencias.clear();
-            listaDocencias = ejbSelectec.mostrarDocencias(empleadoLogeado);
+            listaDocencias = ejbDatosUsuarioLogeado.mostrarListaDocencias(empleadoLogeado);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorEmpleadoLogeado.class.getName()).log(Level.SEVERE, null, ex);
@@ -116,25 +121,19 @@ public class ControladorEmpleadoLogeado implements Serializable {
 
     public void mostrarPerfilLogeado() {
         try {
-            nuevaListaInformacionAdicionalPersonalLogeado.clear();
-            nuevaListaListaPersonalLogeado.clear();
             nuevoOBJListaPersonal = new Personal();
 
-            nuevaListaInformacionAdicionalPersonalLogeado = ejbSelectec.mostrarListaDeInformacionAdicionalPersonal(empleadoLogeado);
-            nuevaListaListaPersonalLogeado = ejbSelectec.mostrarListaDeEmpleadosXClave(empleadoLogeado);
-            nuevoOBJListaPersonal = ejbSelectec.mostrarEmpleadosPorClave(empleadoLogeado);
+            nuevoOBJInformacionAdicionalPersonal = ejbDatosUsuarioLogeado.mostrarInformacionAdicionalPersonalLogeado(empleadoLogeado);
+            nuevoOBJListaListaPersonal = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeado(empleadoLogeado);
+            nuevoOBJListaPersonal = ejbDatosUsuarioLogeado.mostrarPersonalLogeado(empleadoLogeado);
 
-            if (nuevaListaInformacionAdicionalPersonalLogeado.isEmpty()) {
+            if (nuevoOBJInformacionAdicionalPersonal==null) {
                 Messages.addGlobalFatal("Sin información complementaria para la clave " + empleadoLogeado);
-            } else {
-                nuevoOBJInformacionAdicionalPersonal = nuevaListaInformacionAdicionalPersonalLogeado.get(0);
-            }
+            } 
 
-            if (nuevaListaListaPersonalLogeado.isEmpty()) {
+            if (nuevoOBJListaListaPersonal==null) {
                 Messages.addGlobalFatal("Sin datos para la clave " + empleadoLogeado);
-            } else {
-                nuevoOBJListaListaPersonal = nuevaListaListaPersonalLogeado.get(0);
-            }
+            } 
 
             informacionCV();
             mostrarFuncionesLogeado();
@@ -149,21 +148,25 @@ public class ControladorEmpleadoLogeado implements Serializable {
 
     public void informacionCV() {
         try {
-            listaFormacionAcademica = ejbSelectec.mostrarFormacionAcademica(empleadoLogeado);
-            listaExperienciasLaborales = ejbSelectec.mostrarExperienciasLaborales(empleadoLogeado);
-            listaCapacitacionespersonal = ejbSelectec.mostrarCapacitacionespersonal(empleadoLogeado);
-            listaIdiomas = ejbSelectec.mostrarHabilidadesIdiomasPorClaveTrabajador(empleadoLogeado);
-            listaHabilidadesInformaticas = ejbSelectec.mostrarHabilidadesInformaticasPorClaveTrabajador(empleadoLogeado);
-            listaLenguas = ejbSelectec.mostrarHabilidadesLengiasPorClaveTrabajador(empleadoLogeado);
-            listaDesarrolloSoftwar = ejbSelectec.mostrarDesarrollosSoftware(empleadoLogeado);
-            listaDesarrollosTecnologicos = ejbSelectec.mostrarDesarrollosTecnologicos(empleadoLogeado);
-            listaInnovaciones = ejbSelectec.mostrarInnovaciones(empleadoLogeado);
-            listaDistinciones = ejbSelectec.mostrarDistinciones(empleadoLogeado);
-            listaLibrosPubs = ejbSelectec.mostrarLibrosPublicados(empleadoLogeado);
-            listaArticulosp = ejbSelectec.mostrarArticulospublicados(empleadoLogeado);
-            listaMemoriaspub = ejbSelectec.mostrarMemoriaspubicados(empleadoLogeado);
-            listaInvestigacion = ejbSelectec.mostrarInvestigacionPorClaveTrabajador(empleadoLogeado);
-            listaCongresos = ejbSelectec.mostrarCongresos(empleadoLogeado);
+            listaFormacionAcademica = ejbEducacion.mostrarFormacionAcademica(empleadoLogeado);
+            listaExperienciasLaborales = ejbEducacion.mostrarExperienciasLaborales(empleadoLogeado);
+            listaCapacitacionespersonal = ejbEducacion.mostrarCapacitacionespersonal(empleadoLogeado);
+            
+            listaIdiomas = ejbHabilidades.mostrarIdiomas(empleadoLogeado);
+            listaHabilidadesInformaticas = ejbHabilidades.mostrarHabilidadesInformaticas(empleadoLogeado);
+            listaLenguas = ejbHabilidades.mostrarLenguas(empleadoLogeado);
+            
+            listaDesarrolloSoftwar = ejbTecnologia.mostrarDesarrolloSoftware(empleadoLogeado);
+            listaDesarrollosTecnologicos = ejbTecnologia.mostrarDesarrollosTecnologicos(empleadoLogeado);
+            listaInnovaciones = ejbTecnologia.mostrarInnovaciones(empleadoLogeado);
+            
+            listaDistinciones = ejbPremios.mostrarDistinciones(empleadoLogeado);
+            
+            listaLibrosPubs = ejbProduccionProfecional.mostrarLibrosPub(empleadoLogeado);
+            listaArticulosp = ejbProduccionProfecional.mostrarArticulosp(empleadoLogeado);
+            listaMemoriaspub = ejbProduccionProfecional.mostrarMemoriaspub(empleadoLogeado);
+            listaInvestigacion = ejbProduccionProfecional.mostrarInvestigacion(empleadoLogeado);
+            listaCongresos = ejbProduccionProfecional.mostrarCongresos(empleadoLogeado);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorEmpleadoLogeado.class.getName()).log(Level.SEVERE, null, ex);
@@ -176,23 +179,23 @@ public class ControladorEmpleadoLogeado implements Serializable {
             nuevaListaFuncionesEspecificas.clear();
             switch (nuevoOBJListaListaPersonal.getCategoriaOperativa()) {
                 case 30:
-                    listaFuncionesLogeado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncionesLogeado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
                 case 32:
-                    listaFuncionesLogeado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncionesLogeado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
                 case 34:
                     if (nuevoOBJListaListaPersonal.getAreaOperativa() >= 24 && nuevoOBJListaListaPersonal.getAreaOperativa() <= 56) {
-                        listaFuncionesLogeado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
+                        listaFuncionesLogeado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
                     } else {
-                        listaFuncionesLogeado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(nuevoOBJListaListaPersonal.getAreaOperativa(), nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
+                        listaFuncionesLogeado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(nuevoOBJListaListaPersonal.getAreaOperativa(), nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
                     }
                     break;
                 case 41:
-                    listaFuncionesLogeado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(Short.parseShort("61"), nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncionesLogeado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
                 default:
-                    listaFuncionesLogeado = ejbSelectec.mostrarListaDeFuncionesXAreaYPuestoOperativo(nuevoOBJListaListaPersonal.getAreaOperativa(), nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
+                    listaFuncionesLogeado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(nuevoOBJListaListaPersonal.getAreaOperativa(), nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
                     break;
             }
             if (!listaFuncionesLogeado.isEmpty()) {
@@ -229,7 +232,7 @@ public class ControladorEmpleadoLogeado implements Serializable {
             fechaNot.clear();
             listaNotificacionesLogeado.clear();
 
-            listaNotificacionesLogeado = ejbSelectec.mostrarListaDenotificacionesPorUsuario(empleadoLogeado);
+            listaNotificacionesLogeado = ejbNotificacionesIncidencias.mostrarListaDenotificacionesPorUsuario(empleadoLogeado);
             if (listaNotificacionesLogeado.isEmpty()) {
                 listaNotificacionesLogeado.clear();
             } else {
@@ -241,13 +244,13 @@ public class ControladorEmpleadoLogeado implements Serializable {
                     fechaNot.add(nuevoOBJNotificaciones.getFecha());
                 }
                 listaNotificacionesChat.clear();
-                listaNotificacionesChat = ejbSelectec.mostrarListaDenotificacionesPorUsuariosyEstatus(empleadoLogeado, contactoDestino, 0);
+                listaNotificacionesChat = ejbNotificacionesIncidencias.mostrarListaDenotificacionesPorUsuariosyEstatus(empleadoLogeado, contactoDestino, 0);
                 if (!listaNotificacionesChat.isEmpty()) {
                     for (int i = 0; i <= listaNotificacionesChat.size() - 1; i++) {
                         nuevoOBJNotificaciones = new Notificaciones();
                         nuevoOBJNotificaciones = listaNotificacionesChat.get(i);
                         nuevoOBJNotificaciones.setStatus(1);
-                        nuevoOBJNotificaciones = ejbUpdate.actualizarNotificaciones(nuevoOBJNotificaciones);
+                        nuevoOBJNotificaciones = ejbNotificacionesIncidencias.actualizarNotificaciones(nuevoOBJNotificaciones);
                     }
                 }
             }
@@ -270,7 +273,7 @@ public class ControladorEmpleadoLogeado implements Serializable {
                 nuevoOBJListaPersonalContacto = nuevaListaPersonalContacto.get(i);
                 if (!nuevoOBJListaPersonalContacto.getClave().equals(empleadoLogeado)) {
                     nuevOBJcontactosChat = new contactosChat(nuevoOBJListaPersonalContacto.getClave(), nuevoOBJListaPersonalContacto.getNombre(), 2);
-                    listaNotificacionesContacto = ejbSelectec.mostrarListaDenotificacionesPorUsuariosyEstatus(empleadoLogeado, nuevoOBJListaPersonalContacto.getClave(), 0);
+                    listaNotificacionesContacto = ejbNotificacionesIncidencias.mostrarListaDenotificacionesPorUsuariosyEstatus(empleadoLogeado, nuevoOBJListaPersonalContacto.getClave(), 0);
                     if (!listaNotificacionesContacto.isEmpty()) {
                         listacontactosChat.add(nuevOBJcontactosChat);
                         clavesContactosCChat.add(nuevoOBJListaPersonalContacto.getClave());
@@ -278,28 +281,26 @@ public class ControladorEmpleadoLogeado implements Serializable {
                     listaNotificacionesContacto.clear();
                 }
             }
-//            System.out.println("listacontactosChat.size() 1: " + listacontactosChat.size());
-//            System.out.println("_________________________________________________________________");
             for (int i = 0; i <= nuevaListaPersonalContacto.size() - 1; i++) {
                 nuevoOBJListaPersonalContacto = new Personal();
                 nuevoOBJListaPersonalContacto = nuevaListaPersonalContacto.get(i);
                 if (!nuevoOBJListaPersonalContacto.getClave().equals(empleadoLogeado)) {
                     if (!clavesContactosCChat.contains(nuevoOBJListaPersonalContacto.getClave())) {
-                        listaNotificacionesContacto = ejbSelectec.mostrarListaDenotificacionesPorUsuariosyEstatus(empleadoLogeado, nuevoOBJListaPersonalContacto.getClave(), 1);
+                        listaNotificacionesContacto = ejbNotificacionesIncidencias.mostrarListaDenotificacionesPorUsuariosyEstatus(empleadoLogeado, nuevoOBJListaPersonalContacto.getClave(), 1);
                         if (!listaNotificacionesContacto.isEmpty()) {
                             nuevOBJcontactosChat = new contactosChat(nuevoOBJListaPersonalContacto.getClave(), nuevoOBJListaPersonalContacto.getNombre(), 1);
                             listacontactosChat.add(nuevOBJcontactosChat);
                             clavesContactosCChat.add(nuevoOBJListaPersonalContacto.getClave());
                         } else {
                             listaNotificacionesContacto.clear();
-                            listaNotificacionesContacto = ejbSelectec.mostrarListaDenotificacionesPorUsuariosyEstatus(nuevoOBJListaPersonalContacto.getClave(), empleadoLogeado, 1);
+                            listaNotificacionesContacto = ejbNotificacionesIncidencias.mostrarListaDenotificacionesPorUsuariosyEstatus(nuevoOBJListaPersonalContacto.getClave(), empleadoLogeado, 1);
                             if (!listaNotificacionesContacto.isEmpty()) {
                                 nuevOBJcontactosChat = new contactosChat(nuevoOBJListaPersonalContacto.getClave(), nuevoOBJListaPersonalContacto.getNombre(), 1);
                                 listacontactosChat.add(nuevOBJcontactosChat);
                                 clavesContactosCChat.add(nuevoOBJListaPersonalContacto.getClave());
                             } else {
                                 listaNotificacionesContacto.clear();
-                                listaNotificacionesContacto = ejbSelectec.mostrarListaDenotificacionesPorUsuariosyEstatus(nuevoOBJListaPersonalContacto.getClave(), empleadoLogeado, 0);
+                                listaNotificacionesContacto = ejbNotificacionesIncidencias.mostrarListaDenotificacionesPorUsuariosyEstatus(nuevoOBJListaPersonalContacto.getClave(), empleadoLogeado, 0);
                                 if (!listaNotificacionesContacto.isEmpty()) {
                                     nuevOBJcontactosChat = new contactosChat(nuevoOBJListaPersonalContacto.getClave(), nuevoOBJListaPersonalContacto.getNombre(), 1);
                                     listacontactosChat.add(nuevOBJcontactosChat);
@@ -311,8 +312,6 @@ public class ControladorEmpleadoLogeado implements Serializable {
                     listaNotificacionesContacto.clear();
                 }
             }
-//            System.out.println("listacontactosChat.size() 2: " + listacontactosChat.size());
-//            System.out.println("_________________________________________________________________");
             for (int i = 0; i <= nuevaListaPersonalContacto.size() - 1; i++) {
                 nuevoOBJListaPersonalContacto = new Personal();
                 nuevoOBJListaPersonalContacto = nuevaListaPersonalContacto.get(i);
@@ -325,9 +324,7 @@ public class ControladorEmpleadoLogeado implements Serializable {
                     listaNotificacionesContacto.clear();
                 }
             }
-
-//            System.out.println("listacontactosChat.size() 3: " + listacontactosChat.size());
-        } catch (Throwable ex) {
+} catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorEmpleadoLogeado.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -345,7 +342,7 @@ public class ControladorEmpleadoLogeado implements Serializable {
                 nuevoOBJNotificaciones.setStatus(0);
                 nuevoOBJNotificaciones.getClaveTDestino().setClave(contactoDestino);
                 nuevoOBJNotificaciones.getClaveTRemitente().setClave(empleadoLogeado);
-                nuevoOBJNotificaciones = ejbCreate.agregarNotificacion(nuevoOBJNotificaciones);
+                nuevoOBJNotificaciones = ejbNotificacionesIncidencias.agregarNotificacion(nuevoOBJNotificaciones);
                 mensajeDNotificacion = "";
             }
             mostrarNotificacionesLogeado();

@@ -35,13 +35,13 @@ public class ControladorIncidenciasPersonal implements Serializable {
     @Getter    @Setter    private Date tiempo;
     @Getter    @Setter    private DateFormat dateFormat = new SimpleDateFormat("HH:mm");
 //@EJB    
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbCreate ejbCreate;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
 //@Inject
     @Inject    ControladorEmpleado controladorEmpleado;
 
     @PostConstruct
     public void init() {
+        System.out.println("ControladorIncidenciasPersonal Inicio: " + System.currentTimeMillis());
         nuevOBJIncidencias = new Incidencias();
         tiposIncidencias.clear();
         tiposIncidencias.add("No registro entrada");
@@ -51,15 +51,14 @@ public class ControladorIncidenciasPersonal implements Serializable {
         tiposIncidencias.add("Salida anticipada");
         tiposIncidencias.add("Inasistencia");
         usuario = controladorEmpleado.getEmpleadoLogeado();
-//        System.out.println("usuario " + usuario);
         mostrarLista();
+        System.out.println("ControladorIncidenciasPersonal Fin: " + System.currentTimeMillis());
     }
 
     public void mostrarLista() {
         try {
             listaIncidencias.clear();
-            listaIncidencias = ejbSelectec.mostrarIncidencias(usuario);
-//            System.out.println("listaIncidencias.siza() " + listaIncidencias.size());
+            listaIncidencias = ejbNotificacionesIncidencias.mostrarIncidencias(usuario);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
@@ -72,7 +71,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
             nuevOBJIncidencias.getClavePersonal().setClave(usuario);
             nuevOBJIncidencias.setEstatus("Pendiente");
             nuevOBJIncidencias.setTiempo(dateFormat.format(tiempo));
-            nuevOBJIncidencias = ejbCreate.agregarIncidencias(nuevOBJIncidencias);
+            nuevOBJIncidencias = ejbNotificacionesIncidencias.agregarIncidencias(nuevOBJIncidencias);
             nuevOBJIncidencias = new Incidencias();
             Messages.addGlobalInfo("¡Operación exitosa!!");
             mostrarLista();

@@ -44,9 +44,11 @@ public class ControladorPersonalconfiguracion implements Serializable {
  
     @PostConstruct
     public void init() {
+        System.out.println("ControladorPersonalconfiguracion Inicio: " + System.currentTimeMillis());
         nuevoOBJAreasUniversidad = new AreasUniversidad();
         nuevoOBJPersonalCategorias=new PersonalCategorias();
         generarListas();
+        System.out.println("ControladorPersonalconfiguracion Fin: " + System.currentTimeMillis());
     }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,7 +58,6 @@ public class ControladorPersonalconfiguracion implements Serializable {
             nuevoOBJPersonalCategorias = new PersonalCategorias();
             nuevoOBJCategorias = new Categorias();
 
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonalconfiguracion.generarListas()");
             nuevaListaAreasUniversidads.clear();
             nuevaListaCategoriases.clear();
             nuevaListaPersonals.clear();
@@ -79,7 +80,6 @@ public class ControladorPersonalconfiguracion implements Serializable {
 
     public void crearNuevasAreaUnivercidad() {
         try {
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonalconfiguracion.crearNuevasAreaUnivercidad(claveCatagoria)"+claveCatagoria);
             nuevoOBJAreasUniversidad.setCategoria(new Categorias(claveCatagoria));
             nuevoOBJAreasUniversidad = ejbAreasLogeo.agregarAreasUniversidad(nuevoOBJAreasUniversidad);
             Messages.addGlobalInfo("¡Operación exitosa!!");
@@ -103,7 +103,6 @@ public class ControladorPersonalconfiguracion implements Serializable {
 
     public void crearNuevasPersonalCategorias() {
         try {
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonalconfiguracion.crearNuevasPersonalCategorias(nuevoOBJPersonalCategorias)"+nuevoOBJPersonalCategorias);
             nuevoOBJPersonalCategorias = ejbDatosUsuarioLogeado.crearNuevoPersonalCategorias(nuevoOBJPersonalCategorias);
             Messages.addGlobalInfo("¡Operación exitosa!!");
             generarListas();

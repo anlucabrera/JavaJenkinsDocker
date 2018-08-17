@@ -273,7 +273,6 @@ public class ControladorHabilidadesIIL implements Serializable {
             ruta = carga.subir(file, new File(claveTraba.concat(File.separator).concat("idiomas").concat(File.separator)));
             if (!"Error: No se pudo leer el archivo".equals(ruta)) {
                 nuevOBJIdiomas.setEvidenciaDoc(ruta);
-//                System.out.println("mx.edu.utxj.pye.subir.controlador.Subir.upload() res:" + nuevOBJIdiomas.getEvidenciaDoc());
                 direccionInt = 1;
                 ruta = null;
             } else {
@@ -395,7 +394,6 @@ public class ControladorHabilidadesIIL implements Serializable {
 
     public void actualizarObjetosIdioma() {
         if (nuevOBJIdiomaSelectec.getIdioma() != null) {
-//            System.out.println("mx.edu.utxj.pye.sgi.ch.controladores.ControladorHabilidadesIIL.actualizarObjetosIdioma()");
             nuevOBJIdiomas = nuevOBJIdiomaSelectec;
         } else {
             Messages.addGlobalWarn("No es posible actualizar el registro!!");
@@ -404,7 +402,6 @@ public class ControladorHabilidadesIIL implements Serializable {
 
     public void actualizarObjetosHabilidadesInformaticas() {
         if (nuevOBJHabilidadesInformaticaSelectec.getConocimiento() != null) {
-//            System.out.println("mx.edu.utxj.pye.sgi.ch.controladores.ControladorHabilidadesIIL.actualizarObjetosHabilidadesInformaticas()");
             nuevOBJHabilidadesInformaticas = nuevOBJHabilidadesInformaticaSelectec;
             filtarConocimientos();
         } else {
@@ -414,7 +411,6 @@ public class ControladorHabilidadesIIL implements Serializable {
 
     public void actualizarObjetosLengua() {
         if (nuevOBJLenguaSelectec.getLengua() != null) {
-//            System.out.println("mx.edu.utxj.pye.sgi.ch.controladores.ControladorHabilidadesIIL.actualizarObjetosLengua()");
             nuevOBJLenguas = nuevOBJLenguaSelectec;
         } else {
             Messages.addGlobalWarn("No es posible actualizar el registro!!");
@@ -437,7 +433,7 @@ public class ControladorHabilidadesIIL implements Serializable {
             accion = "";
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorHabilidadesIIL.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

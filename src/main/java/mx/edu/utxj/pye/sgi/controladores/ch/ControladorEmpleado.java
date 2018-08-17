@@ -33,8 +33,6 @@ public class ControladorEmpleado implements Serializable {
 
     private static final long serialVersionUID = 1736039029781733869L;
 
-    @Getter    @Setter    private List<InformacionAdicionalPersonal> nuevaListaInformacionAdicionalPersonalLogeado = new ArrayList<>();
-    @Getter    @Setter    private List<ListaPersonal> nuevaListaListaPersonalLogeado = new ArrayList<>();
     @Getter    @Setter    private List<Docencias> listaDocencias = new ArrayList<>();
     @Getter    @Setter    private List<Notificaciones> listaNotificaciones = new ArrayList<>();
     @Getter    @Setter    private List<String> listaPaises = new ArrayList<>(),listaIdiomas = new ArrayList<>(),listaLenguas = new ArrayList<>();    
@@ -61,6 +59,8 @@ public class ControladorEmpleado implements Serializable {
             
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
 
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
     @Inject    LogonMB logonMB;
 
     @PostConstruct
@@ -83,8 +83,8 @@ public class ControladorEmpleado implements Serializable {
             listaDocencias.clear();
             listaNotificaciones.clear();
             
-            listaDocencias = ejbSelectec.mostrarDocencias(empleadoLogeado);
-            listaNotificaciones = ejbSelectec.mostrarListaDenotificacionesPorUsuarios(empleadoLogeado, 0);
+            listaDocencias = ejbDatosUsuarioLogeado.mostrarListaDocencias(empleadoLogeado);
+            listaNotificaciones = ejbNotificacionesIncidencias.mostrarListaDenotificacionesPorUsuarios(empleadoLogeado, 0);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
@@ -93,22 +93,16 @@ public class ControladorEmpleado implements Serializable {
 
     public void mostrarPerfilLogeado() {
         try {
-            nuevaListaInformacionAdicionalPersonalLogeado.clear();
-            nuevaListaListaPersonalLogeado.clear();
 
-            nuevaListaInformacionAdicionalPersonalLogeado = ejbSelectec.mostrarListaDeInformacionAdicionalPersonal(empleadoLogeado);
-            nuevaListaListaPersonalLogeado = ejbSelectec.mostrarListaDeEmpleadosXClave(empleadoLogeado);
+            nuevoOBJInformacionAdicionalPersonal = ejbDatosUsuarioLogeado.mostrarInformacionAdicionalPersonalLogeado(empleadoLogeado);
+            nuevoOBJListaPersonal = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeado(empleadoLogeado);
 
-            if (nuevaListaInformacionAdicionalPersonalLogeado.isEmpty()) {
+            if (nuevoOBJInformacionAdicionalPersonal == null) {
                 Messages.addGlobalFatal("Sin información complementaria para la clave " + empleadoLogeado);
-            } else {
-                nuevoOBJInformacionAdicionalPersonal = nuevaListaInformacionAdicionalPersonalLogeado.get(0);
             }
 
-            if (nuevaListaListaPersonalLogeado.isEmpty()) {
+            if (nuevoOBJListaPersonal == null) {
                 Messages.addGlobalFatal("Sin datos para la clave " + empleadoLogeado);
-            } else {
-                nuevoOBJListaPersonal = nuevaListaListaPersonalLogeado.get(0);
             }
 
             fechasModulos();
@@ -123,7 +117,7 @@ public class ControladorEmpleado implements Serializable {
         try {
             nuevaListaEventos.clear();
             nuevaEventos = new Eventos();
-            nuevaListaEventos = ejbSelectec.mostrarEventosRegistro("Periodo electoral", "Periodo electoral");
+            nuevaListaEventos = ejbDatosUsuarioLogeado.mostrarEventosRegistro("Periodo electoral", "Periodo electoral");
             if (!nuevaListaEventos.isEmpty()) {
                 nuevaEventos = nuevaListaEventos.get(0);
                 if ((fechaActual.before(nuevaEventos.getFechaFin()) || fechaActual.equals(nuevaEventos.getFechaFin()))
@@ -142,7 +136,7 @@ public class ControladorEmpleado implements Serializable {
     public void fechasModulos() {
         try {
             nuevaListaModulosregistro.clear();
-            nuevaListaModulosregistro = ejbSelectec.mostrarModulosregistro(nuevoOBJListaPersonal.getActividadNombre());
+            nuevaListaModulosregistro = ejbDatosUsuarioLogeado.mostrarModulosregistro(nuevoOBJListaPersonal.getActividadNombre());
             nuevaListaModulosregistro.forEach((t) -> {
                 switch (t.getNombre()) {
                     case "CV":

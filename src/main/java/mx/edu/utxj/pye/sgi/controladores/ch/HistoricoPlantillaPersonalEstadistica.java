@@ -50,7 +50,7 @@ public class HistoricoPlantillaPersonalEstadistica implements Serializable {
     @Getter    @Setter    private List<Historicoplantillapersonal> nuevaListaHistoricoplantillapersonal=new ArrayList<>();
 
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbCreate ejbCreate;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
     @PostConstruct
     public void init() {          
         System.out.println("ExelPlantillaPersonal Inicio: " + System.currentTimeMillis());
@@ -62,7 +62,7 @@ public class HistoricoPlantillaPersonalEstadistica implements Serializable {
             nuevaListaListaPersonal = ejbSelectec.mostrarListaDeEmpleados();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(HistoricoPlantillaPersonalEstadistica.class.getName()).log(Level.SEVERE, null, ex);
         }
         System.out.println("ExelPlantillaPersonal Fin: " + System.currentTimeMillis());
     }
@@ -170,7 +170,6 @@ public class HistoricoPlantillaPersonalEstadistica implements Serializable {
             // flujo de datos
             for (int i = 0; i <= 23; i++) {
                 pagina.autoSizeColumn((short) i);
-//                System.out.println("mx.edu.utxj.pye.sgi.ch.controladores.ExelPlantillaPersonal.generarPlantillaPersoanl() " + i);
             }
 
             workbook.write(salida);
@@ -179,7 +178,6 @@ public class HistoricoPlantillaPersonalEstadistica implements Serializable {
             workbook.close();
 
             LOGGER.log(Level.INFO, "Archivo creado exitosamente en {0}", archivo.getAbsolutePath());
-            System.out.println("mx.edu.utxj.pye.sgi.ch.controladores.HistoricoPlantillaPersonalEstadistica.generarPlantillaPersoanl(archivo.getAbsolutePath())"+archivo.getAbsolutePath());
             direccionDescarga = convertirRuta(archivo);
         } catch (FileNotFoundException ex) {
             LOGGER.log(Level.SEVERE, "Archivo no localizable en sistema de archivos");
@@ -205,25 +203,24 @@ public class HistoricoPlantillaPersonalEstadistica implements Serializable {
                     break;
             }
             nuevoHistoricoplantillapersonal.setAnio(String.valueOf(actual.getYear()));
-            nuevoHistoricoplantillapersonal = ejbCreate.agregarHistoricoplantillapersonal(nuevoHistoricoplantillapersonal);
+            nuevoHistoricoplantillapersonal = ejbDatosUsuarioLogeado.agregarHistoricoplantillapersonal(nuevoHistoricoplantillapersonal);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(HistoricoPlantillaPersonalEstadistica.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public String convertirRuta(File file) {
-//        System.out.println("evidencias2/evidenciasCapitalHumano/PlantillaPersonal/" + "evidencias2/evidanciasCapitalHuano/PlantillaPersonal/".concat(file.toURI().toString().split("config")[1]));
-        return "evidencias2/evidenciasCapitalHumano/PlantillaPersonal".concat(file.toURI().toString().split("config")[1]);
+     return "evidencias2/evidenciasCapitalHumano/PlantillaPersonal".concat(file.toURI().toString().split("config")[1]);
     }
     
     public void listaHistoricos() {
          try {
             nuevaListaHistoricoplantillapersonal.clear();
-            nuevaListaHistoricoplantillapersonal = ejbSelectec.mostrarHistoricoplantillapersonal();
+            nuevaListaHistoricoplantillapersonal = ejbDatosUsuarioLogeado.mostrarHistoricoplantillapersonal();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(HistoricoPlantillaPersonalEstadistica.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     

@@ -49,7 +49,6 @@ public class CargaArchivosCH implements Serializable{
         InputStream is = archivo.getInputstream();
         String ext = FilenameUtils.getExtension(nombreArchivo);// .getSubmittedFileName());
         Path file = Files.createTempFile(Paths.get(rutaRelativa), nombreArchivo.split("\\.")[0], "." + ext);
-//            System.out.println("jvv.aldesa.sgot.util.CargaArchivosCH.subir(): " + nombreArchivo + "-->" + file.toString());
         Files.copy(is, file, StandardCopyOption.REPLACE_EXISTING);
         is.close();
 
@@ -64,7 +63,6 @@ public class CargaArchivosCH implements Serializable{
         InputStream is = archivo.getInputstream();
         String ext = FilenameUtils.getExtension(nombreArchivo);// .getSubmittedFileName());
         Path file = Files.createTempFile(Paths.get(rutaRelativa), nombreArchivo.split("\\.")[0], "." + ext);
-//            System.out.println("jvv.aldesa.sgot.util.CargaArchivosCH.subirFoto(): " + nombreArchivo + "-->" + file.toString());
         Files.copy(is, file, StandardCopyOption.REPLACE_EXISTING);
         is.close();
 
