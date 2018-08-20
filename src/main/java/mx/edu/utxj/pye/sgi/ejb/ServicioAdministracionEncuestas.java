@@ -117,9 +117,13 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
     @Override
     public List<AreasUniversidad> obtenerAreasDirector(Short identificador, String estatus) {
         System.out.println("parametro identificador : " + identificador + " parametro estatus : " + estatus);
-        TypedQuery<AreasUniversidad> q = f.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a WHERE a.area = :area and a.vigente = :vigente", AreasUniversidad.class);
-        q.setParameter("area", identificador);
-        q.setParameter("vigente", estatus);
+        AreasUniversidad a = f.getEntityManager().find(AreasUniversidad.class, identificador);
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioAdministracionEncuestas.obtenerAreasDirector() el area es : " + a);
+        TypedQuery<AreasUniversidad> q = f.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a WHERE a.areaSuperior = :area", AreasUniversidad.class);
+//        TypedQuery<AreasUniversidad> q = f.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a WHERE a.areaSuperior = :area and a.vigente = :vigente", AreasUniversidad.class);
+        
+        q.setParameter("area", a.getAreaSuperior());
+//        q.setParameter("vigente", '1');
         System.out.println("resultado de la consulta " + q);
         List<AreasUniversidad> lp = q.getResultList();
         if (lp == null || lp.isEmpty()) {
@@ -291,6 +295,7 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
     public List<ListaPersonal> getListadoDocentesPorArea(Short area) {
         System.out.println("area seleccionada : " + area);
         if (area == 47) {
+            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioAdministracionEncuestas.getListadoDocentesPorArea() es el area 47");
             TypedQuery<ListaPersonal> q = f.getEntityManager().createQuery("SELECT p FROM ListaPersonal p WHERE p.areaOperativa = :area ", ListaPersonal.class);
             q.setParameter("area", area);
 //            q.setParameter("status", "R");
@@ -302,6 +307,7 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
                 return l;
             }
         } else if (area == 999) {
+            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioAdministracionEncuestas.getListadoDocentesPorArea() es el area 999");
             TypedQuery<ListaPersonal> q = f.getEntityManager().createQuery("SELECT p FROM ListaPersonal p WHERE p.actividad <> :docente and p.experienciaDocente >= :experienciaDocente", ListaPersonal.class);
 //            q.setParameter("area", area);
             q.setParameter("docente", 3);
@@ -313,7 +319,8 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
                 return l;
             }
         } else {
-            TypedQuery<ListaPersonal> q = f.getEntityManager().createQuery("SELECT p FROM ListaPersonal p WHERE p.areaSuperior = :area ", ListaPersonal.class);
+            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioAdministracionEncuestas.getListadoDocentesPorArea() es el area : " + area);
+            TypedQuery<ListaPersonal> q = f.getEntityManager().createQuery("SELECT p FROM ListaPersonal p WHERE p.areaOperativa = :area ", ListaPersonal.class);
             q.setParameter("area", area);
 //            q.setParameter("docente", 3);
 //            q.setParameter("experienciaDocente", 1);

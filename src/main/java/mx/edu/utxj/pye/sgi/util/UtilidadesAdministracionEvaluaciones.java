@@ -390,22 +390,33 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
      * (Datatable)
      */
     public void obtenerResultadoEvaluacionDocentePorMateria(ListaEvaluacionDocenteMateria clave) {
-        SubordinadoSeleccionado = clave;
+//        SubordinadoSeleccionado = clave;
         ListaDocentesPromedioMateria = new ArrayList<>();
         List<VistaEvaluacionDocenteMateriaPye> listaMaterias = eJBAdministracionEncuestas.getMateriasPorDocente(clave.getClave(), periodoSeleccionado);
+        System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerResultadoEvaluacionDocentePorMateria() la lista de materias es "+ listaMaterias);
+        System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerResultadoEvaluacionDocentePorMateria() el periodo seleccionado es : " + periodoSeleccionado);
         EvaluacionDocentesMaterias evaluacion = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoSeleccionado);
+        System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerResultadoEvaluacionDocentePorMateria() la evaluacion es :" + evaluacion);
         Map<String, Long> lm = listaMaterias.stream().collect(
                 Collectors.groupingBy(VistaEvaluacionDocenteMateriaPye::getCveMateria, Collectors.counting()));
         List<String> rLM = lm.keySet().stream().collect(Collectors.toList());
+        System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerResultadoEvaluacionDocentePorMateria() ,aterias");
+        rLM.forEach(System.err::println);
         rLM.forEach(mat -> {
+            System.out.println("la materia en cuestion");
             List<EvaluacionDocentesMateriaResultados> lpm = eJBAdministracionEncuestas.getEvaluacionDocentesResultadosPromedioMateria(evaluacion, clave.getClave(), mat);
             List<EvaluacionDocentesMateriaResultados> listaCompletos = lpm.stream().filter(x -> x.getCompleto()).collect(Collectors.toList());
             Double promedioMateria = listaCompletos.stream().collect(Collectors.summingDouble(EvaluacionDocentesMateriaResultados::getPromedio)) / listaCompletos.size();
             List<VistaEvaluacionDocenteMateriaPye> listaMateriaSeleccionada = listaMaterias.stream().filter(m -> m.getCveMateria().equals(mat)).collect(Collectors.toList());
             VistaEvaluacionDocenteMateriaPye materiaSeleccionada = listaMateriaSeleccionada.get(0);
+            System.err.println("La lista de materias es : # ");            
+            listaMateriaSeleccionada.forEach(System.err::println);
             listaCarreras.forEach(c -> {
+                System.err.println("la carrera en cuestion es : " + c);
                 if (materiaSeleccionada.getSiglas().equals(c.getSiglas())) {
+                    
                     ListaEvaluacionDocenteMateria evaluacionMateria = new ListaEvaluacionDocenteMateria(clave.getClave(), clave.getNombre(), clave.getAreaOperativa(), clave.getCategoriaOperativa(), mat, materiaSeleccionada.getNombreMateria(), promedioMateria);
+                    System.err.println("la evaluacion de la materia : " + evaluacionMateria);
                     ListaDocentesPromedioMateria.add(evaluacionMateria);
                 } else {
                     System.out.println("la materia : " + materiaSeleccionada.getNombreMateria() + " pertenece a otra area");
@@ -444,11 +455,17 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
      */
     public void resultadosSA() {
         listadoDocentesPromedioSa = new ArrayList<>();
+        
         EvaluacionDocentesMaterias evaluacionDocenteSeleccionada = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoSeleccionado);
+        System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.resultadosSA() el periodo : " + periodoSeleccionado);
+        System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.resultadosSA() la evaluacuion : " + evaluacionDocenteSeleccionada);
         List<ListaPersonal> lp = eJBAdministracionEncuestas.getListadoDocentesPorArea(areaEducativa);
+        System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.resultadosSA() el tamaño de la lista : " + lp.size());
         lp.forEach(docente -> {
+            System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.resultadosSA() entra al for each");
             List<EvaluacionDocentesMateriaResultados> l = eJBAdministracionEncuestas.getEvaluacionDocentesResultadosPromedioGeneral(evaluacionDocenteSeleccionada, docente.getClave());
             if (l != null) {
+                System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.resultadosSA() no es null");
                 List<EvaluacionDocentesMateriaResultados> listaCompletos = l.stream().filter(x -> x.getCompleto()).collect(Collectors.toList());
                 Double suma = listaCompletos.stream().collect(Collectors.summingDouble(EvaluacionDocentesMateriaResultados::getPromedio));
                 Double promedio = suma / listaCompletos.size();
@@ -501,20 +518,28 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
             listaCarreras = new ArrayList<>();
             listaChartEvaluacionDocentes = new ArrayList<>();
             EvaluacionDocentesMaterias evaluacionDocente = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoSeleccionado);
+            System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerDatosGrafica() el periodo seleccionado es : " + periodoSeleccionado);
             listaCarreras = eJBAdministracionEncuestas.obtenerAreasDirector(areaEducativa, "Vigente");
+            System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerDatosGrafica() la lista de carreras es : " + listaCarreras);
             listaCarreras.stream().forEach(c -> {
+                System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerDatosGrafica() la carrera en cuestion es : 2 " + c);
                 listaDeResultadosEvaluacionDocente = new ArrayList<>();
                 System.out.println("siglas : " + c.getSiglas() + " evaluacion : " + evaluacionDocente.getEvaluacion());
-                listaDeResultadosEvaluacionDocente.addAll(eJBAdministracionEncuestas.resultadosEvaluacionGlobalDirector(c.getSiglas(), evaluacionDocente.getEvaluacion()));
-                if (!listaDeResultadosEvaluacionDocente.isEmpty()) {
+                List<ListaEvaluacionDocentesResultados> l =eJBAdministracionEncuestas.resultadosEvaluacionGlobalDirector(c.getSiglas(), evaluacionDocente.getEvaluacion());
+                if (l.isEmpty() || l == null) {
+                    System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerDatosGrafica() null");
+                } else {
+                    listaDeResultadosEvaluacionDocente.addAll(l);
+                }
+                if (listaDeResultadosEvaluacionDocente == null || listaDeResultadosEvaluacionDocente.isEmpty()) {
+                    System.out.println("mx.edu.utxj.pye.sgi.funcional.UtilidadesAdministracionEvaluaciones.obtenerDatosGrafica() lista vacia" + listaDeResultadosEvaluacionDocente);
+                } else if (!listaDeResultadosEvaluacionDocente.isEmpty()) {
                     Long completos = (listaDeResultadosEvaluacionDocente.stream().filter(x -> x.getEstatus().equalsIgnoreCase("Finalizado")).count());
                     Long incompletos = listaDeResultadosEvaluacionDocente.stream().filter(x -> x.getEstatus().equalsIgnoreCase("Incompleto")).count();
                     Long total = completos + incompletos;
                     ListadoChartEvaluacionDocente chartDato = new ListadoChartEvaluacionDocente(c.getSiglas(), Integer.parseInt(completos.toString()), Integer.parseInt(incompletos.toString()), Integer.parseInt(total.toString()));
                     listaChartEvaluacionDocentes.add(chartDato);
-                } else if (listaDeResultadosEvaluacionDocente == null) {
-                    System.out.println("mx.edu.utxj.pye.sgi.funcional.UtilidadesAdministracionEvaluaciones.obtenerDatosGrafica() lista vacia" + listaDeResultadosEvaluacionDocente);
-                }
+                } 
             });
             System.out.println("lista de dato por carrera : " + listaChartEvaluacionDocentes);
             graficar();
