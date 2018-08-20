@@ -36,7 +36,6 @@ public class DatosPersonales implements Serializable {
     @Getter    @Setter    private List<Personal> nuevaListaPersonal = new ArrayList<>();
     @Getter    @Setter    private Personal nuevoOBJPersonal;
 //List<Personal> 
-    @Getter    @Setter    private List<InformacionAdicionalPersonal> nuevaListaInformacionAdicionalPersonal = new ArrayList<>();
     @Getter    @Setter    private InformacionAdicionalPersonal nuevoOBJInformacionAdicionalPersonal;
 //List<Integer> 
     @Getter    @Setter    private Integer usuario;
@@ -73,7 +72,6 @@ public class DatosPersonales implements Serializable {
     public void consultarPerfil() {
         try {
             nuevaListaPersonal.clear();
-            nuevaListaInformacionAdicionalPersonal.clear();
 
             nuevoOBJPersonal = ejbDatosUsuarioLogeado.mostrarPersonalLogeado(usuario);
             nuevoOBJInformacionAdicionalPersonal = ejbDatosUsuarioLogeado.mostrarInformacionAdicionalPersonalLogeado(usuario);
@@ -84,11 +82,10 @@ public class DatosPersonales implements Serializable {
             }
 
             if (nuevoOBJInformacionAdicionalPersonal != null) {
-                nuevoOBJInformacionAdicionalPersonal = nuevaListaInformacionAdicionalPersonal.get(0);
                 obtenerEdad();
             }
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(DatosPersonales.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -106,7 +103,7 @@ public class DatosPersonales implements Serializable {
             }
             Messages.addGlobalInfo("¡Operación exitosa!!");
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(DatosPersonales.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

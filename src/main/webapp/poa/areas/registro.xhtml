@@ -45,7 +45,7 @@
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <div id="main-buttons" class="hidden-sm hidden-xs" >
-                        <p:panel header="Alineacion estratejica">
+                        <p:panel header="Alineación estratégica">
                             <div class="row">
                                 <div class="col-sm-12 col-md-6 col-lg-6">            
                                     <p:autoUpdate/>
@@ -75,9 +75,10 @@
                                         <p:message for=":frm" display="tooltip" />
                                     </p:outputPanel>
                                 </div>
-                                <div class="col-sm-12 col-md-2 col-lg-2">
+                                <!--div class="col-sm-12 col-md-2 col-lg-2">
+                                    <br/>
                                     <p:commandButton value="Resumen de registros" id="btnPr" actionListener="#{controladorRegistroActividadesPOA.consultarParametrosRegistrados()}"  oncomplete="PF('dlgParametrosRegistrados').show()" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":dtbBajas" />
-                                </div>
+                                </div-->
                             </div>
                         </p:panel>
                     </div>
@@ -109,17 +110,24 @@
                                 <p:message for="medida" display="tooltip" />
                                 <hr/>  
                             </div>  
-
-                            <div class="col-sm-6 col-md-3 col-lg-3">
-                                <p:outputLabel for="subactividades" value="Console:" />
-                                <p:selectOneRadio id="subactividades" value="#{controladorRegistroActividadesPOA.actividadP}">
-                                    <f:selectItem itemLabel="SI" itemValue="SI" />
-                                    <f:selectItem itemLabel="NO" itemValue="NO" />
-                                    <p:ajax listener="#{controladorRegistroActividadesPOA.imprimirValores()}" process="subactividades" />
-                                </p:selectOneRadio>
+                            <p:outputPanel>            
+                                <p:autoUpdate/>
+                                <div class="col-sm-6 col-md-3 col-lg-3" style="#{controladorRegistroActividadesPOA.tipo eq 'Subactividad'?'visibility:collapse':'visibility:visible'}">
+                                    <p:outputLabel for="subactividades" value="Contara con subactividades" />
+                                    <p:selectOneRadio id="subactividades" value="#{controladorRegistroActividadesPOA.actividadP}">
+                                        <f:selectItem itemLabel="SI" itemValue="SI" />
+                                        <f:selectItem itemLabel="NO" itemValue="NO" />
+                                        <p:ajax listener="#{controladorRegistroActividadesPOA.imprimirValores()}" process="subactividades" />
+                                    </p:selectOneRadio>
+                                    <hr/>  
+                                </div>  
+                            </p:outputPanel>
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <p:outputLabel for="nombre"  value="Nombre actividad" />
+                                <p:inputText id="nombre" value="#{controladorRegistroActividadesPOA.actividadesPoa.denominacion}" style="height:100%; width: 100%;" placeholder="Nombre de la actividad" />
+                                <p:message for="nombre" display="tooltip"/>     
                                 <hr/>  
-                            </div>  
-
+                            </div> 
                             <p:outputPanel>            
                                 <p:autoUpdate/>
                                 <div class="col-sm-12 col-md-12 col-lg-12" style="#{controladorRegistroActividadesPOA.tipo eq 'Subactividad'?'visibility:visible':'visibility:collapse'}">
@@ -133,12 +141,6 @@
                                     <hr/>  
                                 </div>
                             </p:outputPanel>
-                            <div class="col-sm-12 col-md-12 col-lg-12">
-                                <p:outputLabel for="nombre"  value="Nombre actividad" />
-                                <p:inputText id="nombre" value="#{controladorRegistroActividadesPOA.actividadesPoa.denominacion}" style="height:100%; width: 100%;" placeholder="Nombre de la actividad" />
-                                <p:message for="nombre" display="tooltip"/>     
-                                <hr/>  
-                            </div> 
                         </div>
                         <div class="col-sm-12 col-md-6 col-lg-6">
                             <p:outputPanel>            
@@ -165,7 +167,7 @@
                             <hr/>   
                         </div>
                     </div> 
-                    <p:commandButton value="Agregar" id="btnSiguiente" actionListener="#{controladorRegistroActividadesPOA.anadirNuavActividad()}"  process=":frm" icon="fa fa-plus" styleClass="btn-primary" update=":frm:dtbBajas" />
+                    <p:commandButton value="Agregar" id="btnSiguiente" actionListener="#{controladorRegistroActividadesPOA.anadirNuavActividad()}"  process=":frm" icon="fa fa-plus" styleClass="btn-primary" update=":frm" />
 
                     <p:separator/>
                     <div class="box box-solid">
@@ -175,18 +177,11 @@
                                     <p:remoteCommand name="actualizarTabla2" actionListener="#{controladorRegistroActividadesPOA.imprimirValores()}" update=":frm:dtbBajas" />
                                     <p:dataTable id="dtbBajas" var="pOa" paginator="true" rows="10" saveOnCellBlur="false"
                                                  rowStyleClass="#{pOa.numeroS eq 0?'principal':''}"
-                                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+                                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                  rowsPerPageTemplate="5,10,15,20,25,30" editable="true" editMode="row"
                                                  value="#{controladorRegistroActividadesPOA.listaActividadesPoasFiltroEje}">
 
                                         <f:facet name="header"></f:facet>
-
-                                        <f:facet name="{Exporters}">
-                                            <p:commandLink ajax="false">
-                                                <i class="fa fa-file-excel-o" /> Descargar
-                                                <pe:exporter type="xlsx" target="dtbBajas" fileName="PlantillaPersonalActivo" orientation="Landscape"  />
-                                            </p:commandLink>
-                                        </f:facet>
 
                                         <p:columnGroup type="header">
                                             <p:row class="success">
@@ -341,6 +336,10 @@
                 <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
                 <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
             </p:confirmDialog>
+
+            <p:blockUI id="bui" block="frm" widgetVar="bui" blocked="true">
+                Seleccione se alineación estratégica<br />
+            </p:blockUI>
 
         </h:form>
 
