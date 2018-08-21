@@ -85,7 +85,7 @@ public class AdministracionEncuesta implements Serializable{
     public void init() {
         
         Long inicio=System.currentTimeMillis();
-        //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuesta.init()"+ inicio);
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuesta.init()"+ inicio);
 //        try {
 //            if (logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
 //                claveTrabajador = Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
@@ -112,10 +112,10 @@ public class AdministracionEncuesta implements Serializable{
 //            Logger.getLogger(AdministracionEncuesta.class.getName()).log(Level.SEVERE, null, ex);
 //        }
         Long fin=System.currentTimeMillis();
-        //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuesta.init()"+ fin);
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuesta.init()"+ fin);
         
         Long retardo=inicio-fin;
-        //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuesta.init() EL retardo del init es:" + retardo);
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuesta.init() EL retardo del init es:" + retardo);
     }
     
     public void initSeguimientoEncuestasDirector(){
@@ -144,7 +144,7 @@ public class AdministracionEncuesta implements Serializable{
             listadoEvaluacionIncompleta = new ArrayList<>();
             listadoEvaluacionNa=new ArrayList<>();
             alumnosNoAccedieronEnc = ejbAdmEncuesta.obtenerAlumno(cveDirector).stream().filter(x->x.getGrado()==11).collect(Collectors.toList());
-//            //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuesta.alumnosNoAccedieronVistaDirector()"+ alumnosNoAccedieronEnc);
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuesta.alumnosNoAccedieronVistaDirector()"+ alumnosNoAccedieronEnc);
             Comparador<EncuestaSatisfaccionEgresadosIng> comparador= new ComparadorEncuestaSatisfaccionEgresadosIng();
             alumnosNoAccedieronEnc.forEach(e -> {
                 try {
@@ -168,9 +168,9 @@ public class AdministracionEncuesta implements Serializable{
                     Logger.getLogger(AdministracionEncuesta.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
-            //System.out.println("satisfaccion no accedio: " + listadoEvaluacionNa.size());
-            //System.out.println("satisfaccion  accedio: " + listadoEvaluacionIncompleta.size());
-            //System.out.println("satisfaccion  accedio y completo: " + listadoEvaluacionCompleta.size());
+            System.out.println("satisfaccion no accedio: " + listadoEvaluacionNa.size());
+            System.out.println("satisfaccion  accedio: " + listadoEvaluacionIncompleta.size());
+            System.out.println("satisfaccion  accedio y completo: " + listadoEvaluacionCompleta.size());
         } catch (Throwable e) {
             Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + e.getMessage());
             Logger.getLogger(AdministracionEncuesta.class.getName()).log(Level.SEVERE, null, e);
@@ -182,7 +182,7 @@ public class AdministracionEncuesta implements Serializable{
             listaEncuestaIncompleta=new ArrayList<>();
             listaEncuestaServicios = new ArrayList<>();
             alumnoNoAccedireonEncServ = ejbAdmEncuesta.obtenerAlumno(cveDirector);
-            //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuesta.alumnosNoAccedieronEncServiciosVistaDirector() total alumnos director:"+alumnoNoAccedireonEncServ.size());
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuesta.alumnosNoAccedieronEncServiciosVistaDirector() total alumnos director:"+alumnoNoAccedireonEncServ.size());
 // se implementa la interfaz funcional comparador para poder validar la encuesta
             Comparador<EncuestaServiciosResultados> comparador = new ComparadorEncuestaServicios();
             alumnoNoAccedireonEncServ.forEach(x -> {
@@ -193,7 +193,7 @@ public class AdministracionEncuesta implements Serializable{
                         if (comparador.isCompleto(estudianteTest)) {
                             ListadoEncuestaServicios completado = new ListadoEncuestaServicios(Integer.parseInt(x.getMatricula()), x.getNombre() + " " + x.getApellidoPat() + " " + x.getApellidoMat(), x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), x.getNombreTutor() + " " + x.getApPatTutor() + " " + x.getApMatTutor());
                             listaEncuestaServicios.add(completado);
-//                        //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuesta.alumnosNoAccedieronEncServiciosVistaDirector() Alumnos que completaron"+listaEncuestaServicios);
+//                        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuesta.alumnosNoAccedieronEncServiciosVistaDirector() Alumnos que completaron"+listaEncuestaServicios);
                         }
                         if(!comparador.isCompleto(estudianteTest)) {
                             ListadoEncuestaServicios incompleto = new ListadoEncuestaServicios(Integer.parseInt(x.getMatricula()), x.getNombre() + " " + x.getApellidoPat() + " " + x.getApellidoMat(), x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), x.getNombreTutor() + " " + x.getApPatTutor() + " " + x.getApMatTutor());
@@ -207,9 +207,9 @@ public class AdministracionEncuesta implements Serializable{
                     Logger.getLogger(AdministracionEncuesta.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
-            //System.out.println("serv no accedio: " + listaEncuestaNA.size());
-            //System.out.println("serv  accedio: " + listaEncuestaIncompleta.size());
-            //System.out.println("serv  accedio y completo: " + listaEncuestaServicios.size());
+            System.out.println("serv no accedio: " + listaEncuestaNA.size());
+            System.out.println("serv  accedio: " + listaEncuestaIncompleta.size());
+            System.out.println("serv  accedio y completo: " + listaEncuestaServicios.size());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(AdministracionEncuesta.class.getName()).log(Level.SEVERE, null, ex);
@@ -244,9 +244,9 @@ public class AdministracionEncuesta implements Serializable{
                         Logger.getLogger(AdministracionEncuesta.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 });
-                //System.out.println("Estudiantes que han finalizado encuesta: " + listadoEvaluacionCompletaEstInf.size());
-            //System.out.println("Estudiantes que no han accedido: " + listaEvNA.size());
-            //System.out.println("Estudiantes con encuesta incompleta: " + listadoEvaluacionIncompletaEstInf.size());
+                System.out.println("Estudiantes que han finalizado encuesta: " + listadoEvaluacionCompletaEstInf.size());
+            System.out.println("Estudiantes que no han accedido: " + listaEvNA.size());
+            System.out.println("Estudiantes con encuesta incompleta: " + listadoEvaluacionIncompletaEstInf.size());
             
 
         } catch (Throwable ex) {
@@ -261,7 +261,7 @@ public class AdministracionEncuesta implements Serializable{
                 listadoEncuestaServicios = new ArrayList<>();
                 listadoEncServiciosIncompleta = new ArrayList<>();
                 listaAlumno = ejbAdmEncuesta.obtenerListaAlumnosNoAccedieron();
-//                //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuesta.alumnosNoAccedieronVistaEstInf()" + listaAlumno);
+//                System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuesta.alumnosNoAccedieronVistaEstInf()" + listaAlumno);
                 Comparador<EncuestaServiciosResultados> comparador = new ComparadorEncuestaServicios();
                 listaAlumno.forEach(x -> {
                     try {
@@ -283,9 +283,9 @@ public class AdministracionEncuesta implements Serializable{
                         Logger.getLogger(AdministracionEncuesta.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 });
-                //System.out.println("egresado no accedio: " + listadoEncuestaServicios.size());
-            //System.out.println("egresado  accedio: " + listadoEncServiciosIncompleta.size());
-            //System.out.println("egresado  accedio y completo: " + listaEncuestaNAEstInf.size());
+                System.out.println("egresado no accedio: " + listadoEncuestaServicios.size());
+            System.out.println("egresado  accedio: " + listadoEncServiciosIncompleta.size());
+            System.out.println("egresado  accedio y completo: " + listaEncuestaNAEstInf.size());
 
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getMessage());
@@ -301,7 +301,7 @@ public class AdministracionEncuesta implements Serializable{
         try {
             listDatosEncEgre=ejbAdmEncuesta.listaDatosAvanceEncEgresados();
             listDatosEncServ=ejbAdmEncuesta.listaAvanceEncServ();
-            //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuesta.datosTablaAvance()"+ listDatosEncEgre);
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuesta.datosTablaAvance()"+ listDatosEncEgre);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(AdministracionEncuesta.class.getName()).log(Level.SEVERE, null, ex);
