@@ -128,7 +128,7 @@
                     <p:tab title="#{administrativoEvaluacion.listadoEstudiantesNA.size()} Estudiantes que no accedieron al sistema de evaluación">
                         <p:panel  toggleable="true">
                             <p:dataTable id="tblEvaluacionesSinAccesar" lazy="false" value="#{administrativoEvaluacion.listadoEstudiantesNA}"   var="encuestaEstudiate" filterDelay="700" 
-                                         paginator="false" rows="10"
+                                         paginator="true" rows="10"
                                          rowsPerPageTemplate="10,20,30,40,50"
                                          emptyMessage="No se encontrarono registros">
                                 <f:facet name="footer">

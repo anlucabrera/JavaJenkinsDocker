@@ -75,7 +75,7 @@ public class AdministrativoEvaluacion implements Serializable {
     public void init() {
         utilAdmin.init();
         if (41 == logonMB.getPersonal().getAreaOperativa()) {
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.init() Psicopedagogia : ");
+           //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.init() Psicopedagogia : ");
 
         }
     }
@@ -87,11 +87,11 @@ public class AdministrativoEvaluacion implements Serializable {
         List<Grupos> l = eJBAdministracionEncuestas.esTutor(logonMB.getUsuarioAutenticado().getUsuariosPK().getCvePersona(), eJBAdministracionEncuestas.getPeriodoActual().getPeriodo());
         grupoSeleccionado = l.get(0);
         listaEstudiantes = eJBAdministracionEncuestas.getListaDeAlumnosPorDocente(grupoSeleccionado.getGruposPK().getCveGrupo());
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.obtenerAlumnosPorGrupo() lista estudiantes tamaño : " + listaEstudiantes.size());
+       //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.obtenerAlumnosPorGrupo() lista estudiantes tamaño : " + listaEstudiantes.size());
         if (null == tipoEvaluacion) {
             Messages.addGlobalWarn("Seleccione una opcion para poder obtener los resultados");
         } else {
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.obtenerAlumnosPorGrupo() la evaluacion seleccionada es : " + tipoEvaluacion);
+           //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.obtenerAlumnosPorGrupo() la evaluacion seleccionada es : " + tipoEvaluacion);
             switch (tipoEvaluacion) {
                 case 1:
                     resultadoDocente();
@@ -107,9 +107,9 @@ public class AdministrativoEvaluacion implements Serializable {
     }
 
     public void resultadoDocente() {
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadoDocente() entra al metodo");
+       //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadoDocente() entra al metodo");
         if (eJBEvaluacionDocenteMateria.evaluacionActiva() != null) {
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadoDocente() la evaluacion no es nula");
+           //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadoDocente() la evaluacion no es nula");
             listaEstudiantes.stream().forEach(e -> {
 
                 List<VistaEvaluacionDocenteMateriaPye> listaDatosEvaluacion = eJBEvaluacionDocenteMateria.getDocenteMAteria(e.getMatricula(), eJBEvaluacionDocenteMateria.evaluacionActiva().getPeriodo());
@@ -122,13 +122,13 @@ public class AdministrativoEvaluacion implements Serializable {
                         listaResultados.addAll(eJBEvaluacionDocenteMateria.obtenerListaResultadosPorEvaluacionEvaluador(eJBEvaluacionDocenteMateria.ultimaEvaluacionDocenteMaterias(), Integer.parseInt(e.getMatricula())));
                     }
                 });
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.obtenerAlumnosPorGrupo() lista de resultados : " + listaResultados + " tamaño : " + listaResultados.size());
+           //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.obtenerAlumnosPorGrupo() lista de resultados : " + listaResultados + " tamaño : " + listaResultados.size());
                 if (!listaResultados.isEmpty()) {
                     Integer total = listaDatosEvaluacion.size();
                     Integer completos = (int) listaResultados.stream().filter(r -> r.getCompleto()).count() / total;
                     Boolean termino = total >= completos;
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.obtenerAlumnosPorGrupo()" + e.getMatricula() + ""
-                        + " completo : " + termino + " completo a : " + completos + " de un total de : " + total);
+           //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.obtenerAlumnosPorGrupo()" + e.getMatricula() + ""
+//                        + " completo : " + termino + " completo a : " + completos + " de un total de : " + total);
                     if (completos < total) {
 //                    List<VistaAlumnosPye> lnc = eJBAdministracionEncuestas.findAllByMatricula(e.getMatricula());
                         listadoEstudiantesNC.add(eJBAdministracionEncuestas.findAllByMatricula(e.getMatricula()).get(0));
@@ -145,7 +145,7 @@ public class AdministrativoEvaluacion implements Serializable {
 //        listadoEstudiantesNA.stream().distinct().collect(Collectors.toList());
 //        listadoEstudiantesCompletado.stream().distinct().collect(Collectors.toList());
 //        listadoEstudiantesNC.stream().distinct().collect(Collectors.toList());
-        System.out.println("lista completo : " + listadoEstudiantesCompletado.size() + ", no completo : " + listadoEstudiantesNC.size() + " no accedio : " + listadoEstudiantesNA.size());
+       //System.out.println("lista completo : " + listadoEstudiantesCompletado.size() + ", no completo : " + listadoEstudiantesNC.size() + " no accedio : " + listadoEstudiantesNA.size());
         } else {
             
             Messages.addGlobalInfo("La evaluacion ya no se encuentra activa, debido a esto usted ya no puede ver el resumen de esta");
@@ -154,20 +154,20 @@ public class AdministrativoEvaluacion implements Serializable {
 
     public void resultadoTutor() {
         if (ejbTutor.evaluacionActiva() != null) {
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadoTutor() lista de estudiantes : " + listaEstudiantes);
+       //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadoTutor() lista de estudiantes : " + listaEstudiantes);
             listaEstudiantes.stream().forEach(e -> {
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadoTutor() el alumno e es : " + e);
+           //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadoTutor() el alumno e es : " + e);
 //            List<VistaEvaluacionDocenteMateriaPye> listaDatosEvaluacion = eJBEvaluacionDocenteMateria.getDocenteMAteria(e.getMatricula());
                 EvaluacionesTutoresResultados resultado;
                 Evaluaciones eva;
                 eva = ejbTutor.evaluacionActiva();
 //            Integer matricula = e.getMatricula();
                 resultado = ejbTutor.getSoloResultados(eva, Integer.parseInt(e.getMatricula()));
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadoTutor() los resultados de "+e.getMatricula()+" y son " + resultado);
+           //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadoTutor() los resultados de "+e.getMatricula()+" y son " + resultado);
                 if (resultado != null) {
                     Comparador<EvaluacionesTutoresResultados> comparador = new ComparadorEvaluacionTutor();
                     boolean finalizado = comparador.isCompleto(resultado);
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadoTutor() finalizo? : " +finalizado);
+           //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadoTutor() finalizo? : " +finalizado);
                     if (!finalizado) {
 //                    List<VistaAlumnosPye> lnc = eJBAdministracionEncuestas.findAllByMatricula(e.getMatricula());
                         listadoEstudiantesNC.add(eJBAdministracionEncuestas.findAllByMatricula(e.getMatricula()).get(0));
@@ -190,16 +190,16 @@ public class AdministrativoEvaluacion implements Serializable {
         listaCarreras = new ArrayList<>();
         listaDeResultadosEvaluaciones = new ArrayList<>();
         desempenioAdmin.getDirectivoSeleccionado();
-        System.out.println("Director Seleccionado : " + desempenioAdmin.getDirectivoSeleccionado());
+       //System.out.println("Director Seleccionado : " + desempenioAdmin.getDirectivoSeleccionado());
         Short area = desempenioAdmin.getDirectivoSeleccionado().getAreaOperativa();
-        System.out.println("area operativa : " + desempenioAdmin.getDirectivoSeleccionado().getAreaOperativa());
+       //System.out.println("area operativa : " + desempenioAdmin.getDirectivoSeleccionado().getAreaOperativa());
         listaCarreras = eJBAdministracionEncuestas.obtenerAreasDirector(area, "1");
-        System.out.println("Lista de carreras : " + listaCarreras);
+       //System.out.println("Lista de carreras : " + listaCarreras);
         listaCarreras.stream().forEach(c -> {
             listaDeResultadosEvaluaciones.addAll(eJBAdministracionEncuestas.resultadosEvaluacionGlobalDirector(c.getSiglas(), 1));
-            System.out.println("siglas agregadas : " + c.getSiglas());
+           //System.out.println("siglas agregadas : " + c.getSiglas());
         });
-        System.out.println("lista de resultados : "+ listaDeResultadosEvaluaciones);
+       //System.out.println("lista de resultados : "+ listaDeResultadosEvaluaciones);
     }
 
     public void resultadosTutorPsicopedagogia() {
@@ -236,8 +236,8 @@ public class AdministrativoEvaluacion implements Serializable {
         listadoEstudiantesNASES = new ArrayList<>();
         listaEstudiantesSES = eJBAdministracionEncuestas.getEstudiantesSEScolaes();
         listaEstudiantesSES.forEach(e ->{
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadosTutoresPs() matricula que entra " + e.getAlumnoPK().getMatricula());
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadosTutoresPs() la evaluacion es : " + ejbTutor.evaluacionActiva().getEvaluacion());
+           //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadosTutoresPs() matricula que entra " + e.getAlumnoPK().getMatricula());
+           //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadosTutoresPs() la evaluacion es : " + ejbTutor.evaluacionActiva().getEvaluacion());
             Integer matricula = e.getAlumnoPK().getMatricula();
             EvaluacionesTutoresResultados resultado = ejbTutor.getSoloResultados(ejbTutor.evaluacionActiva(), matricula);
             Integer clave =  e.getPe();
