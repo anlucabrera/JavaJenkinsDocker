@@ -117,11 +117,13 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
             if(logonMB.getPersonal().getCategoriaOperativa().getCategoria() == 18 && logonMB.getPersonal().getAreaSuperior() == 2){
                 directorDeCarrera = true;
                 listaCarreras = eJBAdministracionEncuestas.obtenerAreasDirector(desempenioAdmin.getDirectivoSeleccionado().getAreaOperativa(), "Vigente");
-                System.out.println("Lista de carreras del directivo" + listaCarreras);
+               //System.out.println("Lista de carreras del directivo" + listaCarreras);
+               //System.out.println("lista de carreras");
+                listaCarreras.forEach(System.err::println);
                 selectItemEvaluacionesDirectorCarrera = eJBSelectItems.itemsEvaluacionDirectores();
                 ListaSubordinadosAdmin = desempenioAdmin.getListaSubordinados();
             } else if (/*!directorDeCarrera &&*/logonMB.getPersonal().getActividad().getActividad() == 4 || logonMB.getPersonal().getActividad().getActividad() == 2) {
-                System.out.println("directivo o coordinador");
+               //System.out.println("directivo o coordinador");
                 selectItemEvaluacionesDirectivo = eJBSelectItems.itemsEvaluacionesDirectivos();
                 ListaSubordinadosAdmin = desempenioAdmin.getListaSubordinados();
                 if (logonMB.getPersonal().getCategoriaOperativa().getCategoria() == 38) {
@@ -129,14 +131,14 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
                     secretariaAc = true;
                     selectItemEvaluacionesPersonalSA = eJBSelectItems.itemsEvaluacionSecretariaAcademica();
                     selectItemsAreasEducativas = eJBSelectItems.itemAreasAcademicas();
-                    System.out.println("Secretaria Academica");
+                   //System.out.println("Secretaria Academica");
                     renderReporte = false;
                     renderReportePersonal = false;
                 } else if (logonMB.getPersonal().getAreaOperativa() == 13 && logonMB.getPersonal().getCategoriaOperativa().getCategoria() == 24) {
                     directivo = true;
                     personal = true;
                     selectItemEvaluacionesPersonal = eJBSelectItems.itemsEvaluacionPersonal();
-                    System.out.println("Jefe de personal");
+                   //System.out.println("Jefe de personal");
                     botoneraActivaPersonal = true;
                     renderReportePersonal = false;
 //                    listaPersonalGeneral = eJBAdministracionEncuestas.personalGeneral();
@@ -246,7 +248,7 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
                 case 4:
                     tipoEvaluacion = "Docente";
                     obtenerResultadosEvaluacionDocente();
-                    System.out.println("docente");
+                   //System.out.println("docente");
                     break;
             }
         } else if (secretariaAc) {
@@ -254,7 +256,7 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
                 case 4:
                     tipoEvaluacion = "Docente";
                     obtenerResultadosEvaluacionDocente();
-                    System.out.println("docente");
+                   //System.out.println("docente");
                     break;
             }
         }
@@ -282,7 +284,7 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
                 ListaEvaluacion360Promedios le = new ListaEvaluacion360Promedios(subordinado.getClave(), subordinado.getNombre(), subordinado.getAreaOperativaNombre(), subordinado.getCategoriaOperativaNombre(), promedio);
                 lista360Promedios.add(le);
             } else {
-                System.out.println("el subordinado : " + subordinado.getNombre() + ", no fue evaluado en ese periodo");
+               //System.out.println("el subordinado : " + subordinado.getNombre() + ", no fue evaluado en ese periodo");
             }
         });
 
@@ -313,7 +315,7 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
                     listaDesempenioPromedios.add(ldp);
                 });
             } else {
-                System.out.println("El subordinado : " + subordinado.getNombre() + " no fue evaluado en este periodo");
+               //System.out.println("El subordinado : " + subordinado.getNombre() + " no fue evaluado en este periodo");
             }
         });
     }
@@ -348,7 +350,7 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
                 ListaEvaluacionTutorPromedios ldp = new ListaEvaluacionTutorPromedios(subordinado.getClave(), subordinado.getNombre(), subordinado.getAreaOperativaNombre(), subordinado.getCategoriaOperativaNombre(), promedioGeneral);
                 listaTutoresPromedios.add(ldp);
             } else {
-                System.out.println("la persona : " + subordinado.getNombre() + " no es tutor o no fue evaluada en este periodo");
+               //System.out.println("la persona : " + subordinado.getNombre() + " no es tutor o no fue evaluada en este periodo");
             }
         });
     }
@@ -376,7 +378,7 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
                 ListaEvaluacionDocenteMateria ld = new ListaEvaluacionDocenteMateria(subordinado.getClave(), subordinado.getNombre(), subordinado.getAreaOperativaNombre(), subordinado.getCategoriaOperativaNombre(), tipoEvaluacion, "", promedio);
                 listaDocentesPromedioGeneral.add(ld);
             } else {
-                System.out.println("el subordinado : " + subordinado.getNombre() + ", no fue evaluado en ese periodo");
+               //System.out.println("el subordinado : " + subordinado.getNombre() + ", no fue evaluado en ese periodo");
             }
         });
         obtenerDatosEvaluacionDocente();
@@ -393,25 +395,40 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
         SubordinadoSeleccionado = clave;
         ListaDocentesPromedioMateria = new ArrayList<>();
         List<VistaEvaluacionDocenteMateriaPye> listaMaterias = eJBAdministracionEncuestas.getMateriasPorDocente(clave.getClave(), periodoSeleccionado);
+       //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerResultadoEvaluacionDocentePorMateria() la lista de materias es "+ listaMaterias);
+       //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerResultadoEvaluacionDocentePorMateria() el periodo seleccionado es : " + periodoSeleccionado);
         EvaluacionDocentesMaterias evaluacion = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoSeleccionado);
+       //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerResultadoEvaluacionDocentePorMateria() la evaluacion es :" + evaluacion);
         Map<String, Long> lm = listaMaterias.stream().collect(
                 Collectors.groupingBy(VistaEvaluacionDocenteMateriaPye::getCveMateria, Collectors.counting()));
         List<String> rLM = lm.keySet().stream().collect(Collectors.toList());
+       //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerResultadoEvaluacionDocentePorMateria() ,aterias");
+        rLM.forEach(System.err::println);
         rLM.forEach(mat -> {
+           //System.out.println("la materia en cuestion");
             List<EvaluacionDocentesMateriaResultados> lpm = eJBAdministracionEncuestas.getEvaluacionDocentesResultadosPromedioMateria(evaluacion, clave.getClave(), mat);
             List<EvaluacionDocentesMateriaResultados> listaCompletos = lpm.stream().filter(x -> x.getCompleto()).collect(Collectors.toList());
             Double promedioMateria = listaCompletos.stream().collect(Collectors.summingDouble(EvaluacionDocentesMateriaResultados::getPromedio)) / listaCompletos.size();
             List<VistaEvaluacionDocenteMateriaPye> listaMateriaSeleccionada = listaMaterias.stream().filter(m -> m.getCveMateria().equals(mat)).collect(Collectors.toList());
             VistaEvaluacionDocenteMateriaPye materiaSeleccionada = listaMateriaSeleccionada.get(0);
+           //System.out.println("La lista de materias es : # ");            
+            listaMateriaSeleccionada.forEach(System.err::println);
             listaCarreras.forEach(c -> {
+               //System.out.println("las siglas de c son: " +c.getSiglas());
+               //System.out.println("las siglas de materia seleccionada son : "+ materiaSeleccionada.getSiglas());
                 if (materiaSeleccionada.getSiglas().equals(c.getSiglas())) {
+                    
                     ListaEvaluacionDocenteMateria evaluacionMateria = new ListaEvaluacionDocenteMateria(clave.getClave(), clave.getNombre(), clave.getAreaOperativa(), clave.getCategoriaOperativa(), mat, materiaSeleccionada.getNombreMateria(), promedioMateria);
+                   //System.out.println("la evaluacion de la materia : " + evaluacionMateria);
                     ListaDocentesPromedioMateria.add(evaluacionMateria);
                 } else {
-                    System.out.println("la materia : " + materiaSeleccionada.getNombreMateria() + " pertenece a otra area");
+                   //System.out.println("la materia : " + materiaSeleccionada.getNombreMateria() + " pertenece a otra area");
                 }
             });
         });
+       //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerResultadoEvaluacionDocentePorMateria() las evaluaciones son ");
+       //System.out.println("---");
+        ListaDocentesPromedioMateria.forEach(System.err::println);
 
     }
 
@@ -444,18 +461,24 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
      */
     public void resultadosSA() {
         listadoDocentesPromedioSa = new ArrayList<>();
+        
         EvaluacionDocentesMaterias evaluacionDocenteSeleccionada = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoSeleccionado);
+       //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.resultadosSA() el periodo : " + periodoSeleccionado);
+       //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.resultadosSA() la evaluacuion : " + evaluacionDocenteSeleccionada);
         List<ListaPersonal> lp = eJBAdministracionEncuestas.getListadoDocentesPorArea(areaEducativa);
+       //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.resultadosSA() el tamaño de la lista : " + lp.size());
         lp.forEach(docente -> {
+           //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.resultadosSA() entra al for each");
             List<EvaluacionDocentesMateriaResultados> l = eJBAdministracionEncuestas.getEvaluacionDocentesResultadosPromedioGeneral(evaluacionDocenteSeleccionada, docente.getClave());
             if (l != null) {
+               //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.resultadosSA() no es null");
                 List<EvaluacionDocentesMateriaResultados> listaCompletos = l.stream().filter(x -> x.getCompleto()).collect(Collectors.toList());
                 Double suma = listaCompletos.stream().collect(Collectors.summingDouble(EvaluacionDocentesMateriaResultados::getPromedio));
                 Double promedio = suma / listaCompletos.size();
                 ListaEvaluacionDocenteMateria ld = new ListaEvaluacionDocenteMateria(docente.getClave(), docente.getNombre(), docente.getAreaOperativaNombre(), docente.getCategoriaOperativaNombre(), tipoEvaluacion, "", promedio);
                 listadoDocentesPromedioSa.add(ld);
             } else {
-                System.out.println("el docente : " + docente.getNombre() + ", no fue evaluado en ese periodo");
+               //System.out.println("el docente : " + docente.getNombre() + ", no fue evaluado en ese periodo");
             }
         });
         botoneraActiva = true;
@@ -466,7 +489,7 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
     public void resultadosSAGeneral() {
         listadoDocentesPromedioSaGeneral = new ArrayList<>();
         listadoDocentesPromedioSaGeneral.clear();
-        System.out.println("Evaluaciones generales");
+       //System.out.println("Evaluaciones generales");
         if (!docente) {
             Messages.addFlashGlobalWarn("Seleccione una evaluacion");
         } else if (periodoSeleccionado < 0) {
@@ -481,12 +504,12 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
 
                     Double suma = listaCompletos.stream().collect(Collectors.summingDouble(EvaluacionDocentesMateriaResultados::getPromedio));
                     Double promedio = suma / listaCompletos.size();
-                    System.out.println("promedio general --> " + promedio + " perteneciente a " + persona.getNombre());
+                   //System.out.println("promedio general --> " + promedio + " perteneciente a " + persona.getNombre());
                     ListaEvaluacionDocenteMateria ld = new ListaEvaluacionDocenteMateria(persona.getClave(), persona.getNombre(), persona.getAreaOperativaNombre(), persona.getCategoriaOperativaNombre(), tipoEvaluacion, "", promedio);
                     listadoDocentesPromedioSaGeneral.add(ld);
                     renderReporte = true;
                 } else {
-                    System.out.println("el subordinado : " + persona.getNombre() + ", no fue evaluado en ese periodo");
+                   //System.out.println("el subordinado : " + persona.getNombre() + ", no fue evaluado en ese periodo");
                 }
             });
         }
@@ -494,35 +517,57 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
     }
 
     public void obtenerDatosGrafica() {
-        System.out.println("imprimir el area _ " + areaEducativa);
+       //System.out.println("imprimir el area _ " + areaEducativa);
         if (areaEducativa == 47 || areaEducativa == 999) {
-            System.out.println("Esta area no pertenece a un area educativa en especifico ....");
+           //System.out.println("Esta area no pertenece a un area educativa en especifico ....");
         } else {
             listaCarreras = new ArrayList<>();
             listaChartEvaluacionDocentes = new ArrayList<>();
             EvaluacionDocentesMaterias evaluacionDocente = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoSeleccionado);
+           //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerDatosGrafica() el periodo seleccionado es : " + periodoSeleccionado);
             listaCarreras = eJBAdministracionEncuestas.obtenerAreasDirector(areaEducativa, "Vigente");
+           //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerDatosGrafica() la lista de carreras es : " + listaCarreras);
             listaCarreras.stream().forEach(c -> {
+               //System.out.println("Controlador la carrera en cuestion es :  " + c.getNombre());
                 listaDeResultadosEvaluacionDocente = new ArrayList<>();
-                System.out.println("siglas : " + c.getSiglas() + " evaluacion : " + evaluacionDocente.getEvaluacion());
-                listaDeResultadosEvaluacionDocente.addAll(eJBAdministracionEncuestas.resultadosEvaluacionGlobalDirector(c.getSiglas(), evaluacionDocente.getEvaluacion()));
-                if (!listaDeResultadosEvaluacionDocente.isEmpty()) {
+               //System.out.println("siglas : " + c.getSiglas() + " evaluacion : " + evaluacionDocente.getEvaluacion());
+                List<ListaEvaluacionDocentesResultados> l = eJBAdministracionEncuestas.resultadosEvaluacionGlobalDirector(c.getSiglas(), evaluacionDocente.getEvaluacion());
+                if (l.isEmpty() || l == null) {
+                   //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerDatosGrafica() null");
+                } else {
+                    listaDeResultadosEvaluacionDocente.addAll(l);
+                }
+                if (listaDeResultadosEvaluacionDocente == null || listaDeResultadosEvaluacionDocente.isEmpty()) {
+                   //System.out.println("mx.edu.utxj.pye.sgi.funcional.UtilidadesAdministracionEvaluaciones.obtenerDatosGrafica() lista vacia" + listaDeResultadosEvaluacionDocente);
+                } else if (!listaDeResultadosEvaluacionDocente.isEmpty()) {
+                   //System.out.println("pasa hasta el llenado del dto ");
                     Long completos = (listaDeResultadosEvaluacionDocente.stream().filter(x -> x.getEstatus().equalsIgnoreCase("Finalizado")).count());
+                   //System.out.println("loc ompletos son : " + completos);
                     Long incompletos = listaDeResultadosEvaluacionDocente.stream().filter(x -> x.getEstatus().equalsIgnoreCase("Incompleto")).count();
+                   //System.out.println("los incompletos son : " + incompletos);
                     Long total = completos + incompletos;
-                    ListadoChartEvaluacionDocente chartDato = new ListadoChartEvaluacionDocente(c.getSiglas(), Integer.parseInt(completos.toString()), Integer.parseInt(incompletos.toString()), Integer.parseInt(total.toString()));
+                    ListadoChartEvaluacionDocente chartDato = new ListadoChartEvaluacionDocente(
+                            c.getSiglas(), Integer.parseInt(completos.toString()), Integer.parseInt(incompletos.toString()), Integer.parseInt(total.toString()));
+                   //System.out.println("el dto llenado es :");
+                   //System.out.println(chartDato);
                     listaChartEvaluacionDocentes.add(chartDato);
-                } else if (listaDeResultadosEvaluacionDocente == null) {
-                    System.out.println("mx.edu.utxj.pye.sgi.funcional.UtilidadesAdministracionEvaluaciones.obtenerDatosGrafica() lista vacia" + listaDeResultadosEvaluacionDocente);
+                   //System.out.println("el tamaño de la lista es : " + listaChartEvaluacionDocentes.size());
                 }
             });
-            System.out.println("lista de dato por carrera : " + listaChartEvaluacionDocentes);
-            graficar();
+           //System.out.println("lista de dato por carrera : " + listaChartEvaluacionDocentes);
+            if (listaChartEvaluacionDocentes.isEmpty() || listaChartEvaluacionDocentes == null) {
+               //System.out.println("NO HAY DATOS EN LA LISTA :::::::::::::");
+            } else {
+               //System.out.println("el tamaño de la lista es : " + listaChartEvaluacionDocentes.size());
+               //System.out.println("GRAFICA");
+                graficar();
+            }
+
         }
     }
 
     public void reload() throws IOException {
-        System.out.println("Recarga pagina");
+       //System.out.println("Recarga pagina");
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
         ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
     }
@@ -532,6 +577,7 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
      * respondidas por los estudiantes dependiendo del área que se selecciona
      */
     public void vistaModalChart() {
+       //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.vistaModalChart() llega al modal de  chart");
         Map<String, Object> modalChart = new HashMap<>();
         modalChart.put("resize", false);
         modalChart.put("modal", true);
@@ -555,8 +601,10 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
         serieCompletados.setName("Completos");
         serieIncompletos.setName("Incompletos");
         serieTotal.setName("Total");
-        System.out.println("lista de evaluaciones _ " + listaChartEvaluacionDocentes);
+       //System.out.println("lista de evaluaciones _ " + listaChartEvaluacionDocentes);
+               
         listaChartEvaluacionDocentes.forEach(x -> {
+           //System.out.println("el registro en cuestionn  : "  + x);
             serieCompletados.addPoint(x.getSiglas(), x.getTerminadas());
             serieIncompletos.addPoint(x.getSiglas(), x.getIncompleta());
             serieTotal.addPoint(x.getSiglas(), x.getTotal());
@@ -598,7 +646,7 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
                 ListaEvaluacion360Promedios le = new ListaEvaluacion360Promedios(personal.getClave(), personal.getNombre(), personal.getAreaOperativaNombre(), personal.getCategoriaOperativaNombre(), promedio);
                 lista360PromediosPersonal.add(le);
             } else {
-                System.out.println("El empleado -> : " + personal.getNombre() + ", no fue evaluado en ese periodo");
+               //System.out.println("El empleado -> : " + personal.getNombre() + ", no fue evaluado en ese periodo");
             }
         });
         lista360PromediosPersonal.forEach(System.out::println);
@@ -618,7 +666,7 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
                     listaDesempenioPromediosPersonal.add(ldp);
                 });
             } else {
-                System.out.println("El empleado : " + personal.getNombre() + " no fue evaluado en este periodo");
+               //System.out.println("El empleado : " + personal.getNombre() + " no fue evaluado en este periodo");
             }
         });
     }
@@ -637,7 +685,7 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
                     listadoDocentesPromedioSaGeneral.add(ld);
                     renderReportePersonal = true;
                 } else {
-                    System.out.println("el subordinado : " + persona.getNombre() + ", no fue evaluado en ese periodo");
+                   //System.out.println("el subordinado : " + persona.getNombre() + ", no fue evaluado en ese periodo");
                 }
             });
     }

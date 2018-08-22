@@ -104,7 +104,8 @@
                                                        var="area" itemValue="#{area.value}" itemLabel="#{area.label}" 
                                                        itemDescription="#{area.description}"  >
                                         </f:selectItems>
-                                        <f:selectItem itemValue="999" itemLabel="Otros" itemDescription="Personal que imparte clases"/>
+<!--                                        <f:selectItem itemValue="47" itemLabel="Idiomas" itemDescription="Coordinacion de idiomas"/>
+                                        <f:selectItem itemValue="999" itemLabel="Otros" itemDescription="Personal que imparte clases"/>-->
                                     </p:selectOneMenu>
                                 </f:ajax>
                                 <p:spacer width="10"/>
@@ -195,8 +196,8 @@
                     </f:ajax>
                     <f:ajax execute="btn_modalA">
                         <p:commandButton id="btn_modalA" title="Visualiza el indice de respuesta por parte de los alumnos" value="Graficar el area seleccionada" 
-                                         class="btn btn-primary" icon="fa  fa-pie-chart " process="@this" update="@this" 
-                                         actionListener="#{administrativoEvaluacion.utilAdmin.vistaModalChart()}" />
+                                         class="btn btn-primary" icon="fa  fa-pie-chart " process="@this" update="@this"  oncomplete="PF('modalGrafica').show()"
+                                         actionListener="# {administrativoEvaluacion.utilAdmin.vistaModalChart()}" />
                     </f:ajax>
                 </p:panel>
                 <p:panel header="" toggleable="true" rendered="#{administrativoEvaluacion.utilAdmin.secretariaAc}">
@@ -438,6 +439,15 @@
                     </p:dataTable>
                 </p:outputPanel>
             </h:form>
+        </p:dialog>
+        
+        <p:dialog widgetVar="modalGrafica" header="Grafica de respuesta de estudiantes">
+            <h:form>
+            <p:outputPanel >
+                <p:growl autoUpdate="true" />
+                <hf:chart type="column" model="#{administrativoEvaluacion.utilAdmin.model}"  title="Respuesta de estudiantes por area"/>                
+            </p:outputPanel>
+        </h:form>
         </p:dialog>
     </ui:define>
 </ui:composition>

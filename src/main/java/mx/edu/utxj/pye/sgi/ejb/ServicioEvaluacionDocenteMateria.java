@@ -147,10 +147,12 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
     public EvaluacionDocentesMaterias evaluacionActiva() {
         StoredProcedureQuery spq = f.getEntityManager().createStoredProcedureQuery("buscar_evaluacion_docentes_materia_activa", EvaluacionDocentesMaterias.class);
         List<EvaluacionDocentesMaterias> l = spq.getResultList();
-
         if (l == null || l.isEmpty()) {
+            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDocenteMateria.evaluacionActiva() la evaluacion es nula");
             return null;
         } else {
+            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDocenteMateria.evaluacionActiva() la evaluacion activa es : " + l.get(0).getEvaluacion());
+
             return l.get(0);
         }
     }

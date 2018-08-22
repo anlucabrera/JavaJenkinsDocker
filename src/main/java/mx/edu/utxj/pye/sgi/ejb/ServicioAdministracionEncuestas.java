@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.sgi.ejb;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
@@ -56,14 +57,14 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
         if (l == null || l.isEmpty()) {
             return null;
         } else {
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioAdministracionEncuestas.getPeriodoActual()" + l.get(0));
+           //System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioAdministracionEncuestas.getPeriodoActual()" + l.get(0));
             return l.get(0);
         }
     }
 
     @Override
     public List<Grupos> esTutor(Integer maestro, Integer periodo) {
-//        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioAdministracionEncuestas.esTutor() esta es la clave del maestro obtenida : --- > " + maestro);
+//       //System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioAdministracionEncuestas.esTutor() esta es la clave del maestro obtenida : --- > " + maestro);
         TypedQuery<Grupos> q = f2.getEntityManager().createQuery("SELECT g FROM Grupos AS g WHERE g.cveMaestro = :cveMaestro AND g.gruposPK.cvePeriodo = :cvePeriodo", Grupos.class);
         q.setParameter("cveMaestro", maestro);
         q.setParameter("cvePeriodo", periodo);
@@ -85,7 +86,7 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
             return null;
         } else {
 //            for (int i = la.size()-1; i >= la.size()-1; i--) {
-//                System.out.println(" alumno " + la);
+//               //System.out.println(" alumno " + la);
 //            }
             return la;
 
@@ -110,38 +111,70 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
         q.setParameter("actividad", actividad);
         q.setParameter("categoria", catOp);
         q.setParameter("clave", clave);
-//        System.out.println("el directivo es : " + q.getResultList());
+//       //System.out.println("el directivo es : " + q.getResultList());
         return q.getResultList();
     }
 
     @Override
     public List<AreasUniversidad> obtenerAreasDirector(Short identificador, String estatus) {
-        System.out.println("parametro identificador : " + identificador + " parametro estatus : " + estatus);
-        TypedQuery<AreasUniversidad> q = f.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a WHERE a.area = :area and a.vigente = :vigente", AreasUniversidad.class);
+       //System.out.println("parametro identificador : " + identificador + " parametro estatus : " + estatus);
+        AreasUniversidad a = f.getEntityManager().find(AreasUniversidad.class, identificador);
+       //System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioAdministracionEncuestas.obtenerAreasDirector() el area es : " + a);
+//        TypedQuery<AreasUniversidad> q = f.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a WHERE a.areaSuperior = :area", AreasUniversidad.class);
+        TypedQuery<AreasUniversidad> q = f.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a WHERE a.areaSuperior = :area and a.vigente = :vigente", AreasUniversidad.class);
+
         q.setParameter("area", identificador);
-        q.setParameter("vigente", estatus);
-        System.out.println("resultado de la consulta " + q);
+        q.setParameter("vigente", "1");
+       //System.out.println("resultado de la consulta " + q.getResultList());
         List<AreasUniversidad> lp = q.getResultList();
         if (lp == null || lp.isEmpty()) {
             return null;
         } else {
-            System.out.println("lista de carreras" + lp);
+           //System.out.println("lista de carreras" + lp);
+           //System.out.println("las carreras son :  ");
+            lp.forEach(System.err::println);
             return lp;
         }
     }
 
     @Override
+    public List<AreasUniversidad> obtenerAreasPorDirectorReporteSA(Short areaSeleccionada) {
+       //System.out.println("el area seleccionada es : " + areaSeleccionada);
+        List<AreasUniversidad> lcarrera = new ArrayList<>();
+        AreasUniversidad a = f.getEntityManager().find(AreasUniversidad.class, areaSeleccionada);
+        TypedQuery<AreasUniversidad> ac = f.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a WHERE a.areaSuperior = :area", AreasUniversidad.class);
+        ac.setParameter("area", a.getArea());
+        List<AreasUniversidad> lc = ac.getResultList();
+        if (lc == null) {
+           //System.out.println("nos e encontraron carreras adjudicadas a esta area");
+            return null;
+        } else {
+           //System.out.println("la lista de carreras ontenidas en el EBJ de el area " + a.getNombre() + " es : ");
+            lc.forEach(System.err::println);
+            lc.forEach(x -> {
+                if ("1".equalsIgnoreCase(x.getVigente())) {
+                   //System.out.println("es valida la carrera");
+                    lcarrera.add(x);
+                } else {
+                   //System.out.println("El area : " + x.getNombre() + " no se encuentra activa y no tiene datos que evaluar");
+                }
+            });
+            return lcarrera;
+        }
+    }
+
+    @Override
     public List<ListaEvaluacionDocentesResultados> resultadosEvaluacionGlobalDirector(String siglas, Integer evaluacion) {
-        System.out.println("EJB siglas : " + siglas + ", EJB Evaluacion : " + evaluacion);
+       //System.out.println("EJB siglas : " + siglas + ", EJB Evaluacion : " + evaluacion);
         TypedQuery<ListaEvaluacionDocentesResultados> q = f.getEntityManager().createQuery("SELECT l FROM ListaEvaluacionDocentesResultados l WHERE l.siglas = :siglas and l.evaluacion = :evaluacion", ListaEvaluacionDocentesResultados.class);
         q.setParameter("siglas", siglas);
         q.setParameter("evaluacion", evaluacion);
         List<ListaEvaluacionDocentesResultados> ld = q.getResultList();
         if (ld == null || ld.isEmpty()) {
-            System.out.println("la lista de resultados por  area esta vacia");
+           //System.out.println("la lista de resultados por  area esta vacia");
             return null;
         } else {
-            System.out.println("lista de resultados por director" + ld);
+           //System.out.println("lista de resultados por director" + ld.size());
             return ld;
         }
     }
@@ -177,7 +210,7 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
         q.setParameter("evaluado", evaluado);
         List<Evaluaciones360Resultados> l = q.getResultList();
         if (l.isEmpty() || l == null) {
-            System.out.println("no hay evaluacion en este periodo ");
+           //System.out.println("no hay evaluacion en este periodo ");
             return null;
         } else {
             return l;
@@ -242,8 +275,10 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
         q.setParameter("evaluado", evaluado);
         List<EvaluacionDocentesMateriaResultados> l = q.getResultList();
         if (l.isEmpty() || l == null) {
+           //System.out.println("Regresa null getEvaluacionDocentesResultadosPromedioGeneral");
             return null;
         } else {
+           //System.out.println("el tamaño de la lista es : " + l.size());
             return l;
         }
     }
@@ -289,19 +324,23 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
 
     @Override
     public List<ListaPersonal> getListadoDocentesPorArea(Short area) {
-        System.out.println("area seleccionada : " + area);
+       //System.out.println("area seleccionada : " + area);
         if (area == 47) {
-            TypedQuery<ListaPersonal> q = f.getEntityManager().createQuery("SELECT p FROM ListaPersonal p WHERE p.areaOperativa = :area ", ListaPersonal.class);
+           //System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioAdministracionEncuestas.getListadoDocentesPorArea() es el area 47");
+            TypedQuery<ListaPersonal> q = f.getEntityManager().createQuery("SELECT p FROM ListaPersonal p WHERE p.areaSuperior = :area ", ListaPersonal.class);
             q.setParameter("area", area);
 //            q.setParameter("status", "R");
             List<ListaPersonal> l = q.getResultList();
-            System.out.println("lista de personal de idiomas : " + q.getResultList());
+           //System.out.println("lista de personal de idiomas : " + q.getResultList());
             if (l.isEmpty() || l == null) {
                 return null;
             } else {
+               //System.out.println("la lista de docentes : ");
+                l.forEach(System.err::println);
                 return l;
             }
         } else if (area == 999) {
+           //System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioAdministracionEncuestas.getListadoDocentesPorArea() es el area 999");
             TypedQuery<ListaPersonal> q = f.getEntityManager().createQuery("SELECT p FROM ListaPersonal p WHERE p.actividad <> :docente and p.experienciaDocente >= :experienciaDocente", ListaPersonal.class);
 //            q.setParameter("area", area);
             q.setParameter("docente", 3);
@@ -310,9 +349,12 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
             if (l.isEmpty() || l == null) {
                 return null;
             } else {
+               //System.out.println("la lista de docentes : ");
+                l.forEach(System.err::println);
                 return l;
             }
         } else {
+           //System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioAdministracionEncuestas.getListadoDocentesPorArea() es el area : " + area);
             TypedQuery<ListaPersonal> q = f.getEntityManager().createQuery("SELECT p FROM ListaPersonal p WHERE p.areaSuperior = :area ", ListaPersonal.class);
             q.setParameter("area", area);
 //            q.setParameter("docente", 3);
@@ -321,6 +363,8 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
             if (l.isEmpty() || l == null) {
                 return null;
             } else {
+               //System.out.println("la lista de docentes : ");
+                l.forEach(System.err::println);
                 return l;
             }
         }
@@ -439,7 +483,7 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
     public List<Alumno> getEstudiantesSEScolaes() {
         TypedQuery<Alumno> q = f.getEntityManager().createQuery("SELECT a from Alumno a WHERE a.alumnoPK.periodo = :periodo", Alumno.class);
         q.setParameter("periodo", getPeriodoActual().getPeriodo());
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioAdministracionEncuestas.getEstudiantesSEScolaes() tamaño de lista de alumnos " + q.getResultList().size());
+       //System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioAdministracionEncuestas.getEstudiantesSEScolaes() tamaño de lista de alumnos " + q.getResultList().size());
         List<Alumno> l = q.getResultList();
         if (l == null || l.isEmpty()) {
             return null;

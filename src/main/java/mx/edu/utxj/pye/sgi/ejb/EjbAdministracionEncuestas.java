@@ -80,12 +80,20 @@ public interface EjbAdministracionEncuestas {
      * @return 
      */
     public List<AreasUniversidad> obtenerAreasDirector(Short identificador, String estatus);
+    
+    /**
+     * 
+     * @param areaSeleccionada
+     * @return 
+     */
+    public List<AreasUniversidad> obtenerAreasPorDirectorReporteSA(Short areaSeleccionada);
     /**
      * 
      * @param siglas
      * @param evaluacion
      * @return 
      */
+    
     public List<ListaEvaluacionDocentesResultados> resultadosEvaluacionGlobalDirector(String siglas, Integer evaluacion);
     /**
      * obtiene la evaluacion segun sea el periodo seleccionado
@@ -191,11 +199,23 @@ public interface EjbAdministracionEncuestas {
      * @return 
      */
     public DesempenioEvaluaciones nuevaEvaluacionDesempenio(DesempenioEvaluaciones evaluacion);
-    
+    /**
+     * obtiene la lista general de evaluaciones de 360°
+     * @return 
+     */
     public List<Evaluaciones360> getListaEvaluaciones360();
-    
+    /**
+     * obntiene los resultados de una evaluacion a 360° correspondiente a los parametros
+     * evaluacion  y perdiodo
+     * @param evaluacion
+     * @param periodo
+     * @return 
+     */
     public List<Evaluaciones360Resultados> getListaResultadosEvaluacion360(Integer evaluacion, Integer periodo);
-    
+    /**
+     * ontiene
+     * @return 
+     */
     public List<DesempenioEvaluaciones> getListaEvaluacionesDesempenio();
     
     public List<DesempenioEvaluacionResultados> getListaResultadosEvaluacionDesempenio(Integer evaluacion, Integer periodo);
