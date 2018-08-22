@@ -36,7 +36,6 @@ public class DatosPersonales implements Serializable {
     @Getter    @Setter    private List<Personal> nuevaListaPersonal = new ArrayList<>();
     @Getter    @Setter    private Personal nuevoOBJPersonal;
 //List<Personal> 
-    @Getter    @Setter    private List<InformacionAdicionalPersonal> nuevaListaInformacionAdicionalPersonal = new ArrayList<>();
     @Getter    @Setter    private InformacionAdicionalPersonal nuevoOBJInformacionAdicionalPersonal;
 //List<Integer> 
     @Getter    @Setter    private Integer usuario;
@@ -54,11 +53,10 @@ public class DatosPersonales implements Serializable {
     
     @EJB    EjbCarga carga;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec; 
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUpdate ejbUpdate; 
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbCreate ejbCreate;
+        
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado; 
 //@Inject
-    @Inject
-    ControladorEmpleado controladorEmpleado;
+    @Inject    ControladorEmpleado controladorEmpleado;
 
     @PostConstruct
     public void init() {
@@ -74,60 +72,43 @@ public class DatosPersonales implements Serializable {
     public void consultarPerfil() {
         try {
             nuevaListaPersonal.clear();
-            nuevaListaInformacionAdicionalPersonal.clear();
 
-            nuevaListaPersonal = ejbSelectec.mostrarListaDeEmpleadosPorClave(usuario);
-            nuevaListaInformacionAdicionalPersonal = ejbSelectec.mostrarListaDeInformacionAdicionalPersonal(usuario);
+            nuevoOBJPersonal = ejbDatosUsuarioLogeado.mostrarPersonalLogeado(usuario);
+            nuevoOBJInformacionAdicionalPersonal = ejbDatosUsuarioLogeado.mostrarInformacionAdicionalPersonalLogeado(usuario);
 
-            if (nuevaListaPersonal.isEmpty()) {
-
-            } else {
-                nuevoOBJPersonal = nuevaListaPersonal.get(0);
+            if (nuevoOBJPersonal != null) {
                 procedencia = nuevoOBJPersonal.getLocalidad() + ", " + nuevoOBJPersonal.getMunicipio() + ", " + nuevoOBJPersonal.getEstado() + ", " + nuevoOBJPersonal.getPais() + ", ";
                 fechaN = dateFormat.format(nuevoOBJPersonal.getFechaNacimiento());
             }
 
-            if (nuevaListaInformacionAdicionalPersonal.isEmpty()) {
-                nuevoOBJInformacionAdicionalPersonal = new InformacionAdicionalPersonal();
+            if (nuevoOBJInformacionAdicionalPersonal != null) {
                 obtenerEdad();
-            } else {
-                nuevoOBJInformacionAdicionalPersonal = nuevaListaInformacionAdicionalPersonal.get(0);
-                obtenerEdad();
-//                System.out.println("nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa() "+nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa());
-//                System.out.println("nuevoOBJInformacionAdicionalPersonal.getEvidenciaCurp() "+nuevoOBJInformacionAdicionalPersonal.getEvidenciaCurp());
-//                System.out.println("nuevoOBJInformacionAdicionalPersonal.getEvidenciaDomicilio() "+nuevoOBJInformacionAdicionalPersonal.getEvidenciaDomicilio());
-//                System.out.println("nuevoOBJInformacionAdicionalPersonal.getEvidenciaIne() "+nuevoOBJInformacionAdicionalPersonal.getEvidenciaIne());
-//                System.out.println("nuevoOBJInformacionAdicionalPersonal.getEvidenciaRfc() "+nuevoOBJInformacionAdicionalPersonal.getEvidenciaRfc());
-//                System.out.println("nuevoOBJInformacionAdicionalPersonal.getEdad() 2 " + nuevoOBJInformacionAdicionalPersonal.getEdad());
             }
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(DatosPersonales.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void actualizarInformacionAdicional() {
         try {
-            System.out.println("nuevoOBJInformacionAdicionalPersonal.getClave() " + nuevoOBJInformacionAdicionalPersonal.getClave());
             nuevoOBJInformacionAdicionalPersonal.setEstatus("Aceptado");
             if (nuevoOBJInformacionAdicionalPersonal.getClave() == null) {
                 nuevoOBJInformacionAdicionalPersonal.setClave(usuario);
                 nuevoOBJInformacionAdicionalPersonal.setEstatus("Aceptado");
-                nuevoOBJInformacionAdicionalPersonal = ejbCreate.agregarInformacionAdicionalPersonal(nuevoOBJInformacionAdicionalPersonal);
+                nuevoOBJInformacionAdicionalPersonal = ejbDatosUsuarioLogeado.crearNuevoInformacionAdicionalPersonal(nuevoOBJInformacionAdicionalPersonal);
             } else {
                 nuevoOBJInformacionAdicionalPersonal.setEstatus("Aceptado");
-                nuevoOBJInformacionAdicionalPersonal = ejbUpdate.actualizarInformacionAdicionalPersonal(nuevoOBJInformacionAdicionalPersonal);
+                nuevoOBJInformacionAdicionalPersonal = ejbDatosUsuarioLogeado.actualizarInformacionAdicionalPersonal(nuevoOBJInformacionAdicionalPersonal);
             }
             Messages.addGlobalInfo("¡Operación exitosa!!");
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(DatosPersonales.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void agregarEvidencias() {
-        System.out.println("inicio " + evidencia);
-        System.out.println("file " + file);
         if (file != null) {
             ruta = carga.subir(file, new File(claveTraba.concat(File.separator).concat("datosPersonales").concat(File.separator).concat(evidencia).concat(File.separator)));
             if (!"Error: No se pudo leer el archivo".equals(ruta)) {
@@ -224,6 +205,5 @@ public class DatosPersonales implements Serializable {
             }
         }
         nuevoOBJInformacionAdicionalPersonal.setEdad(restaA);
-//        System.out.println("nuevoOBJInformacionAdicionalPersonal.getEdad() 1 " + nuevoOBJInformacionAdicionalPersonal.getEdad());
     }
 }

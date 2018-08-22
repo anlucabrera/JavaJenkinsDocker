@@ -121,23 +121,19 @@ public class ControladorEducacion implements Serializable {
     
     public void deleteFormacion(FormacionAcademica formacionAcademica) {
         try {
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEducacion.deleteFormacion(1)");
             if (formacionAcademica.getEvidenciaCedula() != null) {
                 CargaArchivosCH.eliminarArchivo(formacionAcademica.getEvidenciaCedula());
             }
             if (formacionAcademica.getEvidenciaTitulo() != null) {
                 CargaArchivosCH.eliminarArchivo(formacionAcademica.getEvidenciaTitulo());
             }
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEducacion.deleteFormacion(2)");
             nombreTabla = "Formación Académica";
             numeroRegistro = formacionAcademica.getFormacion().toString();
             accion = "Delate";
             agregaBitacora();            
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEducacion.deleteFormacion(3)");
             ejbEducacion.eliminarFormacionAcademica(formacionAcademica);
             Messages.addGlobalInfo("Información Actualizada con Éxito!!");
             mostrarListas();
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEducacion.deleteFormacion(4)");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
@@ -312,8 +308,6 @@ public class ControladorEducacion implements Serializable {
     }
 
     public void agregarEvidenciasEducacion() {
-        System.out.println("inicio " + evidencia);
-        System.out.println("file " + file);
         if (file != null) {
             ruta = carga.subir(file, new File(claveTrabajador.concat(File.separator).concat("formacionAcademica").concat(File.separator).concat(evidencia).concat(File.separator)));
             if (!"Error: No se pudo leer el archivo".equals(ruta)) {
@@ -343,12 +337,10 @@ public class ControladorEducacion implements Serializable {
     }
 
     public void agregarEvidenciaExperienciaLab() {
-        System.out.println("pestaniaActiva " + pestaniaActiva);
         if (file != null) {
             ruta = carga.subir(file, new File(claveTrabajador.concat(File.separator).concat("experienciaLaboral").concat(File.separator)));
             if (!"Error: No se pudo leer el archivo".equals(ruta)) {
                 nuevoOBJExpeienciasLaborales.setEvidenciaNombremiento(ruta);
-//                System.out.println("mx.edu.utxj.pye.subir.controlador.Subir.upload() res:" + nuevoOBJExpeienciasLaborales.getEvidenciaNombremiento());
                 direccionInt3 = 1;
                 ruta = null;
             } else {
@@ -359,16 +351,13 @@ public class ControladorEducacion implements Serializable {
             Messages.addGlobalWarn("Es necesario seleccionar un archivo !!");
         }
         pestaniaActiva = 1;
-        System.out.println("pestaniaActiva " + pestaniaActiva);
     }
 
     public void agregarEvidenciaCapacitacion() {
-        System.out.println("pestaniaActiva " + pestaniaActiva);
         if (file != null) {
             ruta = carga.subir(file, new File(claveTrabajador.concat(File.separator).concat("capacitacion").concat(File.separator)));
             if (!"Error: No se pudo leer el archivo".equals(ruta)) {
                 nuevoOBJCapacitacionespersonal.setEvidenciaCapacitacion(ruta);
-//                System.out.println("mx.edu.utxj.pye.subir.controlador.Subir.upload() res:" + nuevoOBJCapacitacionespersonal.getEvidenciaCapacitacion());
                 direccionInt4 = 1;
                 ruta = null;
             } else {
@@ -379,13 +368,11 @@ public class ControladorEducacion implements Serializable {
             Messages.addGlobalWarn("Es necesario seleccionar un archivo !!");
         }
         pestaniaActiva = 2;
-        System.out.println("pestaniaActiva " + pestaniaActiva);
     }
 
     public String convertirRutaFormaAT(String ruta) {
         if (nuevoOBJFormacionAcademica.getEvidenciaTitulo() != null) {
             File file = new File(nuevoOBJFormacionAcademica.getEvidenciaTitulo());
-//            System.out.println("ruta1: evidencias2".concat(file.toURI().toString().split("archivos")[1]));
             return "evidencias2".concat(file.toURI().toString().split("archivos")[1]);
         } else {
             Messages.addGlobalWarn("No fue posible cargar el archivo!!");
@@ -396,7 +383,6 @@ public class ControladorEducacion implements Serializable {
     public String convertirRutaFormaAC(String ruta) {
         if (nuevoOBJFormacionAcademica.getEvidenciaCedula() != null) {
             File file = new File(nuevoOBJFormacionAcademica.getEvidenciaCedula());
-//            System.out.println("ruta2: evidencias2".concat(file.toURI().toString().split("archivos")[1]));
             return "evidencias2".concat(file.toURI().toString().split("archivos")[1]);
         } else {
             Messages.addGlobalWarn("No fue posible cargar el archivo!!");
@@ -407,7 +393,6 @@ public class ControladorEducacion implements Serializable {
     public String convertirRutaExperienciaL(String ruta) {
         if (nuevoOBJExpeienciasLaborales.getEvidenciaNombremiento() != null) {
             File file = new File(nuevoOBJExpeienciasLaborales.getEvidenciaNombremiento());
-//            System.out.println("evidencias2".concat(file.toURI().toString().split("archivos")[1]));
             return "evidencias2".concat(file.toURI().toString().split("archivos")[1]);
         } else {
             Messages.addGlobalWarn("No fue posible cargar el archivo!!");
@@ -418,7 +403,6 @@ public class ControladorEducacion implements Serializable {
     public String convertirRutaActualizacionP(String ruta) {
         if (nuevoOBJCapacitacionespersonal.getEvidenciaCapacitacion() != null && nuevoOBJCapacitacionespersonal.getEvidenciaCapacitacion() != "") {
             File file = new File(nuevoOBJCapacitacionespersonal.getEvidenciaCapacitacion());
-//            System.out.println("evidencias2".concat(file.toURI().toString().split("archivos")[1]));
             return "evidencias2".concat(file.toURI().toString().split("archivos")[1]);
         } else {
             Messages.addGlobalWarn("No fue posible cargar el archivo!!");
@@ -430,7 +414,6 @@ public class ControladorEducacion implements Serializable {
         if (nuevoOBJFormacionAcademica != null) {
             claveR = nuevoOBJFormacionAcademica.getFormacion();
             grado = nuevoOBJFormacionAcademica.getNivelEscolaridad().getGrado();
-//            System.out.println("claveR " + claveR + " grado " + grado);
         } else {
             claveR = 0;
             grado = 0;
@@ -458,7 +441,6 @@ public class ControladorEducacion implements Serializable {
     }
 
     public void filtrarInfoEducacion() {
-        System.out.println("mx.edu.utxj.pye.sgi.ch.controladores.ControladorEducacion.filtrarInfoEducacion() grado " + grado);
         switch (grado) {
             case 1:                nomCarrera = false;                formaTyC = false;                break;
             case 2:                nomCarrera = false;                formaTyC = false;                break;
@@ -497,7 +479,7 @@ public class ControladorEducacion implements Serializable {
             accion = "";
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     

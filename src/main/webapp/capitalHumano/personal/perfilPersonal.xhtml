@@ -794,12 +794,12 @@
                                                                                 <hr/> 
                                                                                 <label for="areaOp" class="col-sm-12 control-label">Área operativa</label>
                                                                                 <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" id="areaOp" value="#{controladorPersonal.nuevOBJPersonalSubordinado.areaOperativa}">
-                                                                                    <f:selectItems value="#{controladorPersonal.listareasOperativas}" var="arOP" itemValue="#{arOP.clave}" itemLabel="#{arOP.nombre}" />
+                                                                                    <f:selectItems value="#{controladorPersonal.listaAreasUniversidads}" var="arOP" itemValue="#{arOP.area}" itemLabel="#{arOP.nombre}" />
                                                                                 </p:selectOneMenu> 
                                                                                 <hr/>  
                                                                                 <label for="areaSu" class="col-sm-12 control-label">Área superior</label>
                                                                                 <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" id="areaSu" value="#{controladorPersonal.nuevOBJPersonalSubordinado.areaSuperior}">
-                                                                                    <f:selectItems value="#{controladorPersonal.listareasSuperiores}" var="arSP" itemValue="#{arSP.clave}" itemLabel="#{arSP.nombre}" />
+                                                                                    <f:selectItems value="#{controladorPersonal.listareasSuperiores}" var="arSP" itemValue="#{arSP.area}" itemLabel="#{arSP.nombre}" />
                                                                                 </p:selectOneMenu> 
                                                                                 <hr/> 
                                                                             </div>
@@ -819,7 +819,7 @@
                                                                                 <hr/>
                                                                                 <label for="areaOf" class="col-sm-12 control-label">Área oficial</label>
                                                                                 <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" id="areaOf" value="#{controladorPersonal.nuevOBJPersonalSubordinado.areaOficial}">
-                                                                                    <f:selectItems value="#{controladorPersonal.listareasOficiales}" var="arOF" itemValue="#{arOF.clave}" itemLabel="#{arOF.nombre}" />
+                                                                                    <f:selectItems value="#{controladorPersonal.listaAreasUniversidads}" var="arOF" itemValue="#{arOF.area}" itemLabel="#{arOF.nombre}" />
                                                                                 </p:selectOneMenu> 
                                                                                 <hr/> 
 
@@ -1618,6 +1618,26 @@
                                 <h2 class="align-center"> 
                                     <p:outputLabel value="Descargar Plantilla Activa"/>
                                     <p:link href="http://siip.utxj.edu.mx/archivos/#{exelPlantillaPersonal.direccionDescarga}" target="_blank">
+                                        <i class="fa fa-download"></i>
+                                        <span>Descargar plantilla</span>
+                                    </p:link>
+                                </h2>
+                            </h:panelGrid>
+
+                        </p:outputPanel>
+
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="frmEvidencias" >
+                    <p:dialog id="dlgEvidencias" modal="true" header="Plantilla activa" widgetVar="dlgEvidencias" minimizable="true" maximizable="true" position="center">
+
+                        <p:outputPanel >
+
+                            <h:panelGrid columns="1"  class="col-md-12">
+                                <h2 class="align-center"> 
+                                    <p:outputLabel value="Descargar Plantilla Activa"/>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/zips/#{controladorPersonal.contactoDestino}.zip" target="_blank">
                                         <i class="fa fa-download"></i>
                                         <span>Descargar plantilla</span>
                                     </p:link>

@@ -47,10 +47,8 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
     @Getter    @Setter    private List<listaEstrategiaActividades> listaEstrategiaActividadesesEje2 = new ArrayList<>(), listaEstrategiaActividadesesEje3 = new ArrayList<>(), listaEstrategiaActividadesesEje4 = new ArrayList<>(), listaEstrategiaActividadesesEje5 = new ArrayList<>();
 
     
-    @EJB
-    EjbPoaSelectec poaSelectec;
-    @Inject
-    ControladorEmpleado controladorEmpleado;
+    @EJB    EjbPoaSelectec poaSelectec;
+    @Inject    ControladorEmpleado controladorEmpleado;
 
     @PostConstruct
     public void init() {
@@ -63,8 +61,8 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
                 
         ejes=new EjesRegistro(0);
                 
-        claveArea = 62;
-        ejercicioFiscal = Short.parseShort("19");
+        claveArea = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
+        ejercicioFiscal = Short.parseShort("17");
         
         System.out.println(" ControladorHabilidadesIIL Fin: " + System.currentTimeMillis());
     }

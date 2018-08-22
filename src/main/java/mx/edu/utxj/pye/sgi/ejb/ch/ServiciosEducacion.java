@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.ch.Capacitacionespersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.CursosPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ExperienciasLaborales;
 import mx.edu.utxj.pye.sgi.entity.ch.FormacionAcademica;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -128,4 +129,12 @@ public class ServiciosEducacion implements EjbEducacion {
         return nuevoCapacitacionespersonal;
     }
 
+////////////////////////////////////////////////////////////////////////////////Cursos Personal    
+    @Override
+    public List<CursosPersonal> mostrarCursosPersonal(Integer claveTrabajador) throws Throwable {
+        TypedQuery<CursosPersonal> q = em.createQuery("SELECT c FROM CursosPersonal c JOIN c.clave cc WHERE cc.clave=:clave", CursosPersonal.class);
+        q.setParameter("clave", claveTrabajador);
+        List<CursosPersonal> pr = q.getResultList();
+        return pr;
+    }
 }

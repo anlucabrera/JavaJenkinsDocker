@@ -41,7 +41,6 @@
 
     <ui:define name="body">
 
-        <adm:breadcrumb title=" Plan de Trabajo Anual - Descripción y Justificación"/>
         <adm:sidebar collapsed="true"/>
         <h:form id="frm" prependId="false" class="form-inline">
             <div class="box box-primary">
@@ -111,7 +110,7 @@
                                                                 <p:column rowspan="2" headerText="No." style="width: 50px;"/>
                                                                 <p:column rowspan="2" headerText="Actividad" />
                                                                 <p:column rowspan="2" headerText="Unidad de medida" />
-                                                                <p:column colspan="12" headerText="Calendarización de Metas" style="width: 1200px;"/>  
+                                                                <p:column colspan="12" headerText="Calendarización de Metas" style="width: 1000px;"/>  
                                                                 <p:column rowspan="2" headerText="Total" style="width: 80px;"/>
                                                                 <p:column rowspan="2" headerText="" style="width: 50px;"/>
                                                                 <p:column rowspan="2" headerText="" style="width: 50px;"/>
@@ -134,7 +133,9 @@
                                                         </p:columnGroup>
 
                                                         <p:headerRow>
-                                                            <p:column colspan="18" styleClass="lac">
+                                                                <p:column colspan="#{controladorEvaluacionActividadesPOA.mes eq 3?'19':
+                                                                             controladorEvaluacionActividadesPOA.mes eq 7?'19':
+                                                                             controladorEvaluacionActividadesPOA.mes eq 11?'19':'18'}" styleClass="lac">
                                                                 <h:outputText value="#{poa.cuadroMandoInt.lineaAccion.nombre}"/>
                                                             </p:column>
                                                         </p:headerRow>  
@@ -318,8 +319,7 @@
             <h:form id="frmParametros">
                 <p:outputLabel for="eje"  value="Área" />
                 <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorRegistroActividadesPOAPyE.consultarListasValidacionFinal}">
-                    <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                    <f:selectItem itemValue="#{62}" itemLabel="UT Tulancingo"/>
+                    <f:selectItems value="#{controladorEvaluacionActividadesPyE.areasUniversidadsRegistros}" var="area" itemValue="#{area.area}" itemLabel="#{area.area} -- #{area.nombre}" />
                     <p:ajax update="eje" listener="#{controladorRegistroActividadesPOAPyE.imprimirValores()}"/>
                 </p:selectOneMenu> 
                 <p:message for="eje" display="tooltip" />

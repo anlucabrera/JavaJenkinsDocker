@@ -42,7 +42,6 @@
 
     <ui:define name="body">
         
-        <adm:breadcrumb title=" Plan de Trabajo Anual - Descripción y Justificación"/>
         <adm:sidebar collapsed="true"/>
         <h:form id="frm" prependId="false" class="form-inline">
             <div class="box box-primary">
@@ -110,7 +109,7 @@
                                                             <p:column rowspan="2" headerText="Actividad" />
                                                             <p:column rowspan="2" headerText="Unidad de medida" style="width: 150px;"/>
                                                             <p:column rowspan="2" headerText="Meta" style="width: 100px;"/>
-                                                            <p:column colspan="4" headerText="Calendarización de Metas: #{controladorEvaluacionActividadesPyE.cuatrimestre eq 1?'Enero - Abril':(controladorEvaluacionActividadesPyE.cuatrimestre eq 2?'Mayo - Agosto':'Septiembre - Diciembre')}" style="width: 400px;"/> 
+                                                            <p:column colspan="4" headerText="Calendarización de Metas: #{controladorEvaluacionActividadesPyE.cuatrimestre eq 1?'Enero - Abril':(controladorEvaluacionActividadesPyE.cuatrimestre eq 2?'Mayo - Agosto':'Septiembre - Diciembre')}" style="width: 300px;"/> 
                                                             <p:column colspan="3" headerText="Avance cuatrimestral" style="width: 250px;"/> 
                                                             <p:column colspan="3" headerText="Avance general al mes de #{controladorEvaluacionActividadesPyE.mesNombre}" style="width: 250px;"/>
                                                             <p:column rowspan="2" headerText="Evaluar" style="width:80px; "/>
@@ -478,8 +477,7 @@
             <h:form id="frmParametros">
                 <p:outputLabel for="eje"  value="Área" />
                 <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorEvaluacionActividadesPyE.asignarArea}">
-                    <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                    <f:selectItem itemValue="#{62}" itemLabel="UT Tulancingo"/>
+                    <f:selectItems value="#{controladorEvaluacionActividadesPyE.areasUniversidadsRegistros}" var="area" itemValue="#{area.area}" itemLabel="#{area.area} -- #{area.nombre}" />
                     <p:ajax update="eje" listener="#{controladorEvaluacionActividadesPyE.imprimirValores()}"/>
                     <p:message for="eje" display="tooltip" />
                 </p:selectOneMenu> 

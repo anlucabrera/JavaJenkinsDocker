@@ -18,6 +18,8 @@ import mx.edu.utxj.pye.sgi.entity.pye2.PretechoFinanciero;
 public interface EjbPoaSelectec {
 
 //  -------------------------------------------- ActividadesPoa -------------------------------------------------
+    public List<ActividadesPoa> mostrarAreasQueRegistraronActividades();
+    
     public List<ActividadesPoa> mostrarActividadesPoasArea(Short area);
 
     public ActividadesPoa agregarActividadesPoa(ActividadesPoa nuevaActividadesPoa);

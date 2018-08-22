@@ -33,7 +33,7 @@ public class ControladorSoporteTecnico implements Serializable {
     @Getter    @Setter    private Date fechaActual = new Date();
 
 //@EJB 
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbCreate ejbCreate;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbCreate;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
 //@Inject
     @Inject    ControladorEmpleado controladorEmpleado;

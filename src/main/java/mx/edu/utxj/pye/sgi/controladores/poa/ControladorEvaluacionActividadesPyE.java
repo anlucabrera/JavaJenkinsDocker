@@ -22,6 +22,8 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbPoaSelectec;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
@@ -41,7 +43,7 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
 
     private static final long serialVersionUID = -473305993584095094L;
 
-    @Getter    @Setter    private List<ActividadesPoa> actividadesPoasAreas = new ArrayList<>(), actividadesPoasAreasEjes = new ArrayList<>();
+    @Getter    @Setter    private List<ActividadesPoa> actividadesPoasAreas = new ArrayList<>(), actividadesPoasAreasEjes = new ArrayList<>(),actividadesPoasAreasConRegistros = new ArrayList<>();
     @Getter    @Setter    private List<EjesRegistro> ejesesFiltrado = new ArrayList<>(),ejeses = new ArrayList<>();
     @Getter    @Setter    private List<CuadroMandoIntegral> cuadroMandoIntegrals = new ArrayList<>();
     @Getter    @Setter    private List<Estrategias> estrategiases = new ArrayList<>();
@@ -49,6 +51,7 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
     @Getter    @Setter    private List<ActividadesPoa> actividads=new ArrayList<>();
     @Getter    @Setter    private List<Evidencias> evidenciases=new ArrayList<>();
     @Getter    @Setter    private List<EvidenciasDetalle> evidenciasesDetalles=new ArrayList<>(),evidenciasesDe=new ArrayList<>();
+    @Getter    @Setter    private List<AreasUniversidad> areasUniversidads = new ArrayList<>(),areasUniversidadsRegistros = new ArrayList<>();
     
     @Getter    @Setter    private List<listaEjesEsLaAp> ejesEsLaAp=new ArrayList<>();
     @Getter    @Setter    private List<listaEjeEstrategia> listaListaEjeEstrategia=new ArrayList<>();
@@ -78,11 +81,10 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
     @Getter    private String ruta;
     @Getter    StreamedContent content;
     
-    @EJB
-    EjbPoaSelectec poaSelectec;
-    @Inject
-    ControladorEmpleado controladorEmpleado;
+    @EJB    EjbPoaSelectec poaSelectec;
+    @Inject    ControladorEmpleado controladorEmpleado;
     @EJB    EjbCarga carga;
+    @EJB    EjbAreasLogeo ejbAreasLogeo;
 
     @PostConstruct
     public void init() {
@@ -94,10 +96,10 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
                 
         ejes=new EjesRegistro(0);
                 
-        ejercicioFiscal = Short.parseShort("19");
+        ejercicioFiscal = Short.parseShort("17");
         mes=fechaActual.getMonth();
         
-        claveArea = 62;
+        claveArea = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
         siglaArea = "PyE";
         switch(mes){
             case 0: mesNombre="Enero"; break;
@@ -120,12 +122,18 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
 
     // ---------------------------------------------------------------- Listas -------------------------------------------------------------
     public void consultarListas() {
+        try{
         ejesesFiltrado.clear();
+        actividadesPoasAreasConRegistros.clear();
+        areasUniversidads.clear();
+        areasUniversidadsRegistros.clear();
+        areasUniversidadsRegistros.add(new AreasUniversidad(Short.parseShort("0"), "Seleccione uno", "Seleccione uno", "1"));
         ejesesFiltrado.add(new EjesRegistro(0, "Seleccione uno", "Seleccione uno", "", ""));
-
+        areasUniversidads = ejbAreasLogeo.mostrarAreasUniversidad();
+        actividadesPoasAreasConRegistros = poaSelectec.mostrarAreasQueRegistraronActividades();
         actividadesPoasAreas = poaSelectec.mostrarActividadesPoasArea(claveArea);
         ejeses = poaSelectec.mostrarEjesRegistros();
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPyE.consultarListas()"+ejeses.size());
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPyE.consultarListas()" + ejeses.size());
         if (!actividadesPoasAreas.isEmpty()) {
             actividadesPoasAreas.forEach((t) -> {
                 if (!cuadroMandoIntegrals.contains(t.getCuadroMandoInt())) {
@@ -142,6 +150,17 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
                 });
             });
             Collections.sort(ejesesFiltrado, (x, y) -> Integer.compare(x.getEje(), y.getEje()));
+        }
+        actividadesPoasAreasConRegistros.forEach((t) -> {
+            areasUniversidads.forEach((a) -> {
+                if(t.getArea()==a.getArea()){
+                    areasUniversidadsRegistros.add(a);
+                }
+            });
+        });
+         } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorEvaluacionActividadesPyE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

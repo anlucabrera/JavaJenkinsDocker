@@ -253,7 +253,6 @@ public class ControladorTecnologia implements Serializable{
             ruta = carga.subir(file, new File(claveTrabajador.concat(File.separator).concat("desarrolloTecnologico").concat(File.separator)));
             if (!"Error: No se pudo leer el archivo".equals(ruta)) {
                 nuevoOBJDesarrolloTecnologico.setDocumentoRespaldo(ruta);
-//                System.out.println("mx.edu.utxj.pye.subir.controlador.Subir.upload() res:" + nuevoOBJDesarrolloTecnologico.getDocumentoRespaldo());
                 direccionInt = 1;
                 ruta = null;
             } else {
@@ -291,7 +290,7 @@ public class ControladorTecnologia implements Serializable{
             accion = "";
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorTecnologia.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

@@ -11,11 +11,13 @@ import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
 import mx.edu.utxj.pye.sgi.entity.ch.CursosModalidad;
 import mx.edu.utxj.pye.sgi.entity.ch.CursosTipo;
 import mx.edu.utxj.pye.sgi.entity.ch.Docencias;
-import mx.edu.utxj.pye.sgi.entity.ch.Funciones;
+import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
 import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 import mx.edu.utxj.pye.sgi.entity.ch.Grados;
+import mx.edu.utxj.pye.sgi.entity.ch.Historicoplantillapersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.InformacionAdicionalPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -55,6 +57,16 @@ public class ServiciosDatosUsuarioLogeado implements EjbDatosUsuarioLogeado {
         facade.edit(nuevoPersonal);
         facade.flush();
         return nuevoPersonal;
+    }
+
+    @Override
+    public List<ListaPersonal> mostrarListaSubordinados(ListaPersonal perosona) {
+        TypedQuery<ListaPersonal> q = em.createQuery("SELECT l FROM ListaPersonal l WHERE (l.areaOperativa = :areaOperativa OR l.areaSuperior=:areaSuperior) AND l.clave!=:clave ORDER BY l.clave", ListaPersonal.class);
+        q.setParameter("areaOperativa", perosona.getAreaOperativa());
+        q.setParameter("areaSuperior", perosona.getAreaOperativa());
+        q.setParameter("clave", perosona.getClave());
+        List<ListaPersonal> pr = q.getResultList();
+        return pr;
     }
 ////////////////////////////////////////////////////////////////////////////////Informacion Personal
 
@@ -114,16 +126,6 @@ public class ServiciosDatosUsuarioLogeado implements EjbDatosUsuarioLogeado {
 ////////////////////////////////////////////////////////////////////////////////Elementos Específicos Personal Logeado
 
     @Override
-    public List<Funciones> mostrarListaFuncionesPersonalLogeado(Integer area, Short categoriaOperativa, Short categoriaEspecifica) throws Throwable {
-        TypedQuery<Funciones> q = em.createQuery("SELECT f FROM Funciones f JOIN f.categoriaOperativa co JOIN f.categoriaEspesifica ce WHERE f.areaOperativa = :areaOperativa AND co.categoria = :categoria AND ce.categoriaEspecifica=:categoriaEspecifica", Funciones.class);
-        q.setParameter("areaOperativa", area);
-        q.setParameter("categoria", categoriaOperativa);
-        q.setParameter("categoriaEspecifica", categoriaEspecifica);
-        List<Funciones> pr = q.getResultList();
-        return pr;
-    }
-
-    @Override
     public List<Docencias> mostrarListaDocencias(Integer claveTrabajador) throws Throwable {
         TypedQuery<Docencias> q = em.createQuery("SELECT d FROM Docencias d JOIN d.clavePersonal c where c.clave=:clave", Docencias.class);
         q.setParameter("clave", claveTrabajador);
@@ -159,7 +161,8 @@ public class ServiciosDatosUsuarioLogeado implements EjbDatosUsuarioLogeado {
         List<CursosModalidad> pr = q.getResultList();
         return pr;
     }
-@Override
+
+    @Override
     public List<PersonalCategorias> mostrarListaPersonalCategorias() throws Throwable {
         TypedQuery<PersonalCategorias> q = em.createQuery("SELECT p FROM PersonalCategorias p", PersonalCategorias.class);
         List<PersonalCategorias> pr = q.getResultList();
@@ -167,31 +170,43 @@ public class ServiciosDatosUsuarioLogeado implements EjbDatosUsuarioLogeado {
     }
 
     @Override
-    public List<ListaPersonal> mostrarVistaListaPersonalLogeadoAreaOpe() throws Throwable {
-        TypedQuery<ListaPersonal> q = em.createQuery("SELECT l FROM ListaPersonal l GROUP BY l.areaOperativa ORDER BY l.areaOperativaNombre", ListaPersonal.class);
-        List<ListaPersonal> pr = q.getResultList();
-        return pr;
-    }
-
-    @Override
-    public List<ListaPersonal> mostrarVistaListaPersonalLogeadoAreaOfi() throws Throwable {
-        TypedQuery<ListaPersonal> q = em.createQuery("SELECT l FROM ListaPersonal l GROUP BY l.areaOficial ORDER BY l.areaOficialNombre", ListaPersonal.class);
-        List<ListaPersonal> pr = q.getResultList();
-        return pr;
-    }
-
-    @Override
-    public List<ListaPersonal> mostrarVistaListaPersonalLogeadoAreaSup() throws Throwable {
-        TypedQuery<ListaPersonal> q = em.createQuery("SELECT l FROM ListaPersonal l GROUP BY l.areaSuperior ORDER BY l.areaSuperiorNombre", ListaPersonal.class);
-        List<ListaPersonal> pr = q.getResultList();
-        return pr;
-    }
-    
-    @Override
     public PersonalCategorias crearNuevoPersonalCategorias(PersonalCategorias nuevoPersonalCategorias) throws Throwable {
         facade.setEntityClass(PersonalCategorias.class);
         facade.create(nuevoPersonalCategorias);
         facade.flush();
         return nuevoPersonalCategorias;
     }
+
+    @Override
+    public Historicoplantillapersonal agregarHistoricoplantillapersonal(Historicoplantillapersonal nuevoHistoricoplantillapersonal) throws Throwable {
+        facade.setEntityClass(Historicoplantillapersonal.class);
+        facade.create(nuevoHistoricoplantillapersonal);
+        facade.flush();
+        return nuevoHistoricoplantillapersonal;
+    }
+
+    @Override
+    public List<Modulosregistro> mostrarModulosregistro(String actividadUsuario) throws Throwable {
+        TypedQuery<Modulosregistro> q = em.createQuery("SELECT m FROM Modulosregistro m WHERE m.actividadUsuario = :actividadUsuario", Modulosregistro.class);
+        q.setParameter("actividadUsuario", actividadUsuario);
+        List<Modulosregistro> pr = q.getResultList();
+        return pr;
+    }
+
+    @Override
+    public List<Eventos> mostrarEventosRegistro(String tipo, String nombre) throws Throwable {
+        TypedQuery<Eventos> q = em.createQuery("SELECT e FROM Eventos e WHERE e.tipo = :tipo AND e.nombre = :nombre", Eventos.class);
+        q.setParameter("tipo", tipo);
+        q.setParameter("nombre", nombre);
+        List<Eventos> pr = q.getResultList();
+        return pr;
+    }
+
+    @Override
+    public List<Historicoplantillapersonal> mostrarHistoricoplantillapersonal() throws Throwable {
+        TypedQuery<Historicoplantillapersonal> q = em.createQuery("SELECT h FROM Historicoplantillapersonal h", Historicoplantillapersonal.class);
+        List<Historicoplantillapersonal> pr = q.getResultList();
+        return pr;
+    }
+
 }

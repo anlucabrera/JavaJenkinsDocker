@@ -39,8 +39,7 @@ public class ControladorResultadosEvaluaciones implements Serializable {
     @Getter    @Setter    private ListaEvaluaciones nOBRE;
     @Getter    @Setter    DecimalFormat df = new DecimalFormat("#.00");
 //@Inject
-    @Inject
-    ControladorEmpleado controladorEmpleado;
+    @Inject    ControladorEmpleado controladorEmpleado;
 
     @EJB
     EjbPersonalEvaluaciones ejbPersonalEvaluaciones;
@@ -49,7 +48,6 @@ public class ControladorResultadosEvaluaciones implements Serializable {
     public void init() {
         System.out.println("ControladorResultadosEvaluaciones Inicio: " + System.currentTimeMillis());
         usuario = controladorEmpleado.getEmpleadoLogeado();
-//        System.out.println("usuario " + usuario);
         mostrarLista();
         System.out.println("ControladorResultadosEvaluaciones Fin: " + System.currentTimeMillis());
     }

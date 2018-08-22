@@ -71,7 +71,7 @@ public class LogonMB extends AdminSession implements Serializable {
 
     @EJB private EjbLogin ejbLogin;
     @EJB private Facade f;    
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbCreate ejbCreate;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
  //accede al controlador que da permisos a los usuarios
     @Inject permisosUsuarios pUsuarios;
     
@@ -140,7 +140,7 @@ public class LogonMB extends AdminSession implements Serializable {
             nuevaBitacoraacceso.setTabla(nombreTabla);
             nuevaBitacoraacceso.setAccion(accion);
             nuevaBitacoraacceso.setFechaHora(fechaActual);
-            nuevaBitacoraacceso=ejbCreate.agregarBitacoraacceso(nuevaBitacoraacceso);
+            nuevaBitacoraacceso=ejbDatosUsuarioLogeado.crearBitacoraacceso(nuevaBitacoraacceso);
             nombreTabla="";
             numeroRegistro="";
             accion="";

@@ -68,6 +68,13 @@ public class ControladorEmpleadoReporteRegistros implements Serializable {
     
     @Inject    ControladorEmpleado controladorEmpleado;
     
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbEducacion ejbEducacion;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbHabilidades ejbHabilidades;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbTecnologia ejbTecnologia;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPremios ejbPremios;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbProduccionProfecional ejbProduccionProfecional;
+    
     @PostConstruct
     public void init() {
         System.out.println("ControladorEmpleadoReporteRegistros Inicio: " + System.currentTimeMillis());
@@ -96,21 +103,26 @@ public class ControladorEmpleadoReporteRegistros implements Serializable {
             total = 0;
             tipo = "";
 
-            listaFormacionAcademica = ejbSelectec.mostrarFormacionAcademica(nuevoOBJListaPersonal.getClave());
-            listaExperienciasLaborales = ejbSelectec.mostrarExperienciasLaborales(nuevoOBJListaPersonal.getClave());
-            listaCapacitacionespersonal = ejbSelectec.mostrarCapacitacionespersonal(nuevoOBJListaPersonal.getClave());
-            listaIdiomas = ejbSelectec.mostrarHabilidadesIdiomasPorClaveTrabajador(nuevoOBJListaPersonal.getClave());
-            listaHabilidadesInformaticas = ejbSelectec.mostrarHabilidadesInformaticasPorClaveTrabajador(nuevoOBJListaPersonal.getClave());
-            listaLenguas = ejbSelectec.mostrarHabilidadesLengiasPorClaveTrabajador(nuevoOBJListaPersonal.getClave());
-            listaDesarrolloSoftwar = ejbSelectec.mostrarDesarrollosSoftware(nuevoOBJListaPersonal.getClave());
-            listaDesarrollosTecnologicos = ejbSelectec.mostrarDesarrollosTecnologicos(nuevoOBJListaPersonal.getClave());
-            listaInnovaciones = ejbSelectec.mostrarInnovaciones(nuevoOBJListaPersonal.getClave());
-            listaDistinciones = ejbSelectec.mostrarDistinciones(nuevoOBJListaPersonal.getClave());
-            listaLibrosPubs = ejbSelectec.mostrarLibrosPublicados(nuevoOBJListaPersonal.getClave());
-            listaArticulosp = ejbSelectec.mostrarArticulospublicados(nuevoOBJListaPersonal.getClave());
-            listaMemoriaspub = ejbSelectec.mostrarMemoriaspubicados(nuevoOBJListaPersonal.getClave());
-            listaInvestigacion = ejbSelectec.mostrarInvestigacionPorClaveTrabajador(nuevoOBJListaPersonal.getClave());
-            listaCongresos = ejbSelectec.mostrarCongresos(nuevoOBJListaPersonal.getClave());
+            listaFormacionAcademica = ejbEducacion.mostrarFormacionAcademica(nuevoOBJListaPersonal.getClave());
+            listaExperienciasLaborales = ejbEducacion.mostrarExperienciasLaborales(nuevoOBJListaPersonal.getClave());
+            listaCapacitacionespersonal = ejbEducacion.mostrarCapacitacionespersonal(nuevoOBJListaPersonal.getClave());
+            
+            listaIdiomas = ejbHabilidades.mostrarIdiomas(nuevoOBJListaPersonal.getClave());
+            listaHabilidadesInformaticas = ejbHabilidades.mostrarHabilidadesInformaticas(nuevoOBJListaPersonal.getClave());
+            listaLenguas = ejbHabilidades.mostrarLenguas(nuevoOBJListaPersonal.getClave());
+            
+            listaDesarrolloSoftwar = ejbTecnologia.mostrarDesarrolloSoftware(nuevoOBJListaPersonal.getClave());
+            listaDesarrollosTecnologicos = ejbTecnologia.mostrarDesarrollosTecnologicos(nuevoOBJListaPersonal.getClave());
+            listaInnovaciones = ejbTecnologia.mostrarInnovaciones(nuevoOBJListaPersonal.getClave());
+            
+            listaDistinciones = ejbPremios.mostrarDistinciones(nuevoOBJListaPersonal.getClave());
+            
+            listaLibrosPubs = ejbProduccionProfecional.mostrarLibrosPub(nuevoOBJListaPersonal.getClave());
+            listaArticulosp = ejbProduccionProfecional.mostrarArticulosp(nuevoOBJListaPersonal.getClave());
+            listaMemoriaspub = ejbProduccionProfecional.mostrarMemoriaspub(nuevoOBJListaPersonal.getClave());
+            listaInvestigacion = ejbProduccionProfecional.mostrarInvestigacion(nuevoOBJListaPersonal.getClave());
+            listaCongresos = ejbProduccionProfecional.mostrarCongresos(nuevoOBJListaPersonal.getClave());
+            
             total = listaFormacionAcademica.size() + listaExperienciasLaborales.size() + listaCapacitacionespersonal.size() + listaIdiomas.size() + listaHabilidadesInformaticas.size() + listaLenguas.size() + listaDesarrolloSoftwar.size() + listaDesarrollosTecnologicos.size() + listaInnovaciones.size() + listaDistinciones.size() + listaLibrosPubs.size() + listaArticulosp.size() + listaMemoriaspub.size() + listaInvestigacion.size() + listaCongresos.size();
             if (total.equals(0)) {
                 tipo = "A";
@@ -152,11 +164,9 @@ public class ControladorEmpleadoReporteRegistros implements Serializable {
             nuevaVistaListaPersonal.clear();
             nuevoOBJListaPersonal = new ListaPersonal();
 
-            nuevaVistaListaPersonal = ejbSelectec.mostrarListaDeEmpleadosXClave(controladorEmpleado.getEmpleadoLogeado());
-            nuevoOBJListaPersonal = nuevaVistaListaPersonal.get(0);
-            nuevaVistaListaPersonal.clear();
+            nuevoOBJListaPersonal = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeado(controladorEmpleado.getEmpleadoLogeado());
             area = nuevoOBJListaPersonal.getAreaOperativaNombre();
-            nuevaVistaListaPersonal = ejbSelectec.mostrarListaDeEmpleadosParaJefes(nuevoOBJListaPersonal.getAreaOperativa());
+            nuevaVistaListaPersonal = ejbDatosUsuarioLogeado.mostrarListaSubordinados(nuevoOBJListaPersonal);
             nuevoOBJListaPersonal = new ListaPersonal();
             for (int i = 0; i <= nuevaVistaListaPersonal.size() - 1; i++) {
                 nuevoOBJListaPersonal = nuevaVistaListaPersonal.get(i);
