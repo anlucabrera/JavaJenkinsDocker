@@ -6,6 +6,9 @@
 package mx.edu.utxj.pye.sgi.ejb.prontuario;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Optional;
+import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ConfiguracionPropiedades;
@@ -25,4 +28,10 @@ public interface EjbPropiedades extends Serializable{
     public ConfiguracionPropiedades leerPropiedad(String clave);
     
     public OptionalInt leerPropiedadEntera(String clave);
+    
+    public Optional<String> leerPropiedadCadena(String clave);
+    
+    public OptionalDouble leerPropiedadDecimal(String clave);
+    
+    public Optional<LocalDate> leerPropiedadFecha(String clave);
 }

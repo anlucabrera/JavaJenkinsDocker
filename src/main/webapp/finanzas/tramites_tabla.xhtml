@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:m="http://xmlns.jcp.org/jsf/composite/admin">
+    <h:form id="frm" prependId="false" class="form-inline">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    <p:toolbar id="tb">
+                        <f:facet name="left">
+                            <div class="form-group">
+                                <p:outputLabel for="tramites" value="Trámites: " />
+                                <p:selectOneMenu id="tramites" class="form-control" >
+                                    <f:selectItem itemValue="0" itemLabel="Propios" />
+                                    <f:selectItem itemValue="1" itemLabel="Área" />
+                                </p:selectOneMenu>
+                            </div>
+                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                        </f:facet>
+                        <f:facet name="right">
+                            <p:commandButton id="btnAgregar" action="tramites_comisionar?faces-redirect=true"
+                                             value="Comisionar" process="@this" icon="fa fa-plus" styleClass="btn-primary"
+                                             />
+                        </f:facet>
+                    </p:toolbar>
+                </div>
+                <p:separator/>
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">
+                            Ejercicio: #{caster.ejercicioFiscal}
+                        </h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 text-info text-center">
+                                <p:dataTable value="#{fiscalizacion.tramitesACargo}" var="tramite" emptyMessage="Sin registros."
+                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive" tableStyle="vertical-align: middle;">
+                                    <p:columnGroup type="header">
+                                        <p:row>
+                                            <p:column headerText="Oficio de comisión"/>
+                                            <p:column headerText="Ejercicio" />
+                                            <p:column headerText="Folio"/>
+                                            <p:column headerText="Clave"/>
+                                            <p:column headerText="Inicio"/>
+                                            <p:column headerText="Límite"/>
+                                            <p:column headerText="Operaciones"/>
+                                        </p:row>
+                                    </p:columnGroup>
+                                    <p:column><h:outputText value="#{tramite.comisionOficios.oficio}" /></p:column>
+                                    <p:column><h:outputText value="#{tramite.anio}" /></p:column>
+                                    <p:column><h:outputText value="#{tramite.folio}" /></p:column>
+                                    <p:column><h:outputText value="#{tramite.clave}" /></p:column>
+                                    <p:column><h:outputText value="#{tramite.fechaInicio}" ><f:convertDateTime pattern="yyyy-MM-dd" /></h:outputText></p:column>
+                                    <p:column><h:outputText value="#{tramite.fechaLimite}" ><f:convertDateTime pattern="yyyy-MM-dd" /></h:outputText></p:column>
+                                    <p:column>
+                                        <p:commandButton actionListener="#{fiscalizacion.initTramiteFacturas(tramite)}"        process="@this" icon="fa fa-ticket"      class="btn btn-info btn-sm" title="Registrar facturas." update="@(.contenedor)" />
+                                        <p:commandLink ajax="false" action="#{documentoInterno.descargarComisionOficio(tramite)}" target="_blank" disabled="#{false}" class="#{empty false?'btn btn-warning btn-sm':'btn btn-info btn-sm'}" title="Descargar oficio de comisión."><i class="fa fa-external-link-square" /></p:commandLink>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 text-info text-center">
+                                <p:dataTable  value="#{personalModelo.personalData}" var="personal" emptyMessage="Sin registros." rendered="false"
+                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive" tableStyle="vertical-align: middle;"
+                                              rows="10"
+                                              paginator="true"
+                                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                              rowsPerPageTemplate="5,10,15">
+                                    <p:column headerText="Clave">
+                                        <h:outputText value="#{personal}" />
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </h:form>
+</ui:composition>

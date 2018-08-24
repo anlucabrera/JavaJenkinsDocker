@@ -27,7 +27,7 @@ public class PersonalConverter implements Converter{
         if(value != null && value.trim().length() > 0) {
             try {
                 List<Personal> l = Faces.getSessionAttribute("docentesActivos");
-                System.out.println("mx.edu.utxj.pye.sgi.converter.PersonalConverter.getAsObject(" + f + ") value: " + value);
+//                System.out.println("mx.edu.utxj.pye.sgi.converter.PersonalConverter.getAsObject(" + f + ") value: " + value);
                 Personal p = l.get(l.indexOf(new Personal(Integer.parseInt(value))));
                 if(p!=null){
                     return p;

@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="comisionMapa.css" />
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Comisionar personal
+    </ui:define>
+
+    <ui:define name="description">
+        Fiscalización
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Comisionar a personal"/>
+        <adm:sidebar collapsed="true"/>
+        <h:form id="frmAgregarTramite" class="form-horizontal" prependId="true">
+            <p:messages showSummary="true" showDetail="true" >
+                <p:autoUpdate />
+            </p:messages>
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                        <p:toolbar id="tb2">
+                            <f:facet name="left">
+                            </f:facet>
+                            <f:facet name="right">
+                                <p:commandButton id="btnAgregar" actionListener="#{comisionar.guardarComisión()}"
+                                                 process="@form" update="@(.ui-message)" value="Guardar" icon="fa fa-save" styleClass="btn-primary"/>
+                            </f:facet>
+                        </p:toolbar>
+                        <p:sticky target="tb2" />
+                    </div>
+                    <p:separator/>
+                    <div class="box box-solid">                        
+                        <div class="box-body">
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12">
+                                    <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                                    <div class="row">
+                                        <div class="col-md-5 col-lg-4">
+                                            <div class="row" style="#{fila}">
+                                                <div class="col-md-4"><p:outputLabel for="tipoTramite" value="Tipo de trámite:" indicateRequired="true"/></div>
+                                                <div class="col-md-8">
+                                                    <p:selectOneButton id="tipoTramite" required="true" value="#{comisionar.comision.tipo}" converter="tramiteTipoConverter" requiredMessage="Seleccione un tipo de trámite.">
+                                                        <f:selectItem itemLabel="Comisión" itemValue="#{comisionar.tramiteTipoComision}"/>
+                                                        <f:selectItem itemLabel="Producto / Servicio" itemValue="#{comisionar.tramiteTipoProductoServicio}"/>
+                                                        <p:ajax process="tipoTramite" update="@form" immediate="true" />
+                                                    </p:selectOneButton>
+                                                    <p:message for="tipoTramite"  />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-md-offset-1 col-lg-4">
+                                            <div class="row" style="#{fila}">
+                                                <div class="col-md-4"><p:outputLabel for="tipoGasto" value="Tipo de gasto:" indicateRequired="true"/></div>
+                                                <div class="col-md-8">
+                                                    <p:selectOneButton id="tipoGasto" required="true" value="#{comisionar.comision.gastoTipo}" converter="gastoTipoConverter" requiredMessage="Seleccione un tipo de gasto.">
+                                                        <f:selectItem itemLabel="Anticipado" itemValue="#{comisionar.gastoTipoAnticipado}"/>
+                                                        <f:selectItem itemLabel="Devengado" itemValue="#{comisionar.gastoTipoDevengado}"/>
+                                                        <p:ajax process="tipoGasto" update="@form" immediate="true" />
+                                                    </p:selectOneButton>
+                                                    <p:message for="tipoGasto" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <c:set var="col1" value="#{'col-md-1'}" />
+                                            <c:set var="col2" value="#{'col-md-11'}" />
+                                            <p:separator style="margin: 5px;"/>
+                                            <div class="row" style="#{fila}">
+                                                <div class="col-md-12 "><span style="float: left; font-size: 16px; font-weight: 600;" class="ui-dialog-title">Alineación</span></div>
+                                            </div>
+                                            <div class="row" style="#{fila}">
+                                                <div class="#{col1}"><p:outputLabel for="area" value="Área: " indicateRequired="true"/></div>
+                                                <div class="#{col2}">
+                                                    <p:selectOneMenu id="area" required="true" value="#{comisionar.comision.alineacionArea}" valueChangeListener="#{comisionar.actualizarEjes}" var="a" converter="entidadConverter2">
+                                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                                        <f:selectItems value="#{comisionar.comision.areas}" var="area" itemValue="#{area}" itemLabel="#{area.nombre}" itemDescription="#{area.nombre}" />
+                                                        <p:ajax process="area" update="eje,estrategia,lineaAccion,actividad,comisionado" />
+                                                        <p:column>#{a.categoria.descripcion}</p:column>
+                                                        <p:column>#{a.nombre}</p:column>
+                                                    </p:selectOneMenu>
+                                                    <p:message for="area"><p:autoUpdate /></p:message>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="#{fila}">
+                                                <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
+                                                <div class="#{col2}">
+                                                    <p:selectOneMenu id="eje" required="true" value="#{comisionar.comision.alineacionEje}" valueChangeListener="#{comisionar.actualizarEstrategias}" converter="entidadConverter2">
+                                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                                        <f:selectItems value="#{comisionar.comision.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                                        <p:ajax process="eje" update="estrategia,lineaAccion,actividad" />
+                                                    </p:selectOneMenu>
+                                                    <p:message for="eje"><p:autoUpdate /></p:message>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="#{fila}">
+                                                <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
+                                                <div class="#{col2}">
+                                                    <p:selectOneMenu id="estrategia" required="true" value="#{comisionar.comision.alineacionEstrategia}" valueChangeListener="#{comisionar.actualizarLineasAccion}" converter="entidadConverter2">
+                                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                                        <f:selectItems value="#{comisionar.comision.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                                        <p:ajax process="estrategia" update="lineaAccion,actividad" />
+                                                    </p:selectOneMenu>
+                                                    <p:message for="estrategia"><p:autoUpdate /></p:message>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="#{fila}">
+                                                <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
+                                                <div class="#{col2}">
+                                                    <p:selectOneMenu id="lineaAccion" required="true" value="#{comisionar.comision.alineacionLinea}" valueChangeListener="#{comisionar.actualizarActividades}" converter="entidadConverter2">
+                                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                                        <f:selectItems value="#{comisionar.comision.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                                        <p:ajax process="lineaAccion" update="actividad" />
+                                                    </p:selectOneMenu>
+                                                    <p:message for="lineaAccion"><p:autoUpdate /></p:message>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="#{fila}">
+                                                <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
+                                                <div class="#{col2}">
+                                                    <p:selectOneMenu id="actividad" required="true" value="#{comisionar.comision.alineacionActividad}" converter="entidadConverter2">
+                                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                                        <f:selectItems value="#{comisionar.comision.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                                        <p:ajax process="actividad" />
+                                                    </p:selectOneMenu>
+                                                    <p:message for="actividad"><p:autoUpdate /></p:message>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <c:if test="#{comisionar.comision.tipo eq comisionar.tramiteTipoComision}">
+                                        <p:separator style="margin: 5px;"/>
+                                        <div class="row" style="#{fila}">
+                                            <div class="col-md-12 "><span style="float: left; font-size: 16px; font-weight: 600;" class="ui-dialog-title">Comisión</span></div>
+                                        </div>
+                                        <div class="row" style="#{fila}">
+                                            <div class="#{col1}"><p:outputLabel for="comisionado" value="Comisionado: " indicateRequired="true"/></div>
+                                            <div class="#{col2}">
+                                                <p:selectOneMenu id="comisionado" required="true" value="#{comisionar.comision.comisionado}" converter="personalConverter">
+                                                    <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                                    <f:selectItems value="#{comisionar.comision.posiblesComisionados}" var="comisionado" itemValue="#{comisionado}" itemLabel="#{comisionado.nombre}" itemDescription="#{comisionado.nombre}" />
+                                                    <p:ajax process="comisionado" update="@this" />                                                    
+                                                </p:selectOneMenu>
+                                                <p:message for="comisionado" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-lg-6">
+                                                <div class="row" style="#{fila}">
+                                                    <div class="col-md-2"><p:outputLabel for="estado" value="Estado: "/></div>
+                                                    <div class="col-md-10">
+                                                        <p:selectOneMenu id="estado" required="true" value="#{comisionar.comision.estado}" valueChangeListener="#{comisionar.actualizarMunicipios}" filter="true" filterPlaceholder="Buscar" filterMatchMode="contains" converter="entidadConverter2">
+                                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                                            <f:selectItems value="#{comisionar.comision.estados}" var="estado" itemValue="#{estado}" itemLabel="#{estado.nombre}" itemDescription="#{estado.nombre}" />
+                                                            <p:ajax process="estado" update="@form:municipio" />
+                                                        </p:selectOneMenu>
+                                                        <p:message for="estado" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-6">
+                                                <div class="row" style="#{fila}">
+                                                    <div class="col-md-2"><p:outputLabel for="municipio" value="Municipio: "/></div>
+                                                    <div class="col-md-10">
+                                                        <p:selectOneMenu id="municipio" required="true" value="#{comisionar.comision.municipio}" filter="true" filterPlaceholder="Buscar" filterMatchMode="contains" converter="entidadConverter2">
+                                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                                            <f:selectItems value="#{comisionar.comision.municipios}" var="municipio" itemValue="#{municipio}" itemLabel="#{municipio.nombre}" itemDescription="#{municipio.nombre}" />
+                                                            <p:ajax process="municipio" />
+                                                        </p:selectOneMenu>
+                                                        <p:message for="municipio" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="#{fila}">
+                                            <div class="col-md-1"><p:outputLabel value="Dependencia: " for="dependencia" /></div>
+                                            <div class="col-md-11">
+                                                <p:inputText id="dependencia" value="#{comisionar.comision.tramite.comisionOficios.dependencia}" class="form-control" required="true" requiredMessage="Debe especificar la dependencia, organización o lugar donde se realizará la comisión." placeholder="Dependencia, organización o lugar donde se realizará la comisión." />
+                                                <p:message for="dependencia" />
+                                            </div>
+                                        </div>                                        
+                                        <div class="row" style="#{fila}">
+                                            <div class="col-md-1"><p:outputLabel for="actividades" value="Actividades: "/></div>
+                                            <div class="col-md-11">
+                                                <p:inputTextarea id="actividades" value="#{comisionar.comision.tramite.comisionOficios.actividades}" required="true" requiredMessage="Debe ingresar las actividades a realizar por el comisionado." placeholder="Actividades a realizar durante la comisión."
+                                                                 label="actividades" rows="2" cols="140" class="form-control" maxlength="1000" autoResize="true" />
+                                                <p:message for="actividades" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3 col-lg-2">
+                                                <div class="row" style="#{fila}">
+                                                    <div class="col-md-5"><p:outputLabel for="fechaInicio" value="Fecha inicio: " indicateRequired="true"/></div>
+                                                    <div class="col-md-7">
+                                                        <p:calendar id="fechaInicio" value="#{comisionar.comision.inicio}" showOn="button" required="true" requiredMessage="Seleccione una fecha." pattern="dd/MM/yyyy" inputStyle="width: 100px;">
+                                                            <p:ajax process="fechaInicio" event="dateSelect" update="@form:viaticosSinPernoctar,@form:viaticosPernoctando,@form:fechaInicio,@form:fechaFin" />
+                                                        </p:calendar>
+                                                        <p:message for="fechaInicio" />
+                                                    </div>
+                                                </div>
+                                                <div class="row" style="#{fila}">
+                                                    <div class="col-md-5"><p:outputLabel for="fechaFin" value="Fecha fin: " indicateRequired="true"/></div>
+                                                    <div class="col-md-7">
+                                                        <p:calendar id="fechaFin" value="#{comisionar.comision.fin}" showOn="button" required="true" requiredMessage="Seleccione una fecha." pattern="dd/MM/yyyy" inputStyle="width: 100px;">
+                                                            <p:ajax process="fechaFin" event="dateSelect" update="@form:viaticosSinPernoctar,@form:viaticosPernoctando,@form:fechaInicio,@form:fechaFin" />
+                                                        </p:calendar>
+                                                        <p:message for="fechaFin" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-lg-3">
+                                                <div class="row" style="#{fila}">
+                                                    <div class="col-md-8"><p:outputLabel for="viaticosSinPernoctar" value="Viáticos sin pernoctar (días): " indicateRequired="true"/></div>
+                                                    <div class="col-md-4">
+                                                        <p:spinner id="viaticosSinPernoctar" value="#{comisionar.comision.sinPernoctar}" required="true" maxlength="3" min="0" max="30" size="2" requiredMessage="Ingrese la cantidad de días." >
+                                                            <p:ajax process="@this" update="@this" />
+                                                        </p:spinner>
+                                                        <p:message for="viaticosSinPernoctar" />
+                                                    </div>
+                                                </div>
+                                                <div class="row" style="#{fila}">
+                                                    <div class="col-md-8"><p:outputLabel for="viaticosPernoctando" value="Viáticos pernoctando (días): " indicateRequired="true"/></div>
+                                                    <div class="col-md-4">
+                                                        <p:spinner id="viaticosPernoctando" value="#{comisionar.comision.pernoctando}" required="true" maxlength="3" min="0" max="30" size="2" requiredMessage="Ingrese la cantidad de días." >
+                                                            <p:ajax process="@this" update="@this" />
+                                                        </p:spinner>
+                                                        <p:message for="viaticosPernoctando" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 col-lg-2">
+                                                <div class="row" style="#{fila}">
+                                                    <div class="col-md-12">
+                                                        <div class="row">
+                                                            <div class="col-md-8"><p:outputLabel for="sabados" value="Solicitar sábados: "/></div>
+                                                            <div class="col-md-4">
+                                                                <p:selectBooleanCheckbox id="sabados" value="#{comisionar.comision.tramite.comisionOficios.sabadosSolicitados}" label="Sábados" />
+                                                                <p:message for="sabados" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row" style="#{fila}">
+                                                    <div class="col-md-12">
+                                                        <div class="row">
+                                                            <div class="col-md-8"><p:outputLabel for="domingos" value="Solicitar domingos: "/></div>
+                                                            <div class="col-md-4">
+                                                                <p:selectBooleanCheckbox id="domingos" value="#{comisionar.comision.tramite.comisionOficios.domingosSolicitados}" label="Domingos" />
+                                                                <p:message for="domingos" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 col-lg-4">
+                                                <div class="row" style="#{fila}">
+                                                    <div class="col-md-4">
+                                                        <div class="row">
+                                                            <div class="col-md-6"><p:outputLabel for="pasajes" value="Pasajes: "/></div>
+                                                            <div class="col-md-6">
+                                                                <p:selectBooleanCheckbox id="pasajes" value="#{comisionar.comision.tramite.comisionOficios.comisionAvisos.pasajes}" label="pasajes" />
+                                                                <p:message for="pasajes" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="row">
+                                                            <div class="col-md-6"><p:outputLabel for="casetas" value="Casetas: "/></div>
+                                                            <div class="col-md-6">
+                                                                <p:selectBooleanCheckbox id="casetas" value="#{comisionar.comision.tramite.comisionOficios.comisionAvisos.casetas}" label="casetas" />
+                                                                <p:message for="casetas" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-5 col-lg-3"><p:outputLabel for="otros" value="Otros gastos ($): "/></div>
+                                                    <div class="col-md-7 col-lg-4">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <div class="input-group-addon">$</div>
+                                                                <p:inputNumber id="otros" value="#{comisionar.comision.tramite.comisionOficios.comisionAvisos.otros}" label="otros" decimalPlaces="2" inputStyle="width: 117px;" />
+                                                                <p:message for="otros" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="#{fila}">
+                                            <div class="col-md-1"><p:outputLabel for="comentarios" value="Comentarios: "/></div>
+                                            <div class="col-md-11">
+                                                <p:inputTextarea id="comentarios" value="#{comisionar.comision.tramite.comisionOficios.comisionAvisos.comentarios}" placeholder="Justificar otros gastos o ingresar comentarios hacia el área de Fiscalización."
+                                                                 label="comentarios" rows="2" cols="140" class="form-control" maxlength="1500" autoResize="true" />
+                                                <p:message for="comentarios" />
+                                            </div>
+                                        </div>
+                                        <c:if test="#{false}">
+                                            <div class="row" style="display: none;">
+                                                <div class="col-md-12 col-lg-8">
+                                                    <div class="row" style="#{fila}">
+                                                        <div class="col-md-1"><p:outputLabel value="Origen: " for="origen" /></div>
+                                                        <div class="col-md-11">
+                                                            <p:inputText id="origen" value="#{comisionar.origen}" class="form-control origen" required="true" requiredMessage="Origen" style="width: 870px;"  />
+                                                            <p:message for="origen" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="display: none;">
+                                                <div class="col-md-12 col-lg-8">
+                                                    <div class="row" style="#{fila}">
+                                                        <div class="col-md-1"><p:outputLabel value="Destino: " for="destino" /></div>
+                                                        <div class="col-md-8">
+                                                            <p:inputText id="destino" value="#{comisionar.destino}" class="form-control destino" required="true" requiredMessage="Destino" style="width: 870px;" />
+                                                            <p:message for="destino" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="display: none;">
+                                                <div class="col-md-12 col-lg-3">
+                                                    <p:commandButton styleClass="btn-info pull-right" value="Consultar" process="origen, destino" update="@form"
+                                                                     onsuccess="buscar();"/>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="display: none;">
+                                                <div class="col-md-4">
+                                                    <p:outputLabel value="Distancia: " />
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <p:outputLabel id="distancia" value="#{comisionar.distancia}" /> Km
+                                                </div>
+                                            </div>
+                                            <div class="row" style="display: none;">
+                                                <div class="col-md-12" style="height: 500px;">
+                                                    <iframe id="winMapa" name="winMapa" 
+                                                            src="#{request.contextPath}/servletMap/#{comisionar.origen}/##{comisionar.destino}" width="100%"
+                                                            height="100%" frameborder="0" />
+                                                </div>
+                                            </div>
+                                            <p:remoteCommand name="rcActualizarDistancia" actionListener="#{comisionar.actualizarDistancia()}" process="@this" update="distancia" />
+                                            <p:remoteCommand name="rcActualizarOrigen" actionListener="#{comisionar.actualizarOrigen()}" process="@this" update="origen" />
+                                            <p:remoteCommand name="rcActualizarDestino" actionListener="#{comisionar.actualizarDestino()}" process="@this" update="destino" />                                        
+                                        </c:if>
+                                    </c:if>
+                                    <c:if test="#{comisionar.comision.tipo eq comisionar.tramiteTipoProductoServicio}">
+                                        <div class="row" style="#{fila}">
+                                            <div class="col-md-12 "><span style="float: left; font-size: 16px; font-weight: 600;" class="ui-dialog-title">Compra de producto o servicio</span></div>
+                                        </div>
+                                    </c:if>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+        <script>
+            function actualizarDistancia(distancia) {
+                console.log('Se recibió la orden de actualizar la distancia en el xhtml desde el jsp: ' + distancia);
+                rcActualizarDistancia([{name: 'distancia', value: distancia}]);
+            }
+
+            function actualizarOrigen(direccion) {
+                console.log('Se recibió la orden de actualizar el origen en el xhtml desde el jsp: ' + direccion);
+                rcActualizarOrigen([{name: 'origen', value: direccion}]);
+            }
+
+            function actualizarDestino(direccion) {
+                console.log('Se recibió la orden de actualizar el destino en el xhtml desde el jsp: ' + direccion);
+                rcActualizarDestino([{name: 'destino', value: direccion}]);
+            }
+
+            function mensajear(mensaje) {
+                console.log('Se recibió la orden de mostrar mensaje en el xhtml desde el jsp: ' + mensaje);
+            }
+
+            function getOrigen() {
+                var direccion = document.getElementsByClassName('origen')[0].value;
+                console.log('Se recibió la orden de enviar el origen desde el xhtml desde el jsp: ' + direccion);
+                return direccion;
+            }
+
+            function getDestino() {
+                var direccion = document.getElementsByClassName('destino')[0].value;
+                console.log('Se recibió la orden de enviar el destino desde el xhtml desde el jsp: ' + direccion);
+                return direccion;
+            }
+
+            function buscar() {
+                document.getElementById('winMapa').contentWindow.buscar();
+            }
+        </script>
+    </ui:define>
+</ui:composition>
