@@ -45,6 +45,25 @@ public class ServiciosPoaSelectec implements EjbPoaSelectec {
     }
 
     @Override
+    public List<ActividadesPoa> mostrarActividadesPoasReporteArea(Short area,Short ejercicioFiscal) {
+        TypedQuery<ActividadesPoa> q = em.createQuery("SELECT a FROM ActividadesPoa a INNER JOIN a.cuadroMandoInt cm INNER JOIN cm.ejercicioFiscal ef WHERE a.area = :area AND ef.ejercicioFiscal=:ejercicioFiscal", ActividadesPoa.class);
+        q.setParameter("area", area); 
+        q.setParameter("ejercicioFiscal", ejercicioFiscal);
+        List<ActividadesPoa> pr = q.getResultList();
+        return pr;
+    }
+       @Override
+    public List<ActividadesPoa> mostrarSubActividadesPoa(Short area,Short ejercicioFiscal,Short numeroP,CuadroMandoIntegral cuadroMando){
+        TypedQuery<ActividadesPoa> q = em.createQuery("SELECT a FROM ActividadesPoa a INNER JOIN a.cuadroMandoInt cm INNER JOIN cm.ejercicioFiscal ef WHERE a.area = :area AND ef.ejercicioFiscal=:ejercicioFiscal AND a.numeroP=:numeroP AND cm.cuadroMandoInt=:cuadroMandoInt", ActividadesPoa.class);
+        q.setParameter("area", area); 
+        q.setParameter("ejercicioFiscal", ejercicioFiscal);
+        q.setParameter("numeroP", numeroP);
+        q.setParameter("cuadroMandoInt", cuadroMando.getCuadroMandoInt());
+        List<ActividadesPoa> pr = q.getResultList();
+        return pr;
+    }
+    
+    @Override
     public ActividadesPoa agregarActividadesPoa(ActividadesPoa nuevaActividadesPoa) {
         facadePoa.setEntityClass(ActividadesPoa.class);
         facadePoa.create(nuevaActividadesPoa);

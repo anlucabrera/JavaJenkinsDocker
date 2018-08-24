@@ -21,6 +21,10 @@ public interface EjbPoaSelectec {
     public List<ActividadesPoa> mostrarAreasQueRegistraronActividades();
     
     public List<ActividadesPoa> mostrarActividadesPoasArea(Short area);
+    
+    public List<ActividadesPoa> mostrarActividadesPoasReporteArea(Short area,Short ejercicioFiscal);
+    
+    public List<ActividadesPoa> mostrarSubActividadesPoa(Short area,Short ejercicioFiscal,Short numeroP,CuadroMandoIntegral cuadroMando);
 
     public ActividadesPoa agregarActividadesPoa(ActividadesPoa nuevaActividadesPoa);
 

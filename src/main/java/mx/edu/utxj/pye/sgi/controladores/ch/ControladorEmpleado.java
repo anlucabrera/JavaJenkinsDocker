@@ -108,7 +108,7 @@ public class ControladorEmpleado implements Serializable {
             fechasModulos();
 
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
