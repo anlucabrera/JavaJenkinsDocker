@@ -41,7 +41,7 @@ public class ControladorRegistroActividadesPOA implements Serializable {
     private static final long serialVersionUID = -473305993584095094L;
 
     @Getter    @Setter    private List<ProductosAreas> productosAreases = new ArrayList<>();
-    @Getter    @Setter    private List<CuadroMandoIntegral> cuadroMandoIntegrals = new ArrayList<>(),cuadroMandoIntegralsRegistrados = new ArrayList<>();
+    @Getter    @Setter    private List<CuadroMandoIntegral> cuadroMandoIntegrals = new ArrayList<>(),cuadroMandoIntegralArea = new ArrayList<>();
     @Getter    @Setter    private List<UnidadMedidas> unidadMedidases = new ArrayList<>();
     @Getter    @Setter    private List<LineasAccion> lineasAccions = new ArrayList<>();
     @Getter    @Setter    private List<PretechoFinanciero> pretechoFinancieros = new ArrayList<>();
@@ -51,7 +51,7 @@ public class ControladorRegistroActividadesPOA implements Serializable {
     @Getter    @Setter    private List<ActividadesPoa> listaActividadesPoas=new ArrayList<>(),listaActividadesPoasFiltroEje=new ArrayList<>(),listaActividadesPrincipales=new ArrayList<>(),listaActividadesSecundarias=new ArrayList<>();
     @Getter    @Setter    private List<EjesRegistro> ejesesFiltrado = new ArrayList<>(),ejeses = new ArrayList<>();
     @Getter    @Setter    private List<RecursosActividad> recursosActividads = new ArrayList<>(), recursosActividadsPorActividad = new ArrayList<>();
-    @Getter    @Setter    private List<ActividadesPoa> actividadesPoaTotalesCapitulos = new ArrayList<>();
+    @Getter    @Setter    private List<ActividadesPoa> actividadesPoaTotalesCapitulos = new ArrayList<>(),cuadroMandoIntegralsRegistrados = new ArrayList<>();
     
     @Getter    @Setter    private Productos productoSeleccionado = new Productos();
     @Getter    @Setter    private RecursosActividad recursosActividad = new RecursosActividad();
@@ -63,7 +63,7 @@ public class ControladorRegistroActividadesPOA implements Serializable {
     
     @Getter    @Setter    private Short unidadDMedida = 0, claveArea = 0, ejercicioFiscal = 0;
     @Getter    @Setter    private String tipo = "",claseP2="",claseP3="",claseP4="",claseP5="",clasePC="",actividadP="NO";
-    @Getter    @Setter    private Integer claveEje=0,numeroP = 1, numeroS = 1, numeroPEliminado = 1, numeroSEliminado = 1, totalNP = 0, totalActividadPrincipal;
+    @Getter    @Setter    private Integer claveEje=0,numeroP = 1, numeroS = 1, numeroPEliminado = 1, numeroSEliminado = 1, totalNP = 0, totalActividadPrincipal,totalesAPCM=0,numeroPPasado = 0;
     @Getter    @Setter    private Integer mes1 = 0, mes2 = 0, mes3 = 0, mes4 = 0, mes5 = 0, mes6 = 0, mes7 = 0, mes8 = 0, mes9 = 0, mes10 = 0, mes11 = 0, mes12 = 0;
     @Getter    @Setter    private Double pretecho2000=0D,pretecho3000=0D,pretecho4000=0D,pretecho5000=0D,pretechoCPDD=0D,totalPretecho=0D;
     @Getter    @Setter    private Double totalRecursoActividad = 0D,totalCaptitulos=0D,totalCaptituloPartida = 0D,totalCaptitulo2000 = 0D,totalCaptitulo3000 = 0D,totalCaptitulo4000 = 0D,totalCaptitulo5000 = 0D,totalCaptituloCPDD = 0D;
@@ -75,6 +75,7 @@ public class ControladorRegistroActividadesPOA implements Serializable {
     @Getter    @Setter    private List<capitulosLista> capitulo4000 = new ArrayList<>();
     @Getter    @Setter    private List<capitulosLista> capitulo5000 = new ArrayList<>();
     @Getter    @Setter    private List<capitulosLista> capituloCPDD = new ArrayList<>();
+    @Getter    @Setter    private List<reporteRegistros> reporte = new ArrayList<>();
     
     @Getter    @Setter    private ActividadesPoa actividadesPoa = new ActividadesPoa(), actividadesPoaPrincipal = new ActividadesPoa(), actividadesPoaEditando = new ActividadesPoa();
    
@@ -112,11 +113,11 @@ public class ControladorRegistroActividadesPOA implements Serializable {
         ejercicioFiscal = Short.parseShort("17");
 
         consultarListas();
-        
+        limpiarParametros();
     }
     
     public void limpiarParametros() {
-        tipo = "";
+        tipo = "Actividad";
         unidadDMedida = 0;
         actividadP = "NO";
         actividadesPoa = new ActividadesPoa();
@@ -149,7 +150,7 @@ public class ControladorRegistroActividadesPOA implements Serializable {
         listaActividadesPrincipales.clear();
         listaActividadesSecundarias.clear();
         listaActividadesPoas.clear();
-        listaActividadesPoas = poaSelectec.mostrarActividadesPoasArea(claveArea);
+        listaActividadesPoas = poaSelectec.mostrarActividadesPoasReporteArea(claveArea,ejercicioFiscal);
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.consultarActividadesPorParametros()"+listaActividadesPoas.size());
         listaActividadesPoas.forEach((t) -> {
             if (t.getCuadroMandoInt().equals(cuadroMandoIntegral)) {
@@ -185,46 +186,102 @@ public class ControladorRegistroActividadesPOA implements Serializable {
         obteneroTotalesFinales();
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.consultarActividadesPorParametros()"+listaActividadesPoasFiltroEje.size());
     }
-    
+  
     public void consultarParametrosRegistrados() {
         cuadroMandoIntegralsRegistrados.clear();
-        listaActividadesPoas.forEach((t) -> {
-            if (t.getCuadroMandoInt().getEjercicioFiscal().getEjercicioFiscal().equals(ejercicioFiscal)) {
-                if (!cuadroMandoIntegralsRegistrados.contains(t.getCuadroMandoInt())) {
-                    cuadroMandoIntegralsRegistrados.add(t.getCuadroMandoInt());
-                }
+        reporte.clear();
+        cuadroMandoIntegralsRegistrados = poaSelectec.mostrarActividadesPoasReporteArea(claveArea, ejercicioFiscal);
+        cuadroMandoIntegralsRegistrados.forEach((t) -> {
+            if (!cuadroMandoIntegralArea.contains(t.getCuadroMandoInt())) {
+                cuadroMandoIntegralArea.add(t.getCuadroMandoInt());
             }
         });
-        cuadroMandoIntegralsRegistrados.forEach((t) -> {
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.consultarParametrosRegistrados()"+t.getActividadesPoaList());
+        cuadroMandoIntegralArea.forEach((t) -> {
+            totalesAPCM=0;
+            cuadroMandoIntegralsRegistrados.forEach((a) -> {
+                if (t.equals(a.getCuadroMandoInt())) {
+                    totalesAPCM=totalesAPCM+1;
+                }
+            });
+            reporte.add(new reporteRegistros(t, totalesAPCM));
         });
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.consultarActividadesPorParametros(3)" + cuadroMandoIntegralsRegistrados.size());
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.consultarActividadesPorParametros(3)" + reporte.size());
     }
 
     // ------------------------------------------------------------- Actividades ------------------------------------------------------------
     
     public void onRowCancel(RowEditEvent event) {
-        Messages.addGlobalWarn("¡Operación cancelada!!");
+        Messages.addGlobalWarn("�Operaci�n cancelada!!");
+    }
+      
+    public void buscarActividadesVariasPlaneacionCuatrimestral(ActividadesPoa actividadesPoa) {
+        Integer tamaño=0;
+        unidadDMedida = 0;
+        tipo = "";
+        actividadP = "";
+        numeroP = 0;
+        numeroPPasado=0;
+
+        tamaño=poaSelectec.mostrarSubActividadesPoa(claveArea, ejercicioFiscal, actividadesPoa.getNumeroP(),actividadesPoa.getCuadroMandoInt()).size();
+        
+        unidadDMedida = actividadesPoa.getUnidadMedida().getUnidadMedida();
+        numeroP = Integer.parseInt(String.valueOf(actividadesPoa.getNumeroP()));
+        numeroPPasado = Integer.parseInt(String.valueOf(actividadesPoa.getNumeroP()));
+        cuadroMandoIntegral=actividadesPoa.getCuadroMandoInt();
+        if (actividadesPoa.getNumeroS() == 0) {
+            tipo = "Actividad";
+        } else {
+            tipo = "Subactividad";
+        }
+
+        if ("Actividad".equals(tipo)) {
+            if (tamaño == 1) {
+                actividadP = "NO";
+            } else {
+                actividadP = "SI";
+            }
+        } else {
+            actividadP = "NO";
+        }
+
+        generaListaEjes();
+
     }
     
-    public void onRowEdit(RowEditEvent event) {
+    public void onRowEdit() {
+        listaActividadesPrincipales.clear();
+        listaActividadesSecundarias.clear();
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.onRowEdit()");
         mes1 = 0;        mes2 = 0;        mes3 = 0;        mes4 = 0;        mes5 = 0;        mes6 = 0;
         mes7 = 0;        mes8 = 0;        mes9 = 0;        mes10 = 0;        mes11 = 0;        mes12 = 0;
+        numeroS = 0;
         totalActividadPrincipal = 0;
-        ActividadesPoa modificada = (ActividadesPoa) event.getObject();
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.onRowEdit()");    
+        totalActividadPrincipal = actividadesPoaEditando.getNPEnero() + actividadesPoaEditando.getNPFebrero() + actividadesPoaEditando.getNPMarzo() + actividadesPoaEditando.getNPAbril() + actividadesPoaEditando.getNPMayo() + actividadesPoaEditando.getNPJunio() + actividadesPoaEditando.getNPJulio() + actividadesPoaEditando.getNPAgosto() + actividadesPoaEditando.getNPSeptiembre() + actividadesPoaEditando.getNPOctubre() + actividadesPoaEditando.getNPNoviembre() + actividadesPoaEditando.getNPDiciembre();
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.onRowEdit(numeroP)"+numeroP);
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.onRowEdit(numeroPPasado)"+numeroPPasado);
+        actividadesPoaEditando.setTotal(Short.parseShort(totalActividadPrincipal.toString()));  
+        actividadesPoaEditando.setUnidadMedida(new UnidadMedidas(unidadDMedida));
+        actividadesPoaEditando.setNumeroP(Short.parseShort(numeroP.toString()));
+        actividadesPoaEditando.setCuadroMandoInt(cuadroMandoIntegral);
         
-        totalActividadPrincipal = modificada.getNPEnero() + modificada.getNPFebrero() + modificada.getNPMarzo() + modificada.getNPAbril() + modificada.getNPMayo() + modificada.getNPJunio() + modificada.getNPJulio() + modificada.getNPAgosto() + modificada.getNPSeptiembre() + modificada.getNPOctubre() + modificada.getNPNoviembre() + modificada.getNPDiciembre();
-       
-        modificada.setTotal(Short.parseShort(totalActividadPrincipal.toString()));     
-        poaSelectec.actualizaActividadesPoa(modificada);
-        
-        consultarActividadesPorParametros();
+        poaSelectec.actualizaActividadesPoa(actividadesPoaEditando);
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.onRowEdit()");
         
         totalActividadPrincipal = 0;
         
-        if (modificada.getNumeroS() != 0) {
+        if (Short.parseShort(numeroPPasado.toString()) != actividadesPoaEditando.getNumeroP()) {
+            poaSelectec.mostrarSubActividadesPoa(claveArea, ejercicioFiscal, Short.parseShort(numeroPPasado.toString()), actividadesPoaEditando.getCuadroMandoInt()).forEach((t) -> {
+                if (t.getNumeroS() == 0) {
+                    listaActividadesPrincipales.add(t);
+                } else {
+                    listaActividadesSecundarias.add(t);
+                }
+            });
+
             listaActividadesSecundarias.forEach((s) -> {
-                if (s.getNumeroP() == modificada.getNumeroP()) {
+                if (s.getNumeroP() == numeroPPasado) {
+                    numeroS = numeroS + 1;                    s.setNumeroS(Short.parseShort(numeroS.toString()));                    poaSelectec.actualizaActividadesPoa(s);
                     mes1 = mes1 + s.getNPEnero();                    mes2 = mes2 + s.getNPFebrero();
                     mes3 = mes3 + s.getNPMarzo();                    mes4 = mes4 + s.getNPAbril();
                     mes5 = mes5 + s.getNPMayo();                    mes6 = mes6 + s.getNPJunio();
@@ -235,7 +292,7 @@ public class ControladorRegistroActividadesPOA implements Serializable {
             });
 
             listaActividadesPrincipales.forEach((t) -> {
-                if (t.getNumeroP() == modificada.getNumeroP()) {
+                if (t.getNumeroP() == numeroPPasado) {
                     totalActividadPrincipal = mes1 + mes2 + mes3 + mes4 + mes5 + mes6 + mes7 + mes8 + mes9 + mes10 + mes11 + mes12;
                     t.setNPEnero(Short.parseShort(mes1.toString()));                    t.setNPFebrero(Short.parseShort(mes2.toString()));
                     t.setNPMarzo(Short.parseShort(mes3.toString()));                    t.setNPAbril(Short.parseShort(mes4.toString()));
@@ -246,89 +303,136 @@ public class ControladorRegistroActividadesPOA implements Serializable {
                     t.setTotal(Short.parseShort(totalActividadPrincipal.toString()));                    poaSelectec.actualizaActividadesPoa(t);
                 }
             });
-            consultarActividadesPorParametros();
+
         }
+        totalActividadPrincipal = 0;
+        numeroS = 0;
+        listaActividadesPrincipales.clear();
+        listaActividadesSecundarias.clear();
+        mes1 = 0;        mes2 = 0;        mes3 = 0;        mes4 = 0;        mes5 = 0;        mes6 = 0;
+        mes7 = 0;        mes8 = 0;        mes9 = 0;        mes10 = 0;        mes11 = 0;        mes12 = 0;
+        totalActividadPrincipal = 0;
+
+        poaSelectec.mostrarSubActividadesPoa(claveArea, ejercicioFiscal, actividadesPoaEditando.getNumeroP(), actividadesPoaEditando.getCuadroMandoInt()).forEach((t) -> {
+            if (t.getNumeroS() == 0) {
+                listaActividadesPrincipales.add(t);
+            } else {
+                listaActividadesSecundarias.add(t);
+            }
+        });
+        
+        listaActividadesSecundarias.forEach((s) -> {
+            if (s.getNumeroP() == actividadesPoaEditando.getNumeroP()) {
+                if (Short.parseShort(numeroPPasado.toString()) != actividadesPoaEditando.getNumeroP()) {
+                    numeroS = numeroS + 1;                    s.setNumeroS(Short.parseShort(numeroS.toString()));                    poaSelectec.actualizaActividadesPoa(s);
+                }
+                mes1 = mes1 + s.getNPEnero();                mes2 = mes2 + s.getNPFebrero();
+                mes3 = mes3 + s.getNPMarzo();                mes4 = mes4 + s.getNPAbril();
+                mes5 = mes5 + s.getNPMayo();                mes6 = mes6 + s.getNPJunio();
+                mes7 = mes7 + s.getNPJulio();                mes8 = mes8 + s.getNPAgosto();
+                mes9 = mes9 + s.getNPSeptiembre();                mes10 = mes10 + s.getNPOctubre();
+                mes11 = mes11 + s.getNPNoviembre();                mes12 = mes12 + s.getNPDiciembre();
+            }
+        });
+
+        listaActividadesPrincipales.forEach((t) -> {
+            if (t.getNumeroP() == actividadesPoaEditando.getNumeroP()) {
+                totalActividadPrincipal = mes1 + mes2 + mes3 + mes4 + mes5 + mes6 + mes7 + mes8 + mes9 + mes10 + mes11 + mes12;
+                t.setNPEnero(Short.parseShort(mes1.toString()));                t.setNPFebrero(Short.parseShort(mes2.toString()));
+                t.setNPMarzo(Short.parseShort(mes3.toString()));                t.setNPAbril(Short.parseShort(mes4.toString()));
+                t.setNPMayo(Short.parseShort(mes5.toString()));                t.setNPJunio(Short.parseShort(mes6.toString()));
+                t.setNPJulio(Short.parseShort(mes7.toString()));                t.setNPAgosto(Short.parseShort(mes8.toString()));
+                t.setNPSeptiembre(Short.parseShort(mes9.toString()));                t.setNPOctubre(Short.parseShort(mes10.toString()));
+                t.setNPNoviembre(Short.parseShort(mes11.toString()));                t.setNPDiciembre(Short.parseShort(mes12.toString()));
+                t.setTotal(Short.parseShort(totalActividadPrincipal.toString()));                poaSelectec.actualizaActividadesPoa(t);
+            }
+        });
+        consultarListas();
+        limpiarParametros();
+        consultarActividadesPorParametros();
     }
 
     public void anadirNuavActividad() {
-        mes1 = 0;        mes2 = 0;        mes3 = 0;        mes4 = 0;        mes5 = 0;        mes6 = 0;
-        mes7 = 0;        mes8 = 0;        mes9 = 0;        mes10 = 0;        mes11 = 0;        mes12 = 0;
-        numeroS = 1;
-        totalActividadPrincipal = 0;
-        if ("Actividad".equals(tipo)) {
-            numeroP = 0;
-            numeroP = listaActividadesPrincipales.size() + 1;
-            actividadesPoa.setNumeroP(Short.parseShort(numeroP.toString()));
+        if(visible==true){
+            mes1 = 0;            mes2 = 0;            mes3 = 0;            mes4 = 0;            mes5 = 0;            mes6 = 0;
+            mes7 = 0;            mes8 = 0;            mes9 = 0;            mes10 = 0;            mes11 = 0;            mes12 = 0;
+            numeroS = 1;
+            totalActividadPrincipal = 0;
+            if ("Actividad".equals(tipo)) {
+                numeroP = 0;
+                numeroP = listaActividadesPrincipales.size() + 1;
+                actividadesPoa.setNumeroP(Short.parseShort(numeroP.toString()));
+            } else {
+                actividadesPoaPrincipal = new ActividadesPoa();
+                listaActividadesPrincipales.forEach((t) -> {
+                    if (t.getNumeroP() == numeroP) {
+                        actividadesPoaPrincipal = t;
+                    }
+                });
+                listaActividadesSecundarias.forEach((t) -> {
+                    if (t.getNumeroP() == numeroP) {
+                        numeroS = numeroS + 1;
+                    }
+                });
+                actividadesPoa.setNumeroP(Short.parseShort(numeroP.toString()));
+                actividadesPoa.setNumeroS(Short.parseShort(numeroS.toString()));
+            }
+
+            actividadesPoa.setCuadroMandoInt(new CuadroMandoIntegral(cuadroMandoIntegral.getCuadroMandoInt()));
+            actividadesPoa.setUnidadMedida(new UnidadMedidas(unidadDMedida));
+            actividadesPoa.setBandera("y");
+            actividadesPoa.setArea(claveArea);
+
+            actividadesPoa = poaSelectec.agregarActividadesPoa(actividadesPoa);
+
+            consultarActividadesPorParametros();
+            if ("Subactividad".equals(tipo)) {
+                actividadesPoaPrincipal.setBandera("x");
+                listaActividadesSecundarias.forEach((t) -> {
+                    if (t.getNumeroP() == numeroP) {
+                        mes1 = mes1 + t.getNPEnero();
+                        mes2 = mes2 + t.getNPFebrero();
+                        mes3 = mes3 + t.getNPMarzo();
+                        mes4 = mes4 + t.getNPAbril();
+                        mes5 = mes5 + t.getNPMayo();
+                        mes6 = mes6 + t.getNPJunio();
+                        mes7 = mes7 + t.getNPJulio();
+                        mes8 = mes8 + t.getNPAgosto();
+                        mes9 = mes9 + t.getNPSeptiembre();
+                        mes10 = mes10 + t.getNPOctubre();
+                        mes11 = mes11 + t.getNPNoviembre();
+                        mes12 = mes12 + t.getNPDiciembre();
+                    }
+                });
+
+                totalActividadPrincipal = mes1 + mes2 + mes3 + mes4 + mes5 + mes6 + mes7 + mes8 + mes9 + mes10 + mes11 + mes12;
+
+                actividadesPoaPrincipal.setNPEnero(Short.parseShort(mes1.toString()));
+                actividadesPoaPrincipal.setNPFebrero(Short.parseShort(mes2.toString()));
+                actividadesPoaPrincipal.setNPMarzo(Short.parseShort(mes3.toString()));
+                actividadesPoaPrincipal.setNPAbril(Short.parseShort(mes4.toString()));
+                actividadesPoaPrincipal.setNPMayo(Short.parseShort(mes5.toString()));
+                actividadesPoaPrincipal.setNPJunio(Short.parseShort(mes6.toString()));
+                actividadesPoaPrincipal.setNPJulio(Short.parseShort(mes7.toString()));
+                actividadesPoaPrincipal.setNPAgosto(Short.parseShort(mes8.toString()));
+                actividadesPoaPrincipal.setNPSeptiembre(Short.parseShort(mes9.toString()));
+                actividadesPoaPrincipal.setNPOctubre(Short.parseShort(mes10.toString()));
+                actividadesPoaPrincipal.setNPNoviembre(Short.parseShort(mes11.toString()));
+                actividadesPoaPrincipal.setNPDiciembre(Short.parseShort(mes12.toString()));
+
+                actividadesPoaPrincipal.setTotal(Short.parseShort(totalActividadPrincipal.toString()));
+
+                poaSelectec.actualizaActividadesPoa(actividadesPoaPrincipal);
+            }
+
+            actividadesPoa = new ActividadesPoa();
+            numeroP = 1;
+            numeroS = 1;
+            consultarActividadesPorParametros();
+            limpiarParametros();
         } else {
-            actividadesPoaPrincipal = new ActividadesPoa();
-            listaActividadesPrincipales.forEach((t) -> {
-                if (t.getNumeroP() == numeroP) {
-                    actividadesPoaPrincipal = t;
-                }
-            });
-            listaActividadesSecundarias.forEach((t) -> {
-                if (t.getNumeroP() == numeroP) {
-                    numeroS = numeroS + 1;
-                }
-            });
-            actividadesPoa.setNumeroP(Short.parseShort(numeroP.toString()));
-            actividadesPoa.setNumeroS(Short.parseShort(numeroS.toString()));
+            Messages.addGlobalWarn("Seleccione una alineación estratégica");
         }
-
-        actividadesPoa.setCuadroMandoInt(new CuadroMandoIntegral(cuadroMandoIntegral.getCuadroMandoInt()));
-        actividadesPoa.setUnidadMedida(new UnidadMedidas(unidadDMedida));
-        actividadesPoa.setBandera("y");
-        actividadesPoa.setArea(claveArea);
-
-        actividadesPoa = poaSelectec.agregarActividadesPoa(actividadesPoa);
-
-        consultarActividadesPorParametros();
-        if ("Subactividad".equals(tipo)) {
-            actividadesPoaPrincipal.setBandera("x");
-            listaActividadesSecundarias.forEach((t) -> {
-                if (t.getNumeroP() == numeroP) {
-                    mes1 = mes1 + t.getNPEnero();
-                    mes2 = mes2 + t.getNPFebrero();
-                    mes3 = mes3 + t.getNPMarzo();
-                    mes4 = mes4 + t.getNPAbril();
-                    mes5 = mes5 + t.getNPMayo();
-                    mes6 = mes6 + t.getNPJunio();
-                    mes7 = mes7 + t.getNPJulio();
-                    mes8 = mes8 + t.getNPAgosto();
-                    mes9 = mes9 + t.getNPSeptiembre();
-                    mes10 = mes10 + t.getNPOctubre();
-                    mes11 = mes11 + t.getNPNoviembre();
-                    mes12 = mes12 + t.getNPDiciembre();
-                }
-            });
-
-            totalActividadPrincipal = mes1 + mes2 + mes3 + mes4 + mes5 + mes6 + mes7 + mes8 + mes9 + mes10 + mes11 + mes12;
-
-            actividadesPoaPrincipal.setNPEnero(Short.parseShort(mes1.toString()));
-            actividadesPoaPrincipal.setNPFebrero(Short.parseShort(mes2.toString()));
-            actividadesPoaPrincipal.setNPMarzo(Short.parseShort(mes3.toString()));
-            actividadesPoaPrincipal.setNPAbril(Short.parseShort(mes4.toString()));
-            actividadesPoaPrincipal.setNPMayo(Short.parseShort(mes5.toString()));
-            actividadesPoaPrincipal.setNPJunio(Short.parseShort(mes6.toString()));
-            actividadesPoaPrincipal.setNPJulio(Short.parseShort(mes7.toString()));
-            actividadesPoaPrincipal.setNPAgosto(Short.parseShort(mes8.toString()));
-            actividadesPoaPrincipal.setNPSeptiembre(Short.parseShort(mes9.toString()));
-            actividadesPoaPrincipal.setNPOctubre(Short.parseShort(mes10.toString()));
-            actividadesPoaPrincipal.setNPNoviembre(Short.parseShort(mes11.toString()));
-            actividadesPoaPrincipal.setNPDiciembre(Short.parseShort(mes12.toString()));
-
-            actividadesPoaPrincipal.setTotal(Short.parseShort(totalActividadPrincipal.toString()));
-
-            poaSelectec.actualizaActividadesPoa(actividadesPoaPrincipal);
-        }
-
-        actividadesPoa = new ActividadesPoa();
-        numeroP = 1;
-        numeroS = 1;
-        consultarActividadesPorParametros();
-        limpiarParametros();
-
-        Ajax.oncomplete("PF('bui').hide();");
     }
 
     public void actualizarNuavActividad() {
@@ -337,7 +441,6 @@ public class ControladorRegistroActividadesPOA implements Serializable {
         }
         actividadesPoa = poaSelectec.actualizaActividadesPoa(actividadesPoaEditando);
         consultarActividadesPorParametros();
-        Ajax.oncomplete("PF('bui').hide();");
     }
 
     public void eliminarActividad(ActividadesPoa pOa) {
@@ -405,7 +508,6 @@ public class ControladorRegistroActividadesPOA implements Serializable {
             });
         }
         consultarActividadesPorParametros();
-        Ajax.oncomplete("PF('bui').hide();");
     }
 
     public void asignarNumerosProgramados(ValueChangeEvent event) {
@@ -451,6 +553,50 @@ public class ControladorRegistroActividadesPOA implements Serializable {
         actividadesPoa.setTotal(Short.parseShort(totalNP.toString()));
     }
 
+     public void asignarNumerosProgramadosEdicion(ValueChangeEvent event) {
+        switch (event.getComponent().getId()) {
+            case "mes1":
+                actividadesPoaEditando.setNPEnero(Short.parseShort(event.getNewValue().toString()));
+                break;
+            case "mes2":
+                actividadesPoaEditando.setNPFebrero(Short.parseShort(event.getNewValue().toString()));
+                break;
+            case "mes3":
+                actividadesPoaEditando.setNPMarzo(Short.parseShort(event.getNewValue().toString()));
+                break;
+            case "mes4":
+                actividadesPoaEditando.setNPAbril(Short.parseShort(event.getNewValue().toString()));
+                break;
+            case "mes5":
+                actividadesPoaEditando.setNPMayo(Short.parseShort(event.getNewValue().toString()));
+                break;
+            case "mes6":
+                actividadesPoaEditando.setNPJunio(Short.parseShort(event.getNewValue().toString()));
+                break;
+            case "mes7":
+                actividadesPoaEditando.setNPJulio(Short.parseShort(event.getNewValue().toString()));
+                break;
+            case "mes8":
+                actividadesPoaEditando.setNPAgosto(Short.parseShort(event.getNewValue().toString()));
+                break;
+            case "mes9":
+                actividadesPoaEditando.setNPSeptiembre(Short.parseShort(event.getNewValue().toString()));
+                break;
+            case "mes10":
+                actividadesPoaEditando.setNPOctubre(Short.parseShort(event.getNewValue().toString()));
+                break;
+            case "mes11":
+                actividadesPoaEditando.setNPNoviembre(Short.parseShort(event.getNewValue().toString()));
+                break;
+            case "mes12":
+                actividadesPoaEditando.setNPDiciembre(Short.parseShort(event.getNewValue().toString()));
+                break;
+        }
+        totalNP = actividadesPoaEditando.getNPEnero() + actividadesPoaEditando.getNPFebrero() + actividadesPoaEditando.getNPMarzo() + actividadesPoaEditando.getNPAbril() + actividadesPoaEditando.getNPMayo() + actividadesPoaEditando.getNPJunio() + actividadesPoaEditando.getNPJulio() + actividadesPoaEditando.getNPAgosto() + actividadesPoaEditando.getNPSeptiembre() + actividadesPoaEditando.getNPOctubre() + actividadesPoaEditando.getNPNoviembre() + actividadesPoaEditando.getNPDiciembre();
+        actividadesPoaEditando.setTotal(Short.parseShort(totalNP.toString()));
+    }
+
+    
     // --------------------------------------------------------------- Recurso --------------------------------------------------------------
     public void eliminarRecursoActividad(RecursosActividad recursosActividad) {
         poaSelectec.eliminarRecursosActividad(recursosActividad);
@@ -537,7 +683,7 @@ public class ControladorRegistroActividadesPOA implements Serializable {
         recursosActividad.setTotal(totalRecursoActividad);
     }
 
-    // -------------------------------------------------------------- Parámetros ------------------------------------------------------------
+    // -------------------------------------------------------------- Par�metros ------------------------------------------------------------
     public void generaListaEjes() {
         ejesesFiltrado.clear();
         ejesesFiltrado.add(new EjesRegistro(0, "Seleccione uno","Seleccione uno","",""));
@@ -570,6 +716,7 @@ public class ControladorRegistroActividadesPOA implements Serializable {
     }
 
     public void asignaEstrategias(ValueChangeEvent event) {
+        visible = false;
         lineasAccions.clear();
         lineasAccion = new LineasAccion(Short.parseShort("0"), Short.parseShort("0"), "Seleccione uno");
         lineasAccions.add(lineasAccion);
@@ -586,9 +733,9 @@ public class ControladorRegistroActividadesPOA implements Serializable {
                     ejes = t;
                 }
             });
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.asignaEstrategias()"+ejes.getNombre());
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.asignaEstrategias()"+claveEje);
-            claveEje=ejes.getEje();
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.asignaEstrategias()" + ejes.getNombre());
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.asignaEstrategias()" + claveEje);
+            claveEje = ejes.getEje();
             cuadroMandoIntegrals.forEach((t) -> {
                 if (claveEje.equals(t.getEje().getEje())) {
                     if (!estrategiases.contains(t.getEstrategia())) {
@@ -596,8 +743,9 @@ public class ControladorRegistroActividadesPOA implements Serializable {
                     }
                 }
             });
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.asignaEstrategias()"+estrategiases);
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.asignaEstrategias()" + estrategiases);
             Collections.sort(estrategiases, (x, y) -> Short.compare(x.getNumero(), y.getNumero()));
+            limpiarParametros();
         }
     }
 
@@ -607,9 +755,9 @@ public class ControladorRegistroActividadesPOA implements Serializable {
         lineasAccions.add(lineasAccion);
         estrategias = new Estrategias();
         if (event2.getNewValue() != null) {
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.asignaLineasAccion()"+event2.getNewValue().toString());
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.asignaLineasAccion()" + event2.getNewValue().toString());
             estrategiases.forEach((t) -> {
-                if (t.getEstrategia()== Short.parseShort(event2.getNewValue().toString())) {
+                if (t.getEstrategia() == Short.parseShort(event2.getNewValue().toString())) {
                     estrategias = t;
                 }
             });
@@ -623,17 +771,17 @@ public class ControladorRegistroActividadesPOA implements Serializable {
                 }
             });
             Collections.sort(lineasAccions, (x, y) -> Short.compare(x.getNumero(), y.getNumero()));
-        }
+                            }
     }
 
     public void asignaLineaAccionSeleccionada(ValueChangeEvent event3) {
         lineasAccion = new LineasAccion();
         if (event3.getNewValue() != null) {
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.asignaLineaAccionSeleccionada()"+event3.getNewValue().toString());
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.asignaLineaAccionSeleccionada()" + event3.getNewValue().toString());
             lineasAccions.forEach((t) -> {
                 if (t.getLineaAccion() == Short.parseShort(event3.getNewValue().toString())) {
                     lineasAccion = t;
-                    Ajax.oncomplete("PF('bui').hide();");
+                    visible = true;
                 }
             });
             asignaCuadroMando();
@@ -691,7 +839,12 @@ public class ControladorRegistroActividadesPOA implements Serializable {
     }
 
     public void asignarNumeroP(ValueChangeEvent event) {
+        numeroP=0;
+        numeroPPasado=0;
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.asignarNumeroP()"+event.getNewValue().toString());
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.asignarNumeroP()"+event.getOldValue().toString());
         numeroP = Integer.parseInt(event.getNewValue().toString());
+        numeroPPasado=Integer.parseInt(event.getOldValue().toString());
     }
 
     // ------------------------------------------------------------- Totales Capitulo -----------------------------------------------------------  
@@ -916,6 +1069,18 @@ public class ControladorRegistroActividadesPOA implements Serializable {
             this.partidas1 = partidas1;
             this.total = total;
         }
+    }
+    
+     public static class reporteRegistros {
+
+        @Getter        @Setter        private CuadroMandoIntegral cuadroMandoIntegral1;
+        @Getter        @Setter        private Integer totalRegistros;
+
+        public reporteRegistros(CuadroMandoIntegral cuadroMandoIntegral1, Integer totalRegistros) {
+            this.cuadroMandoIntegral1 = cuadroMandoIntegral1;
+            this.totalRegistros = totalRegistros;
+        }
+        
     }
 
 }
