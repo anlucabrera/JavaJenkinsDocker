@@ -3,7 +3,7 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <style type="text/css">
         #layout-menu_menu {
@@ -76,14 +76,13 @@
                 </ul>
             </c:if>
         </li>
-
-        <li class="dropdown user user-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <span onclick="logout();">
-                    <p:spacer width="5" /><i class="fa fa-sign-out fa-lg" title="Cerrar sesión"></i>
-                </span>
-            </a>
-        </li>
+        <li class="dropdown user user-menu" style="margin-top: 15px">
+            <h:form prependId="false">
+                <p:commandLink actionListener="#{logoutMB.doLogout}" class="dropdown-toggle" pt:data-toggle="dropdown">
+                    <i class="fa fa-sign-out fa-lg" title="Cerrar sesión"></i>
+                </p:commandLink>
+            </h:form>
+        </li> 
     </ul>
 
     <!--li class="dropdown user user-menu">
@@ -95,7 +94,4 @@
         </a>
     </li>
     </ul-->
-    <h:form prependId="false">
-        <p:remoteCommand name="logout" action="#{logoutMB.doLogout}" />
-    </h:form>
 </ui:composition>
