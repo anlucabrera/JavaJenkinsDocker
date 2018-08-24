@@ -86,7 +86,7 @@ public class EstudioEgresados implements Serializable {
             }
             try {
                 // modificar para aperturar a onceavos o sextos
-                if ( alumnos.getGradoActual() == 11 /*|| alumnos.getGradoActual() >=6 &&alumnos.getGradoActual() < 1*/ ) {
+                if ( /*alumnos.getGradoActual() == 11 || */alumnos.getGradoActual() >=6 &&alumnos.getGradoActual() < 11 ) {
                     finalizado = false;
                     respuestas = new HashMap<>();
                     generaciones = new ArrayList<>();
