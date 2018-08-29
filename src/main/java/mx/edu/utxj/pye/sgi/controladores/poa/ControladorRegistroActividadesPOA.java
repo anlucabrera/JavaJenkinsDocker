@@ -27,6 +27,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAreas;
 import mx.edu.utxj.pye.sgi.entity.pye2.RecursosActividad;
 import mx.edu.utxj.pye.sgi.entity.pye2.UnidadMedidas;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbPoaSelectec;
+import mx.edu.utxj.pye.sgi.ejb.poa.FacadePoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.PretechoFinanciero;
 import org.omnifaces.util.Ajax;
@@ -60,15 +61,16 @@ public class ControladorRegistroActividadesPOA implements Serializable {
     @Getter    @Setter    private LineasAccion lineasAccion;
     @Getter    @Setter    private Estrategias estrategias;
     @Getter    @Setter    private EjesRegistro ejes;
+    @Getter    @Setter    private UnidadMedidas nuevaUnidadMedidas = new UnidadMedidas();
     
     @Getter    @Setter    private Short unidadDMedida = 0, claveArea = 0, ejercicioFiscal = 0;
-    @Getter    @Setter    private String tipo = "",claseP2="",claseP3="",claseP4="",claseP5="",clasePC="",actividadP="NO";
+    @Getter    @Setter    private String tipo = "",claseP2="",claseP3="",claseP4="",claseP5="",clasePC="",actividadP="NO",nombreUnidad="";
     @Getter    @Setter    private Integer claveEje=0,numeroP = 1, numeroS = 1, numeroPEliminado = 1, numeroSEliminado = 1, totalNP = 0, totalActividadPrincipal,totalesAPCM=0,numeroPPasado = 0;
     @Getter    @Setter    private Integer mes1 = 0, mes2 = 0, mes3 = 0, mes4 = 0, mes5 = 0, mes6 = 0, mes7 = 0, mes8 = 0, mes9 = 0, mes10 = 0, mes11 = 0, mes12 = 0;
     @Getter    @Setter    private Double pretecho2000=0D,pretecho3000=0D,pretecho4000=0D,pretecho5000=0D,pretechoCPDD=0D,totalPretecho=0D;
     @Getter    @Setter    private Double totalRecursoActividad = 0D,totalCaptitulos=0D,totalCaptituloPartida = 0D,totalCaptitulo2000 = 0D,totalCaptitulo3000 = 0D,totalCaptitulo4000 = 0D,totalCaptitulo5000 = 0D,totalCaptituloCPDD = 0D;
     @Getter    @Setter    private Date fechaActual=new Date();
-    @Getter    @Setter    private Boolean visible = false;
+    @Getter    @Setter    private Boolean visible = false,nuevaUnidad=false;
     
     @Getter    @Setter    private List<capitulosLista> capitulo2000 = new ArrayList<>();
     @Getter    @Setter    private List<capitulosLista> capitulo3000 = new ArrayList<>();
@@ -77,8 +79,13 @@ public class ControladorRegistroActividadesPOA implements Serializable {
     @Getter    @Setter    private List<capitulosLista> capituloCPDD = new ArrayList<>();
     @Getter    @Setter    private List<reporteRegistros> reporte = new ArrayList<>();
     
+    @Getter    @Setter    private List<listaEjesEsLaAp> ejesEsLaAp=new ArrayList<>();
+    @Getter    @Setter    private List<listaEjeEstrategia> listaListaEjeEstrategia=new ArrayList<>(); 
+    @Getter    @Setter    private List<listaEstrategiaActividades> listaEstrategiaActividadesesEje= new ArrayList<>();
+    
     @Getter    @Setter    private ActividadesPoa actividadesPoa = new ActividadesPoa(), actividadesPoaPrincipal = new ActividadesPoa(), actividadesPoaEditando = new ActividadesPoa();
-   
+    @Getter    @Setter    private ActividadesPoa poaEliminada=new ActividadesPoa();
+    
     @EJB    EjbPoaSelectec poaSelectec;
     @Inject    ControladorEmpleado controladorEmpleado;
 
@@ -122,7 +129,9 @@ public class ControladorRegistroActividadesPOA implements Serializable {
         actividadP = "NO";
         actividadesPoa = new ActividadesPoa();
         numeroP = 1;
-
+        nuevaUnidad = false;
+        nombreUnidad="";
+        actividadesPoaEditando=new ActividadesPoa();
     }
 
     // ---------------------------------------------------------------- Listas -------------------------------------------------------------
@@ -146,37 +155,67 @@ public class ControladorRegistroActividadesPOA implements Serializable {
     }
 
     public void consultarActividadesPorParametros() {
+        System.out.println("__________________________________________________________________________________________________________");
+        unidadMedidases = poaSelectec.mostrarUnidadMedidases();
         listaActividadesPoasFiltroEje.clear();
         listaActividadesPrincipales.clear();
         listaActividadesSecundarias.clear();
         listaActividadesPoas.clear();
-        listaActividadesPoas = poaSelectec.mostrarActividadesPoasReporteArea(claveArea,ejercicioFiscal);
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.consultarActividadesPorParametros()"+listaActividadesPoas.size());
+
+        listaListaEjeEstrategia.clear();
+        listaEstrategiaActividadesesEje.clear();
+        
+        ejesEsLaAp.clear();
+
+        listaActividadesPoas = poaSelectec.mostrarActividadesPoasReporteArea(claveArea, ejercicioFiscal);
+        listaListaEjeEstrategia.add(new listaEjeEstrategia(ejes, poaSelectec.getEstarategiasPorEje(ejes, ejercicioFiscal, claveArea)));
+
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.consultarActividadesPorParametros(1)" + listaListaEjeEstrategia.size());
+        if (!listaListaEjeEstrategia.isEmpty()) {
+            listaListaEjeEstrategia.forEach((e) -> {
+                e.getListaEstrategiases1().forEach((t) -> {
+                    List<ActividadesPoa> listaActividadesPoasFiltradas=new ArrayList<>();
+                    listaActividadesPoasFiltradas=poaSelectec.getActividadesPoasporEstarategias(t, e.getEjess(), ejercicioFiscal, claveArea);
+                    Collections.sort(listaActividadesPoasFiltradas, (x,y) -> Short.compare(x.getCuadroMandoInt().getLineaAccion().getNumero(), y.getCuadroMandoInt().getLineaAccion().getNumero()));
+                    Collections.sort(listaActividadesPoasFiltradas, (x,y) -> Short.compare(x.getNumeroP(), y.getNumeroP()));
+                    listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(t, listaActividadesPoasFiltradas));
+                });
+            });
+            Collections.sort(listaEstrategiaActividadesesEje, (x,y) -> Short.compare(x.getEstrategias().getEstrategia(),y.getEstrategias().getEstrategia()));
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.consultarActividadesPorParametros(2)" + listaEstrategiaActividadesesEje.size());
+            ejesEsLaAp.add(new listaEjesEsLaAp(ejes, listaEstrategiaActividadesesEje));
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.consultarActividadesPorParametros(3)" + ejesEsLaAp.size());
+        } else {
+            ejesEsLaAp.clear();
+        }
+
+        listaActividadesPoas = poaSelectec.mostrarActividadesPoasReporteArea(claveArea, ejercicioFiscal);
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.consultarActividadesPorParametros()" + listaActividadesPoas.size());
         listaActividadesPoas.forEach((t) -> {
             if (t.getCuadroMandoInt().equals(cuadroMandoIntegral)) {
                 if (!listaActividadesPoasFiltroEje.contains(t)) {
                     listaActividadesPoasFiltroEje.add(t);
-                    
+
                 }
             }
         });
-        
+
         listaActividadesPoasFiltroEje.forEach((t) -> {
             if (t.getNumeroS() == 0) {
                 listaActividadesPrincipales.add(t);
             } else {
                 listaActividadesSecundarias.add(t);
             }
-        });  
-        
-        Collections.sort(listaActividadesPoasFiltroEje, (x, y) -> Short.compare(x.getNumeroP(), y.getNumeroP()));        
-        
+        });
+
+        Collections.sort(listaActividadesPoasFiltroEje, (x, y) -> Short.compare(x.getNumeroP(), y.getNumeroP()));
+
         productosAreases.forEach((t) -> {
             if (!partidases.contains(t.getPartida())) {
                 partidases.add(t.getPartida());
             }
         });
-        
+
         obteneroTotalesCapitulo2000();
         obteneroTotalesCapitulo3000();
         obteneroTotalesCapitulo4000();
@@ -184,7 +223,8 @@ public class ControladorRegistroActividadesPOA implements Serializable {
         obteneroTotalesCapituloCPDD();
         obtenerPretechos();
         obteneroTotalesFinales();
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.consultarActividadesPorParametros()"+listaActividadesPoasFiltroEje.size());
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.consultarActividadesPorParametros(4)" + listaActividadesPoasFiltroEje.size());
+
     }
   
     public void consultarParametrosRegistrados() {
@@ -305,6 +345,9 @@ public class ControladorRegistroActividadesPOA implements Serializable {
             });
 
         }
+        if(actividadesPoaEditando.getNumeroS()==0 && "y".equals(actividadesPoaEditando.getBandera())){
+            
+        }else{
         totalActividadPrincipal = 0;
         numeroS = 0;
         listaActividadesPrincipales.clear();
@@ -347,13 +390,37 @@ public class ControladorRegistroActividadesPOA implements Serializable {
                 t.setTotal(Short.parseShort(totalActividadPrincipal.toString()));                poaSelectec.actualizaActividadesPoa(t);
             }
         });
+        }
         consultarListas();
         limpiarParametros();
         consultarActividadesPorParametros();
+        consultarActividadesPorParametros();
     }
 
+     public void asignarUnidadMedida(ValueChangeEvent event) {
+        if (Integer.parseInt(event.getNewValue().toString()) == 0) {
+            nuevaUnidad = true;
+            unidadDMedida = 0;
+        } else {
+            nuevaUnidad = false;
+            unidadDMedida = Short.parseShort(event.getNewValue().toString());
+        }
+    }
+    
+    public void asignarnombreUnidad(ValueChangeEvent event) {
+        nombreUnidad = event.getNewValue().toString();
+    }
+    
     public void anadirNuavActividad() {
         if(visible==true){
+       
+            if (0 == unidadDMedida) {
+                nuevaUnidadMedidas.setNombre(nombreUnidad);
+                nuevaUnidadMedidas = poaSelectec.agregarUnidadMedidas(nuevaUnidadMedidas);
+                unidadDMedida = nuevaUnidadMedidas.getUnidadMedida();
+            }        
+            
+            
             mes1 = 0;            mes2 = 0;            mes3 = 0;            mes4 = 0;            mes5 = 0;            mes6 = 0;
             mes7 = 0;            mes8 = 0;            mes9 = 0;            mes10 = 0;            mes11 = 0;            mes12 = 0;
             numeroS = 1;
@@ -447,13 +514,30 @@ public class ControladorRegistroActividadesPOA implements Serializable {
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOA.eliminarActividad()"+pOa.getActividadPoa());
         mes1 = 0;        mes2 = 0;        mes3 = 0;        mes4 = 0;        mes5 = 0;        mes6 = 0;
         mes7 = 0;        mes8 = 0;        mes9 = 0;        mes10 = 0;        mes11 = 0;        mes12 = 0;
+        numeroP=1;
+        listaActividadesPrincipales.clear();
+        listaActividadesSecundarias.clear();
+        poaEliminada=new ActividadesPoa();
         totalActividadPrincipal = 0;
         numeroPEliminado = Integer.parseInt(String.valueOf(pOa.getNumeroP()));
         numeroSEliminado = Integer.parseInt(String.valueOf(pOa.getNumeroS()));
         
+        poaEliminada=pOa;
+        
         poaSelectec.eliminarActividadesPoa(pOa);
 
-        consultarActividadesPorParametros();
+        listaActividadesPoas.clear();
+        
+        listaActividadesPoas = poaSelectec.mostrarActividadesPoasReporteArea(claveArea, ejercicioFiscal);
+        listaActividadesPoas.forEach((t) -> {
+            if (t.getCuadroMandoInt().equals(poaEliminada.getCuadroMandoInt())) {
+                if (t.getNumeroS() == 0) {
+                    listaActividadesPrincipales.add(t);
+                } else {
+                    listaActividadesSecundarias.add(t);
+                }
+            }
+        });
 
         if (numeroSEliminado == 0) {
             listaActividadesSecundarias.forEach((s) -> {
@@ -1057,7 +1141,6 @@ public class ControladorRegistroActividadesPOA implements Serializable {
     // ---------------------------------------------------------------- Bases --------------------------------------------------------------    
 
     public void imprimirValores() {
-        System.out.println("mx.edu.utxj.pye.sgi.poa.controladores.ControladorRegistroActividadesPOA.imprimirValores()");
     }
 
     public static class capitulosLista {
@@ -1080,7 +1163,38 @@ public class ControladorRegistroActividadesPOA implements Serializable {
             this.cuadroMandoIntegral1 = cuadroMandoIntegral1;
             this.totalRegistros = totalRegistros;
         }
-        
     }
 
+    public static class listaEjesEsLaAp {
+
+        @Getter        @Setter        private EjesRegistro ejeA;
+        @Getter        @Setter        private List<listaEstrategiaActividades> listalistaEstrategiaLaAp;
+
+        public listaEjesEsLaAp(EjesRegistro ejeA, List<listaEstrategiaActividades> listalistaEstrategiaLaAp) {
+            this.ejeA = ejeA;
+            this.listalistaEstrategiaLaAp = listalistaEstrategiaLaAp;
+        }
+    }
+
+    public static class listaEjeEstrategia {
+
+        @Getter        @Setter        private EjesRegistro ejess;
+        @Getter        @Setter        private List<Estrategias> listaEstrategiases1;
+
+        public listaEjeEstrategia(EjesRegistro ejess, List<Estrategias> listaEstrategiases1) {
+            this.ejess = ejess;
+            this.listaEstrategiases1 = listaEstrategiases1;
+        }
+    }
+
+    public static class listaEstrategiaActividades {
+
+        @Getter        @Setter        private Estrategias estrategias;
+        @Getter        @Setter        private List<ActividadesPoa> actividadesPoas;
+
+        public listaEstrategiaActividades(Estrategias estrategias, List<ActividadesPoa> actividadesPoas) {
+            this.estrategias = estrategias;
+            this.actividadesPoas = actividadesPoas;
+        }
+    }
 }

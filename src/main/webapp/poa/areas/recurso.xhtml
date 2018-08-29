@@ -42,33 +42,60 @@
     <ui:define name="body">
 
         <adm:sidebar collapsed="true"/>
-        <h:form id="frm" prependId="false" class="form-inline">
+        <h:form id="frmopciones" prependId="false" class="form-inline">
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <div id="main-buttons" class="hidden-sm hidden-xs" >
-                        <p:toolbar id="tb">
-                            <f:facet name="left">
-                                <p:outputPanel>            
-                                    <p:autoUpdate/>
-                                    <p:outputLabel value="Eje: #{controladorRegistroActividadesPOA.ejes.nombre}" />
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:outputLabel value="Estrategia: #{controladorRegistroActividadesPOA.estrategias.nombre}" />
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:outputLabel value="Línea de acción: #{controladorRegistroActividadesPOA.lineasAccion.nombre}" />
-                                </p:outputPanel>
-                            </f:facet>
-                            <f:facet name="center">
-                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>                                
-                            </f:facet>
-                            <f:facet name="right">
-                                <p:outputPanel>            
-                                    <p:autoUpdate/>
-                                    <p:commandButton value="Parámetros registro" id="btnRdV" actionListener="#{controladorRegistroActividadesPOA.imprimirValores()}"  oncomplete="PF('dlgParametros').show()" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":dtbBajas" />
-                                </p:outputPanel>
-                            </f:facet>
-                        </p:toolbar>
+                        <p:panel>
+                            <p:commandButton value="Resumen de registros" id="btnPr" actionListener="#{controladorRegistroActividadesPOA.consultarParametrosRegistrados()}"  oncomplete="PF('dlgParametrosRegistrados').show()" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":dtbBajas" />
+                        </p:panel>
                     </div>
-
+                </div>
+            </div>
+        </h:form>
+        <h:form id="frmAlineacionEstratejica" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                        <p:panel header="Alineación estratégica">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-3 col-lg-3">            
+                                    <p:autoUpdate/>
+                                    <p:outputLabel value="Eje rector:" />
+                                    <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorRegistroActividadesPOA.asignaEstrategias}">
+                                        <f:selectItems value="#{controladorRegistroActividadesPOA.ejesesFiltrado}" var="eje" itemValue="#{eje.eje}" itemLabel="#{eje.eje} -- #{eje.nombre}" />
+                                        <p:ajax update="estra" listener="#{controladorRegistroActividadesPOA.imprimirValores()}"/>
+                                    </p:selectOneMenu> 
+                                    <p:message for="eje" display="tooltip" />
+                                </div>
+                                <div class="col-sm-12 col-md-9 col-lg-9">
+                                    <p:outputPanel id="estra">
+                                        <p:outputLabel value="Estrategia:" /> 
+                                        <p:selectOneMenu filter="true" filterMatchMode="contains" id="estrategia" value="#{controladorRegistroActividadesPOA.estrategias.numero}" valueChangeListener="#{controladorRegistroActividadesPOA.asignaLineasAccion}">
+                                            <f:selectItems value="#{controladorRegistroActividadesPOA.estrategiases}" var="estrategia" itemValue="#{estrategia.estrategia}" itemLabel="#{estrategia.numero} -- #{estrategia.nombre}" />
+                                            <p:ajax update="linea" listener="#{controladorRegistroActividadesPOA.imprimirValores()}"/>
+                                        </p:selectOneMenu>
+                                    </p:outputPanel>
+                                </div>
+                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                    <p:outputPanel id="linea">  
+                                        <p:outputLabel for="lineaAccion"  value="Linea de acción" />
+                                        <p:selectOneMenu filter="true" filterMatchMode="contains" id="lineaAccion" value="#{controladorRegistroActividadesPOA.lineasAccion.lineaAccion}" valueChangeListener="#{controladorRegistroActividadesPOA.asignaLineaAccionSeleccionada}">
+                                            <f:selectItems value="#{controladorRegistroActividadesPOA.lineasAccions}" var="lineasAccion" itemValue="#{lineasAccion.lineaAccion}" itemLabel="#{lineasAccion.numero} -- #{lineasAccion.nombre}" />
+                                            <p:ajax update=":frm" listener="#{controladorRegistroActividadesPOA.consultarActividadesPorParametros()}"/>
+                                        </p:selectOneMenu> 
+                                        <p:message for="lineaAccion" display="tooltip" />
+                                    </p:outputPanel>
+                                </div>
+                            </div>
+                        </p:panel>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+        <h:form id="frm" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div class="box-header with-border">
                     <p:separator/>         
                     <div class="row">         
                         <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center;">
@@ -122,44 +149,6 @@
                                 <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
                                     <p:outputLabel value="#{controladorRegistroActividadesPOA.totalPretecho}"/>
                                 </div>
-                            </div>
-                            <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center">
-                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
-                                    <p:outputLabel value="Programado por partida"/>                            
-                                </div>
-                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                    <p:dataTable var="capitulo2" value="#{controladorRegistroActividadesPOA.capitulo2000}" emptyMessage="Sin recurso asignado">
-                                        <p:column headerText="Partida"><h:outputText value="#{capitulo2.partidas1.partida}" /></p:column>   
-                                        <p:column headerText="Programado"><h:outputText value="#{capitulo2.total}" /></p:column>                                         
-                                    </p:dataTable>
-                                </div>
-                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                    <p:dataTable var="capitulo3" value="#{controladorRegistroActividadesPOA.capitulo3000}" emptyMessage="Sin recurso asignado">
-                                        <p:column headerText="Partida"><h:outputText value="#{capitulo3.partidas1.partida}" /></p:column>   
-                                        <p:column headerText="Programado"><h:outputText value="#{capitulo3.total}" /></p:column>                                         
-                                    </p:dataTable>
-                                </div>
-                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                    <p:dataTable var="capitulo4" value="#{controladorRegistroActividadesPOA.capitulo4000}" emptyMessage="Sin recurso asignado">
-                                        <p:column headerText="Partida"><h:outputText value="#{capitulo4.partidas1.partida}" /></p:column>   
-                                        <p:column headerText="Programado"><h:outputText value="#{capitulo4.total}" /></p:column>                                         
-                                    </p:dataTable>
-                                </div>
-                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                    <p:dataTable var="capitulo5" value="#{controladorRegistroActividadesPOA.capitulo5000}" emptyMessage="Sin recurso asignado">
-                                        <p:column headerText="Partida"><h:outputText value="#{capitulo5.partidas1.partida}" /></p:column>   
-                                        <p:column headerText="Programado"><h:outputText value="#{capitulo5.total}" /></p:column>                                         
-                                    </p:dataTable>
-                                </div>
-                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                    <p:dataTable var="capituloCPDD" value="#{controladorRegistroActividadesPOA.capituloCPDD}" emptyMessage="Sin recurso asignado">
-                                        <p:column headerText="Partida"><h:outputText value="#{capituloCPDD.partidas1.partida}" /></p:column>   
-                                        <p:column headerText="Programado"><h:outputText value="#{capituloCPDD.total}" /></p:column>                                         
-                                    </p:dataTable>
-                                </div>
-                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
-                                    <p:outputLabel value=""/>
-                                </div>         
                             </div>
                             <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center">
                                 <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
@@ -217,21 +206,15 @@
                                     <p:remoteCommand name="actualizarTabla" actionListener="#{controladorRegistroActividadesPOA.imprimirValores()}" update=":frm:dtbBajas" />
                                     <p:dataTable id="dtbBajas" var="pOa" paginator="true" rows="10" saveOnCellBlur="false"
                                                  rowStyleClass="#{pOa.numeroS eq 0?'principal':''}"
-                                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+                                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                  rowsPerPageTemplate="5,10,15,20,25,30" editable="true" editMode="cell"
                                                  value="#{controladorRegistroActividadesPOA.listaActividadesPoasFiltroEje}">
 
                                         <f:facet name="header"></f:facet>
 
-                                        <f:facet name="{Exporters}">
-                                            <p:commandLink ajax="false">
-                                                <i class="fa fa-file-excel-o" /> Descargar
-                                                <pe:exporter type="xlsx" target="dtbBajas" fileName="PlantillaPersonalActivo" orientation="Landscape"  />
-                                            </p:commandLink>
-                                        </f:facet>
-
                                         <p:columnGroup type="header">
                                             <p:row class="success">
+                                                <p:column rowspan="2" style="width:30px"/>
                                                 <p:column rowspan="2" headerText="No." style="width: 50px;"/>
                                                 <p:column rowspan="2" headerText="Actividad" />
                                                 <p:column rowspan="2" headerText="Unidad de medida" />
@@ -254,6 +237,10 @@
                                                 <p:column headerText="Diciembre" />
                                             </p:row>
                                         </p:columnGroup>
+
+                                        <p:column >
+                                            <p:rowToggler />
+                                        </p:column>
 
                                         <p:column> 
                                             <h:outputText value="#{pOa.numeroP}.#{pOa.numeroS}" />
@@ -309,6 +296,160 @@
                                                 <f:setPropertyActionListener target="#{controladorRegistroActividadesPOA.actividadesPoaEditando}" value="#{pOa}" />
                                             </p:commandButton>
                                         </p:column>
+
+                                        <p:rowExpansion>
+                                            <p:dataTable id="dtbBajas" var="recurso" sortBy="#{recurso.productoArea.partida.partida}" expandableRowGroups="true"
+                                                         editable="true" editMode="row" emptyMessage="No hay recurso asignado"
+                                                         value="#{pOa.recursosActividadList}">
+
+                                                <f:facet name="header"></f:facet>
+
+                                                <f:facet name="{Exporters}">
+                                                    <p:commandLink ajax="false">
+                                                        <i class="fa fa-file-excel-o" /> Descargar
+                                                        <pe:exporter type="xlsx" target="dtbBajas" fileName="PlantillaPersonalActivo" orientation="Landscape"  />
+                                                    </p:commandLink>
+                                                </f:facet>
+
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column rowspan="2" headerText="" style="width: 50px;" />
+                                                        <p:column rowspan="2" headerText="Producto" />
+                                                        <p:column colspan="12" headerText="Calendarización de Metas" style="width: 700px;"/>  
+                                                        <p:column rowspan="2" headerText="Total" style="width: 80px;"/>
+                                                        <p:column rowspan="2" headerText="Editar" style="width:80px;"/>
+                                                    </p:row>
+                                                    <p:row class="success">
+                                                        <p:column headerText="Ene" />
+                                                        <p:column headerText="Feb" />
+                                                        <p:column headerText="Mar" />
+                                                        <p:column headerText="Abr" />
+                                                        <p:column headerText="May" />                                                    
+                                                        <p:column headerText="Jun" />
+                                                        <p:column headerText="Jul" />
+                                                        <p:column headerText="Ago" />
+                                                        <p:column headerText="Sep" />
+                                                        <p:column headerText="Oct" />
+                                                        <p:column headerText="Nov" />
+                                                        <p:column headerText="Dic" />
+                                                    </p:row>
+                                                </p:columnGroup>
+
+                                                <p:headerRow>
+                                                    <p:column colspan="2">
+                                                        <h:outputText value="Partida: #{recurso.productoArea.partida.partida}" />
+                                                    </p:column>
+                                                    <p:column colspan="13">
+                                                        <h:outputText value="#{recurso.productoArea.partida.denominacion}" />
+                                                    </p:column>
+                                                </p:headerRow>
+
+                                                <p:ajax event="rowEdit" listener="#{controladorRegistroActividadesPOA.onCellEditProductos}" update="dtbBajas" oncomplete="actualizarTabla2()"/>
+                                                <p:ajax event="rowEditCancel" listener="#{controladorRegistroActividadesPOA.onRowCancel}" update="dtbBajas" oncomplete="actualizarTabla2()"/>
+
+                                                <p:column> 
+                                                    <p:commandButton actionListener="#{controladorRegistroActividadesPOA.eliminarRecursoActividad(recurso)}" process="@this" update="frmRecurso" oncomplete="actualizarTabla2()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar recurso">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación del producto #{recurso.productoArea.productos.descripcion} ?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                </p:column>
+
+                                                <p:column> 
+                                                    <h:outputText value="#{recurso.productoArea.productos.productosPK.producto} -- #{recurso.productoArea.productos.descripcion}" />
+                                                </p:column>
+
+                                                <p:column> 
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputText value="#{recurso.RPEnero}" /></f:facet>
+                                                        <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{recurso.RPEnero}" title="" /></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column> 
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputText value="#{recurso.RPFebero}" /> </f:facet>
+                                                        <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{recurso.RPFebero}" title="" /></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column> 
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputText value="#{recurso.RPMarzo}" /> </f:facet>
+                                                        <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{recurso.RPMarzo}" title="" /></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column> 
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputText value="#{recurso.RPAbril}" /> </f:facet>
+                                                        <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{recurso.RPAbril}" title="" /></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column> 
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputText value="#{recurso.RPMayo}" /> </f:facet>
+                                                        <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{recurso.RPMayo}" title="" /></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column> 
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputText value="#{recurso.RPJunio}" /> </f:facet>
+                                                        <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{recurso.RPJunio}" title="" /></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column> 
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputText value="#{recurso.RPJulio}" /> </f:facet>
+                                                        <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{recurso.RPJulio}" title="" /></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column> 
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputText value="#{recurso.RPAgosto}" /> </f:facet>
+                                                        <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{recurso.RPAgosto}" title="" /></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column> 
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputText value="#{recurso.RPSeptiembre}" /> </f:facet>
+                                                        <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{recurso.RPSeptiembre}" title="" /></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column> 
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputText value="#{recurso.RPOctubre}" /> </f:facet>
+                                                        <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{recurso.RPOctubre}" title="" /></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column> 
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputText value="#{recurso.RPNoviembre}" /> </f:facet>
+                                                        <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{recurso.RPNoviembre}" title="" /></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column> 
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputText value="#{recurso.RPDiciembre}" /> </f:facet>
+                                                        <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{recurso.RPDiciembre}" title="" /></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column> 
+                                                    <h:outputText value="#{recurso.total}" /> 
+                                                </p:column>
+                                                <p:column>
+                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                        <a href="#" class="ui-row-editor-pencil">
+                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                        </a>
+                                                        <a href="#" class="ui-row-editor-check">
+                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                        </a>
+                                                        <p:spacer width="20px"/>
+                                                        <a href="#" class="ui-row-editor-close">
+                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                        </a>
+                                                    </div>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:rowExpansion>
+
+
                                     </p:dataTable>
                                 </div>
                             </div>
@@ -317,12 +458,6 @@
                 </div>
             </div>
         </h:form>
-
-        <p:dialog header="Seleccionar parámetros de registro" widgetVar="dlgParametros" modal="true" 
-                  showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true"
-                  visible="#{controladorRegistroActividadesPOA.claveEje eq 0?true:false}">
-            <ui:include src="/poa/areas/seleccionDatosRegistro.xhtml"/>
-        </p:dialog>
 
         <h:form id="frmRecurso">
             <p:dialog header="Consultar recurso asignado" widgetVar="dlgRecurso" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="1100" closeOnEscape="true">

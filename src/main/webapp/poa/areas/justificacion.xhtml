@@ -40,36 +40,63 @@
     </ui:define>
 
     <ui:define name="body">
-        
+
 
         <adm:sidebar collapsed="true"/>
-        <h:form id="frm" prependId="false" class="form-inline">
+        <h:form id="frmopciones" prependId="false" class="form-inline">
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <div id="main-buttons" class="hidden-sm hidden-xs" >
-                        <p:toolbar id="tb">
-                            <f:facet name="left">
-                                <p:outputPanel>            
-                                    <p:autoUpdate/>
-                                    <p:outputLabel value="Eje: #{controladorRegistroActividadesPOA.ejes.nombre}" />
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:outputLabel value="Estrategia: #{controladorRegistroActividadesPOA.estrategias.nombre}" />
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:outputLabel value="Línea de acción: #{controladorRegistroActividadesPOA.lineasAccion.nombre}" />
-                                </p:outputPanel>
-                            </f:facet>
-                            <f:facet name="center">
-                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>                                
-                            </f:facet>
-                            <f:facet name="right">
-                                <p:outputPanel>            
-                                    <p:autoUpdate/>
-                                    <p:commandButton value="Parámetros registro" id="btnRdV" actionListener="#{controladorRegistroActividadesPOA.imprimirValores()}"  oncomplete="PF('dlgParametros').show()" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":dtbBajas" />
-                                </p:outputPanel>
-                            </f:facet>
-                        </p:toolbar>
+                        <p:panel>
+                            <p:commandButton value="Resumen de registros" id="btnPr" actionListener="#{controladorRegistroActividadesPOA.consultarParametrosRegistrados()}"  oncomplete="PF('dlgParametrosRegistrados').show()" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":dtbBajas" />
+                        </p:panel>
                     </div>
-                    <p:separator/>
+                </div>
+            </div>
+        </h:form>
+        <h:form id="frmAlineacionEstratejica" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                        <p:panel header="Alineación estratégica">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-3 col-lg-3">            
+                                    <p:autoUpdate/>
+                                    <p:outputLabel value="Eje rector:" />
+                                    <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorRegistroActividadesPOA.asignaEstrategias}">
+                                        <f:selectItems value="#{controladorRegistroActividadesPOA.ejesesFiltrado}" var="eje" itemValue="#{eje.eje}" itemLabel="#{eje.eje} -- #{eje.nombre}" />
+                                        <p:ajax update="estra" listener="#{controladorRegistroActividadesPOA.imprimirValores()}"/>
+                                    </p:selectOneMenu> 
+                                    <p:message for="eje" display="tooltip" />
+                                </div>
+                                <div class="col-sm-12 col-md-9 col-lg-9">
+                                    <p:outputPanel id="estra">
+                                        <p:outputLabel value="Estrategia:" /> 
+                                        <p:selectOneMenu filter="true" filterMatchMode="contains" id="estrategia" value="#{controladorRegistroActividadesPOA.estrategias.numero}" valueChangeListener="#{controladorRegistroActividadesPOA.asignaLineasAccion}">
+                                            <f:selectItems value="#{controladorRegistroActividadesPOA.estrategiases}" var="estrategia" itemValue="#{estrategia.estrategia}" itemLabel="#{estrategia.numero} -- #{estrategia.nombre}" />
+                                            <p:ajax update="linea" listener="#{controladorRegistroActividadesPOA.imprimirValores()}"/>
+                                        </p:selectOneMenu>
+                                    </p:outputPanel>
+                                </div>
+                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                    <p:outputPanel id="linea">  
+                                        <p:outputLabel for="lineaAccion"  value="Linea de acción" />
+                                        <p:selectOneMenu filter="true" filterMatchMode="contains" id="lineaAccion" value="#{controladorRegistroActividadesPOA.lineasAccion.lineaAccion}" valueChangeListener="#{controladorRegistroActividadesPOA.asignaLineaAccionSeleccionada}">
+                                            <f:selectItems value="#{controladorRegistroActividadesPOA.lineasAccions}" var="lineasAccion" itemValue="#{lineasAccion.lineaAccion}" itemLabel="#{lineasAccion.numero} -- #{lineasAccion.nombre}" />
+                                            <p:ajax update=":frm" listener="#{controladorRegistroActividadesPOA.consultarActividadesPorParametros()}"/>
+                                        </p:selectOneMenu> 
+                                        <p:message for="lineaAccion" display="tooltip" />
+                                    </p:outputPanel>
+                                </div>
+                            </div>
+                        </p:panel>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+        <h:form id="frm" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div class="box-header with-border">
                     <div class="box box-solid">
                         <div class="box-body">
                             <div class="row">
@@ -77,18 +104,11 @@
                                     <p:remoteCommand name="actualizarTabla2" actionListener="#{controladorRegistroActividadesPOA.imprimirValores()}" update=":frm:dtbBajas" />
                                     <p:dataTable id="dtbBajas" var="pOa" paginator="true" rows="10"
                                                  rowStyleClass="#{pOa.numeroS eq 0?'principal':''}"
-                                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+                                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                  rowsPerPageTemplate="5,10,15,20,25,30"
                                                  value="#{controladorRegistroActividadesPOA.listaActividadesPoasFiltroEje}">
 
                                         <f:facet name="header"></f:facet>
-
-                                        <f:facet name="{Exporters}">
-                                            <p:commandLink ajax="false">
-                                                <i class="fa fa-file-excel-o" /> Descargar
-                                                <pe:exporter type="xlsx" target="dtbBajas" fileName="PlantillaPersonalActivo" orientation="Landscape"  />
-                                            </p:commandLink>
-                                        </f:facet>
 
                                         <p:columnGroup type="header">
                                             <p:row class="success">
@@ -99,7 +119,6 @@
                                                 <p:column rowspan="2" headerText="Total" style="width: 80px;"/>
                                                 <p:column rowspan="2" headerText="" style="width: 50px;"/>
                                                 <p:column rowspan="2" headerText="" style="width: 50px;"/>
-                                                <p:column rowspan="2" headerText="Validado por el sistema" style="width: 100px;"/>
                                             </p:row>
                                             <p:row class="success">
                                                 <p:column headerText="Enero" />
@@ -177,9 +196,6 @@
                                                 <f:setPropertyActionListener target="#{controladorRegistroActividadesPOA.actividadesPoaEditando}" value="#{pOa}" />
                                             </p:commandButton>
                                         </p:column>
-                                        <p:column>
-                                            <p:selectBooleanCheckbox id="validar" value="#{pOa.validadoSistema}" disabled="true" />
-                                        </p:column>
                                     </p:dataTable>
                                 </div>
                             </div>
@@ -190,7 +206,7 @@
         </h:form>
 
         <h:form id="frmComentario">
-            <p:dialog header="Agregar descripción" widgetVar="dlgComentario" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
+            <p:dialog header="Agregar Justificación" widgetVar="dlgComentario" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
                 <p:panelGrid id="pnlAgregarComentario" style="text-align:justify;" columns="1">
                     <p:outputLabel value="Actividad: #{controladorRegistroActividadesPOA.actividadesPoaEditando.denominacion}" />
                     <p:inputTextarea id="txtComentario" value="#{controladorRegistroActividadesPOA.actividadesPoaEditando.descripcion}" 
@@ -290,10 +306,5 @@
             </p:dialog>
         </h:form>
 
-        <p:dialog header="Seleccionar parámetros de registro" widgetVar="dlgParametros" modal="true" 
-                  showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true"
-                  visible="#{controladorRegistroActividadesPOA.claveEje eq 0?true:false}">
-            <ui:include src="/poa/areas/seleccionDatosRegistro.xhtml"/>
-        </p:dialog>
     </ui:define>
 </ui:composition>
