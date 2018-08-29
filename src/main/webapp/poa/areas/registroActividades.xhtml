@@ -121,7 +121,7 @@
                             <p:outputPanel >
                                 <p:autoUpdate/>
                                 <div class="col-sm-6 col-md-6 col-lg-6">                  
-                                    <p:inputText id="unidad" class="form-control" valueChangeListener="#{controladorPOARegistro.asignarUnidadMedida}" 
+                                    <p:inputText id="unidad" class="form-control" value="#{controladorPOARegistro.nombreUnidad}" valueChangeListener="#{controladorPOARegistro.asignarUnidadMedida}" 
                                                  disabled="#{!controladorPOARegistro.unidadMedidaNueva}" style="height:100%; width: 100%;" >
                                         <p:ajax update="unidad"/>
                                     </p:inputText>
@@ -187,7 +187,7 @@
                     <p:outputPanel>            
                         <p:autoUpdate/>
                         <p:commandButton value="Agregar" id="btnSiguiente" 
-                                         actionListener="#{controladorPOARegistro.anadirNuavActividad()}"  
+                                         actionListener="#{controladorPOARegistro.anadirNuavUnidadDeMedida()}"  
                                          process=":frm2" icon="fa fa-plus" 
                                          styleClass="btn-primary" update=":frm2 :frm" 
                                          oncomplete="actualizarTabla2()"
@@ -401,6 +401,15 @@
             </h:form>
         </p:dialog>
 
+        <p:dialog id="validacion" header="Error" widgetVar="validacion" modal="true" 
+                  showEffect="fade" hideEffect="fade" resizable="false" width="300" closeOnEscape="true">
+            <h:form id="frmvalidacion">
+                <p:outputPanel>
+                    <p:autoUpdate/>
+                    <h1>#{controladorPOARegistro.mensajeValidacion}</h1>
+                </p:outputPanel>
+            </h:form>
+        </p:dialog>
 
 
         <p:dialog id="dlgParametrosRegistrados" header="Parámetros de registro que ya cuentan con registros" widgetVar="dlgParametrosRegistrados" modal="true" 
