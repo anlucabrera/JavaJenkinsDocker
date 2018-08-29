@@ -13,6 +13,8 @@ import javafx.print.Collation;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -27,6 +29,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.UnidadMedidas;
 import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 
 @Named
@@ -44,8 +47,8 @@ public class ControladorPOARegistro implements Serializable {
 
     @Getter    @Setter    private Boolean unidadMedidaNueva = false, esActividadPrincipal = false, permitirRegistro = false;
     @Getter    @Setter    private Short unidadDMedida = 0;
-    @Getter    @Setter    private String tipo = "Actividad", nombreUnidad = "";
-    @Getter    @Setter    private Integer totalProgramado=0,numeroActividadPrincipal=1,numeroActividadSecuendaria=1,numeroActividadPrincipalAnterior=0;
+    @Getter    @Setter    private String tipo = "Actividad", nombreUnidad = "",mensajeValidacion="";
+    @Getter    @Setter    private Integer totalProgramado=0,numeroActividadPrincipal=1,numeroActividadSecuendaria=1,numeroActividadPrincipalAnterior=0,unidadExistente=0;
     @Getter    @Setter    private Integer mes1 = 0, mes2 = 0, mes3 = 0, mes4 = 0, mes5 = 0, mes6 = 0, mes7 = 0, mes8 = 0, mes9 = 0, mes10 = 0, mes11 = 0, mes12 = 0;
     
     @Getter    @Setter    private ActividadesPoa actividadesPoa = new ActividadesPoa(),actividadPoaPrincipal = new ActividadesPoa(),actividadPoaPrincipalEditada = new ActividadesPoa(),actividadPoaPrincipalEditadaAnterior = new ActividadesPoa(),actividadPoaEliminada = new ActividadesPoa(),actividadPoaEditando = new ActividadesPoa();
@@ -66,6 +69,7 @@ public class ControladorPOARegistro implements Serializable {
     @PostConstruct
     public void init() {
         ejercicioFiscal = 17;
+        unidadDMedida=null;
         consultarListasInit();
     }
 
@@ -88,7 +92,7 @@ public class ControladorPOARegistro implements Serializable {
     public void resetearValores() {
         actividadesPoa = new ActividadesPoa();
         listaActividadesPoas.clear();
-        unidadDMedida = 0;
+        unidadDMedida = null;
         actividadPoaPrincipal = new ActividadesPoa();
         tipo = "Actividad";
         nombreUnidad = "";
@@ -160,6 +164,7 @@ public class ControladorPOARegistro implements Serializable {
                     poaSelectec.mostrarEstrategiasRegistro(ejercicioFiscal, ejesRegistro).forEach((t) -> {
                         listaEstrategias.add(t);
                     });
+                    permitirRegistro = false;
                 }
                 break;
             case "estrategia":
@@ -167,10 +172,11 @@ public class ControladorPOARegistro implements Serializable {
                 estrategias = poaSelectec.mostrarEstrategia(Short.parseShort(event.getNewValue().toString()));
                 if (ejesRegistro != null) {
                     listaLineasAccion.clear();
-                    listaLineasAccion.add(new LineasAccion(Short.parseShort("0"), Short.parseShort("0"),"Selecciones Uno" ));
+                    listaLineasAccion.add(new LineasAccion(Short.parseShort("0"), Short.parseShort("0"), "Selecciones Uno"));
                     poaSelectec.mostrarLineasAccionRegistro(ejercicioFiscal, ejesRegistro, estrategias).forEach((t) -> {
                         listaLineasAccion.add(t);
                     });
+                    permitirRegistro = false;
                 }
                 break;
             case "lineaAccion":
@@ -182,6 +188,7 @@ public class ControladorPOARegistro implements Serializable {
                     listaCuadroMandoIntegrals = poaSelectec.mostrarCuadroMandoIntegralRegistrpo(ejercicioFiscal, ejesRegistro, estrategias, lineasAccion);
                     cuadroMandoIntegral = listaCuadroMandoIntegrals.get(0);
                     consultarListas();
+                    permitirRegistro = true;
                 }
                 break;
         }
@@ -290,22 +297,33 @@ public class ControladorPOARegistro implements Serializable {
 
     public void anadirNuavUnidadDeMedida() {
         if (permitirRegistro == true) {
-            if (unidadDMedida == 0) {
-                listaUnidadMedidases.forEach((u) -> {
-                    if (u.getNombre().equalsIgnoreCase(nombreUnidad)) {
-                        Messages.addGlobalWarn("La unidad de medida ya existe, favor de seleccionarla del menú");
-                    } else {
+            if (unidadDMedida != null) {
+                if (unidadDMedida == 0) {
+                    unidadExistente = 0;
+                    listaUnidadMedidases.forEach((u) -> {
+                        if (u.getNombre().equalsIgnoreCase(nombreUnidad)) {
+                            unidadExistente = unidadExistente + 1;
+                        }
+                    });
+                    if (unidadExistente == 0) {
                         unidadMedidas.setNombre(nombreUnidad);
                         unidadMedidas = poaSelectec.agregarUnidadMedidas(unidadMedidas);
                         unidadDMedida = unidadMedidas.getUnidadMedida();
                         anadirNuavActividad();
+                    } else {
+                        mensajeValidacion = "La unidad de medida ya existe, favor de seleccionarla del menú";
+                        Ajax.oncomplete("PF('validacion').show();");
                     }
-                });
+                } else {
+                    anadirNuavActividad();
+                }
             } else {
-                anadirNuavActividad();
+                mensajeValidacion = "Seleccione una unidad de medida";
+                Ajax.oncomplete("PF('validacion').show();");
             }
         } else {
-            Messages.addGlobalWarn("Seleccione una alineación estratégica");
+            mensajeValidacion = "Seleccione una alineación estratégica";
+            Ajax.oncomplete("PF('validacion').show();");
         }
     }
 
