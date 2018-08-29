@@ -8,7 +8,7 @@
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:define name="head-end">
-         <!-- Inicio estilos par proceso electoral -->
+        <!-- Inicio estilos par proceso electoral -->
         <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
         <!-- Fin estilos par proceso electoral -->
         <style type="text/css">
@@ -43,15 +43,21 @@
                     <div id="main-buttons" class="hidden-sm hidden-xs" >
                         <p:toolbar id="tb">
                             <f:facet name="left">
-                                <p:outputLabel value="Total a evualuar: #{evaluacion360Admin1.listaSubordinados.size()}" />
+                                <c:if test="#{logonMB.personal.actividad.actividad eq 2 || logonMB.personal.actividad.actividad eq 4}">
+                                    <p:outputLabel value="Total a evualuar: #{evaluacion360Admin.listaPersonalEvaluado.size()}" />
+                                </c:if>
+                                <c:if test="#{logonMB.personal.actividad.actividad eq 1 || logonMB.personal.actividad.actividad eq 3}">
+                                    <p:outputLabel value="Total a evualuar: #{evaluacion360Admin.listaPersonalEvaluado.size()}" />
+                                </c:if>
+
                                 <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                 <p:outputLabel value="Evaluados: #{evaluacion360Admin1.evaluados}" />
                                 <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                 <p:outputLabel value="Evaluando: #{evaluacion360Admin1.evaluando}" />
-                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>                              
+                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                             </f:facet>
                             <f:facet name="right">
-                                <p:commandButton value="Descargar" id="btnDescargar" actionListener="#{evaluacion360Admin1.descargarCedulas()}" process="@this" icon="fa fa-sign-in" styleClass="btn-primary"  update="@this" rendered="#{evaluacion360Admin1.directivoSeleccionado.areaOperativa eq caster.toInt(37) or evaluacion360Admin1.directivoSeleccionado.clave eq caster.toInt(203) or evaluacion360Admin1.directivoSeleccionado.clave eq caster.toInt(30)}" />
+                                <p:commandButton value="Descargar" id="btnDescargar" actionListener="#{evaluacion360Admin1.descargarCedulas()}" process="@this" icon="fa fa-sign-in" styleClass="btn-primary"  update="@this" rendered="#{evaluacion360Admin1.directivoSeleccionado.areaOperativa eq caster.toInt(13) or evaluacion360Admin1.directivoSeleccionado.clave eq caster.toInt(203) or evaluacion360Admin1.directivoSeleccionado.clave eq caster.toInt(30)}" />
                                 <p:commandButton value="Actualizar" id="btnActualizar" actionListener="#{evaluacion360Admin1.actualizar()}" process="@this" icon="fa fa-refresh" styleClass="btn-primary" />
                                 <p:commandButton value="Siguiente" id="btnSiguiente" actionListener="#{evaluacion360Admin1.continuarEvaluando()}" process="@this" icon="fa fa-sign-in" styleClass="btn-primary"  update="@form"/>
                             </f:facet>
@@ -96,8 +102,8 @@
                                         </c:if>
                                     </div>
                                     <c:set var="index" value="#{caster.toInt(0)}" />
-                                    <c:forEach items="#{evaluacion360Admin1.listaPersonalEvaluando}" var="evaluado">                                                                                
-                                        <div class="col-lg-2 text-center" style="padding-left: 2px; padding-right: 2px; background-color: aliceblue;">                                            
+                                    <c:forEach items="#{evaluacion360Admin1.listaPersonalEvaluando}" var="evaluado">
+                                        <div class="col-lg-2 text-center" style="padding-left: 2px; padding-right: 2px; background-color: aliceblue;">
                                             <p:outputPanel >
                                                 <p:autoUpdate/>
                                                 <h4 class="#{evaluado.completo?'text-info':'text-warn'} " style="margin: 0px;">#{evaluado.completo?'Finalizado':'Pendiente'}</h4>
@@ -105,7 +111,7 @@
                                                 <br/>
                                                 <h4 class="#{evaluado.completo?'text-info':'text-warn'} " style="margin: 0px;">Promedio: #{evaluado.promedio}</h4>
                                             </p:outputPanel>
-                                            <p:selectOneMenu id="opcion#{index}" class="form-control" autoWidth="false" 
+                                            <p:selectOneMenu id="opcion#{index}" class="form-control" autoWidth="false"
                                                              var="s" panelStyle="width:380px" effect="fade"
                                                              valueChangeListener="#{evaluacion360Admin1.cambiarOpciones}">
                                                 <f:selectItems value="#{evaluacion360Admin1.opciones[index]}" var="subordinados" itemValue="#{subordinados}" itemLabel="#{subordinados.nombre}" itemDescription="#{subordinados.categoriaOperativaNombre}"  />
@@ -215,7 +221,7 @@
                                                             </f:ajax>
                                                         </c:if>
                                                     </div>
-                                                </div>                                                
+                                                </div>
                                             </c:forEach>
                                         </div>
                                     </c:forEach>
@@ -245,11 +251,11 @@
                                         <div class="col-lg-2 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
                                             <c:set var="id" value="#{'r'.concat('32-0').concat('_').concat(evaluado2.pk.evaluado.toString())}" />
                                             <p:outputLabel id="lbl#{id}" for="#{id}" value="#{evaluado2.evaluadoNombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
-                                                <f:ajax execute="#{id}">
-                                                    <p:inputTextarea id="#{id}" class="form-control" value="#{evaluacion360Admin1.respuestas[caster.toInt(evaluado2.pk.evaluado)][caster.toFloat(32)]}"
-                                                                     rows="6" placeholder="Ingrese sus comentarios aquí..." maxlength="500"
-                                                                     valueChangeListener="#{evaluacion360Admin1.guardarRespuesta}" queryDelay="1500" />
-                                                </f:ajax>
+                                            <f:ajax execute="#{id}">
+                                                <p:inputTextarea id="#{id}" class="form-control" value="#{evaluacion360Admin1.respuestas[caster.toInt(evaluado2.pk.evaluado)][caster.toFloat(32)]}"
+                                                                 rows="6" placeholder="Ingrese sus comentarios aquí..." maxlength="500"
+                                                                 valueChangeListener="#{evaluacion360Admin1.guardarRespuesta}" queryDelay="1500" />
+                                            </f:ajax>
                                         </div>
                                     </c:forEach>
                                 </div>
@@ -270,11 +276,11 @@
                                         <div class="col-lg-2 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
                                             <c:set var="id" value="#{'r'.concat('33-0').concat('_').concat(evaluado2.pk.evaluado.toString())}" />
                                             <p:outputLabel id="lbl#{id}" for="#{id}" value="#{evaluado2.evaluadoNombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
-                                                <f:ajax execute="#{id}">
-                                                    <p:inputTextarea id="#{id}" class="form-control" value="#{evaluacion360Admin1.respuestas[caster.toInt(evaluado2.pk.evaluado)][caster.toFloat(33)]}"
-                                                                     rows="6" placeholder="Ingrese sus comentarios aquí..." maxlength="500"
-                                                                     valueChangeListener="#{evaluacion360Admin1.guardarRespuesta}" queryDelay="1500" />
-                                                </f:ajax>
+                                            <f:ajax execute="#{id}">
+                                                <p:inputTextarea id="#{id}" class="form-control" value="#{evaluacion360Admin1.respuestas[caster.toInt(evaluado2.pk.evaluado)][caster.toFloat(33)]}"
+                                                                 rows="6" placeholder="Ingrese sus comentarios aquí..." maxlength="500"
+                                                                 valueChangeListener="#{evaluacion360Admin1.guardarRespuesta}" queryDelay="1500" />
+                                            </f:ajax>
                                         </div>
                                     </c:forEach>
                                 </div>

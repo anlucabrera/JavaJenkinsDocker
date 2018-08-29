@@ -3,6 +3,7 @@ package mx.edu.utxj.pye.sgi.ejb;
 import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.faces.model.SelectItem;
@@ -86,8 +87,8 @@ public class ServicioEvaluacion3601 implements EjbEvaluacion3601 {
                     registerStoredProcedureParameter("par_evaluacion", Integer.class, ParameterMode.IN).setParameter("par_evaluacion", eva.getEvaluacion()).
                     registerStoredProcedureParameter("par_evaluador", Integer.class, ParameterMode.IN).setParameter("par_evaluador", directivo.getClave());
 
-            return q.getResultList();
-        }
+                return q.getResultList();
+            }
 
         return null;
     }
@@ -412,5 +413,4 @@ public class ServicioEvaluacion3601 implements EjbEvaluacion3601 {
         return f.findAll();
     }
 
-    
 }
