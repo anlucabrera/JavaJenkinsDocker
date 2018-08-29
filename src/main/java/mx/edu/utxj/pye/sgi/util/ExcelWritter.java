@@ -213,8 +213,9 @@ public class ExcelWritter implements Serializable {
                 escribirCelda(hoja.getRow(33), 7, redondear(lpe.getR16()));
                 // apartado de comentarios editado 29/08/2018
                 escribirCelda(hoja.getRow(38), 2, lpe.getR32());
+                System.err.println("El comentario es r32: " + lpe.getR32());
                 escribirCelda(hoja.getRow(43), 2, lpe.getR33());
-                
+                System.err.println("El comentario es  r33: " + lpe.getR33());
 //                System.out.println("mx.edu.utxj.pye.sgi.util.ExcelWritter.editarLibro() lpe: " + lpe);
                 int index2 =18;
                 Apartado habilidades = mapaHabilidades.get(lpe.getCategoria());
