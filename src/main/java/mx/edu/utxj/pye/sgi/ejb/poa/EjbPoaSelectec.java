@@ -12,19 +12,54 @@ import mx.edu.utxj.pye.sgi.entity.pye2.UnidadMedidas;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
+import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.PretechoFinanciero;
 
 @Local
 public interface EjbPoaSelectec {
 
+// ---- Registro de actividades
+    
+    public ActividadesPoa mostrarActividadPoaPrincipal(Integer clave);
+    
+    public List<ActividadesPoa> mostrarActividadesPoasAreaEjeyEjercicioFiscal(Short area, Short ejerciciosFiscales, EjesRegistro ejesRegistro);
+    
+    public List<ActividadesPoa> mostrarActividadesPoaCuadroDeMando(Short area, Short ejercicioFiscal, CuadroMandoIntegral cuadroMando);
+//  -------------------------------------------- EjesRegistro --------------------------------------------------
+
+    public EjesRegistro mostrarEjeRegistro(Integer clave);
+
+    public List<EjesRegistro> mostrarEjesRegistros();
+//  -------------------------------------------- Estrategias -------------------------------------------------
+
+    public Estrategias mostrarEstrategia(Short clave);
+
+    public List<Estrategias> mostrarEstrategiasRegistro(Short ejerciciosFiscales, EjesRegistro ejesRegistro);
+
+    //  -------------------------------------------- Lineas Accion -------------------------------------------------
+    public LineasAccion mostrarLineaAccion(Short clave);
+
+    public List<LineasAccion> mostrarLineasAccionRegistro(Short ejerciciosFiscales, EjesRegistro ejesRegistro, Estrategias estrategias);
+    //  -------------------------------------------- UnidadMedidas --------------------------------------------------
+
+    public List<UnidadMedidas> mostrarUnidadMedidases();
+
+    public UnidadMedidas agregarUnidadMedidas(UnidadMedidas nuevaUnidadMedidas);
+
+//  ------------------------------------------CuadroMandoIntegral -----------------------------------------------
+    public List<CuadroMandoIntegral> mostrarCuadroMandoIntegralRegistrpo(Short ejercicioFiscal,EjesRegistro ejesRegistro,Estrategias estrategias,LineasAccion lineasAccion);
+
+    public List<CuadroMandoIntegral> mostrarCuadroMandoIntegrals(Short ejercicioFiscal);
+
+// ---- Fin Registro de actividades
 //  -------------------------------------------- ActividadesPoa -------------------------------------------------
     public List<ActividadesPoa> mostrarAreasQueRegistraronActividades();
-    
+
     public List<ActividadesPoa> mostrarActividadesPoasArea(Short area);
-    
-    public List<ActividadesPoa> mostrarActividadesPoasReporteArea(Short area,Short ejercicioFiscal);
-    
-    public List<ActividadesPoa> mostrarSubActividadesPoa(Short area,Short ejercicioFiscal,Short numeroP,CuadroMandoIntegral cuadroMando);
+
+    public List<ActividadesPoa> mostrarActividadesPoasReporteArea(Short area, Short ejercicioFiscal);
+
+    public List<ActividadesPoa> mostrarSubActividadesPoa(Short area, Short ejercicioFiscal, Short numeroP, CuadroMandoIntegral cuadroMando);
 
     public ActividadesPoa agregarActividadesPoa(ActividadesPoa nuevaActividadesPoa);
 
@@ -40,17 +75,8 @@ public interface EjbPoaSelectec {
     public RecursosActividad actualizaRecursosActividad(RecursosActividad nuevoRecursosActividad);
 
     public RecursosActividad eliminarRecursosActividad(RecursosActividad nuevoRecursosActividad);
-//  ------------------------------------------CuadroMandoIntegral -----------------------------------------------
 
-    public List<CuadroMandoIntegral> mostrarCuadroMandoIntegrals(Short ejercicioFiscal);
-//  -------------------------------------------- UnidadMedidas --------------------------------------------------
-
-    public List<UnidadMedidas> mostrarUnidadMedidases();
-//  -------------------------------------------- EjesRegistro --------------------------------------------------
-
-    public List<EjesRegistro> mostrarEjesRegistros();
 //  -------------------------------------------- EjerciciosFiscales --------------------------------------------------
-
     public List<EjerciciosFiscales> mostrarEjerciciosFiscaleses();
 //  ------------------------------------------- ProductosAreas --------------------------------------------------
 

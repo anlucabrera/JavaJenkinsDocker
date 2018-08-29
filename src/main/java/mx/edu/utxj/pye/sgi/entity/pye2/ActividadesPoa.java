@@ -74,7 +74,8 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "ActividadesPoa.findByValidadoSistema", query = "SELECT a FROM ActividadesPoa a WHERE a.validadoSistema = :validadoSistema")
     , @NamedQuery(name = "ActividadesPoa.findByValidadoPyE", query = "SELECT a FROM ActividadesPoa a WHERE a.validadoPyE = :validadoPyE")
     , @NamedQuery(name = "ActividadesPoa.findByValidadoFinanzas", query = "SELECT a FROM ActividadesPoa a WHERE a.validadoFinanzas = :validadoFinanzas")
-    , @NamedQuery(name = "ActividadesPoa.findByValidadpPyeFinal", query = "SELECT a FROM ActividadesPoa a WHERE a.validadpPyeFinal = :validadpPyeFinal")})
+    , @NamedQuery(name = "ActividadesPoa.findByValidadpPyeFinal", query = "SELECT a FROM ActividadesPoa a WHERE a.validadpPyeFinal = :validadpPyeFinal")
+    , @NamedQuery(name = "ActividadesPoa.findByActividadPadre", query = "SELECT a FROM ActividadesPoa a WHERE a.actividadPadre = :actividadPadre")})
 public class ActividadesPoa implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -233,6 +234,8 @@ public class ActividadesPoa implements Serializable {
     @NotNull
     @Column(name = "validadpPyeFinal")
     private boolean validadpPyeFinal;
+    @Column(name = "actividadPadre")
+    private Integer actividadPadre;
     @JoinTable(name = "actividades_evidencias", joinColumns = {
         @JoinColumn(name = "actividad", referencedColumnName = "actividad_poa")}, inverseJoinColumns = {
         @JoinColumn(name = "evidencia", referencedColumnName = "evidencia")})
@@ -609,6 +612,14 @@ public class ActividadesPoa implements Serializable {
         this.validadpPyeFinal = validadpPyeFinal;
     }
 
+    public Integer getActividadPadre() {
+        return actividadPadre;
+    }
+
+    public void setActividadPadre(Integer actividadPadre) {
+        this.actividadPadre = actividadPadre;
+    }
+    
     @XmlTransient
     public List<Evidencias> getEvidenciasList() {
         return evidenciasList;
@@ -676,5 +687,5 @@ public class ActividadesPoa implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa[ actividadPoa=" + actividadPoa + " ]";
     }
-    
+
 }

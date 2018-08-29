@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.sgi.ejb.poa;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
@@ -17,6 +18,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.UnidadMedidas;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
+import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.PretechoFinanciero;
 
 @Stateful
@@ -28,7 +30,138 @@ public class ServiciosPoaSelectec implements EjbPoaSelectec {
     @EJB
     FacadePoa facadePoa;
 
+// ---- Registro de actividades
+    //  -------------------------------------------- Actividades Poa -------------------------------------------------
+    @Override
+    public ActividadesPoa mostrarActividadPoaPrincipal(Integer clave) {
+        facadePoa.setEntityClass(ActividadesPoa.class);
+        ActividadesPoa pr = facadePoa.getEntityManager().find(ActividadesPoa.class, clave);
+        if (pr == null) {
+            return null;
+        } else {
+            return pr;
+        }
+    }
+
+    @Override
+    public List<ActividadesPoa> mostrarActividadesPoasAreaEjeyEjercicioFiscal(Short area, Short ejerciciosFiscales, EjesRegistro ejesRegistro) {
+        TypedQuery<ActividadesPoa> q = em.createQuery("SELECT a FROM ActividadesPoa a INNER JOIN a.cuadroMandoInt cm INNER JOIN cm.eje ej INNER JOIN cm.ejercicioFiscal ef WHERE a.area = :area AND ej.eje=:eje AND ef.ejercicioFiscal=:ejercicioFiscal", ActividadesPoa.class);
+        q.setParameter("area", area);
+        q.setParameter("eje", ejesRegistro.getEje());
+        q.setParameter("ejercicioFiscal", ejerciciosFiscales);
+        List<ActividadesPoa> pr = q.getResultList();
+        return pr;
+    }
+
+    @Override
+    public List<ActividadesPoa> mostrarActividadesPoaCuadroDeMando(Short area, Short ejercicioFiscal, CuadroMandoIntegral cuadroMando) {
+        TypedQuery<ActividadesPoa> q = em.createQuery("SELECT a FROM ActividadesPoa a INNER JOIN a.cuadroMandoInt cm INNER JOIN cm.ejercicioFiscal ef WHERE a.area = :area AND ef.ejercicioFiscal=:ejercicioFiscal AND a.numeroS=:numeroS AND cm.cuadroMandoInt=:cuadroMandoInt", ActividadesPoa.class);
+        q.setParameter("area", area);
+        q.setParameter("ejercicioFiscal", ejercicioFiscal);
+        q.setParameter("numeroS", Short.parseShort("0"));
+        q.setParameter("cuadroMandoInt", cuadroMando.getCuadroMandoInt());
+        List<ActividadesPoa> pr = q.getResultList();
+        return pr;
+    }
+//  -------------------------------------------- EjesRegistro --------------------------------------------------
+
+    @Override
+    public EjesRegistro mostrarEjeRegistro(Integer clave) {
+        facadePoa.setEntityClass(EjesRegistro.class);
+        EjesRegistro pr = facadePoa.getEntityManager().find(EjesRegistro.class, clave);
+        if (pr == null) {
+            return null;
+        } else {
+            return pr;
+        }
+    }
+
+    @Override
+    public List<EjesRegistro> mostrarEjesRegistros() {
+        facadePoa.setEntityClass(EjesRegistro.class);
+        return facadePoa.findAll();
+    }
+//  -------------------------------------------- Estrategias -------------------------------------------------
+
+    @Override
+    public Estrategias mostrarEstrategia(Short clave) {
+        facadePoa.setEntityClass(Estrategias.class);
+        Estrategias pr = facadePoa.getEntityManager().find(Estrategias.class, clave);
+        if (pr == null) {
+            return null;
+        } else {
+            return pr;
+        }
+    }
+
+    @Override
+    public List<Estrategias> mostrarEstrategiasRegistro(Short ejerciciosFiscales, EjesRegistro ejesRegistro) {
+        TypedQuery<Estrategias> q = em.createQuery("SELECT e FROM CuadroMandoIntegral cm INNER JOIN cm.estrategia e INNER JOIN cm.ejercicioFiscal ef INNER JOIN cm.eje ej WHERE ej.eje=:eje AND ef.ejercicioFiscal=:ejercicioFiscal GROUP BY e.estrategia", Estrategias.class);
+        q.setParameter("eje", ejesRegistro.getEje());
+        q.setParameter("ejercicioFiscal", ejerciciosFiscales);
+        List<Estrategias> pr = q.getResultList();
+        return pr;
+    }
+
+    //  -------------------------------------------- Lineas Accion -------------------------------------------------
+    @Override
+    public LineasAccion mostrarLineaAccion(Short clave) {
+        facadePoa.setEntityClass(LineasAccion.class);
+        LineasAccion pr = facadePoa.getEntityManager().find(LineasAccion.class, clave);
+        if (pr == null) {
+            return null;
+        } else {
+            return pr;
+        }
+    }
+
+    @Override
+    public List<LineasAccion> mostrarLineasAccionRegistro(Short ejerciciosFiscales, EjesRegistro ejesRegistro, Estrategias estrategias) {
+        TypedQuery<LineasAccion> q = em.createQuery("SELECT l FROM CuadroMandoIntegral cm INNER JOIN cm.lineaAccion l INNER JOIN cm.estrategia e INNER JOIN cm.ejercicioFiscal ef INNER JOIN cm.eje ej WHERE ej.eje=:eje AND ef.ejercicioFiscal=:ejercicioFiscal AND e.estrategia=:estrategia GROUP BY l.lineaAccion", LineasAccion.class);
+        q.setParameter("eje", ejesRegistro.getEje());
+        q.setParameter("ejercicioFiscal", ejerciciosFiscales);
+        q.setParameter("estrategia", estrategias.getEstrategia());
+        List<LineasAccion> pr = q.getResultList();
+        return pr;
+    }
+//  -------------------------------------------- UnidadMedidas --------------------------------------------------
+
+    @Override
+    public List<UnidadMedidas> mostrarUnidadMedidases() {
+        facadePoa.setEntityClass(UnidadMedidas.class);
+        return facadePoa.findAll();
+    }
+
+    @Override
+    public UnidadMedidas agregarUnidadMedidas(UnidadMedidas nuevaUnidadMedidas) {
+        facadePoa.setEntityClass(UnidadMedidas.class);
+        facadePoa.create(nuevaUnidadMedidas);
+        facadePoa.flush();
+        return nuevaUnidadMedidas;
+    }
+
+    //  ------------------------------------------CuadroMandoIntegral -----------------------------------------------
+    @Override
+    public List<CuadroMandoIntegral> mostrarCuadroMandoIntegralRegistrpo(Short ejercicioFiscal, EjesRegistro ejesRegistro, Estrategias estrategias, LineasAccion lineasAccion) {
+        TypedQuery<CuadroMandoIntegral> q = em.createQuery("SELECT c FROM CuadroMandoIntegral c INNER JOIN c.ejercicioFiscal ef INNER JOIN c.eje ej INNER JOIN c.estrategia es INNER JOIN c.lineaAccion la WHERE ef.ejercicioFiscal = :ejercicioFiscal AND ej.eje=:eje AND es.estrategia=:estrategia AND la.lineaAccion=:lineaAccion", CuadroMandoIntegral.class);
+        q.setParameter("ejercicioFiscal", ejercicioFiscal);
+        q.setParameter("eje", ejesRegistro.getEje());
+        q.setParameter("estrategia", estrategias.getEstrategia());
+        q.setParameter("lineaAccion", lineasAccion.getLineaAccion());
+        List<CuadroMandoIntegral> pr = q.getResultList();
+        return pr;
+    }
+
+    @Override
+    public List<CuadroMandoIntegral> mostrarCuadroMandoIntegrals(Short ejercicioFiscal) {
+        TypedQuery<CuadroMandoIntegral> q = em.createQuery("SELECT c FROM CuadroMandoIntegral c INNER JOIN c.ejercicioFiscal e WHERE e.ejercicioFiscal = :ejercicioFiscal", CuadroMandoIntegral.class);
+        q.setParameter("ejercicioFiscal", ejercicioFiscal);
+        List<CuadroMandoIntegral> pr = q.getResultList();
+        return pr;
+    }
+// ---- Fin Registro de actividades
 //  -------------------------------------------- ActividadesPoa -------------------------------------------------
+
     @Override
     public List<ActividadesPoa> mostrarAreasQueRegistraronActividades() {
         TypedQuery<ActividadesPoa> q = em.createQuery("SELECT a FROM ActividadesPoa a GROUP BY a.area", ActividadesPoa.class);
@@ -45,24 +178,25 @@ public class ServiciosPoaSelectec implements EjbPoaSelectec {
     }
 
     @Override
-    public List<ActividadesPoa> mostrarActividadesPoasReporteArea(Short area,Short ejercicioFiscal) {
+    public List<ActividadesPoa> mostrarActividadesPoasReporteArea(Short area, Short ejercicioFiscal) {
         TypedQuery<ActividadesPoa> q = em.createQuery("SELECT a FROM ActividadesPoa a INNER JOIN a.cuadroMandoInt cm INNER JOIN cm.ejercicioFiscal ef WHERE a.area = :area AND ef.ejercicioFiscal=:ejercicioFiscal", ActividadesPoa.class);
-        q.setParameter("area", area); 
+        q.setParameter("area", area);
         q.setParameter("ejercicioFiscal", ejercicioFiscal);
         List<ActividadesPoa> pr = q.getResultList();
         return pr;
     }
-       @Override
-    public List<ActividadesPoa> mostrarSubActividadesPoa(Short area,Short ejercicioFiscal,Short numeroP,CuadroMandoIntegral cuadroMando){
+
+    @Override
+    public List<ActividadesPoa> mostrarSubActividadesPoa(Short area, Short ejercicioFiscal, Short numeroP, CuadroMandoIntegral cuadroMando) {
         TypedQuery<ActividadesPoa> q = em.createQuery("SELECT a FROM ActividadesPoa a INNER JOIN a.cuadroMandoInt cm INNER JOIN cm.ejercicioFiscal ef WHERE a.area = :area AND ef.ejercicioFiscal=:ejercicioFiscal AND a.numeroP=:numeroP AND cm.cuadroMandoInt=:cuadroMandoInt", ActividadesPoa.class);
-        q.setParameter("area", area); 
+        q.setParameter("area", area);
         q.setParameter("ejercicioFiscal", ejercicioFiscal);
         q.setParameter("numeroP", numeroP);
         q.setParameter("cuadroMandoInt", cuadroMando.getCuadroMandoInt());
         List<ActividadesPoa> pr = q.getResultList();
         return pr;
     }
-    
+
     @Override
     public ActividadesPoa agregarActividadesPoa(ActividadesPoa nuevaActividadesPoa) {
         facadePoa.setEntityClass(ActividadesPoa.class);
@@ -119,29 +253,7 @@ public class ServiciosPoaSelectec implements EjbPoaSelectec {
     }
 //  ------------------------------------------CuadroMandoIntegral -----------------------------------------------
 
-    @Override
-    public List<CuadroMandoIntegral> mostrarCuadroMandoIntegrals(Short ejercicioFiscal) {
-        TypedQuery<CuadroMandoIntegral> q = em.createQuery("SELECT c FROM CuadroMandoIntegral c INNER JOIN c.ejercicioFiscal e WHERE e.ejercicioFiscal = :ejercicioFiscal", CuadroMandoIntegral.class);
-        q.setParameter("ejercicioFiscal", ejercicioFiscal);
-        List<CuadroMandoIntegral> pr = q.getResultList();
-        return pr;
-    }
-//  -------------------------------------------- UnidadMedidas --------------------------------------------------
-
-    @Override
-    public List<UnidadMedidas> mostrarUnidadMedidases() {
-        facadePoa.setEntityClass(UnidadMedidas.class);
-        return facadePoa.findAll();
-    }
-//  -------------------------------------------- EjesRegistro --------------------------------------------------
-
-    @Override
-    public List<EjesRegistro> mostrarEjesRegistros() {
-        facadePoa.setEntityClass(EjesRegistro.class);
-        return facadePoa.findAll();
-    }
 //  -------------------------------------------- EjerciciosFiscales --------------------------------------------------
-
     @Override
     public List<EjerciciosFiscales> mostrarEjerciciosFiscaleses() {
         facadePoa.setEntityClass(EjesRegistro.class);
@@ -229,7 +341,10 @@ public class ServiciosPoaSelectec implements EjbPoaSelectec {
 
     @Override
     public List<ActividadesPoa> getActividadesPoasporEstarategias(Estrategias estrategia, EjesRegistro eje, Short ejercicio, Short area) {
-        return facadePoa.getEntityManager().createQuery("SELECT a FROM ActividadesPoa a INNER JOIN a.cuadroMandoInt cm INNER JOIN cm.eje ej INNER JOIN cm.ejercicioFiscal ef WHERE cm.estrategia.estrategia=:estrategia AND ej.eje=:eje AND ef.ejercicioFiscal=:ejercicioFiscal AND a.area=:area GROUP BY a.actividadPoa ORDER BY a.actividadPoa", ActividadesPoa.class)
+        List<ActividadesPoa> actividades = new ArrayList<>();
+        facadePoa.flush();
+        actividades.clear();
+        actividades = facadePoa.getEntityManager().createQuery("SELECT a FROM ActividadesPoa a INNER JOIN a.cuadroMandoInt cm INNER JOIN cm.eje ej INNER JOIN cm.ejercicioFiscal ef WHERE cm.estrategia.estrategia=:estrategia AND ej.eje=:eje AND ef.ejercicioFiscal=:ejercicioFiscal AND a.area=:area GROUP BY a.actividadPoa ORDER BY a.actividadPoa", ActividadesPoa.class)
                 .setParameter("estrategia", estrategia.getEstrategia())
                 .setParameter("eje", eje.getEje())
                 .setParameter("ejercicioFiscal", ejercicio)
@@ -238,6 +353,7 @@ public class ServiciosPoaSelectec implements EjbPoaSelectec {
                 .stream()
                 .distinct()
                 .collect(Collectors.toList());
+        return actividades;
     }
 
     @Override
