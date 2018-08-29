@@ -8,7 +8,7 @@
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:define name="head-end">
-         <!-- Inicio estilos par proceso electoral -->
+        <!-- Inicio estilos par proceso electoral -->
         <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
         <!-- Fin estilos par proceso electoral -->
         <style type="text/css">
@@ -35,7 +35,13 @@
                     <div id="main-buttons" class="hidden-sm hidden-xs" >
                         <p:toolbar id="tb">
                             <f:facet name="left">
-                                <p:outputLabel value="Total a evualuar: #{evaluacion360Admin.listaPersonalEvaluado.size()}" />
+                                <c:if test="#{logonMB.personal.actividad.actividad eq 2 || logonMB.personal.actividad.actividad eq 4}">
+                                    <p:outputLabel value="Total a evualuar: #{evaluacion360Admin.listaPersonalEvaluado.size()-1}" />
+                                </c:if>
+                                <c:if test="#{logonMB.personal.actividad.actividad eq 1 || logonMB.personal.actividad.actividad eq 3}">
+                                    <p:outputLabel value="Total a evualuar: #{evaluacion360Admin.listaPersonalEvaluado.size()}" />
+                                </c:if>
+
                                 <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>  
                                 <p:outputLabel value="Evaluados: #{evaluacion360Admin.evaluados}" />
                                 <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>

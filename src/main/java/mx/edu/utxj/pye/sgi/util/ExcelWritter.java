@@ -211,6 +211,9 @@ public class ExcelWritter implements Serializable {
                 escribirCelda(hoja.getRow(31), 7, redondear(lpe.getR14()));
                 escribirCelda(hoja.getRow(32), 7, redondear(lpe.getR15()));
                 escribirCelda(hoja.getRow(33), 7, redondear(lpe.getR16()));
+                // apartado de comentarios editado 29/08/2018
+                escribirCelda(hoja.getRow(38), 2, lpe.getR32());
+                escribirCelda(hoja.getRow(43), 2, lpe.getR33());
                 
 //                System.out.println("mx.edu.utxj.pye.sgi.util.ExcelWritter.editarLibro() lpe: " + lpe);
                 int index2 =18;
@@ -233,7 +236,7 @@ public class ExcelWritter implements Serializable {
             XSSFSheet hojaResumen = libro.getSheetAt(0);
             index = 1;
             for (ListaPersonalEvaluacion360Promedios lpe : listaPromedios) {
-//                System.out.println("mx.edu.utxj.pye.sgi.util.ExcelWritter.editarLibro() index: " + index);
+//                System.err.println("mx.edu.utxj.pye.sgi.util.ExcelWritter.editarLibro() index: " + index);
                 crearFila(hojaResumen, index);
                 escribirCelda(hojaResumen.getRow(index), 0, lpe.getPk().getEvaluado());
                 escribirCelda(hojaResumen.getRow(index), 1, lpe.getEvaluadoNombre());
@@ -242,7 +245,9 @@ public class ExcelWritter implements Serializable {
                 escribirCelda(hojaResumen.getRow(index), 4, lpe.getCompleto());
                 escribirCelda(hojaResumen.getRow(index), 5, lpe.getPromedio());
                 escribirCelda(hojaResumen.getRow(index), 6, lpe.getR32());
+//                System.err.println("Se ecribe el comentario r32 "+ lpe.getR32());
                 escribirCelda(hojaResumen.getRow(index), 7, lpe.getR33());
+//                System.err.println("Se ecribe el comentario r33 "+ lpe.getR33());
                 index++;
             }
             

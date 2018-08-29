@@ -97,6 +97,8 @@ public class Evaluacion360Admin1 implements Serializable {
             if (directivoSeleccionado != null) {
                 //paso 3 obtener la lista de subordnados del directivo elegido
                 listaSubordinados = ejbEvaluacion360.getListaSubordinados(directivoSeleccionado);
+                System.err.println("");
+                listaSubordinados.forEach(x -> {System.err.println("el personal : "+ x.getClave());});
                 System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.init() subordinados: " + listaSubordinados.size());
                 listaSubordinados.forEach(System.out::println);
                 //paso 4 obtener las fotos de los subordinados
