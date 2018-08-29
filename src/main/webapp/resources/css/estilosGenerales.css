@@ -134,16 +134,25 @@ button, input, optgroup, select, textarea{
 
 
 .principal{
+    background-color: #999999;    
+    color: #ffffff;
 }
 
 .eje{
-    background-color: #0081c2;
+    background-color: #032452;
+    color: #ffffff;
 }
 .est{
-    background-color: #999999;
+    background-color: #0675ca;
+    color: #ffffff;
 }
 .lac{
-    background-color: #cccccc;
+    background-color: #00a7d0;
+    color: #ffffff;
+}
+.actividad{
+    background-color: #66ccff;
+    color: #ffffff;
 }
 body .ui-datatable th[role="columnheader"].ui-state-default, body .ui-treetable th[role="columnheader"].ui-state-default{
     background-color: #cccccc;

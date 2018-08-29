@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+
+        </style>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>        
+        <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Plan Anual de Trabajo
+    </ui:define>
+
+    <ui:define name="description">
+        Registro de actividades
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:sidebar collapsed="true"/>
+        <h:form id="frmopciones" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                        <p:panel>
+                        </p:panel>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+        <h:form id="frmAlineacionEstratejica" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                        <p:panel header="Alineación estratégica">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-3 col-lg-3">            
+                                    <p:autoUpdate/>
+                                    <p:outputLabel value="Eje rector:" />
+                                    <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorPOARegistro.asignarParametrosRegistro}">
+                                        <f:selectItems value="#{controladorPOARegistro.listaEjesRegistros}" var="eje" itemValue="#{eje.eje}" itemLabel="#{eje.eje} -- #{eje.nombre}" />
+                                        <p:ajax update="estra" listener="#{controladorPOARegistro.imprimirValores()}"/>
+                                    </p:selectOneMenu> 
+                                    <p:message for="eje" display="tooltip" />
+                                </div>
+                                <div class="col-sm-12 col-md-9 col-lg-9">
+                                    <p:outputPanel id="estra">
+                                        <p:outputLabel value="Estrategia:" /> 
+                                        <p:selectOneMenu filter="true" filterMatchMode="contains" id="estrategia" value="#{controladorPOARegistro.estrategias.numero}" valueChangeListener="#{controladorPOARegistro.asignarParametrosRegistro}">
+                                            <f:selectItems value="#{controladorPOARegistro.listaEstrategias}" var="estrategia" itemValue="#{estrategia.estrategia}" itemLabel="#{estrategia.numero} -- #{estrategia.nombre}" />
+                                            <p:ajax update="linea" listener="#{controladorPOARegistro.imprimirValores()}"/>
+                                        </p:selectOneMenu>
+                                    </p:outputPanel>
+                                </div>
+                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                    <p:outputPanel id="linea">  
+                                        <p:outputLabel for="lineaAccion"  value="Linea de acción" />
+                                        <p:selectOneMenu filter="true" filterMatchMode="contains" id="lineaAccion" value="#{controladorPOARegistro.lineasAccion.lineaAccion}" valueChangeListener="#{controladorPOARegistro.asignarParametrosRegistro}">
+                                            <f:selectItems value="#{controladorPOARegistro.listaLineasAccion}" var="lineasAccion" itemValue="#{lineasAccion.lineaAccion}" itemLabel="#{lineasAccion.numero} -- #{lineasAccion.nombre}" />
+                                            <p:ajax update=":frm" listener="#{controladorPOARegistro.consultarListas()}"/>
+                                        </p:selectOneMenu> 
+                                        <p:message for="lineaAccion" display="tooltip" />
+                                    </p:outputPanel>
+                                </div>
+                            </div>
+                        </p:panel>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+        <h:form id="frm2" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6 col-lg-6">
+                            <div class="col-sm-6 col-md-4 col-lg-4">
+                                <p:outputLabel for="actividad"  value="Tipo" />
+                                <p:selectOneRadio id="actividad" widgetVar="actividad" value="#{controladorPOARegistro.tipo}" required="true"  requiredMessage="Se debe especificar que jerarquía tiene la actividad a registrar.">
+                                    <f:selectItem itemValue="Actividad" itemLabel="Actividad"/>
+                                    <f:selectItem itemValue="Subactividad" itemLabel="Sub actividad"/>
+                                    <p:ajax listener="#{controladorPOARegistro.imprimirValores()}" process="actividad" />
+                                </p:selectOneRadio> 
+                                <p:message for="actividad" display="tooltip" />
+                                <hr/>  
+                            </div>
+                            <div class="col-sm-6 col-md-6 col-lg-6">
+                                <p:outputLabel for="medida"  value="Unidad de medida" />
+                                <p:selectOneMenu filter="true" filterMatchMode="contains" required="true" requiredMessage="Es necesario que la actividad cuente con una unidad de medida" id="medida"  
+                                                 valueChangeListener="#{controladorPOARegistro.asignarUnidadMedida}" widgetVar="medida" value="#{controladorPOARegistro.unidadDMedida}" >
+                                    <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                    <f:selectItems value="#{controladorPOARegistro.listaUnidadMedidases}" var="unidadMedida" itemValue="#{unidadMedida.unidadMedida}" itemLabel="#{unidadMedida.nombre}" />
+                                    <p:ajax update="actividad"/>
+                                </p:selectOneMenu> 
+                                <p:message for="medida" display="tooltip" />
+                                <hr/>  
+                            </div> 
+                            <p:outputPanel >
+                                <p:autoUpdate/>
+                                <div class="col-sm-6 col-md-6 col-lg-6">                  
+                                    <p:inputText id="unidad" class="form-control" valueChangeListener="#{controladorPOARegistro.asignarUnidadMedida}" 
+                                                 disabled="#{!controladorPOARegistro.unidadMedidaNueva}" style="height:100%; width: 100%;" >
+                                        <p:ajax update="unidad"/>
+                                    </p:inputText>
+                                    <p:message for="unidad" display="tooltip" />
+                                    <hr/>
+                                </div>
+                                <div class="col-sm-6 col-md-3 col-lg-3" style="#{controladorPOARegistro.tipo eq 'Subactividad'?'visibility:collapse':'visibility:visible'}">
+                                    <p:outputLabel for="subactividades" value="Contará con subactividades" />
+                                    <p:selectOneRadio id="subactividades" value="#{controladorPOARegistro.esActividadPrincipal}">
+                                        <f:selectItem itemValue="#{true}" itemLabel="SI" />
+                                        <f:selectItem itemValue="#{false}" itemLabel="NO" />
+                                        <p:ajax listener="#{controladorPOARegistro.imprimirValores()}" process="subactividades" />
+                                    </p:selectOneRadio>
+                                    <hr/>  
+                                </div>  
+                            </p:outputPanel>
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <p:outputLabel for="nombre"  value="Nombre de la actividad" />
+                                <p:inputText id="nombre" value="#{controladorPOARegistro.actividadesPoa.denominacion}" required="true" requiredMessage="La actividad debe contar con un nombre" style="height:100%; width: 100%;" placeholder="Nombre de la actividad" />
+                                <p:message for="nombre" display="tooltip"/>     
+                                <hr/>  
+                            </div> 
+                            <p:outputPanel>            
+                                <p:autoUpdate/>
+                                <div class="col-sm-12 col-md-12 col-lg-12" style="#{controladorPOARegistro.tipo eq 'Subactividad'?'visibility:visible':'visibility:collapse'}">
+                                    <p:outputLabel for="actividadP"  value="Actividad principal" />
+                                    <p:selectOneMenu filter="true" filterMatchMode="contains" id="actividadP" value="#{controladorPOARegistro.numeroActividadPrincipal}" 
+                                                     valueChangeListener="#{controladorPOARegistro.asignarActividadPrincipal}"
+                                                     disabled="#{controladorPOARegistro.tipo eq 'Actividad'?true:controladorPOARegistro.tipo eq ''?true:false}" >
+                                        <f:selectItem itemValue="#{0}" itemLabel="Seleccione uno"/>
+                                        <f:selectItems value="#{controladorPOARegistro.listaActividadesPoasPadres}" var="actividadesPoa" itemValue="#{actividadesPoa.actividadPoa}" itemLabel="#{actividadesPoa.denominacion}" />
+                                        <p:ajax listener="#{controladorPOARegistro.imprimirValores()}" process="actividadP" />
+                                    </p:selectOneMenu> 
+                                    <p:message for="actividadP" display="tooltip" />
+                                    <hr/>  
+                                </div>
+                            </p:outputPanel>
+                        </div>
+                        <div class="col-sm-12 col-md-6 col-lg-6">
+                            <p:outputPanel>            
+                                <p:autoUpdate/>
+                                <p:outputLabel for="dtbCalendarizacion"  value="Calendarización" style="height:100%; width: 100%;"/>
+                                <p:panelGrid id="dtbCalendarizacion" columns="4">
+                                    <p:row> Enero:      <br/> <p:inputNumber id="mes1" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramados}" value="#{controladorPOARegistro.actividadesPoa.NPEnero}"  disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>                          
+                                    <p:row> Febrero:    <br/> <p:inputNumber id="mes2" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramados}" value="#{controladorPOARegistro.actividadesPoa.NPFebrero}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                    <p:row> Marzo:      <br/> <p:inputNumber id="mes3" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramados}" value="#{controladorPOARegistro.actividadesPoa.NPMarzo}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                    <p:row> Abril:      <br/> <p:inputNumber id="mes4" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramados}" value="#{controladorPOARegistro.actividadesPoa.NPAbril}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                    <p:row> Mayo:       <br/> <p:inputNumber id="mes5" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramados}" value="#{controladorPOARegistro.actividadesPoa.NPMayo}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                    <p:row> Junio:      <br/> <p:inputNumber id="mes6" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramados}" value="#{controladorPOARegistro.actividadesPoa.NPJunio}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                    <p:row> Julio:      <br/> <p:inputNumber id="mes7" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramados}" value="#{controladorPOARegistro.actividadesPoa.NPJulio}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                    <p:row> Agosto:     <br/> <p:inputNumber id="mes8" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramados}" value="#{controladorPOARegistro.actividadesPoa.NPAgosto}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                    <p:row> Septiembre: <br/> <p:inputNumber id="mes9" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramados}" value="#{controladorPOARegistro.actividadesPoa.NPSeptiembre}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                    <p:row> Octubre:    <br/> <p:inputNumber id="mes10" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramados}" value="#{controladorPOARegistro.actividadesPoa.NPOctubre}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                    <p:row> Noviembre:  <br/> <p:inputNumber id="mes11" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramados}" value="#{controladorPOARegistro.actividadesPoa.NPNoviembre}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                    <p:row> Diciembre:  <br/> <p:inputNumber id="mes12" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramados}" value="#{controladorPOARegistro.actividadesPoa.NPDiciembre}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                    <f:facet name="footer">
+                                        <h4>Total: #{controladorPOARegistro.actividadesPoa.total}</h4>
+                                    </f:facet>                            
+                                </p:panelGrid>
+                            </p:outputPanel>
+                        </div>
+                    </div> 
+                    <p:outputPanel>            
+                        <p:autoUpdate/>
+                        <p:commandButton value="Agregar" id="btnSiguiente" 
+                                         actionListener="#{controladorPOARegistro.anadirNuavActividad()}"  
+                                         process=":frm2" icon="fa fa-plus" 
+                                         styleClass="btn-primary" update=":frm2 :frm" 
+                                         oncomplete="actualizarTabla2()"
+                                         disabled="#{controladorPOARegistro.esActividadPrincipal eq false?controladorPOARegistro.actividadesPoa.total ==0?true:false:false}" 
+                                         title="#{controladorPOARegistro.actividadesPoa.total ==0?'La actividad a agregar debe tener algun valor programado':''}"/>
+                    </p:outputPanel>
+
+                </div>
+            </div>
+        </h:form>
+        <h:form id="frm" prependId="false" class="form-inline">
+            <p:separator/>
+            <div class="box box-solid">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 text-info text-center">
+                            <p:remoteCommand name="actualizarTabla2" actionListener="#{controladorPOARegistro.imprimirValores()}" update=":frm:dtbBajas" />
+
+                            <p:dataTable id="dtbBajas" widgetVar="dtbBajas" var="estrategiasRegistro"  sortBy="#{estrategiasRegistro.estrategias.estrategia}" expandableRowGroups="true"
+                                         value="#{controladorPOARegistro.listaEstrategiaActividadesesEje}">
+
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{controladorPOARegistro.ejesRegistro.eje} - #{controladorPOARegistro.ejesRegistro.nombre}" style="align-content: flex-end"/>
+                                </f:facet>
+
+                                <p:headerRow>
+                                    <p:column colspan="1" styleClass="est" style="text-align: left; color: #FFFFFF;">
+                                        <h:outputText value="#{controladorPOARegistro.ejesRegistro.eje}.#{estrategiasRegistro.estrategias.numero} -- #{estrategiasRegistro.estrategias.nombre}" style="text-align: left"/>
+                                    </p:column>
+                                </p:headerRow>
+                                <p:column colspan="1">
+                                    <p:dataTable value="#{estrategiasRegistro.actividadesPoas}" 
+                                                 var="pOa" sortBy="#{pOa.cuadroMandoInt.lineaAccion.lineaAccion}" 
+                                                 rowStyleClass="#{pOa.numeroS eq 0?'actividad':''}" 
+                                                 emptyMessage="No hay actividades registradas">
+
+                                        <p:headerRow>
+                                            <p:column colspan="18" styleClass="lac" style="text-align: left">
+                                                <h:outputText value="#{controladorPOARegistro.ejesRegistro.eje}.#{estrategiasRegistro.estrategias.numero}.#{pOa.cuadroMandoInt.lineaAccion.numero} --#{pOa.cuadroMandoInt.lineaAccion.nombre}"/>
+                                            </p:column>
+                                        </p:headerRow>  
+
+                                        <f:facet name="header"></f:facet>
+
+                                        <p:columnGroup type="header">
+                                            <p:row class="success">
+                                                <p:column colspan="2" rowspan="2" headerText="No." style="width: 50px;"/>
+                                                <p:column rowspan="2" headerText="Actividad" />
+                                                <p:column rowspan="2" headerText="Unidad de medida" />
+                                                <p:column colspan="12" headerText="Calendarización de Metas" style="width: 1000px;"/>  
+                                                <p:column rowspan="2" headerText="Total" style="width: 100px;"/>
+                                                <p:column rowspan="2" headerText="Opciones" style="width:150px; "/>
+                                            </p:row>
+                                            <p:row class="success">
+                                                <p:column headerText="Enero" />
+                                                <p:column headerText="Febrero" />
+                                                <p:column headerText="Marzo" />
+                                                <p:column headerText="Abril" />
+                                                <p:column headerText="Mayo" />                                                    
+                                                <p:column headerText="Junio" />
+                                                <p:column headerText="Julio" />
+                                                <p:column headerText="Agosto" />
+                                                <p:column headerText="Septiembre" />
+                                                <p:column headerText="Octubre" />
+                                                <p:column headerText="Noviembre" />
+                                                <p:column headerText="Diciembre" />
+                                            </p:row>
+                                        </p:columnGroup>
+
+                                        <p:column> 
+                                            <h:outputText value="#{pOa.numeroP}" />
+                                        </p:column>
+                                        <p:column> 
+                                            <h:outputText value="#{pOa.numeroS}" />
+                                        </p:column>
+                                        <p:column> 
+                                            <h:outputText value="#{pOa.denominacion}" /> 
+                                        </p:column>
+                                        <p:column> 
+                                            <h:outputText value="#{pOa.unidadMedida.nombre}" />
+                                        </p:column>
+                                        <p:column> 
+                                            <h:outputText value="#{pOa.NPEnero}" />
+                                        </p:column>
+                                        <p:column> 
+                                            <h:outputText value="#{pOa.NPFebrero}" /> 
+                                        </p:column>
+                                        <p:column> 
+                                            <h:outputText value="#{pOa.NPMarzo}" /> 
+                                        </p:column>
+                                        <p:column> 
+                                            <h:outputText value="#{pOa.NPAbril}" /> 
+                                        </p:column>
+                                        <p:column> 
+                                            <h:outputText value="#{pOa.NPMayo}" /> 
+                                        </p:column>
+                                        <p:column> 
+                                            <h:outputText value="#{pOa.NPJunio}" /> 
+                                        </p:column>
+                                        <p:column> 
+                                            <h:outputText value="#{pOa.NPJulio}" /> 
+                                        </p:column>
+                                        <p:column> 
+                                            <h:outputText value="#{pOa.NPAgosto}" /> 
+                                        </p:column>
+                                        <p:column> 
+                                            <h:outputText value="#{pOa.NPSeptiembre}" /> 
+                                        </p:column>
+                                        <p:column> 
+                                            <h:outputText value="#{pOa.NPOctubre}" /> 
+                                        </p:column>
+                                        <p:column> 
+                                            <h:outputText value="#{pOa.NPNoviembre}" /> 
+                                        </p:column>
+                                        <p:column> 
+                                            <h:outputText value="#{pOa.NPDiciembre}" /> 
+                                        </p:column>
+                                        <p:column> 
+                                            <h:outputText value="#{pOa.total}" /> 
+                                        </p:column>
+                                        <p:column>
+                                            <p:commandButton icon="fa fa-edit" title="Editar actividad" styleClass="btn-primary" oncomplete="PF('dlgActualizacionActividad').show()" process="@this" update=":frmActualizaActividad"
+                                                             actionListener="#{controladorPOARegistro.buscarActividadesVariasPlaneacionCuatrimestral(pOa)}" onsuccess="actualizarTabla2()">
+                                                <span class="label label-success"></span>
+                                                <f:setPropertyActionListener target="#{controladorPOARegistro.actividadPoaEditando}" value="#{pOa}" />
+                                            </p:commandButton>
+                                            <p:spacer width="20px"/>
+                                            <p:commandButton actionListener="#{controladorPOARegistro.eliminarActividad(pOa)}" process="@this" update=":frm:dtbBajas" onsuccess="actualizarTabla2()" oncomplete="actualizarTabla2()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar actividad">
+                                                <p:confirm header="Confirmación" message="¿Confirma la eliminación de la actividad #{pOa.denominacion} #{pOa.numeroS eq 0 ?',recuerde que se eliminaran las sub actividades que contenga':''} ?" icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                        </p:column>
+                                        <p:autoUpdate/>
+                                    </p:dataTable>
+                                </p:column> 
+
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
+        </h:form>
+
+        <p:dialog id="dlgActualizacionActividad" header="Parámetros de registro que ya cuentan con registros" widgetVar="dlgActualizacionActividad" modal="true" 
+                  showEffect="fade" hideEffect="fade" resizable="false" width="800" closeOnEscape="true">
+            <h:form id="frmActualizaActividad">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <div class="col-sm-6 col-md-4 col-lg-4">
+                            <p:outputLabel for="medida1"  value="Unidad de medida" />
+                            <p:selectOneMenu filter="true" filterMatchMode="contains" required="true" requiredMessage="Es necesario que la actividad cuente con una unidad de medida" id="medida1"  value="#{controladorPOARegistro.unidadDMedida}" >
+                                <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                <f:selectItems value="#{controladorPOARegistro.listaUnidadMedidases}" var="unidadMedida" itemValue="#{unidadMedida.unidadMedida}" itemLabel="#{unidadMedida.nombre}" />
+                            </p:selectOneMenu> 
+                            <p:message for="medida1" display="tooltip" /> 
+                            <hr/>
+                        </div> 
+                        <div class="col-sm-12 col-md-8 col-lg-8">
+                            <p:outputLabel for="nombre1"  value="Nombre de la actividad" />
+                            <p:inputText id="nombre1" value="#{controladorPOARegistro.actividadPoaEditando.denominacion}" required="true" requiredMessage="La actividad debe contar con un nombre" style="height:100%; width: 100%;" placeholder="Nombre de la actividad" />
+                            <p:message for="nombre1" display="tooltip"/>    
+                            <hr/>  
+                        </div> 
+                        <p:outputPanel>            
+                            <p:autoUpdate/>
+                            <div class="col-sm-12 col-md-12 col-lg-12" style="#{controladorPOARegistro.tipo eq 'Subactividad'?'visibility:visible':'visibility:collapse'}">
+                                <p:outputLabel for="actividadP"  value="Actividad principal" />
+                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="actividadP" value="#{controladorPOARegistro.numeroActividadPrincipal}" 
+                                                 valueChangeListener="#{controladorPOARegistro.asignarNumeroP}"
+                                                 disabled="#{controladorPOARegistro.tipo eq 'Actividad'?true:controladorPOARegistro.tipo eq ''?true:false}" >
+                                    <f:selectItem itemValue="#{0}" itemLabel="Seleccione uno"/>
+                                    <f:selectItems value="#{controladorPOARegistro.listaActividadesPoasPadres}" var="actividadesPoa" itemValue="#{actividadesPoa.actividadPoa}" itemLabel="#{actividadesPoa.denominacion}" />
+                                    <p:ajax listener="#{controladorPOARegistro.imprimirValores()}" process="actividadP" />
+                                </p:selectOneMenu> 
+                                <p:message for="actividadP" display="tooltip" /> 
+                                <hr/>
+                            </div>
+                        </p:outputPanel>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <p:outputPanel>            
+                            <p:autoUpdate/>
+                            <p:outputLabel for="dtbCalendarizacion"  value="Calendarización" style="height:100%; width: 100%;"/>
+                            <p:panelGrid id="dtbCalendarizacion" columns="4">
+                                <p:row> Enero:      <br/> <p:inputNumber id="mes1" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramadosEdicion}" value="#{controladorPOARegistro.actividadPoaEditando.NPEnero}"  disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>                          
+                                <p:row> Febrero:    <br/> <p:inputNumber id="mes2" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramadosEdicion}" value="#{controladorPOARegistro.actividadPoaEditando.NPFebrero}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                <p:row> Marzo:      <br/> <p:inputNumber id="mes3" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramadosEdicion}" value="#{controladorPOARegistro.actividadPoaEditando.NPMarzo}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                <p:row> Abril:      <br/> <p:inputNumber id="mes4" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramadosEdicion}" value="#{controladorPOARegistro.actividadPoaEditando.NPAbril}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                <p:row> Mayo:       <br/> <p:inputNumber id="mes5" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramadosEdicion}" value="#{controladorPOARegistro.actividadPoaEditando.NPMayo}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                <p:row> Junio:      <br/> <p:inputNumber id="mes6" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramadosEdicion}" value="#{controladorPOARegistro.actividadPoaEditando.NPJunio}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                <p:row> Julio:      <br/> <p:inputNumber id="mes7" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramadosEdicion}" value="#{controladorPOARegistro.actividadPoaEditando.NPJulio}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                <p:row> Agosto:     <br/> <p:inputNumber id="mes8" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramadosEdicion}" value="#{controladorPOARegistro.actividadPoaEditando.NPAgosto}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                <p:row> Septiembre: <br/> <p:inputNumber id="mes9" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramadosEdicion}" value="#{controladorPOARegistro.actividadPoaEditando.NPSeptiembre}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                <p:row> Octubre:    <br/> <p:inputNumber id="mes10" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramadosEdicion}" value="#{controladorPOARegistro.actividadPoaEditando.NPOctubre}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                <p:row> Noviembre:  <br/> <p:inputNumber id="mes11" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramadosEdicion}" value="#{controladorPOARegistro.actividadPoaEditando.NPNoviembre}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                <p:row> Diciembre:  <br/> <p:inputNumber id="mes12" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARegistro.asignarNumerosProgramadosEdicion}" value="#{controladorPOARegistro.actividadPoaEditando.NPDiciembre}" disabled="#{controladorPOARegistro.esActividadPrincipal}"><p:ajax update="@this" process="@this" listener="#{controladorPOARegistro.imprimirValores()}"/></p:inputNumber> </p:row>
+                                <f:facet name="footer">
+                                    <h4>Total: #{controladorPOARegistro.actividadPoaEditando.total}</h4>
+                                </f:facet>                            
+                            </p:panelGrid>
+                        </p:outputPanel>
+                    </div>
+                </div> 
+                <p:commandButton value="Actualizar" id="btnActualiza" actionListener="#{controladorPOARegistro.onRowEdit()}"  oncomplete="PF('dlgActualizacionActividad').hide()" onsuccess="actualizarTabla2()" process=":frmActualizaActividad" icon="fa fa-edit" styleClass="btn-primary" update=":frm2" />
+                <p:commandButton value="Cancelar" id="btnCancelar" actionListener="#{controladorPOARegistro.imprimirValores()}"  oncomplete="PF('dlgActualizacionActividad').hide()" process=":frmActualizaActividad" icon="fa fa-times" styleClass="btn-primary" update=":frm2" />
+
+            </h:form>
+        </p:dialog>
+
+
+
+        <p:dialog id="dlgParametrosRegistrados" header="Parámetros de registro que ya cuentan con registros" widgetVar="dlgParametrosRegistrados" modal="true" 
+                  showEffect="fade" hideEffect="fade" resizable="false" width="800" closeOnEscape="true">
+            <h:form id="frmParametrosReguistrados">
+                <p:outputPanel>
+                    <p:autoUpdate/>
+                </p:outputPanel>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>
