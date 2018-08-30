@@ -114,7 +114,7 @@ public class ControladorPOARegistro implements Serializable {
 
         listaActividadesPoas = poaSelectec.mostrarActividadesPoasAreaEjeyEjercicioFiscal(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, ejesRegistro);
         if (!listaActividadesPoas.isEmpty()) {
-            Collections.sort(listaActividadesPoas, (x, y) -> Short.compare(x.getNumeroP(), y.getNumeroP()));
+            Collections.sort(listaActividadesPoas, (x, y) -> (x.getNumeroP()+"."+x.getNumeroS()).compareTo(y.getNumeroP()+"."+y.getNumeroS()));
             listaActividadesPoas.forEach((t) -> {
                 if(t.getNumeroS()==0){
                     listaActividadesPoasPadres.add(t);
@@ -138,7 +138,7 @@ public class ControladorPOARegistro implements Serializable {
                     List<ActividadesPoa> listaActividadesPoasFiltradas=new ArrayList<>();
                     listaActividadesPoasFiltradas.clear();
                     listaActividadesPoasFiltradas=poaSelectec.getActividadesPoasporEstarategias(t, e.getEjess(), ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
-                    Collections.sort(listaActividadesPoasFiltradas, (x,y) -> Short.compare(x.getNumeroP(), y.getNumeroP()));
+                    Collections.sort(listaActividadesPoasFiltradas, (x,y) -> (x.getNumeroP()+"."+x.getNumeroS()).compareTo(y.getNumeroP()+"."+y.getNumeroS()));
                     listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(t, listaActividadesPoasFiltradas));
                 });
             });
@@ -351,7 +351,7 @@ public class ControladorPOARegistro implements Serializable {
             actividadesPoa.setNumeroP(actividadPoaPrincipal.getNumeroP());
             actividadesPoa.setNumeroS(Short.parseShort(numeroActividadSecuendaria.toString()));
             actividadesPoa.setBandera("y");            
-            actividadesPoa.setActividadPadre(actividadPoaPrincipal.getActividadPadre());
+            actividadesPoa.setActividadPadre(actividadPoaPrincipal.getActividadPoa());
             actividadesPoa.setCuadroMandoInt(new CuadroMandoIntegral(actividadPoaPrincipal.getCuadroMandoInt().getCuadroMandoInt()));
             System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARegistro.anadirNuavActividad(3)" + actividadesPoa.getNumeroP());
         }
@@ -604,7 +604,7 @@ public class ControladorPOARegistro implements Serializable {
                 }
             });
 
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARegistro.onRowEdit(3)");
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARegistro.onRowEdit(3)");
             listaActividadesPoasHijas.forEach((s) -> {
                 if (s.getNumeroP() == actividadPoaPrincipalEditadaAnterior.getNumeroP()) {
                     numeroActividadSecuendaria = numeroActividadSecuendaria + 1;
@@ -627,6 +627,9 @@ public class ControladorPOARegistro implements Serializable {
 
             listaActividadesPoasPadres.forEach((t) -> {
                 if (t.getNumeroP() == actividadPoaPrincipalEditadaAnterior.getNumeroP()) {
+                    if(listaActividadesPoasHijas.isEmpty()){
+                        t.setBandera("y");
+                    }
                     totalProgramado = mes1 + mes2 + mes3 + mes4 + mes5 + mes6 + mes7 + mes8 + mes9 + mes10 + mes11 + mes12;
                     t.setNPEnero(Short.parseShort(mes1.toString()));
                     t.setNPFebrero(Short.parseShort(mes2.toString()));
@@ -699,6 +702,9 @@ public class ControladorPOARegistro implements Serializable {
 
             listaActividadesPoasPadres.forEach((t) -> {
                 if (t.getNumeroP() == actividadPoaEditando.getNumeroP()) {
+                    if(listaActividadesPoasHijas.isEmpty()){
+                        t.setBandera("y");
+                    }
                     totalProgramado = mes1 + mes2 + mes3 + mes4 + mes5 + mes6 + mes7 + mes8 + mes9 + mes10 + mes11 + mes12;
                     t.setNPEnero(Short.parseShort(mes1.toString()));
                     t.setNPFebrero(Short.parseShort(mes2.toString()));
