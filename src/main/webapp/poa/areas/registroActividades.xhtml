@@ -205,13 +205,13 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12 text-info text-center">
                             <p:remoteCommand name="actualizarTabla2" actionListener="#{controladorPOARegistro.imprimirValores()}" update=":frm:dtbBajas" />
+                            <div styleClass="eje" style="text-align: left; color: #FFFFFF;">
+                                <p:outputLabel value="#{controladorPOARegistro.ejesRegistro.eje} - #{controladorPOARegistro.ejesRegistro.nombre}"  />
+                            </div>
+                            
 
                             <p:dataTable id="dtbBajas" widgetVar="dtbBajas" var="estrategiasRegistro"  sortBy="#{estrategiasRegistro.estrategias.estrategia}" expandableRowGroups="true"
                                          value="#{controladorPOARegistro.listaEstrategiaActividadesesEje}">
-
-                                <f:facet name="header">
-                                    <p:outputLabel value="#{controladorPOARegistro.ejesRegistro.eje} - #{controladorPOARegistro.ejesRegistro.nombre}" style="align-content: flex-end"/>
-                                </f:facet>
 
                                 <p:headerRow>
                                     <p:column colspan="1" styleClass="est" style="text-align: left; color: #FFFFFF;">
