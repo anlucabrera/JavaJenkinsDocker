@@ -30,6 +30,8 @@ public interface EjbPoaSelectec {
     public EjesRegistro mostrarEjeRegistro(Integer clave);
 
     public List<EjesRegistro> mostrarEjesRegistros();
+    
+    public List<EjesRegistro> mostrarEjesRegistrosAreas(Short area,Short ejerciciosFiscales);
 //  -------------------------------------------- Estrategias -------------------------------------------------
 
     public Estrategias mostrarEstrategia(Short clave);
