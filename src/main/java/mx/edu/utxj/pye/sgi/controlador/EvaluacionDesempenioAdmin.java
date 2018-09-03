@@ -84,7 +84,7 @@ public class EvaluacionDesempenioAdmin implements Serializable {
 
             //paso 1 obtener lista de directivos
 //        listaDirectivos = evaluacionDesempenioEJB.getListaDirectivos();
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() ld: " + listaDirectivos);
+//        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() ld: " + listaDirectivos);
             //paso 2 elegir un directivo
 //        directivoSeleccionado = new ListaPersonal(30);
 //        if(listaDirectivos.contains(directivoSeleccionado)){
@@ -92,14 +92,14 @@ public class EvaluacionDesempenioAdmin implements Serializable {
 //        }
             facade.setEntityClass(ListaPersonal.class);
             directivoSeleccionado = (ListaPersonal) facade.find(Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() elegido: " + directivoSeleccionado);
+        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() elegido: " + directivoSeleccionado);
 
             //paso 3 obtener la lista de subordnados del directivo elegido
             listaSubordinados = evaluacionDesempenioEJB.getListaSubordinados(directivoSeleccionado);
             listaSubordinados.forEach(s -> {
-                System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() subordinado 1: " + s.getClave());
+                //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() subordinado 1: " + s.getClave());
             });
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() subordinados: " + listaSubordinados.size());
+//        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() subordinados: " + listaSubordinados.size());
 
             //paso 4 obtener las fotos de los subordinados
             //se convierte en paso 11 debido a que la lista de personal debe decidirse segun las opciones en pantalla
@@ -110,14 +110,14 @@ public class EvaluacionDesempenioAdmin implements Serializable {
                 //paso 6 obtener periodo activo
                 facade.setEntityClass(PeriodosEscolares.class);
                 periodoEscolar = (PeriodosEscolares) facade.find(desempenioEvaluacion.getPeriodo());
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() periodoEscolar:" + periodoEscolar);
+//        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() periodoEscolar:" + periodoEscolar);
 
                 if (directivoSeleccionado.getActividad() == 2 && desempenioEvaluacion != null || directivoSeleccionado.getActividad() == 4 && desempenioEvaluacion != null) {
 
                     //paso 7 obtener respuestas
                     evaluacionDesempenioEJB.cargarResultadosAlmacenados(desempenioEvaluacion, directivoSeleccionado, listaSubordinados);
 //        for(DesempenioEvaluacionResultados der : desempenioEvaluacion.getDesempenioEvaluacionResultadosList()){
-//            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init(7) der: " + der);
+//            //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init(7) der: " + der);
 //        }
 
                     //paso8 inicializar claves de opciones
@@ -137,11 +137,11 @@ public class EvaluacionDesempenioAdmin implements Serializable {
 
                     initPersonalEvaluado();
                     cargada = true;
-                    System.out.println("se carga  des");
+                    //System.out.println("se carga  des");
                 }
             }
         } catch (Exception e) {
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() e: " + e.getMessage());
+            //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() e: " + e.getMessage());
             cargada = false;
         }
     }
@@ -150,21 +150,21 @@ public class EvaluacionDesempenioAdmin implements Serializable {
         opciones.clear();
         Integer index = 0;
         for (Integer clave : clavesOpciones) {
-//            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init(9) clave: " + clave);
+//            //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init(9) clave: " + clave);
             opciones.put(index, new ArrayList<>());
             facade.setEntityClass(ListaPersonal.class);
             ListaPersonal lpPrimero = (ListaPersonal) facade.find(clave);
             opciones.get(index).add(lpPrimero);
             //opcionesSelect.get(index).add(e)
             for (ListaPersonal lp : listaSubordinados) {
-//                System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init(9) res: " + (!clavesOpciones.contains(lp.getClave()) || clave.equals(lp.getClave())) + ", lp: " + lp);
+//                //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init(9) res: " + (!clavesOpciones.contains(lp.getClave()) || clave.equals(lp.getClave())) + ", lp: " + lp);
                 if ((!clavesOpciones.contains(lp.getClave()) || clave.equals(lp.getClave())) && !opciones.get(index).contains(lp)) {
                     opciones.get(index).add(lp);
                 }
             }
             index++;
         }
-//        opciones.forEach((k,v) -> System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.initOpciones(" + k + "): " +  v ));
+//        opciones.forEach((k,v) -> //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.initOpciones(" + k + "): " +  v ));
     }
 
     private void initRespuestas() {
@@ -174,7 +174,7 @@ public class EvaluacionDesempenioAdmin implements Serializable {
         }).forEachOrdered((subordinado) -> {
             Integer index = desempenioEvaluacion.getDesempenioEvaluacionResultadosList().indexOf(new DesempenioEvaluacionResultados(desempenioEvaluacion.getEvaluacion(), directivoSeleccionado.getClave(), subordinado.getClave()));
             DesempenioEvaluacionResultados resultado = desempenioEvaluacion.getDesempenioEvaluacionResultadosList().get(index);
-//            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init(10) resultado: " + resultado);
+//            //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init(10) resultado: " + resultado);
             for (float fi = 1.0f; fi <= 21.0f; fi++) {
                 respuestas.get(subordinado.getClave()).put(fi, evaluacionDesempenioEJB.obtenerRespuestaPorPregunta(resultado, fi));
             }
@@ -190,16 +190,16 @@ public class EvaluacionDesempenioAdmin implements Serializable {
             return clave;
         }).forEachOrdered((clave) -> {
             ListaPersonalDesempenioEvaluacion lpde = new ListaPersonalDesempenioEvaluacion(new DesempenioEvaluacionResultadosPK(desempenioEvaluacion.getEvaluacion(), directivoSeleccionado.getClave(), clave));
-//            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.initPersonalEvaluando() lpde: " + lpde);
+//            //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.initPersonalEvaluando() lpde: " + lpde);
             listaPersonalEvaluando.add(listaPersonalEvaluado.get(listaPersonalEvaluado.indexOf(lpde)));
 //            listaPersonalEvaluando.add((ListaPersonalDesempenioEvaluacion)facade.find(new DesempenioEvaluacionResultadosPK(desempenioEvaluacion.getEvaluacion(), directivoSeleccionado.getClave(), clave)));
-        });//        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init(11) evaluando: " + listaPersonalEvaluando.toString());
+        });//        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init(11) evaluando: " + listaPersonalEvaluando.toString());
     }
 
     private void initPersonalEvaluado() {
         listaPersonalEvaluado = null;
         listaPersonalEvaluado = evaluacionDesempenioEJB.obtenerListaResultadosPorEvaluacionEvaluador(desempenioEvaluacion, directivoSeleccionado);
-//        listaPersonalEvaluado.forEach(lp -> System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.initPersonalEvaluado() lp: " + lp));
+//        listaPersonalEvaluado.forEach(lp -> //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.initPersonalEvaluado() lp: " + lp));
         evaluados = listaPersonalEvaluado.stream().filter(personal -> personal.isCompleto()).collect(Collectors.toList()).size();
         evaluando = listaPersonalEvaluado.stream().filter(personal -> personal.isIncompleto()).collect(Collectors.toList()).size();
     }
@@ -209,7 +209,7 @@ public class EvaluacionDesempenioAdmin implements Serializable {
         String[] datos = origen.getId().split("_");
         Float pregunta_id = Float.parseFloat(datos[0].replaceAll("-", "\\.").replaceAll("r", ""));
         Integer clave = Integer.parseInt(datos[1]);
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.guardarRespuesta(" + pregunta_id + ") evaluado: " + clave + ", respuesta: " + e.getNewValue() );
+//        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.guardarRespuesta(" + pregunta_id + ") evaluado: " + clave + ", respuesta: " + e.getNewValue() );
 
         //1 detectar si ya se tiene la respuesta, de lo contrario generarla
         DesempenioEvaluacionResultados resultado = new DesempenioEvaluacionResultados(desempenioEvaluacion.getEvaluacion(), directivoSeleccionado.getClave(), clave);
@@ -230,18 +230,18 @@ public class EvaluacionDesempenioAdmin implements Serializable {
 //        ListaPersonalDesempenioEvaluacion lpde = (ListaPersonalDesempenioEvaluacion)facade.find(resultado.getPk());
 //        facade.getEntityManager().refresh(lpde);
 //        listaPersonalEvaluando.set(listaPersonalEvaluando.indexOf(lpde), lpde);
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.guardarRespuesta() evaluacion: " + desempenioEvaluacion);
+//        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.guardarRespuesta() evaluacion: " + desempenioEvaluacion);
     }
 
     public void cambiarOpciones(ValueChangeEvent e) throws IOException {
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.cambiarOpciones():" + e.getNewValue());
+//        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.cambiarOpciones():" + e.getNewValue());
         SelectOneMenu origen = (SelectOneMenu) e.getSource();
         String id = origen.getId();
         Integer claveSeleccionada = Integer.parseInt(e.getNewValue().toString().split("clave=")[1].split(",")[0]); // lp.getClave();  //Integer.parseInt(e.getNewValue().toString());
         Integer posicion = Integer.parseInt(id.replace("opcion", ""));
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.cambiarOpciones() id: " + id);
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.cambiarOpciones() claveSeleccionada: " + claveSeleccionada);
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.cambiarOpciones() posición: " + posicion);
+//        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.cambiarOpciones() id: " + id);
+//        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.cambiarOpciones() claveSeleccionada: " + claveSeleccionada);
+//        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.cambiarOpciones() posición: " + posicion);
 
         clavesOpciones.set(posicion, claveSeleccionada);
         initOpciones();
@@ -253,12 +253,12 @@ public class EvaluacionDesempenioAdmin implements Serializable {
     public void continuarEvaluando() throws IOException {
         init();
         initPersonalEvaluado();
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.continuarEvaluando(1) clavesOpciones: " + clavesOpciones);
+//        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.continuarEvaluando(1) clavesOpciones: " + clavesOpciones);
 
         clavesOpciones.clear();
         int total = 0;
         for (ListaPersonalDesempenioEvaluacion lpde : listaPersonalEvaluado.stream().filter(personal -> personal.isIncompleto()).collect(Collectors.toList())) {
-//            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.continuarEvaluando() incompleto: " + lpde);
+//            //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.continuarEvaluando() incompleto: " + lpde);
             if (total < 4) {
                 clavesOpciones.add(lpde.getPk().getEvaluado());
                 total++;
@@ -269,7 +269,7 @@ public class EvaluacionDesempenioAdmin implements Serializable {
 
         if (clavesOpciones.size() < 4) {
             for (ListaPersonalDesempenioEvaluacion lpde : listaPersonalEvaluado.stream().filter(personal -> personal.isCompleto()).collect(Collectors.toList())) {
-//                System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.continuarEvaluando() completo: " + lpde);
+//                //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.continuarEvaluando() completo: " + lpde);
                 if (total < 4) {
                     clavesOpciones.add(lpde.getPk().getEvaluado());
                     total++;
@@ -282,13 +282,13 @@ public class EvaluacionDesempenioAdmin implements Serializable {
         initPersonalEvaluando();
         initOpciones();
 
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.continuarEvaluando(2) clavesOpciones: " + clavesOpciones);
+//        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.continuarEvaluando(2) clavesOpciones: " + clavesOpciones);
         Faces.refresh();
     }
 
     public String getId(@NonNull Float preguntaNumero, @NonNull Integer trabajadorClave) {
         String id = "r" + preguntaNumero.toString().replaceAll("\\.", "-") + "_" + trabajadorClave.toString();
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.getId(): " + id);
+//        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.getId(): " + id);
         return id;
     }
 
@@ -300,26 +300,26 @@ public class EvaluacionDesempenioAdmin implements Serializable {
         String ruta = ew.enviarLibro();
         Ajax.oncomplete("descargar('" + ew.enviarLibro() + "');");
 
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulas() ruta: " + ruta);
+//        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulas() ruta: " + ruta);
     }
 
     public void descargarCedulasDestiempo() throws IOException {
         listaPersonalEvaluadoAntes = new ArrayList<>();
         
         DesempenioEvaluaciones ultimaEvaluacion = evaluacionDesempenioEJB.getUltimaEvaluacionDesempenio();
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() la ultima evaluacion es : "+ ultimaEvaluacion);
+        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() la ultima evaluacion es : "+ ultimaEvaluacion);
         
         directivoSeleccionado = (ListaPersonal) facade.find(Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() el directivo es : "+ directivoSeleccionado);
+        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() el directivo es : "+ directivoSeleccionado);
         
         listaSubordinados = evaluacionDesempenioEJB.getListaSubordinados(directivoSeleccionado);
         
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() los subordinados actuales son : " + listaSubordinados);
+        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() los subordinados actuales son : " + listaSubordinados);
         evaluacionDesempenioEJB.cargarResultadosAlmacenados(ultimaEvaluacion, directivoSeleccionado, listaSubordinados);
         
         
         PeriodosEscolares periodoSeleccionado = evaluacionDesempenioEJB.getPeriodoDeLaEvaluacionDesempenio(ultimaEvaluacion.getPeriodo());
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() el periodo seleccionado = : " + periodoSeleccionado);
+        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() el periodo seleccionado = : " + periodoSeleccionado);
         List<ListaPersonalDesempenioEvaluacion> l =
         /*listaPersonalEvaluadoAntes =*/ evaluacionDesempenioEJB.obtenerListaResultadosPorEvaluacionEvaluador(ultimaEvaluacion, directivoSeleccionado);
         l.forEach(System.out::println);
@@ -340,19 +340,19 @@ public class EvaluacionDesempenioAdmin implements Serializable {
         listaPersonalEvaluadoAntes = new ArrayList<>();
         
         DesempenioEvaluaciones ultimaEvaluacion = evaluacionDesempenioEJB.getUltimaEvaluacionDesempenio();
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() la ultima evaluacion es : "+ ultimaEvaluacion);
+        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() la ultima evaluacion es : "+ ultimaEvaluacion);
         
         directivoSeleccionado = (ListaPersonal) facade.find(Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() el directivo es : "+ directivoSeleccionado);
+        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() el directivo es : "+ directivoSeleccionado);
         
         listaSubordinados = evaluacionDesempenioEJB.getListaSubordinados(directivoSeleccionado);
         
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() los subordinados actuales son : " + listaSubordinados);
+        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() los subordinados actuales son : " + listaSubordinados);
         evaluacionDesempenioEJB.cargarResultadosAlmacenados(ultimaEvaluacion, directivoSeleccionado, listaSubordinados);
         
         
         PeriodosEscolares periodoSeleccionado = evaluacionDesempenioEJB.getPeriodoDeLaEvaluacionDesempenio(ultimaEvaluacion.getPeriodo());
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() el periodo seleccionado = : " + periodoSeleccionado);
+        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() el periodo seleccionado = : " + periodoSeleccionado);
         List<ListaPersonalDesempenioEvaluacion> l =
         /*listaPersonalEvaluadoAntes =*/ evaluacionDesempenioEJB.obtenerListaResultadosPorEvaluacionEvaluador(ultimaEvaluacion, directivoSeleccionado);
         l.forEach(System.out::println);

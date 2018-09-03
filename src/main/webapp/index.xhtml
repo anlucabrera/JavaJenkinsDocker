@@ -31,36 +31,35 @@
     <ui:define name="body">
         <c:set var="claseResumen" value="#{'col-lg-4 col-md-6 col-sm-12'}" />
         <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
-            <c:if test="#{evaluacionDesempenioAdmin.directivoSeleccionado.actividad eq 2 || evaluacionDesempenioAdmin.directivoSeleccionado.actividad eq 4 }">
-                <div class="box box-primary">
-                    <div class="box box-solid">
-                        <div class="box-header with-border" title="Solo se realiza la descarga de las cedulas de la ultima evaluación">
-                            <span class="info-box-icon bg-aqua" ><i class="fa fa-exclamation"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-number">NOTA</span>
-                                <span class="info-box-number">Usted ya puede descargar sus cedulas de desempeño laboral en el apartado:
-                                    <h:form>
-                                        <c:if test="#{!utilidadesAdministracionEvaluaciones.directorDeCarrera}">
-                                            <p> Admin Evaluaciones  <i class="fa fa-arrow-circle-right " />Resultados subordinados  <i class="fa fa-arrow-circle-right " /> Hacer clic  <i class="fa fa-hand-pointer-o " /> en botón desempeño y en el botón <i class="fa fa-arrow-circle-right " />  
-                                                <p:spacer width="15"/>
-                                                <p:commandLink class="btn btn-primary"  value="Descargar cédulas desempeño" ajax="false" action="#{evaluacionDesempenioAdmin.descargarCedulasDestiempoIndex()}" target="_blank" title="Descargar cedulas."><i class="fa fa-download" /></p:commandLink>
-                                            </p>
-                                        </c:if>
-                                        <c:if test="#{utilidadesAdministracionEvaluaciones.directorDeCarrera }">
-                                            <p> Admin Evaluaciones <i class="fa fa-arrow-circle-right " /> Administración evaluaciones  <i class="fa fa-arrow-circle-right " />  Hacer clic <i class="fa fa-hand-pointer-o " /> en botón desempeño y en el botón <i class="fa fa-arrow-circle-right " /> 
-                                                <p:spacer width="15"/> 
-                                                <p:commandLink class="btn btn-primary"  value="Descargar cédulas desempeño" ajax="false" action="#{evaluacionDesempenioAdmin.descargarCedulasDestiempoIndex()}" target="_blank" title="Descargar cedulas."><i class="fa fa-download" /></p:commandLink>
-                                            </p>
-                                        </c:if> 
-                                    </h:form>
-                                </span>
+            <!--            <c:if test="# {evaluacionDesempenioAdmin.directivoSeleccionado.actividad eq 2 || evaluacionDesempenioAdmin.directivoSeleccionado.actividad eq 4 }">
+                            <div class="box box-primary">
+                                <div class="box box-solid">
+                                    <div class="box-header with-border" title="Solo se realiza la descarga de las cedulas de la ultima evaluación">
+                                        <span class="info-box-icon bg-aqua" ><i class="fa fa-exclamation"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-number">NOTA</span>
+                                            <span class="info-box-number">Usted ya puede descargar sus cedulas de desempeño laboral en el apartado:
+                                                <h:form>
+                                                    <c:if test="# {!utilidadesAdministracionEvaluaciones.directorDeCarrera}">
+                                                        <p> Admin Evaluaciones  <i class="fa fa-arrow-circle-right " />Resultados subordinados  <i class="fa fa-arrow-circle-right " /> Hacer clic  <i class="fa fa-hand-pointer-o " /> en botón desempeño y en el botón <i class="fa fa-arrow-circle-right " />  
+                                                            <p:spacer width="15"/>
+                                                            <p:commandLink class="btn btn-primary"  value="Descargar cédulas desempeño" ajax="false" action="# {evaluacionDesempenioAdmin.descargarCedulasDestiempoIndex()}" target="_blank" title="Descargar cedulas."><i class="fa fa-download" /></p:commandLink>
+                                                        </p>
+                                                    </c:if>
+                                                    <c:if test="# {utilidadesAdministracionEvaluaciones.directorDeCarrera }">
+                                                        <p> Admin Evaluaciones <i class="fa fa-arrow-circle-right " /> Administración evaluaciones  <i class="fa fa-arrow-circle-right " />  Hacer clic <i class="fa fa-hand-pointer-o " /> en botón desempeño y en el botón <i class="fa fa-arrow-circle-right " /> 
+                                                            <p:spacer width="15"/> 
+                                                            <p:commandLink class="btn btn-primary"  value="Descargar cédulas desempeño" ajax="false" action="# {evaluacionDesempenioAdmin.descargarCedulasDestiempoIndex()}" target="_blank" title="Descargar cedulas."><i class="fa fa-download" /></p:commandLink>
+                                                        </p>
+                                                    </c:if> 
+                                                </h:form>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </c:if>
-            
-        </c:if>
+                        </c:if>-->
+                 </c:if>
 
         <div class="box box-primary">
             <div class="box box-solid">
@@ -228,6 +227,26 @@
                     </div>
                     <div class="box-body">  
                         <div class="row">
+<!--                            <c:if test="# {utilidadesAdministracionEvaluaciones.personal}">
+                                <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-sm-12'}" />
+                                <div class="# {claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="location.href ='evaluaciones/administracion/notioficacionesPersonal.xhtml';">
+                                            <h4>
+                                                <h:outputLabel value="Enviar notificaciones al personal"/>
+                                            </h4>
+                                            <p>Notificaciones por E-Mail.<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-calendar-check-o"></i>
+                                        </div>
+                                        <p:link outcome="evaluaciones/administracion/notioficacionesPersonal"  class="small-box-footer">
+                                            Acceder <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="desempenio" action="evaluaciones/administracion/notioficacionesPersonal" /></h:form>
+                                    </div>
+                                </div>
+                            </c:if>-->
                             <c:if test="#{evaluacionDesempenioAdmin.cargada}">
                                 <c:if test="#{evaluacionDesempenioAdmin.directivoSeleccionado.actividad eq 2 || evaluacionDesempenioAdmin.directivoSeleccionado.actividad eq 4 }">
                                     <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-sm-12'}" />

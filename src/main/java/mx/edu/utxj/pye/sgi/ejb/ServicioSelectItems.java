@@ -166,7 +166,7 @@ public class ServicioSelectItems implements EJBSelectItems {
 
     public List<AreasUniversidad> getAreasAcademicas() {
         TypedQuery<AreasUniversidad> q = f.getEntityManager().createQuery("SELECT a from AreasUniversidad a WHERE a.categoria.categoria = :categoria", AreasUniversidad.class);
-        q.setParameter("categoria", 9);
+        q.setParameter("categoria", 8);
         System.out.println("Listado de areas academicas : " + q.getResultList());
         List<AreasUniversidad> l = q.getResultList();
         if (l.isEmpty() || l == null) {
