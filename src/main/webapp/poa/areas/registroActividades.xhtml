@@ -340,23 +340,34 @@
             <h:form id="frmActualizaActividad">
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-12">
-                        <div class="col-sm-6 col-md-4 col-lg-4">
-                            <p:outputLabel for="medida1"  value="Unidad de medida" />
-                            <p:selectOneMenu filter="true" filterMatchMode="contains" required="true" requiredMessage="Es necesario que la actividad cuente con una unidad de medida" id="medida1"  value="#{controladorPOARegistro.unidadDMedida}" >
-                                <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                <f:selectItems value="#{controladorPOARegistro.listaUnidadMedidases}" var="unidadMedida" itemValue="#{unidadMedida.unidadMedida}" itemLabel="#{unidadMedida.nombre}" />
-                            </p:selectOneMenu> 
-                            <p:message for="medida1" display="tooltip" /> 
-                            <hr/>
-                        </div> 
-                        <div class="col-sm-12 col-md-8 col-lg-8">
+                        <div class="col-sm-12 col-md-12 col-lg-12">
                             <p:outputLabel for="nombre1"  value="Nombre de la actividad" />
                             <p:inputText id="nombre1" value="#{controladorPOARegistro.actividadPoaEditando.denominacion}" required="true" requiredMessage="La actividad debe contar con un nombre" style="height:100%; width: 100%;" placeholder="Nombre de la actividad" />
                             <p:message for="nombre1" display="tooltip"/>    
                             <hr/>  
                         </div> 
+                        <div class="col-sm-6 col-md-4 col-lg-4">
+                            <p:outputLabel for="medida1"  value="Unidad de medida" />
+                            <p:selectOneMenu filter="true" filterMatchMode="contains" required="true" valueChangeListener="#{controladorPOARegistro.asignarUnidadMedida}"  requiredMessage="Es necesario que la actividad cuente con una unidad de medida" id="medida1"  value="#{controladorPOARegistro.unidadDMedida}" >
+                                <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                <f:selectItems value="#{controladorPOARegistro.listaUnidadMedidases}" var="unidadMedida" itemValue="#{unidadMedida.unidadMedida}" itemLabel="#{unidadMedida.nombre}" />
+                                <p:ajax update="actividad"/>
+                            </p:selectOneMenu> 
+                            <p:message for="medida1" display="tooltip" /> 
+                            <hr/>
+                        </div> 
                         <p:outputPanel>            
                             <p:autoUpdate/>
+                            <div class="col-sm-6 col-md-8 col-lg-8" style="#{controladorPOARegistro.unidadDMedida eq 0? 'visibility:visible':'visibility:collapse'}">                                         
+                                <p:outputLabel for="medida"  value="Unidad de medida" />
+                                <p:inputText id="unidad" class="form-control" value="#{controladorPOARegistro.nombreUnidad}" valueChangeListener="#{controladorPOARegistro.asignarUnidadMedida}" 
+                                             disabled="#{!controladorPOARegistro.unidadMedidaNueva}" style="height:100%; width: 100%;" >
+                                    <p:ajax update="unidad"/>
+                                </p:inputText>
+                                <p:message for="unidad" display="tooltip" />
+                                <hr/>
+                            </div>
+
                             <div class="col-sm-12 col-md-12 col-lg-12" style="#{controladorPOARegistro.tipo eq 'Subactividad'?'visibility:visible':'visibility:collapse'}">
                                 <p:outputLabel for="actividadP"  value="Actividad principal" />
                                 <p:selectOneMenu filter="true" filterMatchMode="contains" id="actividadP" value="#{controladorPOARegistro.numeroActividadPrincipal}" 
@@ -396,7 +407,7 @@
                     </div>
                 </div> 
                 <p:commandButton value="Actualizar" id="btnActualiza" actionListener="#{controladorPOARegistro.onRowEdit()}"  oncomplete="PF('dlgActualizacionActividad').hide()" onsuccess="actualizarTabla2()" process=":frmActualizaActividad" icon="fa fa-edit" styleClass="btn-primary" update=":frm2" />
-                <p:commandButton value="Cancelar" id="btnCancelar" actionListener="#{controladorPOARegistro.imprimirValores()}"  oncomplete="PF('dlgActualizacionActividad').hide()" process=":frmActualizaActividad" icon="fa fa-times" styleClass="btn-primary" update=":frm2" />
+                <p:commandButton value="Cancelar" id="btnCancelar" onclick="PF('dlgActualizacionActividad').hide()" icon="fa fa-times" styleClass="btn-primary"/>
 
             </h:form>
         </p:dialog>
