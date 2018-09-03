@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:pr="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+    </ui:define>
+    <ui:define name="title">
+        Calidad Académica
+    </ui:define>
+
+    <ui:define name="description">
+        Módulo de registro
+    </ui:define>
+
+    <ui:define name="body"> 
+        <adm:sidebar collapsed="true"/>
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    <h:form prependId="true" id="pnlMainButtons" class="form-inline">
+                        <p:outputPanel >
+                            <p:autoUpdate/>
+                            <p:toolbar id="tb"> 
+                                <f:facet name="left">
+                                    <div class="btn-group">
+                                        <p:commandButton value="Cargar Archivo de Excel" icon="fa fa-file-excel-o" onclick="PF('modalCargaProgPertCal').show()" class="btn btn-primary btn-sm"/>
+                                    </div>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <div class="btn-group">
+                                    </div>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <div class="btn-group">
+                                    </div>
+                                </f:facet>
+                                <f:facet name="right">
+                                    <div class="btn-group">
+                                        <p:commandLink class="btn btn-info" ajax="false" action="#{controladorProgramasPertCalidad.descargarPlantilla()}" target="_blank" title="Descargar Plantilla Programas Pertinentes y de Calidad"><i class="fa fa-download" /></p:commandLink>
+                                    </div>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <div class="btn-group">
+                                        <p:commandLink class="btn btn-info" ajax="false" action="calidadAcademica" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
+                                    </div>
+                                </f:facet>
+                            </p:toolbar>
+                            <p:sticky target="tb" />
+                        </p:outputPanel>
+                    </h:form>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <p:separator/>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <center>
+                                <h:form id="formPrevisualizacionDatos" prependId="false">
+                                    <c:if test="#{controladorProgramasPertCalidad.listaProgramasPertCalidad.programasPertCalidad ne null}">
+                                    <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
+                                                 paginator="true"
+                                                 rows="10" 
+                                                 rowsPerPageTemplate="5,10,20,30,40,50"
+                                                 resizeMode="expand" scrollable="true"
+                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                 id="dtbProgPertCalidad"
+                                                 var="progPertCal" value="#{controladorProgramasPertCalidad.listaProgramasPertCalidad.programasPertCalidad}">
+                                        <f:facet name="header">
+                                            Programas Educativos Pertinentes y de Calidad
+                                        </f:facet>
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column rowspan="2" headerText="Programa Educativo" footerText="Programa Educativo" style="width: 200px;"/>
+                                                <p:column rowspan="2" headerText="Año de Inicio del PE" footerText="Año de Inicio del PE" style="width: 50px;"/>
+                                                <p:column rowspan="2" headerText="Evaluable Si/No" footerText="Evaluable Si/No" style="width: 50px;"/>
+                                                <p:column rowspan="2" headerText="Pertinente Si/No" footerText="Pertinente Si/No" style="width: 50px;"/>
+                                                <p:column rowspan="2" headerText="Organimos Acreditador" footerText="Organimos Acreditador" style="width: 100px;"/>
+                                                <p:column colspan="2" headerText="Vigencia de Acreditación" style="width: 100px;"/>
+                                                <p:column rowspan="2" headerText="Año del Estudio de Factibilidad" footerText="Año del Estudio de Factibilidad" style="width: 50px;"/>
+                                                <p:column rowspan="2" headerText="Año del último AST" footerText="Año del último AST" style="width: 50px;"/>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column headerText="Fecha Inicial de Acreditación" style="width: 50px;"/>
+                                                <p:column headerText="Fecha Final de Acreditación" style="width: 50px;"/>
+                                            </p:row>
+
+                                        </p:columnGroup>
+
+                                        <p:column><h:outputText value="#{progPertCal.areasUniversidad.nombre}"/></p:column> 
+                                        <p:column><h:outputText value="#{progPertCal.programasPertcal.anioInicio}"/></p:column>
+                                        <p:column><h:outputText value="#{progPertCal.programasPertcal.evaluable}"/></p:column>
+                                        <p:column><h:outputText value="#{progPertCal.programasPertcal.pertinente}"/></p:column>
+                                        <p:column><h:outputText value="#{progPertCal.programasPertcal.orgAcreditador}"/></p:column>
+                                        <p:column><h:outputText value="#{progPertCal.programasPertcal.feciniAcred}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
+                                        <p:column><h:outputText value="#{progPertCal.programasPertcal.fecfinAcred}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
+                                        <p:column><h:outputText value="#{progPertCal.programasPertcal.anioEstfac}"/></p:column>
+                                        <p:column><h:outputText value="#{progPertCal.programasPertcal.anioUltast}"/></p:column>
+                                        <f:facet name="footer">
+                                        </f:facet>
+                                    </p:dataTable>
+                                    <p></p>
+                                    <center>
+                                        <p:commandButton id="btnGuardar" value="Guardar Datos" actionListener="#{controladorProgramasPertCalidad.guardaProgramasPertCalidad()}" icon="fa fa-pencil-square-o" class="btn-primary" />
+                                        <p:spacer width="5" />
+                                        <p:commandButton id="btnCancelar" value="Cancelar" actionListener="#{controladorProgramasPertCalidad.cancelarArchivo()}" icon="fa fa-times-circle" class="btn-danger" update="formPrevisualizacionDatos"/>
+                                    </center>
+                                    </c:if>
+                                </h:form>
+                            </center>
+                        </div>
+                    </div>
+                </div>
+                <p:dialog widgetVar="modalCargaProgPertCal" width="400" height="auto" showEffect="fade" hideEffect="fade" modal="true" header="Carga de Archivo" responsive="true" resizable="false" maximizable="false">
+                    <!--<p:separator/>-->
+                    <center>
+                        <h:form id="formularioContenedor" enctype="multipart/form-data">  
+                                <o:inputFile id="file" value="#{controladorArchivoProgramasPertCalidad.file}" acceptMessage="Solo se permiten archivos XLSX." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                <p></p>
+                                <h:message id="messageForFile" for="file" />
+                                <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{controladorArchivoProgramasPertCalidad.subirExcelProgramas()}"/>
+                            <p:blockUI block="@form:formularioContenedor" widgetVar="bloqueoCargaFile">
+                                Cargando archivo espere por favor.<br />
+                            </p:blockUI>
+                        </h:form>   
+                    </center>
+                    <!--<p></p>-->
+                </p:dialog>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -17,6 +17,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -28,9 +29,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "ServiciosEnfermeriaCicloPeriodos.findAll", query = "SELECT s FROM ServiciosEnfermeriaCicloPeriodos s")
+    , @NamedQuery(name = "ServiciosEnfermeriaCicloPeriodos.findByRegistro", query = "SELECT s FROM ServiciosEnfermeriaCicloPeriodos s WHERE s.registro = :registro")
     , @NamedQuery(name = "ServiciosEnfermeriaCicloPeriodos.findByCicloEscolar", query = "SELECT s FROM ServiciosEnfermeriaCicloPeriodos s WHERE s.cicloEscolar = :cicloEscolar")
     , @NamedQuery(name = "ServiciosEnfermeriaCicloPeriodos.findByPeriodoEscolar", query = "SELECT s FROM ServiciosEnfermeriaCicloPeriodos s WHERE s.periodoEscolar = :periodoEscolar")
-    , @NamedQuery(name = "ServiciosEnfermeriaCicloPeriodos.findByRegistro", query = "SELECT s FROM ServiciosEnfermeriaCicloPeriodos s WHERE s.registro = :registro")
+    , @NamedQuery(name = "ServiciosEnfermeriaCicloPeriodos.findByMes", query = "SELECT s FROM ServiciosEnfermeriaCicloPeriodos s WHERE s.mes = :mes")
     , @NamedQuery(name = "ServiciosEnfermeriaCicloPeriodos.findByEstH", query = "SELECT s FROM ServiciosEnfermeriaCicloPeriodos s WHERE s.estH = :estH")
     , @NamedQuery(name = "ServiciosEnfermeriaCicloPeriodos.findByEstM", query = "SELECT s FROM ServiciosEnfermeriaCicloPeriodos s WHERE s.estM = :estM")
     , @NamedQuery(name = "ServiciosEnfermeriaCicloPeriodos.findByPerH", query = "SELECT s FROM ServiciosEnfermeriaCicloPeriodos s WHERE s.perH = :perH")
@@ -38,6 +40,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ServiciosEnfermeriaCicloPeriodos implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "registro")
+    private Integer registro;
     @Basic(optional = false)
     @NotNull
     @Column(name = "ciclo_escolar")
@@ -46,11 +53,11 @@ public class ServiciosEnfermeriaCicloPeriodos implements Serializable {
     @NotNull
     @Column(name = "periodo_escolar")
     private int periodoEscolar;
-    @Id
     @Basic(optional = false)
     @NotNull
-    @Column(name = "registro")
-    private Integer registro;
+    @Size(min = 1, max = 10)
+    @Column(name = "mes")
+    private String mes;
     @Basic(optional = false)
     @NotNull
     @Column(name = "est_h")
@@ -81,14 +88,23 @@ public class ServiciosEnfermeriaCicloPeriodos implements Serializable {
         this.registro = registro;
     }
 
-    public ServiciosEnfermeriaCicloPeriodos(Integer registro, int cicloEscolar, int periodoEscolar, int estH, int estM, int perH, int perM) {
+    public ServiciosEnfermeriaCicloPeriodos(Integer registro, int cicloEscolar, int periodoEscolar, String mes, int estH, int estM, int perH, int perM) {
         this.registro = registro;
         this.cicloEscolar = cicloEscolar;
         this.periodoEscolar = periodoEscolar;
+        this.mes = mes;
         this.estH = estH;
         this.estM = estM;
         this.perH = perH;
         this.perM = perM;
+    }
+
+    public Integer getRegistro() {
+        return registro;
+    }
+
+    public void setRegistro(Integer registro) {
+        this.registro = registro;
     }
 
     public int getCicloEscolar() {
@@ -107,12 +123,12 @@ public class ServiciosEnfermeriaCicloPeriodos implements Serializable {
         this.periodoEscolar = periodoEscolar;
     }
 
-    public Integer getRegistro() {
-        return registro;
+    public String getMes() {
+        return mes;
     }
 
-    public void setRegistro(Integer registro) {
-        this.registro = registro;
+    public void setMes(String mes) {
+        this.mes = mes;
     }
 
     public int getEstH() {

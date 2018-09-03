@@ -53,10 +53,10 @@ public class AulasTipo implements Serializable {
     @Size(min = 1, max = 20)
     @Column(name = "capacidad_turno")
     private String capacidadTurno;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "aula")
-    private List<DistribucionAulasCicloPeriodosEscolares> distribucionAulasCicloPeriodosEscolaresList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "aulaTipo")
     private List<DistribucionLabtallCicloPeriodosEscolares> distribucionLabtallCicloPeriodosEscolaresList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "aula")
+    private List<DistribucionAulasCicloPeriodosEscolares> distribucionAulasCicloPeriodosEscolaresList;
 
     public AulasTipo() {
     }
@@ -96,21 +96,21 @@ public class AulasTipo implements Serializable {
     }
 
     @XmlTransient
-    public List<DistribucionAulasCicloPeriodosEscolares> getDistribucionAulasCicloPeriodosEscolaresList() {
-        return distribucionAulasCicloPeriodosEscolaresList;
-    }
-
-    public void setDistribucionAulasCicloPeriodosEscolaresList(List<DistribucionAulasCicloPeriodosEscolares> distribucionAulasCicloPeriodosEscolaresList) {
-        this.distribucionAulasCicloPeriodosEscolaresList = distribucionAulasCicloPeriodosEscolaresList;
-    }
-
-    @XmlTransient
     public List<DistribucionLabtallCicloPeriodosEscolares> getDistribucionLabtallCicloPeriodosEscolaresList() {
         return distribucionLabtallCicloPeriodosEscolaresList;
     }
 
     public void setDistribucionLabtallCicloPeriodosEscolaresList(List<DistribucionLabtallCicloPeriodosEscolares> distribucionLabtallCicloPeriodosEscolaresList) {
         this.distribucionLabtallCicloPeriodosEscolaresList = distribucionLabtallCicloPeriodosEscolaresList;
+    }
+
+    @XmlTransient
+    public List<DistribucionAulasCicloPeriodosEscolares> getDistribucionAulasCicloPeriodosEscolaresList() {
+        return distribucionAulasCicloPeriodosEscolaresList;
+    }
+
+    public void setDistribucionAulasCicloPeriodosEscolaresList(List<DistribucionAulasCicloPeriodosEscolares> distribucionAulasCicloPeriodosEscolaresList) {
+        this.distribucionAulasCicloPeriodosEscolaresList = distribucionAulasCicloPeriodosEscolaresList;
     }
 
     @Override

@@ -64,6 +64,8 @@ public class FeriasProfesiograficas implements Serializable {
     @Size(min = 1, max = 50)
     @Column(name = "evento")
     private String evento;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "feria")
+    private List<FeriasParticipantes> feriasParticipantesList;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Registros registros;
@@ -73,8 +75,6 @@ public class FeriasProfesiograficas implements Serializable {
         , @JoinColumn(name = "localidad", referencedColumnName = "claveLocalidad")})
     @ManyToOne(optional = false)
     private Localidad localidad;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "feria")
-    private List<FeriasParticipantes> feriasParticipantesList;
 
     public FeriasProfesiograficas() {
     }
@@ -122,6 +122,15 @@ public class FeriasProfesiograficas implements Serializable {
         this.evento = evento;
     }
 
+    @XmlTransient
+    public List<FeriasParticipantes> getFeriasParticipantesList() {
+        return feriasParticipantesList;
+    }
+
+    public void setFeriasParticipantesList(List<FeriasParticipantes> feriasParticipantesList) {
+        this.feriasParticipantesList = feriasParticipantesList;
+    }
+
     public Registros getRegistros() {
         return registros;
     }
@@ -136,15 +145,6 @@ public class FeriasProfesiograficas implements Serializable {
 
     public void setLocalidad(Localidad localidad) {
         this.localidad = localidad;
-    }
-
-    @XmlTransient
-    public List<FeriasParticipantes> getFeriasParticipantesList() {
-        return feriasParticipantesList;
-    }
-
-    public void setFeriasParticipantesList(List<FeriasParticipantes> feriasParticipantesList) {
-        this.feriasParticipantesList = feriasParticipantesList;
     }
 
     @Override

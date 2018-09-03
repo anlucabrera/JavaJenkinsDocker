@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:pr="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+    </ui:define>
+
+    <ui:define name="title">
+        Módulos de registro de Información
+    </ui:define>
+
+    <ui:define name="description">
+        Fortalecer el Proceso Administrativo
+    </ui:define>
+    <ui:define name="body">
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <section class="content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="nav-tabs-custom">
+                            <div class="row">
+                                <div class="col-lg-10 col-xs-10"/>
+                                <div class="col-lg-2 col-xs-2">
+                                    <!-- Pendiente verificar navegación en Primefaces-->
+                                    <p:link href="../../../index.xhtml">
+                                        <i class="fa fa-reply"></i>
+                                        <span>Regresar a mi perfil</span>
+                                    </p:link>
+                                </div>      
+                            </div>
+
+                            <f:metadata>
+                                <f:viewParam name="eje" id="eje"></f:viewParam>
+                            </f:metadata>
+                            <p:tabView>
+                                <p:tab id="twbPyD" title="Proceso Administrativo">
+                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                        <div class="col-md-12">
+                                            <div class="box box-widget widget-user-2">
+                                                <div class="row">
+                                                    <div class="col-sm-12 border-right">
+                                                        <div class="description-block">
+                                                            <div class="row">
+
+                                                                <ui:repeat value="#{controladorModulosRegistro.listaModulosRegistroPA}" var="lmr">
+                                                                    <div class="col-lg-4 col-xs-6">
+                                                                        <div class="small-box bg-#{lmr.clase}">
+                                                                            <div class="inner">
+                                                                                <p style="font-size: 200%; font-weight: bold; text-align: left">#{lmr.tituloPrincipal}</p>
+                                                                                <p style="text-align: left">#{lmr.tipo}</p>
+                                                                            </div>
+                                                                            <div class="icon">
+                                                                                <i class="#{lmr.icono}"/>
+                                                                            </div>
+                                                                            <a href="#{lmr.link}.xhtml" class="small-box-footer">#{lmr.descripcionLink}</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </ui:repeat>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </p:tab>
+                            </p:tabView>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </p:panel>
+
+    </ui:define>
+
+</ui:composition>

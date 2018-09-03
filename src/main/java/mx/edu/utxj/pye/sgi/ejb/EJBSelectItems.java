@@ -36,4 +36,16 @@ public interface EJBSelectItems {
     
     public List<SelectItem> itemAreasAcademicas();
     
+    ////////////////////////////////////////// Codigo agregado para la selección de estados o municipios para el filtrado de los Módulos de registro ////////////////////////////////////////////////////////
+    
+    public List<SelectItem> itemEstados();
+        
+    public List<SelectItem> itemMunicipiosByClave(Integer estado);
+        
+    public List<SelectItem> itemLocalidadesByClave(Integer estado, Integer municipio); 
+    
+    public List<SelectItem> itemCiclos();
+    
+    public List<SelectItem> itemPeriodosByClave(Integer ciclo);
+    
 }

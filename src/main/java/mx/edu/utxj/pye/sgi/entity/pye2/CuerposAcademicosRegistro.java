@@ -82,6 +82,10 @@ public class CuerposAcademicosRegistro implements Serializable {
     private short area;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpoAcademico")
     private List<CuerpacadIntegrantes> cuerpacadIntegrantesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpAcad")
+    private List<ReconocimientoProdepRegistros> reconocimientoProdepRegistrosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpoAcademico")
+    private List<CuerpacadLineas> cuerpacadLineasList;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Registros registros;
@@ -91,8 +95,6 @@ public class CuerposAcademicosRegistro implements Serializable {
     @JoinColumn(name = "disciplina", referencedColumnName = "disciplina")
     @ManyToOne(optional = false)
     private CuerpacadDisciplinas disciplina;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerposAcademicosRegistro")
-    private List<CuerpacadLineas> cuerpacadLineasList;
 
     public CuerposAcademicosRegistro() {
     }
@@ -176,6 +178,24 @@ public class CuerposAcademicosRegistro implements Serializable {
         this.cuerpacadIntegrantesList = cuerpacadIntegrantesList;
     }
 
+    @XmlTransient
+    public List<ReconocimientoProdepRegistros> getReconocimientoProdepRegistrosList() {
+        return reconocimientoProdepRegistrosList;
+    }
+
+    public void setReconocimientoProdepRegistrosList(List<ReconocimientoProdepRegistros> reconocimientoProdepRegistrosList) {
+        this.reconocimientoProdepRegistrosList = reconocimientoProdepRegistrosList;
+    }
+
+    @XmlTransient
+    public List<CuerpacadLineas> getCuerpacadLineasList() {
+        return cuerpacadLineasList;
+    }
+
+    public void setCuerpacadLineasList(List<CuerpacadLineas> cuerpacadLineasList) {
+        this.cuerpacadLineasList = cuerpacadLineasList;
+    }
+
     public Registros getRegistros() {
         return registros;
     }
@@ -198,15 +218,6 @@ public class CuerposAcademicosRegistro implements Serializable {
 
     public void setDisciplina(CuerpacadDisciplinas disciplina) {
         this.disciplina = disciplina;
-    }
-
-    @XmlTransient
-    public List<CuerpacadLineas> getCuerpacadLineasList() {
-        return cuerpacadLineasList;
-    }
-
-    public void setCuerpacadLineasList(List<CuerpacadLineas> cuerpacadLineasList) {
-        this.cuerpacadLineasList = cuerpacadLineasList;
     }
 
     @Override

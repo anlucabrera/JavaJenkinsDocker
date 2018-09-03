@@ -45,14 +45,14 @@ public class EjerciciosFiscales implements Serializable {
     @NotNull
     @Column(name = "anio")
     private short anio;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejercicioFiscal")
-    private List<EventosRegistros> eventosRegistrosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejerciciosFiscales")
     private List<Productos> productosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejercicioFiscal")
-    private List<CuadroMandoIntegral> cuadroMandoIntegralList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejercicioFiscal")
     private List<PretechoFinanciero> pretechoFinancieroList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejercicioFiscal")
+    private List<EventosRegistros> eventosRegistrosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejercicioFiscal")
+    private List<CuadroMandoIntegral> cuadroMandoIntegralList;
 
     public EjerciciosFiscales() {
     }
@@ -83,15 +83,6 @@ public class EjerciciosFiscales implements Serializable {
     }
 
     @XmlTransient
-    public List<EventosRegistros> getEventosRegistrosList() {
-        return eventosRegistrosList;
-    }
-
-    public void setEventosRegistrosList(List<EventosRegistros> eventosRegistrosList) {
-        this.eventosRegistrosList = eventosRegistrosList;
-    }
-
-    @XmlTransient
     public List<Productos> getProductosList() {
         return productosList;
     }
@@ -101,21 +92,30 @@ public class EjerciciosFiscales implements Serializable {
     }
 
     @XmlTransient
-    public List<CuadroMandoIntegral> getCuadroMandoIntegralList() {
-        return cuadroMandoIntegralList;
-    }
-
-    public void setCuadroMandoIntegralList(List<CuadroMandoIntegral> cuadroMandoIntegralList) {
-        this.cuadroMandoIntegralList = cuadroMandoIntegralList;
-    }
-
-    @XmlTransient
     public List<PretechoFinanciero> getPretechoFinancieroList() {
         return pretechoFinancieroList;
     }
 
     public void setPretechoFinancieroList(List<PretechoFinanciero> pretechoFinancieroList) {
         this.pretechoFinancieroList = pretechoFinancieroList;
+    }
+
+    @XmlTransient
+    public List<EventosRegistros> getEventosRegistrosList() {
+        return eventosRegistrosList;
+    }
+
+    public void setEventosRegistrosList(List<EventosRegistros> eventosRegistrosList) {
+        this.eventosRegistrosList = eventosRegistrosList;
+    }
+
+    @XmlTransient
+    public List<CuadroMandoIntegral> getCuadroMandoIntegralList() {
+        return cuadroMandoIntegralList;
+    }
+
+    public void setCuadroMandoIntegralList(List<CuadroMandoIntegral> cuadroMandoIntegralList) {
+        this.cuadroMandoIntegralList = cuadroMandoIntegralList;
     }
 
     @Override

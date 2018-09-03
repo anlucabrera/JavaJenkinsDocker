@@ -33,7 +33,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Presupuestos.findAll", query = "SELECT p FROM Presupuestos p")
     , @NamedQuery(name = "Presupuestos.findByRegistro", query = "SELECT p FROM Presupuestos p WHERE p.registro = :registro")
-    , @NamedQuery(name = "Presupuestos.findByPresupuesto", query = "SELECT p FROM Presupuestos p WHERE p.presupuesto = :presupuesto")
     , @NamedQuery(name = "Presupuestos.findByPresupuestoOperacion", query = "SELECT p FROM Presupuestos p WHERE p.presupuestoOperacion = :presupuestoOperacion")
     , @NamedQuery(name = "Presupuestos.findByPresupuestoTipo", query = "SELECT p FROM Presupuestos p WHERE p.presupuestoTipo = :presupuestoTipo")
     , @NamedQuery(name = "Presupuestos.findByMonto", query = "SELECT p FROM Presupuestos p WHERE p.monto = :monto")
@@ -46,9 +45,6 @@ public class Presupuestos implements Serializable {
     @NotNull
     @Column(name = "registro")
     private Integer registro;
-    @Basic(optional = false)
-    @Column(name = "presupuesto")
-    private int presupuesto;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 13)
@@ -82,9 +78,8 @@ public class Presupuestos implements Serializable {
         this.registro = registro;
     }
 
-    public Presupuestos(Integer registro, int presupuesto, String presupuestoOperacion, String presupuestoTipo, double monto, Date fechaAplicacion) {
+    public Presupuestos(Integer registro, String presupuestoOperacion, String presupuestoTipo, double monto, Date fechaAplicacion) {
         this.registro = registro;
-        this.presupuesto = presupuesto;
         this.presupuestoOperacion = presupuestoOperacion;
         this.presupuestoTipo = presupuestoTipo;
         this.monto = monto;
@@ -97,14 +92,6 @@ public class Presupuestos implements Serializable {
 
     public void setRegistro(Integer registro) {
         this.registro = registro;
-    }
-
-    public int getPresupuesto() {
-        return presupuesto;
-    }
-
-    public void setPresupuesto(int presupuesto) {
-        this.presupuesto = presupuesto;
     }
 
     public String getPresupuestoOperacion() {

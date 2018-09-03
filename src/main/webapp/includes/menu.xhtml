@@ -251,6 +251,37 @@
                     </li>
                 </ul>
             </li>
+            
+            <!-- Se agregó la siguiente sección de código para el listado de Módulos de Registro por usuario - Menú de registros -->
+            <li class="treeview">
+                <a>
+                    <i class="fa fa-archive"></i><span><p:spacer width="5" />SIIP</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu" style="display: none;">
+                    <li class="treeview">
+                        <a>
+                            <i class="fa fa-edit"></i><span><p:spacer width="5" />Módulos de Registro</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu" style="display: none;">
+                            <ui:repeat value="#{controladorModulosRegistro.listaEjes}" var="leu">
+                                <li>
+                                    <h:link outcome="/#{leu.linkEje}" >
+                                        <i class="#{leu.iconoEje}"></i>
+                                        <span><p:spacer width="4"/>#{leu.eje}</span>
+                                    </h:link>
+                                </li>
+                            </ui:repeat>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            
             <c:if test="#{controladorEmpleado.listaDocencias.size() != 0}">
                 <li class="treeview">
 

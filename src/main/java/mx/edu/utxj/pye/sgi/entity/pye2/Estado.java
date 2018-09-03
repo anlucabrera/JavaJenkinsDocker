@@ -55,13 +55,13 @@ public class Estado implements Serializable {
     @Size(min = 1, max = 20)
     @Column(name = "clave")
     private String clave;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estado")
+    private List<Municipio> municipioList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estado")
+    private List<RegistrosMovilidad> registrosMovilidadList;
     @JoinColumn(name = "idpais", referencedColumnName = "idpais")
     @ManyToOne(optional = false)
     private Pais idpais;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estado")
-    private List<Municipio> municipioList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciudad")
-    private List<RegistrosMovilidad> registrosMovilidadList;
 
     public Estado() {
     }
@@ -100,14 +100,6 @@ public class Estado implements Serializable {
         this.clave = clave;
     }
 
-    public Pais getIdpais() {
-        return idpais;
-    }
-
-    public void setIdpais(Pais idpais) {
-        this.idpais = idpais;
-    }
-
     @XmlTransient
     public List<Municipio> getMunicipioList() {
         return municipioList;
@@ -124,6 +116,14 @@ public class Estado implements Serializable {
 
     public void setRegistrosMovilidadList(List<RegistrosMovilidad> registrosMovilidadList) {
         this.registrosMovilidadList = registrosMovilidadList;
+    }
+
+    public Pais getIdpais() {
+        return idpais;
+    }
+
+    public void setIdpais(Pais idpais) {
+        this.idpais = idpais;
     }
 
     @Override

@@ -67,14 +67,14 @@ public class BolsaTrabajo implements Serializable {
     @NotNull
     @Column(name = "plazas")
     private short plazas;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bolsatrabent")
-    private List<BolsaTrabajoEntrevistas> bolsaTrabajoEntrevistasList;
     @JoinColumn(name = "empresa", referencedColumnName = "empresa")
     @ManyToOne(optional = false)
     private OrganismosVinculados empresa;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Registros registros;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bolsatrabent")
+    private List<BolsaTrabajoEntrevistas> bolsaTrabajoEntrevistasList;
 
     public BolsaTrabajo() {
     }
@@ -131,15 +131,6 @@ public class BolsaTrabajo implements Serializable {
         this.plazas = plazas;
     }
 
-    @XmlTransient
-    public List<BolsaTrabajoEntrevistas> getBolsaTrabajoEntrevistasList() {
-        return bolsaTrabajoEntrevistasList;
-    }
-
-    public void setBolsaTrabajoEntrevistasList(List<BolsaTrabajoEntrevistas> bolsaTrabajoEntrevistasList) {
-        this.bolsaTrabajoEntrevistasList = bolsaTrabajoEntrevistasList;
-    }
-
     public OrganismosVinculados getEmpresa() {
         return empresa;
     }
@@ -154,6 +145,15 @@ public class BolsaTrabajo implements Serializable {
 
     public void setRegistros(Registros registros) {
         this.registros = registros;
+    }
+
+    @XmlTransient
+    public List<BolsaTrabajoEntrevistas> getBolsaTrabajoEntrevistasList() {
+        return bolsaTrabajoEntrevistasList;
+    }
+
+    public void setBolsaTrabajoEntrevistasList(List<BolsaTrabajoEntrevistas> bolsaTrabajoEntrevistasList) {
+        this.bolsaTrabajoEntrevistasList = bolsaTrabajoEntrevistasList;
     }
 
     @Override
