@@ -81,15 +81,6 @@ public class ServiciosPoaSelectec implements EjbPoaSelectec {
         facadePoa.setEntityClass(EjesRegistro.class);
         return facadePoa.findAll();
     }
-    
-    @Override
-    public List<EjesRegistro> mostrarEjesRegistrosAreas(Short area,Short ejerciciosFiscales) {
-        TypedQuery<EjesRegistro> q = em.createQuery("SELECT ej FROM ActividadesPoa ap INNER JOIN ap.cuadroMandoInt cm INNER JOIN cm.eje ej INNER JOIN cm.ejercicioFiscal ef WHERE ap.area=:area AND ef.ejercicioFiscal=:ejercicioFiscal GROUP BY ej.eje", EjesRegistro.class);
-        q.setParameter("area", area);
-        q.setParameter("ejercicioFiscal", ejerciciosFiscales);
-        List<EjesRegistro> pr = q.getResultList();
-        return pr;
-    }
 //  -------------------------------------------- Estrategias -------------------------------------------------
 
     @Override
