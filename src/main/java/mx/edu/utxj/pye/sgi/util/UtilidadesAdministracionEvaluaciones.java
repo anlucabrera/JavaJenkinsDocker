@@ -47,6 +47,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360Resultados;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesTutoresResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaEvaluacionDocentesResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 //import mx.edu.utxj.pye.sgi.entity.logueo.Pe;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.funcional.Calculable;
@@ -69,6 +70,9 @@ import org.primefaces.context.RequestContext;
 @SessionScoped
 public class UtilidadesAdministracionEvaluaciones implements Serializable{
 
+    private static final long serialVersionUID = -2555896648653537850L;
+    @Getter PeriodosEscolares periodoEscolar;
+    
     //grafica
 //    @Getter @Setter protected List<ListadoChartEvaluacionDocente> chartCompletas, chartIncompletas, chartTotal;
 //    @Getter @Setter protected String selectedPoint;
@@ -157,6 +161,7 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
 //        e360 = true;
 //        selectItemPeriodoDesempenio = eJBSelectItems.itemPeriodosDesempenio();
         selectItemPeriodo360 = eJBSelectItems.itemsPeriodos360();
+        periodoEscolar= eJBAdministracionEncuestas.getPeriodoActual();
     }
 
     public void obtenerPeriodosPorEvaluacion() {

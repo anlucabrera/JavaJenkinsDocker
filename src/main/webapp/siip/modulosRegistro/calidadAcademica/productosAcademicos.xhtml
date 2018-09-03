@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:pr="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+    </ui:define>
+    <ui:define name="title">
+        Calidad Académica
+    </ui:define>
+
+    <ui:define name="description">
+        Módulo de registro
+    </ui:define>
+
+    <ui:define name="body"> 
+        <adm:sidebar collapsed="true"/>
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <div class="box box-primary">
+            <div class="box-header with-border">
+
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    <h:form prependId="true" id="frmMainButtons" class="form-inline">
+                        <p:outputPanel >
+                            <p:autoUpdate/>
+                            <p:toolbar id="tb"> 
+                                <f:facet name="left">
+                                    <div class="btn-group">
+                                        <p:commandButton value="Cargar Archivo de Excel" icon="fa fa-file-excel-o" onclick="PF('modalCargaArchivo').show()" class="btn btn-primary btn-sm"/>
+                                    </div>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <div class="btn-group">
+                                        <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
+                                    </div>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <div class="btn-group">
+                                        <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
+                                    </div>
+                                </f:facet>
+                                <f:facet name="right">
+                                    <div class="btn-group">
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasCA.descargarPlantillaProductosAcademicos()}" target="_blank" title="Descargar Plantilla Productos Académicos"><i class="fa fa-download" /></p:commandLink>
+                                    </div>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <div class="btn-group">
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="calidadAcademica" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
+                                    </div>
+                                </f:facet>
+                            </p:toolbar>
+                            <p:sticky target="tb" />
+                        </p:outputPanel>
+                    </h:form>
+                </div>
+                <p:separator/>
+
+                <div class="box-body">
+
+                    <!-- Sección de visualización y eliminación -->
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <h:form id="formMuestraDatosActivos">
+                                <c:if test="#{controladorProductosAcademicos.listaProductosAcademicos.dtoProductosAcademicos eq null}">
+
+                                </c:if>
+                            </h:form>
+                        </div>
+                    </div>
+                    <!-- Sección de subida -->
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <h:form id="formPrevisualizacionDatos" prependId="false">
+                                <c:if test="#{controladorProductosAcademicos.listaProductosAcademicos.dtoProductosAcademicos ne null}">
+                                    <center>
+                                        <p:tabView id="tabProductosAcademicos" activeIndex="#{controladorProductosAcademicos.tabuladorActivo}">
+                                            <p:tab id="tabPA" title="Productos Académicos y Personal Participante">
+                                                <div class="table-responsive">
+                                                    <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
+                                                                 paginator="true"
+                                                                 rows="10" 
+                                                                 rowsPerPageTemplate="5,10,20,30,40,50"
+                                                                 resizeMode="expand" scrollable="true"
+                                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                                 id="dtbProductosAcademicos"
+                                                                 var="prodAcad" value="#{controladorProductosAcademicos.listaProductosAcademicos.dtoProductosAcademicos}"
+                                                                 tableStyleClass="table-bordered table-hover table-condensed table-responsive">
+                                                        <f:facet name="header">
+                                                            Productos Académicos
+                                                        </f:facet>
+
+                                                        <p:columnGroup type="header">
+                                                            <p:row>
+                                                                <p:column rowspan="2" headerText="Producto Académico" width="200" />
+                                                                <p:column rowspan="2" headerText="Área Académica" width="350" />
+                                                                <p:column rowspan="2" headerText="Tipo de producto" width="300" />
+                                                                <p:column rowspan="2" headerText="Nombre producto académico" width="300" />
+                                                                <p:column rowspan="2" headerText="Evento o revista de presentación" width="300" />
+                                                                <p:column colspan="2" headerText="Duración" width="300" />
+                                                                <p:column rowspan="2" headerText="País" width="300" />
+                                                                <p:column rowspan="2" headerText="Estado" width="300" />
+                                                                <p:column rowspan="2" headerText="Municipio" width="300" />
+                                                                <p:column rowspan="2" headerText="Lugar" width="300" />
+                                                                <p:column rowspan="2" headerText="Descripción" width="300" />
+                                                                <p:column rowspan="2" headerText="ISSSN" width="300" />
+                                                                <p:column rowspan="2" headerText="Arbitrado / Indexado" width="300" />
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column headerText="Fecha Inicio" />
+                                                                <p:column headerText="Fecha Fin" />
+                                                            </p:row>
+                                                        </p:columnGroup>
+                                                        <p:column>
+                                                            <h:outputText value="#{prodAcad.productosAcademicos.productoAcademico}"/>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{prodAcad.areaUniversidad.nombre}"/>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{prodAcad.productosAcademicos.tipo}"/>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{prodAcad.productosAcademicos.nombreProd}"/>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{prodAcad.productosAcademicos.eventrevPresentacion}"/>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{prodAcad.productosAcademicos.fechaInicio}">
+                                                                <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                            </h:outputText>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{prodAcad.productosAcademicos.fechaFin}">
+                                                                <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                            </h:outputText>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{prodAcad.productosAcademicos.pais.nombre}"/>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{prodAcad.productosAcademicos.municipio.estado.nombre}"/>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{prodAcad.productosAcademicos.municipio.nombre}"/>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{prodAcad.productosAcademicos.lugar}"/>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{prodAcad.productosAcademicos.descripcion}"/>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{prodAcad.productosAcademicos.issn}"/>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{prodAcad.productosAcademicos.arbitradoIndexado}"/>
+                                                        </p:column>
+                                                        <f:facet name="footer">
+                                                        </f:facet>
+                                                    </p:dataTable>
+                                                </div>
+                                            </p:tab>
+
+                                            <p:tab id="tabPAP" title="Productos Académicos Personal">
+                                                <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
+                                                             paginator="true"
+                                                             rows="10" 
+                                                             rowsPerPageTemplate="5,10,20,30,40,50"
+                                                             resizeMode="expand" scrollable="true"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                             id="dtbProductosAcademicosPersonal"
+                                                             var="productoAcademicoPersonal" value="#{controladorProductosAcademicos.listaProductosAcademicosPersonal.dtoProductosAcademicosPersonal}"
+                                                             tableStyleClass="table-bordered table-hover table-condensed table-responsive">
+                                                    <f:facet name="header">
+                                                        Productos Académicos Personal
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row>
+                                                            <p:column rowspan="2" headerText="Producto Académico" width="200" sortBy="#{productoAcademicoPersonal.prodAcad}"/>
+                                                            <p:column rowspan="2" headerText="Nombre" width="350" />
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column>
+                                                        <h:outputText value="#{productoAcademicoPersonal.prodAcad}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{productoAcademicoPersonal.personal.nombre}"/>
+                                                    </p:column>
+                                                    <f:facet name="footer">
+                                                    </f:facet>
+                                                </p:dataTable>
+                                            </p:tab>
+                                        </p:tabView>
+                                        <p></p>
+                                        <p:commandButton id="btnGuardar" value="Guardar Datos" actionListener="#{controladorProductosAcademicos.guardaProductosAcademicos()}" icon="fa fa-pencil-square-o" class="btn-primary" update="formPrevisualizacionDatos"/>
+                                        <p:spacer width="5" />
+                                        <p:commandButton id="btnCancelar" value="Cancelar" actionListener="#{controladorProductosAcademicos.cancelarArchivo()}" icon="fa fa-times-circle" class="btn-danger" update=":formPrevisualizacionDatos,:formMuestraDatosActivos"/>
+                                    </center>
+                                </c:if>  
+                            </h:form>
+                        </div>
+                    </div>
+
+                </div>
+
+                <p:dialog widgetVar="modalCargaArchivo" width="400" height="auto" showEffect="fade" hideEffect="fade" modal="true" header="Carga de Archivo" responsive="true" resizable="false" maximizable="false">
+                    <center>
+                        <h:form id="formularioContenedor" enctype="multipart/form-data">
+                            <o:inputFile id="file" value="#{controladorArchivoProductosAcademicos.file}" acceptMessage="Solo se permiten archivos XLSX." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                            <p></p>
+                            <h:message id="messageForFile" for="file" />
+                            <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{controladorArchivoProductosAcademicos.subirExcelProductosAcademicos()}"/>
+                            <p:blockUI block="@form:formularioContenedor" widgetVar="bloqueoCargaFile">
+                                Cargando archivo espere por favor.<br />
+                            </p:blockUI>
+                        </h:form>
+                    </center>
+                </p:dialog>
+
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

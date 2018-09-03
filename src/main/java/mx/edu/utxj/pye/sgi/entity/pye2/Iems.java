@@ -98,9 +98,9 @@ public class Iems implements Serializable {
     @Column(name = "correo")
     private String correo;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "iems")
-    private List<DifusionIems> difusionIemsList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "iems")
     private List<FeriasParticipantes> feriasParticipantesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "iems")
+    private List<DifusionIems> difusionIemsList;
     @JoinColumns({
         @JoinColumn(name = "entidad", referencedColumnName = "claveEstado")
         , @JoinColumn(name = "municipio", referencedColumnName = "claveMunicipio")
@@ -217,21 +217,21 @@ public class Iems implements Serializable {
     }
 
     @XmlTransient
-    public List<DifusionIems> getDifusionIemsList() {
-        return difusionIemsList;
-    }
-
-    public void setDifusionIemsList(List<DifusionIems> difusionIemsList) {
-        this.difusionIemsList = difusionIemsList;
-    }
-
-    @XmlTransient
     public List<FeriasParticipantes> getFeriasParticipantesList() {
         return feriasParticipantesList;
     }
 
     public void setFeriasParticipantesList(List<FeriasParticipantes> feriasParticipantesList) {
         this.feriasParticipantesList = feriasParticipantesList;
+    }
+
+    @XmlTransient
+    public List<DifusionIems> getDifusionIemsList() {
+        return difusionIemsList;
+    }
+
+    public void setDifusionIemsList(List<DifusionIems> difusionIemsList) {
+        this.difusionIemsList = difusionIemsList;
     }
 
     public Localidad getLocalidad() {

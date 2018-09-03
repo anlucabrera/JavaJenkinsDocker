@@ -32,14 +32,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "ProgramasPertcal.findAll", query = "SELECT p FROM ProgramasPertcal p")
     , @NamedQuery(name = "ProgramasPertcal.findByRegistro", query = "SELECT p FROM ProgramasPertcal p WHERE p.registro = :registro")
-    , @NamedQuery(name = "ProgramasPertcal.findByPpc", query = "SELECT p FROM ProgramasPertcal p WHERE p.ppc = :ppc")
-    , @NamedQuery(name = "ProgramasPertcal.findByProgramaInicial", query = "SELECT p FROM ProgramasPertcal p WHERE p.programaInicial = :programaInicial")
-    , @NamedQuery(name = "ProgramasPertcal.findByProgramaActual", query = "SELECT p FROM ProgramasPertcal p WHERE p.programaActual = :programaActual")
+    , @NamedQuery(name = "ProgramasPertcal.findByProgramaEducativo", query = "SELECT p FROM ProgramasPertcal p WHERE p.programaEducativo = :programaEducativo")
+    , @NamedQuery(name = "ProgramasPertcal.findByAnioInicio", query = "SELECT p FROM ProgramasPertcal p WHERE p.anioInicio = :anioInicio")
+    , @NamedQuery(name = "ProgramasPertcal.findByEvaluable", query = "SELECT p FROM ProgramasPertcal p WHERE p.evaluable = :evaluable")
+    , @NamedQuery(name = "ProgramasPertcal.findByPertinente", query = "SELECT p FROM ProgramasPertcal p WHERE p.pertinente = :pertinente")
     , @NamedQuery(name = "ProgramasPertcal.findByOrgAcreditador", query = "SELECT p FROM ProgramasPertcal p WHERE p.orgAcreditador = :orgAcreditador")
     , @NamedQuery(name = "ProgramasPertcal.findByFeciniAcred", query = "SELECT p FROM ProgramasPertcal p WHERE p.feciniAcred = :feciniAcred")
     , @NamedQuery(name = "ProgramasPertcal.findByFecfinAcred", query = "SELECT p FROM ProgramasPertcal p WHERE p.fecfinAcred = :fecfinAcred")
-    , @NamedQuery(name = "ProgramasPertcal.findByFeciniReacred", query = "SELECT p FROM ProgramasPertcal p WHERE p.feciniReacred = :feciniReacred")
-    , @NamedQuery(name = "ProgramasPertcal.findByFecfinReacred", query = "SELECT p FROM ProgramasPertcal p WHERE p.fecfinReacred = :fecfinReacred")
     , @NamedQuery(name = "ProgramasPertcal.findByAnioEstfac", query = "SELECT p FROM ProgramasPertcal p WHERE p.anioEstfac = :anioEstfac")
     , @NamedQuery(name = "ProgramasPertcal.findByAnioUltast", query = "SELECT p FROM ProgramasPertcal p WHERE p.anioUltast = :anioUltast")})
 public class ProgramasPertcal implements Serializable {
@@ -51,22 +50,28 @@ public class ProgramasPertcal implements Serializable {
     @Column(name = "registro")
     private Integer registro;
     @Basic(optional = false)
-    @Column(name = "ppc")
-    private short ppc;
+    @NotNull
+    @Column(name = "programa_educativo")
+    private short programaEducativo;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 8)
-    @Column(name = "programa_inicial")
-    private String programaInicial;
+    @Column(name = "anio_inicio")
+    private short anioInicio;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 8)
-    @Column(name = "programa_actual")
-    private String programaActual;
+    @Size(min = 1, max = 3)
+    @Column(name = "evaluable")
+    private String evaluable;
     @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 3)
+    @Column(name = "pertinente")
+    private String pertinente;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 15)
     @Column(name = "org_acreditador")
-    private int orgAcreditador;
+    private String orgAcreditador;
     @Basic(optional = false)
     @NotNull
     @Column(name = "fecini_acred")
@@ -79,24 +84,12 @@ public class ProgramasPertcal implements Serializable {
     private Date fecfinAcred;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "fecini_reacred")
-    @Temporal(TemporalType.DATE)
-    private Date feciniReacred;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "fecfin_reacred")
-    @Temporal(TemporalType.DATE)
-    private Date fecfinReacred;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "anio_estfac")
-    @Temporal(TemporalType.DATE)
-    private Date anioEstfac;
+    private short anioEstfac;
     @Basic(optional = false)
     @NotNull
     @Column(name = "anio_ultast")
-    @Temporal(TemporalType.DATE)
-    private Date anioUltast;
+    private short anioUltast;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Registros registros;
@@ -108,16 +101,15 @@ public class ProgramasPertcal implements Serializable {
         this.registro = registro;
     }
 
-    public ProgramasPertcal(Integer registro, short ppc, String programaInicial, String programaActual, int orgAcreditador, Date feciniAcred, Date fecfinAcred, Date feciniReacred, Date fecfinReacred, Date anioEstfac, Date anioUltast) {
+    public ProgramasPertcal(Integer registro, short programaEducativo, short anioInicio, String evaluable, String pertinente, String orgAcreditador, Date feciniAcred, Date fecfinAcred, short anioEstfac, short anioUltast) {
         this.registro = registro;
-        this.ppc = ppc;
-        this.programaInicial = programaInicial;
-        this.programaActual = programaActual;
+        this.programaEducativo = programaEducativo;
+        this.anioInicio = anioInicio;
+        this.evaluable = evaluable;
+        this.pertinente = pertinente;
         this.orgAcreditador = orgAcreditador;
         this.feciniAcred = feciniAcred;
         this.fecfinAcred = fecfinAcred;
-        this.feciniReacred = feciniReacred;
-        this.fecfinReacred = fecfinReacred;
         this.anioEstfac = anioEstfac;
         this.anioUltast = anioUltast;
     }
@@ -130,35 +122,43 @@ public class ProgramasPertcal implements Serializable {
         this.registro = registro;
     }
 
-    public short getPpc() {
-        return ppc;
+    public short getProgramaEducativo() {
+        return programaEducativo;
     }
 
-    public void setPpc(short ppc) {
-        this.ppc = ppc;
+    public void setProgramaEducativo(short programaEducativo) {
+        this.programaEducativo = programaEducativo;
     }
 
-    public String getProgramaInicial() {
-        return programaInicial;
+    public short getAnioInicio() {
+        return anioInicio;
     }
 
-    public void setProgramaInicial(String programaInicial) {
-        this.programaInicial = programaInicial;
+    public void setAnioInicio(short anioInicio) {
+        this.anioInicio = anioInicio;
     }
 
-    public String getProgramaActual() {
-        return programaActual;
+    public String getEvaluable() {
+        return evaluable;
     }
 
-    public void setProgramaActual(String programaActual) {
-        this.programaActual = programaActual;
+    public void setEvaluable(String evaluable) {
+        this.evaluable = evaluable;
     }
 
-    public int getOrgAcreditador() {
+    public String getPertinente() {
+        return pertinente;
+    }
+
+    public void setPertinente(String pertinente) {
+        this.pertinente = pertinente;
+    }
+
+    public String getOrgAcreditador() {
         return orgAcreditador;
     }
 
-    public void setOrgAcreditador(int orgAcreditador) {
+    public void setOrgAcreditador(String orgAcreditador) {
         this.orgAcreditador = orgAcreditador;
     }
 
@@ -178,35 +178,19 @@ public class ProgramasPertcal implements Serializable {
         this.fecfinAcred = fecfinAcred;
     }
 
-    public Date getFeciniReacred() {
-        return feciniReacred;
-    }
-
-    public void setFeciniReacred(Date feciniReacred) {
-        this.feciniReacred = feciniReacred;
-    }
-
-    public Date getFecfinReacred() {
-        return fecfinReacred;
-    }
-
-    public void setFecfinReacred(Date fecfinReacred) {
-        this.fecfinReacred = fecfinReacred;
-    }
-
-    public Date getAnioEstfac() {
+    public short getAnioEstfac() {
         return anioEstfac;
     }
 
-    public void setAnioEstfac(Date anioEstfac) {
+    public void setAnioEstfac(short anioEstfac) {
         this.anioEstfac = anioEstfac;
     }
 
-    public Date getAnioUltast() {
+    public short getAnioUltast() {
         return anioUltast;
     }
 
-    public void setAnioUltast(Date anioUltast) {
+    public void setAnioUltast(short anioUltast) {
         this.anioUltast = anioUltast;
     }
 

@@ -15,6 +15,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -142,17 +143,14 @@ public class RegistrosMovilidad implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "descripcion_ing_ext")
     private String descripcionIngExt;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registroMovilidad")
-    private List<RegistroMovilidadEstudiante> registroMovilidadEstudianteList;
-    @JoinColumn(name = "ciudad", referencedColumnName = "idestado")
+    @JoinColumns({
+        @JoinColumn(name = "ciudad", referencedColumnName = "idpais")
+        , @JoinColumn(name = "pais", referencedColumnName = "idestado")})
     @ManyToOne(optional = false)
-    private Estado ciudad;
+    private Estado estado;
     @JoinColumn(name = "institucion_organizacion", referencedColumnName = "empresa")
     @ManyToOne(optional = false)
     private OrganismosVinculados institucionOrganizacion;
-    @JoinColumn(name = "pais", referencedColumnName = "idpais")
-    @ManyToOne(optional = false)
-    private Pais pais;
     @JoinColumn(name = "programa_movilidad", referencedColumnName = "programa")
     @ManyToOne(optional = false)
     private ProgramasMovilidad programaMovilidad;
@@ -161,6 +159,8 @@ public class RegistrosMovilidad implements Serializable {
     private Registros registros;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "registroMovilidad")
     private List<RegistroMovilidadDocente> registroMovilidadDocenteList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registroMovilidad")
+    private List<RegistroMovilidadEstudiante> registroMovilidadEstudianteList;
 
     public RegistrosMovilidad() {
     }
@@ -334,21 +334,12 @@ public class RegistrosMovilidad implements Serializable {
         this.descripcionIngExt = descripcionIngExt;
     }
 
-    @XmlTransient
-    public List<RegistroMovilidadEstudiante> getRegistroMovilidadEstudianteList() {
-        return registroMovilidadEstudianteList;
+    public Estado getEstado() {
+        return estado;
     }
 
-    public void setRegistroMovilidadEstudianteList(List<RegistroMovilidadEstudiante> registroMovilidadEstudianteList) {
-        this.registroMovilidadEstudianteList = registroMovilidadEstudianteList;
-    }
-
-    public Estado getCiudad() {
-        return ciudad;
-    }
-
-    public void setCiudad(Estado ciudad) {
-        this.ciudad = ciudad;
+    public void setEstado(Estado estado) {
+        this.estado = estado;
     }
 
     public OrganismosVinculados getInstitucionOrganizacion() {
@@ -357,14 +348,6 @@ public class RegistrosMovilidad implements Serializable {
 
     public void setInstitucionOrganizacion(OrganismosVinculados institucionOrganizacion) {
         this.institucionOrganizacion = institucionOrganizacion;
-    }
-
-    public Pais getPais() {
-        return pais;
-    }
-
-    public void setPais(Pais pais) {
-        this.pais = pais;
     }
 
     public ProgramasMovilidad getProgramaMovilidad() {
@@ -390,6 +373,15 @@ public class RegistrosMovilidad implements Serializable {
 
     public void setRegistroMovilidadDocenteList(List<RegistroMovilidadDocente> registroMovilidadDocenteList) {
         this.registroMovilidadDocenteList = registroMovilidadDocenteList;
+    }
+
+    @XmlTransient
+    public List<RegistroMovilidadEstudiante> getRegistroMovilidadEstudianteList() {
+        return registroMovilidadEstudianteList;
+    }
+
+    public void setRegistroMovilidadEstudianteList(List<RegistroMovilidadEstudiante> registroMovilidadEstudianteList) {
+        this.registroMovilidadEstudianteList = registroMovilidadEstudianteList;
     }
 
     @Override

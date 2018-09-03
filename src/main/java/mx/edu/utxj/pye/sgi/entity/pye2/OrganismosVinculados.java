@@ -48,7 +48,8 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "OrganismosVinculados.findByTelefono", query = "SELECT o FROM OrganismosVinculados o WHERE o.telefono = :telefono")
     , @NamedQuery(name = "OrganismosVinculados.findByTelefonoOtro", query = "SELECT o FROM OrganismosVinculados o WHERE o.telefonoOtro = :telefonoOtro")
     , @NamedQuery(name = "OrganismosVinculados.findByEmail", query = "SELECT o FROM OrganismosVinculados o WHERE o.email = :email")
-    , @NamedQuery(name = "OrganismosVinculados.findByConvenio", query = "SELECT o FROM OrganismosVinculados o WHERE o.convenio = :convenio")})
+    , @NamedQuery(name = "OrganismosVinculados.findByConvenio", query = "SELECT o FROM OrganismosVinculados o WHERE o.convenio = :convenio")
+    , @NamedQuery(name = "OrganismosVinculados.findByEstatus", query = "SELECT o FROM OrganismosVinculados o WHERE o.estatus = :estatus")})
 public class OrganismosVinculados implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -93,7 +94,7 @@ public class OrganismosVinculados implements Serializable {
     @Size(max = 15)
     @Column(name = "telefono_otro")
     private String telefonoOtro;
-    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Correo electrónico no válido")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
@@ -104,12 +105,22 @@ public class OrganismosVinculados implements Serializable {
     @Size(min = 1, max = 3)
     @Column(name = "convenio")
     private String convenio;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "estatus")
+    private boolean estatus;
     @ManyToMany(mappedBy = "organismosVinculadosList")
     private List<ActividadesVinculacion> actividadesVinculacionList;
     @OneToMany(mappedBy = "empresa")
     private List<ServiciosTecnologicosParticipantes> serviciosTecnologicosParticipantesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
     private List<VisitasIndustriales> visitasIndustrialesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
+    private List<Convenios> conveniosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "institucionOrganizacion")
+    private List<RegistrosMovilidad> registrosMovilidadList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
+    private List<BolsaTrabajo> bolsaTrabajoList;
     @JoinColumn(name = "emp_tip", referencedColumnName = "emptipo")
     @ManyToOne(optional = false)
     private EmpresasTipo empTip;
@@ -134,13 +145,7 @@ public class OrganismosVinculados implements Serializable {
     @ManyToOne(optional = false)
     private SectoresTipo sector;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
-    private List<Convenios> conveniosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
     private List<EstadiasPorEstudiante> estadiasPorEstudianteList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "institucionOrganizacion")
-    private List<RegistrosMovilidad> registrosMovilidadList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
-    private List<BolsaTrabajo> bolsaTrabajoList;
 
     public OrganismosVinculados() {
     }
@@ -149,7 +154,7 @@ public class OrganismosVinculados implements Serializable {
         this.registro = registro;
     }
 
-    public OrganismosVinculados(Integer registro, int empresa, Date fecha, String nombre, String direccion, String cp, String representante, String telefono, String email, String convenio) {
+    public OrganismosVinculados(Integer registro, int empresa, Date fecha, String nombre, String direccion, String cp, String representante, String telefono, String email, String convenio, boolean estatus) {
         this.registro = registro;
         this.empresa = empresa;
         this.fecha = fecha;
@@ -160,6 +165,7 @@ public class OrganismosVinculados implements Serializable {
         this.telefono = telefono;
         this.email = email;
         this.convenio = convenio;
+        this.estatus = estatus;
     }
 
     public Integer getRegistro() {
@@ -250,6 +256,14 @@ public class OrganismosVinculados implements Serializable {
         this.convenio = convenio;
     }
 
+    public boolean getEstatus() {
+        return estatus;
+    }
+
+    public void setEstatus(boolean estatus) {
+        this.estatus = estatus;
+    }
+
     @XmlTransient
     public List<ActividadesVinculacion> getActividadesVinculacionList() {
         return actividadesVinculacionList;
@@ -275,6 +289,33 @@ public class OrganismosVinculados implements Serializable {
 
     public void setVisitasIndustrialesList(List<VisitasIndustriales> visitasIndustrialesList) {
         this.visitasIndustrialesList = visitasIndustrialesList;
+    }
+
+    @XmlTransient
+    public List<Convenios> getConveniosList() {
+        return conveniosList;
+    }
+
+    public void setConveniosList(List<Convenios> conveniosList) {
+        this.conveniosList = conveniosList;
+    }
+
+    @XmlTransient
+    public List<RegistrosMovilidad> getRegistrosMovilidadList() {
+        return registrosMovilidadList;
+    }
+
+    public void setRegistrosMovilidadList(List<RegistrosMovilidad> registrosMovilidadList) {
+        this.registrosMovilidadList = registrosMovilidadList;
+    }
+
+    @XmlTransient
+    public List<BolsaTrabajo> getBolsaTrabajoList() {
+        return bolsaTrabajoList;
+    }
+
+    public void setBolsaTrabajoList(List<BolsaTrabajo> bolsaTrabajoList) {
+        this.bolsaTrabajoList = bolsaTrabajoList;
     }
 
     public EmpresasTipo getEmpTip() {
@@ -334,39 +375,12 @@ public class OrganismosVinculados implements Serializable {
     }
 
     @XmlTransient
-    public List<Convenios> getConveniosList() {
-        return conveniosList;
-    }
-
-    public void setConveniosList(List<Convenios> conveniosList) {
-        this.conveniosList = conveniosList;
-    }
-
-    @XmlTransient
     public List<EstadiasPorEstudiante> getEstadiasPorEstudianteList() {
         return estadiasPorEstudianteList;
     }
 
     public void setEstadiasPorEstudianteList(List<EstadiasPorEstudiante> estadiasPorEstudianteList) {
         this.estadiasPorEstudianteList = estadiasPorEstudianteList;
-    }
-
-    @XmlTransient
-    public List<RegistrosMovilidad> getRegistrosMovilidadList() {
-        return registrosMovilidadList;
-    }
-
-    public void setRegistrosMovilidadList(List<RegistrosMovilidad> registrosMovilidadList) {
-        this.registrosMovilidadList = registrosMovilidadList;
-    }
-
-    @XmlTransient
-    public List<BolsaTrabajo> getBolsaTrabajoList() {
-        return bolsaTrabajoList;
-    }
-
-    public void setBolsaTrabajoList(List<BolsaTrabajo> bolsaTrabajoList) {
-        this.bolsaTrabajoList = bolsaTrabajoList;
     }
 
     @Override

@@ -30,7 +30,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "DesercionReprobacionMaterias.findAll", query = "SELECT d FROM DesercionReprobacionMaterias d")
     , @NamedQuery(name = "DesercionReprobacionMaterias.findByRegistro", query = "SELECT d FROM DesercionReprobacionMaterias d WHERE d.registro = :registro")
-    , @NamedQuery(name = "DesercionReprobacionMaterias.findByDpeRep", query = "SELECT d FROM DesercionReprobacionMaterias d WHERE d.dpeRep = :dpeRep")
     , @NamedQuery(name = "DesercionReprobacionMaterias.findByAsignatura", query = "SELECT d FROM DesercionReprobacionMaterias d WHERE d.asignatura = :asignatura")
     , @NamedQuery(name = "DesercionReprobacionMaterias.findByDocente", query = "SELECT d FROM DesercionReprobacionMaterias d WHERE d.docente = :docente")})
 public class DesercionReprobacionMaterias implements Serializable {
@@ -41,9 +40,6 @@ public class DesercionReprobacionMaterias implements Serializable {
     @NotNull
     @Column(name = "registro")
     private Integer registro;
-    @Basic(optional = false)
-    @Column(name = "dpe_rep")
-    private short dpeRep;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
@@ -67,9 +63,8 @@ public class DesercionReprobacionMaterias implements Serializable {
         this.registro = registro;
     }
 
-    public DesercionReprobacionMaterias(Integer registro, short dpeRep, String asignatura, int docente) {
+    public DesercionReprobacionMaterias(Integer registro, String asignatura, int docente) {
         this.registro = registro;
-        this.dpeRep = dpeRep;
         this.asignatura = asignatura;
         this.docente = docente;
     }
@@ -80,14 +75,6 @@ public class DesercionReprobacionMaterias implements Serializable {
 
     public void setRegistro(Integer registro) {
         this.registro = registro;
-    }
-
-    public short getDpeRep() {
-        return dpeRep;
-    }
-
-    public void setDpeRep(short dpeRep) {
-        this.dpeRep = dpeRep;
     }
 
     public String getAsignatura() {

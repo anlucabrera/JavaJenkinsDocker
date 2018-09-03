@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:pr="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+    </ui:define>
+    <ui:define name="title">
+        Vinculación con Enfoque Global
+    </ui:define>
+
+    <ui:define name="description">
+        Módulo de registro
+    </ui:define>
+
+    <ui:define name="body"> 
+        <adm:sidebar collapsed="true"/>
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <div class="box box-primary">
+            <div class="box-header with-border">
+
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    <h:form prependId="true" id="frmMainButtons" class="form-inline">
+                        <p:outputPanel >
+                            <p:autoUpdate/>
+                            <p:toolbar id="tb"> 
+                                <f:facet name="left">
+                                    <div class="btn-group">
+                                        <p:commandButton value="Cargar Archivo de Excel" icon="fa fa-file-excel-o" onclick="PF('modalCargaArchivo').show()" class="btn btn-primary btn-sm"/>
+                                    </div>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <div class="btn-group">
+                                        <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
+                                    </div>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <div class="btn-group">
+                                        <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
+                                    </div>
+                                </f:facet>
+                                <f:facet name="right">
+                                    <div class="btn-group">
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="# {controladorPlantillasVIN.descargarPlantillaServTec()}" target="_blank" title="Descargar Plantilla Servicios Tecnológicos"><i class="fa fa-download" /></p:commandLink>
+                                    </div>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <div class="btn-group">
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="vinculacion" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
+                                    </div>
+                                </f:facet>
+                            </p:toolbar>
+                            <p:sticky target="tb" />
+                        </p:outputPanel>
+                    </h:form>
+                </div>
+                <p:separator/>
+
+                <div class="box-body">
+
+                    <!-- Sección de visualización y eliminación -->
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <h:form id="formMuestraDatosActivos">
+                                <c:if test="#{controladorServiciosTecnologicosAnioMes.listaServiciosTecnologicosAnioMes.serviciosTecnologicosAnioMes eq null}">
+
+                                </c:if>
+                            </h:form>
+                        </div>
+                    </div>
+                    <!-- Sección de subida -->
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <h:form id="formPrevisualizacionDatos" prependId="false">
+                                <c:if test="#{controladorServiciosTecnologicosAnioMes.listaServiciosTecnologicosAnioMes.serviciosTecnologicosAnioMes ne null}">
+                                    <center>
+                                        <p:tabView id="tabServiciosTecnologicosAnioMes">
+                                            <p:tab id="tabST" title="Servicios Tecnológicos">
+                                                <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
+                                                             paginator="true"
+                                                             rows="10" 
+                                                             rowsPerPageTemplate="5,10,20,30,40,50"
+                                                             resizeMode="expand" scrollable="true"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                             id="dtbServiciosTecnologicos"
+                                                             var="servicioTecnologico" value="#{controladorServiciosTecnologicosAnioMes.listaServiciosTecnologicosAnioMes.serviciosTecnologicosAnioMes}"
+                                                             tableStyleClass="table-bordered table-hover table-condensed table-responsive">
+                                                    <f:facet name="header">
+                                                        Servicios Tecnológicos
+                                                    </f:facet>
+
+                                                    <p:columnGroup type="header">
+                                                        <p:row>
+                                                            <p:column rowspan="2" headerText="Servicio Tecnológico" width="300" />
+                                                            <p:column rowspan="2" headerText="Tipo de Servicio" width="200" />
+                                                            <p:column rowspan="2" headerText="Nombre del Servicio" width="400" />
+                                                            <p:column colspan="2" headerText="Duración" width="300" />
+                                                            <p:column rowspan="2" headerText="Duración(hrs)" width="100" />
+                                                            <p:column rowspan="2" headerText="Monto Ingresado" width="200" />
+                                                            <p:column rowspan="2" headerText="Facilitador" width="300" />
+                                                            <p:column rowspan="2" headerText="Servicio Demandado" width="200" />
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column headerText="Fecha Inicio" />
+                                                            <p:column headerText="Fecha Fin" />
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column>
+                                                        <h:outputText value="#{servicioTecnologico.servicio}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{servicioTecnologico.servicioTipo.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{servicioTecnologico.nombre}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{servicioTecnologico.fechaInicio}">
+                                                            <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                        </h:outputText>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{servicioTecnologico.fechaTermino}">
+                                                            <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                        </h:outputText>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{servicioTecnologico.duracion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="$ #{servicioTecnologico.montoIngresado}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{servicioTecnologico.facilitador}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{servicioTecnologico.servicioDemandado}"/>
+                                                    </p:column>
+
+                                                    <f:facet name="footer">
+                                                    </f:facet>
+                                                </p:dataTable>
+                                            </p:tab>
+
+                                            <p:tab id="tabSTP" title="Participantes en Servicios Tecnológicos">
+                                                <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
+                                                             paginator="true"
+                                                             rows="10" 
+                                                             rowsPerPageTemplate="5,10,20,30,40,50"
+                                                             resizeMode="expand" scrollable="true"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                             id="dtbServiciosTecnologicosParticipantes"
+                                                             var="serviciosTecnologicosPart" value="#{controladorServiciosTecnologicosAnioMes.listaServiciosTecnologicosAnioMesParticipantes.dtoServiciosTecnologicosParticipantes}"
+                                                             tableStyleClass="table-bordered table-hover table-condensed table-responsive">
+                                                    <f:facet name="header">
+                                                        Participantes en Servicios Tecnológicos
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row>
+                                                            <p:column headerText="Servicio Tecnólogico" width="300" />
+                                                            <p:column headerText="Nombre del Participante" width="300" />
+                                                            <p:column headerText="Sexo" width="100" />
+                                                            <p:column headerText="Edad" width="100" />
+                                                            <p:column headerText="Estado" width="300" />
+                                                            <p:column headerText="Municipio" width="300" />
+                                                            <p:column headerText="Lengua Indígena" width="200" />
+                                                            <p:column headerText="Discapacidad" width="200" />
+                                                            <p:column headerText="Nombre de la empresa" width="400" />
+                                                            <p:column headerText="Generacion" width="200" />
+                                                            <p:column headerText="Programa Educativo" width="600" />
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column>
+                                                        <h:outputText value="#{serviciosTecnologicosPart.serviciosTecnologicosParticipantes.servicioTecnologico.servicio}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{serviciosTecnologicosPart.serviciosTecnologicosParticipantes.nombre}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{serviciosTecnologicosPart.serviciosTecnologicosParticipantes.sexo}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{serviciosTecnologicosPart.serviciosTecnologicosParticipantes.edad}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{serviciosTecnologicosPart.serviciosTecnologicosParticipantes.municipio.estado.nombre}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{serviciosTecnologicosPart.serviciosTecnologicosParticipantes.municipio.nombre}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{serviciosTecnologicosPart.serviciosTecnologicosParticipantes.lenguaIndigena}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{serviciosTecnologicosPart.serviciosTecnologicosParticipantes.discapacidad}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{serviciosTecnologicosPart.organismoVinculadoString}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{serviciosTecnologicosPart.generacion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{serviciosTecnologicosPart.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <f:facet name="footer">
+                                                    </f:facet>
+                                                </p:dataTable>
+                                            </p:tab>
+                                        </p:tabView>
+                                        <p></p>
+                                        <p:commandButton id="btnGuardar" value="Guardar Datos" actionListener="#{controladorServiciosTecnologicosAnioMes.guardaServiciosTecnologicos()}" icon="fa fa-pencil-square-o" class="btn-primary" update="formPrevisualizacionDatos"/>
+                                        <p:spacer width="5" />
+                                        <p:commandButton id="btnCancelar" value="Cancelar" actionListener="#{controladorServiciosTecnologicosAnioMes.cancelarArchivo()}" icon="fa fa-times-circle" class="btn-danger" update=":formPrevisualizacionDatos,:formMuestraDatosActivos"/>
+                                    </center>
+                                </c:if>
+                            </h:form>
+                        </div>
+                    </div>
+
+                </div>
+
+                <p:dialog widgetVar="modalCargaArchivo" width="400" height="auto" showEffect="fade" hideEffect="fade" modal="true" header="Carga de Archivo" responsive="true" resizable="false" maximizable="false">
+                    <center>
+                        <h:form id="formularioContenedor" enctype="multipart/form-data">  
+                            <o:inputFile id="file" value="#{controladorArchivoServiciosTecnologicosAnioMes.file}" acceptMessage="Solo se permiten archivos XLSX." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                            <p></p>
+                            <h:message id="messageForFile" for="file" />
+                            <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{controladorArchivoServiciosTecnologicosAnioMes.subirExcelServiciosTecnologicos()}"/>
+                            <p:blockUI block="@form:formularioContenedor" widgetVar="bloqueoCargaFile">
+                                Cargando archivo espere por favor.<br />
+                            </p:blockUI>
+                        </h:form>
+                    </center>
+                </p:dialog>
+
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

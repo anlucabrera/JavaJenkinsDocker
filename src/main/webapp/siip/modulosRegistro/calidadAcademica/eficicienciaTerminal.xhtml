@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:pr="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+    </ui:define>
+    <ui:define name="title">
+        Calidad Académica
+    </ui:define>
+
+    <ui:define name="description">
+        Módulo de registro
+    </ui:define>
+
+    <ui:define name="body"> 
+        <adm:sidebar collapsed="true"/>
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <div class="box box-primary">
+            <div class="box-header with-border">
+
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    <h:form prependId="true" id="frmMainButtons" class="form-inline">
+                        <p:outputPanel >
+                            <p:autoUpdate/>
+                            <p:toolbar id="tb"> 
+                                <f:facet name="left">
+                                    <div class="btn-group">
+                                        <p:commandButton value="Cargar Archivo de Excel" icon="fa fa-file-excel-o" onclick="PF('modalCargaArchivo').show()" class="btn btn-primary btn-sm"/>
+                                    </div>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <div class="btn-group">
+                                        <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
+                                    </div>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <div class="btn-group">
+                                        <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
+                                    </div>
+                                </f:facet>
+                                <f:facet name="right">
+                                    <div class="btn-group">
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="# {controladorPlantillasCA.descargarPlantillaEficienciaTerminal()}" target="_blank" title="Descargar Plantilla Eficiencia Terminal"><i class="fa fa-download" /></p:commandLink>
+                                    </div>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <div class="btn-group">
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="calidadAcademica" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
+                                    </div>
+                                </f:facet>
+                            </p:toolbar>
+                            <p:sticky target="tb" />
+                        </p:outputPanel>
+                    </h:form>
+                </div>
+                <p:separator/>
+
+                <div class="box-body">
+
+                    <!-- Sección de visualización y eliminación -->
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <h:form id="formMuestraDatosActivos">
+                                <c:if test="#{controladorEficienciaTerminalTitulacionRegistro.listaEficienciaTerminalTitulacionRegistros.eficienciaTerminalTitulacionRegistros eq null}">
+
+                                </c:if>
+                            </h:form>
+                        </div>
+                    </div>
+                    <!-- Sección de subida -->
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <h:form id="formPrevisualizacionDatos" prependId="false">
+                                <c:if test="#{controladorEficienciaTerminalTitulacionRegistro.listaEficienciaTerminalTitulacionRegistros.eficienciaTerminalTitulacionRegistros ne null}">
+                                    <center>
+                                        <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
+                                                     paginator="true"
+                                                     rows="10" 
+                                                     rowsPerPageTemplate="5,10,20,30,40,50"
+                                                     resizeMode="expand" scrollable="true"
+                                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                     id="dtbEficienciaTerminalTitulacion"
+                                                     var="eficienciaTerminal" value="#{controladorEficienciaTerminalTitulacionRegistro.listaEficienciaTerminalTitulacionRegistros.eficienciaTerminalTitulacionRegistros}">
+                                            <f:facet name="header">
+                                                Eficiencia Terminal
+                                            </f:facet>
+
+                                            <p:columnGroup type="header">
+                                                <p:row>
+                                                    <p:column rowspan="3" headerText="Fecha Corte" width="100" />
+                                                    <p:column rowspan="3" headerText="Programa Educativo" width="350" />
+                                                    <p:column rowspan="3" headerText="Generación" width="100" />
+                                                    <p:column rowspan="3" headerText="Fecha Ingreso Mes / Año" width="120"/>
+                                                    <p:column rowspan="3" headerText="Fecha Egreso Mes / Año" width="120"/>
+                                                    <p:column rowspan="2" colspan="3" headerText="Nuevo ingreso" width="200"/>
+                                                    <p:column colspan="9" headerText="Egresados" width="600"/>
+                                                    <p:column rowspan="2" colspan="3" headerText="Total de egresados" width="200" />
+                                                    <p:column rowspan="2" colspan="3" headerText="Titulados" width="200" />
+                                                    <p:column rowspan="2" colspan="3" headerText="Titulados DGP" width="200" />
+                                                    <p:column rowspan="3" headerText="Eficiencia Terminal" width="100" />
+                                                    <p:column rowspan="3" headerText="Tasa de titulación" width="100" />
+                                                    <p:column rowspan="3" headerText="Registro ante DGP" width="100" />
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="3" headerText="Con su corte" />
+                                                    <p:column colspan="3" headerText="Rezagados" />
+                                                    <p:column colspan="3" headerText="Segunda carrera" />
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column headerText="H"/>
+                                                    <p:column headerText="M"/>
+                                                    <p:column headerText="T"/>
+                                                    <p:column headerText="H"/>
+                                                    <p:column headerText="M"/>
+                                                    <p:column headerText="T"/>
+                                                    <p:column headerText="H"/>
+                                                    <p:column headerText="M"/>
+                                                    <p:column headerText="T"/>
+                                                    <p:column headerText="H"/>
+                                                    <p:column headerText="M"/>
+                                                    <p:column headerText="T"/>
+                                                    <p:column headerText="H"/>
+                                                    <p:column headerText="M"/>
+                                                    <p:column headerText="T"/>
+                                                    <p:column headerText="H"/>
+                                                    <p:column headerText="M"/>
+                                                    <p:column headerText="T"/>
+                                                    <p:column headerText="H"/>
+                                                    <p:column headerText="M"/>
+                                                    <p:column headerText="T"/>
+                                                </p:row>
+                                            </p:columnGroup>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.fechaCorte}">
+                                                    <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                </h:outputText>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.areasUniversidad.nombre}"/>
+                                            </p:column>
+                                            <p:column >
+                                                <h:outputText value="#{eficienciaTerminal.generacion}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.periodoInicio}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.periodoFin}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.alumnosh}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.alumnosm}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.alumnosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.alumnosm}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egrecorh}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egrecorm}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egrecorh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egrecorm}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.rezagadosh}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.rezagadosm}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.rezagadosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.rezagadosm}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.segcarrerah}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.segcarreram}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.segcarrerah + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.segcarreram}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egresadosh}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egresadosm}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egresadosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egresadosm}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.tituladosh}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.tituladosm}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.tituladosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.tituladosm}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.registradosh}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.registradosm}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.registradosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.registradosm}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{controladorEficienciaTerminalTitulacionRegistro.calculaEficienciaTerminal((eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egresadosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egresadosm),(eficienciaTerminal.eficienciaTerminalTitulacionRegistro.alumnosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.alumnosm))} %"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{controladorEficienciaTerminalTitulacionRegistro.calculaTasaTitulacion((eficienciaTerminal.eficienciaTerminalTitulacionRegistro.tituladosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.tituladosm), (eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egresadosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egresadosm))} %"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{controladorEficienciaTerminalTitulacionRegistro.calculaRegistroDGP((eficienciaTerminal.eficienciaTerminalTitulacionRegistro.registradosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.registradosm), (eficienciaTerminal.eficienciaTerminalTitulacionRegistro.tituladosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.tituladosm))} %"/>
+                                            </p:column>
+                                            <f:facet name="footer">
+                                            </f:facet>
+                                        </p:dataTable>
+                                        <p></p>
+                                        <p:commandButton id="btnGuardarEficienciaTerminalTitulacion" value="Guardar Datos" actionListener="#{controladorEficienciaTerminalTitulacionRegistro.guardaEficienciaTerminalTitulacion()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                        <p:spacer width="5" />
+                                        <p:commandButton id="btnCancelar" value="Cancelar" actionListener="#{controladorEficienciaTerminalTitulacionRegistro.cancelarArchivo()}" icon="fa fa-times-circle" class="btn-danger" update=":formPrevisualizacionDatos,:formMuestraDatosActivos"/>
+                                    </center>
+                                </c:if>
+                            </h:form>
+                        </div>
+                    </div>
+
+                </div>
+
+                <p:dialog widgetVar="modalCargaArchivo" width="400" height="auto" showEffect="fade" hideEffect="fade" modal="true" header="Carga de Archivo" responsive="true" resizable="false" maximizable="false">
+                    <center>
+                        <h:form id="formularioContenedor" enctype="multipart/form-data">
+                            <o:inputFile id="file" value="#{controladorArchivoEficienciaTerminalTitReg.file}" acceptMessage="Solo se permiten archivos XLSX." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                            <p></p>
+                            <h:message id="messageForFile" for="file" />
+                            <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{controladorArchivoEficienciaTerminalTitReg.subirExcelEficienciaTerminalTitulacionRegistro()}"/>
+                            <p:blockUI block="@form:formularioContenedor" widgetVar="bloqueoCargaFile">
+                                Cargando archivo espere por favor.<br />
+                            </p:blockUI>
+                        </h:form>
+                    </center>
+                </p:dialog>
+
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

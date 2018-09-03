@@ -32,6 +32,15 @@ public class ServicioArchivos implements Serializable{
     private static final String carpetaL = "/home/admin/archivos/";
     public static final String[] CATEGORIAS = {"cargas","fotos"};
     
+    /**
+     * Variable creada para la creación del directorio para los Módulos de Registro
+     */
+    public static final String[] EJES = {/*0*/"estadistica_basica", 
+                                         /*1*/"calidad_academica", 
+                                         /*2*/"vinculacion", 
+                                         /*3*/"proceso_administrativo", 
+                                         /*4*/"capital_humano"};
+    
     static{
         carpetaRaiz = carpetaW;
         if (File.separatorChar == '/') {
