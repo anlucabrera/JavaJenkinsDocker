@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.sgi.ejb;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
@@ -16,8 +17,11 @@ import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMaterias;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360;
+import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 //import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Listaperiodosescolares;
+import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
+import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
 /**
@@ -183,6 +187,97 @@ public class ServicioSelectItems implements EJBSelectItems {
             lac.add(new SelectItem(a.getArea(), a.getSiglas(), a.getNombre()));
         }
         return lac;
+    }
+    
+    public List<Estado> getEstados() {
+        TypedQuery<Estado> q = f.getEntityManager().createQuery("SELECT e from Estado e WHERE e.idpais.idpais = :pais", Estado.class);
+        q.setParameter("pais", 42);
+        List<Estado> le = q.getResultList();
+        if (le.isEmpty() || le == null) {
+            System.err.println("no se encontraron estados ligados a este pais");
+            return null;
+        } else {
+            return le;
+        }
+    }
+
+    @Override
+    public List<SelectItem> itemEstados() {
+        List<SelectItem> lse = new ArrayList<>();
+        for (Estado e : getEstados()) {
+            lse.add(new SelectItem(e.getIdestado(), e.getNombre(), e.getNombre()));
+        }
+        return lse;
+    }
+
+    public List<Municipio> getMunicipiosPorEstado(Integer estado) {
+        TypedQuery<Municipio> q = f.getEntityManager().createQuery("SELECT m FROM Municipio m  WHERE m.municipioPK.claveEstado = :estado", Municipio.class);
+        q.setParameter("estado", estado);
+        List<Municipio> lm = q.getResultList();
+        if (lm.isEmpty() || lm == null) {
+            System.err.println("no se encontraron estados ligados a este municipio");
+            return null;
+        }else{
+            return lm;
+        }
+    }
+
+    @Override
+    public List<SelectItem> itemMunicipiosByClave(Integer estado) {
+        List<SelectItem> lsm = new ArrayList<>();
+        for(Municipio m : getMunicipiosPorEstado(estado)){
+            lsm.add( new SelectItem(m.getMunicipioPK().getClaveMunicipio(), m.getNombre(), m.getNombre()));
+        }
+        return lsm;
+    }
+
+    
+    @Override
+    public List<SelectItem> itemLocalidadesByClave(Integer estado, Integer municipio) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public List<CiclosEscolares> getCiclos() {
+        TypedQuery<CiclosEscolares> q = f.getEntityManager().createQuery("SELECT c FROM CiclosEscolares c ORDER BY c.ciclo DESC", CiclosEscolares.class);
+        List<CiclosEscolares> le = q.getResultList();
+        if (le.isEmpty() || le == null) {
+            System.err.println("no existe el ciclo escolar");
+            return null;
+        } else {
+            return le;
+        }
+    }
+
+    @Override
+    public List<SelectItem> itemCiclos() {
+        List<SelectItem> lse = new ArrayList<>();
+        for (CiclosEscolares pe : getCiclos()) {
+            SimpleDateFormat formatoDeFecha = new SimpleDateFormat("yyyy");
+            
+            lse.add(new SelectItem(pe.getCiclo(), formatoDeFecha.format(pe.getInicio()) + "-" + formatoDeFecha.format(pe.getFin()), formatoDeFecha.format(pe.getInicio()) + "-" + formatoDeFecha.format(pe.getFin())));
+        }
+        return lse;
+    }
+    
+    public List<Listaperiodosescolares> getPeriodosPorCiclo(Integer ciclo) {
+        TypedQuery<Listaperiodosescolares> q = f.getEntityManager().createQuery("SELECT l FROM Listaperiodosescolares l WHERE l.ciclo = :ciclo",  Listaperiodosescolares.class);
+        q.setParameter("ciclo", ciclo);
+        List<Listaperiodosescolares> lp = q.getResultList();
+        if (lp.isEmpty() || lp == null) {
+            System.err.println("no se encontraron periodos ligados a este ciclo");
+            return null;
+        }else{
+            return lp;
+        }
+    }
+
+    @Override
+    public List<SelectItem> itemPeriodosByClave(Integer ciclo) {
+        List<SelectItem> lsp = new ArrayList<>();
+        for(Listaperiodosescolares p : getPeriodosPorCiclo(ciclo)){
+            lsp.add( new SelectItem(p.getPeriodo(), p.getMesInicio() + "-" + p.getMesFin(),  p.getMesInicio() + "-" + p.getMesFin()));
+        }
+        return lsp;
     }
 
 }

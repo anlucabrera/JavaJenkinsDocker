@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
+import java.text.Normalizer;
+import java.time.LocalDate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -96,6 +98,94 @@ public class ServicioCarga implements EjbCarga {
             Logger.getLogger(ServicioCarga.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
+    }
+    
+    /************************ Métodos creados para la administración de archivos de los módulos de registro ***************************************************************************************/     
+//    Valores que se ocuparán para generar una clave aleatoria al nombre del archivo
+    String[] abecedarioMinusculas = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+    
+//    Variables creadas para la subida de archivos de los Modulos de registro
+    public static final String modulosRegistro = "modulos_registro";
+    public static final String plantillas = "plantillas";
+    public static final String completo = "completo";
+    private static final String carpetaW = "C:\\archivos\\";
+    private static final String carpetaL = "/home/admin/archivos/";
+    public static String carpetaRaiz;
+
+//    Método que se encarga de crear la carpeta raíz en caso de que no exista para poder almacenar el archivo
+    static {
+        carpetaRaiz = carpetaW;
+        if (File.separatorChar == '/') {
+            carpetaRaiz = carpetaL;
+        }
+        File file = new File(carpetaRaiz);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+    }
+    
+//    Método que se encarga de generar la ruta del archivo concatenando los valores enviados desde el Ejb, la cual será ocupada para devolver posteriormenta la ruta del archivo
+    public static String genCarpetaRelativa(String modulosRegistro, String ejercicio, String usuario, String eje, String registro) {
+        return carpetaRaiz + modulosRegistro + File.separator + ejercicio + File.separator + usuario + File.separator + eje + File.separator + registro + File.separator;
+    }
+    public static String genCarpetaRelativa(String modulosRegistro, String plantillas, String eje){
+        return carpetaRaiz + modulosRegistro + File.separator + plantillas + File.separator + eje + File.separator;
+    }
+    public static String genCarpetaRelativa(String modulosRegistro, String plantillas, String eje, String completo){
+        return carpetaRaiz + modulosRegistro + File.separator + plantillas + File.separator + eje + File.separator + completo + File.separator;
+    }
+    
+     @Override
+    public String subirExcelRegistro(String ejercicio, String area, String eje, String registro, Part file) {
+        try {
+            byte[] content = Utils.toByteArray(file.getInputStream());
+            String rutaRelativa = genCarpetaRelativa(modulosRegistro, ejercicio, area, eje, registro);
+            addCarpetaRelativa(rutaRelativa);
+            String nombreArchivo = file.getSubmittedFileName().trim().toLowerCase();
+            nombreArchivo = prettyURL(nombreArchivo);
+
+            for (int i = 1; i <= 10; i++) {
+                int numero = (int) Math.round(Math.random() * 35);
+                aleatorio = aleatorio + abecedarioMinusculas[numero];
+            }
+
+            LocalDate localDateOf = LocalDate.now();
+            String name = rutaRelativa.concat(String.valueOf(localDateOf)).concat("_").concat(aleatorio).concat("_").concat(nombreArchivo);
+            FileOutputStream fos = new FileOutputStream(name);
+            FileCopyUtils.copy(content, fos);
+            aleatorio = "";
+
+            return name;
+        } catch (IOException ex) {
+            Logger.getLogger(ServicioCarga.class.getName()).log(Level.SEVERE, null, ex);
+            return "Error: No se pudo leer el archivo";
+        }
+    }
+
+//    Método que se encarga de validar el nombre del archivo y en caso de contener caracteres especiales son remplazados por un guión medio
+    public static String prettyURL(String string) {
+        if (string == null) {
+            return null;
+        }
+
+        return Normalizer.normalize(string.toLowerCase(), Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                /*.replaceAll("[^\\p{Alnum}]+", ".")*/
+                .replaceAll("[^A-Za-z0-9-_.()]+", "-");
+    }
+    
+    @Override
+    public String crearDirectorioPlantilla(String eje) {
+        String rutaRelativa = genCarpetaRelativa(modulosRegistro, plantillas, eje);
+        addCarpetaRelativa(rutaRelativa);
+        return rutaRelativa;
+    }
+
+    @Override
+    public String crearDirectorioPlantillaCompleto(String eje) {
+        String rutaRelativa = genCarpetaRelativa(modulosRegistro, plantillas, eje, completo);
+        addCarpetaRelativa(rutaRelativa);
+        return rutaRelativa;
     }
 
 }

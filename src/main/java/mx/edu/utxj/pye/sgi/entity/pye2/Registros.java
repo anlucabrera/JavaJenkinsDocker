@@ -39,7 +39,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Registros.findAll", query = "SELECT r FROM Registros r")
     , @NamedQuery(name = "Registros.findByRegistro", query = "SELECT r FROM Registros r WHERE r.registro = :registro")
     , @NamedQuery(name = "Registros.findByArea", query = "SELECT r FROM Registros r WHERE r.area = :area")
-    , @NamedQuery(name = "Registros.findByFechaRegistro", query = "SELECT r FROM Registros r WHERE r.fechaRegistro = :fechaRegistro")})
+    , @NamedQuery(name = "Registros.findByFechaRegistro", query = "SELECT r FROM Registros r WHERE r.fechaRegistro = :fechaRegistro")
+    , @NamedQuery(name = "Registros.findByValidado", query = "SELECT r FROM Registros r WHERE r.validado = :validado")})
 public class Registros implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -57,6 +58,10 @@ public class Registros implements Serializable {
     @Column(name = "fecha_registro")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaRegistro;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "validado")
+    private boolean validado;
     @ManyToMany(mappedBy = "registrosList")
     private List<ActividadesPoa> actividadesPoaList;
     @ManyToMany(mappedBy = "registrosList")
@@ -77,39 +82,23 @@ public class Registros implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private ActividadEconomicaEgresadoGeneracion actividadEconomicaEgresadoGeneracion;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
-    private ServiciosEnfermeriaCicloPeriodos serviciosEnfermeriaCicloPeriodos;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private VisitasIndustriales visitasIndustriales;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
-    private AsesoriasTutoriasCicloPeriodos asesoriasTutoriasCicloPeriodos;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
-    private BolsaTrabajoEntrevistas bolsaTrabajoEntrevistas;
+    private ProgramasEstimulos programasEstimulos;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private ProductosAcademicosPersonal productosAcademicosPersonal;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
-    private DistribucionAulasCicloPeriodosEscolares distribucionAulasCicloPeriodosEscolares;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private CuerpacadIntegrantes cuerpacadIntegrantes;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
-    private BecasPeriodosEscolares becasPeriodosEscolares;
+    private PersonalCapacitado personalCapacitado;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private MatriculaPeriodosEscolares matriculaPeriodosEscolares;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
-    private DesercionReprobacionMaterias desercionReprobacionMaterias;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
-    private ParticipantesActividadesFormacionIntegral participantesActividadesFormacionIntegral;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private EquiposComputoInternetCicloPeriodoEscolar equiposComputoInternetCicloPeriodoEscolar;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private EficienciaTerminalTitulacionRegistro eficienciaTerminalTitulacionRegistro;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
-    private OrganismosVinculados organismosVinculados;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private CapacidadInstaladaCiclosEscolares capacidadInstaladaCiclosEscolares;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
-    private DifusionIems difusionIems;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
-    private ProgramasPertcal programasPertcal;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private ServiciosTecnologicosAnioMes serviciosTecnologicosAnioMes;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
@@ -119,21 +108,61 @@ public class Registros implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private DistribucionLabtallCicloPeriodosEscolares distribucionLabtallCicloPeriodosEscolares;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private ReconocimientoProdepRegistros reconocimientoProdepRegistros;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private ParticipantesPersonalCapacitado participantesPersonalCapacitado;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private ActividadesVariasRegistro actividadesVariasRegistro;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private IngresosPropiosCaptados ingresosPropiosCaptados;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private NivelIngresosEgresadosGeneracion nivelIngresosEgresadosGeneracion;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private CuerpacadLineas cuerpacadLineas;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private RegistrosMovilidad registrosMovilidad;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private BolsaTrabajo bolsaTrabajo;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private FeriasParticipantes feriasParticipantes;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private Presupuestos presupuestos;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private RegistroMovilidadDocente registroMovilidadDocente;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private ServiciosEnfermeriaCicloPeriodos serviciosEnfermeriaCicloPeriodos;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private AsesoriasTutoriasCicloPeriodos asesoriasTutoriasCicloPeriodos;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private BolsaTrabajoEntrevistas bolsaTrabajoEntrevistas;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private DistribucionAulasCicloPeriodosEscolares distribucionAulasCicloPeriodosEscolares;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private BecasPeriodosEscolares becasPeriodosEscolares;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private DesercionReprobacionMaterias desercionReprobacionMaterias;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private ParticipantesActividadesFormacionIntegral participantesActividadesFormacionIntegral;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private OrganismosVinculados organismosVinculados;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private ComisionesAcademicasParticipantes comisionesAcademicasParticipantes;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private DifusionIems difusionIems;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private ProgramasPertcal programasPertcal;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private ComisionesAcademicas comisionesAcademicas;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private RegistroMovilidadEstudiante registroMovilidadEstudiante;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private EgetsuResultadosGeneraciones egetsuResultadosGeneraciones;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
-    private ActividadesVariasRegistro actividadesVariasRegistro;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private ActividadEgresadoGeneracion actividadEgresadoGeneracion;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
-    private IngresosPropiosCaptados ingresosPropiosCaptados;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private EstadiasPorEstudiante estadiasPorEstudiante;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private CuerposAcademicosRegistro cuerposAcademicosRegistro;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
-    private NivelIngresosEgresadosGeneracion nivelIngresosEgresadosGeneracion;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private NivelOcupacionEgresadosGeneracion nivelOcupacionEgresadosGeneracion;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
@@ -143,17 +172,7 @@ public class Registros implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private ExaniResultadosCiclosEscolares exaniResultadosCiclosEscolares;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
-    private RegistrosMovilidad registrosMovilidad;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private DesercionPeriodosEscolares desercionPeriodosEscolares;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
-    private BolsaTrabajo bolsaTrabajo;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
-    private FeriasParticipantes feriasParticipantes;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
-    private Presupuestos presupuestos;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
-    private RegistroMovilidadDocente registroMovilidadDocente;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private ActividadesFormacionIntegral actividadesFormacionIntegral;
 
@@ -164,10 +183,11 @@ public class Registros implements Serializable {
         this.registro = registro;
     }
 
-    public Registros(Integer registro, short area, Date fechaRegistro) {
+    public Registros(Integer registro, short area, Date fechaRegistro, boolean validado) {
         this.registro = registro;
         this.area = area;
         this.fechaRegistro = fechaRegistro;
+        this.validado = validado;
     }
 
     public Integer getRegistro() {
@@ -192,6 +212,14 @@ public class Registros implements Serializable {
 
     public void setFechaRegistro(Date fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
+    }
+
+    public boolean getValidado() {
+        return validado;
+    }
+
+    public void setValidado(boolean validado) {
+        this.validado = validado;
     }
 
     @XmlTransient
@@ -260,14 +288,6 @@ public class Registros implements Serializable {
         this.actividadEconomicaEgresadoGeneracion = actividadEconomicaEgresadoGeneracion;
     }
 
-    public ServiciosEnfermeriaCicloPeriodos getServiciosEnfermeriaCicloPeriodos() {
-        return serviciosEnfermeriaCicloPeriodos;
-    }
-
-    public void setServiciosEnfermeriaCicloPeriodos(ServiciosEnfermeriaCicloPeriodos serviciosEnfermeriaCicloPeriodos) {
-        this.serviciosEnfermeriaCicloPeriodos = serviciosEnfermeriaCicloPeriodos;
-    }
-
     public VisitasIndustriales getVisitasIndustriales() {
         return visitasIndustriales;
     }
@@ -276,20 +296,12 @@ public class Registros implements Serializable {
         this.visitasIndustriales = visitasIndustriales;
     }
 
-    public AsesoriasTutoriasCicloPeriodos getAsesoriasTutoriasCicloPeriodos() {
-        return asesoriasTutoriasCicloPeriodos;
+    public ProgramasEstimulos getProgramasEstimulos() {
+        return programasEstimulos;
     }
 
-    public void setAsesoriasTutoriasCicloPeriodos(AsesoriasTutoriasCicloPeriodos asesoriasTutoriasCicloPeriodos) {
-        this.asesoriasTutoriasCicloPeriodos = asesoriasTutoriasCicloPeriodos;
-    }
-
-    public BolsaTrabajoEntrevistas getBolsaTrabajoEntrevistas() {
-        return bolsaTrabajoEntrevistas;
-    }
-
-    public void setBolsaTrabajoEntrevistas(BolsaTrabajoEntrevistas bolsaTrabajoEntrevistas) {
-        this.bolsaTrabajoEntrevistas = bolsaTrabajoEntrevistas;
+    public void setProgramasEstimulos(ProgramasEstimulos programasEstimulos) {
+        this.programasEstimulos = programasEstimulos;
     }
 
     public ProductosAcademicosPersonal getProductosAcademicosPersonal() {
@@ -300,14 +312,6 @@ public class Registros implements Serializable {
         this.productosAcademicosPersonal = productosAcademicosPersonal;
     }
 
-    public DistribucionAulasCicloPeriodosEscolares getDistribucionAulasCicloPeriodosEscolares() {
-        return distribucionAulasCicloPeriodosEscolares;
-    }
-
-    public void setDistribucionAulasCicloPeriodosEscolares(DistribucionAulasCicloPeriodosEscolares distribucionAulasCicloPeriodosEscolares) {
-        this.distribucionAulasCicloPeriodosEscolares = distribucionAulasCicloPeriodosEscolares;
-    }
-
     public CuerpacadIntegrantes getCuerpacadIntegrantes() {
         return cuerpacadIntegrantes;
     }
@@ -316,12 +320,12 @@ public class Registros implements Serializable {
         this.cuerpacadIntegrantes = cuerpacadIntegrantes;
     }
 
-    public BecasPeriodosEscolares getBecasPeriodosEscolares() {
-        return becasPeriodosEscolares;
+    public PersonalCapacitado getPersonalCapacitado() {
+        return personalCapacitado;
     }
 
-    public void setBecasPeriodosEscolares(BecasPeriodosEscolares becasPeriodosEscolares) {
-        this.becasPeriodosEscolares = becasPeriodosEscolares;
+    public void setPersonalCapacitado(PersonalCapacitado personalCapacitado) {
+        this.personalCapacitado = personalCapacitado;
     }
 
     public MatriculaPeriodosEscolares getMatriculaPeriodosEscolares() {
@@ -330,22 +334,6 @@ public class Registros implements Serializable {
 
     public void setMatriculaPeriodosEscolares(MatriculaPeriodosEscolares matriculaPeriodosEscolares) {
         this.matriculaPeriodosEscolares = matriculaPeriodosEscolares;
-    }
-
-    public DesercionReprobacionMaterias getDesercionReprobacionMaterias() {
-        return desercionReprobacionMaterias;
-    }
-
-    public void setDesercionReprobacionMaterias(DesercionReprobacionMaterias desercionReprobacionMaterias) {
-        this.desercionReprobacionMaterias = desercionReprobacionMaterias;
-    }
-
-    public ParticipantesActividadesFormacionIntegral getParticipantesActividadesFormacionIntegral() {
-        return participantesActividadesFormacionIntegral;
-    }
-
-    public void setParticipantesActividadesFormacionIntegral(ParticipantesActividadesFormacionIntegral participantesActividadesFormacionIntegral) {
-        this.participantesActividadesFormacionIntegral = participantesActividadesFormacionIntegral;
     }
 
     public EquiposComputoInternetCicloPeriodoEscolar getEquiposComputoInternetCicloPeriodoEscolar() {
@@ -364,36 +352,12 @@ public class Registros implements Serializable {
         this.eficienciaTerminalTitulacionRegistro = eficienciaTerminalTitulacionRegistro;
     }
 
-    public OrganismosVinculados getOrganismosVinculados() {
-        return organismosVinculados;
-    }
-
-    public void setOrganismosVinculados(OrganismosVinculados organismosVinculados) {
-        this.organismosVinculados = organismosVinculados;
-    }
-
     public CapacidadInstaladaCiclosEscolares getCapacidadInstaladaCiclosEscolares() {
         return capacidadInstaladaCiclosEscolares;
     }
 
     public void setCapacidadInstaladaCiclosEscolares(CapacidadInstaladaCiclosEscolares capacidadInstaladaCiclosEscolares) {
         this.capacidadInstaladaCiclosEscolares = capacidadInstaladaCiclosEscolares;
-    }
-
-    public DifusionIems getDifusionIems() {
-        return difusionIems;
-    }
-
-    public void setDifusionIems(DifusionIems difusionIems) {
-        this.difusionIems = difusionIems;
-    }
-
-    public ProgramasPertcal getProgramasPertcal() {
-        return programasPertcal;
-    }
-
-    public void setProgramasPertcal(ProgramasPertcal programasPertcal) {
-        this.programasPertcal = programasPertcal;
     }
 
     public ServiciosTecnologicosAnioMes getServiciosTecnologicosAnioMes() {
@@ -428,6 +392,190 @@ public class Registros implements Serializable {
         this.distribucionLabtallCicloPeriodosEscolares = distribucionLabtallCicloPeriodosEscolares;
     }
 
+    public ReconocimientoProdepRegistros getReconocimientoProdepRegistros() {
+        return reconocimientoProdepRegistros;
+    }
+
+    public void setReconocimientoProdepRegistros(ReconocimientoProdepRegistros reconocimientoProdepRegistros) {
+        this.reconocimientoProdepRegistros = reconocimientoProdepRegistros;
+    }
+
+    public ParticipantesPersonalCapacitado getParticipantesPersonalCapacitado() {
+        return participantesPersonalCapacitado;
+    }
+
+    public void setParticipantesPersonalCapacitado(ParticipantesPersonalCapacitado participantesPersonalCapacitado) {
+        this.participantesPersonalCapacitado = participantesPersonalCapacitado;
+    }
+
+    public ActividadesVariasRegistro getActividadesVariasRegistro() {
+        return actividadesVariasRegistro;
+    }
+
+    public void setActividadesVariasRegistro(ActividadesVariasRegistro actividadesVariasRegistro) {
+        this.actividadesVariasRegistro = actividadesVariasRegistro;
+    }
+
+    public IngresosPropiosCaptados getIngresosPropiosCaptados() {
+        return ingresosPropiosCaptados;
+    }
+
+    public void setIngresosPropiosCaptados(IngresosPropiosCaptados ingresosPropiosCaptados) {
+        this.ingresosPropiosCaptados = ingresosPropiosCaptados;
+    }
+
+    public NivelIngresosEgresadosGeneracion getNivelIngresosEgresadosGeneracion() {
+        return nivelIngresosEgresadosGeneracion;
+    }
+
+    public void setNivelIngresosEgresadosGeneracion(NivelIngresosEgresadosGeneracion nivelIngresosEgresadosGeneracion) {
+        this.nivelIngresosEgresadosGeneracion = nivelIngresosEgresadosGeneracion;
+    }
+
+    public CuerpacadLineas getCuerpacadLineas() {
+        return cuerpacadLineas;
+    }
+
+    public void setCuerpacadLineas(CuerpacadLineas cuerpacadLineas) {
+        this.cuerpacadLineas = cuerpacadLineas;
+    }
+
+    public RegistrosMovilidad getRegistrosMovilidad() {
+        return registrosMovilidad;
+    }
+
+    public void setRegistrosMovilidad(RegistrosMovilidad registrosMovilidad) {
+        this.registrosMovilidad = registrosMovilidad;
+    }
+
+    public BolsaTrabajo getBolsaTrabajo() {
+        return bolsaTrabajo;
+    }
+
+    public void setBolsaTrabajo(BolsaTrabajo bolsaTrabajo) {
+        this.bolsaTrabajo = bolsaTrabajo;
+    }
+
+    public FeriasParticipantes getFeriasParticipantes() {
+        return feriasParticipantes;
+    }
+
+    public void setFeriasParticipantes(FeriasParticipantes feriasParticipantes) {
+        this.feriasParticipantes = feriasParticipantes;
+    }
+
+    public Presupuestos getPresupuestos() {
+        return presupuestos;
+    }
+
+    public void setPresupuestos(Presupuestos presupuestos) {
+        this.presupuestos = presupuestos;
+    }
+
+    public RegistroMovilidadDocente getRegistroMovilidadDocente() {
+        return registroMovilidadDocente;
+    }
+
+    public void setRegistroMovilidadDocente(RegistroMovilidadDocente registroMovilidadDocente) {
+        this.registroMovilidadDocente = registroMovilidadDocente;
+    }
+
+    public ServiciosEnfermeriaCicloPeriodos getServiciosEnfermeriaCicloPeriodos() {
+        return serviciosEnfermeriaCicloPeriodos;
+    }
+
+    public void setServiciosEnfermeriaCicloPeriodos(ServiciosEnfermeriaCicloPeriodos serviciosEnfermeriaCicloPeriodos) {
+        this.serviciosEnfermeriaCicloPeriodos = serviciosEnfermeriaCicloPeriodos;
+    }
+
+    public AsesoriasTutoriasCicloPeriodos getAsesoriasTutoriasCicloPeriodos() {
+        return asesoriasTutoriasCicloPeriodos;
+    }
+
+    public void setAsesoriasTutoriasCicloPeriodos(AsesoriasTutoriasCicloPeriodos asesoriasTutoriasCicloPeriodos) {
+        this.asesoriasTutoriasCicloPeriodos = asesoriasTutoriasCicloPeriodos;
+    }
+
+    public BolsaTrabajoEntrevistas getBolsaTrabajoEntrevistas() {
+        return bolsaTrabajoEntrevistas;
+    }
+
+    public void setBolsaTrabajoEntrevistas(BolsaTrabajoEntrevistas bolsaTrabajoEntrevistas) {
+        this.bolsaTrabajoEntrevistas = bolsaTrabajoEntrevistas;
+    }
+
+    public DistribucionAulasCicloPeriodosEscolares getDistribucionAulasCicloPeriodosEscolares() {
+        return distribucionAulasCicloPeriodosEscolares;
+    }
+
+    public void setDistribucionAulasCicloPeriodosEscolares(DistribucionAulasCicloPeriodosEscolares distribucionAulasCicloPeriodosEscolares) {
+        this.distribucionAulasCicloPeriodosEscolares = distribucionAulasCicloPeriodosEscolares;
+    }
+
+    public BecasPeriodosEscolares getBecasPeriodosEscolares() {
+        return becasPeriodosEscolares;
+    }
+
+    public void setBecasPeriodosEscolares(BecasPeriodosEscolares becasPeriodosEscolares) {
+        this.becasPeriodosEscolares = becasPeriodosEscolares;
+    }
+
+    public DesercionReprobacionMaterias getDesercionReprobacionMaterias() {
+        return desercionReprobacionMaterias;
+    }
+
+    public void setDesercionReprobacionMaterias(DesercionReprobacionMaterias desercionReprobacionMaterias) {
+        this.desercionReprobacionMaterias = desercionReprobacionMaterias;
+    }
+
+    public ParticipantesActividadesFormacionIntegral getParticipantesActividadesFormacionIntegral() {
+        return participantesActividadesFormacionIntegral;
+    }
+
+    public void setParticipantesActividadesFormacionIntegral(ParticipantesActividadesFormacionIntegral participantesActividadesFormacionIntegral) {
+        this.participantesActividadesFormacionIntegral = participantesActividadesFormacionIntegral;
+    }
+
+    public OrganismosVinculados getOrganismosVinculados() {
+        return organismosVinculados;
+    }
+
+    public void setOrganismosVinculados(OrganismosVinculados organismosVinculados) {
+        this.organismosVinculados = organismosVinculados;
+    }
+
+    public ComisionesAcademicasParticipantes getComisionesAcademicasParticipantes() {
+        return comisionesAcademicasParticipantes;
+    }
+
+    public void setComisionesAcademicasParticipantes(ComisionesAcademicasParticipantes comisionesAcademicasParticipantes) {
+        this.comisionesAcademicasParticipantes = comisionesAcademicasParticipantes;
+    }
+
+    public DifusionIems getDifusionIems() {
+        return difusionIems;
+    }
+
+    public void setDifusionIems(DifusionIems difusionIems) {
+        this.difusionIems = difusionIems;
+    }
+
+    public ProgramasPertcal getProgramasPertcal() {
+        return programasPertcal;
+    }
+
+    public void setProgramasPertcal(ProgramasPertcal programasPertcal) {
+        this.programasPertcal = programasPertcal;
+    }
+
+    public ComisionesAcademicas getComisionesAcademicas() {
+        return comisionesAcademicas;
+    }
+
+    public void setComisionesAcademicas(ComisionesAcademicas comisionesAcademicas) {
+        this.comisionesAcademicas = comisionesAcademicas;
+    }
+
     public RegistroMovilidadEstudiante getRegistroMovilidadEstudiante() {
         return registroMovilidadEstudiante;
     }
@@ -444,28 +592,12 @@ public class Registros implements Serializable {
         this.egetsuResultadosGeneraciones = egetsuResultadosGeneraciones;
     }
 
-    public ActividadesVariasRegistro getActividadesVariasRegistro() {
-        return actividadesVariasRegistro;
-    }
-
-    public void setActividadesVariasRegistro(ActividadesVariasRegistro actividadesVariasRegistro) {
-        this.actividadesVariasRegistro = actividadesVariasRegistro;
-    }
-
     public ActividadEgresadoGeneracion getActividadEgresadoGeneracion() {
         return actividadEgresadoGeneracion;
     }
 
     public void setActividadEgresadoGeneracion(ActividadEgresadoGeneracion actividadEgresadoGeneracion) {
         this.actividadEgresadoGeneracion = actividadEgresadoGeneracion;
-    }
-
-    public IngresosPropiosCaptados getIngresosPropiosCaptados() {
-        return ingresosPropiosCaptados;
-    }
-
-    public void setIngresosPropiosCaptados(IngresosPropiosCaptados ingresosPropiosCaptados) {
-        this.ingresosPropiosCaptados = ingresosPropiosCaptados;
     }
 
     public EstadiasPorEstudiante getEstadiasPorEstudiante() {
@@ -482,14 +614,6 @@ public class Registros implements Serializable {
 
     public void setCuerposAcademicosRegistro(CuerposAcademicosRegistro cuerposAcademicosRegistro) {
         this.cuerposAcademicosRegistro = cuerposAcademicosRegistro;
-    }
-
-    public NivelIngresosEgresadosGeneracion getNivelIngresosEgresadosGeneracion() {
-        return nivelIngresosEgresadosGeneracion;
-    }
-
-    public void setNivelIngresosEgresadosGeneracion(NivelIngresosEgresadosGeneracion nivelIngresosEgresadosGeneracion) {
-        this.nivelIngresosEgresadosGeneracion = nivelIngresosEgresadosGeneracion;
     }
 
     public NivelOcupacionEgresadosGeneracion getNivelOcupacionEgresadosGeneracion() {
@@ -524,52 +648,12 @@ public class Registros implements Serializable {
         this.exaniResultadosCiclosEscolares = exaniResultadosCiclosEscolares;
     }
 
-    public RegistrosMovilidad getRegistrosMovilidad() {
-        return registrosMovilidad;
-    }
-
-    public void setRegistrosMovilidad(RegistrosMovilidad registrosMovilidad) {
-        this.registrosMovilidad = registrosMovilidad;
-    }
-
     public DesercionPeriodosEscolares getDesercionPeriodosEscolares() {
         return desercionPeriodosEscolares;
     }
 
     public void setDesercionPeriodosEscolares(DesercionPeriodosEscolares desercionPeriodosEscolares) {
         this.desercionPeriodosEscolares = desercionPeriodosEscolares;
-    }
-
-    public BolsaTrabajo getBolsaTrabajo() {
-        return bolsaTrabajo;
-    }
-
-    public void setBolsaTrabajo(BolsaTrabajo bolsaTrabajo) {
-        this.bolsaTrabajo = bolsaTrabajo;
-    }
-
-    public FeriasParticipantes getFeriasParticipantes() {
-        return feriasParticipantes;
-    }
-
-    public void setFeriasParticipantes(FeriasParticipantes feriasParticipantes) {
-        this.feriasParticipantes = feriasParticipantes;
-    }
-
-    public Presupuestos getPresupuestos() {
-        return presupuestos;
-    }
-
-    public void setPresupuestos(Presupuestos presupuestos) {
-        this.presupuestos = presupuestos;
-    }
-
-    public RegistroMovilidadDocente getRegistroMovilidadDocente() {
-        return registroMovilidadDocente;
-    }
-
-    public void setRegistroMovilidadDocente(RegistroMovilidadDocente registroMovilidadDocente) {
-        this.registroMovilidadDocente = registroMovilidadDocente;
     }
 
     public ActividadesFormacionIntegral getActividadesFormacionIntegral() {

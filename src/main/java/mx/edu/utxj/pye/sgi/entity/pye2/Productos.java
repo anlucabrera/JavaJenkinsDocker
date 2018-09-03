@@ -45,11 +45,11 @@ public class Productos implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "descripcion")
     private String descripcion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productos")
-    private List<ProductosAreas> productosAreasList;
     @JoinColumn(name = "ejercicio_fiscal", referencedColumnName = "ejercicio_fiscal", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private EjerciciosFiscales ejerciciosFiscales;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productos")
+    private List<ProductosAreas> productosAreasList;
 
     public Productos() {
     }
@@ -83,6 +83,14 @@ public class Productos implements Serializable {
         this.descripcion = descripcion;
     }
 
+    public EjerciciosFiscales getEjerciciosFiscales() {
+        return ejerciciosFiscales;
+    }
+
+    public void setEjerciciosFiscales(EjerciciosFiscales ejerciciosFiscales) {
+        this.ejerciciosFiscales = ejerciciosFiscales;
+    }
+
     @XmlTransient
     public List<ProductosAreas> getProductosAreasList() {
         return productosAreasList;
@@ -90,14 +98,6 @@ public class Productos implements Serializable {
 
     public void setProductosAreasList(List<ProductosAreas> productosAreasList) {
         this.productosAreasList = productosAreasList;
-    }
-
-    public EjerciciosFiscales getEjerciciosFiscales() {
-        return ejerciciosFiscales;
-    }
-
-    public void setEjerciciosFiscales(EjerciciosFiscales ejerciciosFiscales) {
-        this.ejerciciosFiscales = ejerciciosFiscales;
     }
 
     @Override

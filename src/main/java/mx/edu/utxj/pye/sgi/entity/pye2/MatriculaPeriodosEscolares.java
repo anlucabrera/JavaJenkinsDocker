@@ -73,11 +73,11 @@ public class MatriculaPeriodosEscolares implements Serializable {
     @Size(max = 18)
     @Column(name = "curp")
     private String curp;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "matriculaPeriodosEscolares")
-    private BecasPeriodosEscolares becasPeriodosEscolares;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Registros registros;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "matriculaPeriodosEscolares")
+    private BecasPeriodosEscolares becasPeriodosEscolares;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "matriculaPeriodosEscolares")
     private List<ParticipantesActividadesFormacionIntegral> participantesActividadesFormacionIntegralList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "matriculaPeriodosEscolares")
@@ -159,20 +159,20 @@ public class MatriculaPeriodosEscolares implements Serializable {
         this.curp = curp;
     }
 
-    public BecasPeriodosEscolares getBecasPeriodosEscolares() {
-        return becasPeriodosEscolares;
-    }
-
-    public void setBecasPeriodosEscolares(BecasPeriodosEscolares becasPeriodosEscolares) {
-        this.becasPeriodosEscolares = becasPeriodosEscolares;
-    }
-
     public Registros getRegistros() {
         return registros;
     }
 
     public void setRegistros(Registros registros) {
         this.registros = registros;
+    }
+
+    public BecasPeriodosEscolares getBecasPeriodosEscolares() {
+        return becasPeriodosEscolares;
+    }
+
+    public void setBecasPeriodosEscolares(BecasPeriodosEscolares becasPeriodosEscolares) {
+        this.becasPeriodosEscolares = becasPeriodosEscolares;
     }
 
     @XmlTransient

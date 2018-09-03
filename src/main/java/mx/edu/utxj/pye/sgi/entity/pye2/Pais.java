@@ -47,14 +47,12 @@ public class Pais implements Serializable {
     @Size(min = 1, max = 150)
     @Column(name = "nombre")
     private String nombre;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pais")
+    private List<ProductosAcademicos> productosAcademicosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idpais")
     private List<Estado> estadoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pais")
-    private List<ProductosAcademicos> productosAcademicosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pais")
     private List<OrganismosVinculados> organismosVinculadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pais")
-    private List<RegistrosMovilidad> registrosMovilidadList;
 
     public Pais() {
     }
@@ -85,15 +83,6 @@ public class Pais implements Serializable {
     }
 
     @XmlTransient
-    public List<Estado> getEstadoList() {
-        return estadoList;
-    }
-
-    public void setEstadoList(List<Estado> estadoList) {
-        this.estadoList = estadoList;
-    }
-
-    @XmlTransient
     public List<ProductosAcademicos> getProductosAcademicosList() {
         return productosAcademicosList;
     }
@@ -103,21 +92,21 @@ public class Pais implements Serializable {
     }
 
     @XmlTransient
+    public List<Estado> getEstadoList() {
+        return estadoList;
+    }
+
+    public void setEstadoList(List<Estado> estadoList) {
+        this.estadoList = estadoList;
+    }
+
+    @XmlTransient
     public List<OrganismosVinculados> getOrganismosVinculadosList() {
         return organismosVinculadosList;
     }
 
     public void setOrganismosVinculadosList(List<OrganismosVinculados> organismosVinculadosList) {
         this.organismosVinculadosList = organismosVinculadosList;
-    }
-
-    @XmlTransient
-    public List<RegistrosMovilidad> getRegistrosMovilidadList() {
-        return registrosMovilidadList;
-    }
-
-    public void setRegistrosMovilidadList(List<RegistrosMovilidad> registrosMovilidadList) {
-        this.registrosMovilidadList = registrosMovilidadList;
     }
 
     @Override

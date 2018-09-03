@@ -32,7 +32,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "IngresosPropiosCaptados.findAll", query = "SELECT i FROM IngresosPropiosCaptados i")
     , @NamedQuery(name = "IngresosPropiosCaptados.findByRegistro", query = "SELECT i FROM IngresosPropiosCaptados i WHERE i.registro = :registro")
-    , @NamedQuery(name = "IngresosPropiosCaptados.findByIngresosPropiosCaptados", query = "SELECT i FROM IngresosPropiosCaptados i WHERE i.ingresosPropiosCaptados = :ingresosPropiosCaptados")
     , @NamedQuery(name = "IngresosPropiosCaptados.findByPeriodoEscolar", query = "SELECT i FROM IngresosPropiosCaptados i WHERE i.periodoEscolar = :periodoEscolar")
     , @NamedQuery(name = "IngresosPropiosCaptados.findByConceptoIngresosCaptados", query = "SELECT i FROM IngresosPropiosCaptados i WHERE i.conceptoIngresosCaptados = :conceptoIngresosCaptados")
     , @NamedQuery(name = "IngresosPropiosCaptados.findByFechaIngreso", query = "SELECT i FROM IngresosPropiosCaptados i WHERE i.fechaIngreso = :fechaIngreso")
@@ -46,9 +45,6 @@ public class IngresosPropiosCaptados implements Serializable {
     @NotNull
     @Column(name = "registro")
     private Integer registro;
-    @Basic(optional = false)
-    @Column(name = "ingresos_propios_captados")
-    private int ingresosPropiosCaptados;
     @Basic(optional = false)
     @NotNull
     @Column(name = "periodo_escolar")
@@ -83,9 +79,8 @@ public class IngresosPropiosCaptados implements Serializable {
         this.registro = registro;
     }
 
-    public IngresosPropiosCaptados(Integer registro, int ingresosPropiosCaptados, int periodoEscolar, String conceptoIngresosCaptados, Date fechaIngreso, double monto, String descripcion) {
+    public IngresosPropiosCaptados(Integer registro, int periodoEscolar, String conceptoIngresosCaptados, Date fechaIngreso, double monto, String descripcion) {
         this.registro = registro;
-        this.ingresosPropiosCaptados = ingresosPropiosCaptados;
         this.periodoEscolar = periodoEscolar;
         this.conceptoIngresosCaptados = conceptoIngresosCaptados;
         this.fechaIngreso = fechaIngreso;
@@ -99,14 +94,6 @@ public class IngresosPropiosCaptados implements Serializable {
 
     public void setRegistro(Integer registro) {
         this.registro = registro;
-    }
-
-    public int getIngresosPropiosCaptados() {
-        return ingresosPropiosCaptados;
-    }
-
-    public void setIngresosPropiosCaptados(int ingresosPropiosCaptados) {
-        this.ingresosPropiosCaptados = ingresosPropiosCaptados;
     }
 
     public int getPeriodoEscolar() {

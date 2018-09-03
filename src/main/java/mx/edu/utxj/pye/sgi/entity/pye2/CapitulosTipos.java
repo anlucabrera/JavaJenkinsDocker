@@ -53,12 +53,12 @@ public class CapitulosTipos implements Serializable {
     @Size(min = 1, max = 100)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "capitulo")
-    private List<ProductosAreas> productosAreasList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "capituloTipo")
     private List<PretechoFinanciero> pretechoFinancieroList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "capituloTipo")
     private List<Presupuestos> presupuestosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "capitulo")
+    private List<ProductosAreas> productosAreasList;
 
     public CapitulosTipos() {
     }
@@ -98,15 +98,6 @@ public class CapitulosTipos implements Serializable {
     }
 
     @XmlTransient
-    public List<ProductosAreas> getProductosAreasList() {
-        return productosAreasList;
-    }
-
-    public void setProductosAreasList(List<ProductosAreas> productosAreasList) {
-        this.productosAreasList = productosAreasList;
-    }
-
-    @XmlTransient
     public List<PretechoFinanciero> getPretechoFinancieroList() {
         return pretechoFinancieroList;
     }
@@ -122,6 +113,15 @@ public class CapitulosTipos implements Serializable {
 
     public void setPresupuestosList(List<Presupuestos> presupuestosList) {
         this.presupuestosList = presupuestosList;
+    }
+
+    @XmlTransient
+    public List<ProductosAreas> getProductosAreasList() {
+        return productosAreasList;
+    }
+
+    public void setProductosAreasList(List<ProductosAreas> productosAreasList) {
+        this.productosAreasList = productosAreasList;
     }
 
     @Override

@@ -94,7 +94,7 @@ public class ActividadesPoa implements Serializable {
     private short numeroS;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 300)
+    @Size(min = 1, max = 500)
     @Column(name = "denominacion")
     private String denominacion;
     @Basic(optional = false)
@@ -197,16 +197,16 @@ public class ActividadesPoa implements Serializable {
     @NotNull
     @Column(name = "total")
     private short total;
-    @Size(max = 500)
+    @Size(max = 1000)
     @Column(name = "just_Abril")
     private String justAbril;
-    @Size(max = 500)
+    @Size(max = 1000)
     @Column(name = "just_Agosto")
     private String justAgosto;
-    @Size(max = 500)
+    @Size(max = 1000)
     @Column(name = "just_Diciembre")
     private String justDiciembre;
-    @Size(max = 500)
+    @Size(max = 1500)
     @Column(name = "descripcion")
     private String descripcion;
     @Basic(optional = false)
@@ -236,16 +236,16 @@ public class ActividadesPoa implements Serializable {
     private boolean validadpPyeFinal;
     @Column(name = "actividadPadre")
     private Integer actividadPadre;
-    @JoinTable(name = "actividades_evidencias", joinColumns = {
-        @JoinColumn(name = "actividad", referencedColumnName = "actividad_poa")}, inverseJoinColumns = {
-        @JoinColumn(name = "evidencia", referencedColumnName = "evidencia")})
-    @ManyToMany
-    private List<Evidencias> evidenciasList;
     @JoinTable(name = "actividades_registros", joinColumns = {
         @JoinColumn(name = "actividad", referencedColumnName = "actividad_poa")}, inverseJoinColumns = {
         @JoinColumn(name = "registro", referencedColumnName = "registro")})
     @ManyToMany
     private List<Registros> registrosList;
+    @JoinTable(name = "actividades_evidencias", joinColumns = {
+        @JoinColumn(name = "actividad", referencedColumnName = "actividad_poa")}, inverseJoinColumns = {
+        @JoinColumn(name = "evidencia", referencedColumnName = "evidencia")})
+    @ManyToMany
+    private List<Evidencias> evidenciasList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "actividadPoa")
     private List<RecursosActividad> recursosActividadList;
     @JoinColumn(name = "cuadro_mando_int", referencedColumnName = "cuadro_mando_int")
@@ -619,15 +619,6 @@ public class ActividadesPoa implements Serializable {
     public void setActividadPadre(Integer actividadPadre) {
         this.actividadPadre = actividadPadre;
     }
-    
-    @XmlTransient
-    public List<Evidencias> getEvidenciasList() {
-        return evidenciasList;
-    }
-
-    public void setEvidenciasList(List<Evidencias> evidenciasList) {
-        this.evidenciasList = evidenciasList;
-    }
 
     @XmlTransient
     public List<Registros> getRegistrosList() {
@@ -636,6 +627,15 @@ public class ActividadesPoa implements Serializable {
 
     public void setRegistrosList(List<Registros> registrosList) {
         this.registrosList = registrosList;
+    }
+
+    @XmlTransient
+    public List<Evidencias> getEvidenciasList() {
+        return evidenciasList;
+    }
+
+    public void setEvidenciasList(List<Evidencias> evidenciasList) {
+        this.evidenciasList = evidenciasList;
     }
 
     @XmlTransient
@@ -687,5 +687,5 @@ public class ActividadesPoa implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa[ actividadPoa=" + actividadPoa + " ]";
     }
-
+    
 }
