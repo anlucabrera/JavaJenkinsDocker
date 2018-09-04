@@ -11,18 +11,21 @@
                 xmlns:pr="http://xmlns.jcp.org/jsp/jstl/functions">
 
     <ui:define name="head-end">
-        <ui:param name="renderBreadCrumb" value="false"/>
+        <ui:param name="renderBreadCrumb" value="true"/>
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
     </ui:define>
     <ui:define name="title">
-        Calidad Académica
+        Asesorías y tutorías
     </ui:define>
 
     <ui:define name="description">
-        Módulo de registro
+        Calidad Académica
     </ui:define>
 
     <ui:define name="body">
+        <adm:breadcrumb title="Calidad académica - Asesorías y tutorías"/>
         <adm:sidebar collapsed="true"/>
+        <p:importEnum type="mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa" var="etapa" allSuffix="ETAPAS" />
         <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
             <h1>
                 Esta página está disponible solo para pantallas superiores a 1024px.
@@ -30,32 +33,39 @@
         </p:panel>
         <div class="box box-primary">
             <div class="box-header with-border">
-
                 <div id="main-buttons" class="hidden-sm hidden-xs" >
                     <h:form prependId="true" id="frmMainButtons" class="form-inline">
                         <p:outputPanel >
                             <p:autoUpdate/>
-                            <p:toolbar id="tb"> 
+                            <p:toolbar id="tb">
                                 <f:facet name="left">
+                                    <p:spacer width="10" />
+                                    <p:outputLabel value="Periodo: " for="periodo" />
+                                    <p:spacer width="3" />
+                                    <p:selectOneMenu id="periodo" converter="entityConverter"
+                                                     value="#{asesoriasTutoriasCicloEscolar.dto.periodo}" valueChangeListener="#{asesoriasTutoriasCicloEscolar.actualizarMeses}"
+                                                     class="form-control" style="padding-top: 0px;">
+                                        <f:selectItems value="#{asesoriasTutoriasCicloEscolar.dto.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" itemDescription="#{caster.periodoToString(periodo)}" />
+                                        <p:ajax process="@this" update="@form:mes" global="false" />
+                                    </p:selectOneMenu>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <p:outputLabel value="Mes: " for="mes" />
+                                    <p:spacer width="3" />
+                                    <p:selectOneMenu id="mes" value="#{asesoriasTutoriasCicloEscolar.dto.eventoSeleccionado}" converter="entityConverter" class="form-control" style="padding-top: 0px;">
+                                        <f:selectItems value="#{asesoriasTutoriasCicloEscolar.dto.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" itemDescription="#{evento.mes}"  />
+                                        <p:ajax process="@this" listener="#{asesoriasTutoriasCicloEscolar.cargarListaPorEvento()}" update="@(form)" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <f:facet name="right">
                                     <div class="btn-group">
                                         <p:commandButton value="Cargar Archivo de Excel" icon="fa fa-file-excel-o" onclick="PF('modalCargaArchivo').show()" class="btn btn-primary btn-sm"/>
                                     </div>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <div class="btn-group">
-                                        <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
+                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="# {controladorPlantillasCA.descargarPlantillaAsesoriasTutorias()}" target="_blank" title="Descargar Plantilla Asesorías y Tutorías"><i class="fa fa-download" /></p:commandLink>
                                     </div>
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <div class="btn-group">
-                                        <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
-                                    </div>
-                                </f:facet>
-                                <f:facet name="right">
-                                    <div class="btn-group">
-                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="# {controladorPlantillasCA.descargarPlantillaAsesoriasTutorias()}" target="_blank" title="Descargar Plantilla Asesorías y Tutorías"><i class="fa fa-download" /></p:commandLink>
-                                    </div>
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <div class="btn-group">
-                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="calidadAcademica" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
+                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="calidadAcademica" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
                                     </div>
                                 </f:facet>
                             </p:toolbar>
@@ -66,13 +76,38 @@
                 <p:separator/>
 
                 <div class="box-body">
-
                     <!-- Sección de visualización y eliminación -->
                     <div class="row">
                         <div class="col-lg-12 col-md-12">
                             <h:form id="formMuestraDatosActivos">
-                                <c:if test="#{controladorAsesoriasTutoriasCicloEscolar.listaAsesoriasTutoriasCicloPeriodos.asesoriasTutoriasCicloPeriodos eq null}">
-
+                                <c:if test="#{asesoriasTutoriasCicloEscolar.dto.etapa eq etapa.MOSTRAR}">
+                                    <p:dataTable id="dtbAsesoriasTutoriasPrevia" emptyMessage="Sin datos en el periodo seleccionado." value="#{asesoriasTutoriasCicloEscolar.dto.lista}" var="asesoriaTutoria"
+                                                 paginator="true" rows="10" rowsPerPageTemplate="5,10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                 resizeMode="expand"
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Periodo Escolar"      width="150"/>
+                                                <p:column headerText="Programa Educativo"   width="400"/>
+                                                <p:column headerText="Cuat."                width="40"/>
+                                                <p:column headerText="Grupo"                width="60"/>
+                                                <p:column headerText="Sesiones"             width="60"/>
+                                                <p:column headerText="Asistentes"           width="60"/>
+                                                <p:column headerText="Tipo de Actividad"    width="80"/>
+                                                <p:column headerText="Tipo"                 width="80"/>
+                                                <p:column headerText="Asunto"               width="400"/>
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column><h:outputText value="#{asesoriaTutoria.periodoEscolar}"/></p:column>
+                                        <p:column><h:outputText value="#{asesoriaTutoria.areasUniversidad.nombre}"/></p:column>
+                                        <p:column><h:outputText value="#{asesoriaTutoria.asesoriasTutoriasCicloPeriodos.cuatrimestre}"/></p:column>
+                                        <p:column><h:outputText value="#{asesoriaTutoria.asesoriasTutoriasCicloPeriodos.grupo}"/></p:column>
+                                        <p:column><h:outputText value="#{asesoriaTutoria.asesoriasTutoriasCicloPeriodos.noTutoriasAsesorias}"/></p:column>
+                                        <p:column><h:outputText value="#{asesoriaTutoria.asesoriasTutoriasCicloPeriodos.asistentes}"/></p:column>
+                                        <p:column><h:outputText value="#{asesoriaTutoria.asesoriasTutoriasCicloPeriodos.tipoActividad}"/></p:column>
+                                        <p:column><h:outputText value="#{asesoriaTutoria.asesoriasTutoriasCicloPeriodos.tipo}"/></p:column>
+                                        <p:column><h:outputText value="#{asesoriaTutoria.asesoriasTutoriasCicloPeriodos.asunto}"/></p:column>
+                                    </p:dataTable>
                                 </c:if>
                             </h:form>
                         </div>
@@ -81,26 +116,26 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12">
                             <h:form id="formPrevisualizacionDatos" prependId="false">
-                                <c:if test="#{controladorAsesoriasTutoriasCicloEscolar.listaAsesoriasTutoriasCicloPeriodos.asesoriasTutoriasCicloPeriodos ne null}">
+                                <c:if test="#{asesoriasTutoriasCicloEscolar.dto.etapa eq etapa.CARGAR}">
                                     <center>
-                                        <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
+                                        <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente"
                                                      paginator="true"
-                                                     rows="10" 
+                                                     rows="10"
                                                      rowsPerPageTemplate="5,10,20,30,40,50"
                                                      paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
                                                      id="dtbAsesoriasTutoriasPrevia"
-                                                     var="asesoriaTutoria" value="#{controladorAsesoriasTutoriasCicloEscolar.listaAsesoriasTutoriasCicloPeriodos.asesoriasTutoriasCicloPeriodos}"
+                                                     var="asesoriaTutoria" value="#{asesoriasTutoriasCicloEscolar.dto.lista}"
                                                      resizeMode="expand" scrollable="true"
                                                      tableStyleClass="table-bordered table-hover table-condensed table-responsive">
                                             <f:facet name="header">
                                                 Asesorías y Tutorías
                                             </f:facet>
 
-                                            <p:column headerText="Periodo Escolar" width="100">
+                                            <p:column headerText="Periodo Escolar" width="150">
                                                 <h:outputText value="#{asesoriaTutoria.periodoEscolar}"/>
                                             </p:column>
 
-                                            <p:column headerText="Programa Educativo" width="600">
+                                            <p:column headerText="Programa Educativo" width="400">
                                                 <h:outputText value="#{asesoriaTutoria.areasUniversidad.nombre}"/>
                                             </p:column>
 
@@ -136,9 +171,9 @@
                                             </f:facet>
                                         </p:dataTable>
                                         <p></p>
-                                        <p:commandButton id="btnGuardarAsesoriasTutorias" value="Guardar Datos" actionListener="#{controladorAsesoriasTutoriasCicloEscolar.guardaAsesoriasTutorias()}" icon="fa fa-pencil-square-o" class="btn-primary" update="formPrevisualizacionDatos"/>
+                                        <p:commandButton id="btnGuardarAsesoriasTutorias" value="Guardar Datos" actionListener="#{asesoriasTutoriasCicloEscolar.guardaAsesoriasTutorias()}" icon="fa fa-pencil-square-o" class="btn-primary" update="formPrevisualizacionDatos"/>
                                         <p:spacer width="5" />
-                                        <p:commandButton id="btnCancelar" value="Cancelar" actionListener="#{controladorAsesoriasTutoriasCicloEscolar.cancelarArchivo()}" icon="fa fa-times-circle" class="btn-danger" update=":formPrevisualizacionDatos,:formMuestraDatosActivos"/>
+                                        <p:commandButton id="btnCancelar" value="Cancelar" actionListener="#{asesoriasTutoriasCicloEscolar.cancelarArchivo()}" icon="fa fa-times-circle" class="btn-danger" update=":formPrevisualizacionDatos,:formMuestraDatosActivos"/>
                                     </center>
                                 </c:if>
                             </h:form>

@@ -8,16 +8,20 @@ package mx.edu.utxj.pye.siip.services.ca;
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuestas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Meses;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.AsesoriasTutoriasCicloPeriodos;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
@@ -42,21 +46,18 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 @Stateful
 public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTutoriasCiclosPeriodos {
 
-    @EJB
-    Facade facadeEscolar;
+    @EJB Facade facadeEscolar;
+    @EJB EjbModulos ejbModulos;
+    @EJB EjbAdministracionEncuestas eJBAdministracionEncuestas;
+    @EJB Facade f;
+    @Inject Caster caster;
 
-    @EJB
-    EjbModulos ejbModulos;
-
-    @EJB
-    EjbAdministracionEncuestas eJBAdministracionEncuestas;
-
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
+//    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
+//    private EntityManager em;
 
     @Override
-    public ListaAsesoriasTutoriasCicloPeriodos getListaAsesoriasTutorias(String rutaArchivo) throws Throwable {
-        ListaAsesoriasTutoriasCicloPeriodos listaAsesoriasTutoriasCicloPeriodos = new ListaAsesoriasTutoriasCicloPeriodos();
+    public List<DTOAsesoriasTutoriasCicloPeriodos> getListaAsesoriasTutorias(String rutaArchivo) throws Throwable {
+//        ListaAsesoriasTutoriasCicloPeriodos listaAsesoriasTutoriasCicloPeriodos = new ListaAsesoriasTutoriasCicloPeriodos();
 
         List<DTOAsesoriasTutoriasCicloPeriodos> listaDtoAsesoriasTutoriasCicloPeriodos = new ArrayList<>();
         DTOAsesoriasTutoriasCicloPeriodos dtoAsesoriaTutoriaCicloPeriodo;
@@ -64,7 +65,7 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
         AreasUniversidad areaUniversidad;
 
         File excelAsesoriaTutoria = new File(rutaArchivo);
-        XSSFWorkbook workBookAsesoriaTutoria = new XSSFWorkbook();
+        XSSFWorkbook workBookAsesoriaTutoria;
         workBookAsesoriaTutoria = (XSSFWorkbook) WorkbookFactory.create(excelAsesoriaTutoria);
         XSSFSheet primeraHoja = workBookAsesoriaTutoria.getSheetAt(0);
         XSSFRow fila;
@@ -150,7 +151,7 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
                 }
             }
             workBookAsesoriaTutoria.close();
-            listaAsesoriasTutoriasCicloPeriodos.setAsesoriasTutoriasCicloPeriodos(listaDtoAsesoriasTutoriasCicloPeriodos);
+//            listaAsesoriasTutoriasCicloPeriodos.setAsesoriasTutoriasCicloPeriodos(listaDtoAsesoriasTutoriasCicloPeriodos);
             addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
         } else {
             workBookAsesoriaTutoria.close();
@@ -158,13 +159,13 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
             ServicioArchivos.eliminarArchivo(rutaArchivo);
             addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
         }
-        return listaAsesoriasTutoriasCicloPeriodos;
+        return listaDtoAsesoriasTutoriasCicloPeriodos;
     }
 
     @Override
-    public void guardaAsesoriasTutorias(ListaAsesoriasTutoriasCicloPeriodos listaAsesoriasTutoriasCicloPeriodos, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) throws Throwable {
+    public void guardaAsesoriasTutorias(List<DTOAsesoriasTutoriasCicloPeriodos> lista, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) throws Throwable {
         List<String> listaCondicional = new ArrayList<>();
-        listaAsesoriasTutoriasCicloPeriodos.getAsesoriasTutoriasCicloPeriodos().forEach((asesTut) -> {
+        lista.forEach((asesTut) -> {
             if (ejbModulos.validaPeriodoRegistro(eJBAdministracionEncuestas.getPeriodoActual(), asesTut.getAsesoriasTutoriasCicloPeriodos().getPeriodoEscolar())) {
                 facadeEscolar.setEntityClass(AsesoriasTutoriasCicloPeriodos.class);
                 AsesoriasTutoriasCicloPeriodos asesTutEncontrada = getRegistroAsesoriaTutoriaCicloPeriodo(asesTut.getAsesoriasTutoriasCicloPeriodos());
@@ -189,8 +190,8 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
 
     @Override
     public AsesoriasTutoriasCicloPeriodos getRegistroAsesoriaTutoriaCicloPeriodo(AsesoriasTutoriasCicloPeriodos asesoriaTutoriaCicloPeriodo) {
-        AsesoriasTutoriasCicloPeriodos asesTutCPEnviada = new AsesoriasTutoriasCicloPeriodos();
-        TypedQuery<AsesoriasTutoriasCicloPeriodos> query = em.createQuery("SELECT a FROM AsesoriasTutoriasCicloPeriodos AS a WHERE a.periodoEscolar = :periodoEscolar AND a.programaEducativo = :programaEducativo AND a.cuatrimestre = :cuatrimestre AND a.grupo = :grupo AND a.tipoActividad = :tipoActividad AND a.tipo = :tipo", AsesoriasTutoriasCicloPeriodos.class);
+        AsesoriasTutoriasCicloPeriodos asesTutCPEnviada;
+        TypedQuery<AsesoriasTutoriasCicloPeriodos> query = f.getEntityManager().createQuery("SELECT a FROM AsesoriasTutoriasCicloPeriodos AS a WHERE a.periodoEscolar = :periodoEscolar AND a.programaEducativo = :programaEducativo AND a.cuatrimestre = :cuatrimestre AND a.grupo = :grupo AND a.tipoActividad = :tipoActividad AND a.tipo = :tipo", AsesoriasTutoriasCicloPeriodos.class);
         query.setParameter("periodoEscolar", asesoriaTutoriaCicloPeriodo.getPeriodoEscolar());
         query.setParameter("programaEducativo", asesoriaTutoriaCicloPeriodo.getProgramaEducativo());
         query.setParameter("cuatrimestre", asesoriaTutoriaCicloPeriodo.getCuatrimestre());
@@ -204,6 +205,63 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
             ex.toString();
         }
         return asesTutCPEnviada;
+    }
+
+    @Override
+    public List<PeriodosEscolares> getPeriodosConregistro() {
+        List<Integer> claves = f.getEntityManager().createQuery("SELECT atp FROM AsesoriasTutoriasCicloPeriodos atp", AsesoriasTutoriasCicloPeriodos.class)
+                .getResultStream()
+                .map(atp -> atp.getPeriodoEscolar())
+                .collect(Collectors.toList());
+                
+        
+        return f.getEntityManager().createQuery("SELECT periodo FROM PeriodosEscolares periodo WHERE periodo.periodo IN :claves ORDER BY periodo.periodo desc", PeriodosEscolares.class)
+                .setParameter("claves", claves)
+                .getResultList();
+    }
+
+    @Override
+    public List<EventosRegistros> getEventosPorPeriodo(PeriodosEscolares periodo) {
+        if(periodo == null){
+            return null;
+        }
+        
+        List<String> meses = f.getEntityManager().createQuery("SELECT m FROM Meses m where m.numero BETWEEN :inicio AND :fin ORDER BY m.numero", Meses.class)
+                .setParameter("inicio", periodo.getMesInicio().getNumero())
+                .setParameter("fin", periodo.getMesFin().getNumero())
+                .getResultList()
+                .stream()
+                .map(m -> m.getMes())
+                .collect(Collectors.toList());
+        
+//        meses.forEach(m -> System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getEventosPorPeriodo() mes: " + m));
+        
+        return f.getEntityManager().createQuery("SELECT er from EventosRegistros er INNER JOIN er.ejercicioFiscal ef WHERE ef.anio=:anio AND er.mes in :meses ORDER BY er.fechaInicio, er.fechaFin", EventosRegistros.class)
+                .setParameter("anio", periodo.getAnio())
+                .setParameter("meses", meses)
+                .getResultList();
+        
+    }
+
+    @Override
+    public List<DTOAsesoriasTutoriasCicloPeriodos> getListaRegistrosPorEvento(EventosRegistros evento) {
+        if(evento == null){
+            return null;
+        }
+        
+        List<DTOAsesoriasTutoriasCicloPeriodos> l = new ArrayList<>();
+        List<AsesoriasTutoriasCicloPeriodos> entities = f.getEntityManager().createQuery("SELECT atc FROM AsesoriasTutoriasCicloPeriodos atc INNER JOIN atc.registros r INNER JOIN r.eventoRegistro er WHERE er.eventoRegistro=:evento ORDER BY atc.programaEducativo, atc.cuatrimestre, atc.grupo, atc.tipoActividad, atc.tipo", AsesoriasTutoriasCicloPeriodos.class)
+                .setParameter("evento", evento.getEventoRegistro())
+                .getResultList();
+        
+        entities.forEach(e -> {
+            l.add(new DTOAsesoriasTutoriasCicloPeriodos(
+                    e, 
+                    caster.periodoToString(f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodoEscolar())), 
+                    f.getEntityManager().find(AreasUniversidad.class, e.getProgramaEducativo())));
+        });
+        
+        return l;
     }
 
 }

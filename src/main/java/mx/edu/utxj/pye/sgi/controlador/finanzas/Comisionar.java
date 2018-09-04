@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.controlador.finanzas;
 
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.logging.Level;
@@ -123,7 +124,7 @@ public class Comisionar implements Serializable{
         origen = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("origen");
     }
     
-    public void guardarComisión(){
+    public void guardarComisión() throws IOException{
         try{
             ejb.guardarTramite(comision.getTramite(), distancia);
             Faces.redirect("finanzas/tramites.xhtml");

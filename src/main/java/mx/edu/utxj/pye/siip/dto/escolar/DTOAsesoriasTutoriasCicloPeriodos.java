@@ -22,7 +22,6 @@ import mx.edu.utxj.pye.sgi.entity.pye2.AsesoriasTutoriasCicloPeriodos;
 @AllArgsConstructor
 @ToString
 public class DTOAsesoriasTutoriasCicloPeriodos implements Serializable{
-
     private static final long serialVersionUID = 6896177529612063988L;
     @Getter @Setter private AsesoriasTutoriasCicloPeriodos asesoriasTutoriasCicloPeriodos;
     @Getter @Setter private String periodoEscolar;

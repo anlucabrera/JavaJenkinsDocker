@@ -6,6 +6,11 @@ body .ui-datatable th[role="columnheader"].ui-state-default, body .ui-treetable 
     color: #fff !important;
     background-color: #3c8dbc !important;
 }
+
+table[role="grid"]{    
+    margin-bottom: 0px !important;
+}
+
 .table-bordered>thead>tr>th, 
 .table-bordered>tbody>tr>th, 
 .table-bordered>tfoot>tr>th, 
