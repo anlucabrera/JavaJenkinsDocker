@@ -139,23 +139,26 @@ button, input, optgroup, select, textarea{
 }
 
 .eje{
-    background-color: #cccccc;
+    background-color: #00204a;
     color: #ffffff;
+    font-size: 25px
 }
 .est{
-    background-color: #00649d;
+    background-color: #005792;
     color: #ffffff;
+    font-size: 20px
 }
 .lac{
-    background-color: #01aac1;
-    color: #ffffff;
+    background-color: #89a4c7;
+    color: #000000;
+    font-size: 15px
 }
 .actividad{
-    background-color: #00dbe7;
-    color: #ffffff;
+    background-color: #cdd5e0;
+    color: #000000;
 }
 body .ui-datatable th[role="columnheader"].ui-state-default, body .ui-treetable th[role="columnheader"].ui-state-default{
-    background-color: #cccccc;
+    /*background-color: #cccccc;*/
 }
 
 .ui-steps .ui-steps-item {
