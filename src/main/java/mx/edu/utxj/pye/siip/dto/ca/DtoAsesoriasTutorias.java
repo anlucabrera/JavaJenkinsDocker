@@ -20,8 +20,6 @@ public final class DtoAsesoriasTutorias {
     @Getter private PeriodosEscolares periodo;    
     @Getter private RegistrosTipo registroTipo;
     
-    @Getter private RegistroSiipEtapa etapa;
-    
     @Getter private Short area;
     @Getter private String rutaArchivo;
     
@@ -32,7 +30,6 @@ public final class DtoAsesoriasTutorias {
     public DtoAsesoriasTutorias() {
         setRegistroTipo(new RegistrosTipo((short)3));
         setEje(new EjesRegistro(3));
-        setEtapa(RegistroSiipEtapa.MOSTRAR);
     }   
 
     public void setEje(EjesRegistro eje) {
@@ -69,12 +66,9 @@ public final class DtoAsesoriasTutorias {
         }
     }
 
-    public void setEtapa(RegistroSiipEtapa etapa) {
-        this.etapa = etapa;
-    }
-
     public void setEventoActual(EventosRegistros eventoActual) {
         this.eventoActual = eventoActual;
+        System.out.println("mx.edu.utxj.pye.siip.dto.ca.DtoAsesoriasTutorias.setEventoActual(): " + eventoActual);
     }
 
     public void setEventoSeleccionado(EventosRegistros eventoSeleccionado) {

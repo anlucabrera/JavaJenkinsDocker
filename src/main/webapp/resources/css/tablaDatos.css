@@ -21,3 +21,17 @@ table[role="grid"]{
     vertical-align: middle;
     padding: 3px !important;
 }
+
+.ui-dialog-buttonpane{
+    margin-top: 2px  !important;
+    margin-bottom: 2px !important;
+}
+
+.ui-dialog-title{
+    font-size: larger !important;
+    margin: auto;
+}
+
+.panel-heading{
+    text-align: center;
+}

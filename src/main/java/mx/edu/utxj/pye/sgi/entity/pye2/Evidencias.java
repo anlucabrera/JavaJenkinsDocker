@@ -52,7 +52,7 @@ public class Evidencias implements Serializable {
     private String categoria;
     @ManyToMany(mappedBy = "evidenciasList")
     private List<ActividadesPoa> actividadesPoaList;
-    @JoinTable(name = "registros_evidencias", joinColumns = {
+    @JoinTable(name = "pye2.registros_evidencias", joinColumns = {
         @JoinColumn(name = "evidencia", referencedColumnName = "evidencia")}, inverseJoinColumns = {
         @JoinColumn(name = "registro", referencedColumnName = "registro")})
     @ManyToMany

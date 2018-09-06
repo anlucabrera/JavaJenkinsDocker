@@ -76,7 +76,7 @@ public class Eventos implements Serializable {
     @Column(name = "fecha_fin")
     @Temporal(TemporalType.DATE)
     private Date fechaFin;
-    @JoinTable(name = "eventos_personal", joinColumns = {
+    @JoinTable(name = "capital_humano.eventos_personal", joinColumns = {
         @JoinColumn(name = "evento", referencedColumnName = "evento")}, inverseJoinColumns = {
         @JoinColumn(name = "clave", referencedColumnName = "clave")})
     @ManyToMany

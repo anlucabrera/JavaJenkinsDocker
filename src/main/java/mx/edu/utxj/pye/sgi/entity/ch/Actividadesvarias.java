@@ -53,7 +53,7 @@ public class Actividadesvarias implements Serializable {
     @Size(min = 1, max = 250)
     @Column(name = "nombreAcctividad")
     private String nombreAcctividad;
-    @JoinTable(name = "atividadesvariasplaneacionescuatrimestrales", joinColumns = {
+    @JoinTable(name = "capital_humano.atividadesvariasplaneacionescuatrimestrales", joinColumns = {
         @JoinColumn(name = "actividad", referencedColumnName = "actividad")}, inverseJoinColumns = {
         @JoinColumn(name = "planeacion", referencedColumnName = "planeacion")})
     @ManyToMany

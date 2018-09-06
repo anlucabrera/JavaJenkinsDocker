@@ -10,13 +10,16 @@ import java.io.Serializable;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
+import mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
@@ -37,32 +40,42 @@ public class ControladorArchivoTutAsesCE implements Serializable{
     @Getter private String eje;
     @Getter private Short area;
     @Getter private final String[] ejes = ServicioArchivos.EJES;
+    @Getter private RegistroSiipEtapa etapa;
+    
     
 //    Variables de Lectura y Escritura
     @Getter @Setter private String rutaArchivo;
     @Getter @Setter private Part file; 
 
 //    Recursos inyectados  
-    @Inject
-    ControladorEmpleado controladorEmpleado;
-    @Inject
-    ControladorAsesoriasTutoriasCicloEscolar controladorAsesoriasTutoriasCicloEscolar;
+    @Inject ControladorEmpleado controladorEmpleado;
+    @Inject ControladorAsesoriasTutoriasCicloEscolar controladorAsesoriasTutoriasCicloEscolar;
+    @Inject Caster caster;
     
 //    Interfaces conectadas
-    @EJB
-    EjbCarga ejbCarga;
+    @EJB EjbCarga ejbCarga;
     
     @PostConstruct
     public void init(){
         eje = ejes[1];
-        ejercicio = 2018;
-        area = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
+        ejercicio = Short.parseShort(caster.getEjercicioFiscal());
+        area = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();        
+        setEtapa(RegistroSiipEtapa.MOSTRAR);
+    }
+    
+    public void recibirArchivo(ValueChangeEvent e){
+        file = (Part)e.getNewValue();
+    }
+
+    public void setEtapa(RegistroSiipEtapa etapa) {
+        this.etapa = etapa;
     }
     
     public void subirExcelTutAsesCE() throws IOException {
         if (file != null) {
             rutaArchivo = ejbCarga.subirExcelRegistro(String.valueOf(ejercicio),String.valueOf(area),eje,"tutorias_asesorias",file);
             if (!"Error: No se pudo leer el archivo".equals(rutaArchivo)) {
+                setEtapa(RegistroSiipEtapa.CARGAR);
                 controladorAsesoriasTutoriasCicloEscolar.listaAsesoriasTutoriasPrevia(rutaArchivo);
                 rutaArchivo = null;
                 file.delete();
@@ -72,7 +85,7 @@ public class ControladorArchivoTutAsesCE implements Serializable{
                 Messages.addGlobalWarn("No fue posible cargar el archivo, Intentelo nuevamente !!");
             }
         } else {
-            Messages.addGlobalWarn("Es necesario seleccionar un archivo !!");
+            Messages.addGlobalWarn("!Es necesario seleccionar un archivo!");
         }
     }
     

@@ -236,12 +236,12 @@ public class ActividadesPoa implements Serializable {
     private boolean validadpPyeFinal;
     @Column(name = "actividadPadre")
     private Integer actividadPadre;
-    @JoinTable(name = "actividades_registros", joinColumns = {
+    @JoinTable(name = "pye2.actividades_registros", joinColumns = {
         @JoinColumn(name = "actividad", referencedColumnName = "actividad_poa")}, inverseJoinColumns = {
         @JoinColumn(name = "registro", referencedColumnName = "registro")})
     @ManyToMany
     private List<Registros> registrosList;
-    @JoinTable(name = "actividades_evidencias", joinColumns = {
+    @JoinTable(name = "pye2.actividades_evidencias", joinColumns = {
         @JoinColumn(name = "actividad", referencedColumnName = "actividad_poa")}, inverseJoinColumns = {
         @JoinColumn(name = "evidencia", referencedColumnName = "evidencia")})
     @ManyToMany

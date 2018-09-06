@@ -11,6 +11,8 @@ import java.util.Objects;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -19,6 +21,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistroUsuario;
 import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
+import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 
@@ -82,12 +85,15 @@ public class ServicioModulos implements EjbModulos {
     }
 
     @Override
-    public EventosRegistros getEventoRegistro() {
-        TypedQuery<EventosRegistros> query = em.createQuery("SELECT er FROM EventosRegistros er WHERE (er.fechaInicio <= :fechaInicio AND er.fechaFin >= :fechaFin)", EventosRegistros.class);
-        query.setParameter("fechaInicio", new Date());
-        query.setParameter("fechaFin", new Date());
-        EventosRegistros eventoRegistro = query.getSingleResult();
-        return eventoRegistro;
+    public EventosRegistros getEventoRegistro() throws EventoRegistroNoExistenteException{
+        try{
+            TypedQuery<EventosRegistros> query = em.createQuery("SELECT er FROM EventosRegistros er WHERE :fecha BETWEEN er.fechaInicio AND er.fechaFin", EventosRegistros.class);
+            query.setParameter("fecha", new Date());
+            EventosRegistros eventoRegistro = query.getSingleResult();
+            return eventoRegistro;
+        }catch(NoResultException | NonUniqueResultException ex){
+            throw new EventoRegistroNoExistenteException(new Date(), ex);
+        }
     }
 
     @Override

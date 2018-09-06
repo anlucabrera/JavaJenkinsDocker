@@ -13,6 +13,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistroUsuario;
 import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
+import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 
 /**
  *
@@ -39,7 +40,12 @@ public interface EjbModulos {
     
     public Registros getRegistro(RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros);
     
-    public EventosRegistros getEventoRegistro();
+    /**
+     * Obtiene el evento de registro según la fecha actual
+     * @return Evento de registro actual
+     * @throws EventoRegistroNoExistenteException Se lanza en caso que no exista un evento de registro para la fecha actual
+     */
+    public EventosRegistros getEventoRegistro() throws EventoRegistroNoExistenteException;
     
     public Boolean validaPeriodoRegistro(PeriodosEscolares periodoEscolar, Integer periodoRegistro);
 }

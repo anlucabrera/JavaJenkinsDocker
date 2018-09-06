@@ -56,12 +56,12 @@ public class PersonalCategorias implements Serializable {
     @Size(min = 1, max = 19)
     @Column(name = "tipo")
     private String tipo;
-    @JoinTable(name = "categorias_habilidades", joinColumns = {
+    @JoinTable(name = "capital_humano.categorias_habilidades", joinColumns = {
         @JoinColumn(name = "categoria", referencedColumnName = "categoria")}, inverseJoinColumns = {
         @JoinColumn(name = "habilidad", referencedColumnName = "habilidad")})
     @ManyToMany
     private List<Habilidades> habilidadesList;
-    @JoinTable(name = "eventos_categorias", joinColumns = {
+    @JoinTable(name = "capital_humano.eventos_categorias", joinColumns = {
         @JoinColumn(name = "categoria_operativa", referencedColumnName = "categoria")}, inverseJoinColumns = {
         @JoinColumn(name = "evento", referencedColumnName = "evento")})
     @ManyToMany
