@@ -231,7 +231,8 @@ public class ControladorPOARegistro implements Serializable {
     }
 
     public void asignarParametrosRegistro(ValueChangeEvent event) {
-        if (event.getNewValue() != null) {
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARegistro.asignarParametrosRegistro()" + Short.parseShort(event.getNewValue().toString()));
+        if (Short.parseShort(event.getNewValue().toString()) != Short.parseShort("0")) {
             switch (event.getComponent().getId()) {
                 case "eje":
                     ejesRegistro = new EjesRegistro();
@@ -277,7 +278,13 @@ public class ControladorPOARegistro implements Serializable {
                     ejeActivo = true;
                     break;
             }
-        }else{
+        } else {
+            ejesRegistro = new EjesRegistro();
+            estrategias = new Estrategias();
+            lineasAccion = new LineasAccion();
+            listaEstrategias.clear();
+            listaLineasAccion.clear();
+            listaCuadroMandoIntegrals.clear();
             consultarListasInit();
         }
     }

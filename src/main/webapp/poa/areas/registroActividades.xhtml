@@ -62,7 +62,7 @@
                                 <p:outputLabel value="Eje rector:" />
                                 <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorPOARegistro.asignarParametrosRegistro}">
                                     <f:selectItems value="#{controladorPOARegistro.listaEjesRegistros}" var="eje" itemValue="#{eje.eje}" itemLabel="#{eje.eje} -- #{eje.nombre}" />
-                                    <p:ajax update="estra" listener="#{controladorPOARegistro.imprimirValores()}"/>
+                                    <p:ajax update="estra :frm" listener="#{controladorPOARegistro.imprimirValores()}"/>
                                 </p:selectOneMenu> 
                                 <p:message for="eje" display="tooltip" />
                             </div>
