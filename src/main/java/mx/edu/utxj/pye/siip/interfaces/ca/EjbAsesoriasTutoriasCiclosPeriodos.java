@@ -8,11 +8,16 @@ package mx.edu.utxj.pye.siip.interfaces.ca;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.Local;
+import javax.servlet.http.Part;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.AsesoriasTutoriasCicloPeriodos;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
+import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
+import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
+import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
 import mx.edu.utxj.pye.siip.dto.escolar.DTOAsesoriasTutoriasCicloPeriodos;
@@ -67,4 +72,50 @@ public interface EjbAsesoriasTutoriasCiclosPeriodos {
      * @return Devuelve TRUE si se eliminó el registro o FALSE de lo contrario.
      */
     public Boolean eliminarRegistro(DTOAsesoriasTutoriasCicloPeriodos registro);
+    
+    /**
+     * Obtiene la lista de evidencias del registro correspondiente.
+     * @param registro Registro a obtener sus evidencias
+     * @return Lista de evidencias detalle
+     */
+    public List<EvidenciasDetalle> getListaEvidenciasPorRegistro(DTOAsesoriasTutoriasCicloPeriodos registro);
+    
+    /**
+     * Registra múltiples archivos como evidencias del registro especificado.
+     * @param registro Registro al que se van a agreegar las evidencias.
+     * @param archivos Lista de archivos de evidencias.
+     * @return Regresa una entrada de mapa con la clave tipo boleana indicando si todos las evidencias se almacenaron y como valor la cantidad de evidencias registradas.
+     */
+    public Map.Entry<Boolean, Integer> registrarEvidenciasARegistro(DTOAsesoriasTutoriasCicloPeriodos registro, List<Part> archivos);
+    
+    /**
+     * Elimina una evidencia de un registro, si la evidencia solo está asignada al registro especificado la elimina de la base de datos y del disco duro, de lo contrario solo la 
+     * desliga del registro.
+     * @param registro Registro al que está ligada la evidencia.
+     * @param evidenciasDetalle Evidencia a desligar o eliminar
+     * @return Regresa TRUE si la evidencia se eliminó, FALSE de lo contrario o NULL si solo se desligó.
+     */
+    public Boolean eliminarEvidenciaEnRegistro(DTOAsesoriasTutoriasCicloPeriodos registro, EvidenciasDetalle evidenciasDetalle);
+    
+    /**
+     * Obtiene la referencia al área con POA para que un usuario de una persona acceda a los registros de su area
+     * @param area Clave del area
+     * @return Referencia del área con POA
+     */
+    public AreasUniversidad getAreaConPOA(Short area);
+    
+    /**
+     * Obtiene la referencia a la actividad que está alineada con el registro.
+     * @param registro Registro del cual se desea conocer su actividad alineada.
+     * @return Devuelve la referencia a la actividad alineada o null si es que no ha sido alineada.
+     */
+    public ActividadesPoa getActividadAlineada(DTOAsesoriasTutoriasCicloPeriodos registro);
+    
+    /**
+     * Alinea el registro con la actividad para que compartan evidencias.
+     * @param actividad Actividad con la que se desea alinear.
+     * @param registro Registro que se desea alinear.
+     * @return Devuelve TRUE si la alineación se completó o FALSE de lo contrario.
+     */
+    public Boolean alinearRegistroActividad(ActividadesPoa actividad, DTOAsesoriasTutoriasCicloPeriodos registro);
 }

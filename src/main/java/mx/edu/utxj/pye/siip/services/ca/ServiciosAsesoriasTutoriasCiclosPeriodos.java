@@ -8,12 +8,14 @@ package mx.edu.utxj.pye.siip.services.ca;
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.ejb.EJB;
@@ -22,24 +24,31 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
+import javax.servlet.http.Part;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuestas;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Meses;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.AsesoriasTutoriasCicloPeriodos;
+import mx.edu.utxj.pye.sgi.entity.pye2.EjerciciosFiscales;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
+import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
+import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
+import mx.edu.utxj.pye.sgi.enums.EvidenciaCategoria;
 import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
-import mx.edu.utxj.pye.siip.entity.escolar.list.ListaAsesoriasTutoriasCicloPeriodos;
+import mx.edu.utxj.pye.sgi.util.StringUtils;
 import mx.edu.utxj.pye.siip.dto.escolar.DTOAsesoriasTutoriasCicloPeriodos;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbAsesoriasTutoriasCiclosPeriodos;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -348,6 +357,147 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
         f.flush();
         
         return f.getEntityManager().find(AsesoriasTutoriasCicloPeriodos.class, clave) == null;
+    }
+
+    @Override
+    public List<EvidenciasDetalle> getListaEvidenciasPorRegistro(DTOAsesoriasTutoriasCicloPeriodos registro) {
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaEvidenciasPorRegistro(): " + registro);
+        if(registro == null){
+            return Collections.EMPTY_LIST;
+        }
+        return f.getEntityManager().createQuery("SELECT e FROM Evidencias e INNER JOIN e.registrosList r INNER JOIN e.evidenciasDetalleList ed WHERE r.registro=:registro ORDER BY ed.mime, ed.ruta", Evidencias.class)
+                .setParameter("registro", registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getRegistro())
+                .getResultStream()
+                .map(e -> e.getEvidenciasDetalleList())
+                .flatMap(ed -> ed.stream())
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Map.Entry<Boolean, Integer> registrarEvidenciasARegistro(DTOAsesoriasTutoriasCicloPeriodos registro, List<Part> archivos) {
+        Map<Boolean, Integer> map = new HashMap<>();
+        
+        if(registro == null || archivos == null || archivos.isEmpty()){
+            map.put(Boolean.FALSE, 0);
+            return map.entrySet().iterator().next();
+        }
+        final List<Boolean> res = new ArrayList<>();
+        Evidencias evidencias = new Evidencias(0, archivos.size() > 1?EvidenciaCategoria.MULTIPLE.getLabel():EvidenciaCategoria.UNICA.getLabel());
+        f.create(evidencias);
+        f.flush();
+        f.refresh(evidencias);
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.registrarEvidenciasARegistro() evidencias: " + evidencias);
+        AreasUniversidad areaPOA = getAreaConPOA(registro.getAreasUniversidad().getArea());
+        archivos.forEach(archivo -> {
+            try{
+                String rutaAbsoluta = ServicioArchivos.almacenarEvidenciaRegistro(areaPOA, registro, archivo);                
+                EvidenciasDetalle ed = new EvidenciasDetalle(0, rutaAbsoluta, archivo.getContentType(), archivo.getSize(), registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getEventoRegistro().getMes());
+                evidencias.getEvidenciasDetalleList().add(ed);
+                ed.setEvidencia(evidencias);
+                f.create(ed);
+                f.flush();
+//                System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.registrarEvidenciasARegistro() ed: " + ed.getRuta());
+                res.add(true);
+            }catch(Exception e){
+                res.add(Boolean.FALSE);
+                LOG.log(Level.SEVERE, "No se guardó el archivo: " + archivo.getSubmittedFileName(), e);
+            }
+        });
+        
+        Long correctos = res.stream().filter(r -> r).count();        
+        Long incorrectos = res.stream().filter(r -> !r).count();
+        
+        if(correctos == 0){
+            f.remove(evidencias);
+            f.flush();
+        }else{
+            registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getEvidenciasList().add(evidencias);
+            evidencias.getRegistrosList().add(registro.getAsesoriasTutoriasCicloPeriodos().getRegistros());
+            f.edit(registro.getAsesoriasTutoriasCicloPeriodos().getRegistros());
+            f.edit(evidencias);
+            f.flush();
+        }
+        
+        map.put(incorrectos == 0, correctos.intValue());
+        return map.entrySet().iterator().next();
+    }
+    private static final Logger LOG = Logger.getLogger(ServiciosAsesoriasTutoriasCiclosPeriodos.class.getName());
+
+    @Override
+    public Boolean eliminarEvidenciaEnRegistro(DTOAsesoriasTutoriasCicloPeriodos registro, EvidenciasDetalle evidenciasDetalle) {
+        if (registro == null || evidenciasDetalle == null) {
+            return false;
+        }
+        
+        Integer id = evidenciasDetalle.getDetalleEvidencia();
+
+        try {
+            ServicioArchivos.eliminarArchivo(evidenciasDetalle.getRuta());
+            
+            Evidencias evidencias = evidenciasDetalle.getEvidencia();
+            Integer total = evidencias.getEvidenciasDetalleList().size();
+            evidencias.getEvidenciasDetalleList().remove(evidenciasDetalle);
+            f.remove(evidenciasDetalle); 
+            f.edit(evidencias);
+            f.flush();
+            
+//            System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.eliminarEvidenciaEnRegistro() total: " + total);
+            
+            if(total == 1){
+                f.remove(evidencias);
+                f.flush();
+            }else if(total == 2){
+                evidencias.setCategoria(EvidenciaCategoria.UNICA.getLabel());
+                f.edit(evidencias);
+                f.flush();
+                f.getEntityManager().detach(evidencias);
+            }
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se eliminó la evidencia: " + evidenciasDetalle.getRuta(), e);
+            return false;
+        }
+
+        return f.getEntityManager().find(EvidenciasDetalle.class, id) == null;
+    }
+
+    @Override
+    public AreasUniversidad getAreaConPOA(Short claveArea) {
+        //obtener la referencia al area operativa del trabajador
+        AreasUniversidad area = f.getEntityManager().find(AreasUniversidad.class, claveArea);
+        
+        while(!area.getTienePoa()){
+//            System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getAreaConPOA() area: " + area);
+            area = f.getEntityManager().find(AreasUniversidad.class, area.getAreaSuperior());
+        }
+        
+        return area;
+    }
+
+    @Override
+    public ActividadesPoa getActividadAlineada(DTOAsesoriasTutoriasCicloPeriodos registro) {
+        List<ActividadesPoa> l =f.getEntityManager().createQuery("SELECT a FROM ActividadesPoa a INNER JOIN a.registrosList r WHERE r.registro = :registro", ActividadesPoa.class)
+                .setParameter("registro", registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getRegistro())
+                .getResultList();
+        
+        if(l.isEmpty()) return l.get(0);
+        else return null;
+    }
+
+    @Override
+    public Boolean alinearRegistroActividad(ActividadesPoa actividad, DTOAsesoriasTutoriasCicloPeriodos registro) {
+        try{
+            actividad.getRegistrosList().clear();
+            registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getActividadesPoaList().clear();        
+            f.flush();
+            actividad.getRegistrosList().add(registro.getAsesoriasTutoriasCicloPeriodos().getRegistros());
+            registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getActividadesPoaList().add(actividad);
+            f.flush();
+            return true;
+        }catch(Exception e){
+            LOG.log(Level.SEVERE, "No se pudo alinear el registro con la actividad.", e);
+            return false;
+        }
     }
 
 }

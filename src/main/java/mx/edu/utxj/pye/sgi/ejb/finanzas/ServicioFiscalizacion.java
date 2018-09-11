@@ -308,6 +308,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 
     @Override
     public List<EjesRegistro> getEjes(Short ejercicio, Short area) {
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion.getEjes() ejercicio,area: " + ejercicio + "," + area);
         return f.getEntityManager()
                 .createQuery("SELECT e FROM EjesRegistro e INNER JOIN e.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.ejercicioFiscal ef WHERE ac.area=:area AND ef.anio=:ejercicio ORDER BY e.nombre", EjesRegistro.class)
                 .setParameter("area", area)

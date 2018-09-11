@@ -35,3 +35,7 @@ table[role="grid"]{
 .panel-heading{
     text-align: center;
 }
+
+.ui-dialog-titlebar-close{
+    margin-top: 25px !important;
+}

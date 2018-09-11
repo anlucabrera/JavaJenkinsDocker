@@ -15,9 +15,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
 import java.time.Year;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.Part;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.exception.EvidenciaRegistroExtensionNoValidaException;
+import mx.edu.utxj.pye.siip.dto.escolar.DTOAsesoriasTutoriasCicloPeriodos;
 import org.apache.commons.io.FilenameUtils;
 import org.primefaces.model.UploadedFile;
 
@@ -31,6 +39,8 @@ public class ServicioArchivos implements Serializable{
     private static final String carpetaW = "C:\\archivos\\";
     private static final String carpetaL = "/home/admin/archivos/";
     public static final String[] CATEGORIAS = {"cargas","fotos"};
+    public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_hhmm");
+    public static List<String> extensiones = Arrays.asList("pdf","jpg","jpeg","png");
     
     /**
      * Variable creada para la creación del directorio para los Módulos de Registro
@@ -125,11 +135,27 @@ public class ServicioArchivos implements Serializable{
     
     /**
      * Genera una ruta relativa por año, para subida de datos atraves de técnica servlet y alojar en una carpeta denominada archivos ubicada sobre la carpeta raíz     * 
-     * @param categoria Categoría de la subida
-     * @return 
+     * @param categoria Categoría de la subida, para subida de datos atraves de técnica servlet y alojar en una carpeta denominada archivos ubicada sobre la carpeta raíz
+     * @return Ruta resultante
      */
     public static String genRutaRelativa(String categoria){
         return categoria.concat(File.separator).concat(Year.now().toString()).concat(File.separator);
+    }
+    
+    /**
+     * Genera una ruta relativa por area, mes y nombre de registro, 
+     * @param ejercicioFiscal Ejercicio fiscal del evento del registro
+     * @param area Siglas del area que registra en minúscula
+     * @param mes Nombre del mes completo en minúscula en el que se registra
+     * @param registro Nombre del registro sin acentos, sin espacios y en minúsculas
+     * @return Ruta relativa resultante
+     */
+    public static String genRutaRelativa(String ejercicioFiscal, String area, String mes, String registro){
+        //anio,area,mes,registro
+        return ejercicioFiscal.trim().concat(File.separator)
+                .concat(area.toLowerCase().trim()).concat(File.separator)
+                .concat(mes.toLowerCase().trim()).concat(File.separator)
+                .concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(registro.toLowerCase()))).concat(File.separator);
     }
     
     /**
@@ -151,5 +177,37 @@ public class ServicioArchivos implements Serializable{
         }
             
         return null;
+    }
+    
+    
+    public static String almacenarEvidenciaRegistro(AreasUniversidad area, DTOAsesoriasTutoriasCicloPeriodos registro, Part archivo) throws IOException, EvidenciaRegistroExtensionNoValidaException{        
+        if(!extensiones.contains(FilenameUtils.getExtension(archivo.getSubmittedFileName()).toLowerCase())){
+            throw new EvidenciaRegistroExtensionNoValidaException(archivo.getSubmittedFileName());
+        }
+        
+        String ruta = ServicioArchivos.genRutaRelativa(
+                String.valueOf(registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()), //ejercicio fiscal
+                area.getSiglas(),
+                registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getEventoRegistro().getMes(),
+                registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getTipo().getNombre());
+        System.out.println("mx.edu.utxj.pye.sgi.util.ServicioArchivos.almacenarEvidenciaRegistro(" + registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getTipo().getNombre() + ") ruta: " + ruta);
+        
+        String nombreArchivo = sdf.format(new Date()).concat("_").concat(archivo.getSubmittedFileName());
+        String rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
+        String rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
+        
+        //si el archivo se agrega un contador extra
+        Integer cont = 1;
+        while(Files.exists(Paths.get(rutaAbsoluta))){
+            nombreArchivo = sdf.format(new Date()).concat("_").concat(cont.toString()).concat("_").concat(archivo.getSubmittedFileName());
+            rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
+            rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
+            cont++;
+        }
+        
+        ServicioArchivos.addCarpetaRelativa(ServicioArchivos.carpetaRaiz.concat(ruta));
+                
+        archivo.write(rutaArchivo);
+        return rutaAbsoluta;
     }
 }

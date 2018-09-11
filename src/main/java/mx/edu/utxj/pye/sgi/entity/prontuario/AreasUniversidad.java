@@ -38,14 +38,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "AreasUniversidad.findByVigente", query = "SELECT a FROM AreasUniversidad a WHERE a.vigente = :vigente")})
 public class AreasUniversidad implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "area")
-    private Short area;
-    @Column(name = "area_superior")
-    private Short areaSuperior;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
@@ -56,13 +48,26 @@ public class AreasUniversidad implements Serializable {
     @Size(min = 1, max = 8)
     @Column(name = "siglas")
     private String siglas;
-    @Column(name = "responsable")
-    private Integer responsable;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2)
     @Column(name = "vigente")
     private String vigente;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "tiene_poa")
+    private boolean tienePoa;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "area")
+    private Short area;
+    @Column(name = "area_superior")
+    private Short areaSuperior;
+    @Column(name = "responsable")
+    private Integer responsable;
     @JoinColumn(name = "categoria", referencedColumnName = "categoria")
     @ManyToOne(optional = false)
     private Categorias categoria;
@@ -97,21 +102,6 @@ public class AreasUniversidad implements Serializable {
         this.areaSuperior = areaSuperior;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getSiglas() {
-        return siglas;
-    }
-
-    public void setSiglas(String siglas) {
-        this.siglas = siglas;
-    }
 
     public Integer getResponsable() {
         return responsable;
@@ -121,13 +111,6 @@ public class AreasUniversidad implements Serializable {
         this.responsable = responsable;
     }
 
-    public String getVigente() {
-        return vigente;
-    }
-
-    public void setVigente(String vigente) {
-        this.vigente = vigente;
-    }
 
     public Categorias getCategoria() {
         return categoria;
@@ -160,6 +143,38 @@ public class AreasUniversidad implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.ejb.prontuario.AreasUniversidad[ area=" + area + " ]";
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getSiglas() {
+        return siglas;
+    }
+
+    public void setSiglas(String siglas) {
+        this.siglas = siglas;
+    }
+
+    public String getVigente() {
+        return vigente;
+    }
+
+    public void setVigente(String vigente) {
+        this.vigente = vigente;
+    }
+
+    public boolean getTienePoa() {
+        return tienePoa;
+    }
+
+    public void setTienePoa(boolean tienePoa) {
+        this.tienePoa = tienePoa;
     }
     
 }
