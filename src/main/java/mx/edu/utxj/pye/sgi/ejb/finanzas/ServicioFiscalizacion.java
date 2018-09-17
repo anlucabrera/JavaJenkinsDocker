@@ -30,6 +30,7 @@ import org.xml.sax.SAXException;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -128,7 +129,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
         
         comision.setAlineacionArea(f.getEntityManager().find(AreasUniversidad.class, (short)generador.getAreaOperativa()));
         comision.setAreas(getAreasConPOA(Short.valueOf(caster.getEjercicioFiscal())));
-        comision.setEjes(getEjes(Short.valueOf(caster.getEjercicioFiscal()), comision.getAlineacionArea().getArea()));
+        comision.setEjes(getEjes(Short.valueOf(caster.getEjercicioFiscal()), comision.getAreaPOA()));
         comision.setEstados(getEstados());
         comision.setComisionado(generador);
         comision.setPosiblesComisionados(getPosiblesComisionados((short)generador.getAreaOperativa(), (short)comision.getComisionado().getAreaOperativa()));
@@ -307,11 +308,11 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     }
 
     @Override
-    public List<EjesRegistro> getEjes(Short ejercicio, Short area) {
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion.getEjes() ejercicio,area: " + ejercicio + "," + area);
+    public List<EjesRegistro> getEjes(Short ejercicio, AreasUniversidad areaPOA) {
+//        System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion.getEjes() ejercicio,areas: " + ejercicio + "," + areaPOA);
         return f.getEntityManager()
-                .createQuery("SELECT e FROM EjesRegistro e INNER JOIN e.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.ejercicioFiscal ef WHERE ac.area=:area AND ef.anio=:ejercicio ORDER BY e.nombre", EjesRegistro.class)
-                .setParameter("area", area)
+                .createQuery("SELECT e FROM EjesRegistro e INNER JOIN e.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.ejercicioFiscal ef WHERE ac.area = :area AND ef.anio=:ejercicio ORDER BY e.nombre", EjesRegistro.class)
+                .setParameter("area", areaPOA.getArea())
                 .setParameter("ejercicio", ejercicio)
                 .getResultList()
                 .stream()
@@ -320,10 +321,10 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     }
 
     @Override
-    public List<Estrategias> getEstrategiasPorEje(EjesRegistro eje, Short area) {
+    public List<Estrategias> getEstrategiasPorEje(EjesRegistro eje, AreasUniversidad areaPOA) {
         return f.getEntityManager()
-                .createQuery("SELECT es FROM Estrategias es INNER JOIN es.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.eje ej WHERE ac.area=:area AND ej.eje=:eje ORDER BY es.nombre", Estrategias.class)
-                .setParameter("area", area)
+                .createQuery("SELECT es FROM Estrategias es INNER JOIN es.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.eje ej WHERE ac.area = :area AND ej.eje=:eje ORDER BY es.nombre", Estrategias.class)
+                .setParameter("area", areaPOA.getArea())
                 .setParameter("eje", eje.getEje())
                 .getResultList()
                 .stream()
@@ -332,10 +333,10 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     }
 
     @Override
-    public List<LineasAccion> getLineasAccionPorEstrategia(Estrategias estrategia, Short area) {
+    public List<LineasAccion> getLineasAccionPorEstrategia(Estrategias estrategia, AreasUniversidad areaPOA) {
         return f.getEntityManager()
-                .createQuery("SELECT la FROM LineasAccion la INNER JOIN la.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.estrategia es WHERE ac.area=:area AND es.estrategia=:estrategia ORDER BY la.nombre", LineasAccion.class)
-                .setParameter("area", area)
+                .createQuery("SELECT la FROM LineasAccion la INNER JOIN la.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.estrategia es WHERE ac.area = :area AND es.estrategia=:estrategia ORDER BY la.nombre", LineasAccion.class)
+                .setParameter("area", areaPOA.getArea())
                 .setParameter("estrategia", estrategia.getEstrategia())
                 .getResultList()
                 .stream()
@@ -344,10 +345,10 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     }
 
     @Override
-    public List<ActividadesPoa> getActividadesPorLineaAccion(LineasAccion lineaaccion, Short area) {
+    public List<ActividadesPoa> getActividadesPorLineaAccion(LineasAccion lineaaccion, AreasUniversidad areaPOA) {
         return f.getEntityManager()
-                .createQuery("SELECT ac FROM ActividadesPoa ac INNER JOIN ac.cuadroMandoInt cmi INNER JOIN cmi.lineaAccion la WHERE ac.area=:area AND la.lineaAccion=:lineaAccion ORDER BY ac.denominacion", ActividadesPoa.class)
-                .setParameter("area", area)
+                .createQuery("SELECT ac FROM ActividadesPoa ac INNER JOIN ac.cuadroMandoInt cmi INNER JOIN cmi.lineaAccion la WHERE ac.area = :area AND la.lineaAccion=:lineaAccion ORDER BY ac.denominacion", ActividadesPoa.class)
+                .setParameter("area", areaPOA.getArea())
                 .setParameter("lineaAccion", lineaaccion.getLineaAccion())
                 .getResultList()
                 .stream()
@@ -770,6 +771,31 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
         return f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE p.areaOperativa in :areas ORDER BY p.nombre", Personal.class)
                 .setParameter("areas", Stream.of(areaAlineacion, areaSeguimiento).collect(Collectors.toList()))
                 .getResultList();
+    }
+    
+    @Override
+    public AreasUniversidad getAreaConPOA(Short claveArea) {
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getAreaConPOA(1)");
+        //obtener la referencia al area operativa del trabajador
+        AreasUniversidad area = f.getEntityManager().find(AreasUniversidad.class, claveArea);
+        
+        while(!area.getTienePoa()){
+//            System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getAreaConPOA() area: " + area);
+            area = f.getEntityManager().find(AreasUniversidad.class, area.getAreaSuperior());
+        }
+        
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getAreaConPOA(2)");
+        return area;
+    }
+
+    @Override
+    public List<Short> getAreasSubordinadasSinPOA(AreasUniversidad areaPOA) {
+        return f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1' AND au.tienePoa=:tienePoa", AreasUniversidad.class)
+                .setParameter("areaSuperior", areaPOA.getArea())
+                .setParameter("tienePoa", false)
+                .getResultStream()
+                .map(au -> au.getArea())
+                .collect(Collectors.toList());
     }
 
 }

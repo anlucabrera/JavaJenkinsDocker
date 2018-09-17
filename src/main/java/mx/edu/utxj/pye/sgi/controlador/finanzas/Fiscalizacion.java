@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.inject.Named;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -100,7 +101,7 @@ public class Fiscalizacion implements Serializable {
 //        System.out.println("mx.edu.utxj.pye.sgi.controlador.finanzas.Fiscalizacion.initNuevoTramite() caster: " + caster);
 //        System.out.println("mx.edu.utxj.pye.sgi.controlador.finanzas.Fiscalizacion.initNuevoTramite() ejercicio: " + caster.getEjercicioFiscal());
 //        System.out.println("mx.edu.utxj.pye.sgi.controlador.finanzas.Fiscalizacion.initNuevoTramite() usuario: " + usuarioPOA);
-        ejes = ejb.getEjes(Short.valueOf(caster.getEjercicioFiscal()), (short)logon.getPersonal().getAreaOperativa());
+        ejes = ejb.getEjes(Short.valueOf(caster.getEjercicioFiscal()), ejb.getAreaConPOA(logon.getPersonal().getAreaOperativa()));
         System.out.println("mx.edu.utxj.pye.sgi.controlador.finanzas.Fiscalizacion.initNuevoTramite() ejes: " + ejes);
         Ajax.update("eje");
         Faces.setSessionAttribute("ejes", ejes);

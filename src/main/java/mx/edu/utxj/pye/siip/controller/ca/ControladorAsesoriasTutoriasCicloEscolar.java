@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
@@ -18,15 +17,12 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
-import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
-import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
@@ -63,7 +59,8 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
 //        System.out.println("mx.edu.utxj.pye.siip.controller.ca.ControladorAsesoriasTutoriasCicloEscolar.init()");
         dto = new DtoAsesoriasTutorias();        
         dto.setArea((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
-        dto.setAreaPOA(ejb.getAreaConPOA(dto.getArea()));
+        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
+        dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()));
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());
         } catch (EventoRegistroNoExistenteException ex) {
@@ -73,10 +70,10 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
     }
     
     public void initFiltros(){
-        dto.setPeriodos(ejb.getPeriodosConregistro());
+        dto.setPeriodos(ejb.getPeriodosConregistro(dto.getRegistroTipo()));
         dto.setEventosPorPeriodo(ejb.getEventosPorPeriodo(dto.getPeriodo()));
         try {
-            Map.Entry<List<PeriodosEscolares>,List<EventosRegistros>> entrada = ejb.comprobarEventoActual(dto.getPeriodos(), dto.getEventosPorPeriodo(), dto.getEventoActual());
+            Map.Entry<List<PeriodosEscolares>,List<EventosRegistros>> entrada = ejb.comprobarEventoActual(dto.getPeriodos(), dto.getEventosPorPeriodo(), dto.getEventoActual(), dto.getRegistroTipo());
 //            System.out.println("mx.edu.utxj.pye.siip.controller.ca.ControladorAsesoriasTutoriasCicloEscolar.initFiltros() entrada: " + entrada);
             if(entrada != null){
                 dto.setPeriodos(entrada.getKey());
@@ -90,8 +87,10 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
     }
     
     public void abrirAlineacionPOA(DTOAsesoriasTutoriasCicloPeriodos registro){
-        dto.setRegistro(registro);
+        dto.setRegistro(registro);        
+        dto.setAlineacionActividad(ejb.getActividadAlineada(registro));
         actualizarEjes();
+        cargarAlineacionXActividad();
         Ajax.update("frmAlineacion");
         Ajax.oncomplete("skin();");
         Ajax.oncomplete("PF('modalAlineacion').show();");
@@ -99,32 +98,33 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
     
     public void actualizarActividades(ValueChangeEvent event){
         dto.setAlineacionLinea((LineasAccion)event.getNewValue());
-        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA().getArea()));
+        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
         Faces.setSessionAttribute("actividades", dto.getActividades());
     }
     
     public void actualizarEjes(){
-        dto.setEjes(ejbFiscalizacion.getEjes(dto.getRegistro().getAsesoriasTutoriasCicloPeriodos().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio(), dto.getAreaPOA().getArea()));
-        dto.getEjes().forEach(e -> System.out.println("mx.edu.utxj.pye.siip.controller.ca.ControladorAsesoriasTutoriasCicloEscolar.actualizarEjes() eje: " + e));
-        if(!dto.getEjes().isEmpty()){
+        dto.setEjes(ejbFiscalizacion.getEjes(dto.getRegistro().getAsesoriasTutoriasCicloPeriodos().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio(), dto.getAreaPOA()));
+//        dto.getEjes().forEach(e -> System.out.println("mx.edu.utxj.pye.siip.controller.ca.ControladorAsesoriasTutoriasCicloEscolar.actualizarEjes() eje: " + e));
+        if(!dto.getEjes().isEmpty() && dto.getAlineacionEje() == null){
             dto.setAlineacionEje(dto.getEjes().get(0));
-            dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getAreaPOA().getArea()));
+            dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getAreaPOA()));
         }
-        dto.setAlineacionEje(null);
         Faces.setSessionAttribute("ejes", dto.getEjes());
     }
 
     public void actualizarEstrategias(ValueChangeEvent event){
         dto.setAlineacionEje((EjesRegistro)event.getNewValue());
-        dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getAreaPOA().getArea()));
-        dto.setAlineacionEstrategia(null);
+        dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getAreaPOA()));
+        dto.nulificarEstrategia();
+//        dto.setAlineacionEstrategia(null);
         Faces.setSessionAttribute("estrategias", dto.getEstrategias());
     }
 
     public void actualizarLineasAccion(ValueChangeEvent event){
         dto.setAlineacionEstrategia((Estrategias)event.getNewValue());
-        dto.setLineasAccion(ejbFiscalizacion.getLineasAccionPorEstrategia(dto.getAlineacionEstrategia(), dto.getAreaPOA().getArea()));
-        dto.setAlineacionLinea(null);
+        dto.setLineasAccion(ejbFiscalizacion.getLineasAccionPorEstrategia(dto.getAlineacionEstrategia(), dto.getAreaPOA()));
+        dto.nulificarLinea();
+//        dto.setAlineacionLinea(null);
         Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
     }
     
@@ -136,13 +136,40 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
     
     public void alinearRegistro(){
         Boolean alineado = ejb.alinearRegistroActividad(dto.getAlineacionActividad(), dto.getRegistro());
-        if(alineado){ 
+        if(alineado){
+            cargarListaPorEvento();
+            abrirAlineacionPOA(dto.getRegistro());
             Messages.addGlobalInfo("El registro se alineó de forma correcta.");
         }else Messages.addGlobalError("El registro no pudo alinearse.");
     }
     
+    public void cargarAlineacionXActividad(){
+        if(dto.getAlineacionActividad() != null){
+//            System.out.println("mx.edu.utxj.pye.siip.controller.ca.ControladorAsesoriasTutoriasCicloEscolar.cargarAlineacionXActividad() actividad: " + dto.getAlineacionActividad());
+            dto.setAlineacionEje(dto.getAlineacionActividad().getCuadroMandoInt().getEje());
+
+            dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getAreaPOA()));
+            dto.setAlineacionEstrategia(dto.getAlineacionActividad().getCuadroMandoInt().getEstrategia());
+            Faces.setSessionAttribute("estrategias", dto.getEstrategias());
+//            System.out.println("mx.edu.utxj.pye.siip.controller.ca.ControladorAsesoriasTutoriasCicloEscolar.cargarAlineacionXActividad() estrategias: " + dto.getEstrategias());
+
+            dto.setLineasAccion(ejbFiscalizacion.getLineasAccionPorEstrategia(dto.getAlineacionEstrategia(), dto.getAreaPOA()));
+            dto.setAlineacionLinea(dto.getAlineacionActividad().getCuadroMandoInt().getLineaAccion());
+            Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
+//            System.out.println("mx.edu.utxj.pye.siip.controller.ca.ControladorAsesoriasTutoriasCicloEscolar.cargarAlineacionXActividad() lineas: " + dto.getLineasAccion());
+
+            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
+            Faces.setSessionAttribute("actividades", dto.getActividades());
+//            System.out.println("mx.edu.utxj.pye.siip.controller.ca.ControladorAsesoriasTutoriasCicloEscolar.cargarAlineacionXActividad() actividades: " + dto.getActividades());
+//            dto.setAlineacionActividad(dto.getAlineacionActividad());
+        }else{
+            dto.setAlineacionEje(null);
+            dto.nulificarEje();
+        }
+    }
+    
     public void cargarListaPorEvento(){
-        dto.setLista(ejb.getListaRegistrosPorEventoAreaPeriodo(dto.getEventoSeleccionado(), dto.getArea(), dto.getPeriodo()));
+        dto.setLista(ejb.getListaRegistrosPorEventoAreaPeriodo(dto.getEventoSeleccionado(), dto.getArea(), dto.getPeriodo(), dto.getRegistroTipo()));
         Ajax.update("formMuestraDatosActivos");
     }
     
@@ -158,6 +185,19 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
     public void descargarEvidencia(EvidenciasDetalle evidencia) throws IOException{
         File f = new File(evidencia.getRuta());
         Faces.sendFile(f, false);
+    }
+    
+    public void eliminarAlineacion(){
+        Boolean eliminado = ejb.eliminarAlineacion(dto.getRegistro());
+        if(eliminado){ 
+            Messages.addGlobalInfo("La elineación se eliminó de forma correcta.");
+            dto.getRegistro().setActividadAlineada(null);
+            dto.setAlineacionActividad(ejb.getActividadAlineada(dto.getRegistro()));
+            actualizarEjes();
+            cargarAlineacionXActividad();
+            Ajax.update("frmAlineacion");
+//            System.out.println("mx.edu.utxj.pye.siip.controller.ca.ControladorAsesoriasTutoriasCicloEscolar.eliminarAlineacion() alineacion: " + dto.getRegistro().getActividadAlineada());
+        }else Messages.addGlobalError("La alineación no pudo eliminarse.");
     }
     
     public void eliminarEvidencia(EvidenciasDetalle evidencia){

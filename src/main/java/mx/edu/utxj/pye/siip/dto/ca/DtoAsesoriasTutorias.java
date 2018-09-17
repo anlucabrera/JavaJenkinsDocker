@@ -47,7 +47,8 @@ public final class DtoAsesoriasTutorias {
     @Getter private List<EjesRegistro> ejes;
     @Getter private List<Estrategias> estrategias;
     @Getter private List<LineasAccion> lineasAccion;
-//    @Getter private Map<DTOAsesoriasTutoriasCicloPeriodos, List<EvidenciasDetalle>> evidencias;//representa las evidencias del registro seleccionado o registro circulante
+    
+    @Getter private List<Short> clavesAreasSubordinadas;//claves de areas subordinas que no tienes poa
 
     public DtoAsesoriasTutorias() {
         setRegistroTipo(new RegistrosTipo((short)3));
@@ -116,23 +117,7 @@ public final class DtoAsesoriasTutorias {
         if(registro==null){//si el registro es nullo se nulifican las evidencias
             setListaEvidencias(Collections.EMPTY_LIST);
         }
-//        else{
-//            if(evidencias.get(registro) != null){
-//                setListaEvidencias(evidencias.get(registro));
-//            }
-//        }
     }
-
-//    private void setEvidencias(Map<DTOAsesoriasTutoriasCicloPeriodos, List<EvidenciasDetalle>> evidencias) {
-//        this.evidencias = evidencias;
-////        registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().setEvidenciasList(evidencias.get(registro));
-//    }
-    
-//    public void addEvidencia(DTOAsesoriasTutoriasCicloPeriodos registro, List<EvidenciasDetalle> evidencias){
-////        System.out.println("mx.edu.utxj.pye.siip.dto.ca.DtoAsesoriasTutorias.addEvidencia(" + evidencias.size() + ") registro: " + registro);
-////        evidencias.forEach(ed -> System.out.println("mx.edu.utxj.pye.siip.dto.ca.DtoAsesoriasTutorias.addEvidencia() ed: " + ed));
-//        this.evidencias.put(registro, evidencias);
-//    }
 
     public void setArchivos(List<Part> archivos) {
         this.archivos = archivos;
@@ -153,83 +138,101 @@ public final class DtoAsesoriasTutorias {
     }
     
     public void setAlineacionEje(EjesRegistro alineacionEje) {
+//        System.out.println("mx.edu.utxj.pye.siip.dto.ca.DtoAsesoriasTutorias.setAlineacionEje(): " + eje);
         this.alineacionEje = alineacionEje;
         
         if(alineacionEje == null)
             nulificarEje();
     }
     
-    private void nulificarEje(){
+    public void nulificarEje(){
         estrategias = Collections.EMPTY_LIST;
         nulificarEstrategia();
     }
 
     public void setAlineacionEstrategia(Estrategias alineacionEstrategia) {
+//        System.out.println("mx.edu.utxj.pye.siip.dto.ca.DtoAsesoriasTutorias.setAlineacionEstrategia(): " + alineacionEstrategia);
         this.alineacionEstrategia = alineacionEstrategia;
         
         if(alineacionEstrategia == null)
             nulificarEstrategia();
     }
     
-    private void nulificarEstrategia(){
+    public void nulificarEstrategia(){
         lineasAccion = Collections.EMPTY_LIST;
         nulificarLinea();
     }
 
     public void setAlineacionLinea(LineasAccion alineacionLinea) {
+//        System.out.println("mx.edu.utxj.pye.siip.dto.ca.DtoAsesoriasTutorias.setAlineacionLinea(): " + alineacionLinea);
         this.alineacionLinea = alineacionLinea;
         
         if(alineacionLinea == null)
             nulificarLinea();
     }
     
-    private void nulificarLinea(){
+    public void nulificarLinea(){
          actividades = Collections.EMPTY_LIST;
-         nulificarActividad();
+//         nulificarActividad();
      }
 
     public void setAlineacionActividad(ActividadesPoa alineacionActividad) {
         this.alineacionActividad = alineacionActividad;
+//        System.out.println("mx.edu.utxj.pye.siip.dto.ca.DtoAsesoriasTutorias.setAlineacionActividad(): " + getAlineacionActividad());
         
-        if(alineacionActividad == null)
-            nulificarActividad();
-        else{
-            registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getActividadesPoaList().add(alineacionActividad);
-            this.alineacionActividad.getRegistrosList().add(registro.getAsesoriasTutoriasCicloPeriodos().getRegistros());
-        }
+//        if(alineacionActividad != null){
+//            setAlineacionEje(alineacionActividad.getCuadroMandoInt().getEje());
+//            setAlineacionEstrategia(alineacionActividad.getCuadroMandoInt().getEstrategia());
+//            setAlineacionLinea(alineacionActividad.getCuadroMandoInt().getLineaAccion());
+//            
+//            System.out.println("mx.edu.utxj.pye.siip.dto.ca.DtoAsesoriasTutorias.setAlineacionActividad() eje: " + getAlineacionEje());
+//            System.out.println("mx.edu.utxj.pye.siip.dto.ca.DtoAsesoriasTutorias.setAlineacionActividad() estrategia: " + getAlineacionEstrategia());
+//            System.out.println("mx.edu.utxj.pye.siip.dto.ca.DtoAsesoriasTutorias.setAlineacionActividad() linea: " + getAlineacionLinea());
+//        }
     }
     
-    private void nulificarActividad(){
-        if(registro != null) registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getActividadesPoaList().remove(alineacionActividad);
-        
-        if(alineacionActividad != null) alineacionActividad.getRegistrosList().remove(registro.getAsesoriasTutoriasCicloPeriodos().getRegistros());
+    public void nulificarActividad(){
+        setAlineacionActividad(null);
     }
     
     public void setActividades(List<ActividadesPoa> actividades) {
         this.actividades = actividades;
-        if(actividades.isEmpty())
-            nulificarActividad();
+//        System.out.println("mx.edu.utxj.pye.siip.dto.ca.DtoAsesoriasTutorias.setActividades(): " + actividades);
+//        if(actividades.isEmpty())
+//            nulificarActividad();
     }
 
     public void setEjes(List<EjesRegistro> ejes) {
+//        System.out.println("mx.edu.utxj.pye.siip.dto.ca.DtoAsesoriasTutorias.setEjes(): " + ejes);
         this.ejes = ejes;
         if(ejes.isEmpty())
             nulificarEje();
     }
 
     public void setEstrategias(List<Estrategias> estrategias) {
+//        System.out.println("mx.edu.utxj.pye.siip.dto.ca.DtoAsesoriasTutorias.setEstrategias(): " + estrategias);
         this.estrategias = estrategias;
         if(estrategias.isEmpty())
             nulificarEstrategia();
+        
+//        nulificarLinea();
     }
 
     public void setLineasAccion(List<LineasAccion> lineasAccion) {
+//        System.out.println("mx.edu.utxj.pye.siip.dto.ca.DtoAsesoriasTutorias.setLineasAccion(): " + lineasAccion);
         this.lineasAccion = lineasAccion;
         if(lineasAccion.isEmpty())
             nulificarLinea();
+        
+//        nulificarActividad();
     }
 
     public void setAreaPOA(AreasUniversidad areaPOA) {
         this.areaPOA = areaPOA;
     }
+
+    public void setClavesAreasSubordinadas(List<Short> clavesAreasSubordinadas) {
+        this.clavesAreasSubordinadas = clavesAreasSubordinadas;
+    }
+    
 }

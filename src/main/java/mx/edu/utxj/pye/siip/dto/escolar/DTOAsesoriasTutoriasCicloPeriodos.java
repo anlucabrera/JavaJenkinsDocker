@@ -9,6 +9,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.AsesoriasTutoriasCicloPeriodos;
 
 /**
@@ -24,5 +25,5 @@ public class DTOAsesoriasTutoriasCicloPeriodos implements Serializable{
     @Getter @Setter @NonNull private AsesoriasTutoriasCicloPeriodos asesoriasTutoriasCicloPeriodos; //se declara como llave primaria para interacturar con sus eviedencias
     @Getter @Setter private String periodoEscolar;
     @Getter @Setter private AreasUniversidad areasUniversidad;
-    
+    @Getter @Setter private ActividadesPoa actividadAlineada;
 }

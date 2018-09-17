@@ -8,7 +8,6 @@ package mx.edu.utxj.pye.sgi.controlador.finanzas;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -25,9 +24,6 @@ import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.dto.Comision;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbDocumentosInternos;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
-import mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion;
-import mx.edu.utxj.pye.sgi.entity.finanzas.ComisionOficios;
-import mx.edu.utxj.pye.sgi.entity.finanzas.Tramites;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
@@ -64,7 +60,9 @@ public class Comisionar implements Serializable{
     
     @PostConstruct
     public void init(){
-        comision = ejb.inicializarComision(logon.getPersonal()); 
+        comision = ejb.inicializarComision(logon.getPersonal());
+        comision.setAreaPOA(ejb.getAreaConPOA(logon.getPersonal().getAreaOperativa()));
+        comision.setClavesAreasSubordinadas(ejb.getAreasSubordinadasSinPOA(comision.getAreaPOA()));
         Ajax.update("area","eje");
         Faces.setSessionAttribute("ejes", comision.getEjes());
         Faces.setSessionAttribute("areas", comision.getAreas());
@@ -76,16 +74,17 @@ public class Comisionar implements Serializable{
     
     public void actualizarActividades(ValueChangeEvent event){
         comision.setAlineacionLinea((LineasAccion)event.getNewValue());
-        comision.setActividades(ejb.getActividadesPorLineaAccion(comision.getAlineacionLinea(), comision.getAlineacionArea().getArea()));
+        comision.setActividades(ejb.getActividadesPorLineaAccion(comision.getAlineacionLinea(), comision.getAreaPOA()));
         Faces.setSessionAttribute("actividades", comision.getActividades());
     }
     
     public void actualizarEjes(ValueChangeEvent event){
         comision.setAlineacionArea((AreasUniversidad)event.getNewValue());
-        comision.setEjes(ejb.getEjes(Short.valueOf(caster.getEjercicioFiscal()), comision.getAlineacionArea().getArea()));
+        comision.setClavesAreasSubordinadas(ejb.getAreasSubordinadasSinPOA(comision.getAlineacionArea()));
+        comision.setEjes(ejb.getEjes(Short.valueOf(caster.getEjercicioFiscal()), comision.getAreaPOA()));
         if(!comision.getEjes().isEmpty()){
             comision.setAlineacionEje(comision.getEjes().get(0));
-            comision.setEstrategias(ejb.getEstrategiasPorEje(comision.getAlineacionEje(), comision.getAlineacionArea().getArea()));
+            comision.setEstrategias(ejb.getEstrategiasPorEje(comision.getAlineacionEje(), comision.getAreaPOA()));
             comision.setPosiblesComisionados(ejb.getPosiblesComisionados(logon.getPersonal().getAreaOperativa(), comision.getAlineacionArea().getArea()));
         }
         comision.setAlineacionEje(null);
@@ -94,14 +93,14 @@ public class Comisionar implements Serializable{
 
     public void actualizarEstrategias(ValueChangeEvent event){
         comision.setAlineacionEje((EjesRegistro)event.getNewValue());
-        comision.setEstrategias(ejb.getEstrategiasPorEje(comision.getAlineacionEje(), comision.getAlineacionArea().getArea()));
+        comision.setEstrategias(ejb.getEstrategiasPorEje(comision.getAlineacionEje(), comision.getAreaPOA()));
         comision.setAlineacionEstrategia(null);
         Faces.setSessionAttribute("estrategias", comision.getEstrategias());
     }
 
     public void actualizarLineasAccion(ValueChangeEvent event){
         comision.setAlineacionEstrategia((Estrategias)event.getNewValue());
-        comision.setLineasAccion(ejb.getLineasAccionPorEstrategia(comision.getAlineacionEstrategia(), comision.getAlineacionArea().getArea()));
+        comision.setLineasAccion(ejb.getLineasAccionPorEstrategia(comision.getAlineacionEstrategia(), comision.getAreaPOA()));
         comision.setAlineacionLinea(null);
         Faces.setSessionAttribute("lineasAccion", comision.getLineasAccion());
     }

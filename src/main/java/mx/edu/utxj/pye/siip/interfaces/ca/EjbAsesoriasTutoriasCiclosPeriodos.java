@@ -36,9 +36,10 @@ public interface EjbAsesoriasTutoriasCiclosPeriodos {
     
     /**
      * Obtiene la lista de periodos con registros de tutorías y asesorías.
+     * @param registrosTipo Permite filtrar los registros por el tipo necesario.
      * @return Lista de periodos.
      */
-    public List<PeriodosEscolares> getPeriodosConregistro();
+    public List<PeriodosEscolares> getPeriodosConregistro(RegistrosTipo registrosTipo);
     
     /**
      * Obtiene la lista de eventos de registros correspondientes a un periodo escolar.
@@ -52,19 +53,21 @@ public interface EjbAsesoriasTutoriasCiclosPeriodos {
      * @param evento Evento seleccionado.
      * @param claveArea Área a la que pertenece el usuario y que servirá como filtro.
      * @param periodo Periodo del evento y que servirá como filtro
+     * @param registrosTipo Permite filtrar los registros por el tipo necesario.
      * @return Lista de registros mensuales.
      */
-    public List<DTOAsesoriasTutoriasCicloPeriodos> getListaRegistrosPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo);
+    public List<DTOAsesoriasTutoriasCicloPeriodos> getListaRegistrosPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo, RegistrosTipo registrosTipo);
     
     /**
-     * Comprueba si el periodo del evento actual se encuentra en el periodo mas reciente, en caso de no encontrarlo obtiene el periodo correspondiente
-     * @param periodos Lista de periodos obtenidos con registros
-     * @param eventos Eventos del periodo mas reciente
-     * @param eventoActual Evento de registro actual
-     * @return Lista de periodos actualizados y eventos que inclyen evento actual del periodo correspondiente
-     * @throws mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException Se lanza en casi que se requiera un periodo que no existe aún en la base de datos
+     * Comprueba si el periodo del evento actual se encuentra en el periodo mas reciente, en caso de no encontrarlo obtiene el periodo correspondiente.
+     * @param periodos Lista de periodos obtenidos con registros.
+     * @param eventos Eventos del periodo mas reciente.
+     * @param eventoActual Evento de registro actual.
+     * @param registrosTipo Permite filtrar los registros por el tipo necesario.
+     * @return Lista de periodos actualizados y eventos que inclyen evento actual del periodo correspondiente.
+     * @throws mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException Se lanza en casi que se requiera un periodo que no existe aún en la base de datos.
      */
-    public Map.Entry<List<PeriodosEscolares>,List<EventosRegistros>> comprobarEventoActual(List<PeriodosEscolares> periodos, List<EventosRegistros> eventos, EventosRegistros eventoActual) throws PeriodoEscolarNecesarioNoRegistradoException;
+    public Map.Entry<List<PeriodosEscolares>,List<EventosRegistros>> comprobarEventoActual(List<PeriodosEscolares> periodos, List<EventosRegistros> eventos, EventosRegistros eventoActual, RegistrosTipo registrosTipo) throws PeriodoEscolarNecesarioNoRegistradoException;
     
     /**
      * Elimina un registro especificado.
@@ -98,13 +101,6 @@ public interface EjbAsesoriasTutoriasCiclosPeriodos {
     public Boolean eliminarEvidenciaEnRegistro(DTOAsesoriasTutoriasCicloPeriodos registro, EvidenciasDetalle evidenciasDetalle);
     
     /**
-     * Obtiene la referencia al área con POA para que un usuario de una persona acceda a los registros de su area
-     * @param area Clave del area
-     * @return Referencia del área con POA
-     */
-    public AreasUniversidad getAreaConPOA(Short area);
-    
-    /**
      * Obtiene la referencia a la actividad que está alineada con el registro.
      * @param registro Registro del cual se desea conocer su actividad alineada.
      * @return Devuelve la referencia a la actividad alineada o null si es que no ha sido alineada.
@@ -118,4 +114,6 @@ public interface EjbAsesoriasTutoriasCiclosPeriodos {
      * @return Devuelve TRUE si la alineación se completó o FALSE de lo contrario.
      */
     public Boolean alinearRegistroActividad(ActividadesPoa actividad, DTOAsesoriasTutoriasCicloPeriodos registro);
+    
+    public Boolean eliminarAlineacion(DTOAsesoriasTutoriasCicloPeriodos registro);
 }

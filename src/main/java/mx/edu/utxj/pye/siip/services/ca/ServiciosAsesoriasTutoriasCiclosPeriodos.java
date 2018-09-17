@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mx.edu.utxj.pye.siip.services.ca;
 
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
@@ -27,13 +22,13 @@ import javax.persistence.TypedQuery;
 import javax.servlet.http.Part;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuestas;
+import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Meses;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.AsesoriasTutoriasCicloPeriodos;
-import mx.edu.utxj.pye.sgi.entity.pye2.EjerciciosFiscales;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
@@ -44,11 +39,9 @@ import mx.edu.utxj.pye.sgi.enums.EvidenciaCategoria;
 import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
-import mx.edu.utxj.pye.sgi.util.StringUtils;
 import mx.edu.utxj.pye.siip.dto.escolar.DTOAsesoriasTutoriasCicloPeriodos;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbAsesoriasTutoriasCiclosPeriodos;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -67,6 +60,7 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
     @EJB EjbAdministracionEncuestas eJBAdministracionEncuestas;
     @EJB Facade f;
     @EJB EjbPropiedades ep;
+    @EJB EjbFiscalizacion ejbFiscalizacion;
     @Inject Caster caster;
 
 //    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
@@ -74,6 +68,7 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
 
     @Override
     public List<DTOAsesoriasTutoriasCicloPeriodos> getListaAsesoriasTutorias(String rutaArchivo) throws Throwable {
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaAsesoriasTutorias(1)");
 //        ListaAsesoriasTutoriasCicloPeriodos listaAsesoriasTutoriasCicloPeriodos = new ListaAsesoriasTutoriasCicloPeriodos();
 
         List<DTOAsesoriasTutoriasCicloPeriodos> listaDtoAsesoriasTutoriasCicloPeriodos = new ArrayList<>();
@@ -176,11 +171,13 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
             ServicioArchivos.eliminarArchivo(rutaArchivo);
             addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
         }
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaAsesoriasTutorias(2)");
         return listaDtoAsesoriasTutoriasCicloPeriodos;
     }
 
     @Override
     public void guardaAsesoriasTutorias(List<DTOAsesoriasTutoriasCicloPeriodos> lista, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) throws Throwable {
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.guardaAsesoriasTutorias(1)");
         List<String> listaCondicional = new ArrayList<>();
         lista.forEach((asesTut) -> {
             if (ejbModulos.validaPeriodoRegistro(eJBAdministracionEncuestas.getPeriodoActual(), asesTut.getAsesoriasTutoriasCicloPeriodos().getPeriodoEscolar())) {
@@ -203,10 +200,12 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
             }
         });
         addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.guardaAsesoriasTutorias(2)");
     }
 
     @Override
     public AsesoriasTutoriasCicloPeriodos getRegistroAsesoriaTutoriaCicloPeriodo(AsesoriasTutoriasCicloPeriodos asesoriaTutoriaCicloPeriodo) {
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getRegistroAsesoriaTutoriaCicloPeriodo(1)");
         AsesoriasTutoriasCicloPeriodos asesTutCPEnviada;
         TypedQuery<AsesoriasTutoriasCicloPeriodos> query = f.getEntityManager().createQuery("SELECT a FROM AsesoriasTutoriasCicloPeriodos AS a WHERE a.periodoEscolar = :periodoEscolar AND a.programaEducativo = :programaEducativo AND a.cuatrimestre = :cuatrimestre AND a.grupo = :grupo AND a.tipoActividad = :tipoActividad AND a.tipo = :tipo", AsesoriasTutoriasCicloPeriodos.class);
         query.setParameter("periodoEscolar", asesoriaTutoriaCicloPeriodo.getPeriodoEscolar());
@@ -221,24 +220,35 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
             asesTutCPEnviada = null;
             ex.toString();
         }
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getRegistroAsesoriaTutoriaCicloPeriodo(2)");
         return asesTutCPEnviada;
     }
 
     @Override
-    public List<PeriodosEscolares> getPeriodosConregistro() {
-        List<Integer> claves = f.getEntityManager().createQuery("SELECT atp FROM AsesoriasTutoriasCicloPeriodos atp", AsesoriasTutoriasCicloPeriodos.class)
-                .getResultStream()
-                .map(atp -> atp.getPeriodoEscolar())
-                .collect(Collectors.toList());
+    public List<PeriodosEscolares> getPeriodosConregistro(RegistrosTipo registrosTipo) {
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getPeriodosConregistro(1)");
+//        List<Integer> claves = f.getEntityManager().createQuery("SELECT atp FROM AsesoriasTutoriasCicloPeriodos atp INNER JOIN atp.registros r WHERE r.tipo.registroTipo=:tipo", AsesoriasTutoriasCicloPeriodos.class)
+//                .setParameter("tipo", registrosTipo.getRegistroTipo())
+//                .getResultStream()
+//                .map(atp -> atp.getPeriodoEscolar())
+//                .collect(Collectors.toList());
 
+        List<Integer> claves = f.getEntityManager().createQuery("SELECT atp.periodoEscolar FROM AsesoriasTutoriasCicloPeriodos atp INNER JOIN atp.registros r WHERE r.tipo.registroTipo=:tipo", Integer.class)
+                .setParameter("tipo", registrosTipo.getRegistroTipo())
+                .getResultList();
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getPeriodosConregistro(1a)");
 
-        return f.getEntityManager().createQuery("SELECT periodo FROM PeriodosEscolares periodo WHERE periodo.periodo IN :claves ORDER BY periodo.periodo desc", PeriodosEscolares.class)
+        List<PeriodosEscolares>l =  f.getEntityManager().createQuery("SELECT periodo FROM PeriodosEscolares periodo WHERE periodo.periodo IN :claves ORDER BY periodo.periodo desc", PeriodosEscolares.class)
                 .setParameter("claves", claves)
                 .getResultList();
+
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getPeriodosConregistro(2)");
+        return l;
     }
 
     @Override
     public List<EventosRegistros> getEventosPorPeriodo(PeriodosEscolares periodo) {
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getEventosPorPeriodo(1)");
         if(periodo == null){
             return null;
         }
@@ -253,35 +263,37 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
 
 //        meses.forEach(m -> System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getEventosPorPeriodo() mes: " + m));
 
-        return f.getEntityManager().createQuery("SELECT er from EventosRegistros er INNER JOIN er.ejercicioFiscal ef WHERE ef.anio=:anio AND er.mes in :meses AND er.fechaInicio < :fecha ORDER BY er.fechaInicio DESC, er.fechaFin DESC", EventosRegistros.class)
+        List<EventosRegistros> l = f.getEntityManager().createQuery("SELECT er from EventosRegistros er INNER JOIN er.ejercicioFiscal ef WHERE ef.anio=:anio AND er.mes in :meses AND er.fechaInicio < :fecha ORDER BY er.fechaInicio DESC, er.fechaFin DESC", EventosRegistros.class)
                 .setParameter("fecha", new Date())
                 .setParameter("anio", periodo.getAnio())
                 .setParameter("meses", meses)
                 .getResultList();
-
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getEventosPorPeriodo(2)");
+        return l;
     }
 
     @Override
-    public List<DTOAsesoriasTutoriasCicloPeriodos> getListaRegistrosPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo) {
+    public List<DTOAsesoriasTutoriasCicloPeriodos> getListaRegistrosPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo, RegistrosTipo registrosTipo) {
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaRegistrosPorEventoAreaPeriodo(inicio)");
         //verificar que los parametros no sean nulos
         if(evento == null || claveArea == null || periodo == null){
             return null;
         }
 //        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaRegistrosPorEventoArea(1) evento: " + evento);
 //        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaRegistrosPorEventoArea(2) area: " + claveArea);
-        
+
         List<Short> areas = new ArrayList<>();
-        
+
         //obtener la referencia al area operativa del trabajador
         AreasUniversidad area = f.getEntityManager().find(AreasUniversidad.class, claveArea);
 //        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaRegistrosPorEventoArea(3) area: " + area);
-        
+
         //comprobar si el area operativa es un programa educativo referenciar a su area superior para obtener la referencia al area academica
         Short programaCategoria = (short)ep.leerPropiedadEntera("modulosRegistroProgramaEducativoCategoria").orElse(9);
-        if (Objects.equals(area.getCategoria().getCategoria(), programaCategoria)) {            
+        if (Objects.equals(area.getCategoria().getCategoria(), programaCategoria)) {
             area = f.getEntityManager().find(AreasUniversidad.class, area.getAreaSuperior());
 //            System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaRegistrosPorEventoArea(3a) area: " + area);
-            
+
             //Obtener las claves de todas las areas que dependan de área academicoa
             areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
                     .setParameter("areaSuperior", area.getArea())
@@ -293,42 +305,46 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
             areas.add(claveArea);
 //            System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaRegistrosPorEventoArea(3b) areas: " + areas);
         }
-        
+
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         List<DTOAsesoriasTutoriasCicloPeriodos> l = new ArrayList<>();
-        List<AsesoriasTutoriasCicloPeriodos> entities = f.getEntityManager().createQuery("SELECT atc FROM AsesoriasTutoriasCicloPeriodos atc INNER JOIN atc.registros r INNER JOIN r.eventoRegistro er WHERE er.eventoRegistro=:evento AND atc.programaEducativo in :areas AND atc.periodoEscolar=:periodo ORDER BY atc.programaEducativo, atc.cuatrimestre, atc.grupo, atc.tipoActividad, atc.tipo", AsesoriasTutoriasCicloPeriodos.class)
+        List<AsesoriasTutoriasCicloPeriodos> entities = f.getEntityManager().createQuery("SELECT atc FROM AsesoriasTutoriasCicloPeriodos atc INNER JOIN atc.registros r INNER JOIN r.tipo t INNER JOIN r.eventoRegistro er WHERE er.eventoRegistro=:evento AND atc.programaEducativo in :areas AND atc.periodoEscolar=:periodo AND t.registroTipo=:tipo ORDER BY atc.programaEducativo, atc.cuatrimestre, atc.grupo, atc.tipoActividad, atc.tipo", AsesoriasTutoriasCicloPeriodos.class)
                 .setParameter("areas", areas)
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
+                .setParameter("tipo", registrosTipo.getRegistroTipo())
                 .getResultList();
-        
+
 //        entities.forEach(atc -> System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaRegistrosPorEventoArea(4) registro: " + atc));
 
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
+            ActividadesPoa a = e.getRegistros().getActividadesPoaList().isEmpty()?null:e.getRegistros().getActividadesPoaList().get(0);
             l.add(new DTOAsesoriasTutoriasCicloPeriodos(
                     e,
                     caster.periodoToString(f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodoEscolar())),
-                    f.getEntityManager().find(AreasUniversidad.class, e.getProgramaEducativo())));
+                    f.getEntityManager().find(AreasUniversidad.class, e.getProgramaEducativo())
+                    ,a));
         });
-        
-//        l.forEach(dto -> System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaRegistrosPorEventoArea() dto: " + dto));
 
+//        l.forEach(dto -> System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaRegistrosPorEventoArea() dto: " + dto));
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaRegistrosPorEventoAreaPeriodo(fin)");
         return l;
     }
 
     @Override
-    public Map.Entry<List<PeriodosEscolares>,List<EventosRegistros>> comprobarEventoActual(List<PeriodosEscolares> periodos, List<EventosRegistros> eventos, EventosRegistros eventoActual) throws PeriodoEscolarNecesarioNoRegistradoException{
+    public Map.Entry<List<PeriodosEscolares>,List<EventosRegistros>> comprobarEventoActual(List<PeriodosEscolares> periodos, List<EventosRegistros> eventos, EventosRegistros eventoActual, RegistrosTipo registrosTipo) throws PeriodoEscolarNecesarioNoRegistradoException{
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.comprobarEventoActual(1)");
 //        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.comprobarEventoActual(1) actual: " + eventoActual);
-        if(periodos==null || periodos.isEmpty()) periodos = getPeriodosConregistro();
+        if(periodos==null || periodos.isEmpty()) periodos = getPeriodosConregistro(registrosTipo);
         if(periodos==null || periodos.isEmpty()) return null;
         if(eventoActual == null) eventoActual = ejbModulos.getEventoRegistro();
         if(eventoActual == null) return null;
-        
+
         PeriodosEscolares reciente = periodos.get(0);
-        Boolean existe = eventos.contains(eventoActual);        
+        Boolean existe = eventos.contains(eventoActual);
 //        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.comprobarEventoActual(2) existe: " + existe);
-        
+
         if(!existe){//si el evento no existe en la lista de eventos del periodo mas reciente
             if(eventos.size() <3){//si el evento deberia pertenecer al periodo mas reciente
                 eventos = new ArrayList<>(Stream.concat(Stream.of(eventoActual), eventos.stream()).collect(Collectors.toList())); //.add(eventoActual);
@@ -346,38 +362,45 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
 //        eventos.forEach(er -> System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.comprobarEventoActual(3) evento: " + er));
         Map<List<PeriodosEscolares>,List<EventosRegistros>> map = new HashMap<>();
         map.put(periodos, eventos);
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.comprobarEventoActual(2)");
         return map.entrySet().iterator().next();
     }
 
     @Override
     public Boolean eliminarRegistro(DTOAsesoriasTutoriasCicloPeriodos registro) {
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.eliminarRegistro(1)");
         Integer clave = registro.getAsesoriasTutoriasCicloPeriodos().getRegistro();
         f.remove(registro.getAsesoriasTutoriasCicloPeriodos().getRegistros());
         f.getEntityManager().detach(registro.getAsesoriasTutoriasCicloPeriodos());
         f.flush();
-        
+
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.eliminarRegistro(2)");
         return f.getEntityManager().find(AsesoriasTutoriasCicloPeriodos.class, clave) == null;
     }
 
     @Override
     public List<EvidenciasDetalle> getListaEvidenciasPorRegistro(DTOAsesoriasTutoriasCicloPeriodos registro) {
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaEvidenciasPorRegistro(1)");
 //        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaEvidenciasPorRegistro(): " + registro);
         if(registro == null){
             return Collections.EMPTY_LIST;
         }
-        return f.getEntityManager().createQuery("SELECT e FROM Evidencias e INNER JOIN e.registrosList r INNER JOIN e.evidenciasDetalleList ed WHERE r.registro=:registro ORDER BY ed.mime, ed.ruta", Evidencias.class)
+        List<EvidenciasDetalle> l = f.getEntityManager().createQuery("SELECT e FROM Evidencias e INNER JOIN e.registrosList r INNER JOIN e.evidenciasDetalleList ed WHERE r.registro=:registro ORDER BY ed.mime, ed.ruta", Evidencias.class)
                 .setParameter("registro", registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getRegistro())
                 .getResultStream()
                 .map(e -> e.getEvidenciasDetalleList())
                 .flatMap(ed -> ed.stream())
                 .distinct()
                 .collect(Collectors.toList());
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaEvidenciasPorRegistro(2)");
+        return l;
     }
 
     @Override
     public Map.Entry<Boolean, Integer> registrarEvidenciasARegistro(DTOAsesoriasTutoriasCicloPeriodos registro, List<Part> archivos) {
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.registrarEvidenciasARegistro(1)");
         Map<Boolean, Integer> map = new HashMap<>();
-        
+
         if(registro == null || archivos == null || archivos.isEmpty()){
             map.put(Boolean.FALSE, 0);
             return map.entrySet().iterator().next();
@@ -388,10 +411,10 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
         f.flush();
         f.refresh(evidencias);
 //        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.registrarEvidenciasARegistro() evidencias: " + evidencias);
-        AreasUniversidad areaPOA = getAreaConPOA(registro.getAreasUniversidad().getArea());
+        AreasUniversidad areaPOA = ejbFiscalizacion.getAreaConPOA(registro.getAreasUniversidad().getArea());
         archivos.forEach(archivo -> {
             try{
-                String rutaAbsoluta = ServicioArchivos.almacenarEvidenciaRegistro(areaPOA, registro, archivo);                
+                String rutaAbsoluta = ServicioArchivos.almacenarEvidenciaRegistro(areaPOA, registro, archivo);
                 EvidenciasDetalle ed = new EvidenciasDetalle(0, rutaAbsoluta, archivo.getContentType(), archivo.getSize(), registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getEventoRegistro().getMes());
                 evidencias.getEvidenciasDetalleList().add(ed);
                 ed.setEvidencia(evidencias);
@@ -404,10 +427,10 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
                 LOG.log(Level.SEVERE, "No se guardó el archivo: " + archivo.getSubmittedFileName(), e);
             }
         });
-        
-        Long correctos = res.stream().filter(r -> r).count();        
+
+        Long correctos = res.stream().filter(r -> r).count();
         Long incorrectos = res.stream().filter(r -> !r).count();
-        
+
         if(correctos == 0){
             f.remove(evidencias);
             f.flush();
@@ -418,32 +441,34 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
             f.edit(evidencias);
             f.flush();
         }
-        
+
         map.put(incorrectos == 0, correctos.intValue());
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.registrarEvidenciasARegistro(2)");
         return map.entrySet().iterator().next();
     }
     private static final Logger LOG = Logger.getLogger(ServiciosAsesoriasTutoriasCiclosPeriodos.class.getName());
 
     @Override
     public Boolean eliminarEvidenciaEnRegistro(DTOAsesoriasTutoriasCicloPeriodos registro, EvidenciasDetalle evidenciasDetalle) {
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.eliminarEvidenciaEnRegistro(1)");
         if (registro == null || evidenciasDetalle == null) {
             return false;
         }
-        
+
         Integer id = evidenciasDetalle.getDetalleEvidencia();
 
         try {
             ServicioArchivos.eliminarArchivo(evidenciasDetalle.getRuta());
-            
+
             Evidencias evidencias = evidenciasDetalle.getEvidencia();
             Integer total = evidencias.getEvidenciasDetalleList().size();
             evidencias.getEvidenciasDetalleList().remove(evidenciasDetalle);
-            f.remove(evidenciasDetalle); 
+            f.remove(evidenciasDetalle);
             f.edit(evidencias);
             f.flush();
-            
+
 //            System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.eliminarEvidenciaEnRegistro() total: " + total);
-            
+
             if(total == 1){
                 f.remove(evidencias);
                 f.flush();
@@ -458,41 +483,44 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
             return false;
         }
 
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.eliminarEvidenciaEnRegistro(2)");
         return f.getEntityManager().find(EvidenciasDetalle.class, id) == null;
     }
 
     @Override
-    public AreasUniversidad getAreaConPOA(Short claveArea) {
-        //obtener la referencia al area operativa del trabajador
-        AreasUniversidad area = f.getEntityManager().find(AreasUniversidad.class, claveArea);
-        
-        while(!area.getTienePoa()){
-//            System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getAreaConPOA() area: " + area);
-            area = f.getEntityManager().find(AreasUniversidad.class, area.getAreaSuperior());
-        }
-        
-        return area;
-    }
-
-    @Override
     public ActividadesPoa getActividadAlineada(DTOAsesoriasTutoriasCicloPeriodos registro) {
-        List<ActividadesPoa> l =f.getEntityManager().createQuery("SELECT a FROM ActividadesPoa a INNER JOIN a.registrosList r WHERE r.registro = :registro", ActividadesPoa.class)
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getActividadAlineada(1)");
+        List<ActividadesPoa> l =f.getEntityManager().createQuery("SELECT a FROM ActividadesPoa a INNER JOIN a.registrosList r INNER JOIN a.cuadroMandoInt cm INNER JOIN FETCH cm.lineaAccion INNER JOIN FETCH cm.estrategia INNER JOIN FETCH cm.eje WHERE r.registro = :registro", ActividadesPoa.class)
                 .setParameter("registro", registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getRegistro())
                 .getResultList();
-        
-        if(l.isEmpty()) return l.get(0);
+
+
+
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getActividadAlineada(2)");
+        if(!l.isEmpty()) return l.get(0);
         else return null;
     }
 
     @Override
     public Boolean alinearRegistroActividad(ActividadesPoa actividad, DTOAsesoriasTutoriasCicloPeriodos registro) {
+//        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.alinearRegistroActividad(1)");
         try{
-            actividad.getRegistrosList().clear();
-            registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getActividadesPoaList().clear();        
+            ActividadesPoa a = f.getEntityManager().find(ActividadesPoa.class, actividad.getActividadPoa());
+            Registros r = f.getEntityManager().find(Registros.class, registro.getAsesoriasTutoriasCicloPeriodos().getRegistro());
+
+//            if(!a.getRegistrosList().isEmpty() || !r.getActividadesPoaList().isEmpty()){
+//                ActividadesPoa a2 = f.getEntityManager().find(ActividadesPoa.class, r.getActividadesPoaList().get(0).getActividadPoa());
+//                a2.getRegistrosList().remove(r);
+//                r.getActividadesPoaList().remove(a2);
+//                f.flush();
+//            }
+            eliminarAlineacion(registro);
+
+            a.getRegistrosList().add(r);
+            r.getActividadesPoaList().add(actividad);
             f.flush();
-            actividad.getRegistrosList().add(registro.getAsesoriasTutoriasCicloPeriodos().getRegistros());
-            registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getActividadesPoaList().add(actividad);
-            f.flush();
+
+//            System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.alinearRegistroActividad(2)");
             return true;
         }catch(Exception e){
             LOG.log(Level.SEVERE, "No se pudo alinear el registro con la actividad.", e);
@@ -500,4 +528,24 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
         }
     }
 
+    @Override
+    public Boolean eliminarAlineacion(DTOAsesoriasTutoriasCicloPeriodos registro) {
+        try{
+            Registros r = f.getEntityManager().find(Registros.class, registro.getAsesoriasTutoriasCicloPeriodos().getRegistro());
+
+            if(!r.getActividadesPoaList().isEmpty()){
+                ActividadesPoa a2 = f.getEntityManager().find(ActividadesPoa.class, r.getActividadesPoaList().get(0).getActividadPoa());
+//                Integer clave = a2.getActividadPoa();
+                a2.getRegistrosList().remove(r);
+                r.getActividadesPoaList().remove(a2);
+                f.flush();
+                registro.setActividadAlineada(null);
+            }
+            
+            return true;
+        }catch(Exception e){
+            LOG.log(Level.SEVERE, "No se pudo alinear el registro con la actividad.", e);
+            return false;
+        }
+    }
 }

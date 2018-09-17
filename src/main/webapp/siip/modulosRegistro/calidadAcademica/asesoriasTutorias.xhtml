@@ -113,7 +113,7 @@
                                                                  class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" icon="fa fa-image"
                                                                  title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
                                                 <p:commandButton actionListener="#{asesoriasTutoriasCicloEscolar.abrirAlineacionPOA(asesoriaTutoria)}"
-                                                                 class="btn btn-sm btn-info" icon="fa fa-cog"
+                                                                 class="btn btn-sm #{!empty asesoriaTutoria.actividadAlineada?'btn-info':'btn-warning'}" icon="fa fa-cog"
                                                                  title="Alineación a POA." />
                                             </div>
                                         </p:column>
@@ -207,7 +207,7 @@
                         </h:form>
                     </p:dialog>
                     <p:dialog id="modalAlineacion" widgetVar="modalAlineacion" width="900" height="auto"  closeOnEscape="true"
-                              showEffect="fade" hideEffect="fade" modal="true" draggable="true" header="Alineación a POA." 
+                              showEffect="fade" hideEffect="fade" modal="true" draggable="true" header="Alineación a POA." onHide="actualizar();"
                               styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">                        
                         <h:form id="frmAlineacion" >
                             <div class="row">
@@ -217,7 +217,10 @@
                                             
                                         </f:facet>
                                         <f:facet name="right">
-                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" />
+                                            <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{asesoriasTutoriasCicloEscolar.eliminarAlineacion()}" rendered="#{!empty asesoriasTutoriasCicloEscolar.dto.registro.actividadAlineada}" >
+                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{asesoriasTutoriasCicloEscolar.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
                                         </f:facet>
                                     </p:toolbar>
                                 </div>
@@ -241,6 +244,7 @@
                                 <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
                                     <p:selectOneMenu id="eje" value="#{asesoriasTutoriasCicloEscolar.dto.alineacionEje}" valueChangeListener="#{asesoriasTutoriasCicloEscolar.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
                                         <f:selectItems value="#{asesoriasTutoriasCicloEscolar.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
                                         <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
@@ -252,6 +256,7 @@
                                 <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
                                     <p:selectOneMenu id="estrategia" value="#{asesoriasTutoriasCicloEscolar.dto.alineacionEstrategia}" valueChangeListener="#{asesoriasTutoriasCicloEscolar.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
                                         <f:selectItems value="#{asesoriasTutoriasCicloEscolar.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
                                         <p:ajax process="estrategia" update="lineaAccion,actividad" />
@@ -263,6 +268,7 @@
                                 <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
                                     <p:selectOneMenu id="lineaAccion" value="#{asesoriasTutoriasCicloEscolar.dto.alineacionLinea}" valueChangeListener="#{asesoriasTutoriasCicloEscolar.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
                                         <f:selectItems value="#{asesoriasTutoriasCicloEscolar.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
                                         <p:ajax process="lineaAccion" update="actividad" />
@@ -274,6 +280,7 @@
                                 <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
                                     <p:selectOneMenu id="actividad" value="#{asesoriasTutoriasCicloEscolar.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                        <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
                                         <f:selectItems value="#{asesoriasTutoriasCicloEscolar.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
                                         <p:ajax process="actividad" />
