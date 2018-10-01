@@ -27,10 +27,8 @@ import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAreas;
 import mx.edu.utxj.pye.sgi.entity.pye2.RecursosActividad;
 import mx.edu.utxj.pye.sgi.entity.pye2.UnidadMedidas;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbPoaSelectec;
-import mx.edu.utxj.pye.sgi.ejb.poa.FacadePoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.PretechoFinanciero;
-import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.RowEditEvent;
 
@@ -151,7 +149,7 @@ public class ControladorRegistroActividadesPOA implements Serializable {
         unidadMedidases = poaSelectec.mostrarUnidadMedidases();
         productosAreases = poaSelectec.mostrarProductosAreases(claveArea, ejercicioFiscal);
         listaActividadesPoas = poaSelectec.mostrarActividadesPoasArea(claveArea);
-        recursosActividads=poaSelectec.mostrarRecursosActividad();
+//        recursosActividads=poaSelectec.mostrarRecursosActividad();
     }
 
     public void consultarActividadesPorParametros() {

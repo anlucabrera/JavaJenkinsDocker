@@ -255,7 +255,7 @@
                 </ul>
             </li>
 
-            <!-- Se agregÃ³ la siguiente secciÃ³n de cÃ³digo para el listado de MÃ³dulos de Registro por usuario - MenÃº de registros -->
+            <!-- Se agregó la siguiente sección de código para el listado de Módulos de Registro por usuario - Menú de registros -->
             <li class="treeview">
                 <a>
                     <i class="fa fa-archive"></i><span><p:spacer width="5" />SIIP</span>
@@ -305,6 +305,7 @@
             </c:if>
 
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 6 }">
+                <!--c:if test="#{controladorEmpleado.tienePOA}"-->
                 <li class="treeview">
 
                     <a href="#">
@@ -326,7 +327,7 @@
                             </p:link>
                         </li-->
                         <li>
-                            <p:link href="/poa/areas/recurso.xhtml"><i class="fa fa-usd"></i>
+                            <p:link href="/poa/areas/recursoActividad.xhtml"><i class="fa fa-usd"></i>
                                 <span>Recurso</span>
                             </p:link>
                         </li>
@@ -424,35 +425,27 @@
                     <span>Incidencias</span>
                 </p:link>
             </li-->
+
+            <li>
+                <p:link href="/manuales.xhtml">
+                    <i class="fa fa-book"></i>
+                    <span>Manuales</span>
+                </p:link>
+            </li>
             <li>
                 <p:link href="/soporteTecnico.xhtml">
                     <i class="fa fa-wrench"></i>
-                    <span>Soporte tÃ©cnico</span>
+                    <span>Soporte técnico</span>
                 </p:link>
             </li>
-            <!--<<<<<<< HEAD
-                        <li class="treeview">
-            =======
-                        li class="treeview">
-            >>>>>>> 9c97b611792ac8864244daac82efc5e46562c58c
-                            <a href="#"><i class="fa fa-money"></i><span>Finanzas</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
-                            <ul class="treeview-menu">
-                                <li><p:link href="/finanzas/tramites.xhtml"><i class="fa fa-shopping-bag"></i> <span>Seguimiento a trÃ¡mites</span></p:link></li>
-                                <li><p:link href="/finanzas/tramites_comisionar.xhtml"><i class="fa fa-shopping-bag"></i> <span>Comisionar personal</span></p:link></li>
-                            </ul>
-            <<<<<<< HEAD
-                        </li>
-            =======
-                        </li
-            >>>>>>> 9c97b611792ac8864244daac82efc5e46562c58c-->
+
+            <!--li class="treeview">
+                <a href="#"><i class="fa fa-money"></i><span>Finanzas</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
+                <ul class="treeview-menu">
+                    <li><p:link href="/finanzas/tramites.xhtml"><i class="fa fa-shopping-bag"></i> <span>Seguimiento a trámites</span></p:link></li>
+                    <li><p:link href="/finanzas/tramites_comisionar.xhtml"><i class="fa fa-shopping-bag"></i> <span>Comisionar personal</span></p:link></li>
+                </ul>
+            </li-->
         </c:if>
     </ul>
-    <script type="text/javascript">
-        if (isMobile()) {
-            $('ul.sidebar-menu a.ui-link').click(function () {
-                $(this).prop('disabled', true);
-                showBar();
-            })
-        }
-    </script>
 </ui:composition>

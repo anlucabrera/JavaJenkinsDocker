@@ -10,6 +10,8 @@
 
     <ui:define name="head-end">
         <ui:param name="renderBreadCrumb" value="false"/>
+
+        <link href="../resources/demo/css/primitives.latest.css?219" media="screen" rel="stylesheet" type="text/css" />
         <!-- Inicio estilos par proceso electoral -->            
         <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
@@ -24,7 +26,9 @@
 
     <ui:define name="body">
         <style>
-
+            .ui-organigram .ui-organigram-node{
+                padding: 0px;
+            }
         </style>
         <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
             <h1>
@@ -63,7 +67,7 @@
                 <section class="content">
                     <div class="row">
                         <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
-                        <div class="col-md-9">
+                        <div class="col-md-10">
                             <div class="nav-tabs-custom">
                                 <div class="row">
                                     <h:form >
@@ -435,7 +439,7 @@
                                                 <div class="col-md-12">
                                                     <p:organigram id="organigram"
                                                                   widgetVar="organigram"
-                                                                  value="#{organigramView4.REC}"
+                                                                  value="#{organigramView4.OP1}"
                                                                   var="nodeOF"
                                                                   leafNodeConnectorHeight="#{organigramView4.leafNodeConnectorHeight}"
                                                                   autoScrollToSelection="#{organigramView4.autoScrollToSelection}"
@@ -450,46 +454,125 @@
                                                         <p:organigramNode>
                                                             <h:outputText value="#{nodeOF.data}" />
                                                         </p:organigramNode>
-
                                                         <p:organigramNode type="root"
-                                                                          style="border-radius: 10px;">
-                                                            <h:outputText value="#{nodeOF.data}" />
+                                                                          style="border-radius: 10px; width: 300px;">
+
+                                                            <p:panelGrid  style="width: 290px">
+                                                                <p:row style="height: 40px;">
+                                                                    <p:column colspan="2" style="height: 40px; border-color:#043191; font-weight: bold;background:#043191;color: #ffffff ">
+                                                                        <h:outputText value="#{organigramView4.obtenerEmpleadoArea(nodeOF)}"/>
+                                                                        <h:outputText value=" _________________________________"/>
+                                                                    </p:column>
+                                                                </p:row>
+
+                                                                <p:row>
+                                                                    <p:column style="background:#043191; border-color:#043191;color: #ffffff">    
+                                                                        <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{nodeOF.data}.jpg" class="img-circle" alt="Imagen no disponible" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 75px; height: 75px;"/>
+                                                                    </p:column>
+                                                                    <p:column style="background:#043191; border-color:#043191;color: #ffffff">
+                                                                        <h:outputText value="#{organigramView4.obtenerEmpleadoNombre(nodeOF)}" />
+                                                                        <h:outputText value=" ____________________ "/>
+                                                                        <h:outputText value="#{organigramView4.obtenerEmpleadoCategoria(nodeOF)}" />
+                                                                    </p:column>
+                                                                </p:row>
+                                                            </p:panelGrid>
+
+                                                        </p:organigramNode>
+
+                                                        <p:organigramNode type="opcional"
+                                                                          style="background: #000000; width: 1px;height: 200px">
+                                                            <h:outputText value="#{nodeOF.data}"/>
+                                                        </p:organigramNode>
+
+                                                        <p:organigramNode type="colaborador"
+                                                                          styleClass="colaborador"
+                                                                          icon="ui-icon-suitcase"
+                                                                          iconPos="left" 
+                                                                          class="collapsed">
+
+                                                            <div style="height: 40px">
+                                                                <h:outputText value="#{organigramView4.obtenerEmpleadoArea(nodeOF)}" />
+                                                            </div>
+                                                            <div style="height: 95px">
+                                                                <h:outputText value=" ____________________ "/>
+                                                                <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{nodeOF.data}.jpg" class="img-circle" alt="Imagen no disponible" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 75px; height: 75px;"/>
+                                                            </div>
+                                                            <div style="height: 40px">
+                                                                <h:outputText value="#{organigramView4.obtenerEmpleadoNombre(nodeOF)}" />
+                                                            </div>
+
                                                         </p:organigramNode>
 
                                                         <p:organigramNode type="division"
                                                                           styleClass="division"
                                                                           icon="ui-icon-suitcase"
                                                                           iconPos="left" 
-                                                                          style="border-radius: 15px;"
                                                                           class="collapsed">
-                                                            <h:outputText value="#{nodeOF.data}" />
-                                                        </p:organigramNode>
-
-                                                        <p:organigramNode type="staff"
-                                                                          styleClass="staff"
-                                                                          icon="ui-icon-person"
-                                                                          iconPos="center" 
-                                                                          style="border-radius: 15px;"
-                                                                          class="collapsed">
-                                                            <h:outputText value="#{nodeOF.data}" />
+                                                            <div style="height: 40px; align-content: center">
+                                                                <h:outputText value="#{organigramView4.obtenerEmpleadoArea(nodeOF)}" />
+                                                            </div>
+                                                            <div style="height: 95px">
+                                                                <h:outputText value=" ____________________ " />
+                                                                <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{nodeOF.data}.jpg" class="img-circle" alt="Imagen no disponible" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 75px; height: 75px;"/>
+                                                            </div>
+                                                            <div style="height: 40px">
+                                                                <h:outputText value="#{organigramView4.obtenerEmpleadoNombre(nodeOF)}" />
+                                                            </div>
                                                         </p:organigramNode>
 
                                                         <p:organigramNode type="staff2"
                                                                           styleClass="staff2"
                                                                           icon="ui-icon-person"
                                                                           iconPos="center" 
-                                                                          style="border-radius: 15px;"
                                                                           class="collapsed">
-                                                            <h:outputText value="#{nodeOF.data}" />
+
+                                                            <div style="height: 40px; align-content: center">
+                                                                <h:outputText value="#{organigramView4.obtenerEmpleadoArea(nodeOF)}" />
+                                                            </div>
+                                                            <div style="height: 95px">
+                                                                <h:outputText value=" ____________________ "/>
+                                                                <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{nodeOF.data}.jpg" class="img-circle" alt="Imagen no disponible" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 75px; height: 75px;"/>
+                                                            </div>
+                                                            <div style="height: 40px">
+                                                                <h:outputText value="#{organigramView4.obtenerEmpleadoNombre(nodeOF)}" />
+                                                            </div>
                                                         </p:organigramNode>
 
                                                         <p:organigramNode type="arapo"
                                                                           styleClass="arapo"
                                                                           icon="ui-icon-suitcase"
                                                                           iconPos="left" 
-                                                                          style="border-radius: 15px;"
                                                                           class="collapsed">
-                                                            <h:outputText value="#{nodeOF.data}" />
+                                                            <div style="height: 40px; align-content: center">
+                                                                <h:outputText value="#{organigramView4.obtenerEmpleadoArea(nodeOF)}" />
+                                                            </div>
+                                                            <div style="height: 95px">
+                                                                <h:outputText value=" ____________________ "/>
+                                                                <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{nodeOF.data}.jpg" class="img-circle" alt="Imagen no disponible" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 75px; height: 75px;"/>
+                                                            </div>
+                                                            <div style="height: 40px"> 
+                                                                <h:outputText value="#{organigramView4.obtenerEmpleadoNombre(nodeOF)}" />
+                                                            </div>
+                                                        </p:organigramNode>
+
+                                                        <p:organigramNode type="staff"
+                                                                          styleClass="staff"
+                                                                          icon="ui-icon-person"
+                                                                          iconPos="center" 
+                                                                          class="collapsed">
+
+
+                                                            <div style="height: 75px">
+                                                                <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{nodeOF.data}.jpg" class="img-circle" alt="Imagen no disponible" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 75px; height: 75px;"/>
+                                                            </div>
+                                                            <div style="height: 22px"> 
+                                                                <h:outputText value="#{organigramView4.obtenerEmpleadoNombre(nodeOF)}" />
+                                                            </div>
+                                                            <div style="height: 78px; align-content: center">
+                                                                <h:outputText value=" ____________________ "/>
+                                                                <h:outputText value="#{organigramView4.obtenerEmpleadoCategoria(nodeOF)}" />
+                                                            </div>
+
                                                         </p:organigramNode>
 
                                                         <p:organigramNode type="employee"
@@ -498,11 +581,6 @@
                                                             <h:outputText value="#{nodeOF.data}" />
                                                         </p:organigramNode>
 
-                                                        <p:organigramNode type="employeeStaff"
-                                                                          styleClass="employee"
-                                                                          icon="ui-icon-person">
-                                                            <h:outputText value="#{nodeOF.data}" />
-                                                        </p:organigramNode>
                                                     </p:organigram>
                                                 </div>
                                             </div>
@@ -527,7 +605,8 @@
                                                 <p:column headerText="Clave"
                                                           sortBy="#{ByR.clave}" 
                                                           filterBy="#{ByR.clave}" 
-                                                          filterMatchMode="contains">
+                                                          filterMatchMode="contains" 
+                                                          style="width: 75px">
                                                     <h:outputText value="#{ByR.clave}" />
                                                 </p:column>
 

@@ -2,10 +2,7 @@ package mx.edu.utxj.pye.sgi.ejb.ch;
 
 import java.util.List;
 import javax.ejb.Local;
-import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
-import mx.edu.utxj.pye.sgi.entity.ch.Historicoplantillapersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
-import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 
 @Local

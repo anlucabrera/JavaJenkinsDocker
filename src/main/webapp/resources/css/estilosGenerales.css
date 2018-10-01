@@ -54,41 +54,54 @@ button, input, optgroup, select, textarea{
     background: white;
     block-size: 2.6em;
 }
+
 .ui-organigram .ui-organigram-node.root {
     background: #043191;
     font-family: roboto,bitter;
+    width: 300px;
+    border-radius: 15px;
+}
+.ui-organigram .ui-organigram-node.colaborador{
+    background: #045491;
+    font-family: roboto,bitter;
     width: 150px;
+    border-radius: 15px;
 }
 .ui-organigram .ui-organigram-node.division {
     background: #045491;
     font-family: roboto,bitter;
     width: 150px;
+    border-radius: 15px;
 }
 .ui-organigram .ui-organigram-node.division2 {
     background: #045491;
     font-family: roboto,bitter;
     width: 150px;
+    border-radius: 15px;
 }
 .ui-organigram .ui-organigram-node.division3 {
     background: #045491;
     font-family: roboto,bitter;
     width: 150px;
+    border-radius: 15px;
 }
 .ui-organigram .ui-organigram-node.staff2 {
     background: #0675ca;
     font-family: roboto,bitter;
     width: 150px;
+    border-radius: 15px;
 }
 .ui-organigram .ui-organigram-node.staff {
     background: #434c52;
     font-family: roboto,bitter;
-    width: 100px;
-    height:  100px;
+    width: 165px;
+    border-radius: 15px;
 }
 .ui-organigram .ui-organigram-node.arapo {
     background: #0675ca;
     font-family: roboto,bitter;
     width: 150px;
+    border-radius: 15px;
 }
 .ui-organigram .ui-organigram-node.employee {
     background: #434c52;
@@ -139,23 +152,26 @@ button, input, optgroup, select, textarea{
 }
 
 .eje{
-    background-color: #cccccc;
+    background-color: #00204a;
     color: #ffffff;
+    font-size: 25px
 }
 .est{
-    background-color: #00649d;
+    background-color: #005792;
     color: #ffffff;
+    font-size: 20px
 }
 .lac{
-    background-color: #01aac1;
-    color: #ffffff;
+    background-color: #89a4c7;
+    color: #000000;
+    font-size: 15px
 }
 .actividad{
-    background-color: #00dbe7;
-    color: #ffffff;
+    background-color: #cdd5e0;
+    color: #000000;
 }
 body .ui-datatable th[role="columnheader"].ui-state-default, body .ui-treetable th[role="columnheader"].ui-state-default{
-    background-color: #cccccc;
+    /*background-color: #cccccc;*/
 }
 
 .ui-steps .ui-steps-item {
