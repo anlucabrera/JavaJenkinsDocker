@@ -39,7 +39,7 @@ public class ControladorProduccionPersonal implements Serializable {
     @Getter    @Setter    private List<LibrosPub> nuevaListaLibrosPub = new ArrayList<>();
     @Getter    @Setter    private List<Articulosp> nuevaListaArticulosp = new ArrayList<>();
     @Getter    @Setter    private List<Memoriaspub> nuevaListaMemoriaspub = new ArrayList<>();
-    @Getter    @Setter    private List<Investigaciones> nuevaListatInvestigaciones = new ArrayList<>();
+    @Getter    @Setter    private List<Investigaciones> nuevaListatInvestigaciones = new ArrayList<>(),nuevaListatTrabajos=new ArrayList<>(),nuevaListatProyectos=new ArrayList<>();
     @Getter    @Setter    private List<Congresos> nuevaListaCongresos = new ArrayList<>();
     @Getter    @Setter    private List<String> listaSubClase = new ArrayList<>();
 
@@ -369,12 +369,23 @@ public class ControladorProduccionPersonal implements Serializable {
             nuevaListaMemoriaspub.clear();
             nuevaListaCongresos.clear();
             nuevaListatInvestigaciones.clear();
+            nuevaListatProyectos.clear();
+            nuevaListatTrabajos.clear();
 
             nuevaListaArticulosp = ejbProduccionProfecional.mostrarArticulosp(personal);
             nuevaListaLibrosPub = ejbProduccionProfecional.mostrarLibrosPub(personal);
             nuevaListaMemoriaspub = ejbProduccionProfecional.mostrarMemoriaspub(personal);
             nuevaListaCongresos = ejbProduccionProfecional.mostrarCongresos(personal);
             nuevaListatInvestigaciones = ejbProduccionProfecional.mostrarInvestigacion(personal);
+            if (!nuevaListatInvestigaciones.isEmpty()) {
+                nuevaListatInvestigaciones.forEach((t) -> {
+                    if (t.getTipo().equals("Proyecto")) {
+                        nuevaListatProyectos.add(t);
+                    } else {
+                        nuevaListatTrabajos.add(t);
+                    }
+                });
+            }
 
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());

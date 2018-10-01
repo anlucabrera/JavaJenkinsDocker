@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -142,20 +143,14 @@ public class ControladorPersonal implements Serializable {
             listaAreasUniversidads.clear();
             listaPersonalCategorias.clear();
             
-            listaAreasUniversidads=ejbAreasLogeo.mostrarAreasUniversidad();
+            listaAreasUniversidads = ejbAreasLogeo.mostrarAreasUniversidad();
             listaAreasUniversidads.forEach((t) -> {
-                if(!listaClaveAS.contains(t.getAreaSuperior())){
-                   listaClaveAS.add(t.getAreaSuperior()); 
-                }                
+                if (t.getCategoria().getCategoria() == Short.parseShort("10") || t.getCategoria().getCategoria() == Short.parseShort("9")) {
+                } else {
+                    listareasSuperiores.add(t);
+                }
             });
-            listaAreasUniversidads.forEach((t) -> {
-                listaClaveAS.forEach((c) -> {
-                    if(Objects.equals(t.getArea(), c) || t.getArea()==61){
-                        listareasSuperiores.add(t);
-                    }
-                });
-            });
-                                   
+            Collections.sort(listareasSuperiores, (x, y) -> x.getNombre().compareTo(y.getNombre()));
             listaGrados = ejbDatosUsuarioLogeado.mostrarListaGrados();
             listaActividades = ejbDatosUsuarioLogeado.mostrarListaActividades();
             listaPersonalCategorias = ejbDatosUsuarioLogeado.mostrarListaPersonalCategorias();

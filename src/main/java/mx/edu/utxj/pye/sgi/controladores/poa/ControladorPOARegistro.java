@@ -22,6 +22,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.UnidadMedidas;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
+import org.omnifaces.util.Faces;
 
 @Named
 @ManagedBean
@@ -54,8 +55,7 @@ public class ControladorPOARegistro implements Serializable {
     @Getter    @Setter    private List<listaEjesEsLaAp> ejesEsLaAp = new ArrayList<>();
     @Getter    @Setter    private List<listaEjeEstrategia> listaListaEjeEstrategia = new ArrayList<>();
     @Getter    @Setter    private List<listaEstrategiaActividades> listaEstrategiaActividadesesEje = new ArrayList<>();
-    @Getter    @Setter    private List<listaEstrategiaActividades> listaEstrategiaActividadesesEje1 = new ArrayList<>(), listaEstrategiaActividadesesEje2 = new ArrayList<>(), listaEstrategiaActividadesesEje3 = new ArrayList<>(), listaEstrategiaActividadesesEje4 = new ArrayList<>(), listaEstrategiaActividadesesEje5 = new ArrayList<>();
-
+   
 
     @EJB    EjbPoaSelectec poaSelectec;
     @Inject    ControladorEmpleado controladorEmpleado;
@@ -72,6 +72,11 @@ public class ControladorPOARegistro implements Serializable {
     }
 
     public void consultarListasInit() {
+        
+        ejesRegistro = new EjesRegistro();
+        estrategias = new Estrategias();
+        lineasAccion = new LineasAccion();
+
         listaLineasAccion.clear();
         listaEstrategias.clear();
         listaEjesRegistros.clear();
@@ -120,49 +125,24 @@ public class ControladorPOARegistro implements Serializable {
                             listaActividadesPoasFiltradas.clear();
                             listaActividadesPoasFiltradas = poaSelectec.getActividadesPoasporEstarategias(t, e.getEjess(), ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
                             Collections.sort(listaActividadesPoasFiltradas, (x, y) -> (x.getNumeroP() + "." + x.getNumeroS()).compareTo(y.getNumeroP() + "." + y.getNumeroS()));
-                            switch (e.getEjess().getEje()) {
-                                case 1:
-                                    listaEstrategiaActividadesesEje1.add(new listaEstrategiaActividades(t, listaActividadesPoasFiltradas));
-                                    Collections.sort(listaEstrategiaActividadesesEje1, (x, y) -> Short.compare(x.getEstrategias().getEstrategia(), y.getEstrategias().getEstrategia()));
-                                    break;
-                                case 2:
-                                    listaEstrategiaActividadesesEje2.add(new listaEstrategiaActividades(t, listaActividadesPoasFiltradas));
-                                    Collections.sort(listaEstrategiaActividadesesEje2, (x, y) -> Short.compare(x.getEstrategias().getEstrategia(), y.getEstrategias().getEstrategia()));
-                                    break;
-                                case 3:
-                                    listaEstrategiaActividadesesEje3.add(new listaEstrategiaActividades(t, listaActividadesPoasFiltradas));
-                                    Collections.sort(listaEstrategiaActividadesesEje3, (x, y) -> Short.compare(x.getEstrategias().getEstrategia(), y.getEstrategias().getEstrategia()));
-                                    break;
-                                case 4:
-                                    listaEstrategiaActividadesesEje4.add(new listaEstrategiaActividades(t, listaActividadesPoasFiltradas));
-                                    Collections.sort(listaEstrategiaActividadesesEje4, (x, y) -> Short.compare(x.getEstrategias().getEstrategia(), y.getEstrategias().getEstrategia()));
-                                    break;
-
-                                case 5:
-                                    listaEstrategiaActividadesesEje5.add(new listaEstrategiaActividades(t, listaActividadesPoasFiltradas));
-                                    Collections.sort(listaEstrategiaActividadesesEje5, (x, y) -> Short.compare(x.getEstrategias().getEstrategia(), y.getEstrategias().getEstrategia()));
-                                    break;
-                            }
+                            listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(t, listaActividadesPoasFiltradas));
+                            Collections.sort(listaEstrategiaActividadesesEje, (x, y) -> Short.compare(x.getEstrategias().getEstrategia(), y.getEstrategias().getEstrategia()));
                         });
+                        ejesEsLaAp.add(new listaEjesEsLaAp(ej, listaEstrategiaActividadesesEje));
+                        listaEstrategiaActividadesesEje = new ArrayList<>();
+                        listaEstrategiaActividadesesEje.clear();
                     });
                 }
             });
         }
-
-        if (!poaSelectec.mostrarEjesRegistrosAreas(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal).isEmpty()) {
-            poaSelectec.mostrarEjesRegistrosAreas(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal).forEach((ej) -> {
-                switch (ej.getEje()) {
-                    case 1:                        ejesEsLaAp.add(new listaEjesEsLaAp(ej, listaEstrategiaActividadesesEje1));                        break;
-                    case 2:                        ejesEsLaAp.add(new listaEjesEsLaAp(ej, listaEstrategiaActividadesesEje2));                        break;
-                    case 3:                        ejesEsLaAp.add(new listaEjesEsLaAp(ej, listaEstrategiaActividadesesEje3));                        break;
-                    case 4:                        ejesEsLaAp.add(new listaEjesEsLaAp(ej, listaEstrategiaActividadesesEje4));                        break;
-                    case 5:                        ejesEsLaAp.add(new listaEjesEsLaAp(ej, listaEstrategiaActividadesesEje5));                        break;
-                }
-            });
-        }
+        
         Collections.sort(ejesEsLaAp, (x, y) -> Integer.compare(x.getEjeA().getEje(), y.getEjeA().getEje()));
     }
 
+    public void recargarPag(){        
+            Faces.refresh();
+    }
+    
     public void resetearValores() {
         actividadesPoa = new ActividadesPoa();
         listaActividadesPoas.clear();
@@ -227,7 +207,6 @@ public class ControladorPOARegistro implements Serializable {
             ejesEsLaAp.add(new listaEjesEsLaAp(ejesRegistro, listaEstrategiaActividadesesEje));
             Collections.sort(ejesEsLaAp, (x, y) -> Integer.compare(x.getEjeA().getEje(), y.getEjeA().getEje()));
         }
-
     }
 
     public void asignarParametrosRegistro(ValueChangeEvent event) {
@@ -245,6 +224,7 @@ public class ControladorPOARegistro implements Serializable {
                         poaSelectec.mostrarEstrategiasRegistro(ejercicioFiscal, ejesRegistro).forEach((t) -> {
                             listaEstrategias.add(t);
                         });
+                        consultarListas();
                         permitirRegistro = false;
                     }
                     resetearValores();
@@ -271,7 +251,6 @@ public class ControladorPOARegistro implements Serializable {
                         listaCuadroMandoIntegrals.clear();
                         listaCuadroMandoIntegrals = poaSelectec.mostrarCuadroMandoIntegralRegistrpo(ejercicioFiscal, ejesRegistro, estrategias, lineasAccion);
                         cuadroMandoIntegral = listaCuadroMandoIntegrals.get(0);
-                        consultarListas();
                         permitirRegistro = true;
                     }
                     resetearValores();
@@ -692,8 +671,10 @@ public class ControladorPOARegistro implements Serializable {
             });
         }
         resetearValores();
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARegistro.eliminarActividad()"+ejeActivo);
         if(ejeActivo == false){
-            consultarListasInit();
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARegistro.eliminarActividad(False)");
+            Faces.refresh();
         }else{
             consultarListas();
         }
@@ -889,7 +870,7 @@ public class ControladorPOARegistro implements Serializable {
         }
         resetearValores();
         if(ejeActivo == false){
-            consultarListasInit();
+            Faces.refresh();
         }else{
             consultarListas();
         }

@@ -62,7 +62,7 @@
                 <section class="content">
                     <div class="row">
                         <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
-                        <div class="col-md-9">
+                        <div class="col-md-10">
                             <div class="nav-tabs-custom">
                                 <div class="row">
                                     <div class="col-lg-10 col-xs-10"/>
@@ -128,8 +128,8 @@
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputLabel for="vigente" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Vigente?" />
                                                                                     <p:selectOneMenu id="vigente" style="height: 100%; width: 100%; object-fit: contain" value="#{controladorPersonalconfiguracion.nuevoOBJAreasUniversidad.vigente}">
-                                                                                        <f:selectItem itemValue="0" itemLabel="NO"/>
                                                                                         <f:selectItem itemValue="1" itemLabel="SI"/>
+                                                                                        <f:selectItem itemValue="0" itemLabel="NO"/>
                                                                                     </p:selectOneMenu> 
                                                                                     <p:message for="vigente" display="tooltip"/> 
                                                                                     <hr/>
@@ -161,7 +161,7 @@
                                                 <h:form id="frmareas1">
                                                     <p:outputPanel >
                                                         <p:dataTable id="tblDistinciones" value="#{controladorPersonalconfiguracion.nuevaListaAreasUniversidads}"
-                                                                     paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron registros" rendered="true"
+                                                                     paginator="true" rows="15" rowsPerPageTemplate="15,20,25,30" emptyMessage="No se encontraron registros" rendered="true"
                                                                      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                                                      var="area">
 
@@ -173,12 +173,6 @@
                                                                 <h:outputText value="#{area.area}"/>
                                                             </p:column>
 
-                                                            <p:column headerText="Nombre" 
-                                                                      filterBy="#{area.nombre}" 
-                                                                      sortBy="#{area.nombre}" 
-                                                                      filterMatchMode="contains">
-                                                                <h:outputText value="#{area.nombre}" />
-                                                            </p:column> 
                                                             <p:column headerText="Categoria" 
                                                                       filterBy="#{area.categoria.descripcion}" 
                                                                       sortBy="#{area.categoria.descripcion}" 
@@ -187,6 +181,20 @@
                                                                 <h:outputText value="#{area.categoria.descripcion}" />
                                                             </p:column>
 
+                                                            <p:column headerText="Nombre" 
+                                                                      filterBy="#{area.nombre}" 
+                                                                      sortBy="#{area.nombre}" 
+                                                                      filterMatchMode="contains">
+                                                                <h:outputText value="#{area.nombre}" />
+                                                            </p:column> 
+
+                                                            <p:column headerText="Activa" 
+                                                                      filterBy="#{area.vigente}" 
+                                                                      sortBy="#{area.vigente}" 
+                                                                      filterMatchMode="contains"
+                                                                      style="width: 10%">
+                                                                <h:outputText value="#{area.vigente eq 1 ?'SI':'NO'}" />
+                                                            </p:column>
                                                         </p:dataTable>     
                                                     </p:outputPanel>
                                                 </h:form>
@@ -214,14 +222,14 @@
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                                    <p:outputLabel for="categoria" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Categoria" />
-                                                                                    <p:selectOneMenu id="categoria" style="height: 100%; width: 100%; object-fit: contain" value="#{controladorPersonalconfiguracion.nuevoOBJPersonalCategorias.tipo}">
-                                                                                        <f:selectItem itemValue="Genérica" itemLabel="Genérica"/>
-                                                                                        <f:selectItem itemValue="Específica" itemLabel="360°"/>
-                                                                                    </p:selectOneMenu> 
-                                                                                    <p:message for="categoria" display="tooltip"/> 
-                                                                                    <hr/>
-                                                                                </div>
+                                                                                <p:outputLabel for="categoria" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Categoria" />
+                                                                                <p:selectOneMenu id="categoria" style="height: 100%; width: 100%; object-fit: contain" value="#{controladorPersonalconfiguracion.nuevoOBJPersonalCategorias.tipo}">
+                                                                                    <f:selectItem itemValue="Genérica" itemLabel="Genérica"/>
+                                                                                    <f:selectItem itemValue="Específica" itemLabel="360°"/>
+                                                                                </p:selectOneMenu> 
+                                                                                <p:message for="categoria" display="tooltip"/> 
+                                                                                <hr/>
+                                                                            </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <p:outputPanel>       
@@ -249,7 +257,7 @@
                                         <h:form id="frmcategorias1">
                                             <p:outputPanel>
                                                 <p:dataTable id="tblDistinciones" value="#{controladorPersonalconfiguracion.nuevaListaPersonalCategoriases}"
-                                                             paginator="true" rows="10" rowsPerPageTemplate="10,15,20,25,30" emptyMessage="No se encontraron registros" rendered="true"
+                                                             paginator="true" rows="15" rowsPerPageTemplate="15,20,25,30" emptyMessage="No se encontraron registros" rendered="true"
                                                              paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                                              var="distincion">
 
@@ -267,7 +275,7 @@
                                                               filterMatchMode="contains" >
                                                         <h:outputText value="#{distincion.nombre}" />
                                                     </p:column>
-                                                    
+
                                                     <p:column headerText="Tipo" 
                                                               filterBy="#{distincion.tipo}" 
                                                               sortBy="#{distincion.tipo}" 

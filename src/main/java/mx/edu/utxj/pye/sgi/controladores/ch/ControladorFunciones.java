@@ -3,6 +3,7 @@ package mx.edu.utxj.pye.sgi.controladores.ch;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -51,6 +52,7 @@ public class ControladorFunciones implements Serializable {
     @Getter    @Setter    private List<Funciones> listaFunciones = new ArrayList<>();
     @Getter    @Setter    private Funciones nuevoOBJFunciones = new Funciones(), nuevoOBJFuncionesSelect;
     @Getter    @Setter    private Integer usuario, contiene = 0,totalC=0,claveEmpleado=0;
+    @Getter    @Setter    private Iterator<Personal> empleadoActual;
 
     @Getter    @Setter    private List<String> listaClavesEmpleados = new ArrayList<>();
     @Getter    @Setter    private List<Categoriasespecificasfunciones> listaCategoriasespecificasfuncioneses = new ArrayList<>();
@@ -171,6 +173,13 @@ public class ControladorFunciones implements Serializable {
                         }
                     }
                     contiene = 0;
+                }
+            }
+            empleadoActual = listaPersonalJefes.iterator();
+            while (empleadoActual.hasNext()) {
+                Personal next = empleadoActual.next();
+                if (Objects.equals(next.getClave(), usuario)) {
+                    empleadoActual.remove();
                 }
             }
             listalistaAreas.add(new listaAre(Short.parseShort("0"), "Sin áreas subordinadas"));

@@ -251,7 +251,7 @@
                     </li>
                 </ul>
             </li>
-            
+
             <!-- Se agregó la siguiente sección de código para el listado de Módulos de Registro por usuario - Menú de registros -->
             <li class="treeview">
                 <a>
@@ -281,7 +281,7 @@
                     </li>
                 </ul>
             </li>
-            
+
             <c:if test="#{controladorEmpleado.listaDocencias.size() != 0}">
                 <li class="treeview">
 
@@ -302,6 +302,7 @@
             </c:if>
 
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 6 }">
+                <!--c:if test="#{controladorEmpleado.tienePOA}"-->
                 <li class="treeview">
 
                     <a href="#">
@@ -323,7 +324,7 @@
                             </p:link>
                         </li-->
                         <li>
-                            <p:link href="/poa/areas/recurso.xhtml"><i class="fa fa-usd"></i>
+                            <p:link href="/poa/areas/recursoActividad.xhtml"><i class="fa fa-usd"></i>
                                 <span>Recurso</span>
                             </p:link>
                         </li>
@@ -421,6 +422,13 @@
                     <span>Incidencias</span>
                 </p:link>
             </li-->
+            
+            <li>
+                <p:link href="/manuales.xhtml">
+                    <i class="fa fa-book"></i>
+                    <span>Manuales</span>
+                </p:link>
+            </li>
             <li>
                 <p:link href="/soporteTecnico.xhtml">
                     <i class="fa fa-wrench"></i>

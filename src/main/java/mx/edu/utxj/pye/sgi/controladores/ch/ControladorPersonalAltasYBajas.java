@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -92,18 +93,12 @@ public class ControladorPersonalAltasYBajas implements Serializable {
 
             listaAreasUniversidads = ejbAreasLogeo.mostrarAreasUniversidad();
             listaAreasUniversidads.forEach((t) -> {
-                if (!listaClaveAS.contains(t.getAreaSuperior())) {
-                    listaClaveAS.add(t.getAreaSuperior());
+                if (t.getCategoria().getCategoria() == Short.parseShort("10") || t.getCategoria().getCategoria() == Short.parseShort("9")) {
+                } else {
+                    listareasSuperiores.add(t);
                 }
-            });
-            listaAreasUniversidads.forEach((t) -> {
-                listaClaveAS.forEach((c) -> {
-                    if (Objects.equals(t.getArea(), c) || t.getArea() == 61) {
-                        listareasSuperiores.add(t);
-                    }
-                });
-            });
-
+            });           
+            Collections.sort(listareasSuperiores, (x, y) -> x.getNombre().compareTo(y.getNombre()));
             listaGrados = ejbDatosUsuarioLogeado.mostrarListaGrados();
             listaGeneros = ejbDatosUsuarioLogeado.mostrarListaGeneros();
             listaActividades = ejbDatosUsuarioLogeado.mostrarListaActividades();
