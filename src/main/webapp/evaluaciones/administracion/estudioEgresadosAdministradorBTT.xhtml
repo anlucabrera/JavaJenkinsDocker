@@ -44,17 +44,17 @@
                 <p:panel id="panel1" toggleable="true" toggleSpeed="500" >
                     <p:toolbar id="tb">
                         <f:facet name="left">
-                            <h:panelGrid columns="12" cellpadding="1">
+                            <h:panelGrid columns="6" cellpadding="1">
                                 <p:outputLabel id="lblMatricula" value="Busqueda del estudiante  " for="txtMatricula" 
                                                class="label-control"/>                            
                                 <p:spacer width="15px"/>
                                 <p:inputMask mask="999999" placeholder="Matricula" id="txtMatricula" value="#{estudioEgresados.matricula}" required="true" class="form-control" maxlength="6" requiredMessage="Es Necesario llenar el campo Matricula"/>
                                 <p:commandButton id="buscar" value="Buscar" icon="fa fa-search" 
-                                                 actionListener="#{estudioEgresados.buscaEstudianteEstudioEgresado()}"
+                                                 actionListener="#{estudioEgresados.buscaEstudianteEstudioEgresadoTramiteTitulacion()}"
                                                  class="btn btn-primary"  process=":frmPagoAlumno:panel1"  update="@form"  onsuccess="location.reload(true)" />                  
                                 
-                                <p:spacer width="30px"/>
-                                        <a href="estudioEgresadosAdministradorBTT.xhtml" class="btn btn-primary "> <span style="font-weight: bold;" class="fa fa-graduation-cap"></span> Egresado tramite de titulación</a>
+                                <p:spacer width="35px"/>
+                                        <a href="estudioEgresadosAdministrador.xhtml" class="btn btn-primary "> <span style="font-weight: bold;" class="fa fa-reply"></span> Regresar</a>
                             </h:panelGrid>
                         </f:facet>
                     </p:toolbar>
@@ -65,26 +65,20 @@
                 <p:outputPanel >
                     <p:autoUpdate/>
                     <div class="form-group">
-                        <p:outputLabel value="" class="col-sm-2"/>
-                        <div class="col-sm-2">
-                            <img src="https://escolar.utxj.edu.mx:8181/saiiut2/imagenes/alumnos/#{estudioEgresados.estudiante.matricula}.jpg"  height="200" width="160"/>
-                        </div>
-                        <div class="col-sm-4" style="align-content: flex-end"> 
+                        <p:outputLabel value="" class="col-sm-1"/>
+                        
+                        <div class="col-sm-11" style="align-content: flex-end"> 
                             <p:outputLabel value="Nombre: " />
                             <p:spacer width="15px"/>
-                            <p:outputLabel  value=" #{estudioEgresados.estudiante.nombre}"/>
+                            <p:outputLabel  value=" #{estudioEgresados.resultados.r1}"/>
                             <br/>
                             <p:outputLabel value="Matricula: "/>
                             <p:spacer width="6px"/>
-                            <p:outputLabel value=" #{estudioEgresados.estudiante.matricula}"/>
+                            <p:outputLabel value=" #{estudioEgresados.resultados.evaluacionEstudioEgresadosResultadosPK.evaluador}"/>
                             <br/>
-                            <p:outputLabel value="Grado: "/>
+                            <p:outputLabel value="Carrera "/>
                             <p:spacer width="23px"/>
-                            <p:outputLabel value=" #{estudioEgresados.estudiante.cuatrimestre}"/>
-                            <br/>
-                            <p:outputLabel value="Grupo: "/>
-                            <p:spacer width="23px"/>
-                            <p:outputLabel value=" #{estudioEgresados.estudiante.grupo}"/>
+                            <p:outputLabel value=" #{estudioEgresados.resultados.r4}"/>
                         </div>
                     </div>
                 </p:outputPanel>
@@ -97,7 +91,7 @@
 
                         </c:if>
                         <c:if test="#{estudioEgresados.nivel eq 2}">
-                            <h4><span class="label label-success"><i class="fa fa-check" />Nivel ING.</span></h4>
+                            <h4><span class="label label-success"><i class="fa fa-check" />Nivel ING o Lic.</span></h4>
                         </c:if>
                         <c:if test="#{estudioEgresados.nivel eq 3}">
                             <h4><span class="label label-success"><i class="fa fa-check" />Este estudiante aun no ah egresado.</span></h4>

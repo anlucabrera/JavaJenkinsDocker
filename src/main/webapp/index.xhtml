@@ -277,10 +277,10 @@
                                     <div class="small-box bg-blue">
                                         <div class="inner" style="cursor: pointer;" onclick="360_1();">
                                             <h3>
-                                                    <h:outputLabel value="#{evaluacion360Admin1.evaluados / evaluacion360Admin1.listaPersonalEvaluado.size() * 100}">
-                                                        <f:convertNumber pattern="###,###.##" />
-                                                    </h:outputLabel>
-                                                    <sup style="font-size: 20px">%</sup>
+                                                <h:outputLabel value="#{evaluacion360Admin1.evaluados / evaluacion360Admin1.listaPersonalEvaluado.size() * 100}">
+                                                    <f:convertNumber pattern="###,###.##" />
+                                                </h:outputLabel>
+                                                <sup style="font-size: 20px">%</sup>
                                             </h3>
                                             <p>Evaluación de 360°<br/>Periodo: #{evaluacion360Admin1.periodoEscolar.mesInicio.mes} - #{evaluacion360Admin1.periodoEscolar.mesFin.mes} #{evaluacion360Admin1.periodoEscolar.anio}</p>
                                         </div>
