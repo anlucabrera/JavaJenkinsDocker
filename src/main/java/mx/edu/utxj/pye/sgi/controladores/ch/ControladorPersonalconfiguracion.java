@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,17 +32,19 @@ public class ControladorPersonalconfiguracion implements Serializable {
     @Getter    @Setter    private List<AreasUniversidad> nuevaListaAreasUniversidads = new ArrayList<>();
     @Getter    @Setter    private List<Categorias> nuevaListaCategoriases = new ArrayList<>();
     @Getter    @Setter    private List<PersonalCategorias> nuevaListaPersonalCategoriases = new ArrayList<>();
-    
+
+    @Getter    @Setter    private Iterator<ListaPersonal> empleadoActual;
+
     @Getter    @Setter    private PersonalCategorias nuevoOBJPersonalCategorias;
     @Getter    @Setter    private AreasUniversidad nuevoOBJAreasUniversidad;
     @Getter    @Setter    private Categorias nuevoOBJCategorias;
-    
+
     @Getter    @Setter    private Short claveCatagoria=0;    
-    
+
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
- 
+
     @PostConstruct
     public void init() {
         System.out.println("ControladorPersonalconfiguracion Inicio: " + System.currentTimeMillis());
@@ -68,6 +71,14 @@ public class ControladorPersonalconfiguracion implements Serializable {
             nuevaListaCategoriases = ejbAreasLogeo.mostrarCategorias();
             nuevaListaAreasUniversidads = ejbAreasLogeo.mostrarAreasUniversidad();
 
+            empleadoActual = nuevaListaPersonals.iterator();
+            while (empleadoActual.hasNext()) {
+                ListaPersonal next = empleadoActual.next();
+                if (next.getActividad() == 1 || next.getActividad() == 3) {
+                    empleadoActual.remove();
+                }
+            }
+            
             Collections.sort(nuevaListaAreasUniversidads, (x, y) -> x.getCategoria().getCategoria().compareTo(y.getCategoria().getCategoria()));
             Collections.sort(nuevaListaPersonalCategoriases, (x, y) -> x.getTipo().compareTo(y.getTipo()));
             Collections.sort(nuevaListaPersonals, (x, y) -> Short.compare(x.getCategoriaOperativa(),y.getCategoriaOperativa()));

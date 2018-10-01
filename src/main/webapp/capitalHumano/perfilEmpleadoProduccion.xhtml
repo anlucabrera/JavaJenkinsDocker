@@ -905,7 +905,7 @@
                                             <p:tabView >
                                                 <p:tab title="Proyectos" >
                                                     <p:remoteCommand name="actualizarTabla4" actionListener="#{controladorProduccionPersonal.metodoBase()}" update="tblActividades" />
-                                                    <p:dataTable id="tblActividades" value="#{controladorProduccionPersonal.nuevaListatInvestigaciones}" var="proyIn"
+                                                    <p:dataTable id="tblActividades" value="#{controladorProduccionPersonal.nuevaListatProyectos}" var="proyIn"
                                                                  paginator="true" rows="5"
                                                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                                  rowsPerPageTemplate="5,10,15,20,25,30"
@@ -920,8 +920,8 @@
                                                         </f:facet>
 
                                                         <p:column style="width: 50px;">
-                                                            <p:commandButton actionListener="#{controladorProduccionPersonal.eliminaInvestigacion(proyIn)}" update="tblActividades" oncomplete="actualizarTabla4()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                                <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{proyIn.nombreInvestigacion}?" icon="ui-icon-alert" />
+                                                            <p:commandButton actionListener="#{controladorProduccionPersonal.eliminaInvestigacion(proyIn)}" update="tblActividades" oncomplete="actualizarTabla4()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar Investigacion">
+                                                                <p:confirm header="Confirmación" message="¿Confirma la eliminación del proyecto #{proyIn.nombreInvestigacion}?" icon="ui-icon-alert" />
                                                             </p:commandButton>
                                                         </p:column>
 
@@ -957,7 +957,7 @@
                                                 </p:tab>
                                                 <p:tab title="Trabajos" >
                                                     <p:remoteCommand name="actualizarTabla5" actionListener="#{controladorProduccionPersonal.metodoBase()}" update="tblInvestigaciones" />
-                                                    <p:dataTable id="tblInvestigaciones" value="#{controladorProduccionPersonal.nuevaListatInvestigaciones}" var="trabIn"
+                                                    <p:dataTable id="tblInvestigaciones" value="#{controladorProduccionPersonal.nuevaListatTrabajos}" var="trabIn"
                                                                  paginator="true" rows="5"
                                                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                                  rowsPerPageTemplate="5,10,15,20,25,30"
@@ -973,7 +973,7 @@
 
                                                         <p:column style="width: 50px;">
                                                             <p:commandButton actionListener="#{controladorProduccionPersonal.eliminaInvestigacion(trabIn)}" update="tblInvestigaciones" oncomplete="actualizarTabla5()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                                <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{trabIn.nombreInvestigacion}?" icon="ui-icon-alert" />
+                                                                <p:confirm header="Confirmación" message="¿Confirma la eliminación del trabajo #{trabIn.nombreInvestigacion}?" icon="ui-icon-alert" />
                                                             </p:commandButton>
                                                         </p:column>
 

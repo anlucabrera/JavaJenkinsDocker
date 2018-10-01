@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Planeacion
+ * @author UTXJ
  */
 @Entity
 @Table(name = "areas_universidad", catalog = "prontuario", schema = "")
@@ -35,7 +35,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "AreasUniversidad.findByNombre", query = "SELECT a FROM AreasUniversidad a WHERE a.nombre = :nombre")
     , @NamedQuery(name = "AreasUniversidad.findBySiglas", query = "SELECT a FROM AreasUniversidad a WHERE a.siglas = :siglas")
     , @NamedQuery(name = "AreasUniversidad.findByResponsable", query = "SELECT a FROM AreasUniversidad a WHERE a.responsable = :responsable")
-    , @NamedQuery(name = "AreasUniversidad.findByVigente", query = "SELECT a FROM AreasUniversidad a WHERE a.vigente = :vigente")})
+    , @NamedQuery(name = "AreasUniversidad.findByVigente", query = "SELECT a FROM AreasUniversidad a WHERE a.vigente = :vigente")
+    , @NamedQuery(name = "AreasUniversidad.findByTienePoa", query = "SELECT a FROM AreasUniversidad a WHERE a.tienePoa = :tienePoa")})
 public class AreasUniversidad implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -63,6 +64,10 @@ public class AreasUniversidad implements Serializable {
     @Size(min = 1, max = 2)
     @Column(name = "vigente")
     private String vigente;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "tiene_poa")
+    private boolean tienePoa;
     @JoinColumn(name = "categoria", referencedColumnName = "categoria")
     @ManyToOne(optional = false)
     private Categorias categoria;
@@ -74,11 +79,12 @@ public class AreasUniversidad implements Serializable {
         this.area = area;
     }
 
-    public AreasUniversidad(Short area, String nombre, String siglas, String vigente) {
+    public AreasUniversidad(Short area, String nombre, String siglas, String vigente, boolean tienePoa) {
         this.area = area;
         this.nombre = nombre;
         this.siglas = siglas;
         this.vigente = vigente;
+        this.tienePoa = tienePoa;
     }
 
     public Short getArea() {
@@ -129,6 +135,14 @@ public class AreasUniversidad implements Serializable {
         this.vigente = vigente;
     }
 
+    public boolean getTienePoa() {
+        return tienePoa;
+    }
+
+    public void setTienePoa(boolean tienePoa) {
+        this.tienePoa = tienePoa;
+    }
+
     public Categorias getCategoria() {
         return categoria;
     }
@@ -159,7 +173,7 @@ public class AreasUniversidad implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.ejb.prontuario.AreasUniversidad[ area=" + area + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad[ area=" + area + " ]";
     }
     
 }

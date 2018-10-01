@@ -41,9 +41,31 @@
     </ui:define>
 
     <ui:define name="body">
-       
+
 
         <adm:sidebar collapsed="true"/>
+
+        <h:form id="frmAlineacionEstratejica" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    <p:panel header="Alineación estratégica">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3 col-lg-3">            
+                                <p:autoUpdate/>
+                                <p:outputLabel value="Eje rector:" />
+                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorPOARecurso.asignarParametrosRegistro}">
+                                    <f:selectItems value="#{controladorPOARecurso.listaEjesRegistros}" var="eje" itemValue="#{eje.eje}" itemLabel="#{eje.eje} -- #{eje.nombre}" />
+                                    <p:ajax update=":frm" listener="#{controladorPOARecurso.imprimirValores()}"/>
+                                </p:selectOneMenu> 
+                                <p:message for="eje" display="tooltip" />
+                            </div>
+                        </div>
+                    </p:panel>
+                </div>
+            </div>
+        </h:form>
+
+
         <h:form id="frm" prependId="false" class="form-inline">
             <div class="box box-primary">
                 <div class="box-header with-border">
@@ -143,8 +165,8 @@
 
                                                 <p:headerRow>
                                                     <p:column colspan="#{controladorEvaluacionActividadesPOA.mes eq 3?'18':
-                                                                             controladorEvaluacionActividadesPOA.mes eq 7?'18':
-                                                                             controladorEvaluacionActividadesPOA.mes eq 11?'18':'17'}" styleClass="lac">
+                                                                         controladorEvaluacionActividadesPOA.mes eq 7?'18':
+                                                                         controladorEvaluacionActividadesPOA.mes eq 11?'18':'17'}" styleClass="lac">
                                                         <h:outputText value="#{controladorEvaluacionActividadesPOA.ejes.eje}.#{estrategiasRegistro.estrategias.numero}.#{poa.actividadesPoa.cuadroMandoInt.lineaAccion.numero}.#{poa.actividadesPoa.cuadroMandoInt.lineaAccion.nombre}"/>
                                                     </p:column>
                                                 </p:headerRow>

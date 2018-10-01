@@ -17,13 +17,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
-import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
 import mx.edu.utxj.pye.sgi.entity.ch.Docencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
 import mx.edu.utxj.pye.sgi.entity.ch.InformacionAdicionalPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
 import mx.edu.utxj.pye.sgi.entity.ch.Notificaciones;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import org.omnifaces.util.Messages;
 
 @Named
@@ -44,13 +44,13 @@ public class ControladorEmpleado implements Serializable {
     @Getter    @Setter    private InformacionAdicionalPersonal nuevoOBJInformacionAdicionalPersonal;
     @Getter    @Setter    private ListaPersonal nuevoOBJListaPersonal;    
     
-    @Getter    @Setter    private Boolean fechaLimiteCV,fechaLimiteFunciones,procesoElectoralActivo;
+    @Getter    @Setter    private Boolean fechaLimiteCV,fechaLimiteFunciones,procesoElectoralActivo,tienePOA=false;
        
     @Getter    @Setter    private List<Modulosregistro> nuevaListaModulosregistro = new ArrayList<>();
     
     @Getter    @Setter    private Eventos nuevaEventos;
     
-    @Getter    @Setter    private Bitacoraacceso nuevaBitacoraacceso;
+    @Getter    @Setter    private AreasUniversidad nuevaAreasUniversidad=new AreasUniversidad();
     
     
     @Getter    @Setter    private Date fechaActual = new Date();
@@ -61,6 +61,7 @@ public class ControladorEmpleado implements Serializable {
 
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
     @Inject    LogonMB logonMB;
 
     @PostConstruct
@@ -74,6 +75,7 @@ public class ControladorEmpleado implements Serializable {
         mostrarPerfilLogeado();
         informacionComplementariaAEmpleadoLogeado();
         procesoElectoral();
+        areaPoa();
         llenaListaPaises();
         System.out.println(" ControladorEmpleado Fin: " + System.currentTimeMillis());
     }
@@ -156,6 +158,18 @@ public class ControladorEmpleado implements Serializable {
             }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void areaPoa() {
+        try {
+            nuevaAreasUniversidad = ejbAreasLogeo.mostrarAreasUniversidad(nuevoOBJListaPersonal.getAreaOperativa());
+            if (nuevaAreasUniversidad != null) {
+                tienePOA=nuevaAreasUniversidad.getTienePoa();
+            }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
