@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
@@ -23,15 +24,12 @@ import org.omnifaces.cdi.ViewScoped;
 @ViewScoped
 public class ControladorPOAEvaluacion implements Serializable {
     
-    @Getter    @Setter
-    private Short ejercicioFiscal = 0;
-    @Getter    @Setter
-    private EjesRegistro ejesRegistro = new EjesRegistro();
+    @Getter    @Setter    private Short ejercicioFiscal = 0;
+    @Getter    @Setter    private EjesRegistro ejesRegistro = new EjesRegistro();
     // Listas de DTO's
-    @Getter    @Setter
-    private List<listaEjesEsLaAp> ejesEsLaAp = new ArrayList<>();
-    @Getter    @Setter
-    private List<listaEjeEstrategia> listaListaEjeEstrategia = new ArrayList<>();
+    @Getter    @Setter    private List<EjesRegistro> listaEjesRegistros = new ArrayList<>();
+    @Getter    @Setter    private List<listaEjesEsLaAp> ejesEsLaAp = new ArrayList<>();
+    @Getter    @Setter    private List<listaEjeEstrategia> listaListaEjeEstrategia = new ArrayList<>();
     @Getter    @Setter    private List<listaEstrategiaActividades> listaEstrategiaActividadesesEje = new ArrayList<>();
 
     @EJB    EjbPoaSelectec poaSelectec;
@@ -41,7 +39,25 @@ public class ControladorPOAEvaluacion implements Serializable {
     public void init() {
         
     }
-    
+    public void consultarListasInit() {
+        listaEjesRegistros.clear();
+
+        listaEjesRegistros.add(new EjesRegistro(0, "Selecciones Uno", "Selecciones Uno", "Selecciones Uno", "Selecciones Uno"));
+        poaSelectec.mostrarEjesRegistrosAreas(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal).forEach((t) -> {
+            listaEjesRegistros.add(t);
+        });
+
+    }
+
+    public void asignarParametrosRegistro(ValueChangeEvent event) {
+        if (Short.parseShort(event.getNewValue().toString()) != Short.parseShort("0")) {
+            ejesRegistro = new EjesRegistro();
+            ejesRegistro = poaSelectec.mostrarEjeRegistro(Integer.parseInt(event.getNewValue().toString()));
+        } else {
+            ejesRegistro = new EjesRegistro();
+        }
+    }
+
     public void consultarListas() {
 
         listaEstrategiaActividadesesEje = new ArrayList<>();

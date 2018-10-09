@@ -405,6 +405,24 @@ public class ServiciosPoaSelectec implements EjbPoaSelectec {
         facadePoa.flush();
         return evidenciasDetalle;
     }
+    
+    
+    @Override
+    public Evidencias eliminarEvidencias(Evidencias evidencias){
+        facadePoa.setEntityClass(Evidencias.class);
+        facadePoa.remove(evidencias);
+        facadePoa.flush();
+        return evidencias;
+    }
+
+    @Override
+    public EvidenciasDetalle eliminarEvidenciasDetalle(EvidenciasDetalle evidenciasDetalle){
+        facadePoa.setEntityClass(EvidenciasDetalle.class);
+        facadePoa.remove(evidenciasDetalle);
+        facadePoa.flush();
+        return evidenciasDetalle;
+    }
+
 
     @Override
     public List<Evidencias> mostrarEvidenciases(ActividadesPoa actividad) {
@@ -438,7 +456,7 @@ public class ServiciosPoaSelectec implements EjbPoaSelectec {
         List<ActividadesPoa> actividades = new ArrayList<>();
         facadePoa.flush();
         actividades.clear();
-        actividades = facadePoa.getEntityManager().createQuery("SELECT a FROM ActividadesPoa a INNER JOIN a.cuadroMandoInt cm INNER JOIN cm.eje ej INNER JOIN cm.ejercicioFiscal ef WHERE cm.estrategia.estrategia=:estrategia AND ej.eje=:eje AND ef.ejercicioFiscal=:ejercicioFiscal AND a.area=:area GROUP BY a.actividadPoa ORDER BY a.actividadPoa", ActividadesPoa.class)
+        actividades = facadePoa.getEntityManager().createQuery("SELECT a FROM ActividadesPoa a INNER JOIN a.cuadroMandoInt cm INNER JOIN cm.eje ej INNER JOIN cm.ejercicioFiscal ef WHERE cm.estrategia.estrategia=:estrategia AND ej.eje=:eje AND ef.ejercicioFiscal=:ejercicioFiscal AND a.area=:area GROUP BY a.actividadPoa ORDER BY a.numeroP, a.numeroS", ActividadesPoa.class)
                 .setParameter("estrategia", estrategia.getEstrategia())
                 .setParameter("eje", eje.getEje())
                 .setParameter("ejercicioFiscal", ejercicio)
@@ -457,10 +475,11 @@ public class ServiciosPoaSelectec implements EjbPoaSelectec {
     }
 
     @Override
-    public List<ActividadesPoa> getActividadesEvaluacionMadre(CuadroMandoIntegral cuadroDmando, Short numeroP) {
-        return facadePoa.getEntityManager().createQuery("SELECT a FROM ActividadesPoa a INNER JOIN a.cuadroMandoInt cm WHERE cm.cuadroMandoInt=:cuadroMandoInt AND a.numeroP=:numeroP ORDER BY a.actividadPoa", ActividadesPoa.class)
+    public List<ActividadesPoa> getActividadesEvaluacionMadre(CuadroMandoIntegral cuadroDmando, Short numeroP,Short area) {
+        return facadePoa.getEntityManager().createQuery("SELECT a FROM ActividadesPoa a INNER JOIN a.cuadroMandoInt cm WHERE cm.cuadroMandoInt=:cuadroMandoInt AND a.numeroP=:numeroP  AND a.area=:area ORDER BY a.actividadPoa", ActividadesPoa.class)
                 .setParameter("cuadroMandoInt", cuadroDmando.getCuadroMandoInt())
                 .setParameter("numeroP", numeroP)
+                .setParameter("area", area)
                 .getResultList()
                 .stream()
                 .distinct()

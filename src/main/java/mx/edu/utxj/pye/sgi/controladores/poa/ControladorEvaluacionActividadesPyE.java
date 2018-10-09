@@ -441,7 +441,7 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit()" + ultimaEstrategiaExpandida.getEstrategia());
 
         if (modificada.getNumeroS() != 0) {
-            actividads = poaSelectec.getActividadesEvaluacionMadre(modificada.getCuadroMandoInt(), modificada.getNumeroP());
+            actividads = poaSelectec.getActividadesEvaluacionMadre(modificada.getCuadroMandoInt(), modificada.getNumeroP(),claveArea);
             if (!actividads.isEmpty()) {
                 actividads.forEach((t) -> {
                     if (t.getNumeroS() == 0) {

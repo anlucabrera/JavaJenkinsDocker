@@ -418,6 +418,8 @@ public class ControladorPOARecurso implements Serializable {
     }
 
     public void onCellEditProductos(RowEditEvent event) {
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARecurso.onCellEditProductos(1)"+event.getObject());
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARecurso.onCellEditProductos(2)"+event.getObject().getClass());
         System.out.println("edicion"+System.currentTimeMillis());
         RecursosActividad modificada = (RecursosActividad) event.getObject();
         totalRecursoActividad = modificada.getRPEnero() + modificada.getRPFebero() + modificada.getRPMarzo() + modificada.getRPAbril() + modificada.getRPMayo() + modificada.getRPJunio() + modificada.getRPJulio() + modificada.getRPAgosto() + modificada.getRPSeptiembre() + modificada.getRPOctubre() + modificada.getRPNoviembre() + modificada.getRPDiciembre();
@@ -472,16 +474,12 @@ public class ControladorPOARecurso implements Serializable {
     }
     
     public void obteneroTotalesCapitulos() {
-        recursosActividads2 = new ArrayList<>();
-        recursosActividads3 = new ArrayList<>();
-        recursosActividads4 = new ArrayList<>();
-        recursosActividads5 = new ArrayList<>();
+        recursosActividads2 = new ArrayList<>();        recursosActividads3 = new ArrayList<>();
+        recursosActividads4 = new ArrayList<>();        recursosActividads5 = new ArrayList<>();
         recursosActividadscdh = new ArrayList<>();
 
-        recursosActividads2.clear();
-        recursosActividads3.clear();
-        recursosActividads4.clear();
-        recursosActividads5.clear();
+        recursosActividads2.clear();        recursosActividads3.clear();
+        recursosActividads4.clear();        recursosActividads5.clear();
         recursosActividadscdh.clear();
 
         recursosActividads2=poaSelectec.mostrarRecursosActividad(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, Short.parseShort("2"));

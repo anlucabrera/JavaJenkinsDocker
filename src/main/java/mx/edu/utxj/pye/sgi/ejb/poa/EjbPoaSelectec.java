@@ -111,6 +111,10 @@ public interface EjbPoaSelectec {
     public List<PretechoFinanciero> mostrarPretechoFinancieros(Short clavearea, Short ejercicioFiscal);
 //  ------------------------------------------- Evidencias --------------------------------------------------
 
+    public Evidencias eliminarEvidencias(Evidencias evidencias);
+
+    public EvidenciasDetalle eliminarEvidenciasDetalle(EvidenciasDetalle evidenciasDetalle);
+
     public Evidencias agregarEvidenciases(Evidencias evidencias, ActividadesPoa actividadesPoa);
 
     public Evidencias actualizarEvidenciases(Evidencias evidencias);
@@ -124,5 +128,5 @@ public interface EjbPoaSelectec {
 
     public List<ActividadesPoa> getActividadesPoasporEstarategias(Estrategias estrategia, EjesRegistro eje, Short ejercicio, Short area);
 
-    public List<ActividadesPoa> getActividadesEvaluacionMadre(CuadroMandoIntegral cuadroDmando, Short numeroP);
+    public List<ActividadesPoa> getActividadesEvaluacionMadre(CuadroMandoIntegral cuadroDmando, Short numeroP,Short area);
 }

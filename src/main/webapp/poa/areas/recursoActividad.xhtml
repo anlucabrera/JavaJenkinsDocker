@@ -110,10 +110,10 @@
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
                                         <p:outputLabel value="Capítulo 5000"/>                            
                                     </div>
-                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorPOARecurso.pretechoCPDD eq 0.0?'collapse':'visible'};">
                                         <p:outputLabel value="Captación de derechos"/>                            
                                     </div>
-                                    <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
+                                    <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center;">
                                         <p:outputLabel value="Total"/>                            
                                     </div>
                                 </div>
@@ -133,7 +133,7 @@
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
                                         <p:outputLabel value="#{controladorPOARecurso.pretecho5000}"/>
                                     </div>
-                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorPOARecurso.pretechoCPDD eq 0.0?'collapse':'visible'};">
                                         <p:outputLabel value="#{controladorPOARecurso.pretechoCPDD}"/>
                                     </div>
                                     <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
@@ -156,7 +156,7 @@
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
                                         <p:outputLabel value="#{controladorPOARecurso.totalCaptitulo5000}"/>
                                     </div>
-                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorPOARecurso.pretechoCPDD eq 0.0?'collapse':'visible'};">
                                         <p:outputLabel value="#{controladorPOARecurso.totalCaptituloCPDD}"/>
                                     </div>
                                     <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
@@ -179,7 +179,7 @@
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
                                         <p:outputLabel style="#{controladorPOARecurso.claseP4 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorPOARecurso.pretecho5000-controladorPOARecurso.totalCaptitulo5000}"/>
                                     </div>
-                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorPOARecurso.pretechoCPDD eq 0.0?'collapse':'visible'};">
                                         <p:outputLabel style="#{controladorPOARecurso.clasePC eq 'mayor'?'':'color: #ff0000'}" value="#{controladorPOARecurso.pretechoCPDD-controladorPOARecurso.totalCaptituloCPDD}"/>
                                     </div>
                                     <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
@@ -291,9 +291,6 @@
                                                                                  styleClass="btn-primary" title="Agregar recurso" onsuccess="actualizarTabla()"/> 
                                                             </p:column>
 
-
-
-
                                                             <p:rowExpansion>
 
                                                                 <p:dataTable id="dtbRecurso" var="recurso" sortBy="#{recurso.productoArea.partida.partida}" expandableRowGroups="true"
@@ -326,10 +323,10 @@
                                                                     </p:columnGroup>
 
                                                                     <p:headerRow>
-                                                                        <p:column colspan="2" style="background: #d9faff;">
+                                                                        <p:column colspan="2" style="background: #2796cb; color: #FFFFFF;">
                                                                             <h:outputText value="Partida: #{recurso.productoArea.partida.partida}" />
                                                                         </p:column>
-                                                                        <p:column colspan="14" style="background: #d9faff;">
+                                                                        <p:column colspan="14" style="background: #2796cb; color: #FFFFFF;">
                                                                             <h:outputText value="#{recurso.productoArea.partida.denominacion}" />
                                                                         </p:column>
                                                                     </p:headerRow>
@@ -434,7 +431,6 @@
                                                                         <p:commandButton actionListener="#{controladorPOARecurso.eliminarRecursoActividad(recurso)}" process="@this" update="frm" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar recurso">
                                                                             <p:confirm header="Confirmación" message="¿Confirma la eliminación del producto #{recurso.productoArea.productos.descripcion} ?" icon="ui-icon-alert" />
                                                                         </p:commandButton>
-
                                                                     </p:column>
                                                                 </p:dataTable>                                                            
 
@@ -528,12 +524,6 @@
                         <p:commandButton value="Aceptar" id="btnAgregarRecurso" actionListener="#{controladorPOARecurso.agregarRecursoActividad()}"
                                          icon="fa fa-chek" styleClass="btn-primary"  update=":frm" process=":frmAsignaRecurso"
                                          onsuccess="actualizarTabla()" oncomplete="PF('delRegistroProdustos').hide()"/>
-
-                        <p:commandButton value="Cancelar" id="btnCancelar" actionListener="#{controladorPOARecurso.resetearValores()}"  
-                                         oncomplete="PF('delRegistroProdustos').hide()" icon="fa fa-times" 
-                                         styleClass="btn-primary" update=":frm" />
-
-
                     </div>
                 </h:form>
             </p:dialog>

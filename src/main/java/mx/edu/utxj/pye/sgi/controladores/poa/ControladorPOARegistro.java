@@ -547,34 +547,21 @@ public class ControladorPOARegistro implements Serializable {
                 });
             }
             listaActividadesPoasHijas.forEach((t) -> {
-                mes1 = mes1 + t.getNPEnero();
-                mes2 = mes2 + t.getNPFebrero();
-                mes3 = mes3 + t.getNPMarzo();
-                mes4 = mes4 + t.getNPAbril();
-                mes5 = mes5 + t.getNPMayo();
-                mes6 = mes6 + t.getNPJunio();
-                mes7 = mes7 + t.getNPJulio();
-                mes8 = mes8 + t.getNPAgosto();
-                mes9 = mes9 + t.getNPSeptiembre();
-                mes10 = mes10 + t.getNPOctubre();
-                mes11 = mes11 + t.getNPNoviembre();
-                mes12 = mes12 + t.getNPDiciembre();
+                mes1 = mes1 + t.getNPEnero();                mes2 = mes2 + t.getNPFebrero();
+                mes3 = mes3 + t.getNPMarzo();                mes4 = mes4 + t.getNPAbril();
+                mes5 = mes5 + t.getNPMayo();                mes6 = mes6 + t.getNPJunio();
+                mes7 = mes7 + t.getNPJulio();                mes8 = mes8 + t.getNPAgosto();
+                mes9 = mes9 + t.getNPSeptiembre();                mes10 = mes10 + t.getNPOctubre();
+                mes11 = mes11 + t.getNPNoviembre();                mes12 = mes12 + t.getNPDiciembre();
             });
             totalProgramado = mes1 + mes2 + mes3 + mes4 + mes5 + mes6 + mes7 + mes8 + mes9 + mes10 + mes11 + mes12;
-            actividadPoaPrincipal.setNPEnero(Short.parseShort(mes1.toString()));
-            actividadPoaPrincipal.setNPFebrero(Short.parseShort(mes2.toString()));
-            actividadPoaPrincipal.setNPMarzo(Short.parseShort(mes3.toString()));
-            actividadPoaPrincipal.setNPAbril(Short.parseShort(mes4.toString()));
-            actividadPoaPrincipal.setNPMayo(Short.parseShort(mes5.toString()));
-            actividadPoaPrincipal.setNPJunio(Short.parseShort(mes6.toString()));
-            actividadPoaPrincipal.setNPJulio(Short.parseShort(mes7.toString()));
-            actividadPoaPrincipal.setNPAgosto(Short.parseShort(mes8.toString()));
-            actividadPoaPrincipal.setNPSeptiembre(Short.parseShort(mes9.toString()));
-            actividadPoaPrincipal.setNPOctubre(Short.parseShort(mes10.toString()));
-            actividadPoaPrincipal.setNPNoviembre(Short.parseShort(mes11.toString()));
-            actividadPoaPrincipal.setNPDiciembre(Short.parseShort(mes12.toString()));
-            actividadPoaPrincipal.setTotal(Short.parseShort(totalProgramado.toString()));
-            poaSelectec.actualizaActividadesPoa(actividadPoaPrincipal);
+            actividadPoaPrincipal.setNPEnero(Short.parseShort(mes1.toString()));            actividadPoaPrincipal.setNPFebrero(Short.parseShort(mes2.toString()));
+            actividadPoaPrincipal.setNPMarzo(Short.parseShort(mes3.toString()));            actividadPoaPrincipal.setNPAbril(Short.parseShort(mes4.toString()));
+            actividadPoaPrincipal.setNPMayo(Short.parseShort(mes5.toString()));            actividadPoaPrincipal.setNPJunio(Short.parseShort(mes6.toString()));
+            actividadPoaPrincipal.setNPJulio(Short.parseShort(mes7.toString()));            actividadPoaPrincipal.setNPAgosto(Short.parseShort(mes8.toString()));
+            actividadPoaPrincipal.setNPSeptiembre(Short.parseShort(mes9.toString()));            actividadPoaPrincipal.setNPOctubre(Short.parseShort(mes10.toString()));
+            actividadPoaPrincipal.setNPNoviembre(Short.parseShort(mes11.toString()));            actividadPoaPrincipal.setNPDiciembre(Short.parseShort(mes12.toString()));
+            actividadPoaPrincipal.setTotal(Short.parseShort(totalProgramado.toString()));            poaSelectec.actualizaActividadesPoa(actividadPoaPrincipal);
         }
         resetearValores();
         consultarListas();
@@ -640,7 +627,19 @@ public class ControladorPOARegistro implements Serializable {
                 numeroActividadPrincipal = numeroActividadPrincipal + 1;
             });
         } else {
-            listaActividadesPoasHijas.forEach((s) -> {
+            if(listaActividadesPoasHijas.isEmpty()){
+                listaActividadesPoasPadres.forEach((t) -> {
+                    t.setBandera("y");
+                    t.setNPEnero(Short.parseShort("0"));                    t.setNPFebrero(Short.parseShort("0"));
+                    t.setNPMarzo(Short.parseShort("0"));                    t.setNPAbril(Short.parseShort("0"));
+                    t.setNPMayo(Short.parseShort("0"));                    t.setNPJunio(Short.parseShort("0"));
+                    t.setNPJulio(Short.parseShort("0"));                    t.setNPAgosto(Short.parseShort("0"));
+                    t.setNPSeptiembre(Short.parseShort("0"));                    t.setNPOctubre(Short.parseShort("0"));
+                    t.setNPNoviembre(Short.parseShort("0"));                    t.setNPDiciembre(Short.parseShort("0"));
+                    t.setTotal(Short.parseShort("0"));                    poaSelectec.actualizaActividadesPoa(t);
+                });
+            }else{
+                listaActividadesPoasHijas.forEach((s) -> {
                 if (actividadPoaEliminada.getNumeroP() == s.getNumeroP()) {
                     s.setNumeroS(Short.valueOf(numeroActividadSecuendaria.toString()));
                     poaSelectec.actualizaActividadesPoa(s);
@@ -657,6 +656,9 @@ public class ControladorPOARegistro implements Serializable {
                             mes7 = mes7 + s.getNPJulio();                            mes8 = mes8 + s.getNPAgosto();
                             mes9 = mes9 + s.getNPSeptiembre();                            mes10 = mes10 + s.getNPOctubre();
                             mes11 = mes11 + s.getNPNoviembre();                            mes12 = mes12 + s.getNPDiciembre();
+                            t.setBandera("x");
+                        }else{
+                            t.setBandera("y");
                         }
                         totalProgramado = mes1 + mes2 + mes3 + mes4 + mes5 + mes6 + mes7 + mes8 + mes9 + mes10 + mes11 + mes12;
                         t.setNPEnero(Short.parseShort(mes1.toString()));                        t.setNPFebrero(Short.parseShort(mes2.toString()));
@@ -669,6 +671,8 @@ public class ControladorPOARegistro implements Serializable {
                     });
                 }
             });
+            }
+            
         }
         resetearValores();
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARegistro.eliminarActividad()"+ejeActivo);
@@ -774,18 +778,12 @@ public class ControladorPOARegistro implements Serializable {
                 if (s.getNumeroP() == actividadPoaPrincipalEditadaAnterior.getNumeroP()) {
                     numeroActividadSecuendaria = numeroActividadSecuendaria + 1;
                     s.setNumeroS(Short.parseShort(numeroActividadSecuendaria.toString()));
-                    poaSelectec.actualizaActividadesPoa(s);
-                    mes1 = mes1 + s.getNPEnero();
-                    mes2 = mes2 + s.getNPFebrero();
-                    mes3 = mes3 + s.getNPMarzo();
-                    mes4 = mes4 + s.getNPAbril();
-                    mes5 = mes5 + s.getNPMayo();
-                    mes6 = mes6 + s.getNPJunio();
-                    mes7 = mes7 + s.getNPJulio();
-                    mes8 = mes8 + s.getNPAgosto();
-                    mes9 = mes9 + s.getNPSeptiembre();
-                    mes10 = mes10 + s.getNPOctubre();
-                    mes11 = mes11 + s.getNPNoviembre();
+                    poaSelectec.actualizaActividadesPoa(s);                    mes1 = mes1 + s.getNPEnero();
+                    mes2 = mes2 + s.getNPFebrero();                    mes3 = mes3 + s.getNPMarzo();
+                    mes4 = mes4 + s.getNPAbril();                    mes5 = mes5 + s.getNPMayo();
+                    mes6 = mes6 + s.getNPJunio();                    mes7 = mes7 + s.getNPJulio();
+                    mes8 = mes8 + s.getNPAgosto();                    mes9 = mes9 + s.getNPSeptiembre();
+                    mes10 = mes10 + s.getNPOctubre();                    mes11 = mes11 + s.getNPNoviembre();
                     mes12 = mes12 + s.getNPDiciembre();
                 }
             });
@@ -795,20 +793,13 @@ public class ControladorPOARegistro implements Serializable {
                         t.setBandera("y");
                     }
                     totalProgramado = mes1 + mes2 + mes3 + mes4 + mes5 + mes6 + mes7 + mes8 + mes9 + mes10 + mes11 + mes12;
-                    t.setNPEnero(Short.parseShort(mes1.toString()));
-                    t.setNPFebrero(Short.parseShort(mes2.toString()));
-                    t.setNPMarzo(Short.parseShort(mes3.toString()));
-                    t.setNPAbril(Short.parseShort(mes4.toString()));
-                    t.setNPMayo(Short.parseShort(mes5.toString()));
-                    t.setNPJunio(Short.parseShort(mes6.toString()));
-                    t.setNPJulio(Short.parseShort(mes7.toString()));
-                    t.setNPAgosto(Short.parseShort(mes8.toString()));
-                    t.setNPSeptiembre(Short.parseShort(mes9.toString()));
-                    t.setNPOctubre(Short.parseShort(mes10.toString()));
-                    t.setNPNoviembre(Short.parseShort(mes11.toString()));
-                    t.setNPDiciembre(Short.parseShort(mes12.toString()));
-                    t.setTotal(Short.parseShort(totalProgramado.toString()));
-                    poaSelectec.actualizaActividadesPoa(t);
+                    t.setNPEnero(Short.parseShort(mes1.toString()));                    t.setNPFebrero(Short.parseShort(mes2.toString()));
+                    t.setNPMarzo(Short.parseShort(mes3.toString()));                    t.setNPAbril(Short.parseShort(mes4.toString()));
+                    t.setNPMayo(Short.parseShort(mes5.toString()));                    t.setNPJunio(Short.parseShort(mes6.toString()));
+                    t.setNPJulio(Short.parseShort(mes7.toString()));                    t.setNPAgosto(Short.parseShort(mes8.toString()));
+                    t.setNPSeptiembre(Short.parseShort(mes9.toString()));                    t.setNPOctubre(Short.parseShort(mes10.toString()));
+                    t.setNPNoviembre(Short.parseShort(mes11.toString()));                    t.setNPDiciembre(Short.parseShort(mes12.toString()));
+                    t.setTotal(Short.parseShort(totalProgramado.toString()));                    poaSelectec.actualizaActividadesPoa(t);
                 }
             });
         }
@@ -831,18 +822,12 @@ public class ControladorPOARegistro implements Serializable {
                         s.setNumeroS(Short.parseShort(numeroActividadSecuendaria.toString()));
                         poaSelectec.actualizaActividadesPoa(s);
                     }
-                    mes1 = mes1 + s.getNPEnero();
-                    mes2 = mes2 + s.getNPFebrero();
-                    mes3 = mes3 + s.getNPMarzo();
-                    mes4 = mes4 + s.getNPAbril();
-                    mes5 = mes5 + s.getNPMayo();
-                    mes6 = mes6 + s.getNPJunio();
-                    mes7 = mes7 + s.getNPJulio();
-                    mes8 = mes8 + s.getNPAgosto();
-                    mes9 = mes9 + s.getNPSeptiembre();
-                    mes10 = mes10 + s.getNPOctubre();
-                    mes11 = mes11 + s.getNPNoviembre();
-                    mes12 = mes12 + s.getNPDiciembre();
+                    mes1 = mes1 + s.getNPEnero();                    mes2 = mes2 + s.getNPFebrero();
+                    mes3 = mes3 + s.getNPMarzo();                    mes4 = mes4 + s.getNPAbril();
+                    mes5 = mes5 + s.getNPMayo();                    mes6 = mes6 + s.getNPJunio();
+                    mes7 = mes7 + s.getNPJulio();                    mes8 = mes8 + s.getNPAgosto();
+                    mes9 = mes9 + s.getNPSeptiembre();                    mes10 = mes10 + s.getNPOctubre();
+                    mes11 = mes11 + s.getNPNoviembre();                    mes12 = mes12 + s.getNPDiciembre();
                 }
             });
             listaActividadesPoasPadres.forEach((t) -> {
@@ -851,20 +836,13 @@ public class ControladorPOARegistro implements Serializable {
                         t.setBandera("y");
                     }
                     totalProgramado = mes1 + mes2 + mes3 + mes4 + mes5 + mes6 + mes7 + mes8 + mes9 + mes10 + mes11 + mes12;
-                    t.setNPEnero(Short.parseShort(mes1.toString()));
-                    t.setNPFebrero(Short.parseShort(mes2.toString()));
-                    t.setNPMarzo(Short.parseShort(mes3.toString()));
-                    t.setNPAbril(Short.parseShort(mes4.toString()));
-                    t.setNPMayo(Short.parseShort(mes5.toString()));
-                    t.setNPJunio(Short.parseShort(mes6.toString()));
-                    t.setNPJulio(Short.parseShort(mes7.toString()));
-                    t.setNPAgosto(Short.parseShort(mes8.toString()));
-                    t.setNPSeptiembre(Short.parseShort(mes9.toString()));
-                    t.setNPOctubre(Short.parseShort(mes10.toString()));
-                    t.setNPNoviembre(Short.parseShort(mes11.toString()));
-                    t.setNPDiciembre(Short.parseShort(mes12.toString()));
-                    t.setTotal(Short.parseShort(totalProgramado.toString()));
-                    poaSelectec.actualizaActividadesPoa(t);
+                    t.setNPEnero(Short.parseShort(mes1.toString()));                    t.setNPFebrero(Short.parseShort(mes2.toString()));
+                    t.setNPMarzo(Short.parseShort(mes3.toString()));                    t.setNPAbril(Short.parseShort(mes4.toString()));
+                    t.setNPMayo(Short.parseShort(mes5.toString()));                    t.setNPJunio(Short.parseShort(mes6.toString()));
+                    t.setNPJulio(Short.parseShort(mes7.toString()));                    t.setNPAgosto(Short.parseShort(mes8.toString()));
+                    t.setNPSeptiembre(Short.parseShort(mes9.toString()));                    t.setNPOctubre(Short.parseShort(mes10.toString()));
+                    t.setNPNoviembre(Short.parseShort(mes11.toString()));                    t.setNPDiciembre(Short.parseShort(mes12.toString()));
+                    t.setTotal(Short.parseShort(totalProgramado.toString()));                    poaSelectec.actualizaActividadesPoa(t);
                 }
             });
         }
