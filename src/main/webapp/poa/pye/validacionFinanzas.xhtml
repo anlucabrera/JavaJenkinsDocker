@@ -41,32 +41,176 @@
 
     <ui:define name="body">
 
-        <adm:sidebar collapsed="true"/>
+        <adm:sidebar collapsed="true"/> 
+        <h:form id="frmAlineacionEstratejica" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    <p:panel header="Alineación estratégica">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3 col-lg-3">            
+                                <p:autoUpdate/>
+                                <p:outputLabel value="Área:" />
+
+                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorRegistroActividadesPOAPyE.areaSeleccionada}">
+                                    <f:selectItems value="#{controladorRegistroActividadesPOAPyE.areasUniversidadsRegistros}" var="area" itemValue="#{area.area}" itemLabel="#{area.area} -- #{area.nombre}" />
+                                    <p:ajax update=":frm :frm2" listener="#{controladorRegistroActividadesPOAPyE.imprimirValores()}"/>
+                                </p:selectOneMenu> 
+                                <p:message for="eje" display="tooltip" />
+                            </div>
+                        </div>
+                    </p:panel>
+                </div>
+            </div>
+        </h:form>
+        <h:form id="frm2" prependId="false" class="form-inline" >
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <p:separator/>         
+                    <div class="row">         
+                        <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center;">
+                            <p:outputLabel value="Presupuesto general"/>
+                        </div>
+
+                        <p:outputPanel>
+                            <p:autoUpdate/>
+                            <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center">
+                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
+                                    <p:outputLabel value=""/>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="Capítulo 2000"/>                            
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="Capítulo 3000"/>                            
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="Capítulo 4000"/>                            
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="Capítulo 5000"/>                            
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorRegistroActividadesPOAPyE.pretechoCPDD eq 0.0?'collapse':'visible'};">
+                                    <p:outputLabel value="Captación de derechos"/>                            
+                                </div>
+                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center;">
+                                    <p:outputLabel value="Total"/>                            
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center">
+                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
+                                    <p:outputLabel value="Pretecho"/>                            
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.pretecho2000}"/>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.pretecho3000}"/>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.pretecho4000}"/>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.pretecho5000}"/>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorRegistroActividadesPOAPyE.pretechoCPDD eq 0.0?'collapse':'visible'};">
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.pretechoCPDD}"/>
+                                </div>
+                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.totalPretecho}"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center">
+                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
+                                    <p:outputLabel value="Programado por partida"/>                            
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:dataTable var="capitulo2" value="#{controladorRegistroActividadesPOAPyE.capitulo2000}" emptyMessage="Sin recurso asignado">
+                                        <p:column headerText="Partida"><h:outputText value="#{capitulo2.partidas1.partida}" /></p:column>   
+                                        <p:column headerText="Programado"><h:outputText value="#{capitulo2.total}" /></p:column>                                         
+                                    </p:dataTable>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:dataTable var="capitulo3" value="#{controladorRegistroActividadesPOAPyE.capitulo3000}" emptyMessage="Sin recurso asignado">
+                                        <p:column headerText="Partida"><h:outputText value="#{capitulo3.partidas1.partida}" /></p:column>   
+                                        <p:column headerText="Programado"><h:outputText value="#{capitulo3.total}" /></p:column>                                         
+                                    </p:dataTable>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:dataTable var="capitulo4" value="#{controladorRegistroActividadesPOAPyE.capitulo4000}" emptyMessage="Sin recurso asignado">
+                                        <p:column headerText="Partida"><h:outputText value="#{capitulo4.partidas1.partida}" /></p:column>   
+                                        <p:column headerText="Programado"><h:outputText value="#{capitulo4.total}" /></p:column>                                         
+                                    </p:dataTable>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:dataTable var="capitulo5" value="#{controladorRegistroActividadesPOAPyE.capitulo5000}" emptyMessage="Sin recurso asignado">
+                                        <p:column headerText="Partida"><h:outputText value="#{capitulo5.partidas1.partida}" /></p:column>   
+                                        <p:column headerText="Programado"><h:outputText value="#{capitulo5.total}" /></p:column>                                         
+                                    </p:dataTable>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center visibility:#{controladorRegistroActividadesPOAPyE.pretechoCPDD eq 0.0?'collapse':'visible'};">
+                                    <p:dataTable var="capituloCPDD" value="#{controladorRegistroActividadesPOAPyE.capituloCPDD}" emptyMessage="Sin recurso asignado" rendered="#{controladorRegistroActividadesPOAPyE.pretechoCPDD eq 0.0?false:true}">
+                                        <p:column headerText="Partida"><h:outputText value="#{capituloCPDD.partidas1.partida}" /></p:column>   
+                                        <p:column headerText="Programado"><h:outputText value="#{capituloCPDD.total}" /></p:column>                                         
+                                    </p:dataTable>
+                                </div>
+                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
+                                    <p:outputLabel value=""/>
+                                </div>         
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center">
+                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
+                                    <p:outputLabel value="Programado"/>                            
+                                </div>                                
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.totalCaptitulo2000}"/>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.totalCaptitulo3000}"/>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.totalCaptitulo4000}"/>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.totalCaptitulo5000}"/>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorRegistroActividadesPOAPyE.pretechoCPDD eq 0.0?'collapse':'visible'};">
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.totalCaptituloCPDD}"/>
+                                </div>
+                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.totalCaptitulos}"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center">
+                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
+                                    <p:outputLabel value="Disponible"/>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel style="#{controladorRegistroActividadesPOAPyE.claseP1 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorRegistroActividadesPOAPyE.pretecho2000-controladorRegistroActividadesPOAPyE.totalCaptitulo2000}"/>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel style="#{controladorRegistroActividadesPOAPyE.claseP2 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorRegistroActividadesPOAPyE.pretecho3000-controladorRegistroActividadesPOAPyE.totalCaptitulo3000}"/>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel style="#{controladorRegistroActividadesPOAPyE.claseP3 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorRegistroActividadesPOAPyE.pretecho4000-controladorRegistroActividadesPOAPyE.totalCaptitulo4000}"/>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel style="#{controladorRegistroActividadesPOAPyE.claseP4 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorRegistroActividadesPOAPyE.pretecho5000-controladorRegistroActividadesPOAPyE.totalCaptitulo5000}"/>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorRegistroActividadesPOAPyE.pretechoCPDD eq 0.0?'collapse':'visible'};">
+                                    <p:outputLabel style="#{controladorRegistroActividadesPOAPyE.clasePC eq 'mayor'?'':'color: #ff0000'}" value="#{controladorRegistroActividadesPOAPyE.pretechoCPDD-controladorRegistroActividadesPOAPyE.totalCaptituloCPDD}"/>
+                                </div>
+                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
+                                    <p:outputLabel style="#{controladorRegistroActividadesPOAPyE.clasePT eq 'mayor'?'':'color: #ff0000'}" value="#{controladorRegistroActividadesPOAPyE.totalPretecho-controladorRegistroActividadesPOAPyE.totalCaptitulos}"/>
+                                </div>
+                            </div>
+                        </p:outputPanel>
+                    </div>
+                </div>
+            </div>
+        </h:form>
         <h:form id="frm" prependId="false" class="form-inline">
             <div class="box box-primary">
                 <div class="box-header with-border">
-                    <div id="main-buttons" class="hidden-sm hidden-xs" >
-                        <p:toolbar id="tb">
-                            <f:facet name="left">
-                                <p:outputPanel>     
-                                    <p:outputLabel value="Área: " />
-                                    <p:autoUpdate/>
-                                </p:outputPanel>
-                            </f:facet>
-                            <f:facet name="center">
-                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>                                
-                            </f:facet>
-                            <f:facet name="right">
-
-                                <p:outputPanel>            
-                                    <p:autoUpdate/>
-                                    <p:commandButton value="Parámetros registro" id="btnRdV" actionListener="#{controladorRegistroActividadesPOAPyE.imprimirValores()}"  oncomplete="PF('dlgParametros').show()" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":dtbBajas" />
-
-                                </p:outputPanel>
-                            </f:facet>
-                        </p:toolbar>
-                    </div>
-                    <p:separator/>
                     <div class="box box-solid">
                         <div class="box-body">
                             <div class="row">
@@ -107,11 +251,11 @@
                                                                 <p:column rowspan="2" style="width:50px"/>
                                                                 <p:column rowspan="2" headerText="No." style="width: 50px;"/>
                                                                 <p:column rowspan="2" headerText="Actividad" />
-                                                                <p:column rowspan="2" headerText="Unidad de medida" />
+                                                                <p:column rowspan="2" headerText="Unidad de medida" style="width:100px;"/>
                                                                 <p:column colspan="12" headerText="Calendarización de Metas" style="width: 700px;"/>  
                                                                 <p:column rowspan="2" headerText="Total" style="width: 50px;"/>
-                                                                <p:column rowspan="2" headerText="Descripción" />
-                                                                <p:column rowspan="2" headerText="Validación de recurso" />
+                                                                <p:column rowspan="2" headerText="Justificacion" />
+                                                                <p:column rowspan="2" headerText="Validación de recurso"  style="width: 100px;"/>
                                                             </p:row>
                                                             <p:row class="success">
                                                                 <p:column headerText="Ene" />
@@ -187,12 +331,12 @@
                                                         <p:column>
                                                             <h:outputText value="#{poa.total}" />
                                                         </p:column>
-                                                        <p:column>
+                                                        <p:column style="text-align: justify" >
                                                             <h:outputText value="#{poa.descripcion}" />
                                                         </p:column>
                                                         <p:column>
-                                                            <p:selectBooleanCheckbox id="validar" value="#{pOa.validadoFinanzas}"
-                                                                                     valueChangeListener="#{controladorRegistroActividadesPOAPyE.validarFinanzas}" >
+                                                            <p:selectBooleanCheckbox id="validar" value="#{poa.validadoFinanzas}"
+                                                                                     valueChangeListener="#{controladorRegistroActividadesPOAPyE.validarFinanzas(poa)}" >
                                                                 <p:ajax update=":dtbBajas" />
                                                             </p:selectBooleanCheckbox>
                                                         </p:column>
@@ -291,23 +435,5 @@
                 </div>
             </div>
         </h:form>
-
-        <p:dialog header="Seleccionar parámetros de registro" widgetVar="dlgParametros" modal="true" 
-                  showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true"
-                  visible="#{controladorRegistroActividadesPOAPyE.claveEje eq 0?true:false}">
-            <h:form id="frmParametros">
-                <p:outputLabel for="eje"  value="Área" />
-                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorRegistroActividadesPOAPyE.consultarListasValidacionFinal}">
-                    <f:selectItems value="#{controladorEvaluacionActividadesPyE.areasUniversidadsRegistros}" var="area" itemValue="#{area.area}" itemLabel="#{area.area} -- #{area.nombre}" />
-                    <p:ajax update="eje" listener="#{controladorRegistroActividadesPOAPyE.imprimirValores()}"/>
-                </p:selectOneMenu> 
-                <p:message for="eje" display="tooltip" />
-                <hr/>   
-                <h:outputText id="display" />
-                <p:commandButton id="btnAceptarParametro" value="Aceptar" actionListener="#{controladorRegistroActividadesPOAPyE.generaListaActividades()}"
-                                 icon="fa fa-chek" styleClass="btn-primary"  update=":frm:dtbBajas"
-                                 onsuccess="PF('dlgParametros').hide()" />
-            </h:form>
-        </p:dialog>
     </ui:define>
 </ui:composition>

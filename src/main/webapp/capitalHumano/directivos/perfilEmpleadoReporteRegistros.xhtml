@@ -100,19 +100,10 @@
                     </div>
                 </section>
             </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Administrativo'}">
-                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave != 563}">
-                    <h1>
-                        Esta página está disponible solo para directivos.
-                    </h1>
-                </c:if>
-            </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Docente'}">
-                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave != 563}">
-                    <h1>
-                        Esta página está disponible solo para directivos.
-                    </h1>
-                </c:if>
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Administrativo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Docente'}">
+                <h1>
+                    Esta página está disponible solo para directivos.
+                </h1>
             </c:if>
         </p:panel>
     </ui:define>

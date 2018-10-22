@@ -41,8 +41,28 @@
     </ui:define>
 
     <ui:define name="body">
-        
+
         <adm:sidebar collapsed="true"/>
+        <h:form id="frmAlineacionEstratejica" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    <p:panel header="Alineación estratégica">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3 col-lg-3">            
+                                <p:autoUpdate/>
+                                <p:outputLabel value="Área:" />
+
+                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorEvaluacionActividadesPyE.areaSeleccionada}">
+                                    <f:selectItems value="#{controladorEvaluacionActividadesPyE.areasUniversidadsRegistros}" var="area" itemValue="#{area.area}" itemLabel="#{area.area} -- #{area.nombre}" />
+                                    <p:ajax update=":frm:rpActividades" listener="#{controladorEvaluacionActividadesPyE.imprimirValores()}"/>
+                                </p:selectOneMenu> 
+                                <p:message for="eje" display="tooltip" />
+                            </div>
+                        </div>
+                    </p:panel>
+                </div>
+            </div>
+        </h:form>
         <h:form id="frm" prependId="false" class="form-inline">
             <div class="box box-primary">
                 <div class="box-header with-border">
@@ -55,8 +75,7 @@
                             <f:facet name="right">
                                 <p:outputPanel>            
                                     <p:autoUpdate/>
-                                    <p:commandButton value="Parámetros registro" id="btnRdV" actionListener="#{controladorEvaluacionActividadesPyE.imprimirValores()}"  oncomplete="PF('dlgParametros').show()" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
-                                    <p:commandButton value="Enero" id="mes0" actionListener="#{controladorEvaluacionActividadesPyE.obtnerMEs('0')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
+                                   <p:commandButton value="Enero" id="mes0" actionListener="#{controladorEvaluacionActividadesPyE.obtnerMEs('0')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
                                     <p:commandButton value="Febrero" id="mes1" actionListener="#{controladorEvaluacionActividadesPyE.obtnerMEs('1')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
                                     <p:commandButton value="Marzo" id="mes2" actionListener="#{controladorEvaluacionActividadesPyE.obtnerMEs('2')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
                                     <p:commandButton value="Abril" id="mes3" actionListener="#{controladorEvaluacionActividadesPyE.obtnerMEs('3')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
@@ -434,21 +453,36 @@
                                 #{controladorEvaluacionActividadesPyE.evidenciasesDetalles.size()} Evidencias cargadas
                             </f:facet>
                             <p:headerRow>
-                                <p:column colspan="2">
+                                <p:column colspan="3">
                                     <h:outputText value="#{detalle.mes}" />
                                 </p:column>
                             </p:headerRow>
+                            <p:column style="width: 30px">
+                                <p:commandButton actionListener="#{controladorEvaluacionActividadesPyE.eliminarEvidencia(detalle)}" process="@this" update="frm" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar recurso">
+                                    <p:confirm header="Confirmación" message="¿Confirma la eliminación de la evidencia #{detalle.ruta} ?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                            </p:column>
                             <p:column headerText="Tipo" style="width: 100px">
                                 <h:outputText value="#{detalle.mime}" />
                             </p:column>
                             <p:column headerText="Ruta">
-                                <h:outputText value="#{detalle.ruta}" />
+                                <h:outputText value="#{controladorEvaluacionActividadesPyE.convertirRutaMP(detalle.ruta)}" />
+                            </p:column>
+                            <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
+                                <p:link href="http://siip.utxj.edu.mx/archivos/#{controladorEvaluacionActividadesPyE.convertirRutaVistaEvidencia(detalle.ruta)}" target="_blank">
+                                    <i class="fa fa-search"></i>
+                                    <span>Ver</span>
+                                </p:link>
                             </p:column>
                         </p:dataTable>
                     </p:outputPanel>
                 </p:panelGrid>
                 <p:autoUpdate/>
             </p:dialog>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
         </h:form>
 
         <h:form id="frmJuM">
@@ -469,24 +503,6 @@
                 </p:panelGrid>
             </p:dialog>
         </h:form>
-
-
-        <p:dialog header="Seleccionar parámetros de registro" widgetVar="dlgParametros" modal="true" 
-                  showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true"
-                  visible="#{controladorEvaluacionActividadesPyE.claveEje eq 0?true:false}">
-            <h:form id="frmParametros">
-                <p:outputLabel for="eje"  value="Área" />
-                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorEvaluacionActividadesPyE.asignarArea}">
-                    <f:selectItems value="#{controladorEvaluacionActividadesPyE.areasUniversidadsRegistros}" var="area" itemValue="#{area.area}" itemLabel="#{area.area} -- #{area.nombre}" />
-                    <p:ajax update="eje" listener="#{controladorEvaluacionActividadesPyE.imprimirValores()}"/>
-                    <p:message for="eje" display="tooltip" />
-                </p:selectOneMenu> 
-                <hr/>   
-                <h:outputText id="display" />
-                <p:commandButton id="btnAceptarParametro" value="Aceptar" actionListener="#{controladorEvaluacionActividadesPyE.consultarListasValidacionFinal()}"
-                                 icon="fa fa-chek" styleClass="btn-primary"  update=":frm:rpActividades"
-                                 onsuccess="PF('dlgParametros').hide()" />
-            </h:form>
-        </p:dialog>
-    </ui:define>
+        
+          </ui:define>
 </ui:composition>

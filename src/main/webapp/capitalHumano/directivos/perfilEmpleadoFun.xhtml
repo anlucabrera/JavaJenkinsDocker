@@ -62,8 +62,8 @@
                 </div>
             </div>
         </c:if>
-        <p:panel id="informacion" class="hidden-xs hidden-sm">
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Directivo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Coordinador' || controladorEmpleado.nuevoOBJListaPersonal.clave eq 563}">
+        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Directivo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Coordinador' || controladorEmpleado.nuevoOBJListaPersonal.clave eq 563}">
+            <p:panel id="informacion" class="hidden-xs hidden-sm">
                 <section class="content">
                     <div class="row">
                         <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
@@ -650,441 +650,432 @@
                         </div>
                     </div>
                 </section>
-            </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Administrativo'}">
-                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave != 563}">
-                    <h1>
-                        Esta página está disponible solo para directivos.
-                    </h1>
-                </c:if>
-            </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Docente'}">
-                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave != 563}">
-                    <h1>
-                        Esta página está disponible solo para directivos.
-                    </h1>
-                </c:if>
-            </c:if>
-        </p:panel>
+            </p:panel>
 
-        <h:form id="frmayuda" >
-            <p:dialog id="dlgAyuda" header="Ayuda" widgetVar="dlgAyuda" minimizable="true" maximizable="true" position="center">
-                <f:facet name="footer">
-                    <p:commandButton id="btncancelar" value="Cerrar" class="btn btn-primary" icon="fa fa-times" process="@form" update="@form" onsuccess="PF('dlgAyuda').hide();"/>
-                </f:facet>
-                <p:outputPanel>            
-                    <p:autoUpdate/>
-                    <h:panelGrid columns="1"  class="col-md-12">
-                        <object width="800" height="400" data="../../resources/documentos/registro_de_funciones.pdf" style="#{controladorEmpleado.procesoElectoralActivo eq false?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}"/>
-                    </h:panelGrid>
-                </p:outputPanel>
-            </p:dialog>
-        </h:form>
-
-        <h:form id="frmNewP" >
-            <p:dialog id="dlgNewP" header="Puesto especifico" widgetVar="dlgNewP" minimizable="true" maximizable="true" position="center">
-                <f:facet name="footer">
-                    <p:commandButton id="btncancelar" value="Cancelar" class="btn btn-primary" icon="fa fa-times" process="@form" update="@form" onsuccess="PF('dlgNewP').hide();"/>
-                    <p:commandButton id="btnAceptar" value="Guarda puesto específico" class="btn btn-primary" actionListener="#{controladorFunciones.agregarYactualizarCategoriasEspecificas()}" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgNewP').hide();"/>
-                </f:facet>
-                <p:outputPanel autoUpdate="true" style="max-width: 650px; max-height: 600px">
-                    <p:scrollPanel style="width:600px">
+            <h:form id="frmayuda" >
+                <p:dialog id="dlgAyuda" header="Ayuda" widgetVar="dlgAyuda" minimizable="true" maximizable="true" position="center">
+                    <f:facet name="footer">
+                        <p:commandButton id="btncancelar" value="Cerrar" class="btn btn-primary" icon="fa fa-times" process="@form" update="@form" onsuccess="PF('dlgAyuda').hide();"/>
+                    </f:facet>
+                    <p:outputPanel>            
+                        <p:autoUpdate/>
                         <h:panelGrid columns="1"  class="col-md-12">
-                            <p:outputLabel value="Nombre del puesto específico" for="nomPE"/>
-                            <p:inputText id="nomPE" value="#{controladorFunciones.nombreCategoriaEspecifica}" style="text-align: justify" class="col-md-12"/>
-                            <p:message for="nomPE"/>
-
-                            <p:outputLabel value="Empleados para nuevo puesto específico" for="empleNP"/>
-                            <p:selectManyCheckbox id="empleNP" value="#{controladorFunciones.listaClavesEmpleados}" layout="responsive" columns="1">
-                                <f:selectItems value="#{controladorFunciones.listaListaPersonalSubordinados}" var="subordinado" itemLabel="#{subordinado.nombre} - #{subordinado.categoriaOperativaNombre}" itemValue="#{subordinado.clave}" />
-                            </p:selectManyCheckbox>
-                            <p:message for="empleNP"/>
+                            <object width="800" height="400" data="../../resources/documentos/registro_de_funciones.pdf" style="#{controladorEmpleado.procesoElectoralActivo eq false?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}"/>
                         </h:panelGrid>
-                    </p:scrollPanel>
-                </p:outputPanel>
-            </p:dialog>
-        </h:form>
-
-        <h:form id="frmComent" >
-            <p:dialog id="dlgcoment" header="Comentarios" widgetVar="dlgcoment" minimizable="true" maximizable="true" position="center">
-                <f:facet name="footer">
-                    <p:commandButton id="btncancelar" value="Cancelar" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" onsuccess="PF('dlgcoment').hide();"/>
-                    <p:commandButton id="btnAceptar" value="Guardar comentario" class="btn btn-primary" actionListener="#{controladorFunciones.crearComentariosfunciones()}" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgcoment').hide();"/>
-                </f:facet>
-                <p:outputPanel autoUpdate="true" style="max-width: 250px">
-                    <h:panelGrid columns="1"  class="col-md-12">
-                        <p:outputLabel value="Función" for="numc"/>
-                        <h:outputText id="numc" value="#{controladorFunciones.nuevoOBJFuncionesSelect.nombre}" style="text-align: justify" class="col-md-12"/>
-                        <p:message for="numc"/>
-
-                        <p:outputLabel value="Comentario" for="ct"/>
-                        <p:inputTextarea id="ct" value="#{controladorFunciones.nuevoOBJComentariosfunciones.comentario}" required="true" requiredMessage="El comentario es obligatorio." class="col-md-12"/>
-                        <p:message for="ct"/>                       
-                    </h:panelGrid>
-                </p:outputPanel>
-            </p:dialog>
-        </h:form>
-
-        <h:form id="frmObser" >
-            <p:dialog id="dlgObser" header="Comentarios" widgetVar="dlgObser" minimizable="true" maximizable="true" position="center">
-                <p:dataTable id="tblComents"  value="#{controladorFunciones.listaComentariosfuncionesConsulta}"  var="comentario"
-                             paginator="true" rows="5"
-                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                             rowsPerPageTemplate="5,10,15,20,25,30"
-                             emptyMessage="No se encontraron funciones." rendered="true"
-                             editable="true" style="width:1000px; margin-bottom:20px">
-
-                    <p:ajax event="rowEdit" listener="#{controladorFunciones.onRowEditComent}" update="tblComents" />
-                    <p:ajax event="rowEditCancel" listener="#{controladorFunciones.onRowCancel}" update="tblComents" />
-
-                    <p:column headerText="Empleado" 
-                              sortBy="#{comentario.idPersonal.nombre}" 
-                              filterBy="#{comentario.idPersonal.nombre}" 
-                              filterMatchMode="contains"
-                              style="width:130px; text-align: justify">
-                        <h:outputText value="#{comentario.idPersonal.nombre}" />
-                    </p:column>
-
-                    <p:column headerText="Categoría de función" 
-                              sortBy="#{comentario.idFuncion.categoriaOperativa.nombre}" 
-                              filterBy="#{comentario.idFuncion.categoriaOperativa.nombre}" 
-                              filterMatchMode="contains"
-                              style="width:150px; text-align: justify">
-                        <h:outputText value="#{comentario.idFuncion.categoriaOperativa.nombre}" />
-                    </p:column>
-
-                    <p:column headerText="Función" 
-                              sortBy="#{comentario.idFuncion.nombre}" 
-                              filterBy="#{comentario.idFuncion.nombre}" 
-                              filterMatchMode="contains"
-                              style="width:200px; text-align: justify">
-                        <h:outputText value="#{comentario.idFuncion.nombre}" />
-                    </p:column>
-
-                    <p:column headerText="Observación" 
-                              sortBy="#{comentario.comentario}" 
-                              filterBy="#{comentario.comentario}" 
-                              filterMatchMode="contains"
-                              style="width:200px; text-align: justify">
-                        <h:outputText value="#{comentario.comentario}" />
-                    </p:column>
-
-                    <p:column headerText="Fecha" 
-                              sortBy="#{comentario.fechaHoraC}" 
-                              filterBy="#{comentario.fechaHoraC}" 
-                              filterMatchMode="contains"
-                              style="width:130px; text-align: justify">
-                        <h:outputLabel value="#{comentario.fechaHoraC}"><f:convertDateTime locale="es" pattern="dd/MMMM/yyyy HH:mm:ss"/></h:outputLabel>
-                    </p:column>
-
-                    <p:column headerText="Estatus" 
-                              sortBy="#{comentario.esatus}" 
-                              filterBy="#{comentario.esatus}" 
-                              filterMatchMode="contains"
-                              style="width:130px; text-align: justify">
-                        <p:cellEditor>
-                            <f:facet name="output"><h:outputText value="#{comentario.esatus eq 0?'Pendiente':'Resuelta'}" /></f:facet>
-                            <f:facet name="input">
-                                <h:selectOneMenu value="#{comentario.esatus}">
-                                    <f:selectItems value="#{controladorFunciones.listalistaEstatus}" var="esatus" itemLabel="#{esatus.nombre}" itemValue="#{esatus.clave}" />
-                                </h:selectOneMenu>
-                            </f:facet>
-                        </p:cellEditor>
-                    </p:column>
-
-                    <p:column headerText="Editar" style="width:50px">
-                        <p:rowEditor />
-                    </p:column>                  
-                </p:dataTable>  
-            </p:dialog>
-        </h:form>
-
-        <h:form id="frmDelate1" >
-            <p:dialog id="dlgDelate1" header="Eliminación" widgetVar="dlgDelate1" minimizable="true" maximizable="true" position="center">
-                <f:facet name="footer">
-                    <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" onsuccess="PF('dlgDelate1').hide();"/>
-                    <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorFunciones.eliminarFuncion()}" icon="fa fa-check" process="@form" update="@form" onsuccess="PF('dlgDelate1').hide();"/>
-                </f:facet>
-                <p:outputPanel>            
-                    <p:autoUpdate/>
-                    <h:panelGrid columns="1"  class="col-md-12">
-                        <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
-                    </h:panelGrid>
-                </p:outputPanel>
-            </p:dialog>
-        </h:form>     
-
-        <h:form id="des">
-            <p:outputPanel autoUpdate="true" style="max-width: 350px; max-height: 550px;">
-                <p:dialog id="datos" widgetVar="datos" position="center">
-                    <p:tabView style="max-width: 350px; max-height: 550px;">
-                        <p:tab title="Datos personales">
-                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                <div class="col-md-12">
-                                    <div class="box box-widget widget-user-2">
-                                        <div class="widget-user-header bg-aqua-active">
-                                            <div class="widget-user-image">
-                                                <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{organigramView4.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigramView4.nuevoEmpleado.clave}" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/>
-                                            </div>
-                                            <h3 class="widget-user-username">#{organigramView4.nuevoEmpleado.nombre}</h3>
-                                            <h5 class="widget-user-desc">#{organigramView4.nuevoEmpleado.categoriaOperativaNombre}</h5>
-                                        </div>
-                                        <div class="box-footer">
-                                            <div class="row">
-                                                <div class="col-sm-12 border-right">
-                                                    <div class="description-block">
-                                                        <h5 class="description-header">Fecha de ingreso:</h5>
-                                                        <span class="description-text"><p style="text-align: center">#{organigramView4.fechaI}</p></span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12 border-right">
-                                                    <div class="description-block">
-                                                        <h5 class="description-header">Grado de estudios:</h5>
-                                                        <span class="description-text"><p style="text-align: center">#{organigramView4.nuevoEmpleado.perfilProfesional}</p></span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12">
-                                                    <div class="description-block">
-                                                        <h5 class="description-header">Área de adscripción:</h5>
-                                                        <span class="description-text"><p style="text-align: center">#{organigramView4.nuevoEmpleado.areaOperativaNombre}</p></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </p:tab>
-                        <p:tab title="Funciones generales">
-                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                <div class="col-md-12">
-                                    <div class="box box-widget widget-user-2">
-                                        <div class="widget-user-header bg-aqua-active">
-                                            <div class="widget-user-image">
-                                                <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{organigramView4.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigramView4.nuevoEmpleado.clave}" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/>
-                                            </div>
-                                            <h3 class="widget-user-username">#{organigramView4.nuevoEmpleado.nombre}</h3>
-                                            <h5 class="widget-user-desc">#{organigramView4.nuevoEmpleado.categoriaOperativaNombre}</h5>
-                                        </div>
-                                        <div class="box-footer">
-                                            <div class="row">
-                                                <div class="col-sm-12 border-right">
-                                                    <div class="description-block">
-                                                        <h5 class="description-header">Función genérica</h5>
-                                                        <c:forEach var = "i" begin = "0" end = "#{organigramView4.nuevaListaFuncionesGenerales.size()-1}">
-                                                            <span class="description-text" style="text-align: justify">#{organigramView4.nuevaListaFuncionesGenerales.get(i)}</span>
-                                                            <br/>
-                                                            <br/>
-                                                        </c:forEach>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </p:tab>
-                        <p:tab title="Funciones específicas">
-                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                <div class="col-md-12">
-                                    <div class="box box-widget widget-user-2">
-                                        <div class="widget-user-header bg-aqua-active">
-                                            <div class="widget-user-image">
-                                                <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{organigramView4.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigramView4.nuevoEmpleado.clave}" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/> 
-                                            </div>
-                                            <h3 class="widget-user-username">#{organigramView4.nuevoEmpleado.nombre}</h3>
-                                            <h5 class="widget-user-desc">#{organigramView4.nuevoEmpleado.categoriaOperativaNombre}</h5>
-                                        </div>
-                                        <div class="box-footer">
-                                            <div class="row">
-                                                <div class="col-sm-12 border-right">
-                                                    <div class="description-block">
-                                                        <h5 class="description-header">Funciones específicas</h5>
-                                                        <c:forEach var = "i" begin = "0" end = "#{organigramView4.nuevaListaFuncionesEspecificas.size()-1}">
-                                                            <span class="description-text" style="text-align: justify">#{organigramView4.nuevaListaFuncionesEspecificas.get(i)}</span>
-                                                            <br/>
-                                                            <br/>
-                                                        </c:forEach>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </p:tab>
-                    </p:tabView>
+                    </p:outputPanel>
                 </p:dialog>
-            </p:outputPanel>
-        </h:form>
+            </h:form>
 
-        <h:form id="areas">
-            <p:outputPanel autoUpdate="true" style="max-width: 350px; max-height: 550px;">
-                <p:dialog id="areEdu" widgetVar="areEdu" position="center">
-                    <p:tabView style="max-width: 350px; max-height: 550px;">
-                        <p:tab title="Datos personales">
-                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                <div class="col-md-12">
-                                    <div class="box box-widget widget-user-2">
-                                        <div class="widget-user-header bg-aqua-active">
-                                            <div class="widget-user-image">
-                                                <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{organigramView4.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigramView4.nuevoEmpleado.clave}" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/>
-                                            </div>
-                                            <h3 class="widget-user-username">#{organigramView4.nuevoEmpleado.nombre}</h3>
-                                            <h5 class="widget-user-desc">#{organigramView4.nuevoEmpleado.categoriaOperativaNombre}</h5>
-                                        </div>
-                                        <div class="box-footer">
-                                            <div class="row">
-                                                <div class="col-sm-12 border-right">
-                                                    <div class="description-block">
-                                                        <h5 class="description-header">Fecha de ingreso:</h5>
-                                                        <span class="description-text"><p style="text-align: center">#{organigramView4.fechaI}</p></span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12 border-right">
-                                                    <div class="description-block">
-                                                        <h5 class="description-header">Grado de estudios:</h5>
-                                                        <span class="description-text"><p style="text-align: center">#{organigramView4.nuevoEmpleado.perfilProfesional}</p></span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12">
-                                                    <div class="description-block">
-                                                        <h5 class="description-header">Área de adscripción:</h5>
-                                                        <span class="description-text"><p style="text-align: center">#{organigramView4.nuevoEmpleado.areaOperativaNombre}</p></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </p:tab>
-                        <p:tab title="Subordinados" >
-                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                <div class="col-md-12">
-                                    <div class="box box-widget widget-user-2">
-                                        <div class="widget-user-header bg-aqua-active">
-                                            <div class="widget-user-image">
-                                                <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{organigramView4.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigramView4.nuevoEmpleado.clave}" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/>
-                                            </div>
-                                            <h3 class="widget-user-username">#{organigramView4.nuevoEmpleado.nombre}</h3>
-                                            <h5 class="widget-user-desc">#{organigramView4.nuevoEmpleado.categoriaOperativaNombre}</h5>
-                                        </div>
-                                        <div class="box-footer">
-                                            <div class="row">
-                                                <c:choose>
-                                                    <c:when test="#{organigramView4.sec != 0}">
-                                                        <div class="col-sm-6 border-right">
-                                                            <div class="description-block">
-                                                                <h5 class="description-header">Secretaria(s):</h5>
-                                                                <span class="description-text"><p style="text-align: center">#{organigramView4.sec}</p></span>
-                                                            </div>
-                                                        </div>
-                                                    </c:when>
-                                                    <c:when test="#{organigramView4.sec == 0}"/>
-                                                </c:choose>
-                                                <c:choose>
-                                                    <c:when test="#{organigramView4.ptc!= 0}">
-                                                        <div class="col-sm-6 border-right">
-                                                            <div class="description-block">
-                                                                <h5 class="description-header">Profesor(es) de tiempo completo:</h5>
-                                                                <span class="description-text"><p style="text-align: center">#{organigramView4.ptc}</p></span>
-                                                            </div>
-                                                        </div>
-                                                    </c:when>
-                                                    <c:when test="#{organigramView4.ptc == 0}"/>
-                                                </c:choose>
-                                                <c:choose>
-                                                    <c:when test="#{organigramView4.pda != 0}">
-                                                        <div class="col-sm-6">
-                                                            <div class="description-block">
-                                                                <h5 class="description-header">Profesor(es) de asignatura:</h5>
-                                                                <span class="description-text"><p style="text-align: center">#{organigramView4.pda}</p></span>
-                                                            </div>
-                                                        </div>
-                                                    </c:when>
-                                                    <c:when test="#{organigramView4.pda == 0}"/>
-                                                </c:choose>
-                                                <c:choose>
-                                                    <c:when test="#{organigramView4.lab != 0}">
-                                                        <div class="col-sm-6">
-                                                            <div class="description-block">
-                                                                <h5 class="description-header">Laboratorista(s):</h5>
-                                                                <span class="description-text"><p style="text-align: center">#{organigramView4.lab}</p></span>
-                                                            </div>
-                                                        </div>
-                                                    </c:when>
-                                                    <c:when test="#{organigramView4.lab == 0}"/>
-                                                </c:choose>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </p:tab>
-                        <p:tab title="Funciones generales">
-                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                <div class="col-md-12">
-                                    <div class="box box-widget widget-user-2">
-                                        <div class="widget-user-header bg-aqua-active">
-                                            <div class="widget-user-image">
-                                                <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{organigramView4.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigramView4.nuevoEmpleado.clave}" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/>
-                                            </div>
-                                            <h3 class="widget-user-username">#{organigramView4.nuevoEmpleado.nombre}</h3>
-                                            <h5 class="widget-user-desc">#{organigramView4.nuevoEmpleado.categoriaOperativaNombre}</h5>
-                                        </div>
-                                        <div class="box-footer">
-                                            <div class="row">
-                                                <div class="col-sm-12 border-right">
-                                                    <div class="description-block">
-                                                        <h5 class="description-header">Función genérica</h5>
-                                                        <c:forEach var = "i" begin = "0" end = "#{organigramView4.nuevaListaFuncionesGenerales.size()-1}">
-                                                            <span class="description-text" style="text-align: justify">#{organigramView4.nuevaListaFuncionesGenerales.get(i)}</span>
-                                                            <br/>
-                                                            <br/>
-                                                        </c:forEach>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </p:tab>
-                        <p:tab title="Funciones específicas">
-                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                <div class="col-md-12">
-                                    <div class="box box-widget widget-user-2">
-                                        <div class="widget-user-header bg-aqua-active">
-                                            <div class="widget-user-image">
-                                                <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{organigramView4.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigramView4.nuevoEmpleado.clave}" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/>
-                                            </div>
-                                            <h3 class="widget-user-username">#{organigramView4.nuevoEmpleado.nombre}</h3>
-                                            <h5 class="widget-user-desc">#{organigramView4.nuevoEmpleado.categoriaOperativaNombre}</h5>
-                                        </div>
-                                        <div class="box-footer">
-                                            <div class="row">
-                                                <div class="col-sm-12 border-right">
-                                                    <div class="description-block">
-                                                        <h5 class="description-header">Funciones específicas </h5>
-                                                        <c:forEach var = "i" begin = "0" end = "#{organigramView4.nuevaListaFuncionesEspecificas.size()-1}">
-                                                            <span class="description-text" style="text-align: justify">#{organigramView4.nuevaListaFuncionesEspecificas.get(i)}</span>
-                                                            <br/>
-                                                            <br/>
-                                                        </c:forEach>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </p:tab>
-                    </p:tabView>
+            <h:form id="frmNewP" >
+                <p:dialog id="dlgNewP" header="Puesto especifico" widgetVar="dlgNewP" minimizable="true" maximizable="true" position="center">
+                    <f:facet name="footer">
+                        <p:commandButton id="btncancelar" value="Cancelar" class="btn btn-primary" icon="fa fa-times" process="@form" update="@form" onsuccess="PF('dlgNewP').hide();"/>
+                        <p:commandButton id="btnAceptar" value="Guarda puesto específico" class="btn btn-primary" actionListener="#{controladorFunciones.agregarYactualizarCategoriasEspecificas()}" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgNewP').hide();"/>
+                    </f:facet>
+                    <p:outputPanel autoUpdate="true" style="max-width: 650px; max-height: 600px">
+                        <p:scrollPanel style="width:600px">
+                            <h:panelGrid columns="1"  class="col-md-12">
+                                <p:outputLabel value="Nombre del puesto específico" for="nomPE"/>
+                                <p:inputText id="nomPE" value="#{controladorFunciones.nombreCategoriaEspecifica}" style="text-align: justify" class="col-md-12"/>
+                                <p:message for="nomPE"/>
+
+                                <p:outputLabel value="Empleados para nuevo puesto específico" for="empleNP"/>
+                                <p:selectManyCheckbox id="empleNP" value="#{controladorFunciones.listaClavesEmpleados}" layout="responsive" columns="1">
+                                    <f:selectItems value="#{controladorFunciones.listaListaPersonalSubordinados}" var="subordinado" itemLabel="#{subordinado.nombre} - #{subordinado.categoriaOperativaNombre}" itemValue="#{subordinado.clave}" />
+                                </p:selectManyCheckbox>
+                                <p:message for="empleNP"/>
+                            </h:panelGrid>
+                        </p:scrollPanel>
+                    </p:outputPanel>
                 </p:dialog>
-            </p:outputPanel>
-        </h:form>
+            </h:form>
 
+            <h:form id="frmComent" >
+                <p:dialog id="dlgcoment" header="Comentarios" widgetVar="dlgcoment" minimizable="true" maximizable="true" position="center">
+                    <f:facet name="footer">
+                        <p:commandButton id="btncancelar" value="Cancelar" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" onsuccess="PF('dlgcoment').hide();"/>
+                        <p:commandButton id="btnAceptar" value="Guardar comentario" class="btn btn-primary" actionListener="#{controladorFunciones.crearComentariosfunciones()}" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgcoment').hide();"/>
+                    </f:facet>
+                    <p:outputPanel autoUpdate="true" style="max-width: 250px">
+                        <h:panelGrid columns="1"  class="col-md-12">
+                            <p:outputLabel value="Función" for="numc"/>
+                            <h:outputText id="numc" value="#{controladorFunciones.nuevoOBJFuncionesSelect.nombre}" style="text-align: justify" class="col-md-12"/>
+                            <p:message for="numc"/>
+
+                            <p:outputLabel value="Comentario" for="ct"/>
+                            <p:inputTextarea id="ct" value="#{controladorFunciones.nuevoOBJComentariosfunciones.comentario}" required="true" requiredMessage="El comentario es obligatorio." class="col-md-12"/>
+                            <p:message for="ct"/>                       
+                        </h:panelGrid>
+                    </p:outputPanel>
+                </p:dialog>
+            </h:form>
+
+            <h:form id="frmObser" >
+                <p:dialog id="dlgObser" header="Comentarios" widgetVar="dlgObser" minimizable="true" maximizable="true" position="center">
+                    <p:dataTable id="tblComents"  value="#{controladorFunciones.listaComentariosfuncionesConsulta}"  var="comentario"
+                                 paginator="true" rows="5"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15,20,25,30"
+                                 emptyMessage="No se encontraron funciones." rendered="true"
+                                 editable="true" style="width:1000px; margin-bottom:20px">
+
+                        <p:ajax event="rowEdit" listener="#{controladorFunciones.onRowEditComent}" update="tblComents" />
+                        <p:ajax event="rowEditCancel" listener="#{controladorFunciones.onRowCancel}" update="tblComents" />
+
+                        <p:column headerText="Empleado" 
+                                  sortBy="#{comentario.idPersonal.nombre}" 
+                                  filterBy="#{comentario.idPersonal.nombre}" 
+                                  filterMatchMode="contains"
+                                  style="width:130px; text-align: justify">
+                            <h:outputText value="#{comentario.idPersonal.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Categoría de función" 
+                                  sortBy="#{comentario.idFuncion.categoriaOperativa.nombre}" 
+                                  filterBy="#{comentario.idFuncion.categoriaOperativa.nombre}" 
+                                  filterMatchMode="contains"
+                                  style="width:150px; text-align: justify">
+                            <h:outputText value="#{comentario.idFuncion.categoriaOperativa.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Función" 
+                                  sortBy="#{comentario.idFuncion.nombre}" 
+                                  filterBy="#{comentario.idFuncion.nombre}" 
+                                  filterMatchMode="contains"
+                                  style="width:200px; text-align: justify">
+                            <h:outputText value="#{comentario.idFuncion.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Observación" 
+                                  sortBy="#{comentario.comentario}" 
+                                  filterBy="#{comentario.comentario}" 
+                                  filterMatchMode="contains"
+                                  style="width:200px; text-align: justify">
+                            <h:outputText value="#{comentario.comentario}" />
+                        </p:column>
+
+                        <p:column headerText="Fecha" 
+                                  sortBy="#{comentario.fechaHoraC}" 
+                                  filterBy="#{comentario.fechaHoraC}" 
+                                  filterMatchMode="contains"
+                                  style="width:130px; text-align: justify">
+                            <h:outputLabel value="#{comentario.fechaHoraC}"><f:convertDateTime locale="es" pattern="dd/MMMM/yyyy HH:mm:ss"/></h:outputLabel>
+                        </p:column>
+
+                        <p:column headerText="Estatus" 
+                                  sortBy="#{comentario.esatus}" 
+                                  filterBy="#{comentario.esatus}" 
+                                  filterMatchMode="contains"
+                                  style="width:130px; text-align: justify">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{comentario.esatus eq 0?'Pendiente':'Resuelta'}" /></f:facet>
+                                <f:facet name="input">
+                                    <h:selectOneMenu value="#{comentario.esatus}">
+                                        <f:selectItems value="#{controladorFunciones.listalistaEstatus}" var="esatus" itemLabel="#{esatus.nombre}" itemValue="#{esatus.clave}" />
+                                    </h:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Editar" style="width:50px">
+                            <p:rowEditor />
+                        </p:column>                  
+                    </p:dataTable>  
+                </p:dialog>
+            </h:form>
+
+            <h:form id="frmDelate1" >
+                <p:dialog id="dlgDelate1" header="Eliminación" widgetVar="dlgDelate1" minimizable="true" maximizable="true" position="center">
+                    <f:facet name="footer">
+                        <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" onsuccess="PF('dlgDelate1').hide();"/>
+                        <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorFunciones.eliminarFuncion()}" icon="fa fa-check" process="@form" update="@form" onsuccess="PF('dlgDelate1').hide();"/>
+                    </f:facet>
+                    <p:outputPanel>            
+                        <p:autoUpdate/>
+                        <h:panelGrid columns="1"  class="col-md-12">
+                            <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
+                        </h:panelGrid>
+                    </p:outputPanel>
+                </p:dialog>
+            </h:form>     
+
+            <h:form id="des">
+                <p:outputPanel autoUpdate="true" style="max-width: 350px; max-height: 550px;">
+                    <p:dialog id="datos" widgetVar="datos" position="center">
+                        <p:tabView style="max-width: 350px; max-height: 550px;">
+                            <p:tab title="Datos personales">
+                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                    <div class="col-md-12">
+                                        <div class="box box-widget widget-user-2">
+                                            <div class="widget-user-header bg-aqua-active">
+                                                <div class="widget-user-image">
+                                                    <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{organigramView4.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigramView4.nuevoEmpleado.clave}" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/>
+                                                </div>
+                                                <h3 class="widget-user-username">#{organigramView4.nuevoEmpleado.nombre}</h3>
+                                                <h5 class="widget-user-desc">#{organigramView4.nuevoEmpleado.categoriaOperativaNombre}</h5>
+                                            </div>
+                                            <div class="box-footer">
+                                                <div class="row">
+                                                    <div class="col-sm-12 border-right">
+                                                        <div class="description-block">
+                                                            <h5 class="description-header">Fecha de ingreso:</h5>
+                                                            <span class="description-text"><p style="text-align: center">#{organigramView4.fechaI}</p></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-12 border-right">
+                                                        <div class="description-block">
+                                                            <h5 class="description-header">Grado de estudios:</h5>
+                                                            <span class="description-text"><p style="text-align: center">#{organigramView4.nuevoEmpleado.perfilProfesional}</p></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <div class="description-block">
+                                                            <h5 class="description-header">Área de adscripción:</h5>
+                                                            <span class="description-text"><p style="text-align: center">#{organigramView4.nuevoEmpleado.areaOperativaNombre}</p></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:tab>
+                            <p:tab title="Funciones generales">
+                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                    <div class="col-md-12">
+                                        <div class="box box-widget widget-user-2">
+                                            <div class="widget-user-header bg-aqua-active">
+                                                <div class="widget-user-image">
+                                                    <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{organigramView4.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigramView4.nuevoEmpleado.clave}" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/>
+                                                </div>
+                                                <h3 class="widget-user-username">#{organigramView4.nuevoEmpleado.nombre}</h3>
+                                                <h5 class="widget-user-desc">#{organigramView4.nuevoEmpleado.categoriaOperativaNombre}</h5>
+                                            </div>
+                                            <div class="box-footer">
+                                                <div class="row">
+                                                    <div class="col-sm-12 border-right">
+                                                        <div class="description-block">
+                                                            <h5 class="description-header">Función genérica</h5>
+                                                            <c:forEach var = "i" begin = "0" end = "#{organigramView4.nuevaListaFuncionesGenerales.size()-1}">
+                                                                <span class="description-text" style="text-align: justify">#{organigramView4.nuevaListaFuncionesGenerales.get(i)}</span>
+                                                                <br/>
+                                                                <br/>
+                                                            </c:forEach>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:tab>
+                            <p:tab title="Funciones específicas">
+                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                    <div class="col-md-12">
+                                        <div class="box box-widget widget-user-2">
+                                            <div class="widget-user-header bg-aqua-active">
+                                                <div class="widget-user-image">
+                                                    <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{organigramView4.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigramView4.nuevoEmpleado.clave}" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/> 
+                                                </div>
+                                                <h3 class="widget-user-username">#{organigramView4.nuevoEmpleado.nombre}</h3>
+                                                <h5 class="widget-user-desc">#{organigramView4.nuevoEmpleado.categoriaOperativaNombre}</h5>
+                                            </div>
+                                            <div class="box-footer">
+                                                <div class="row">
+                                                    <div class="col-sm-12 border-right">
+                                                        <div class="description-block">
+                                                            <h5 class="description-header">Funciones específicas</h5>
+                                                            <c:forEach var = "i" begin = "0" end = "#{organigramView4.nuevaListaFuncionesEspecificas.size()-1}">
+                                                                <span class="description-text" style="text-align: justify">#{organigramView4.nuevaListaFuncionesEspecificas.get(i)}</span>
+                                                                <br/>
+                                                                <br/>
+                                                            </c:forEach>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:tab>
+                        </p:tabView>
+                    </p:dialog>
+                </p:outputPanel>
+            </h:form>
+
+            <h:form id="areas">
+                <p:outputPanel autoUpdate="true" style="max-width: 350px; max-height: 550px;">
+                    <p:dialog id="areEdu" widgetVar="areEdu" position="center">
+                        <p:tabView style="max-width: 350px; max-height: 550px;">
+                            <p:tab title="Datos personales">
+                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                    <div class="col-md-12">
+                                        <div class="box box-widget widget-user-2">
+                                            <div class="widget-user-header bg-aqua-active">
+                                                <div class="widget-user-image">
+                                                    <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{organigramView4.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigramView4.nuevoEmpleado.clave}" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/>
+                                                </div>
+                                                <h3 class="widget-user-username">#{organigramView4.nuevoEmpleado.nombre}</h3>
+                                                <h5 class="widget-user-desc">#{organigramView4.nuevoEmpleado.categoriaOperativaNombre}</h5>
+                                            </div>
+                                            <div class="box-footer">
+                                                <div class="row">
+                                                    <div class="col-sm-12 border-right">
+                                                        <div class="description-block">
+                                                            <h5 class="description-header">Fecha de ingreso:</h5>
+                                                            <span class="description-text"><p style="text-align: center">#{organigramView4.fechaI}</p></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-12 border-right">
+                                                        <div class="description-block">
+                                                            <h5 class="description-header">Grado de estudios:</h5>
+                                                            <span class="description-text"><p style="text-align: center">#{organigramView4.nuevoEmpleado.perfilProfesional}</p></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <div class="description-block">
+                                                            <h5 class="description-header">Área de adscripción:</h5>
+                                                            <span class="description-text"><p style="text-align: center">#{organigramView4.nuevoEmpleado.areaOperativaNombre}</p></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:tab>
+                            <p:tab title="Subordinados" >
+                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                    <div class="col-md-12">
+                                        <div class="box box-widget widget-user-2">
+                                            <div class="widget-user-header bg-aqua-active">
+                                                <div class="widget-user-image">
+                                                    <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{organigramView4.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigramView4.nuevoEmpleado.clave}" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/>
+                                                </div>
+                                                <h3 class="widget-user-username">#{organigramView4.nuevoEmpleado.nombre}</h3>
+                                                <h5 class="widget-user-desc">#{organigramView4.nuevoEmpleado.categoriaOperativaNombre}</h5>
+                                            </div>
+                                            <div class="box-footer">
+                                                <div class="row">
+                                                    <c:choose>
+                                                        <c:when test="#{organigramView4.sec != 0}">
+                                                            <div class="col-sm-6 border-right">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header">Secretaria(s):</h5>
+                                                                    <span class="description-text"><p style="text-align: center">#{organigramView4.sec}</p></span>
+                                                                </div>
+                                                            </div>
+                                                        </c:when>
+                                                        <c:when test="#{organigramView4.sec == 0}"/>
+                                                    </c:choose>
+                                                    <c:choose>
+                                                        <c:when test="#{organigramView4.ptc!= 0}">
+                                                            <div class="col-sm-6 border-right">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header">Profesor(es) de tiempo completo:</h5>
+                                                                    <span class="description-text"><p style="text-align: center">#{organigramView4.ptc}</p></span>
+                                                                </div>
+                                                            </div>
+                                                        </c:when>
+                                                        <c:when test="#{organigramView4.ptc == 0}"/>
+                                                    </c:choose>
+                                                    <c:choose>
+                                                        <c:when test="#{organigramView4.pda != 0}">
+                                                            <div class="col-sm-6">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header">Profesor(es) de asignatura:</h5>
+                                                                    <span class="description-text"><p style="text-align: center">#{organigramView4.pda}</p></span>
+                                                                </div>
+                                                            </div>
+                                                        </c:when>
+                                                        <c:when test="#{organigramView4.pda == 0}"/>
+                                                    </c:choose>
+                                                    <c:choose>
+                                                        <c:when test="#{organigramView4.lab != 0}">
+                                                            <div class="col-sm-6">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header">Laboratorista(s):</h5>
+                                                                    <span class="description-text"><p style="text-align: center">#{organigramView4.lab}</p></span>
+                                                                </div>
+                                                            </div>
+                                                        </c:when>
+                                                        <c:when test="#{organigramView4.lab == 0}"/>
+                                                    </c:choose>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:tab>
+                            <p:tab title="Funciones generales">
+                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                    <div class="col-md-12">
+                                        <div class="box box-widget widget-user-2">
+                                            <div class="widget-user-header bg-aqua-active">
+                                                <div class="widget-user-image">
+                                                    <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{organigramView4.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigramView4.nuevoEmpleado.clave}" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/>
+                                                </div>
+                                                <h3 class="widget-user-username">#{organigramView4.nuevoEmpleado.nombre}</h3>
+                                                <h5 class="widget-user-desc">#{organigramView4.nuevoEmpleado.categoriaOperativaNombre}</h5>
+                                            </div>
+                                            <div class="box-footer">
+                                                <div class="row">
+                                                    <div class="col-sm-12 border-right">
+                                                        <div class="description-block">
+                                                            <h5 class="description-header">Función genérica</h5>
+                                                            <c:forEach var = "i" begin = "0" end = "#{organigramView4.nuevaListaFuncionesGenerales.size()-1}">
+                                                                <span class="description-text" style="text-align: justify">#{organigramView4.nuevaListaFuncionesGenerales.get(i)}</span>
+                                                                <br/>
+                                                                <br/>
+                                                            </c:forEach>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:tab>
+                            <p:tab title="Funciones específicas">
+                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                    <div class="col-md-12">
+                                        <div class="box box-widget widget-user-2">
+                                            <div class="widget-user-header bg-aqua-active">
+                                                <div class="widget-user-image">
+                                                    <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{organigramView4.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigramView4.nuevoEmpleado.clave}" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/>
+                                                </div>
+                                                <h3 class="widget-user-username">#{organigramView4.nuevoEmpleado.nombre}</h3>
+                                                <h5 class="widget-user-desc">#{organigramView4.nuevoEmpleado.categoriaOperativaNombre}</h5>
+                                            </div>
+                                            <div class="box-footer">
+                                                <div class="row">
+                                                    <div class="col-sm-12 border-right">
+                                                        <div class="description-block">
+                                                            <h5 class="description-header">Funciones específicas </h5>
+                                                            <c:forEach var = "i" begin = "0" end = "#{organigramView4.nuevaListaFuncionesEspecificas.size()-1}">
+                                                                <span class="description-text" style="text-align: justify">#{organigramView4.nuevaListaFuncionesEspecificas.get(i)}</span>
+                                                                <br/>
+                                                                <br/>
+                                                            </c:forEach>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:tab>
+                        </p:tabView>
+                    </p:dialog>
+                </p:outputPanel>
+            </h:form>
+
+        </c:if>
+        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Administrativo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Docente'}">
+            <h1>
+                Esta página está disponible solo para directivos.
+            </h1>
+        </c:if>
     </ui:define>
     <h:outputScript library="js" name="funciones.js" />
 

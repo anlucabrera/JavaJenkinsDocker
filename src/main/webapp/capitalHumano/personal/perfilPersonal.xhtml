@@ -693,42 +693,6 @@
                                             </div>
                                         </div>
                                     </p:tab>
-                                    <p:tab title="Incidencias" titletip="#{controladorPersonal.listaIncidencias.size()} incidencias pendientes" titleStyle="#{controladorPersonal.listaIncidencias.size() eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}">
-                                        <h:form id="frmExLab">                                               
-                                            <p:outputPanel >
-                                                <p:dataTable id="tblActividades"  value="#{controladorPersonal.listaIncidencias}"  var="incidencias"
-                                                             paginator="true" rows="5"
-                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                             rowsPerPageTemplate="5,10,15,20,25,30" 
-                                                             emptyMessage="No se encontraron Registros." rendered="true">                                              
-                                                    <p:column headerText="Tipo de incidencia" 
-                                                              sortBy="#{incidencias.tipo}" 
-                                                              filterBy="#{incidencias.tipo}" 
-                                                              filterMatchMode="contains">
-                                                        <h:outputText value="#{incidencias.tipo}" />
-                                                    </p:column>
-                                                    <p:column headerText="Fecha de aplicación" 
-                                                              sortBy="#{incidencias.fecha}" 
-                                                              filterBy="#{incidencias.fecha}" 
-                                                              filterMatchMode="contains">
-                                                        <h:outputLabel value="#{incidencias.fecha}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
-                                                    </p:column>                                                
-                                                    <p:column headerText="Estatus" 
-                                                              sortBy="#{incidencias.estatus}" 
-                                                              filterBy="#{incidencias.estatus}" 
-                                                              filterMatchMode="contains">
-                                                        <h:outputText value="#{incidencias.estatus}" />
-                                                    </p:column>     
-                                                    <p:column headerText="Tiempo" 
-                                                              sortBy="#{incidencias.tiempo}" 
-                                                              filterBy="#{incidencias.tiempo}" 
-                                                              filterMatchMode="contains">
-                                                        <h:outputText value="#{incidencias.tiempo}" />
-                                                    </p:column> 
-                                                </p:dataTable>  
-                                            </p:outputPanel>    
-                                        </h:form>
-                                    </p:tab>
                                     <p:tab title="Configuración">
                                         <h:form id="datosPer">
                                             <p:outputPanel >
@@ -1628,7 +1592,7 @@
 
                     </p:dialog>
                 </h:form>
-                
+
                 <h:form id="frmEvidencias" >
                     <p:dialog id="dlgEvidencias" modal="true" header="Plantilla activa" widgetVar="dlgEvidencias" minimizable="true" maximizable="true" position="center">
 

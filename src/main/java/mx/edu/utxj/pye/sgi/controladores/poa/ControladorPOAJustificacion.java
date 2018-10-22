@@ -3,6 +3,7 @@ package mx.edu.utxj.pye.sgi.controladores.poa;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
@@ -29,7 +30,8 @@ public class ControladorPOAJustificacion implements Serializable {
     @Getter    @Setter    private List<Estrategias> listaEstrategias = new ArrayList<>();
 // variables de datos Primitivos
     @Getter    @Setter    private Short ejercicioFiscal = 0;   
-    @Getter    @Setter    private Boolean alineacionActiva = false;   
+    @Getter    @Setter    private Boolean alineacionActiva = false;
+    @Getter    @Setter    private Date fechaActual=new Date();   
 // variables de entities
     @Getter    @Setter    private ActividadesPoa actividadesPoa = new ActividadesPoa();
     @Getter    @Setter    private EjesRegistro ejesRegistro = new EjesRegistro();
@@ -47,7 +49,7 @@ public class ControladorPOAJustificacion implements Serializable {
     @PostConstruct
     public void init() {
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARegistro.init()");
-        ejercicioFiscal = 17;
+        ejercicioFiscal =  Short.parseShort(String.valueOf(fechaActual.getYear()-100));
         alineacionActiva = false; 
         consultarListasInit();
     }

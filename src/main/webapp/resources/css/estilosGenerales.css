@@ -208,3 +208,10 @@ body .ui-datatable th[role="columnheader"].ui-state-default, body .ui-treetable 
 .ui-panelgrid .ui-panelgrid-cell{
     padding: 12px 10px;
 }
+
+@media print {
+    .noprint,.noprint *{
+        display: none !important;
+    }
+    
+}

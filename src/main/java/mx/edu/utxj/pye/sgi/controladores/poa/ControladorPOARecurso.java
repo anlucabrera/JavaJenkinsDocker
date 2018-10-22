@@ -3,6 +3,7 @@ package mx.edu.utxj.pye.sgi.controladores.poa;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
@@ -46,10 +47,11 @@ public class ControladorPOARecurso implements Serializable {
 // variables de datos Primitivos
     @Getter    @Setter    private String claseP1="",claseP2="",claseP3="",claseP4="",clasePC="",clasePT="";
     @Getter    @Setter    private Short ejercicioFiscal = 0;
+    @Getter    @Setter    private Date fechaActual=new Date();   
     @Getter    @Setter    private Double numPm1=0D,numPm2=0D,numPm3=0D,numPm4=0D,numPm5=0D,numPm6=0D,numPm7=0D,numPm8=0D,numPm9=0D,numPm10=0D,numPm11=0D,numPm12=0D;
     @Getter    @Setter    private Double pretecho2000=0D,pretecho3000=0D,pretecho4000=0D,pretecho5000=0D,pretechoCPDD=0D,totalPretecho=0D;
     @Getter    @Setter    private Double totalRecursoActividad = 0D,totalCaptitulos=0D,totalCaptituloPartida = 0D,totalCaptitulo2000 = 0D,totalCaptitulo3000 = 0D,totalCaptitulo4000 = 0D,totalCaptitulo5000 = 0D,totalCaptituloCPDD = 0D;
-    @Getter    @Setter    private Boolean contenido = false, alineacionSeleccionada = false;
+    @Getter    @Setter    private Boolean contenido = false, alineacionSeleccionada = false,productoSeleccionado=false;
 // variables de entities
     @Getter    @Setter    private ActividadesPoa actividadesPoa = new ActividadesPoa();
     @Getter    @Setter    private RecursosActividad recursosActividad = new RecursosActividad();
@@ -76,7 +78,7 @@ public class ControladorPOARecurso implements Serializable {
     @PostConstruct
     public void init() {
         System.out.println("inicio"+System.currentTimeMillis());
-        ejercicioFiscal = 17;
+        ejercicioFiscal =  Short.parseShort(String.valueOf(fechaActual.getYear()-101));
         numPm1 = null;        numPm2 = null;        numPm3 = null;        numPm4 = null;        numPm5 = null;        numPm6 = null;
         numPm7 = null;        numPm8 = null;        numPm9 = null;        numPm10 = null;        numPm11 = null;        numPm12 = null;
         alineacionSeleccionada = false;
@@ -373,27 +375,38 @@ public class ControladorPOARecurso implements Serializable {
 
     public void asignaRecursoProductos(ValueChangeEvent event2) {
         contenido = false;
-        ProductosPK seleccionado = new ProductosPK();
-        seleccionado.setEjercicioFiscal(ejercicioFiscal);
-        seleccionado.setProducto(event2.getNewValue().toString());
-        productos = new Productos();
-        productos = poaSelectec.mostrarProductos(seleccionado);
+        productoSeleccionado = false;
+        if (!event2.getNewValue().toString().equals("0")) {
 
-        productosAreas = new ProductosAreas();
-        productosAreas = poaSelectec.mostrarProductosAreas(productos, partidas, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+            ProductosPK seleccionado = new ProductosPK();
+            seleccionado.setEjercicioFiscal(ejercicioFiscal);
+            seleccionado.setProducto(event2.getNewValue().toString());
 
-        if (!actividadesPoa.getRecursosActividadList().isEmpty()) {
-            actividadesPoa.getRecursosActividadList().forEach((r) -> {
-                if (r.getProductoArea().equals(productosAreas)) {
-                    contenido = true;
-                }
-            });
-        }
+            productos = new Productos();
+            productos = poaSelectec.mostrarProductos(seleccionado);
 
-        if (contenido == true) {
+            productosAreas = new ProductosAreas();
+            productosAreas = poaSelectec.mostrarProductosAreas(productos, partidas, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+
+            if (!actividadesPoa.getRecursosActividadList().isEmpty()) {
+                actividadesPoa.getRecursosActividadList().forEach((r) -> {
+                    if (r.getProductoArea().equals(productosAreas)) {
+                        contenido = true;
+                    }
+                });
+            }
+
+            if (contenido == true) {
+                productos = new Productos();
+                productosAreas = new ProductosAreas();
+                Messages.addGlobalWarn("El producto ya está asignado a la actividad, favor de seleccionar otro");
+            } else {
+                productoSeleccionado = true;
+            }
+        } else {
             productos = new Productos();
             productosAreas = new ProductosAreas();
-            Messages.addGlobalWarn("El producto ya está asignado a la actividad, favor de seleccionar otro");
+            productoSeleccionado = false;
         }
     }
 
