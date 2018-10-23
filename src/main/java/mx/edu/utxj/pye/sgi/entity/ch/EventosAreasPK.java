@@ -25,12 +25,12 @@ public class EventosAreasPK implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "area_operativa")
-    private int areaOperativa;
+    private short areaOperativa;
 
     public EventosAreasPK() {
     }
 
-    public EventosAreasPK(int evento, int areaOperativa) {
+    public EventosAreasPK(int evento, short areaOperativa) {
         this.evento = evento;
         this.areaOperativa = areaOperativa;
     }
@@ -47,7 +47,7 @@ public class EventosAreasPK implements Serializable {
         return areaOperativa;
     }
 
-    public void setAreaOperativa(int areaOperativa) {
+    public void setAreaOperativa(short areaOperativa) {
         this.areaOperativa = areaOperativa;
     }
 
@@ -79,5 +79,5 @@ public class EventosAreasPK implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.EventosAreasPK[ evento=" + evento + ", areaOperativa=" + areaOperativa + " ]";
     }
-    
+
 }

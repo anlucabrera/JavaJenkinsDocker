@@ -66,6 +66,7 @@ public class DatosPersonales implements Serializable {
         procedencia = "";
         evidencia = "";
         consultarPerfil();
+        actualizarInformacionAdicional();
         System.out.println("DatosPersonales Fin: " + System.currentTimeMillis());
     }
 
@@ -83,6 +84,7 @@ public class DatosPersonales implements Serializable {
 
             if (nuevoOBJInformacionAdicionalPersonal != null) {
                 obtenerEdad();
+                actualizarInformacionAdicional();
             }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());

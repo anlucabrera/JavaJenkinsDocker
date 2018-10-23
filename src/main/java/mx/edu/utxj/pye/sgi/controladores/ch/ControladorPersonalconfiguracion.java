@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.sgi.controladores.ch;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,14 +13,17 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.annotation.ManagedBean;
 import javax.inject.Named;
+import javax.servlet.http.Part;
 import org.omnifaces.cdi.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import org.omnifaces.util.Messages;
+import org.primefaces.model.StreamedContent;
 
 @Named
 @ManagedBean
@@ -29,6 +33,7 @@ public class ControladorPersonalconfiguracion implements Serializable {
     private static final long serialVersionUID = 1736039029781733869L;
 
     @Getter    @Setter    private List<ListaPersonal> nuevaListaPersonals = new ArrayList<>();
+    @Getter    @Setter    private List<ListaPersonal> nuevaListaPersonalsFotosFaltantes = new ArrayList<>();
     @Getter    @Setter    private List<AreasUniversidad> nuevaListaAreasUniversidads = new ArrayList<>();
     @Getter    @Setter    private List<Categorias> nuevaListaCategoriases = new ArrayList<>();
     @Getter    @Setter    private List<PersonalCategorias> nuevaListaPersonalCategoriases = new ArrayList<>();
@@ -39,12 +44,16 @@ public class ControladorPersonalconfiguracion implements Serializable {
     @Getter    @Setter    private AreasUniversidad nuevoOBJAreasUniversidad;
     @Getter    @Setter    private Categorias nuevoOBJCategorias;
 
-    @Getter    @Setter    private Short claveCatagoria=0;    
+    @Getter    @Setter    private Short claveCatagoria=0;   
 
+     @Getter    @Setter    private Part file;
+    @Getter    private String ruta;
+    @Getter    StreamedContent content;
+    
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
-
+    @EJB    EjbCarga carga;
     @PostConstruct
     public void init() {
         System.out.println("ControladorPersonalconfiguracion Inicio: " + System.currentTimeMillis());
@@ -57,16 +66,18 @@ public class ControladorPersonalconfiguracion implements Serializable {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public void generarListas() {
         try {
-            nuevoOBJAreasUniversidad = new AreasUniversidad();
             nuevoOBJPersonalCategorias = new PersonalCategorias();
+            nuevoOBJAreasUniversidad = new AreasUniversidad();
             nuevoOBJCategorias = new Categorias();
 
+            nuevaListaPersonalsFotosFaltantes.clear();
+            nuevaListaPersonalCategoriases.clear();
             nuevaListaAreasUniversidads.clear();
             nuevaListaCategoriases.clear();
             nuevaListaPersonals.clear();
-            nuevaListaPersonalCategoriases.clear();
 
             nuevaListaPersonals = ejbSelectec.mostrarListaDeEmpleados();
+            nuevaListaPersonalsFotosFaltantes = ejbSelectec.mostrarListaDeEmpleados();
             nuevaListaPersonalCategoriases = ejbDatosUsuarioLogeado.mostrarListaPersonalCategorias();
             nuevaListaCategoriases = ejbAreasLogeo.mostrarCategorias();
             nuevaListaAreasUniversidads = ejbAreasLogeo.mostrarAreasUniversidad();
@@ -122,5 +133,20 @@ public class ControladorPersonalconfiguracion implements Serializable {
             Logger.getLogger(ControladorPersonalconfiguracion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
+    public void agregarEvidenciaDistincion() {
+        if (file != null) {
+            ruta = carga.subirFotoPersonal(file, new File("personal".concat(File.separator)));
+            if (!"Error: No se pudo leer el archivo".equals(ruta)) {
+                Messages.addGlobalInfo("Foto agregada!!");
+                ruta = null;
+            } else {
+                ruta = null;
+                Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !!");
+            }
+        } else {
+            Messages.addGlobalWarn("Es necesario seleccionar un archivo !!");
+        }
+        file = null;
+    }
 }

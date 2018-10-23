@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>  
+        <c:if test="#{!controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if> 
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <h:outputScript>
+            PrimeFaces.locales['es'] = {
+            closeText: 'Cerrar',
+            prevText: 'Anterior',
+            nextText: 'Siguiente',
+            monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+            dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+            dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+            dayNamesMin: ['D','L','M','M','J','V','S'],
+            weekHeader: 'Semana',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: '',
+            timeOnlyTitle: 'Sólo hora',
+            timeText: 'Tiempo',
+            hourText: 'Hora',
+            minuteText: 'Minuto',
+            secondText: 'Segundo',
+            currentText: 'Fecha actual',
+            ampm: false,
+            month: 'Mes',
+            week: 'Semana',
+            day: 'Día',
+            allDayText : 'Todo el día'
+            };
+        </h:outputScript>
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Directivo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Coordinador'}">
+                <section class="content">
+                    <div class="row">
+                        <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                        <div class="col-md-10">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div>      
+                                </div>
+                                <p:tabView>
+                                    <p:tab title="Reporte Incidencias">
+                                        <h:form id="frmInciGeneral"> 
+                                            <div class="row">
+                                                <div class="col-sm-2 border-right">
+                                                    <p:commandButton value="Imprimir reporte" icon="fa fa-print" class="btn-success">                                        
+                                                        <p:printer target="incidenciasReporte" />
+                                                    </p:commandButton>
+                                                </div>
+                                                <div class="col-sm-2 border-right">
+                                                    <p:outputLabel for="anio" value="Año" />
+                                                    <p:selectOneMenu  id="anio" value="#{controladorSubordinados.anioNumero}" valueChangeListener="#{controladorSubordinados.numeroAnioAsiganado}">
+                                                        <f:selectItem itemValue="17" itemLabel="2017" />
+                                                        <f:selectItem itemValue="18" itemLabel="2018" />
+                                                        <p:ajax listener="#{controladorSubordinados.imprimirValores()}" process="anio" update="tblActividades"/>
+                                                    </p:selectOneMenu >
+                                                </div>
+                                                <div class="col-sm-2 border-right">
+                                                    <p:outputPanel>            
+                                                        <p:autoUpdate/>      
+                                                        <p:outputLabel id="ipn" value="Incidencias Pendientes"/>
+                                                        <p:inputSwitch value="#{controladorSubordinados.visible}" offLabel="NO" onLabel="SI">
+                                                            <p:ajax listener="#{controladorSubordinados.novisible()}" update="tblActividades" />
+                                                        </p:inputSwitch>              
+                                                    </p:outputPanel>
+                                                </div>
+                                                <div class="col-sm-3 border-right">
+                                                    <p:outputLabel for="tipoVista" value="Tipo de reporte" />
+                                                    <p:selectOneRadio id="tipoVista" value="#{controladorSubordinados.vistaMensual}" valueChangeListener="#{controladorSubordinados.vistaMensualAsiganado}">
+                                                        <f:selectItem itemValue="#{true}" itemLabel="Mensual" />
+                                                        <f:selectItem itemValue="#{false}" itemLabel="Quincenal" />
+                                                        <p:ajax listener="#{controladorSubordinados.imprimirValores()}" process="tipoVista" />
+                                                    </p:selectOneRadio>
+                                                </div>
+                                                <p:outputPanel>            
+                                                    <p:autoUpdate/>
+                                                    <div class="col-sm-3 border-right" style=" #{controladorSubordinados.vistaMensual eq true?'visibility:collapse':'visibility:visible'}">
+                                                        <p:outputLabel for="periodoVista" value="Periodo:" />
+                                                        <p:selectOneRadio id="periodoVista" value="#{controladorSubordinados.numeroQuincena}" valueChangeListener="#{controladorSubordinados.numeroQuincenaAsiganado}">
+                                                            <f:selectItem itemValue="1" itemLabel="del 1 al 15" />
+                                                            <f:selectItem itemValue="2" itemLabel="del 16 al (28)(30)(31)" noSelectionOption="#{controladorSubordinados.fechaActual.date lt 15?true:false}" />                                                        
+                                                            <p:ajax listener="#{controladorSubordinados.imprimirValores()}" process="periodoVista" update="tblActividades"/>
+                                                        </p:selectOneRadio>
+                                                    </div>
+                                                </p:outputPanel>
+                                            </div>
+                                            <hr/>
+                                            <p:outputPanel>            
+                                                <p:autoUpdate/>
+                                                <p:commandButton value="Ene" id="mes0" actionListener="#{controladorSubordinados.mostrarIncidencias('01')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 0?true:false:false}"/>
+                                                <p:commandButton value="Feb" id="mes1" actionListener="#{controladorSubordinados.mostrarIncidencias('02')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 1?true:false:false}"/>
+                                                <p:commandButton value="Mar" id="mes2" actionListener="#{controladorSubordinados.mostrarIncidencias('03')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 2?true:false:false}"/>
+                                                <p:commandButton value="Abr" id="mes3" actionListener="#{controladorSubordinados.mostrarIncidencias('04')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 3?true:false:false}"/>
+                                                <p:commandButton value="May" id="mes4" actionListener="#{controladorSubordinados.mostrarIncidencias('05')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 4?true:false:false}"/>
+                                                <p:commandButton value="Jun" id="mes5" actionListener="#{controladorSubordinados.mostrarIncidencias('06')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 5?true:false:false}"/>
+                                                <p:commandButton value="Jul" id="mes6" actionListener="#{controladorSubordinados.mostrarIncidencias('07')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 6?true:false:false}"/>
+                                                <p:commandButton value="Ago" id="mes7" actionListener="#{controladorSubordinados.mostrarIncidencias('08')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 7?true:false:false}"/>
+                                                <p:commandButton value="Sep" id="mes8" actionListener="#{controladorSubordinados.mostrarIncidencias('09')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 8?true:false:false}"/>
+                                                <p:commandButton value="Oct" id="mes9" actionListener="#{controladorSubordinados.mostrarIncidencias('10')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 9?true:false:false}"/>
+                                                <p:commandButton value="Nov" id="mes10" actionListener="#{controladorSubordinados.mostrarIncidencias('11')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 10?true:false:false}"/>
+                                                <p:commandButton value="Dic" id="mes11" actionListener="#{controladorSubordinados.mostrarIncidencias('12')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 11?true:false:false}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel>
+                                                <p:outputPanel id="incidenciasReporte">
+                                                    <p:outputPanel>            
+                                                        <p:autoUpdate/>
+                                                        <div class="row">
+                                                            <div id="tituloCV" class="col-sm-12">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h2>Universidad Tecnológica De Xicotepec de Juárez</h2>
+                                                                    <h3>#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativaNombre}</h3>
+                                                                    <h:outputLabel value="Consulta:" style="font-weight: bold"/> <p:spacer width="10px"/> <h:outputLabel value="#{controladorSubordinados.fechaActual}"><f:convertDateTime pattern="EEEE d MMMM yyyy" locale="es"/></h:outputLabel><p:spacer width="30px"/>
+                                                                    <h:outputLabel value="Periodo:" style="font-weight: bold"/> <p:spacer width="10px"/> <h:outputLabel value="#{controladorSubordinados.fechaI}"><f:convertDateTime pattern="EEEE d MMMM yyyy" locale="es"/> <p:spacer width="10px"/></h:outputLabel><h:outputLabel value="a" style="font-weight: bold"/> <p:spacer width="10px"/><h:outputLabel value="#{controladorSubordinados.fechaF}"><f:convertDateTime pattern="EEEE d MMMM yyyy" locale="es"/></h:outputLabel>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h3><strong>Incidencias</strong></h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </p:outputPanel>    
+                                                    <p:dataTable id="tblActividades"  value="#{controladorSubordinados.listaIncidencias}"  var="incidencias"
+                                                                 editable="true" style="margin-bottom:20px"
+                                                                 emptyMessage="No se encontraron Registros." rendered="true">
+                                                        <p:ajax event="rowEdit" listener="#{controladorSubordinados.onRowEdit}" update="tblActividades" process="@this"/>
+                                                        <p:ajax event="rowEditCancel" listener="#{controladorSubordinados.onRowCancel}" update="tblActividades" />
+                                                        <p:column headerText="Nomina" style="width: 9%;text-align: center;">
+                                                            <h:outputText value="#{incidencias.clavePersonal.clave}" />
+                                                        </p:column>
+                                                        <p:column headerText="Nombre" style="width: 20%;text-align: justify;">
+                                                            <h:outputText value="#{incidencias.clavePersonal.nombre}" />
+                                                        </p:column>        
+                                                        <p:column headerText="Tipo"  style="width: 15%;text-align: center;">
+                                                            <h:outputText value="#{incidencias.tipo}" />
+                                                        </p:column>  
+                                                        <p:column headerText="Justificacion" style="text-align: justify;">
+                                                            <h:outputText value="#{incidencias.justificacion}" />
+                                                        </p:column> 
+                                                        <p:column headerText="Fecha" style="width: 12%">
+                                                            <h:outputLabel value="#{incidencias.fecha}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                        </p:column>                                                
+                                                        <p:column headerText="Estado" style="width: 15%;text-align: center;">
+                                                            <p:cellEditor>
+                                                                <f:facet name="output"><h:outputText value="#{incidencias.estatus}" /></f:facet>
+                                                                <f:facet name="input">
+                                                                    <h:selectOneMenu value="#{incidencias.estatus}" style="width:100%">
+                                                                        <f:selectItems value="#{controladorSubordinados.estatus}" var="estatus" itemLabel="#{estatus}" itemValue="#{estatus}" />
+                                                                    </h:selectOneMenu>
+                                                                </f:facet>
+                                                            </p:cellEditor>
+                                                        </p:column>     
+                                                        <p:column headerText="Tiempo" style="width: 9%;text-align: center;">
+                                                            <h:outputText value="#{incidencias.tiempo}" />
+                                                        </p:column>  
+                                                        <p:column headerText="Evidencia(s)" style="width:85px;text-align: center;">
+                                                            <p:link href="http://siip.utxj.edu.mx/archivos/#{controladorSubordinados.convertirRutaVistaEvidencia(incidencia.evidencia)}" target="_blank" style=" visibility:#{incidencia.evidencia eq null?'hidden':'visible'};">
+                                                                <i class="fa fa-search"></i>
+                                                                <span>Ver</span>
+                                                            </p:link>
+                                                        </p:column>
+                                                        <p:column style="width:32px;" class="noprint">
+                                                            <p:rowEditor />
+                                                        </p:column>
+                                                    </p:dataTable>                                                  
+                                                    <div class="row">
+                                                        <div class="col-sm-4"/>
+                                                        <div class="col-sm-4">
+                                                           <br/>
+                                                            <br/>
+                                                            <br/>
+                                                            <div class="description-block" style="text-align: center">
+                                                                <hr/>
+                                                                <h4>#{controladorEmpleado.nuevoOBJListaPersonal.nombre}</h4>
+                                                                <h4>#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativaNombre}</h4>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </p:outputPanel>   
+                                            </p:outputPanel>    
+                                        </h:form>
+                                    </p:tab>
+                                    <p:tab title="Reporte Incapacidades">
+                                        <h:form id="frmIncaGeneral"> 
+                                            <div class="row">
+                                                <div class="col-sm-2 border-right">
+                                                    <p:commandButton value="Imprimir reporte" icon="fa fa-print" class="btn-success">                                        
+                                                        <p:printer target="incidenciasReporte" />
+                                                    </p:commandButton>
+                                                </div>
+                                                <div class="col-sm-2 border-right">
+                                                    <p:outputLabel for="anio" value="Año" />
+                                                    <p:selectOneMenu  id="anio" value="#{controladorSubordinados.anioNumero}" valueChangeListener="#{controladorSubordinados.numeroAnioAsiganado}">
+                                                        <f:selectItem itemValue="17" itemLabel="2017" />
+                                                        <f:selectItem itemValue="18" itemLabel="2018" />
+                                                        <p:ajax listener="#{controladorSubordinados.imprimirValores()}" process="anio" update="tblActividades"/>
+                                                    </p:selectOneMenu >
+                                                </div>
+                                                <div class="col-sm-2 border-right">
+                                                    <p:outputPanel>            
+                                                        <p:autoUpdate/>      
+                                                        <p:outputLabel id="ipn" value="Incidencias Pendientes"/>
+                                                        <p:inputSwitch value="#{controladorSubordinados.visible}" offLabel="NO" onLabel="SI">
+                                                            <p:ajax listener="#{controladorSubordinados.novisible()}" update="tblActividades" />
+                                                        </p:inputSwitch>              
+                                                    </p:outputPanel>
+                                                </div>
+                                                <div class="col-sm-3 border-right">
+                                                    <p:outputLabel for="tipoVista" value="Tipo de reporte" />
+                                                    <p:selectOneRadio id="tipoVista" value="#{controladorSubordinados.vistaMensual}" valueChangeListener="#{controladorSubordinados.vistaMensualAsiganado}">
+                                                        <f:selectItem itemValue="#{true}" itemLabel="Mensual" />
+                                                        <f:selectItem itemValue="#{false}" itemLabel="Quincenal" />
+                                                        <p:ajax listener="#{controladorSubordinados.imprimirValores()}" process="tipoVista" />
+                                                    </p:selectOneRadio>
+                                                </div>
+                                                <p:outputPanel>            
+                                                    <p:autoUpdate/>
+                                                    <div class="col-sm-3 border-right" style=" #{controladorSubordinados.vistaMensual eq true?'visibility:collapse':'visibility:visible'}">
+                                                        <p:outputLabel for="periodoVista" value="Periodo:" />
+                                                        <p:selectOneRadio id="periodoVista" value="#{controladorSubordinados.numeroQuincena}" valueChangeListener="#{controladorSubordinados.numeroQuincenaAsiganado}">
+                                                            <f:selectItem itemValue="1" itemLabel="del 1 al 15" />
+                                                            <f:selectItem itemValue="2" itemLabel="del 16 al (28)(30)(31)" noSelectionOption="#{controladorSubordinados.fechaActual.date lt 15?true:false}" />                                                        
+                                                            <p:ajax listener="#{controladorSubordinados.imprimirValores()}" process="periodoVista" update="tblActividades"/>
+                                                        </p:selectOneRadio>
+                                                    </div>
+                                                </p:outputPanel>
+                                            </div>
+                                            <hr/>
+                                            <p:outputPanel>            
+                                                <p:autoUpdate/>
+                                                <p:commandButton value="Ene" id="mes0" actionListener="#{controladorSubordinados.mostrarIncidencias('01')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 0?true:false:false}"/>
+                                                <p:commandButton value="Feb" id="mes1" actionListener="#{controladorSubordinados.mostrarIncidencias('02')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 1?true:false:false}"/>
+                                                <p:commandButton value="Mar" id="mes2" actionListener="#{controladorSubordinados.mostrarIncidencias('03')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 2?true:false:false}"/>
+                                                <p:commandButton value="Abr" id="mes3" actionListener="#{controladorSubordinados.mostrarIncidencias('04')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 3?true:false:false}"/>
+                                                <p:commandButton value="May" id="mes4" actionListener="#{controladorSubordinados.mostrarIncidencias('05')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 4?true:false:false}"/>
+                                                <p:commandButton value="Jun" id="mes5" actionListener="#{controladorSubordinados.mostrarIncidencias('06')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 5?true:false:false}"/>
+                                                <p:commandButton value="Jul" id="mes6" actionListener="#{controladorSubordinados.mostrarIncidencias('07')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 6?true:false:false}"/>
+                                                <p:commandButton value="Ago" id="mes7" actionListener="#{controladorSubordinados.mostrarIncidencias('08')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 7?true:false:false}"/>
+                                                <p:commandButton value="Sep" id="mes8" actionListener="#{controladorSubordinados.mostrarIncidencias('09')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 8?true:false:false}"/>
+                                                <p:commandButton value="Oct" id="mes9" actionListener="#{controladorSubordinados.mostrarIncidencias('10')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 9?true:false:false}"/>
+                                                <p:commandButton value="Nov" id="mes10" actionListener="#{controladorSubordinados.mostrarIncidencias('11')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 10?true:false:false}"/>
+                                                <p:commandButton value="Dic" id="mes11" actionListener="#{controladorSubordinados.mostrarIncidencias('12')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="tblActividades" disabled="#{controladorSubordinados.anioNumero eq (controladorSubordinados.fechaActual.year-100)?controladorSubordinados.fechaActual.month lt 11?true:false:false}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel>
+                                                <p:outputPanel id="incidenciasReporte">
+                                                    <p:outputPanel>            
+                                                        <p:autoUpdate/>
+                                                        <div class="row">
+                                                            <div id="tituloCV" class="col-sm-12">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h2>Universidad Tecnológica De Xicotepec de Juárez</h2>
+                                                                    <h3>#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativaNombre}</h3>
+                                                                    <h:outputLabel value="Consulta:" style="font-weight: bold"/> <p:spacer width="10px"/> <h:outputLabel value="#{controladorSubordinados.fechaActual}"><f:convertDateTime pattern="EEEE d MMMM yyyy" locale="es"/></h:outputLabel><p:spacer width="30px"/>
+                                                                    <h:outputLabel value="Periodo:" style="font-weight: bold"/> <p:spacer width="10px"/> <h:outputLabel value="#{controladorSubordinados.fechaI}"><f:convertDateTime pattern="EEEE d MMMM yyyy" locale="es"/> <p:spacer width="10px"/></h:outputLabel><h:outputLabel value="a" style="font-weight: bold"/> <p:spacer width="10px"/><h:outputLabel value="#{controladorSubordinados.fechaF}"><f:convertDateTime pattern="EEEE d MMMM yyyy" locale="es"/></h:outputLabel>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h3><strong>Incidencias</strong></h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </p:outputPanel>    
+                                                    <p:dataTable id="tblActividades"  value="#{controladorSubordinados.listaIncapacidads}"  var="incapacidad"
+                                                                 style="margin-bottom:20px"
+                                                                 emptyMessage="No se encontraron Registros." rendered="true">
+
+                                                        <p:column headerText="Nomina" style="width: 9%;text-align: center;">
+                                                            <h:outputText value="#{incapacidad.clavePersonal.clave}" />
+                                                        </p:column>
+                                                        <p:column headerText="Nombre" style="width: 20%;text-align: justify;">
+                                                            <h:outputText value="#{incapacidad.clavePersonal.nombre}" />
+                                                        </p:column>        
+                                                        <p:column headerText="Fecha inicio"  style="width: 15%;text-align: center;">
+                                                            <h:outputLabel value="#{incapacidad.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                        </p:column>  
+                                                        <p:column headerText="Fecha fin" style="width: 12%">
+                                                            <h:outputLabel value="#{incapacidad.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                        </p:column>                                                
+                                                        <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
+                                                            <p:link href="http://siip.utxj.edu.mx/archivos/#{controladorSubordinados.convertirRutaVistaEvidencia(incapacidad.evidencia)}" target="_blank">
+                                                                <i class="fa fa-search"></i>
+                                                                <span>Ver</span>
+                                                            </p:link>
+                                                        </p:column>
+
+                                                    </p:dataTable>                                                  
+                                                    <div class="row">
+                                                        <div class="col-sm-4"/>
+                                                        <div class="col-sm-4">
+                                                            <br/>
+                                                            <br/>
+                                                            <br/>
+                                                            <div class="description-block" style="text-align: center">
+                                                                <hr/>
+                                                                <h4>#{controladorEmpleado.nuevoOBJListaPersonal.nombre}</h4>
+                                                                <h4>#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativaNombre}</h4>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </p:outputPanel>   
+                                            </p:outputPanel>    
+                                        </h:form>
+                                    </p:tab>                               
+
+                                </p:tabView>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </c:if>
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Administrativo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Docente'}">
+                <h1>
+                    Esta página está disponible solo para directivos.
+                </h1>
+            </c:if>
+        </p:panel>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+</ui:composition>

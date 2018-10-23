@@ -3,6 +3,7 @@ package mx.edu.utxj.pye.sgi.controladores.poa;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
@@ -39,6 +40,7 @@ public class ControladorPOARegistro implements Serializable {
 // variables de datos Primitivos
     @Getter    @Setter    private Boolean unidadMedidaNueva = false, esActividadPrincipal = false, permitirRegistro = false,ejeActivo = false;
     @Getter    @Setter    private Short unidadDMedida = 0, ejercicioFiscal = 0;    
+    @Getter    @Setter    private Date fechaActual=new Date();   
     @Getter    @Setter    private Short numPm1=0,numPm2=0,numPm3=0,numPm4=0,numPm5=0,numPm6=0,numPm7=0,numPm8=0,numPm9=0,numPm10=0,numPm11=0,numPm12=0;
     @Getter    @Setter    private Short numPEm1=0,numPEm2=0,numPEm3=0,numPEm4=0,numPEm5=0,numPEm6=0,numPEm7=0,numPEm8=0,numPEm9=0,numPEm10=0,numPEm11=0,numPEm12=0;
     @Getter    @Setter    private String tipo = "Actividad", nombreUnidad = "", mensajeValidacion = "";
@@ -63,7 +65,7 @@ public class ControladorPOARegistro implements Serializable {
     @PostConstruct
     public void init() {
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARegistro.init()");
-        ejercicioFiscal = 17;
+        ejercicioFiscal =  Short.parseShort(String.valueOf(fechaActual.getYear()-100));
         unidadDMedida = null;
         numPm1 = null;        numPm2 = null;        numPm3 = null;        numPm4 = null;        numPm5 = null;        numPm6 = null;
         numPm7 = null;        numPm8 = null;        numPm9 = null;        numPm10 = null;        numPm11 = null;        numPm12 = null;
@@ -156,6 +158,24 @@ public class ControladorPOARegistro implements Serializable {
         numPm7 = null;        numPm8 = null;        numPm9 = null;        numPm10 = null;        numPm11 = null;        numPm12 = null;
         numPEm1 = null;        numPEm2 = null;        numPEm3 = null;        numPEm4 = null;        numPEm5 = null;        numPEm6 = null;
         numPEm7 = null;        numPEm8 = null;        numPEm9 = null;        numPEm10 = null;        numPEm11 = null;        numPEm12 = null;
+    }
+
+    public void resetearProgramados(ValueChangeEvent event) {
+        esActividadPrincipal = Boolean.parseBoolean(event.getNewValue().toString());
+        if (esActividadPrincipal) {
+            numPm1 = null;            numPm2 = null;            numPm3 = null;            numPm4 = null;            numPm5 = null;            numPm6 = null;
+            numPm7 = null;            numPm8 = null;            numPm9 = null;            numPm10 = null;            numPm11 = null;            numPm12 = null;
+            numPEm1 = null;            numPEm2 = null;            numPEm3 = null;            numPEm4 = null;            numPEm5 = null;            numPEm6 = null;
+            numPEm7 = null;            numPEm8 = null;            numPEm9 = null;            numPEm10 = null;            numPEm11 = null;            numPEm12 = null;
+            actividadesPoa.setNPEnero(Short.parseShort("0"));            actividadesPoa.setNPFebrero(Short.parseShort("0"));
+            actividadesPoa.setNPMarzo(Short.parseShort("0"));            actividadesPoa.setNPAbril(Short.parseShort("0"));
+            actividadesPoa.setNPMayo(Short.parseShort("0"));            actividadesPoa.setNPJunio(Short.parseShort("0"));
+            actividadesPoa.setNPJulio(Short.parseShort("0"));            actividadesPoa.setNPAgosto(Short.parseShort("0"));
+            actividadesPoa.setNPSeptiembre(Short.parseShort("0"));            actividadesPoa.setNPOctubre(Short.parseShort("0"));
+            actividadesPoa.setNPNoviembre(Short.parseShort("0"));            actividadesPoa.setNPDiciembre(Short.parseShort("0"));
+            totalProgramado = actividadesPoa.getNPEnero() + actividadesPoa.getNPFebrero() + actividadesPoa.getNPMarzo() + actividadesPoa.getNPAbril() + actividadesPoa.getNPMayo() + actividadesPoa.getNPJunio() + actividadesPoa.getNPJulio() + actividadesPoa.getNPAgosto() + actividadesPoa.getNPSeptiembre() + actividadesPoa.getNPOctubre() + actividadesPoa.getNPNoviembre() + actividadesPoa.getNPDiciembre();
+            actividadesPoa.setTotal(Short.parseShort(totalProgramado.toString()));
+        }
     }
 
     public void consultarListas() {

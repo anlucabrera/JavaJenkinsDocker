@@ -8,6 +8,8 @@ import mx.edu.utxj.pye.sgi.entity.ch.CursosModalidad;
 import mx.edu.utxj.pye.sgi.entity.ch.CursosTipo;
 import mx.edu.utxj.pye.sgi.entity.ch.Docencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
+import mx.edu.utxj.pye.sgi.entity.ch.EventosAreas;
+import mx.edu.utxj.pye.sgi.entity.ch.EventosAreasPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 import mx.edu.utxj.pye.sgi.entity.ch.Grados;
 import mx.edu.utxj.pye.sgi.entity.ch.Historicoplantillapersonal;
@@ -57,6 +59,10 @@ public interface EjbDatosUsuarioLogeado {
     public Bitacoraacceso crearBitacoraacceso(Bitacoraacceso nuevoBitacoraacceso) throws Throwable;
 
     public List<Modulosregistro> mostrarModulosregistro(String actividadUsuario) throws Throwable;
+    
+    public List<Eventos> mostrarEventoses() throws Throwable;
+    
+    public EventosAreas mostrarEventoAreas(EventosAreasPK areasPK);
 
     public List<Eventos> mostrarEventosRegistro(String tipo, String nombre) throws Throwable;
 

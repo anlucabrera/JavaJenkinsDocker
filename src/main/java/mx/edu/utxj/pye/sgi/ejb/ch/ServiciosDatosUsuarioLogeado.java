@@ -12,6 +12,8 @@ import mx.edu.utxj.pye.sgi.entity.ch.CursosModalidad;
 import mx.edu.utxj.pye.sgi.entity.ch.CursosTipo;
 import mx.edu.utxj.pye.sgi.entity.ch.Docencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
+import mx.edu.utxj.pye.sgi.entity.ch.EventosAreas;
+import mx.edu.utxj.pye.sgi.entity.ch.EventosAreasPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 import mx.edu.utxj.pye.sgi.entity.ch.Grados;
 import mx.edu.utxj.pye.sgi.entity.ch.Historicoplantillapersonal;
@@ -191,6 +193,23 @@ public class ServiciosDatosUsuarioLogeado implements EjbDatosUsuarioLogeado {
         q.setParameter("actividadUsuario", actividadUsuario);
         List<Modulosregistro> pr = q.getResultList();
         return pr;
+    }
+
+    @Override
+    public List<Eventos> mostrarEventoses() throws Throwable {
+        facade.setEntityClass(Eventos.class);
+        List<Eventos> es = facade.findAll();
+        if (es.isEmpty()) {
+            return null;
+        } else {
+            return es;
+        }
+    }
+    @Override
+    public EventosAreas mostrarEventoAreas(EventosAreasPK areasPK) {
+        facade.setEntityClass(EventosAreas.class);
+        EventosAreas es = (EventosAreas) facade.find(areasPK);
+        return es;
     }
 
     @Override

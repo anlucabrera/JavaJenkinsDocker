@@ -288,6 +288,69 @@
                                             </p:outputPanel>
                                         </h:form>
                                     </p:tab>
+                                    <p:tab title="Fotografias">  
+                                        <h:form id="frmPremDis" enctype="multipart/form-data"> 
+                                            <script type="text/javascript">
+                                                function limpiarForm()
+                                                {
+                                                    document.getElementById("frmPremDis").reset();
+                                                }
+                                            </script>
+                                            <p:outputPanel id="form1">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                        <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Foto del perosnal" />
+                                                                                   <o:inputFile id="file" value="#{controladorPersonalconfiguracion.file}" accept="image/png||image/jpeg||image/pjpeg" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                                    <br/>
+                                                                                    <h:message id="messageForFile" for="file" />
+                                                                                    <br/>
+                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir Foto" class="btn-primary btn-info" action="#{controladorPersonalconfiguracion.agregarEvidenciaDistincion}"/>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>                                                                        
+                                                                    </div>
+                                                                </div>
+                                                            </div>                                               
+                                                        </div>
+                                                    </div>
+                                                </div>                                               
+                                            </p:outputPanel>
+                                        </h:form>
+                                        <h:form id="frmListaDistinciones">
+                                            <p:dataGrid var="perosnalFoto" value="#{controladorPersonalconfiguracion.nuevaListaPersonalsFotosFaltantes}" columns="4" layout="grid"
+                                                        rows="16" paginator="true" id="cars"
+                                                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                        rowsPerPageTemplate="4,16,20">
+
+                                                <f:facet name="header">
+                                                    Plantilla Perosnal
+                                                </f:facet>
+
+                                                <p:panel style="text-align:center">
+                                                    <h:panelGrid columns="1" style="width:100%">
+
+                                                        <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{perosnalFoto.clave}.jpg" alt="#{perosnalFoto.clave}" title="Personal #{perosnalFoto.clave}" style="width: 100px; height: 100px; align-content: center;"/>
+
+                                                        <h:outputText value="#{perosnalFoto.nombre}" />
+                                                        <h:outputText value="#{perosnalFoto.categoriaOperativaNombre}" />
+
+                                                    </h:panelGrid>
+                                                </p:panel>
+
+                                            </p:dataGrid>
+
+                                        </h:form>
+                                    </p:tab>
                                 </p:tabView>
                             </div>
                         </div>

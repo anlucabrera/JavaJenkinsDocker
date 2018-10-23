@@ -149,7 +149,7 @@
                                     </div>
                                     <div class="col-sm-6 col-md-3 col-lg-3" style=" #{controladorPOARegistro.ejeActivo eq true?controladorPOARegistro.tipo eq 'Subactividad'?'visibility:collapse':'visibility:visible':'visibility: collapse'}">
                                         <p:outputLabel for="subactividades" value="Contará con subactividades" />
-                                        <p:selectOneRadio id="subactividades" value="#{controladorPOARegistro.esActividadPrincipal}">
+                                        <p:selectOneRadio id="subactividades" value="#{controladorPOARegistro.esActividadPrincipal}" valueChangeListener="#{controladorPOARegistro.resetearProgramados}">
                                             <f:selectItem itemValue="#{true}" itemLabel="SI" />
                                             <f:selectItem itemValue="#{false}" itemLabel="NO" />
                                             <p:ajax listener="#{controladorPOARegistro.imprimirValores()}" process="subactividades" />

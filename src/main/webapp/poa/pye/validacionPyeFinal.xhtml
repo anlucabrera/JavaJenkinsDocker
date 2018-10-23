@@ -43,6 +43,26 @@
 
 
         <adm:sidebar collapsed="true"/>
+        <h:form id="frmAlineacionEstratejica" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    <p:panel header="Alineación estratégica">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3 col-lg-3">            
+                                <p:autoUpdate/>
+                                <p:outputLabel value="Área:" />
+
+                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorRegistroActividadesPOAPyE.areaSeleccionada}">
+                                    <f:selectItems value="#{controladorRegistroActividadesPOAPyE.areasUniversidadsRegistros}" var="area" itemValue="#{area.area}" itemLabel="#{area.area} -- #{area.nombre}" />
+                                    <p:ajax update=":frm" listener="#{controladorRegistroActividadesPOAPyE.imprimirValores()}"/>
+                                </p:selectOneMenu> 
+                                <p:message for="eje" display="tooltip" />
+                            </div>
+                        </div>
+                    </p:panel>
+                </div>
+            </div>
+        </h:form>
         <h:form id="frm" prependId="false" class="form-inline">
             <div class="box box-primary">
                 <div class="box-header with-border">
@@ -61,8 +81,7 @@
 
                                 <p:outputPanel>            
                                     <p:autoUpdate/>
-                                    <p:commandButton value="Parametros registro" id="btnRdV" actionListener="#{controladorRegistroActividadesPOAPyE.imprimirValores()}"  oncomplete="PF('dlgParametros').show()" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":dtbBajas" />
-                                    <p:commandButton value="Liberar POA" id="btnlbPOA" actionListener="#{controladorRegistroActividadesPOAPyE.validarPyEFinal()}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":dtbBajas" />
+                                    <p:commandButton value="Liberar POA" id="btnlbPOA" actionListener="#{controladorRegistroActividadesPOAPyE.validarPyEFinal()}" disabled="#{controladorRegistroActividadesPOAPyE.liberado}" title="El poa del area #{controladorRegistroActividadesPOAPyE.areaPOASeleccionada.nombre} ya a sido aprobado" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":dtbBajas" />
                                 </p:outputPanel>
                             </f:facet>
                         </p:toolbar>
@@ -285,24 +304,5 @@
                 </div>
             </div>
         </h:form>
-
-        <p:dialog header="Seleccionar parámetros de registro" widgetVar="dlgParametros" modal="true" 
-                  showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true"
-                  visible="#{controladorRegistroActividadesPOAPyE.claveEje eq 0?true:false}">
-            <h:form id="frmParametros">
-                <p:outputLabel for="eje"  value="Área" />
-                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorRegistroActividadesPOAPyE.consultarListasValidacionFinal}">
-                    <f:selectItems value="#{controladorEvaluacionActividadesPyE.areasUniversidadsRegistros}" var="area" itemValue="#{area.area}" itemLabel="#{area.area} -- #{area.nombre}" />
-                    <p:ajax update="eje" listener="#{controladorRegistroActividadesPOAPyE.imprimirValores()}"/>
-                </p:selectOneMenu> 
-                <p:message for="eje" display="tooltip" />
-                <hr/>   
-                <h:outputText id="display" />
-                <p:commandButton id="btnAceptarParametro" value="Aceptar" actionListener="#{controladorRegistroActividadesPOAPyE.generaListaActividades()}"
-                                 icon="fa fa-chek" styleClass="btn-primary"  update=":frm:dtbBajas"
-                                 onsuccess="PF('dlgParametros').hide()" />
-            </h:form>
-        </p:dialog>
-
     </ui:define>
 </ui:composition>

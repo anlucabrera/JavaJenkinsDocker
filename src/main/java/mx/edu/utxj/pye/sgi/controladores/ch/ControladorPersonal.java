@@ -172,7 +172,6 @@ public class ControladorPersonal implements Serializable {
 
             informacionCV();
             mostrarFuncioneSubordinado();
-            mostrarIncidencias();
             convertirRutaDatosPersonales();
             
             actividad = nuevOBJPersonalSubordinado.getActividad().getActividad();
@@ -198,19 +197,6 @@ public class ControladorPersonal implements Serializable {
 
     public void onRowCancel(RowEditEvent event) {
         Messages.addGlobalWarn("¡Operación cancelada!!");
-    }
-
-    public void mostrarIncidencias() {
-        try {
-            ejbNotificacionesIncidencias.mostrarIncidencias(contactoDestino).forEach((t) -> {
-                if (t.getEstatus().equals("Aceptado")) {
-                    listaIncidencias.add(t);
-                }
-            });
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorPersonal.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     public void mostrarFuncioneSubordinado() {

@@ -474,7 +474,6 @@
                         <div class="col-sm-12 col-md-12 col-lg-12">
                             <p:outputLabel for="producto"  value="Producto" />
                             <p:selectOneMenu filter="true" filterMatchMode="contains" id="producto" valueChangeListener="#{controladorPOARecurso.asignaRecursoProductos}">
-                                <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                 <f:selectItems value="#{controladorPOARecurso.productoses}" var="productos" itemValue="#{productos.productosPK.producto}" itemLabel="#{productos.descripcion}" />
                                 <p:ajax update="producto mensejeError"/>
                             </p:selectOneMenu> 
@@ -521,9 +520,13 @@
                                 </p:panelGrid>        
                             </p:outputPanel>
                         </div>
-                        <p:commandButton value="Aceptar" id="btnAgregarRecurso" actionListener="#{controladorPOARecurso.agregarRecursoActividad()}"
-                                         icon="fa fa-chek" styleClass="btn-primary"  update=":frm" process=":frmAsignaRecurso"
-                                         onsuccess="actualizarTabla()" oncomplete="PF('delRegistroProdustos').hide()"/>
+                        <p:outputPanel>            
+                            <p:autoUpdate/>
+                            <p:commandButton value="Aceptar" id="btnAgregarRecurso" actionListener="#{controladorPOARecurso.agregarRecursoActividad()}"
+                                             disabled="#{!controladorPOARecurso.productoSeleccionado}" title="Seleccione una Partida y un Producto"
+                                             icon="fa fa-chek" styleClass="btn-primary"  update=":frm" process=":frmAsignaRecurso"
+                                             onsuccess="actualizarTabla()" oncomplete="PF('delRegistroProdustos').hide()"/>       
+                        </p:outputPanel>
                     </div>
                 </h:form>
             </p:dialog>

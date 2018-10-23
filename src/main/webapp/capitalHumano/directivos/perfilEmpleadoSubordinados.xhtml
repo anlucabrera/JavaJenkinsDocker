@@ -451,61 +451,6 @@
                                             </p:outputPanel>    
                                         </h:form>
                                     </p:tab>
-                                    <p:tab title="Incidencias" titletip="#{controladorSubordinados.listaIncidencias.size()} incidencias pendientes" titleStyle="#{controladorSubordinados.listaIncidencias.size() eq 0 ?'':'background: #00a7d0 !important;' }">
-                                        <h:form id="frminci">                                               
-                                            <p:outputPanel >
-                                                <p:dataTable id="tblActividades"  value="#{controladorSubordinados.listaIncidencias}"  var="incidencias"
-                                                             paginator="true" rows="10"
-                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                             rowsPerPageTemplate="5,10,15,20,25,30" editable="true" style="margin-bottom:20px"
-                                                             emptyMessage="No se encontraron Registros." rendered="true">
-
-                                                    <p:ajax event="rowEdit" listener="#{controladorSubordinados.onRowEdit}" update="tblActividades" />
-                                                    <p:ajax event="rowEditCancel" listener="#{controladorSubordinados.onRowCancel}" update="tblActividades" />
-
-                                                    <p:column headerText="Tipo de incidencia" 
-                                                              sortBy="#{incidencias.tipo}" 
-                                                              filterBy="#{incidencias.tipo}" 
-                                                              filterMatchMode="contains">
-                                                        <h:outputText value="#{incidencias.tipo}" />
-                                                    </p:column>
-
-                                                    <p:column headerText="Fecha de aplicación" 
-                                                              sortBy="#{incidencias.fecha}" 
-                                                              filterBy="#{incidencias.fecha}" 
-                                                              filterMatchMode="contains">
-                                                        <h:outputLabel value="#{incidencias.fecha}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
-                                                    </p:column>                                                
-
-                                                    <p:column headerText="Estatus" 
-                                                              sortBy="#{incidencias.estatus}" 
-                                                              filterBy="#{incidencias.estatus}" 
-                                                              filterMatchMode="contains">
-                                                        <p:cellEditor>
-                                                            <f:facet name="output"><h:outputText value="#{incidencias.estatus}" /></f:facet>
-                                                            <f:facet name="input">
-                                                                <h:selectOneMenu value="#{incidencias.estatus}" style="width:100%">
-                                                                    <f:selectItems value="#{controladorSubordinados.estatus}" var="estatus" itemLabel="#{estatus}" itemValue="#{estatus}" />
-                                                                </h:selectOneMenu>
-                                                            </f:facet>
-                                                        </p:cellEditor>
-                                                    </p:column>     
-
-                                                    <p:column headerText="Tiempo" 
-                                                              sortBy="#{incidencias.tiempo}" 
-                                                              filterBy="#{incidencias.tiempo}" 
-                                                              filterMatchMode="contains">
-                                                        <h:outputText value="#{incidencias.tiempo}" />
-                                                    </p:column> 
-
-                                                    <p:column style="width:32px">
-                                                        <p:rowEditor />
-                                                    </p:column>
-
-                                                </p:dataTable>  
-                                            </p:outputPanel>    
-                                        </h:form>
-                                    </p:tab>
                                     <!--p:tab title="Tarjeta de asistencia">
                                         <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                             <div class="col-md-12">
@@ -530,19 +475,10 @@
                     </div>
                 </section>
             </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Administrativo'}">
-                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave != 563}">
-                    <h1>
-                        Esta página está disponible solo para directivos.
-                    </h1>
-                </c:if>
-            </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Docente'}">
-                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave != 563}">
-                    <h1>
-                        Esta página está disponible solo para directivos.
-                    </h1>
-                </c:if>
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Administrativo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Docente'}">
+                <h1>
+                    Esta página está disponible solo para directivos.
+                </h1>
             </c:if>
         </p:panel>
     </ui:define>
