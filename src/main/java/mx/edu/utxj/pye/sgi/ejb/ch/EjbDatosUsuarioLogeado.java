@@ -51,6 +51,8 @@ public interface EjbDatosUsuarioLogeado {
     public List<Actividades> mostrarListaActividades() throws Throwable;
 
     public List<PersonalCategorias> mostrarListaPersonalCategorias() throws Throwable;
+    
+    public Integer mostrarListaPersonalCategoriasAreas(Short categoria, Short area) throws Throwable;
 
     public PersonalCategorias crearNuevoPersonalCategorias(PersonalCategorias nuevoPersonalCategorias) throws Throwable;
 

@@ -170,6 +170,14 @@ public class ServiciosDatosUsuarioLogeado implements EjbDatosUsuarioLogeado {
         List<PersonalCategorias> pr = q.getResultList();
         return pr;
     }
+    @Override
+    public Integer mostrarListaPersonalCategoriasAreas(Short categoria, Short area) throws Throwable{
+        TypedQuery<ListaPersonal> q = em.createQuery("SELECT l FROM ListaPersonal l WHERE  l.areaSuperior=:area AND l.categoriaOperativa=:categoria", ListaPersonal.class);
+        q.setParameter("categoria", categoria);
+        q.setParameter("area", area);
+        List<ListaPersonal> pr = q.getResultList();
+        return pr.size();
+    }
 
     @Override
     public PersonalCategorias crearNuevoPersonalCategorias(PersonalCategorias nuevoPersonalCategorias) throws Throwable {

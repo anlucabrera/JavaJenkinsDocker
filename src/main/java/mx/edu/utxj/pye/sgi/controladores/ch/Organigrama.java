@@ -1,21 +1,27 @@
 package mx.edu.utxj.pye.sgi.controladores.ch;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.ManagedBean;
 import javax.ejb.EJB;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.entity.ch.Funciones;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 
 @Named
@@ -24,100 +30,124 @@ import org.omnifaces.util.Messages;
 public class Organigrama implements Serializable {
 
     private static final long serialVersionUID = 2288964212463101066L;
-
-    @Getter    @Setter    List<ListaPersonal> personalGeneral = new ArrayList<>();    
-    @Getter    @Setter    private Iterator<ListaPersonal> empleadoActual;
-    @Getter    @Setter    List<jasson> jassonList = new ArrayList<>();
-    @Getter    @Setter    Integer clave=100;
-
     
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
+    @Getter    @Setter    private ListaPersonal nuevoEmpleado;
+    @Getter    @Setter    private Personal nuevoEmpleadoFunciones;
+    @Getter    @Setter    private List<ListaPersonal> nuevaListaPersonal = new ArrayList<>();
+    @Getter    @Setter    private List<String> nuevaListaFuncionesEspecificas = new ArrayList<>();
+    @Getter    @Setter    private List<Funciones> listaDFunciones = new ArrayList<>();
+    @Getter    @Setter    private List<String> nuevaListaFuncionesGenerales = new ArrayList<>();
+    @Getter    @Setter    private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    @Getter    @Setter    private Integer  sub = 0, sec = 0, ptc = 0, pda = 0, lab = 0;
+    @Getter    @Setter    private Short  area=0,catO=0,catE=0;
+    @Getter    @Setter    private String fechaI;
     
+
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo areasLogeo;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbFunciones ejbFunciones;
 
     @PostConstruct
     public void init() {
         try {
-        System.out.println("ExelPlantillaPersonal Inicio: " + System.currentTimeMillis());
-            personalGeneral = ejbSelectec.mostrarListaDeEmpleados();
-            Collections.sort(personalGeneral, (x, y) -> Short.compare(x.getAreaOperativa(), y.getAreaOperativa()));
-            empleadoActual = personalGeneral.iterator();
-            while (empleadoActual.hasNext()) {
-                ListaPersonal next = empleadoActual.next();
-                if (next.getActividad() == 2 || next.getActividad() == 4 || next.getClave() == 343) {
-                    if (next.getAreaOperativa() == 1) {
-                        jassonList.add(new jasson("0", null, '"' + next.getAreaOperativaNombre() + '"', '"' + next.getNombre() + " ______________________________ " + next.getCategoriaOperativaNombre() + '"', next.getClave()));
-                    } else {
-                        jassonList.add(new jasson(String.valueOf(next.getAreaOperativa() - 1), String.valueOf(next.getAreaSuperior() - 1), '"' + next.getAreaOperativaNombre() + '"', '"' + next.getNombre() + " ______________________________ " + next.getCategoriaOperativaNombre() + '"', next.getClave()));
-                    }
-                    empleadoActual.remove();
-                }
-            }
-
-//            jassonList.add(new jasson(String.valueOf(clave), String.valueOf("3"), '"'+ "Segimiento de Recursos Extraordinarios"+ '"','"'+  "Albin Gutierrez Maria Lorena ______________________________ Encargado/a de la Comprobación Financiera de Recursos Extraordinarios"+ '"', 390));
-
-            empleadoActual = personalGeneral.iterator();
-            while (empleadoActual.hasNext()) {
-                clave++;
-                ListaPersonal next = empleadoActual.next();
-                if (next.getActividad() == 3 || next.getCategoriaOperativa() == 34) {
-                    if (next.getAreaSuperior() >= 23 && next.getAreaSuperior() <= 50) {
-                        jassonList.add(new jasson(String.valueOf(clave), String.valueOf(next.getAreaSuperior()- 1), '"' + next.getNombre() + '"', '"' + next.getCategoriaOperativaNombre() + '"', next.getClave()));
-                        empleadoActual.remove();
-                    }
-                }
-            }
-
-            empleadoActual = personalGeneral.iterator();
-            while (empleadoActual.hasNext()) {
-                ListaPersonal next = empleadoActual.next();
-                clave++;
-                jassonList.add(new jasson(String.valueOf(clave), String.valueOf(next.getAreaOperativa()- 1), '"' + next.getNombre() + '"', '"' + next.getCategoriaOperativaNombre() + '"', next.getClave()));
-                empleadoActual.remove();
-            }
-            
-            jassonList.forEach((t) -> {
-                System.out.println(":"+t.getId()+":"+t.getParent()+":"+t.getTitle()+":"+t.getDescription()+":"+t.getImage());
-            });
-        System.out.println("Organigrama Fin: " + System.currentTimeMillis());
-
+            sub = 0;            sec = 0;            ptc = 0;            pda = 0;
+            lab = 0;            area = 0;            catO = 0;            catE = 0;
+            fechaI = "";
+            nuevoEmpleadoFunciones = new Personal();
+            nuevaListaFuncionesEspecificas.clear();
+            nuevaListaFuncionesGenerales.clear();
+            nuevoEmpleado = new ListaPersonal();
+            nuevaListaPersonal.clear();
+            listaDFunciones.clear();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(Organigrama.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public List<ListaPersonal> personalPorArea(ListaPersonal personalActual) {
-        List<ListaPersonal> subordinados = new ArrayList<>();
-        subordinados = ejbDatosUsuarioLogeado.mostrarListaSubordinados(personalActual);
-        return subordinados;
-    }
-   
-    public void llenaJasson(List<ListaPersonal> personasActuales) {
-        personasActuales.forEach((p) -> {
-            jassonList.add(new jasson(String.valueOf(p.getAreaOperativa()), String.valueOf(p.getAreaSuperior()), p.getAreaOperativaNombre(), p.getNombre() + "" + p.getCategoriaOperativaNombre(), p.getClave()));
-        });            
-    }
-    
-    public void claveSeleccionada(String clave){
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.Organigrama.claveSeleccionada()"+clave);
-    }
-    public static class jasson {
 
-        @Getter        @Setter        private String id;
-        @Getter        @Setter        private String parent;
-        @Getter        @Setter        private String title;
-        @Getter        @Setter        private String description;
-        @Getter        @Setter        private int image;
+    public void nodeSelectListener() {
+        try {
+            sub = 0;            sec = 0;            ptc = 0;            pda = 0;
+            lab = 0;            area = 0;            catO = 0;            catE = 0;
+            fechaI = "";
+            AreasUniversidad areasUniversidad = new AreasUniversidad();
 
-        public jasson(String id, String parent, String title, String description, int image) {
-            this.id = id;
-            this.parent = parent;
-            this.title = title;
-            this.description = description;
-            this.image = image;
+            Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+            int clave = Integer.valueOf(params.get("clave"));
+
+            if (clave <= 0) {
+                Messages.addGlobalWarn("No hay Datos");
+                Ajax.oncomplete("PF('datos').hide();");
+            } else {
+                nuevoEmpleado = new ListaPersonal();
+                nuevoEmpleado = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeado(clave);
+                nuevoEmpleadoFunciones = ejbDatosUsuarioLogeado.mostrarPersonalLogeado(nuevoEmpleado.getClave());
+                areasUniversidad = new AreasUniversidad();
+                areasUniversidad = areasLogeo.mostrarAreasUniversidad(nuevoEmpleado.getAreaOperativa());
+                if (areasUniversidad.getCategoria().getDescripcion().equals("Área Académica")) {
+                    pda = 0;
+                    ptc = 0;
+                    sec = 0;
+                    lab = 0;
+                    pda = ejbDatosUsuarioLogeado.mostrarListaPersonalCategoriasAreas(Short.parseShort("30"), nuevoEmpleado.getAreaOperativa());
+                    ptc = ejbDatosUsuarioLogeado.mostrarListaPersonalCategoriasAreas(Short.parseShort("32"), nuevoEmpleado.getAreaOperativa());
+                    sec = ejbDatosUsuarioLogeado.mostrarListaPersonalCategoriasAreas(Short.parseShort("34"), nuevoEmpleado.getAreaOperativa());
+                    lab = ejbDatosUsuarioLogeado.mostrarListaPersonalCategoriasAreas(Short.parseShort("41"), nuevoEmpleado.getAreaOperativa());
+                    sub=lab+pda+ptc+sec;
+                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.Organigrama.nodeSelectListener(pda)"+pda);
+                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.Organigrama.nodeSelectListener(ptc)"+ptc);
+                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.Organigrama.nodeSelectListener(sec)"+sec);
+                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.Organigrama.nodeSelectListener(lab)"+lab);
+                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.Organigrama.nodeSelectListener(sub)"+sub);
+                }
+                fechaI = dateFormat.format(nuevoEmpleado.getFechaIngreso());
+                buscaFunciones();
+                Ajax.oncomplete("PF('datos').show();");
+                Ajax.oncomplete("PF('datos').show();");
+            }
+
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(OrganigramView4.class.getName()).log(Level.SEVERE, null, ex);
         }
-    
     }
 
+    public void buscaFunciones() {
+        try {
+            area=0;
+            catO=0;
+            catE=0;
+            nuevaListaFuncionesGenerales.clear();
+            nuevaListaFuncionesEspecificas.clear();
+            if (nuevoEmpleado.getCategoriaOperativa() == 111) {
+                catO=33;
+            }else{
+                catO=nuevoEmpleado.getCategoriaOperativa();
+            }
+            if ((nuevoEmpleado.getAreaSuperior() >= 23 && nuevoEmpleado.getAreaSuperior() <= 50) || (nuevoEmpleado.getAreaOperativa() >= 23 && nuevoEmpleado.getAreaOperativa() <= 50)) {
+                area = 61;
+            } else {
+                area = nuevoEmpleado.getAreaOperativa();
+            }
+            catE=nuevoEmpleadoFunciones.getCategoriaEspecifica().getCategoriaEspecifica();
+            listaDFunciones = ejbFunciones.mostrarListaFuncionesPersonalLogeado(area,catO,catE);
+            if (listaDFunciones.isEmpty()) {
+                Messages.addGlobalWarn("Sin información de funciones");
+            } else {
+                for (int i = 0; i <= listaDFunciones.size() - 1; i++) {
+                    Funciones nuevaFunciones = new Funciones();
+                    nuevaFunciones = listaDFunciones.get(i);
+                    if ("GENERAL".equals(nuevaFunciones.getTipo())) {
+                        nuevaListaFuncionesGenerales.add(nuevaFunciones.getNombre());
+                    } else {
+                        nuevaListaFuncionesEspecificas.add(nuevaFunciones.getNombre());
+                    }
+                }
+            }
+            listaDFunciones.clear();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(OrganigramView4.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }
