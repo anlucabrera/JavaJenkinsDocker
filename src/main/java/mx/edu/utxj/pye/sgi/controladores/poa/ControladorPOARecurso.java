@@ -78,7 +78,7 @@ public class ControladorPOARecurso implements Serializable {
     @PostConstruct
     public void init() {
         System.out.println("inicio"+System.currentTimeMillis());
-        ejercicioFiscal =  Short.parseShort(String.valueOf(fechaActual.getYear()-101));
+        ejercicioFiscal =  Short.parseShort(String.valueOf(fechaActual.getYear()-100));
         numPm1 = null;        numPm2 = null;        numPm3 = null;        numPm4 = null;        numPm5 = null;        numPm6 = null;
         numPm7 = null;        numPm8 = null;        numPm9 = null;        numPm10 = null;        numPm11 = null;        numPm12 = null;
         alineacionSeleccionada = false;

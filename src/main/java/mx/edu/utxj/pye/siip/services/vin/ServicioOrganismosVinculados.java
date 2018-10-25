@@ -5,17 +5,25 @@
  */
 package mx.edu.utxj.pye.siip.services.vin;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
-import javax.ejb.Stateful;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.servlet.annotation.MultipartConfig;
+import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesVinculacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EmpresasTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
@@ -30,20 +38,9 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.SectoresTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
-//import mx.edu.utxj.pye.sgi.facade.FacadePye;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
-import mx.edu.utxj.pye.siip.entity.prontuario.list.ListaOrganismosVinculados;
+import mx.edu.utxj.pye.siip.dto.vinculacion.DTOActividadesVinculacion;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
-//import mx.edu.utxj.pye.siip.entity.prontuario.EmpresasTipo;
-//import mx.edu.utxj.pye.siip.entity.prontuario.Estado;
-//import mx.edu.utxj.pye.siip.entity.prontuario.GirosTipo;
-//import mx.edu.utxj.pye.siip.entity.prontuario.Municipio;
-//import mx.edu.utxj.pye.siip.entity.prontuario.MunicipioPK;
-//import mx.edu.utxj.pye.siip.entity.prontuario.OrganismosTipo;
-//import mx.edu.utxj.pye.siip.entity.prontuario.OrganismosVinculados;
-//import mx.edu.utxj.pye.siip.entity.prontuario.Pais;
-//import mx.edu.utxj.pye.siip.entity.prontuario.SectoresTipo;
-//import mx.edu.utxj.pye.siip.entity.prontuario.list.ListaOrganismosVinculados;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -51,62 +48,33 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbOrganismosVinculados;
+import org.omnifaces.util.Messages;
 
 /**
  *
  * @author UTXJ
  */
-@Stateful
+@Stateless
+@MultipartConfig
 public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
 
     @EJB
     Facade facadeProntuario;
     @EJB
     EjbModulos ejbModulos;
-
+    @EJB Facade f;
+    @Inject LogonMB logonMB;
+    
+    @EJB
+    EjbFiscalizacion ejbFiscalizacion;
+    
     @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
     private EntityManager em;
+    
+    public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-//    @Override
-//    public ListaOrganismosVinculados getListaActualizadaPlantilla() throws Throwable {
-//        ListaOrganismosVinculados listaOrganismosVinculados = new ListaOrganismosVinculados();
-//        Query q = facadeProntuario.getEntityManager().createNativeQuery("SELECT empresa, nombre FROM prontuario.organismos_vinculados", OrganismosVinculados.class);
-//        listaOrganismosVinculados.setOrganismosVinculadosLst(q.getResultList());
-//        return listaOrganismosVinculados;
-//    }
-//
-//    @Override
-//    public void actualizarPlantillaConvenio(ListaOrganismosVinculados listaOrganismosVinculados) throws FileNotFoundException, IOException, ParsePropertyException, InvalidFormatException, Throwable{
-//        Map<String, ListaOrganismosVinculados> beans = new HashMap<>();
-//        XLSTransformer transformer = new XLSTransformer();
-//        beans.put("listaOrganismosVinculados", listaOrganismosVinculados);
-//        InputStream stream;
-//        stream = ServicioConvenios.class.getClassLoader().getResourceAsStream("plantillas\\convenios.xlsx");
-//        try (Workbook workbook = transformer.transformXLS(stream, beans)) {
-//            OutputStream reportFile = new FileOutputStream("C:\\archivos\\modulos_registro\\plantillas\\vinculacion\\convenios.xlsx");
-//            workbook.write(reportFile);
-//        }
-//    }
-//    @Override
-//    public ListaOrganismosVinculados getListaOrganismosVinculados(String rutaArchivo) throws Throwable {
-//        
-//    }
-//
-////    public static void main(String args[]){
-////        try {
-////            System.out.println("mx.edu.utxj.pye.siip.services.main() Main");
-////            getListaEmpresas("C:\\archivos\\MODULOS_REGISTRO\\2018\\511\\VINCULACION\\empresas.xlsx");
-////        } catch (Throwable ex) {
-////            Logger.getLogger(ServicioEmpresas.class.getName()).log(Level.SEVERE, null, ex);
-////        } 
-////    }
-//    @Override
-//    public void guardaOrganismosVinculados(ListaOrganismosVinculados listaOrganismosVinculados) throws Throwable {
-//    }
     @Override
-    public ListaOrganismosVinculados getListaOrganismosVinculados(String rutaArchivo) throws Throwable {
-//        Creación de un nuevo objeto contenedor de listas de organismos vinculados
-        ListaOrganismosVinculados listaOrganismosVinculados = new ListaOrganismosVinculados();
+    public List<OrganismosVinculados> getListaOrganismosVinculados(String rutaArchivo) throws Throwable {
         //Creacion de una lista que almacenará todas los nuevos orgnanismos vinculados del archivo de excel
         List<OrganismosVinculados> organismosVinculados = new ArrayList<>();
         //Declaración del objeto que será ocupado para almanar cada registro y almacenarlo como nuevo en la lista de organismos vinculados.
@@ -278,41 +246,45 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
                     organismosVinculados.add(organismoVinculado);
                 }
             }
-            listaOrganismosVinculados.setOrganismosVinculadosLst(organismosVinculados);
             workBookOrgVin.close();
-            addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+            Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
         } else {
             workBookOrgVin.close();
             excelOrgVin.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            Messages.addGlobalError("<b>El archivo cargado no corresponde al registro</b>");
         }
-        return listaOrganismosVinculados;
+        return organismosVinculados;
     }
 
     @Override
-    public void guardaOrganismosVinculados(ListaOrganismosVinculados listaOrganismosVinculados, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) throws Throwable {
+    public void guardaOrganismosVinculados(List<OrganismosVinculados> listaOrganismosVinculados, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) throws Throwable {
         List<String> listaCondicional = new ArrayList<>();
-        listaOrganismosVinculados.getOrganismosVinculadosLst().forEach((organismoVinculado) -> {
+        listaOrganismosVinculados.forEach((organismoVinculado) -> {
             facadeProntuario.setEntityClass(OrganismosVinculados.class);
             OrganismosVinculados organismosVEncontrado = getOrganismosVinculado(organismoVinculado);
             Boolean registroAlmacenado = false;
             if (organismosVEncontrado != null) {
-                listaCondicional.add(organismoVinculado.getFecha() + " " + organismoVinculado.getNombre());
+                listaCondicional.add(sdf.format(organismoVinculado.getFecha()) + " " + organismoVinculado.getNombre());
                 registroAlmacenado = true;
             }
             if (registroAlmacenado) {
-                organismoVinculado.setRegistro(organismosVEncontrado.getRegistro());
-                organismoVinculado.setEmpresa(organismosVEncontrado.getEmpresa());
-                facadeProntuario.edit(organismoVinculado);
+                if (organismosVEncontrado.getEstatus() == true) {
+                    organismoVinculado.setRegistro(organismosVEncontrado.getRegistro());
+                    organismoVinculado.setEmpresa(organismosVEncontrado.getEmpresa());
+                    facadeProntuario.edit(organismoVinculado);
+                }else{
+                    listaCondicional.remove(sdf.format(organismoVinculado.getFecha()) + " " + organismoVinculado.getNombre());
+                }
             } else {
                 Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                 organismoVinculado.setRegistro(registro.getRegistro());
+                organismoVinculado.setEstatus(true);
                 facadeProntuario.create(organismoVinculado);
             }
             facadeProntuario.flush();
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
@@ -321,6 +293,17 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
         query.setParameter("empresa", empresa);
         Integer registro = query.getSingleResult().getRegistro();
         return registro;
+    }
+    
+    @Override
+    public OrganismosVinculados getOrganismoVinculadoPorEmpresa(Integer empresa) {
+        try {
+            return em.createNamedQuery("OrganismosVinculados.findByEmpresa", OrganismosVinculados.class)
+                    .setParameter("empresa", empresa)
+                    .getSingleResult();
+        } catch (NonUniqueResultException e) {
+            return null;
+        }
     }
 
     @Override
@@ -340,7 +323,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     @Override
     public List<OrganismosVinculados> getOrganismosVinculadoVigentes() {
         List<OrganismosVinculados> organismosVinculadosLst = new ArrayList<>();
-        TypedQuery<OrganismosVinculados> query = em.createQuery("SELECT o FROM OrganismosVinculados o WHERE o.estatus = :estatus", OrganismosVinculados.class);
+        TypedQuery<OrganismosVinculados> query = em.createQuery("SELECT o FROM OrganismosVinculados o WHERE o.estatus = :estatus ORDER BY o.nombre", OrganismosVinculados.class);
         query.setParameter("estatus", true);
         try {
             organismosVinculadosLst = query.getResultList();
@@ -349,6 +332,166 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
 //            System.out.println("mx.edu.utxj.pye.siip.services.vin.ServicioOrganismosVinculados.getOrganismosVinculadoVigentes()" + ex.toString());
         }
         return organismosVinculadosLst;
+    }
+
+    @Override
+    public List<OrganismosTipo> getOrganismosTipo() throws Throwable {
+        try {
+            return em.createQuery("SELECT o FROM OrganismosTipo o ORDER BY o.descripcion ASC", OrganismosTipo.class)
+                    .getResultList();
+        } catch (NoResultException ex) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<EmpresasTipo> getEmpresasTipos() throws Throwable {
+        try {
+            return em.createQuery("SELECT e FROM EmpresasTipo e ORDER BY e.descripcion ASC", EmpresasTipo.class)
+                    .getResultList();
+        } catch (NoResultException ex) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<GirosTipo> getGirosTipo() throws Throwable {
+        try {
+            return em.createQuery("SELECT g FROM GirosTipo g ORDER BY g.descripcion ASC", GirosTipo.class)
+                    .getResultList();
+        } catch (NoResultException ex) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<SectoresTipo> getSectoresTipo() throws Throwable {
+        try {
+            return em.createQuery("SELECT s FROM SectoresTipo s ORDER BY s.descripcion ASC", SectoresTipo.class)
+                    .getResultList();
+        } catch (NoResultException ex) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<OrganismosVinculados> getFiltroOrganismoVinculadoEjercicioMesArea(Short ejercicio, String mes, Short area){
+        try {
+            return em.createQuery("SELECT o FROM OrganismosVinculados o JOIN o.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes AND r.area = :area AND o.estatus = :estatus", OrganismosVinculados.class)
+                    .setParameter("anio", ejercicio)
+                    .setParameter("mes", mes)
+                    .setParameter("area", area)
+                    .setParameter("estatus", true)
+                    .getResultList();
+        } catch (NoResultException ex) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+    
+    private static final Logger LOG = Logger.getLogger(ServicioOrganismosVinculados.class.getName());
+
+    @Override
+    public List<DTOActividadesVinculacion> getActividadesVinculacion() throws Throwable {
+        try {
+            List<DTOActividadesVinculacion> dtoActividadesVinculacion = new ArrayList<>();
+            List<ActividadesVinculacion> listaActividadesVinculacion = em.createQuery("SELECT a FROM ActividadesVinculacion a ORDER BY a.nombre", ActividadesVinculacion.class)
+                    .getResultList();
+            listaActividadesVinculacion.forEach((d) -> {
+                em.refresh(d);
+                dtoActividadesVinculacion.add(new DTOActividadesVinculacion(
+                        d
+                ));
+            });
+            return dtoActividadesVinculacion;
+        } catch (NoResultException ex) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public Boolean verificaActividadVinculacion(OrganismosVinculados empresa, ActividadesVinculacion actividadVinculacion) {
+        try {
+            OrganismosVinculados ov = em.find(OrganismosVinculados.class, empresa.getRegistro());
+            em.refresh(ov);
+            
+            ActividadesVinculacion actVin = em.createQuery("SELECT a FROM ActividadesVinculacion a INNER JOIN a.organismosVinculadosList o WHERE o.empresa = :empresa AND a.actividadVinculacion = :actividadVinculacion", ActividadesVinculacion.class)
+                    .setParameter("empresa", ov.getEmpresa())
+                    .setParameter("actividadVinculacion", actividadVinculacion.getActividadVinculacion())
+                    .getSingleResult();
+            
+            em.refresh(actVin);
+            
+            if (!actVin.getOrganismosVinculadosList().isEmpty()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (NoResultException | NonUniqueResultException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean guardarActividadVinculacionEmpresa(OrganismosVinculados empresa, DTOActividadesVinculacion actividadVinculacion) {
+//        TODO: Corregir cuando el registro es nuevo
+        try {
+            OrganismosVinculados ov = em.find(OrganismosVinculados.class, empresa.getRegistro());
+//            OrganismosVinculados ov = em.createQuery("SELECT o FROM OrganismosVinculados o JOIN o.actividadesVinculacionList av JOIN av.organismosVinculadosList aov WHERE o.registro = :registro", OrganismosVinculados.class)
+//                    .setParameter("registro", empresa.getRegistro())
+//                    .getSingleResult();
+            ActividadesVinculacion av = em.find(ActividadesVinculacion.class, actividadVinculacion.getActividadVinculacion().getActividadVinculacion());
+//            ActividadesVinculacion av = em.createQuery("SELECT a FROM ActividadesVinculacion a JOIN a.organismosVinculadosList ov JOIN ov.actividadesVinculacionList oav  WHERE a.actividadVinculacion = :actividad", ActividadesVinculacion.class)
+//                    .setParameter("actividad", actividadVinculacion.getActividadVinculacion().getActividadVinculacion())
+//                    .getSingleResult();
+
+            em.refresh(ov);
+            em.refresh(av);
+            
+            if (verificaActividadVinculacion(ov, av)) {
+                eliminarActividadVinculacionEmpresa(empresa, actividadVinculacion);
+            } else {
+                ov.getActividadesVinculacionList().add(av);
+                av.getOrganismosVinculadosList().add(ov);
+                em.flush();
+            }
+            
+            em.flush();
+            return true;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo asignar la actividad con la empresa.", e);
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean eliminarActividadVinculacionEmpresa(OrganismosVinculados empresa, DTOActividadesVinculacion actividadVinculacion) {
+        try {
+            OrganismosVinculados ov = em.find(OrganismosVinculados.class, empresa.getRegistro());
+            ActividadesVinculacion av = em.find(ActividadesVinculacion.class, actividadVinculacion.getActividadVinculacion().getActividadVinculacion());
+            em.refresh(ov);
+            em.refresh(av);
+            if (verificaActividadVinculacion(ov, av)) {
+                ov.getActividadesVinculacionList().remove(av);
+                av.getOrganismosVinculadosList().remove(ov);
+                em.flush();
+            }
+            return true;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo asignar la actividad con la empresa.", e);
+            return false;
+        }
+    }
+
+    @Override
+    public void bajaOrganismoVinculado(OrganismosVinculados organismoVinculado) {
+        try {
+            facadeProntuario.setEntityClass(OrganismosVinculados.class);
+            organismoVinculado.setEstatus(false);
+            facadeProntuario.edit(organismoVinculado);
+            facadeProntuario.flush();
+            Messages.addGlobalInfo("<b>Se ha dado de baja el siguiente Organismo Vinculado: </b> " + organismoVinculado.getNombre());
+        } catch (Exception e) {
+        }
     }
 
 }

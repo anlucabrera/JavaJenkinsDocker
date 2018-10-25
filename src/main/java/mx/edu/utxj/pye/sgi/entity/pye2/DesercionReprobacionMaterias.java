@@ -17,7 +17,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -30,7 +29,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "DesercionReprobacionMaterias.findAll", query = "SELECT d FROM DesercionReprobacionMaterias d")
     , @NamedQuery(name = "DesercionReprobacionMaterias.findByRegistro", query = "SELECT d FROM DesercionReprobacionMaterias d WHERE d.registro = :registro")
-    , @NamedQuery(name = "DesercionReprobacionMaterias.findByAsignatura", query = "SELECT d FROM DesercionReprobacionMaterias d WHERE d.asignatura = :asignatura")
     , @NamedQuery(name = "DesercionReprobacionMaterias.findByDocente", query = "SELECT d FROM DesercionReprobacionMaterias d WHERE d.docente = :docente")})
 public class DesercionReprobacionMaterias implements Serializable {
 
@@ -42,13 +40,11 @@ public class DesercionReprobacionMaterias implements Serializable {
     private Integer registro;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 50)
-    @Column(name = "asignatura")
-    private String asignatura;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "docente")
     private int docente;
+    @JoinColumn(name = "asignatura", referencedColumnName = "cve_materia")
+    @ManyToOne(optional = false)
+    private MateriasProgramaEducativo asignatura;
     @JoinColumn(name = "dpe", referencedColumnName = "dpe")
     @ManyToOne(optional = false)
     private DesercionPeriodosEscolares dpe;
@@ -63,9 +59,8 @@ public class DesercionReprobacionMaterias implements Serializable {
         this.registro = registro;
     }
 
-    public DesercionReprobacionMaterias(Integer registro, String asignatura, int docente) {
+    public DesercionReprobacionMaterias(Integer registro, int docente) {
         this.registro = registro;
-        this.asignatura = asignatura;
         this.docente = docente;
     }
 
@@ -77,20 +72,20 @@ public class DesercionReprobacionMaterias implements Serializable {
         this.registro = registro;
     }
 
-    public String getAsignatura() {
-        return asignatura;
-    }
-
-    public void setAsignatura(String asignatura) {
-        this.asignatura = asignatura;
-    }
-
     public int getDocente() {
         return docente;
     }
 
     public void setDocente(int docente) {
         this.docente = docente;
+    }
+
+    public MateriasProgramaEducativo getAsignatura() {
+        return asignatura;
+    }
+
+    public void setAsignatura(MateriasProgramaEducativo asignatura) {
+        this.asignatura = asignatura;
     }
 
     public DesercionPeriodosEscolares getDpe() {

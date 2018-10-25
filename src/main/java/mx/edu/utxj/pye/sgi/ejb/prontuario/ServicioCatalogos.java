@@ -5,10 +5,9 @@
  */
 package mx.edu.utxj.pye.sgi.ejb.prontuario;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -20,7 +19,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.OrganismosEvaluadores;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
+import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 
 
 /**
@@ -57,8 +56,8 @@ public class ServicioCatalogos implements EjbCatalogos{
         } catch (NoResultException | NonUniqueResultException ex) {
             genLst = null;
 
-        }
-          return genLst;
+        }  
+        return genLst;
     }
 
     @Override
@@ -111,6 +110,42 @@ public class ServicioCatalogos implements EjbCatalogos{
             areasAcademicas = null;
         }
         return areasAcademicas;
+    }
+    
+    @Override
+    public List<AreasUniversidad> getAreasAcademicasDistribucionAulas() {
+        try {
+            return em.createQuery("SELECT a FROM AreasUniversidad a JOIN a.categoria c WHERE c.categoria = :categoria OR a.area = :area ORDER BY a.nombre", AreasUniversidad.class)
+                .setParameter("categoria", 8)
+                .setParameter("area", 8)
+                .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+        
+    }
+
+    @Override
+    public List<ProgramasEducativos> getProgramasEducativosProntuario() {
+        try {
+            return em.createQuery("SELECT p FROM ProgramasEducativos p ORDER BY p.nombre", ProgramasEducativos.class)
+                    .getResultList();
+        } catch (NoResultException ex) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<AreasUniversidad> getProgramasEducativoPorAreaAcademica(Short area) {
+        try {
+            return em.createQuery("SELECT a FROM AreasUniversidad a JOIN a.categoria c WHERE c.categoria = :categoria AND a.vigente = :vigente AND a.areaSuperior = :area ORDER BY a.nombre ASC", AreasUniversidad.class)
+                    .setParameter("categoria", 9)
+                    .setParameter("vigente", "1")
+                    .setParameter("area", area)
+                    .getResultList();
+        } catch (NoResultException ex) {
+            return Collections.EMPTY_LIST;
+        }
     }
 
 }

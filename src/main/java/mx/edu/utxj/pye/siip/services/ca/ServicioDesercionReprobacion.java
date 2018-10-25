@@ -116,7 +116,7 @@ public class ServicioDesercionReprobacion implements EjbDesercionReprobacion{
                 switch (fila.getCell(5).getCellTypeEnum()) {
                     case FORMULA:
                         materias.setCveMateria(fila.getCell(5).getStringCellValue());
-                        desercionReprobacionMaterias.setAsignatura(materias.getCveMateria());
+//                        desercionReprobacionMaterias.setAsignatura(materias.getCveMateria());
                         break;
                     default:
                         break;

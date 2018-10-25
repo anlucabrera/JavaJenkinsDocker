@@ -35,6 +35,7 @@ public class Comision implements Serializable{
     }
     @Getter @Setter @NonNull private Tramites tramite;
     
+    @Getter private AreasUniversidad areaPOA;
     @Getter private AreasUniversidad alineacionArea;
     @Getter private EjesRegistro alineacionEje;
     @Getter private Estrategias alineacionEstrategia;
@@ -57,6 +58,8 @@ public class Comision implements Serializable{
     @Getter private List<LineasAccion> lineasAccion;
     @Getter private List<Estado> estados;
     @Getter private List<Municipio> municipios;
+    
+    @Getter private List<Short> clavesAreasSubordinadas;//claves de areas subordinas que no tienes poa
     
     @Getter @Setter private List<Personal> posiblesComisionados;
 
@@ -287,6 +290,14 @@ public class Comision implements Serializable{
         this.comisionado = comisionado;
         tramite.getComisionOficios().setComisionado(comisionado.getClave());
         tramite.getComisionOficios().setArea((short)comisionado.getAreaOperativa());
+    }
+
+    public void setClavesAreasSubordinadas(List<Short> clavesAreasSubordinadas) {
+        this.clavesAreasSubordinadas = clavesAreasSubordinadas;
+    }
+
+    public void setAreaPOA(AreasUniversidad areaPOA) {
+        this.areaPOA = areaPOA;
     }
     
 

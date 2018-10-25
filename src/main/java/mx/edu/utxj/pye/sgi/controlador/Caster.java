@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.sgi.controlador;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import javax.ejb.EJB;
@@ -12,7 +13,10 @@ import javax.inject.Named;
 import javax.enterprise.context.ApplicationScoped;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.PlaneacionesCuatrimestrales;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  *
@@ -23,6 +27,8 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 public class Caster {
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
     @EJB EjbPropiedades ep;
+    private DecimalFormat df = new DecimalFormat("0.##");
+    
     public Caster() {
     }
     
@@ -55,5 +61,50 @@ public class Caster {
     
     public String getEjercicioFiscal(){
         return String.valueOf(ep.leerPropiedadEntera("finanzasEjercicioFiscal").getAsInt());
+    }
+    
+    public String generacionToString(Generaciones generacion) {
+        return (new StringBuilder())
+                .append(generacion.getInicio())
+                .append(" - ")
+                .append(generacion.getFin())
+                .toString();
+    }
+
+    public String organismoVinculadoToString(OrganismosVinculados organismo) {
+        return (new StringBuilder())
+                .append(organismo.getNombre())
+                .toString();
+    }
+    
+    public long getEvidenciasTamanioLimite() {
+        return 25 * 1024 * 1024;
+    }
+
+    public String bytesToMegabytes(long bytes) {
+        return String.format("%s MB", df.format((double) bytes / (double) (1024 * 1024)));
+    }
+
+    public String rutaToArchivoNombre(String ruta) {
+        return FilenameUtils.getName(ruta);
+    }
+
+    public String mimeToTipo(String mime) {
+        switch (mime) {
+            case "image/png":
+                return "PNG";
+            case "image/jpeg":
+            case "image/jpg":
+                return "JPG";
+            case "application/pdf":
+                return "PDF";
+            default:
+                return "NA";
+        }
+    }
+
+    public static void main(String[] args) {
+        Caster caster = new Caster();
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.Caster.main(): " + caster.bytesToMegabytes(450l));
     }
 }

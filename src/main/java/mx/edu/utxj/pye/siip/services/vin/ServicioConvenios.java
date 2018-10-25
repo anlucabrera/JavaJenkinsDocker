@@ -5,26 +5,33 @@
  */
 package mx.edu.utxj.pye.siip.services.vin;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.Convenios;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
+import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasBeneficiadosVinculacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
-import mx.edu.utxj.pye.siip.entity.vinculacion.list.ListaConvenios;
+import mx.edu.utxj.pye.siip.dto.vinculacion.DTOProgramasBeneficiadosVinculacion;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -34,6 +41,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbConvenios;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbOrganismosVinculados;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -48,13 +56,17 @@ public class ServicioConvenios implements EjbConvenios {
     EjbModulos ejbModulos;
     @EJB
     EjbOrganismosVinculados ejbOrganismosVinculados;
+    @EJB EjbFiscalizacion ejbFiscalizacion;        
+    @EJB Facade f;
+    @Inject
+    LogonMB logonMB;
     @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
     private EntityManager em;
 
+    private static final Logger LOG = Logger.getLogger(ServicioConvenios.class.getName());
+    
     @Override
-    public ListaConvenios getListaConvenios(String rutaArchivo) throws Throwable {
-        ListaConvenios listaConvenios = new ListaConvenios();
-
+    public List<Convenios> getListaConvenios(String rutaArchivo) throws Throwable {
         List<Convenios> convenios = new ArrayList<>();
         Convenios convenio;
         OrganismosVinculados organismoVinculado;
@@ -68,12 +80,11 @@ public class ServicioConvenios implements EjbConvenios {
         if (primeraHoja.getSheetName().equals("Convenios")) {
             for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
                 fila = (XSSFRow) (Row) primeraHoja.getRow(i);
-                if ((fila.getCell(1).getDateCellValue() != null)) {
+                if (fila.getCell(2).getDateCellValue() != null) {
                     convenio = new Convenios();
                     organismoVinculado = new OrganismosVinculados();
                     switch (fila.getCell(1).getCellTypeEnum()) {
                         case FORMULA:
-                            organismoVinculado.setNombre(fila.getCell(0).getStringCellValue());
                             organismoVinculado.setEmpresa((int) fila.getCell(1).getNumericCellValue());
                             break;
                         default:
@@ -149,261 +160,34 @@ public class ServicioConvenios implements EjbConvenios {
                     switch (fila.getCell(12).getCellTypeEnum()) {
                         case FORMULA:
                             convenio.setRecursosObtenidos(fila.getCell(12).getNumericCellValue());
+                            organismoVinculado.setNombre(fila.getCell(13).getStringCellValue());
                             break;
                         default:
                             break;
                     }
 
-                    switch (fila.getCell(13).getCellTypeEnum()) {
-                        case NUMERIC:
-                            String cadena = Integer.toString((int) fila.getCell(13).getNumericCellValue());
-                            Character aach = cadena.charAt(0);
-                            convenio.setAach(aach);
-                            break;
-                        case BLANK:
-                            convenio.setAach('0');
-                            break;
-                        default:
-                            break;
+                    if(!organismoVinculado.getNombre().isEmpty()){
+                        convenio.setEmpresa(organismoVinculado);
+                        convenios.add(convenio);
                     }
-                    switch (fila.getCell(14).getCellTypeEnum()) {
-                        case NUMERIC:
-                            String cadena = Integer.toString((int) fila.getCell(14).getNumericCellValue());
-                            Character aarh = cadena.charAt(0);
-                            convenio.setAarh(aarh);
-                            break;
-                        case BLANK:
-                            convenio.setAarh('0');
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(15).getCellTypeEnum()) {
-                        case NUMERIC:
-                            String cadena = Integer.toString((int) fila.getCell(15).getNumericCellValue());
-                            Character idie = cadena.charAt(0);
-                            convenio.setIdie(idie);
-                            break;
-                        case BLANK:
-                            convenio.setIdie('0');
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(16).getCellTypeEnum()) {
-                        case NUMERIC:
-                            String cadena = Integer.toString((int) fila.getCell(16).getNumericCellValue());
-                            Character pa = cadena.charAt(0);
-                            convenio.setPa(pa);
-                            break;
-                        case BLANK:
-                            convenio.setPa('0');
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(17).getCellTypeEnum()) {
-                        case NUMERIC:
-                            String cadena = Integer.toString((int) fila.getCell(17).getNumericCellValue());
-                            Character qab = cadena.charAt(0);
-                            convenio.setQab(qab);
-                            break;
-                        case BLANK:
-                            convenio.setQab('0');
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(18).getCellTypeEnum()) {
-                        case NUMERIC:
-                            String cadena = Integer.toString((int) fila.getCell(18).getNumericCellValue());
-                            Character gas = cadena.charAt(0);
-                            convenio.setGas(gas);
-                            break;
-                        case BLANK:
-                            convenio.setGas('0');
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(19).getCellTypeEnum()) {
-                        case NUMERIC:
-                            String cadena = Integer.toString((int) fila.getCell(19).getNumericCellValue());
-                            Character asp = cadena.charAt(0);
-                            convenio.setAsp(asp);
-                            break;
-                        case BLANK:
-                            convenio.setAsp('0');
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(20).getCellTypeEnum()) {
-                        case NUMERIC:
-                            String cadena = Integer.toString((int) fila.getCell(20).getNumericCellValue());
-                            Character ipa = cadena.charAt(0);
-                            convenio.setIpa(ipa);
-                            break;
-                        case BLANK:
-                            convenio.setIpa('0');
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(21).getCellTypeEnum()) {
-                        case NUMERIC:
-                            String cadena = Integer.toString((int) fila.getCell(21).getNumericCellValue());
-                            Character ibio = cadena.charAt(0);
-                            convenio.setIbio(ibio);
-                            break;
-                        case BLANK:
-                            convenio.setIbio('0');
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(22).getCellTypeEnum()) {
-                        case NUMERIC:
-                            String cadena = Integer.toString((int) fila.getCell(22).getNumericCellValue());
-                            Character mai = cadena.charAt(0);
-                            convenio.setMai(mai);
-                            break;
-                        case BLANK:
-                            convenio.setMai('0');
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(23).getCellTypeEnum()) {
-                        case NUMERIC:
-                            String cadena = Integer.toString((int) fila.getCell(23).getNumericCellValue());
-                            Character miap = cadena.charAt(0);
-                            convenio.setMiap(miap);
-                            break;
-                        case BLANK:
-                            convenio.setMiap('0');
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(24).getCellTypeEnum()) {
-                        case NUMERIC:
-                            String cadena = Integer.toString((int) fila.getCell(24).getNumericCellValue());
-                            Character imi = cadena.charAt(0);
-                            convenio.setImi(imi);
-                            break;
-                        case BLANK:
-                            convenio.setImi('0');
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(25).getCellTypeEnum()) {
-                        case NUMERIC:
-                            String cadena = Integer.toString((int) fila.getCell(25).getNumericCellValue());
-                            Character mecaa = cadena.charAt(0);
-                            convenio.setMecaa(mecaa);
-                            break;
-                        case BLANK:
-                            convenio.setMecaa('0');
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(26).getCellTypeEnum()) {
-                        case NUMERIC:
-                            String cadena = Integer.toString((int) fila.getCell(26).getNumericCellValue());
-                            Character imeca = cadena.charAt(0);
-                            convenio.setImeca(imeca);
-                            break;
-                        case BLANK:
-                            convenio.setImeca('0');
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(27).getCellTypeEnum()) {
-                        case NUMERIC:
-                            String cadena = Integer.toString((int) fila.getCell(27).getNumericCellValue());
-                            Character ticasi = cadena.charAt(0);
-                            convenio.setTicasi(ticasi);
-                            break;
-                        case BLANK:
-                            convenio.setTicasi('0');
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(28).getCellTypeEnum()) {
-                        case NUMERIC:
-                            String cadena = Integer.toString((int) fila.getCell(28).getNumericCellValue());
-                            Character ticamc = cadena.charAt(0);
-                            convenio.setTicamc(ticamc);
-                            break;
-                        case BLANK:
-                            convenio.setTicamc('0');
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(29).getCellTypeEnum()) {
-                        case NUMERIC:
-                            String cadena = Integer.toString((int) fila.getCell(29).getNumericCellValue());
-                            Character itic = cadena.charAt(0);
-                            convenio.setItic(itic);
-                            break;
-                        case BLANK:
-                            convenio.setItic('0');
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(30).getCellTypeEnum()) {
-                        case NUMERIC:
-                            String cadena = Integer.toString((int) fila.getCell(30).getNumericCellValue());
-                            Character tfar = cadena.charAt(0);
-                            convenio.setTfar(tfar);
-                            break;
-                        case BLANK:
-                            convenio.setTfar('0');
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(31).getCellTypeEnum()) {
-                        case NUMERIC:
-                            String cadena = Integer.toString((int) fila.getCell(31).getNumericCellValue());
-                            Character ltefi = cadena.charAt(0);
-                            convenio.setLtefi(ltefi);
-
-                            break;
-                        case BLANK:
-                            convenio.setLtefi('0');
-                            break;
-                        default:
-                            break;
-                    }
-                    convenio.setEmpresa(organismoVinculado);
-
-                    convenios.add(convenio);
+                    
                 }
             }
-            listaConvenios.setConvenios(convenios);
             workBookConvenios.close();
-            addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+            Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
         } else {
             workBookConvenios.close();
             excelConvenios.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+           Messages.addGlobalInfo("<b>El archivo cargado no corresponde al registro</b>");
         }
-        return listaConvenios;
+        return convenios;
     }
 
     @Override
-    public void guardaConvenios(ListaConvenios listaConvenios, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) throws Throwable {
+    public void guardaConvenios(List<Convenios> listaConvenios, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) throws Throwable {
         List<String> listaCondicional = new ArrayList<>();
-        listaConvenios.getConvenios().forEach((convenios) -> {
+        listaConvenios.forEach((convenios) -> {
             facadeVinculacion.setEntityClass(Convenios.class);
             Convenios convenioEncontrado = getConvenio(convenios);
             Boolean registroAlmacenado = false;
@@ -423,7 +207,7 @@ public class ServicioConvenios implements EjbConvenios {
             }
             facadeVinculacion.flush();
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
@@ -439,4 +223,107 @@ public class ServicioConvenios implements EjbConvenios {
         }
         return convenio;
     }
+    
+    @Override
+    public List<Convenios> getFiltroConveniosEjercicioMesArea(Short ejercicio, String mes, Short area) {
+        try {
+            List<Convenios> convenios = em.createQuery("SELECT s FROM Convenios s JOIN s.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes AND r.area = :area AND s.empresa.estatus = :estatus", Convenios.class)
+                    .setParameter("anio", ejercicio)
+                    .setParameter("mes", mes)
+                    .setParameter("area", area)
+                    .setParameter("estatus", true)
+                    .getResultList();
+            
+            convenios.forEach((c) -> {
+                em.refresh(c);
+            });
+            
+            return convenios;
+        } catch (NoResultException ex) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+    
+    @Override
+    public List<DTOProgramasBeneficiadosVinculacion> getProgramasBeneficiadosVinculacion() throws Throwable {
+        try {
+            List<DTOProgramasBeneficiadosVinculacion> dtoProgBenVin = new ArrayList<>();
+            List<AreasUniversidad> areasUniversidad = em.createQuery("SELECT a FROM AreasUniversidad a JOIN a.categoria c WHERE c.categoria = :categoria AND a.vigente = :vigente ORDER BY a.nombre ASC", AreasUniversidad.class)
+                    .setParameter("categoria", 9)
+                    .setParameter("vigente", "1")
+                    .getResultList();
+            areasUniversidad.stream().forEach((a) -> {
+                dtoProgBenVin.add(new DTOProgramasBeneficiadosVinculacion(
+                        a
+                ));
+            });
+            return dtoProgBenVin;
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public Boolean verificaProgramaBeneficiadoVinculacion(Integer empresa, AreasUniversidad areaUniversidad) {
+        try {
+            ProgramasBeneficiadosVinculacion pbv = em.createQuery("SELECT p FROM ProgramasBeneficiadosVinculacion p INNER JOIN p.convenios c WHERE c.empresa.empresa = :empresa AND p.programasBeneficiadosVinculacionPK.programaEducativo = :programaEducativo",ProgramasBeneficiadosVinculacion.class)
+                    .setParameter("empresa",empresa)
+                    .setParameter("programaEducativo",areaUniversidad.getArea())
+                    .getSingleResult();
+            if(pbv != null) return true;
+            else return false;
+        } catch (NoResultException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean guardarProgramaBeneficiadoVinculacion(ProgramasBeneficiadosVinculacion programaBeneficiadosVinculacion) {
+//        TODO: Verificar que guarde cuando existe un registro nuevo
+        try {
+            if (verificaProgramaBeneficiadoVinculacion(programaBeneficiadosVinculacion.getProgramasBeneficiadosVinculacionPK().getEmpresa(), em.find(AreasUniversidad.class, programaBeneficiadosVinculacion.getProgramasBeneficiadosVinculacionPK().getProgramaEducativo()))) {
+                eliminarProgramaBeneficiadoVinculacion(programaBeneficiadosVinculacion);
+            } else {
+                facadeVinculacion.setEntityClass(ProgramasBeneficiadosVinculacion.class);
+                facadeVinculacion.create(programaBeneficiadosVinculacion);
+                facadeVinculacion.flush();
+            }
+            return true;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo asginar el programa al convenio.", e);
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean eliminarProgramaBeneficiadoVinculacion(ProgramasBeneficiadosVinculacion programaBeneficiadosVinculacion) {
+        try {
+            if (verificaProgramaBeneficiadoVinculacion(programaBeneficiadosVinculacion.getProgramasBeneficiadosVinculacionPK().getEmpresa(), em.find(AreasUniversidad.class, programaBeneficiadosVinculacion.getProgramasBeneficiadosVinculacionPK().getProgramaEducativo()))) {
+                facadeVinculacion.setEntityClass(ProgramasBeneficiadosVinculacion.class);
+                facadeVinculacion.remove(programaBeneficiadosVinculacion);
+                facadeVinculacion.flush();
+            }
+            return true;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo eliminar el programa del convenio.", e);
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean verificaConvenio(Integer empresa) {
+        try {
+            List<Convenios> convenios = em.createQuery("SELECT c FROM Convenios c INNER JOIN c.empresa e WHERE e.empresa = :empresa", Convenios.class)
+                    .setParameter("empresa", empresa)
+                    .getResultList();
+            if(convenios.isEmpty()){
+                return false;
+            }else{
+                return true;
+            }
+        } catch (NoResultException e) {
+            return false;
+        }
+    }
+
 }

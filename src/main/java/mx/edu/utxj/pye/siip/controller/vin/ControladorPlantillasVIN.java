@@ -33,4 +33,9 @@ public class ControladorPlantillasVIN implements Serializable {
         File f = new File(ejbPlantillasVINExcel.getPlantillaConvenios());
         Faces.sendFile(f, true);
     }
+    
+    public void descargarPlantillaOrgVin() throws IOException, Throwable {
+        File f = new File(ejbPlantillasVINExcel.getPlantillaOrganismosVinculados());
+        Faces.sendFile(f, true);
+    }
 }

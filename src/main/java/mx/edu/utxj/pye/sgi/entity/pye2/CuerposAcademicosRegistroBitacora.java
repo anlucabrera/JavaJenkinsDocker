@@ -7,51 +7,59 @@ package mx.edu.utxj.pye.sgi.entity.pye2;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author UTXJ
  */
 @Entity
-@Table(name = "cuerpos_academicos_registro", catalog = "pye2", schema = "")
+@Table(name = "cuerpos_academicos_registro_bitacora", catalog = "pye2", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "CuerposAcademicosRegistro.findAll", query = "SELECT c FROM CuerposAcademicosRegistro c")
-    , @NamedQuery(name = "CuerposAcademicosRegistro.findByRegistro", query = "SELECT c FROM CuerposAcademicosRegistro c WHERE c.registro = :registro")
-    , @NamedQuery(name = "CuerposAcademicosRegistro.findByCuerpoAcademico", query = "SELECT c FROM CuerposAcademicosRegistro c WHERE c.cuerpoAcademico = :cuerpoAcademico")
-    , @NamedQuery(name = "CuerposAcademicosRegistro.findByFechaInicio", query = "SELECT c FROM CuerposAcademicosRegistro c WHERE c.fechaInicio = :fechaInicio")
-    , @NamedQuery(name = "CuerposAcademicosRegistro.findByFechaTermino", query = "SELECT c FROM CuerposAcademicosRegistro c WHERE c.fechaTermino = :fechaTermino")
-    , @NamedQuery(name = "CuerposAcademicosRegistro.findByNombre", query = "SELECT c FROM CuerposAcademicosRegistro c WHERE c.nombre = :nombre")
-    , @NamedQuery(name = "CuerposAcademicosRegistro.findByNivelProdep", query = "SELECT c FROM CuerposAcademicosRegistro c WHERE c.nivelProdep = :nivelProdep")
-    , @NamedQuery(name = "CuerposAcademicosRegistro.findByArea", query = "SELECT c FROM CuerposAcademicosRegistro c WHERE c.area = :area")
-    , @NamedQuery(name = "CuerposAcademicosRegistro.findByEstatus", query = "SELECT c FROM CuerposAcademicosRegistro c WHERE c.estatus = :estatus")})
-public class CuerposAcademicosRegistro implements Serializable {
+    @NamedQuery(name = "CuerposAcademicosRegistroBitacora.findAll", query = "SELECT c FROM CuerposAcademicosRegistroBitacora c")
+    , @NamedQuery(name = "CuerposAcademicosRegistroBitacora.findByBitacora", query = "SELECT c FROM CuerposAcademicosRegistroBitacora c WHERE c.bitacora = :bitacora")
+    , @NamedQuery(name = "CuerposAcademicosRegistroBitacora.findByFechaCambio", query = "SELECT c FROM CuerposAcademicosRegistroBitacora c WHERE c.fechaCambio = :fechaCambio")
+    , @NamedQuery(name = "CuerposAcademicosRegistroBitacora.findByRegistro", query = "SELECT c FROM CuerposAcademicosRegistroBitacora c WHERE c.registro = :registro")
+    , @NamedQuery(name = "CuerposAcademicosRegistroBitacora.findByCuerpoAcademico", query = "SELECT c FROM CuerposAcademicosRegistroBitacora c WHERE c.cuerpoAcademico = :cuerpoAcademico")
+    , @NamedQuery(name = "CuerposAcademicosRegistroBitacora.findByFechaInicio", query = "SELECT c FROM CuerposAcademicosRegistroBitacora c WHERE c.fechaInicio = :fechaInicio")
+    , @NamedQuery(name = "CuerposAcademicosRegistroBitacora.findByFechaTermino", query = "SELECT c FROM CuerposAcademicosRegistroBitacora c WHERE c.fechaTermino = :fechaTermino")
+    , @NamedQuery(name = "CuerposAcademicosRegistroBitacora.findByNombre", query = "SELECT c FROM CuerposAcademicosRegistroBitacora c WHERE c.nombre = :nombre")
+    , @NamedQuery(name = "CuerposAcademicosRegistroBitacora.findByNivelProdep", query = "SELECT c FROM CuerposAcademicosRegistroBitacora c WHERE c.nivelProdep = :nivelProdep")
+    , @NamedQuery(name = "CuerposAcademicosRegistroBitacora.findByArea", query = "SELECT c FROM CuerposAcademicosRegistroBitacora c WHERE c.area = :area")
+    , @NamedQuery(name = "CuerposAcademicosRegistroBitacora.findByEstatus", query = "SELECT c FROM CuerposAcademicosRegistroBitacora c WHERE c.estatus = :estatus")})
+public class CuerposAcademicosRegistroBitacora implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "bitacora")
+    private Integer bitacora;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "fecha_cambio")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaCambio;
     @Basic(optional = false)
     @NotNull
     @Column(name = "registro")
-    private Integer registro;
+    private int registro;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 11)
@@ -85,15 +93,6 @@ public class CuerposAcademicosRegistro implements Serializable {
     @NotNull
     @Column(name = "estatus")
     private boolean estatus;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpoAcademico")
-    private List<CuerpacadIntegrantes> cuerpacadIntegrantesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpAcad")
-    private List<ReconocimientoProdepRegistros> reconocimientoProdepRegistrosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpoAcademico")
-    private List<CuerpacadLineas> cuerpacadLineasList;
-    @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
-    @OneToOne(optional = false)
-    private Registros registros;
     @JoinColumn(name = "area_estudio", referencedColumnName = "area_estudio")
     @ManyToOne(optional = false)
     private CuerpacadAreasEstudio areaEstudio;
@@ -101,14 +100,16 @@ public class CuerposAcademicosRegistro implements Serializable {
     @ManyToOne(optional = false)
     private CuerpacadDisciplinas disciplina;
 
-    public CuerposAcademicosRegistro() {
+    public CuerposAcademicosRegistroBitacora() {
     }
 
-    public CuerposAcademicosRegistro(Integer registro) {
-        this.registro = registro;
+    public CuerposAcademicosRegistroBitacora(Integer bitacora) {
+        this.bitacora = bitacora;
     }
 
-    public CuerposAcademicosRegistro(Integer registro, String cuerpoAcademico, Date fechaInicio, Date fechaTermino, String nombre, String nivelProdep, short area, boolean estatus) {
+    public CuerposAcademicosRegistroBitacora(Integer bitacora, Date fechaCambio, int registro, String cuerpoAcademico, Date fechaInicio, Date fechaTermino, String nombre, String nivelProdep, short area, boolean estatus) {
+        this.bitacora = bitacora;
+        this.fechaCambio = fechaCambio;
         this.registro = registro;
         this.cuerpoAcademico = cuerpoAcademico;
         this.fechaInicio = fechaInicio;
@@ -119,11 +120,27 @@ public class CuerposAcademicosRegistro implements Serializable {
         this.estatus = estatus;
     }
 
-    public Integer getRegistro() {
+    public Integer getBitacora() {
+        return bitacora;
+    }
+
+    public void setBitacora(Integer bitacora) {
+        this.bitacora = bitacora;
+    }
+
+    public Date getFechaCambio() {
+        return fechaCambio;
+    }
+
+    public void setFechaCambio(Date fechaCambio) {
+        this.fechaCambio = fechaCambio;
+    }
+
+    public int getRegistro() {
         return registro;
     }
 
-    public void setRegistro(Integer registro) {
+    public void setRegistro(int registro) {
         this.registro = registro;
     }
 
@@ -183,41 +200,6 @@ public class CuerposAcademicosRegistro implements Serializable {
         this.estatus = estatus;
     }
 
-    @XmlTransient
-    public List<CuerpacadIntegrantes> getCuerpacadIntegrantesList() {
-        return cuerpacadIntegrantesList;
-    }
-
-    public void setCuerpacadIntegrantesList(List<CuerpacadIntegrantes> cuerpacadIntegrantesList) {
-        this.cuerpacadIntegrantesList = cuerpacadIntegrantesList;
-    }
-
-    @XmlTransient
-    public List<ReconocimientoProdepRegistros> getReconocimientoProdepRegistrosList() {
-        return reconocimientoProdepRegistrosList;
-    }
-
-    public void setReconocimientoProdepRegistrosList(List<ReconocimientoProdepRegistros> reconocimientoProdepRegistrosList) {
-        this.reconocimientoProdepRegistrosList = reconocimientoProdepRegistrosList;
-    }
-
-    @XmlTransient
-    public List<CuerpacadLineas> getCuerpacadLineasList() {
-        return cuerpacadLineasList;
-    }
-
-    public void setCuerpacadLineasList(List<CuerpacadLineas> cuerpacadLineasList) {
-        this.cuerpacadLineasList = cuerpacadLineasList;
-    }
-
-    public Registros getRegistros() {
-        return registros;
-    }
-
-    public void setRegistros(Registros registros) {
-        this.registros = registros;
-    }
-
     public CuerpacadAreasEstudio getAreaEstudio() {
         return areaEstudio;
     }
@@ -237,18 +219,18 @@ public class CuerposAcademicosRegistro implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (registro != null ? registro.hashCode() : 0);
+        hash += (bitacora != null ? bitacora.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof CuerposAcademicosRegistro)) {
+        if (!(object instanceof CuerposAcademicosRegistroBitacora)) {
             return false;
         }
-        CuerposAcademicosRegistro other = (CuerposAcademicosRegistro) object;
-        if ((this.registro == null && other.registro != null) || (this.registro != null && !this.registro.equals(other.registro))) {
+        CuerposAcademicosRegistroBitacora other = (CuerposAcademicosRegistroBitacora) object;
+        if ((this.bitacora == null && other.bitacora != null) || (this.bitacora != null && !this.bitacora.equals(other.bitacora))) {
             return false;
         }
         return true;
@@ -256,7 +238,7 @@ public class CuerposAcademicosRegistro implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.pye2.CuerposAcademicosRegistro[ registro=" + registro + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.pye2.CuerposAcademicosRegistroBitacora[ bitacora=" + bitacora + " ]";
     }
     
 }

@@ -66,7 +66,39 @@ public class EntityConverter implements Converter{
                     MunicipioPK pk = (new Gson()).fromJson(value, MunicipioPK.class);
                     List<Municipio> municipios = Faces.getSessionAttribute("municipios");
                     Municipio municipio = municipios.get(municipios.indexOf(new Municipio(pk)));
-                    return municipio;
+                    return municipio;    
+                case "ejeParticipante":
+                    List<EjesRegistro> ejesParticipantes = Faces.getSessionAttribute("ejes");
+                    EjesRegistro ejeParticipante = new EjesRegistro(Integer.valueOf(value));            
+                    return ejesParticipantes.get(ejesParticipantes.indexOf(ejeParticipante));
+                case "estrategiaParticipante":
+                    List<Estrategias> estrategiasParticipantes = Faces.getSessionAttribute("estrategias");
+                    Estrategias estrategiaParticipante = new Estrategias(Short.valueOf(value));
+                    return estrategiasParticipantes.get(estrategiasParticipantes.indexOf(estrategiaParticipante));
+                case "lineaAccionParticipante":
+                    List<LineasAccion> lineasAccionParticipantes = Faces.getSessionAttribute("lineasAccion");
+                    LineasAccion lineaAccionParticipante = new LineasAccion(Short.valueOf(value));            
+                    return lineasAccionParticipantes.get(lineasAccionParticipantes.indexOf(lineaAccionParticipante));
+                case "actividadParticipante":
+                    List<ActividadesPoa> actividadesParticipantes = Faces.getSessionAttribute("actividades");
+                    ActividadesPoa actividadParticipante = new ActividadesPoa(Integer.valueOf(value));            
+                    return actividadesParticipantes.get(actividadesParticipantes.indexOf(actividadParticipante));
+                case "ejeParticipante2":
+                    List<EjesRegistro> ejesParticipantes2 = Faces.getSessionAttribute("ejes");
+                    EjesRegistro ejeParticipante2 = new EjesRegistro(Integer.valueOf(value));            
+                    return ejesParticipantes2.get(ejesParticipantes2.indexOf(ejeParticipante2));
+                case "estrategiaParticipante2":
+                    List<Estrategias> estrategiasParticipantes2 = Faces.getSessionAttribute("estrategias");
+                    Estrategias estrategiaParticipante2 = new Estrategias(Short.valueOf(value));
+                    return estrategiasParticipantes2.get(estrategiasParticipantes2.indexOf(estrategiaParticipante2));
+                case "lineaAccionParticipante2":
+                    List<LineasAccion> lineasAccionParticipantes2 = Faces.getSessionAttribute("lineasAccion");
+                    LineasAccion lineaAccionParticipante2 = new LineasAccion(Short.valueOf(value));            
+                    return lineasAccionParticipantes2.get(lineasAccionParticipantes2.indexOf(lineaAccionParticipante2));
+                case "actividadParticipante2":
+                    List<ActividadesPoa> actividadesParticipantes2 = Faces.getSessionAttribute("actividades");
+                    ActividadesPoa actividadParticipante2 = new ActividadesPoa(Integer.valueOf(value));            
+                    return actividadesParticipantes2.get(actividadesParticipantes2.indexOf(actividadParticipante2));
                 default:
                     throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "", component.getClientId() + " no es un componente válido."));
             }

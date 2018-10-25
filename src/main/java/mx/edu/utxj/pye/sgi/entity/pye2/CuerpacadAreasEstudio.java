@@ -48,6 +48,8 @@ public class CuerpacadAreasEstudio implements Serializable {
     @Column(name = "nombre")
     private String nombre;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "areaEstudio")
+    private List<CuerposAcademicosRegistroBitacora> cuerposAcademicosRegistroBitacoraList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "areaEstudio")
     private List<CuerposAcademicosRegistro> cuerposAcademicosRegistroList;
 
     public CuerpacadAreasEstudio() {
@@ -76,6 +78,15 @@ public class CuerpacadAreasEstudio implements Serializable {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    @XmlTransient
+    public List<CuerposAcademicosRegistroBitacora> getCuerposAcademicosRegistroBitacoraList() {
+        return cuerposAcademicosRegistroBitacoraList;
+    }
+
+    public void setCuerposAcademicosRegistroBitacoraList(List<CuerposAcademicosRegistroBitacora> cuerposAcademicosRegistroBitacoraList) {
+        this.cuerposAcademicosRegistroBitacoraList = cuerposAcademicosRegistroBitacoraList;
     }
 
     @XmlTransient

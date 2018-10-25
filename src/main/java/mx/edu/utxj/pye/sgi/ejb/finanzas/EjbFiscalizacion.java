@@ -104,34 +104,34 @@ public interface EjbFiscalizacion {
     /**
      * Consulta la lista de ejes para el ejercicio fiscal correspondiente.
      * @param ejercicio Ejercicio fiscal, se recomienda el activo.
-     * @param area
+     * @param areaPOA
      * @return Devuelve la lista de ejes.
      */
-    public List<EjesRegistro> getEjes(Short ejercicio, Short area);
+    public List<EjesRegistro> getEjes(Short ejercicio, AreasUniversidad areaPOA);
     
     /**
      * Consulta la lista de estrategias correspondientes a un eje determidado.
      * @param eje Eje a consultar.
-     * @param area
+     * @param areaPOA
      * @return Devuelve la lista de estrategias.
      */
-    public List<Estrategias> getEstrategiasPorEje(EjesRegistro eje, Short area);
+    public List<Estrategias> getEstrategiasPorEje(EjesRegistro eje, AreasUniversidad areaPOA);
     
     /**
      * Consulta la lista de líneas de acción correspondientes a una estrategia determinada.
      * @param estrategia Estrategia a consultar
-     * @param area
+     * @param areaPOA
      * @return Devuelve la lista de líneas de acción.
      */
-    public List<LineasAccion> getLineasAccionPorEstrategia(Estrategias estrategia, Short area);
+    public List<LineasAccion> getLineasAccionPorEstrategia(Estrategias estrategia, AreasUniversidad areaPOA);
     
     /**
      * Consulta la lista de actividades correspondientes a una línea de acción determinada.
      * @param lineaaccion Línea de acción a consultar.
-     * @param area
+     * @param areaPOA
      * @return Devuelve la lista de actividades.
      */
-    public List<ActividadesPoa> getActividadesPorLineaAccion(LineasAccion lineaaccion, Short area);
+    public List<ActividadesPoa> getActividadesPorLineaAccion(LineasAccion lineaaccion, AreasUniversidad areaPOA);
     
     /**
      * Obtiene el usuario SIIP a partir de la clave de un area de la institución.
@@ -262,4 +262,18 @@ public interface EjbFiscalizacion {
      * @return Lista de posibles comisionados.
      */
     public List<Personal> getPosiblesComisionados(Short areaSeguimiento, Short areaAlineacion);
+    
+    /**
+     * Obtiene la referencia al área con POA para que un usuario de una persona acceda a los registros de su area
+     * @param area Clave del area
+     * @return Referencia del área con POA
+     */
+    public AreasUniversidad getAreaConPOA(Short area);
+    
+    /**
+     * Obtiene la lista de claves de areas subordinadas sin poa de un area especifica con poa
+     * @param areaPOA Area que tiene poa
+     * @return Devuelve la lista de claves de areas subordinadas sin poa
+     */
+    public List<Short> getAreasSubordinadasSinPOA(AreasUniversidad areaPOA);
 }

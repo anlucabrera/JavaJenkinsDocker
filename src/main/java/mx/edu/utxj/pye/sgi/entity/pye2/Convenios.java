@@ -7,7 +7,9 @@ package mx.edu.utxj.pye.sgi.entity.pye2;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -15,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -22,6 +25,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -42,26 +46,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Convenios.findByEbm", query = "SELECT c FROM Convenios c WHERE c.ebm = :ebm")
     , @NamedQuery(name = "Convenios.findByDbh", query = "SELECT c FROM Convenios c WHERE c.dbh = :dbh")
     , @NamedQuery(name = "Convenios.findByDbm", query = "SELECT c FROM Convenios c WHERE c.dbm = :dbm")
-    , @NamedQuery(name = "Convenios.findByRecursosObtenidos", query = "SELECT c FROM Convenios c WHERE c.recursosObtenidos = :recursosObtenidos")
-    , @NamedQuery(name = "Convenios.findByAach", query = "SELECT c FROM Convenios c WHERE c.aach = :aach")
-    , @NamedQuery(name = "Convenios.findByAarh", query = "SELECT c FROM Convenios c WHERE c.aarh = :aarh")
-    , @NamedQuery(name = "Convenios.findByIdie", query = "SELECT c FROM Convenios c WHERE c.idie = :idie")
-    , @NamedQuery(name = "Convenios.findByPa", query = "SELECT c FROM Convenios c WHERE c.pa = :pa")
-    , @NamedQuery(name = "Convenios.findByQab", query = "SELECT c FROM Convenios c WHERE c.qab = :qab")
-    , @NamedQuery(name = "Convenios.findByGas", query = "SELECT c FROM Convenios c WHERE c.gas = :gas")
-    , @NamedQuery(name = "Convenios.findByAsp", query = "SELECT c FROM Convenios c WHERE c.asp = :asp")
-    , @NamedQuery(name = "Convenios.findByIpa", query = "SELECT c FROM Convenios c WHERE c.ipa = :ipa")
-    , @NamedQuery(name = "Convenios.findByIbio", query = "SELECT c FROM Convenios c WHERE c.ibio = :ibio")
-    , @NamedQuery(name = "Convenios.findByMai", query = "SELECT c FROM Convenios c WHERE c.mai = :mai")
-    , @NamedQuery(name = "Convenios.findByMiap", query = "SELECT c FROM Convenios c WHERE c.miap = :miap")
-    , @NamedQuery(name = "Convenios.findByImi", query = "SELECT c FROM Convenios c WHERE c.imi = :imi")
-    , @NamedQuery(name = "Convenios.findByMecaa", query = "SELECT c FROM Convenios c WHERE c.mecaa = :mecaa")
-    , @NamedQuery(name = "Convenios.findByImeca", query = "SELECT c FROM Convenios c WHERE c.imeca = :imeca")
-    , @NamedQuery(name = "Convenios.findByTicasi", query = "SELECT c FROM Convenios c WHERE c.ticasi = :ticasi")
-    , @NamedQuery(name = "Convenios.findByTicamc", query = "SELECT c FROM Convenios c WHERE c.ticamc = :ticamc")
-    , @NamedQuery(name = "Convenios.findByItic", query = "SELECT c FROM Convenios c WHERE c.itic = :itic")
-    , @NamedQuery(name = "Convenios.findByTfar", query = "SELECT c FROM Convenios c WHERE c.tfar = :tfar")
-    , @NamedQuery(name = "Convenios.findByLtefi", query = "SELECT c FROM Convenios c WHERE c.ltefi = :ltefi")})
+    , @NamedQuery(name = "Convenios.findByRecursosObtenidos", query = "SELECT c FROM Convenios c WHERE c.recursosObtenidos = :recursosObtenidos")})
 public class Convenios implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -115,88 +100,14 @@ public class Convenios implements Serializable {
     @NotNull
     @Column(name = "recursos_obtenidos")
     private double recursosObtenidos;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "AACH")
-    private Character aach;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "AARH")
-    private Character aarh;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "IDIE")
-    private Character idie;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "PA")
-    private Character pa;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "QAB")
-    private Character qab;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "GAS")
-    private Character gas;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ASP")
-    private Character asp;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "IPA")
-    private Character ipa;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "IBIO")
-    private Character ibio;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "MAI")
-    private Character mai;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "MIAP")
-    private Character miap;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "IMI")
-    private Character imi;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "MECAA")
-    private Character mecaa;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "IMECA")
-    private Character imeca;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "TICASI")
-    private Character ticasi;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "TICAMC")
-    private Character ticamc;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ITIC")
-    private Character itic;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "TFAR")
-    private Character tfar;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "LTEFI")
-    private Character ltefi;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Registros registros;
     @JoinColumn(name = "empresa", referencedColumnName = "empresa")
     @ManyToOne(optional = false)
     private OrganismosVinculados empresa;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "convenios")
+    private List<ProgramasBeneficiadosVinculacion> programasBeneficiadosVinculacionList;
 
     public Convenios() {
     }
@@ -205,7 +116,7 @@ public class Convenios implements Serializable {
         this.registro = registro;
     }
 
-    public Convenios(Integer registro, Date fechaFirma, Date vigencia, String objetivo, String descripcion, String impacto, short ebh, short ebm, short dbh, short dbm, double recursosObtenidos, Character aach, Character aarh, Character idie, Character pa, Character qab, Character gas, Character asp, Character ipa, Character ibio, Character mai, Character miap, Character imi, Character mecaa, Character imeca, Character ticasi, Character ticamc, Character itic, Character tfar, Character ltefi) {
+    public Convenios(Integer registro, Date fechaFirma, Date vigencia, String objetivo, String descripcion, String impacto, short ebh, short ebm, short dbh, short dbm, double recursosObtenidos) {
         this.registro = registro;
         this.fechaFirma = fechaFirma;
         this.vigencia = vigencia;
@@ -217,25 +128,6 @@ public class Convenios implements Serializable {
         this.dbh = dbh;
         this.dbm = dbm;
         this.recursosObtenidos = recursosObtenidos;
-        this.aach = aach;
-        this.aarh = aarh;
-        this.idie = idie;
-        this.pa = pa;
-        this.qab = qab;
-        this.gas = gas;
-        this.asp = asp;
-        this.ipa = ipa;
-        this.ibio = ibio;
-        this.mai = mai;
-        this.miap = miap;
-        this.imi = imi;
-        this.mecaa = mecaa;
-        this.imeca = imeca;
-        this.ticasi = ticasi;
-        this.ticamc = ticamc;
-        this.itic = itic;
-        this.tfar = tfar;
-        this.ltefi = ltefi;
     }
 
     public Integer getRegistro() {
@@ -326,158 +218,6 @@ public class Convenios implements Serializable {
         this.recursosObtenidos = recursosObtenidos;
     }
 
-    public Character getAach() {
-        return aach;
-    }
-
-    public void setAach(Character aach) {
-        this.aach = aach;
-    }
-
-    public Character getAarh() {
-        return aarh;
-    }
-
-    public void setAarh(Character aarh) {
-        this.aarh = aarh;
-    }
-
-    public Character getIdie() {
-        return idie;
-    }
-
-    public void setIdie(Character idie) {
-        this.idie = idie;
-    }
-
-    public Character getPa() {
-        return pa;
-    }
-
-    public void setPa(Character pa) {
-        this.pa = pa;
-    }
-
-    public Character getQab() {
-        return qab;
-    }
-
-    public void setQab(Character qab) {
-        this.qab = qab;
-    }
-
-    public Character getGas() {
-        return gas;
-    }
-
-    public void setGas(Character gas) {
-        this.gas = gas;
-    }
-
-    public Character getAsp() {
-        return asp;
-    }
-
-    public void setAsp(Character asp) {
-        this.asp = asp;
-    }
-
-    public Character getIpa() {
-        return ipa;
-    }
-
-    public void setIpa(Character ipa) {
-        this.ipa = ipa;
-    }
-
-    public Character getIbio() {
-        return ibio;
-    }
-
-    public void setIbio(Character ibio) {
-        this.ibio = ibio;
-    }
-
-    public Character getMai() {
-        return mai;
-    }
-
-    public void setMai(Character mai) {
-        this.mai = mai;
-    }
-
-    public Character getMiap() {
-        return miap;
-    }
-
-    public void setMiap(Character miap) {
-        this.miap = miap;
-    }
-
-    public Character getImi() {
-        return imi;
-    }
-
-    public void setImi(Character imi) {
-        this.imi = imi;
-    }
-
-    public Character getMecaa() {
-        return mecaa;
-    }
-
-    public void setMecaa(Character mecaa) {
-        this.mecaa = mecaa;
-    }
-
-    public Character getImeca() {
-        return imeca;
-    }
-
-    public void setImeca(Character imeca) {
-        this.imeca = imeca;
-    }
-
-    public Character getTicasi() {
-        return ticasi;
-    }
-
-    public void setTicasi(Character ticasi) {
-        this.ticasi = ticasi;
-    }
-
-    public Character getTicamc() {
-        return ticamc;
-    }
-
-    public void setTicamc(Character ticamc) {
-        this.ticamc = ticamc;
-    }
-
-    public Character getItic() {
-        return itic;
-    }
-
-    public void setItic(Character itic) {
-        this.itic = itic;
-    }
-
-    public Character getTfar() {
-        return tfar;
-    }
-
-    public void setTfar(Character tfar) {
-        this.tfar = tfar;
-    }
-
-    public Character getLtefi() {
-        return ltefi;
-    }
-
-    public void setLtefi(Character ltefi) {
-        this.ltefi = ltefi;
-    }
-
     public Registros getRegistros() {
         return registros;
     }
@@ -492,6 +232,15 @@ public class Convenios implements Serializable {
 
     public void setEmpresa(OrganismosVinculados empresa) {
         this.empresa = empresa;
+    }
+
+    @XmlTransient
+    public List<ProgramasBeneficiadosVinculacion> getProgramasBeneficiadosVinculacionList() {
+        return programasBeneficiadosVinculacionList;
+    }
+
+    public void setProgramasBeneficiadosVinculacionList(List<ProgramasBeneficiadosVinculacion> programasBeneficiadosVinculacionList) {
+        this.programasBeneficiadosVinculacionList = programasBeneficiadosVinculacionList;
     }
 
     @Override

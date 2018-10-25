@@ -16,5 +16,5 @@ public interface EjbPlantillasVINExcel {
     
     public String getPlantillaConvenios() throws Throwable;
     
-    public String getPlantillaBolsaTrabajo() throws Throwable;
+    public String getPlantillaOrganismosVinculados() throws Throwable;
 }

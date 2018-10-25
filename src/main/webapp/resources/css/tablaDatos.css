@@ -6,6 +6,11 @@ body .ui-datatable th[role="columnheader"].ui-state-default, body .ui-treetable 
     color: #fff !important;
     background-color: #3c8dbc !important;
 }
+
+table[role="grid"]{    
+    margin-bottom: 0px !important;
+}
+
 .table-bordered>thead>tr>th, 
 .table-bordered>tbody>tr>th, 
 .table-bordered>tfoot>tr>th, 
@@ -15,4 +20,22 @@ body .ui-datatable th[role="columnheader"].ui-state-default, body .ui-treetable 
     border: 1px solid #000000;
     vertical-align: middle;
     padding: 3px !important;
+}
+
+.ui-dialog-buttonpane{
+    margin-top: 2px  !important;
+    margin-bottom: 2px !important;
+}
+
+.ui-dialog-title{
+    font-size: larger !important;
+    margin: auto;
+}
+
+.panel-heading{
+    text-align: center;
+}
+
+.ui-dialog-titlebar-close{
+    margin-top: 25px !important;
 }

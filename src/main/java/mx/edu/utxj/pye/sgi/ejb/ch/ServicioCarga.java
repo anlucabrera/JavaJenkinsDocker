@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.ejb.Stateful;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +28,7 @@ import org.springframework.util.FileCopyUtils;
  * @author UTXJ
  */
 @Stateful
+@MultipartConfig()
 public class ServicioCarga implements EjbCarga {
 
     private static final long serialVersionUID = -28440987935768377L;
@@ -62,18 +64,18 @@ public class ServicioCarga implements EjbCarga {
             m.appendTail(sb);
             nombreArchivo = sb.toString();
 //            System.out.println("mx.edu.utxj.pye.sgi.ch.servicio.ServicioCarga.subir() nombreArchivoFinal " + nombreArchivo);
-            for (int i = 1; i <= 10; i++) {
-                int numero = (int) Math.round(Math.random() * 35);
+                for (int i = 1; i <= 10; i++) {
+                    int numero = (int) Math.round(Math.random() * 35);
 //                    System.out.println("mx.edu.utxj.pye.sgi.ch.servicio.ServicioCarga.subir() numero: " + numero);
-                aleatorio = aleatorio + abecedario[numero];
-            }
+                    aleatorio = aleatorio + abecedario[numero];
+                }
 //                System.out.println("mx.edu.utxj.pye.sgi.ch.servicio.ServicioCarga.subir() aleatorio: " + aleatorio);
-            String name = carpeta.toString().concat(File.separator).concat(aleatorio).concat(nombreArchivo);
+                String name = carpeta.toString().concat(File.separator).concat(aleatorio).concat(nombreArchivo);
 //                System.out.println("mx.edu.utxj.pye.sgi.ch.servicio.ServicioCarga.subir() name: " + name);
-            FileOutputStream fos = new FileOutputStream(name);
-            FileCopyUtils.copy(content, fos);
-            aleatorio = "";
-            return name;
+                FileOutputStream fos = new FileOutputStream(name);
+                FileCopyUtils.copy(content, fos);
+                aleatorio = "";
+                return name;
         } catch (IOException ex) {
             Logger.getLogger(ServicioCarga.class.getName()).log(Level.SEVERE, null, ex);
             return "Error: No se pudo leer el archivo";
@@ -116,14 +118,11 @@ public class ServicioCarga implements EjbCarga {
             return null;
         }
     }
-
-    /**
-     * ********************** Métodos creados para la administración de archivos
-     * de los módulos de registro **************************************************************************************
-     */
+    
+    /************************ Métodos creados para la administración de archivos de los módulos de registro ***************************************************************************************/     
 //    Valores que se ocuparán para generar una clave aleatoria al nombre del archivo
     String[] abecedarioMinusculas = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
-
+    
 //    Variables creadas para la subida de archivos de los Modulos de registro
     public static final String modulosRegistro = "modulos_registro";
     public static final String plantillas = "plantillas";
@@ -143,28 +142,31 @@ public class ServicioCarga implements EjbCarga {
             file.mkdirs();
         }
     }
-
+    
 //    Método que se encarga de generar la ruta del archivo concatenando los valores enviados desde el Ejb, la cual será ocupada para devolver posteriormenta la ruta del archivo
     public static String genCarpetaRelativa(String modulosRegistro, String ejercicio, String usuario, String eje, String registro) {
         return carpetaRaiz + modulosRegistro + File.separator + ejercicio + File.separator + usuario + File.separator + eje + File.separator + registro + File.separator;
     }
-
-    public static String genCarpetaRelativa(String modulosRegistro, String plantillas, String eje) {
+    
+    public static String genCarpetaRelativa(String modulosRegistro, String ejercicio, String usuario, String eje, String mes, String registro) {
+        return carpetaRaiz + modulosRegistro + File.separator + ejercicio + File.separator + usuario + File.separator + eje + File.separator + mes + File.separator + registro + File.separator;
+    }
+    
+    public static String genCarpetaRelativa(String modulosRegistro, String plantillas, String eje){
         return carpetaRaiz + modulosRegistro + File.separator + plantillas + File.separator + eje + File.separator;
     }
-
-    public static String genCarpetaRelativa(String modulosRegistro, String plantillas, String eje, String completo) {
+    public static String genCarpetaRelativa(String modulosRegistro, String plantillas, String eje, String completo){
         return carpetaRaiz + modulosRegistro + File.separator + plantillas + File.separator + eje + File.separator + completo + File.separator;
     }
-
+     
     @Override
     public String subirExcelRegistro(String ejercicio, String area, String eje, String registro, Part file) {
         try {
             byte[] content = Utils.toByteArray(file.getInputStream());
             String rutaRelativa = genCarpetaRelativa(modulosRegistro, ejercicio, area, eje, registro);
             addCarpetaRelativa(rutaRelativa);
-            String nombreArchivo = file.getSubmittedFileName().trim().toLowerCase();
-            nombreArchivo = prettyURL(nombreArchivo);
+            String nombreArchivo1 = file.getSubmittedFileName().trim().toLowerCase();
+            nombreArchivo1 = prettyURL(nombreArchivo1);
 
             for (int i = 1; i <= 10; i++) {
                 int numero = (int) Math.round(Math.random() * 35);
@@ -172,7 +174,34 @@ public class ServicioCarga implements EjbCarga {
             }
 
             LocalDate localDateOf = LocalDate.now();
-            String name = rutaRelativa.concat(String.valueOf(localDateOf)).concat("_").concat(aleatorio).concat("_").concat(nombreArchivo);
+            String name = rutaRelativa.concat(String.valueOf(localDateOf)).concat("_").concat(aleatorio).concat("_").concat(nombreArchivo1);
+            FileOutputStream fos = new FileOutputStream(name);
+            FileCopyUtils.copy(content, fos);
+            aleatorio = "";
+
+            return name;
+        } catch (IOException ex) {
+            Logger.getLogger(ServicioCarga.class.getName()).log(Level.SEVERE, null, ex);
+            return "Error: No se pudo leer el archivo";
+        }
+    }
+    
+    @Override
+    public String subirExcelRegistroMensual(String ejercicio, String area, String eje, String mes, String registro, Part file) {
+        try {
+            byte[] content = Utils.toByteArray(file.getInputStream());
+            String rutaRelativa = genCarpetaRelativa(modulosRegistro, ejercicio, area, eje, mes, registro);
+            addCarpetaRelativa(rutaRelativa.toLowerCase());
+            String nombreArchivo2 = file.getSubmittedFileName().trim().toLowerCase();
+            nombreArchivo2 = prettyURL(nombreArchivo2);
+
+            for (int i = 1; i <= 10; i++) {
+                int numero = (int) Math.round(Math.random() * 35);
+                aleatorio = aleatorio + abecedarioMinusculas[numero];
+            }
+
+            LocalDate localDateOf = LocalDate.now();
+            String name = rutaRelativa.concat(String.valueOf(localDateOf)).concat("_").concat(aleatorio).concat("_").concat(nombreArchivo2).toLowerCase();
             FileOutputStream fos = new FileOutputStream(name);
             FileCopyUtils.copy(content, fos);
             aleatorio = "";
@@ -195,7 +224,7 @@ public class ServicioCarga implements EjbCarga {
                 /*.replaceAll("[^\\p{Alnum}]+", ".")*/
                 .replaceAll("[^A-Za-z0-9-_.()]+", "-");
     }
-
+    
     @Override
     public String crearDirectorioPlantilla(String eje) {
         String rutaRelativa = genCarpetaRelativa(modulosRegistro, plantillas, eje);
