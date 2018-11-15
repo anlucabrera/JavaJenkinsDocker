@@ -42,12 +42,13 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "OrganismosVinculados.findByEmpresa", query = "SELECT o FROM OrganismosVinculados o WHERE o.empresa = :empresa")
     , @NamedQuery(name = "OrganismosVinculados.findByFecha", query = "SELECT o FROM OrganismosVinculados o WHERE o.fecha = :fecha")
     , @NamedQuery(name = "OrganismosVinculados.findByNombre", query = "SELECT o FROM OrganismosVinculados o WHERE o.nombre = :nombre")
+    , @NamedQuery(name = "OrganismosVinculados.findByGiroEspecifico", query = "SELECT o FROM OrganismosVinculados o WHERE o.giroEspecifico = :giroEspecifico")
     , @NamedQuery(name = "OrganismosVinculados.findByDireccion", query = "SELECT o FROM OrganismosVinculados o WHERE o.direccion = :direccion")
     , @NamedQuery(name = "OrganismosVinculados.findByCp", query = "SELECT o FROM OrganismosVinculados o WHERE o.cp = :cp")
-    , @NamedQuery(name = "OrganismosVinculados.findByRepresentante", query = "SELECT o FROM OrganismosVinculados o WHERE o.representante = :representante")
-    , @NamedQuery(name = "OrganismosVinculados.findByTelefono", query = "SELECT o FROM OrganismosVinculados o WHERE o.telefono = :telefono")
-    , @NamedQuery(name = "OrganismosVinculados.findByTelefonoOtro", query = "SELECT o FROM OrganismosVinculados o WHERE o.telefonoOtro = :telefonoOtro")
-    , @NamedQuery(name = "OrganismosVinculados.findByEmail", query = "SELECT o FROM OrganismosVinculados o WHERE o.email = :email")
+    , @NamedQuery(name = "OrganismosVinculados.findByRepresentantePrincipal", query = "SELECT o FROM OrganismosVinculados o WHERE o.representantePrincipal = :representantePrincipal")
+    , @NamedQuery(name = "OrganismosVinculados.findByCargoRepresentantePrincipal", query = "SELECT o FROM OrganismosVinculados o WHERE o.cargoRepresentantePrincipal = :cargoRepresentantePrincipal")
+    , @NamedQuery(name = "OrganismosVinculados.findByTelefonoPrincipal", query = "SELECT o FROM OrganismosVinculados o WHERE o.telefonoPrincipal = :telefonoPrincipal")
+    , @NamedQuery(name = "OrganismosVinculados.findByEmailPrincipal", query = "SELECT o FROM OrganismosVinculados o WHERE o.emailPrincipal = :emailPrincipal")
     , @NamedQuery(name = "OrganismosVinculados.findByConvenio", query = "SELECT o FROM OrganismosVinculados o WHERE o.convenio = :convenio")
     , @NamedQuery(name = "OrganismosVinculados.findByEstatus", query = "SELECT o FROM OrganismosVinculados o WHERE o.estatus = :estatus")})
 public class OrganismosVinculados implements Serializable {
@@ -73,6 +74,11 @@ public class OrganismosVinculados implements Serializable {
     private String nombre;
     @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 500)
+    @Column(name = "giro_especifico")
+    private String giroEspecifico;
+    @Basic(optional = false)
+    @NotNull
     @Size(min = 1, max = 250)
     @Column(name = "direccion")
     private String direccion;
@@ -83,23 +89,24 @@ public class OrganismosVinculados implements Serializable {
     private String cp;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 250)
-    @Column(name = "representante")
-    private String representante;
+    @Size(min = 1, max = 500)
+    @Column(name = "representante_principal")
+    private String representantePrincipal;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 500)
+    @Column(name = "cargo_representante_principal")
+    private String cargoRepresentantePrincipal;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 15)
-    @Column(name = "telefono")
-    private String telefono;
-    @Size(max = 15)
-    @Column(name = "telefono_otro")
-    private String telefonoOtro;
-    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+    @Column(name = "telefono_principal")
+    private String telefonoPrincipal;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
-    @Column(name = "email")
-    private String email;
+    @Column(name = "email_principal")
+    private String emailPrincipal;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 3)
@@ -116,7 +123,13 @@ public class OrganismosVinculados implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
     private List<VisitasIndustriales> visitasIndustrialesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
+    private List<CorreosEmpresa> correosEmpresaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
     private List<Convenios> conveniosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
+    private List<TelefonosEmpresa> telefonosEmpresaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
+    private List<ContactosEmpresa> contactosEmpresaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "institucionOrganizacion")
     private List<RegistrosMovilidad> registrosMovilidadList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
@@ -129,14 +142,15 @@ public class OrganismosVinculados implements Serializable {
     private GirosTipo giro;
     @JoinColumns({
         @JoinColumn(name = "estado", referencedColumnName = "claveEstado")
-        , @JoinColumn(name = "municipio", referencedColumnName = "claveMunicipio")})
-    @ManyToOne(optional = false)
-    private Municipio municipio;
+        , @JoinColumn(name = "municipio", referencedColumnName = "claveMunicipio")
+        , @JoinColumn(name = "localidad", referencedColumnName = "claveLocalidad")})
+    @ManyToOne
+    private Localidad localidad;
     @JoinColumn(name = "org_tip", referencedColumnName = "orgtipo")
     @ManyToOne(optional = false)
     private OrganismosTipo orgTip;
     @JoinColumn(name = "pais", referencedColumnName = "idpais")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Pais pais;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
     @OneToOne(optional = false)
@@ -154,16 +168,18 @@ public class OrganismosVinculados implements Serializable {
         this.registro = registro;
     }
 
-    public OrganismosVinculados(Integer registro, int empresa, Date fecha, String nombre, String direccion, String cp, String representante, String telefono, String email, String convenio, boolean estatus) {
+    public OrganismosVinculados(Integer registro, int empresa, Date fecha, String nombre, String giroEspecifico, String direccion, String cp, String representantePrincipal, String cargoRepresentantePrincipal, String telefonoPrincipal, String emailPrincipal, String convenio, boolean estatus) {
         this.registro = registro;
         this.empresa = empresa;
         this.fecha = fecha;
         this.nombre = nombre;
+        this.giroEspecifico = giroEspecifico;
         this.direccion = direccion;
         this.cp = cp;
-        this.representante = representante;
-        this.telefono = telefono;
-        this.email = email;
+        this.representantePrincipal = representantePrincipal;
+        this.cargoRepresentantePrincipal = cargoRepresentantePrincipal;
+        this.telefonoPrincipal = telefonoPrincipal;
+        this.emailPrincipal = emailPrincipal;
         this.convenio = convenio;
         this.estatus = estatus;
     }
@@ -200,6 +216,14 @@ public class OrganismosVinculados implements Serializable {
         this.nombre = nombre;
     }
 
+    public String getGiroEspecifico() {
+        return giroEspecifico;
+    }
+
+    public void setGiroEspecifico(String giroEspecifico) {
+        this.giroEspecifico = giroEspecifico;
+    }
+
     public String getDireccion() {
         return direccion;
     }
@@ -216,36 +240,36 @@ public class OrganismosVinculados implements Serializable {
         this.cp = cp;
     }
 
-    public String getRepresentante() {
-        return representante;
+    public String getRepresentantePrincipal() {
+        return representantePrincipal;
     }
 
-    public void setRepresentante(String representante) {
-        this.representante = representante;
+    public void setRepresentantePrincipal(String representantePrincipal) {
+        this.representantePrincipal = representantePrincipal;
     }
 
-    public String getTelefono() {
-        return telefono;
+    public String getCargoRepresentantePrincipal() {
+        return cargoRepresentantePrincipal;
     }
 
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
+    public void setCargoRepresentantePrincipal(String cargoRepresentantePrincipal) {
+        this.cargoRepresentantePrincipal = cargoRepresentantePrincipal;
     }
 
-    public String getTelefonoOtro() {
-        return telefonoOtro;
+    public String getTelefonoPrincipal() {
+        return telefonoPrincipal;
     }
 
-    public void setTelefonoOtro(String telefonoOtro) {
-        this.telefonoOtro = telefonoOtro;
+    public void setTelefonoPrincipal(String telefonoPrincipal) {
+        this.telefonoPrincipal = telefonoPrincipal;
     }
 
-    public String getEmail() {
-        return email;
+    public String getEmailPrincipal() {
+        return emailPrincipal;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmailPrincipal(String emailPrincipal) {
+        this.emailPrincipal = emailPrincipal;
     }
 
     public String getConvenio() {
@@ -292,12 +316,39 @@ public class OrganismosVinculados implements Serializable {
     }
 
     @XmlTransient
+    public List<CorreosEmpresa> getCorreosEmpresaList() {
+        return correosEmpresaList;
+    }
+
+    public void setCorreosEmpresaList(List<CorreosEmpresa> correosEmpresaList) {
+        this.correosEmpresaList = correosEmpresaList;
+    }
+
+    @XmlTransient
     public List<Convenios> getConveniosList() {
         return conveniosList;
     }
 
     public void setConveniosList(List<Convenios> conveniosList) {
         this.conveniosList = conveniosList;
+    }
+
+    @XmlTransient
+    public List<TelefonosEmpresa> getTelefonosEmpresaList() {
+        return telefonosEmpresaList;
+    }
+
+    public void setTelefonosEmpresaList(List<TelefonosEmpresa> telefonosEmpresaList) {
+        this.telefonosEmpresaList = telefonosEmpresaList;
+    }
+
+    @XmlTransient
+    public List<ContactosEmpresa> getContactosEmpresaList() {
+        return contactosEmpresaList;
+    }
+
+    public void setContactosEmpresaList(List<ContactosEmpresa> contactosEmpresaList) {
+        this.contactosEmpresaList = contactosEmpresaList;
     }
 
     @XmlTransient
@@ -334,12 +385,12 @@ public class OrganismosVinculados implements Serializable {
         this.giro = giro;
     }
 
-    public Municipio getMunicipio() {
-        return municipio;
+    public Localidad getLocalidad() {
+        return localidad;
     }
 
-    public void setMunicipio(Municipio municipio) {
-        this.municipio = municipio;
+    public void setLocalidad(Localidad localidad) {
+        this.localidad = localidad;
     }
 
     public OrganismosTipo getOrgTip() {

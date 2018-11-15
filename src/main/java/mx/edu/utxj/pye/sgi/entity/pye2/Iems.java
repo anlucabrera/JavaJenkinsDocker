@@ -45,7 +45,8 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Iems.findByLada", query = "SELECT i FROM Iems i WHERE i.lada = :lada")
     , @NamedQuery(name = "Iems.findByTelefono", query = "SELECT i FROM Iems i WHERE i.telefono = :telefono")
     , @NamedQuery(name = "Iems.findByResponsable", query = "SELECT i FROM Iems i WHERE i.responsable = :responsable")
-    , @NamedQuery(name = "Iems.findByCorreo", query = "SELECT i FROM Iems i WHERE i.correo = :correo")})
+    , @NamedQuery(name = "Iems.findByCorreo", query = "SELECT i FROM Iems i WHERE i.correo = :correo")
+    , @NamedQuery(name = "Iems.findByStatus", query = "SELECT i FROM Iems i WHERE i.status = :status")})
 public class Iems implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -97,6 +98,10 @@ public class Iems implements Serializable {
     @Size(max = 150)
     @Column(name = "correo")
     private String correo;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "status")
+    private short status;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "iems")
     private List<FeriasParticipantes> feriasParticipantesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "iems")
@@ -118,7 +123,7 @@ public class Iems implements Serializable {
         this.iems = iems;
     }
 
-    public Iems(Integer iems, String clave, String turno, String ambito, String nombre, String tipo, String domicilio) {
+    public Iems(Integer iems, String clave, String turno, String ambito, String nombre, String tipo, String domicilio, short status) {
         this.iems = iems;
         this.clave = clave;
         this.turno = turno;
@@ -126,6 +131,7 @@ public class Iems implements Serializable {
         this.nombre = nombre;
         this.tipo = tipo;
         this.domicilio = domicilio;
+        this.status = status;
     }
 
     public Integer getIems() {
@@ -214,6 +220,14 @@ public class Iems implements Serializable {
 
     public void setCorreo(String correo) {
         this.correo = correo;
+    }
+
+    public short getStatus() {
+        return status;
+    }
+
+    public void setStatus(short status) {
+        this.status = status;
     }
 
     @XmlTransient

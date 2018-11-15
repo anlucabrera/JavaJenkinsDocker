@@ -54,8 +54,6 @@ public class Municipio implements Serializable {
     private Estado estado;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "municipio")
     private List<Localidad> localidadList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "municipio")
-    private List<OrganismosVinculados> organismosVinculadosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "municipio1")
     private List<Codigopostal> codigopostalList;
 
@@ -124,15 +122,6 @@ public class Municipio implements Serializable {
 
     public void setLocalidadList(List<Localidad> localidadList) {
         this.localidadList = localidadList;
-    }
-
-    @XmlTransient
-    public List<OrganismosVinculados> getOrganismosVinculadosList() {
-        return organismosVinculadosList;
-    }
-
-    public void setOrganismosVinculadosList(List<OrganismosVinculados> organismosVinculadosList) {
-        this.organismosVinculadosList = organismosVinculadosList;
     }
 
     @XmlTransient

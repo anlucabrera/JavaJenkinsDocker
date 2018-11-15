@@ -29,7 +29,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "CuerpacadIntegrantes.findAll", query = "SELECT c FROM CuerpacadIntegrantes c")
     , @NamedQuery(name = "CuerpacadIntegrantes.findByRegistro", query = "SELECT c FROM CuerpacadIntegrantes c WHERE c.registro = :registro")
-    , @NamedQuery(name = "CuerpacadIntegrantes.findByPersonal", query = "SELECT c FROM CuerpacadIntegrantes c WHERE c.personal = :personal")})
+    , @NamedQuery(name = "CuerpacadIntegrantes.findByPersonal", query = "SELECT c FROM CuerpacadIntegrantes c WHERE c.personal = :personal")
+    , @NamedQuery(name = "CuerpacadIntegrantes.findByEstatus", query = "SELECT c FROM CuerpacadIntegrantes c WHERE c.estatus = :estatus")})
 public class CuerpacadIntegrantes implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -42,6 +43,10 @@ public class CuerpacadIntegrantes implements Serializable {
     @NotNull
     @Column(name = "personal")
     private int personal;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "estatus")
+    private boolean estatus;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Registros registros;
@@ -56,9 +61,10 @@ public class CuerpacadIntegrantes implements Serializable {
         this.registro = registro;
     }
 
-    public CuerpacadIntegrantes(Integer registro, int personal) {
+    public CuerpacadIntegrantes(Integer registro, int personal, boolean estatus) {
         this.registro = registro;
         this.personal = personal;
+        this.estatus = estatus;
     }
 
     public Integer getRegistro() {
@@ -75,6 +81,14 @@ public class CuerpacadIntegrantes implements Serializable {
 
     public void setPersonal(int personal) {
         this.personal = personal;
+    }
+
+    public boolean getEstatus() {
+        return estatus;
+    }
+
+    public void setEstatus(boolean estatus) {
+        this.estatus = estatus;
     }
 
     public Registros getRegistros() {

@@ -68,6 +68,8 @@ public class EjesRegistro implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "eje")
     private List<Registros> registrosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "eje")
+    private List<ModulosRegistro> modulosRegistroList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eje")
     private List<InformacionCorrespondienteArea> informacionCorrespondienteAreaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "eje")
     private List<CuadroMandoIntegral> cuadroMandoIntegralList;
@@ -134,6 +136,15 @@ public class EjesRegistro implements Serializable {
 
     public void setRegistrosList(List<Registros> registrosList) {
         this.registrosList = registrosList;
+    }
+
+    @XmlTransient
+    public List<ModulosRegistro> getModulosRegistroList() {
+        return modulosRegistroList;
+    }
+
+    public void setModulosRegistroList(List<ModulosRegistro> modulosRegistroList) {
+        this.modulosRegistroList = modulosRegistroList;
     }
 
     @XmlTransient

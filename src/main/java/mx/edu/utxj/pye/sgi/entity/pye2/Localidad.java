@@ -55,6 +55,8 @@ public class Localidad implements Serializable {
     @JoinColumn(name = "claveTipoLocalidad", referencedColumnName = "clave")
     @ManyToOne(optional = false)
     private Tipolocalidad claveTipoLocalidad;
+    @OneToMany(mappedBy = "localidad")
+    private List<OrganismosVinculados> organismosVinculadosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "localidad")
     private List<FeriasProfesiograficas> feriasProfesiograficasList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "localidad")
@@ -106,6 +108,15 @@ public class Localidad implements Serializable {
 
     public void setClaveTipoLocalidad(Tipolocalidad claveTipoLocalidad) {
         this.claveTipoLocalidad = claveTipoLocalidad;
+    }
+
+    @XmlTransient
+    public List<OrganismosVinculados> getOrganismosVinculadosList() {
+        return organismosVinculadosList;
+    }
+
+    public void setOrganismosVinculadosList(List<OrganismosVinculados> organismosVinculadosList) {
+        this.organismosVinculadosList = organismosVinculadosList;
     }
 
     @XmlTransient

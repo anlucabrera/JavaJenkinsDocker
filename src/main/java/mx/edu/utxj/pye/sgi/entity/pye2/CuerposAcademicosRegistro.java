@@ -87,8 +87,12 @@ public class CuerposAcademicosRegistro implements Serializable {
     private boolean estatus;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpoAcademico")
     private List<CuerpacadIntegrantes> cuerpacadIntegrantesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpoAcademico")
+    private List<CuerpacadIntegrantesBitacora> cuerpacadIntegrantesBitacoraList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpAcad")
     private List<ReconocimientoProdepRegistros> reconocimientoProdepRegistrosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpoAcademico")
+    private List<CuerpacadLineasBitacora> cuerpacadLineasBitacoraList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpoAcademico")
     private List<CuerpacadLineas> cuerpacadLineasList;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
@@ -193,12 +197,30 @@ public class CuerposAcademicosRegistro implements Serializable {
     }
 
     @XmlTransient
+    public List<CuerpacadIntegrantesBitacora> getCuerpacadIntegrantesBitacoraList() {
+        return cuerpacadIntegrantesBitacoraList;
+    }
+
+    public void setCuerpacadIntegrantesBitacoraList(List<CuerpacadIntegrantesBitacora> cuerpacadIntegrantesBitacoraList) {
+        this.cuerpacadIntegrantesBitacoraList = cuerpacadIntegrantesBitacoraList;
+    }
+
+    @XmlTransient
     public List<ReconocimientoProdepRegistros> getReconocimientoProdepRegistrosList() {
         return reconocimientoProdepRegistrosList;
     }
 
     public void setReconocimientoProdepRegistrosList(List<ReconocimientoProdepRegistros> reconocimientoProdepRegistrosList) {
         this.reconocimientoProdepRegistrosList = reconocimientoProdepRegistrosList;
+    }
+
+    @XmlTransient
+    public List<CuerpacadLineasBitacora> getCuerpacadLineasBitacoraList() {
+        return cuerpacadLineasBitacoraList;
+    }
+
+    public void setCuerpacadLineasBitacoraList(List<CuerpacadLineasBitacora> cuerpacadLineasBitacoraList) {
+        this.cuerpacadLineasBitacoraList = cuerpacadLineasBitacoraList;
     }
 
     @XmlTransient

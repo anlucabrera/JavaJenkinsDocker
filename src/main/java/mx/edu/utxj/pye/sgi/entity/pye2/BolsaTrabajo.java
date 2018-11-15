@@ -38,6 +38,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "BolsaTrabajo.findAll", query = "SELECT b FROM BolsaTrabajo b")
     , @NamedQuery(name = "BolsaTrabajo.findByRegistro", query = "SELECT b FROM BolsaTrabajo b WHERE b.registro = :registro")
     , @NamedQuery(name = "BolsaTrabajo.findByBolsatrab", query = "SELECT b FROM BolsaTrabajo b WHERE b.bolsatrab = :bolsatrab")
+    , @NamedQuery(name = "BolsaTrabajo.findByPeriodo", query = "SELECT b FROM BolsaTrabajo b WHERE b.periodo = :periodo")
     , @NamedQuery(name = "BolsaTrabajo.findByFecha", query = "SELECT b FROM BolsaTrabajo b WHERE b.fecha = :fecha")
     , @NamedQuery(name = "BolsaTrabajo.findByPuestoOfertado", query = "SELECT b FROM BolsaTrabajo b WHERE b.puestoOfertado = :puestoOfertado")
     , @NamedQuery(name = "BolsaTrabajo.findByPlazas", query = "SELECT b FROM BolsaTrabajo b WHERE b.plazas = :plazas")})
@@ -51,8 +52,13 @@ public class BolsaTrabajo implements Serializable {
     private Integer registro;
     @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 25)
     @Column(name = "bolsatrab")
-    private int bolsatrab;
+    private String bolsatrab;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "periodo")
+    private int periodo;
     @Basic(optional = false)
     @NotNull
     @Column(name = "fecha")
@@ -83,9 +89,10 @@ public class BolsaTrabajo implements Serializable {
         this.registro = registro;
     }
 
-    public BolsaTrabajo(Integer registro, int bolsatrab, Date fecha, String puestoOfertado, short plazas) {
+    public BolsaTrabajo(Integer registro, String bolsatrab, int periodo, Date fecha, String puestoOfertado, short plazas) {
         this.registro = registro;
         this.bolsatrab = bolsatrab;
+        this.periodo = periodo;
         this.fecha = fecha;
         this.puestoOfertado = puestoOfertado;
         this.plazas = plazas;
@@ -99,12 +106,20 @@ public class BolsaTrabajo implements Serializable {
         this.registro = registro;
     }
 
-    public int getBolsatrab() {
+    public String getBolsatrab() {
         return bolsatrab;
     }
 
-    public void setBolsatrab(int bolsatrab) {
+    public void setBolsatrab(String bolsatrab) {
         this.bolsatrab = bolsatrab;
+    }
+
+    public int getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(int periodo) {
+        this.periodo = periodo;
     }
 
     public Date getFecha() {
