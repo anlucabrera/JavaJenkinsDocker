@@ -71,7 +71,7 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "ActividadesPoa.findByDescripcion", query = "SELECT a FROM ActividadesPoa a WHERE a.descripcion = :descripcion")
     , @NamedQuery(name = "ActividadesPoa.findByArea", query = "SELECT a FROM ActividadesPoa a WHERE a.area = :area")
     , @NamedQuery(name = "ActividadesPoa.findByBandera", query = "SELECT a FROM ActividadesPoa a WHERE a.bandera = :bandera")
-    , @NamedQuery(name = "ActividadesPoa.findByValidadoSistema", query = "SELECT a FROM ActividadesPoa a WHERE a.validadoSistema = :validadoSistema")
+    , @NamedQuery(name = "ActividadesPoa.findByEsPIDE", query = "SELECT a FROM ActividadesPoa a WHERE a.esPIDE = :esPIDE")
     , @NamedQuery(name = "ActividadesPoa.findByValidadoPyE", query = "SELECT a FROM ActividadesPoa a WHERE a.validadoPyE = :validadoPyE")
     , @NamedQuery(name = "ActividadesPoa.findByValidadoFinanzas", query = "SELECT a FROM ActividadesPoa a WHERE a.validadoFinanzas = :validadoFinanzas")
     , @NamedQuery(name = "ActividadesPoa.findByValidadpPyeFinal", query = "SELECT a FROM ActividadesPoa a WHERE a.validadpPyeFinal = :validadpPyeFinal")
@@ -220,8 +220,8 @@ public class ActividadesPoa implements Serializable {
     private String bandera;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "validadoSistema")
-    private boolean validadoSistema;
+    @Column(name = "esPIDE")
+    private boolean esPIDE;
     @Basic(optional = false)
     @NotNull
     @Column(name = "validadoPyE")
@@ -262,7 +262,7 @@ public class ActividadesPoa implements Serializable {
         this.actividadPoa = actividadPoa;
     }
 
-    public ActividadesPoa(Integer actividadPoa, short numeroP, short numeroS, String denominacion, short nPEnero, short nAEnero, short nPFebrero, short nAFebrero, short nPMarzo, short nAMarzo, short nPAbril, short nAAbril, short nPMayo, short nAMayo, short nPJunio, short nAJunio, short nPJulio, short nAJulio, short nPAgosto, short nAAgosto, short nPSeptiembre, short nASeptiembre, short nPOctubre, short nAOctubre, short nPNoviembre, short nANoviembre, short nPDiciembre, short nADiciembre, short total, short area, String bandera, boolean validadoSistema, boolean validadoPyE, boolean validadoFinanzas, boolean validadpPyeFinal) {
+    public ActividadesPoa(Integer actividadPoa, short numeroP, short numeroS, String denominacion, short nPEnero, short nAEnero, short nPFebrero, short nAFebrero, short nPMarzo, short nAMarzo, short nPAbril, short nAAbril, short nPMayo, short nAMayo, short nPJunio, short nAJunio, short nPJulio, short nAJulio, short nPAgosto, short nAAgosto, short nPSeptiembre, short nASeptiembre, short nPOctubre, short nAOctubre, short nPNoviembre, short nANoviembre, short nPDiciembre, short nADiciembre, short total, short area, String bandera, boolean esPIDE, boolean validadoPyE, boolean validadoFinanzas, boolean validadpPyeFinal) {
         this.actividadPoa = actividadPoa;
         this.numeroP = numeroP;
         this.numeroS = numeroS;
@@ -294,7 +294,7 @@ public class ActividadesPoa implements Serializable {
         this.total = total;
         this.area = area;
         this.bandera = bandera;
-        this.validadoSistema = validadoSistema;
+        this.esPIDE = esPIDE;
         this.validadoPyE = validadoPyE;
         this.validadoFinanzas = validadoFinanzas;
         this.validadpPyeFinal = validadpPyeFinal;
@@ -580,12 +580,12 @@ public class ActividadesPoa implements Serializable {
         this.bandera = bandera;
     }
 
-    public boolean getValidadoSistema() {
-        return validadoSistema;
+    public boolean getEsPIDE() {
+        return esPIDE;
     }
 
-    public void setValidadoSistema(boolean validadoSistema) {
-        this.validadoSistema = validadoSistema;
+    public void setEsPIDE(boolean esPIDE) {
+        this.esPIDE = esPIDE;
     }
 
     public boolean getValidadoPyE() {

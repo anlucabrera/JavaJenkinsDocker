@@ -47,6 +47,8 @@ public class EjerciciosFiscales implements Serializable {
     private short anio;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejerciciosFiscales")
     private List<Productos> productosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejerciciosFiscales")
+    private List<IndicadorPlazo> indicadorPlazoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejercicioFiscal")
     private List<PretechoFinanciero> pretechoFinancieroList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejercicioFiscal")
@@ -89,6 +91,15 @@ public class EjerciciosFiscales implements Serializable {
 
     public void setProductosList(List<Productos> productosList) {
         this.productosList = productosList;
+    }
+
+    @XmlTransient
+    public List<IndicadorPlazo> getIndicadorPlazoList() {
+        return indicadorPlazoList;
+    }
+
+    public void setIndicadorPlazoList(List<IndicadorPlazo> indicadorPlazoList) {
+        this.indicadorPlazoList = indicadorPlazoList;
     }
 
     @XmlTransient

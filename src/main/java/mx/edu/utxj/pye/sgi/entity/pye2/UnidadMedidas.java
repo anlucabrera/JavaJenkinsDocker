@@ -49,6 +49,8 @@ public class UnidadMedidas implements Serializable {
     private String nombre;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "unidadMedida")
     private List<ActividadesPoa> actividadesPoaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "unidadMedida")
+    private List<IndicadoresPide> indicadoresPideList;
 
     public UnidadMedidas() {
     }
@@ -85,6 +87,15 @@ public class UnidadMedidas implements Serializable {
 
     public void setActividadesPoaList(List<ActividadesPoa> actividadesPoaList) {
         this.actividadesPoaList = actividadesPoaList;
+    }
+
+    @XmlTransient
+    public List<IndicadoresPide> getIndicadoresPideList() {
+        return indicadoresPideList;
+    }
+
+    public void setIndicadoresPideList(List<IndicadoresPide> indicadoresPideList) {
+        this.indicadoresPideList = indicadoresPideList;
     }
 
     @Override

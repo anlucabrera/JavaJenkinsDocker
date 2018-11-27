@@ -84,7 +84,7 @@ public class OrganismosVinculados implements Serializable {
     private String direccion;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 5)
+    @Size(min = 1, max = 10)
     @Column(name = "cp")
     private String cp;
     @Basic(optional = false)
@@ -104,7 +104,7 @@ public class OrganismosVinculados implements Serializable {
     private String telefonoPrincipal;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 100)
     @Column(name = "email_principal")
     private String emailPrincipal;
     @Basic(optional = false)
