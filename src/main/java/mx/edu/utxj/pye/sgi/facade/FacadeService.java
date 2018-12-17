@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateful;
+import javax.persistence.Cache;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolation;
@@ -43,6 +44,8 @@ public class FacadeService<T> implements Facade {
 
     @Override
     public EntityManager getEntityManager() {
+        Cache c=em.getEntityManagerFactory().getCache();
+        c.evictAll();
         return em;
     }
 

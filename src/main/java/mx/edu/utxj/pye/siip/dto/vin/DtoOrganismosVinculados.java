@@ -8,21 +8,26 @@ package mx.edu.utxj.pye.siip.dto.vin;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import javax.faces.model.SelectItem;
 import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesVinculacion;
+import mx.edu.utxj.pye.sgi.entity.pye2.ContactosEmpresa;
+import mx.edu.utxj.pye.sgi.entity.pye2.CorreosEmpresa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
+import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.sgi.entity.pye2.Localidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
+import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
+import mx.edu.utxj.pye.sgi.entity.pye2.TelefonosEmpresa;
 import mx.edu.utxj.pye.siip.dto.vinculacion.DTOActividadesVinculacion;
 import mx.edu.utxj.pye.siip.dto.vinculacion.DTOOrganismoVinculado;
 
@@ -31,6 +36,28 @@ import mx.edu.utxj.pye.siip.dto.vinculacion.DTOOrganismoVinculado;
  * @author Planeacion
  */
 public class DtoOrganismosVinculados {
+    /************************** Ubicación *************************************/
+    @Getter private Pais pais;
+    @Getter private Estado estado;
+    @Getter private Municipio municipio;
+    @Getter private Localidad localidad;
+    
+    @Getter private List<Pais> paises;
+    @Getter private List<Estado> estados;
+    @Getter private List<Municipio> municipios;
+    @Getter private List<Localidad> localidades;
+    
+    /************************** Teléfonos Empresa *************************************/
+    @Getter @Setter TelefonosEmpresa telefonoEmpresa = new TelefonosEmpresa();
+    @Getter @Setter private List<TelefonosEmpresa> listaTelefonosEmpresa = new ArrayList<>();
+    
+    /************************** Correos Empresa *************************************/
+    @Getter @Setter CorreosEmpresa correoEmpresa = new CorreosEmpresa();
+    @Getter @Setter private List<CorreosEmpresa> listaCorreosEmpresa = new ArrayList<>();
+    
+    /************************** Contactos empresa *************************************/
+    @Getter @Setter ContactosEmpresa contactoEmpresa = new ContactosEmpresa();
+    @Getter @Setter private List<ContactosEmpresa> listaContactosEmpresas = new ArrayList<>();
     
     /************************** Actividades de vinculación *************************************/
     @Getter @Setter ActividadesVinculacion actividadVinculacion;
@@ -164,6 +191,72 @@ public class DtoOrganismosVinculados {
         this.lineasAccion = lineasAccion;
         if(lineasAccion.isEmpty())
             nulificarLinea();
+    }
+    
+    /********************** Ubicación ************************************/
+    
+    public void setPais(Pais pais){
+        this.pais = pais;
+        if(pais == null){
+            nulificarPais();
+        }
+    }
+    
+    public void nulificarPais(){
+        estados = Collections.EMPTY_LIST;
+        nulificarEstados();
+    }
+    
+    public void nulificarEstados(){
+        municipios = Collections.EMPTY_LIST;
+        nulificarMunicipios();
+    }
+    
+    public void nulificarMunicipios(){
+        localidades = Collections.EMPTY_LIST;
+    }
+    
+    public void setEstado(Estado estado){
+        this.estado = estado;
+        if(estado == null){
+            nulificarEstados();
+        }
+    }
+    
+    public void setMunicipio(Municipio municipio){
+        this.municipio = municipio;
+        if(municipio == null){
+            nulificarMunicipios();
+        }
+    }
+    
+    public void setLocalidad(Localidad localidad){
+        this.localidad = localidad;
+    }
+    
+    public void setPaises(List<Pais> paises){
+        this.paises = paises;
+        if(paises.isEmpty()){
+            nulificarPais();
+        }
+    }
+    
+    public void setEstados(List<Estado> estados){
+        this.estados = estados;
+        if(estados.isEmpty()){
+            nulificarEstados();
+        }
+    }
+    
+    public void setMunicipios(List<Municipio> municipios){
+        this.municipios = municipios;
+        if(municipios.isEmpty()){
+            nulificarMunicipios();
+        }
+    }
+    
+    public void setLocalidades(List<Localidad> localidades){
+        this.localidades = localidades;
     }
     
 }

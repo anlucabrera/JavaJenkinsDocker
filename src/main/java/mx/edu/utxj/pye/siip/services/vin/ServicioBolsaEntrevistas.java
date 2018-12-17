@@ -86,7 +86,7 @@ public class ServicioBolsaEntrevistas implements EjbBolsaEntrevistas{
                
                 switch (fila.getCell(1).getCellTypeEnum()) {
                     case FORMULA:
-                        bolsaTrabajo.setBolsatrab((int) fila.getCell(1).getNumericCellValue());
+//                        bolsaTrabajo.setBolsatrab((int) fila.getCell(1).getNumericCellValue());
                         bolsaTrabajoEntrevistas.setBolsatrabent(bolsaTrabajo);
                         break;
                     default:
@@ -194,7 +194,7 @@ public class ServicioBolsaEntrevistas implements EjbBolsaEntrevistas{
                     facdepye.edit(bolsaEntrevistas.getBolsaTrabajoEntrevistas());
                 } else {
                     Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-                    bolsaEntrevistas.getBolsaTrabajoEntrevistas().getBolsatrabent().setRegistro(ejbBolsaTrabajo.getRegistroBolsaTrabajoEspecifico(bolsaEntrevistas.getBolsaTrabajoEntrevistas().getBolsatrabent().getBolsatrab()));
+//                    bolsaEntrevistas.getBolsaTrabajoEntrevistas().getBolsatrabent().setRegistro(ejbBolsaTrabajo.getRegistroBolsaTrabajoEspecifico(bolsaEntrevistas.getBolsaTrabajoEntrevistas().getBolsatrabent().getBolsatrab()));
                     bolsaEntrevistas.getBolsaTrabajoEntrevistas().setRegistro(registro.getRegistro());
                     facdepye.create(bolsaEntrevistas.getBolsaTrabajoEntrevistas());
                 }

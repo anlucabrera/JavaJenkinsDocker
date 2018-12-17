@@ -42,30 +42,41 @@ public class ClimaLaboral implements Serializable {
     
     @PostConstruct
     public void init() {
-        if (logonMB.getUsuarioTipo() != UsuarioTipo.ESTUDIANTE) {
-            respuestas = new HashMap<>();
+        try {
+            if (logonMB.getUsuarioTipo() != UsuarioTipo.ESTUDIANTE) {
+                respuestas = new HashMap<>();
 
-            try {
-                finalizado = false;
+                try {
+                    finalizado = false;
 
-                evaluacion = ejb.getEvaluacionActiva();
-                if(evaluacion == null){return;}
-                evaluador = ejb.getEvaluador(Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
-                if(evaluador == null){return;}
-                resultado = ejb.getResultado(evaluacion, evaluador);
-                if(resultado == null){return;}
-                facade.setEntityClass(PeriodosEscolares.class);
+                    evaluacion = ejb.getEvaluacionActiva();
+                    if (evaluacion == null) {
+                        return;
+                    }
+                    evaluador = ejb.getEvaluador(Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
+                    if (evaluador == null) {
+                        return;
+                    }
+                    resultado = ejb.getResultado(evaluacion, evaluador);
+                    if (resultado == null) {
+                        return;
+                    }
+                    facade.setEntityClass(PeriodosEscolares.class);
 
-                if (resultado != null) {
-                    periodoEscolar = (PeriodosEscolares) facade.find(evaluacion.getPeriodo());
-                    ejb.vaciarRespuestas(resultado, respuestas);
-                    cargada = true;
-                    verificarFinalizado();
+                    if (resultado != null) {
+                        periodoEscolar = (PeriodosEscolares) facade.find(evaluacion.getPeriodo());
+                        ejb.vaciarRespuestas(resultado, respuestas);
+                        cargada = true;
+                        verificarFinalizado();
+                    }
+                } catch (EJBException e) {
+                    cargada = false;
+                    System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionControlInterno.init() e: " + e.getMessage());
                 }
-            } catch (EJBException e) {
-                cargada = false;
-                System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionControlInterno.init() e: " + e.getMessage());
             }
+        } catch (Exception e) {
+            cargada = false;
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionControlInterno.init() e: " + e.getMessage());
         }
     }
         

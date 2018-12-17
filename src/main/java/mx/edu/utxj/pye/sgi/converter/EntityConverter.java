@@ -15,8 +15,11 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.sgi.entity.pye2.Localidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.LocalidadPK;
 import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.MunicipioPK;
+import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import org.omnifaces.util.Faces;
 
@@ -58,6 +61,10 @@ public class EntityConverter implements Converter{
                     List<AreasUniversidad> areas = Faces.getSessionAttribute("areas");
                     AreasUniversidad area = new AreasUniversidad(Short.valueOf(value));
                     return areas.get(areas.indexOf(area));
+                case "pais":
+                    List<Pais> paises = Faces.getSessionAttribute("paises");
+                    Pais pais = new Pais(Integer.valueOf(value));
+                    return paises.get(paises.indexOf(pais));
                 case "estado":
                     List<Estado> estados = Faces.getSessionAttribute("estados");
                     Estado estado = new Estado(Integer.valueOf(value));
@@ -66,7 +73,12 @@ public class EntityConverter implements Converter{
                     MunicipioPK pk = (new Gson()).fromJson(value, MunicipioPK.class);
                     List<Municipio> municipios = Faces.getSessionAttribute("municipios");
                     Municipio municipio = municipios.get(municipios.indexOf(new Municipio(pk)));
-                    return municipio;    
+                    return municipio;
+                case "localidad":
+                    LocalidadPK pkl = (new Gson()).fromJson(value, LocalidadPK.class);
+                    List<Localidad> localidades = Faces.getSessionAttribute("localidades");
+                    Localidad localidad = localidades.get(localidades.indexOf(new Localidad(pkl)));
+                    return localidad;
                 case "ejeParticipante":
                     List<EjesRegistro> ejesParticipantes = Faces.getSessionAttribute("ejes");
                     EjesRegistro ejeParticipante = new EjesRegistro(Integer.valueOf(value));            
@@ -128,11 +140,16 @@ public class EntityConverter implements Converter{
                 return ((ActividadesPoa)value).getActividadPoa().toString();
             else if(value instanceof AreasUniversidad)
                 return ((AreasUniversidad)value).getArea().toString();
+            else if(value instanceof Pais)
+                return ((Pais)value).getIdpais().toString();
             else if(value instanceof Estado)
                 return ((Estado)value).getIdestado().toString();
             else if(value instanceof Municipio){
                 String json = (new Gson()).toJson(((Municipio)value).getMunicipioPK());
-                return json;//((Municipio)value).getMunicipioPK().toString();
+                return json;//((Municipio)value).getMunicipioPK().toString();    
+            }else if(value instanceof Localidad){
+                String jsonLoc = (new Gson()).toJson(((Localidad)value).getLocalidadPK());
+                return jsonLoc;
             }else{
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "", value.getClass().getName() + " no es una clase válida."));
             }

@@ -24,11 +24,14 @@ import javax.persistence.TypedQuery;
 import javax.servlet.annotation.MultipartConfig;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesVinculacion;
+import mx.edu.utxj.pye.sgi.entity.pye2.ContactosEmpresa;
+import mx.edu.utxj.pye.sgi.entity.pye2.CorreosEmpresa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EmpresasTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.GirosTipo;
+import mx.edu.utxj.pye.sgi.entity.pye2.Localidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.MunicipioPK;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosTipo;
@@ -37,8 +40,10 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
 import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.SectoresTipo;
+import mx.edu.utxj.pye.sgi.entity.pye2.TelefonosEmpresa;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
+import mx.edu.utxj.pye.sgi.util.StringUtils;
 import mx.edu.utxj.pye.siip.dto.vinculacion.DTOActividadesVinculacion;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -83,11 +88,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
         EmpresasTipo empresasTipo;
         GirosTipo girosTipo;
         SectoresTipo sectoresTipo;
-        Pais pais;
-        Estado estado;
-        Municipio municipio;
-        MunicipioPK municipioPK;
-
+        
         File excelOrgVin = new File(rutaArchivo);
         XSSFWorkbook workBookOrgVin = new XSSFWorkbook();
         workBookOrgVin = (XSSFWorkbook) WorkbookFactory.create(excelOrgVin);
@@ -103,10 +104,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
                     empresasTipo = new EmpresasTipo();
                     girosTipo = new GirosTipo();
                     sectoresTipo = new SectoresTipo();
-                    pais = new Pais();
-                    estado = new Estado();
-                    municipio = new Municipio();
-                    municipioPK = new MunicipioPK();
+                    
                     switch (fila.getCell(0).getCellTypeEnum()) {
                         case NUMERIC:
                             if (DateUtil.isCellDateFormatted(fila.getCell(0))) {
@@ -126,119 +124,99 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
                     switch (fila.getCell(3).getCellTypeEnum()) {
                         case FORMULA:
                             organismosTipo.setOrgtipo((short) fila.getCell(3).getNumericCellValue());
-                            organismosTipo.setDescripcion(fila.getCell(4).getStringCellValue());
+                            organismosTipo.setDescripcion(fila.getCell(2).getStringCellValue());
                             organismoVinculado.setOrgTip(organismosTipo);
                             break;
                         default:
                             break;
                     }
-                    switch (fila.getCell(6).getCellTypeEnum()) {
+                    switch (fila.getCell(5).getCellTypeEnum()) {
                         case FORMULA:
-                            empresasTipo.setEmptipo((short) fila.getCell(6).getNumericCellValue());
-                            empresasTipo.setDescripcion(fila.getCell(7).getStringCellValue());
+                            empresasTipo.setEmptipo((short) fila.getCell(5).getNumericCellValue());
+                            empresasTipo.setDescripcion(fila.getCell(4).getStringCellValue());
                             organismoVinculado.setEmpTip(empresasTipo);
                             break;
                         default:
                             break;
                     }
-                    switch (fila.getCell(9).getCellTypeEnum()) {
+                    switch (fila.getCell(7).getCellTypeEnum()) {
                         case FORMULA:
-                            girosTipo.setGiro((short) fila.getCell(9).getNumericCellValue());
-                            girosTipo.setDescripcion(fila.getCell(10).getStringCellValue());
+                            girosTipo.setGiro((short) fila.getCell(7).getNumericCellValue());
+                            girosTipo.setDescripcion(fila.getCell(6).getStringCellValue());
                             organismoVinculado.setGiro(girosTipo);
                             break;
                         default:
                             break;
                     }
-                    switch (fila.getCell(12).getCellTypeEnum()) {
+                    
+                    switch (fila.getCell(8).getCellTypeEnum()) {
+                        case STRING:
+                            organismoVinculado.setGiroEspecifico(fila.getCell(8).getStringCellValue());
+                            break;
+                        default:
+                            break;
+                    }
+                    
+                    switch (fila.getCell(10).getCellTypeEnum()) {
                         case FORMULA:
-                            sectoresTipo.setSector((short) fila.getCell(12).getNumericCellValue());
-                            sectoresTipo.setDescripcion(fila.getCell(13).getStringCellValue());
+                            sectoresTipo.setSector((short) fila.getCell(10).getNumericCellValue());
+                            sectoresTipo.setDescripcion(fila.getCell(9).getStringCellValue());
                             organismoVinculado.setSector(sectoresTipo);
+                            break;
+                        default:
+                            break;
+                    }
+                    switch (fila.getCell(11).getCellTypeEnum()) {
+                        case STRING:
+                            organismoVinculado.setDireccion(fila.getCell(11).getStringCellValue());
+                            break;
+                        default:
+                            break;
+                    }
+                    switch (fila.getCell(12).getCellTypeEnum()) {
+                        case STRING:
+                            organismoVinculado.setCp(fila.getCell(12).getStringCellValue());
+                            break;
+                        case NUMERIC:
+                            Integer empresInt = (int) fila.getCell(12).getNumericCellValue();
+                            organismoVinculado.setCp(String.valueOf(empresInt));
+                            break;
+                        default:
+                            break;
+                    }
+                    switch (fila.getCell(13).getCellTypeEnum()) {
+                        case STRING:
+                            organismoVinculado.setRepresentantePrincipal(fila.getCell(13).getStringCellValue());
                             break;
                         default:
                             break;
                     }
                     switch (fila.getCell(14).getCellTypeEnum()) {
                         case STRING:
-                            organismoVinculado.setDireccion(fila.getCell(14).getStringCellValue());
+                            organismoVinculado.setCargoRepresentantePrincipal(fila.getCell(14).getStringCellValue());
+                            break;
+                        default:
+                            break;
+                    }
+                    switch (fila.getCell(16).getCellTypeEnum()) {
+                        case FORMULA:
+                            String telefono = fila.getCell(16).getStringCellValue();
+                            String telefonoConvertido = StringUtils.quitarGuionesEspacios(telefono);
+                            organismoVinculado.setTelefonoPrincipal(String.valueOf(telefonoConvertido));
                             break;
                         default:
                             break;
                     }
                     switch (fila.getCell(17).getCellTypeEnum()) {
-                        case FORMULA:
-                            pais.setNombre(fila.getCell(16).getStringCellValue());
-                            pais.setIdpais((int) fila.getCell(17).getNumericCellValue());
-                            organismoVinculado.setPais(pais);
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(22).getCellTypeEnum()) {
-                        case FORMULA:
-                            estado.setNombre(fila.getCell(21).getStringCellValue());
-                            estado.setIdestado((int) fila.getCell(22).getNumericCellValue());
-                            municipio.setEstado(estado);
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(28).getCellTypeEnum()) {
-                        case FORMULA:
-                            municipio.setNombre(fila.getCell(27).getStringCellValue());
-                            municipioPK.setClaveEstado(estado.getIdestado());
-                            municipioPK.setClaveMunicipio((int) fila.getCell(29).getNumericCellValue());
-                            municipio.setMunicipioPK(municipioPK);
-                            organismoVinculado.setMunicipio(municipio);
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(30).getCellTypeEnum()) {
                         case STRING:
-                            organismoVinculado.setCp(fila.getCell(30).getStringCellValue());
-                            break;
-                        case NUMERIC:
-                            Integer empresInt = (int) fila.getCell(30).getNumericCellValue();
-                            organismoVinculado.setCp(String.valueOf(empresInt));
+                            organismoVinculado.setEmailPrincipal(fila.getCell(17).getStringCellValue());
                             break;
                         default:
                             break;
                     }
-                    switch (fila.getCell(31).getCellTypeEnum()) {
+                    switch (fila.getCell(18).getCellTypeEnum()) {
                         case STRING:
-                            organismoVinculado.setRepresentante(fila.getCell(31).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(33).getCellTypeEnum()) {
-                        case FORMULA:
-                            String telefono = fila.getCell(33).getStringCellValue();
-                            organismoVinculado.setTelefono(String.valueOf(telefono));
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(35).getCellTypeEnum()) {
-                        case FORMULA:
-                            String telefonoOtro = fila.getCell(35).getStringCellValue();
-                            organismoVinculado.setTelefonoOtro(String.valueOf(telefonoOtro));
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(36).getCellTypeEnum()) {
-                        case STRING:
-                            organismoVinculado.setEmail(fila.getCell(36).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(38).getCellTypeEnum()) {
-                        case FORMULA:
-                            organismoVinculado.setConvenio(fila.getCell(38).getStringCellValue());
+                            organismoVinculado.setConvenio(fila.getCell(18).getStringCellValue());
                             break;
                         default:
                             break;
@@ -272,6 +250,9 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
                 if (organismosVEncontrado.getEstatus() == true) {
                     organismoVinculado.setRegistro(organismosVEncontrado.getRegistro());
                     organismoVinculado.setEmpresa(organismosVEncontrado.getEmpresa());
+                    organismoVinculado.setEstatus(true);
+                    organismoVinculado.setPais(organismosVEncontrado.getPais());
+                    organismoVinculado.setLocalidad(organismosVEncontrado.getLocalidad());
                     facadeProntuario.edit(organismoVinculado);
                 }else{
                     listaCondicional.remove(sdf.format(organismoVinculado.getFecha()) + " " + organismoVinculado.getNombre());
@@ -308,30 +289,26 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
 
     @Override
     public OrganismosVinculados getOrganismosVinculado(OrganismosVinculados organismoVinculado) {
-        TypedQuery<OrganismosVinculados> query = em.createQuery("SELECT o FROM OrganismosVinculados o WHERE o.fecha = :fecha AND o.nombre = :nombre", OrganismosVinculados.class);
-        query.setParameter("fecha", organismoVinculado.getFecha());
-        query.setParameter("nombre", organismoVinculado.getNombre());
+        OrganismosVinculados organismoEncontrado = new OrganismosVinculados();
         try {
-            organismoVinculado = query.getSingleResult();
+            return organismoEncontrado = em.createQuery("SELECT o FROM OrganismosVinculados o WHERE o.nombre = :nombre", OrganismosVinculados.class)
+                    .setParameter("nombre", organismoVinculado.getNombre())
+                    .getSingleResult();
         } catch (NoResultException | NonUniqueResultException ex) {
-            organismoVinculado = null;
-            ex.toString();
+            return organismoEncontrado = null;
         }
-        return organismoVinculado;
     }
 
     @Override
     public List<OrganismosVinculados> getOrganismosVinculadoVigentes() {
         List<OrganismosVinculados> organismosVinculadosLst = new ArrayList<>();
-        TypedQuery<OrganismosVinculados> query = em.createQuery("SELECT o FROM OrganismosVinculados o WHERE o.estatus = :estatus ORDER BY o.nombre", OrganismosVinculados.class);
-        query.setParameter("estatus", true);
         try {
-            organismosVinculadosLst = query.getResultList();
-        } catch (NoResultException | NonUniqueResultException ex) {
-            organismosVinculadosLst = null;
-//            System.out.println("mx.edu.utxj.pye.siip.services.vin.ServicioOrganismosVinculados.getOrganismosVinculadoVigentes()" + ex.toString());
+            return organismosVinculadosLst = em.createQuery("SELECT o FROM OrganismosVinculados o WHERE o.estatus = :estatus ORDER BY o.nombre", OrganismosVinculados.class)
+                    .setParameter("estatus", true)
+                    .getResultList();
+        } catch (NoResultException ex) {
+            return Collections.EMPTY_LIST;
         }
-        return organismosVinculadosLst;
     }
 
     @Override
@@ -485,12 +462,259 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     @Override
     public void bajaOrganismoVinculado(OrganismosVinculados organismoVinculado) {
         try {
-            facadeProntuario.setEntityClass(OrganismosVinculados.class);
-            organismoVinculado.setEstatus(false);
-            facadeProntuario.edit(organismoVinculado);
-            facadeProntuario.flush();
-            Messages.addGlobalInfo("<b>Se ha dado de baja el siguiente Organismo Vinculado: </b> " + organismoVinculado.getNombre());
+            Integer comprueba = em.createQuery("UPDATE OrganismosVinculados o SET o.estatus = false WHERE o.registro = :registro")
+                    .setParameter("registro", organismoVinculado.getRegistro())
+                    .executeUpdate();
+            if(comprueba != 0){
+                Messages.addGlobalInfo("<b>Se ha dado de baja el siguiente Organismo Vinculado: </b> " + organismoVinculado.getNombre());
+            }else{
+                Messages.addGlobalInfo("<b>No se ha podido dar de baja el siguiente Organismo Vinculado: </b> " + organismoVinculado.getNombre());
+            }
+//            facadeProntuario.setEntityClass(OrganismosVinculados.class);
+//            organismoVinculado.setEstatus(false);
+//            facadeProntuario.edit(organismoVinculado);
+//            facadeProntuario.flush();
         } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
+
+    @Override
+    public List<ContactosEmpresa> consultaContactosEmpresa(OrganismosVinculados organismoVinculado) {
+        try {
+            return em.createQuery("SELECT c FROM ContactosEmpresa c WHERE c.empresa.empresa = :empresa", ContactosEmpresa.class)
+                    .setParameter("empresa", organismoVinculado.getEmpresa())
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public Boolean guardarContactoEmpresa(ContactosEmpresa contactoEmpresa) {
+        try {
+            facadeProntuario.setEntityClass(ContactosEmpresa.class);
+            facadeProntuario.create(contactoEmpresa);
+            facadeProntuario.flush();
+            Integer verifica = em.find(ContactosEmpresa.class, contactoEmpresa.getContactoEmpresa()).getContactoEmpresa();
+            if(verifica != 0){
+                return true;
+            }else{
+                return false;
+            }
+        } catch (NoResultException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean eliminarContactoEmpresa(ContactosEmpresa contactosEmpresa) {
+        try {
+            facadeProntuario.setEntityClass(ContactosEmpresa.class);
+            facadeProntuario.remove(contactosEmpresa);
+            facadeProntuario.getEntityManager().detach(contactosEmpresa);
+            facadeProntuario.flush();
+            contactosEmpresa = em.find(ContactosEmpresa.class, contactosEmpresa.getContactoEmpresa());
+            if (contactosEmpresa == null) {
+                return true;
+            }else{
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean editaContactoEmpresa(ContactosEmpresa contactoEmpresa) {
+        try {
+            facadeProntuario.setEntityClass(ContactosEmpresa.class);
+            facadeProntuario.edit(contactoEmpresa);
+            facadeProntuario.flush();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public List<CorreosEmpresa> consultaCorreosEmpresa(OrganismosVinculados organismoVinculado) {
+        try {
+            return em.createQuery("SELECT c FROM CorreosEmpresa c WHERE c.empresa.empresa = :empresa", CorreosEmpresa.class)
+                    .setParameter("empresa", organismoVinculado.getEmpresa())
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public Boolean guardarCorreoEmpresa(CorreosEmpresa correoEmpresa) {
+        try {
+            facadeProntuario.setEntityClass(CorreosEmpresa.class);
+            facadeProntuario.create(correoEmpresa);
+            facadeProntuario.flush();
+            Integer verifica = em.find(CorreosEmpresa.class, correoEmpresa.getCorreoEmpresa()).getCorreoEmpresa();
+            if(verifica != 0){
+                return true;
+            }else{
+                return false;
+            }
+        } catch (NoResultException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean eliminarCorreoEmpresa(CorreosEmpresa correoEmpresa) {
+        try {
+            facadeProntuario.setEntityClass(CorreosEmpresa.class);
+            facadeProntuario.remove(correoEmpresa);
+            facadeProntuario.getEntityManager().detach(correoEmpresa);
+            facadeProntuario.flush();
+            correoEmpresa = em.find(CorreosEmpresa.class, correoEmpresa.getCorreoEmpresa());
+            if (correoEmpresa == null) {
+                return true;
+            }else{
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean editaCorreoEmpresa(CorreosEmpresa correoEmpresa) {
+        try {
+            facadeProntuario.setEntityClass(CorreosEmpresa.class);
+            facadeProntuario.edit(correoEmpresa);
+            facadeProntuario.flush();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public List<TelefonosEmpresa> consultaTelefonosEmpresa(OrganismosVinculados organismoVinculado) {
+        try {
+            return em.createQuery("SELECT c FROM TelefonosEmpresa c WHERE c.empresa.empresa = :empresa", TelefonosEmpresa.class)
+                    .setParameter("empresa", organismoVinculado.getEmpresa())
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public Boolean guardaTelefonoEmpresa(TelefonosEmpresa telefonoEmpresa) {
+        try {
+            facadeProntuario.setEntityClass(TelefonosEmpresa.class);
+            facadeProntuario.create(telefonoEmpresa);
+            facadeProntuario.flush();
+            Integer verifica = em.find(TelefonosEmpresa.class, telefonoEmpresa.getTelefonoEmpresa()).getTelefonoEmpresa();
+            if(verifica != 0){
+                return true;
+            }else{
+                return false;
+            }
+        } catch (NoResultException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean eliminarTelefonoEmpresa(TelefonosEmpresa telefonoEmpresa) {
+        try {
+            facadeProntuario.setEntityClass(TelefonosEmpresa.class);
+            facadeProntuario.remove(telefonoEmpresa);
+            facadeProntuario.getEntityManager().detach(telefonoEmpresa);
+            facadeProntuario.flush();
+            telefonoEmpresa = em.find(TelefonosEmpresa.class, telefonoEmpresa.getTelefonoEmpresa());
+            if (telefonoEmpresa == null) {
+                return true;
+            }else{
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean editaTelefonoEmpresa(TelefonosEmpresa telefonosEmpresa) {
+        try {
+            facadeProntuario.setEntityClass(TelefonosEmpresa.class);
+            facadeProntuario.edit(telefonosEmpresa);
+            facadeProntuario.flush();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public Localidad getLocalidadOrganismoVinculado(OrganismosVinculados organismoVinculado) {
+        try {
+            if(organismoVinculado == null)
+                return null;
+            return em.createQuery("SELECT l FROM OrganismosVinculados o JOIN o.localidad l WHERE o.registro = :registro",Localidad.class)
+                    .setParameter("registro", organismoVinculado.getRegistro())
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public Pais getPaisOrganismoVinculado(OrganismosVinculados organismoVinculado) {
+        try {
+            if(organismoVinculado == null)
+                return null;
+            return em.createQuery("SELECT p FROM OrganismosVinculados o JOIN o.pais p WHERE o.registro = :registro",Pais.class)
+                .setParameter("registro", organismoVinculado.getRegistro())
+                .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public Boolean guardaUbicacion(OrganismosVinculados organismoVinculado, Pais pais, Estado estado, Municipio municipio, Localidad localidad) {
+        try {
+//            System.out.println("OrganismoVinculado: " + organismoVinculado.getNombre());
+//            System.out.println("Pais: " + pais.getIdpais() + " " + pais.getNombre());
+//            System.out.println("Localidad: " + localidad.getLocalidadPK().getClaveEstado() + " " + localidad.getLocalidadPK().getClaveMunicipio() + " " + localidad.getLocalidadPK().getClaveLocalidad() + " " + localidad.getNombre());
+            OrganismosVinculados orgVin = new OrganismosVinculados();
+            orgVin = em.find(OrganismosVinculados.class, organismoVinculado.getRegistro());
+            orgVin.setPais(pais);
+            localidad.getLocalidadPK().setClaveEstado(estado.getIdestado());
+            localidad.getLocalidadPK().setClaveMunicipio(municipio.getMunicipioPK().getClaveMunicipio());
+            localidad.setMunicipio(municipio);
+            orgVin.setLocalidad(localidad);
+            facadeProntuario.edit(orgVin);
+            facadeProntuario.flush();
+            return true;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo guardar la ubicación en el organismo vinculado.", e);
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean eliminaUbicacion(OrganismosVinculados organismosVinculados) {
+        try {
+        facadeProntuario.setEntityClass(OrganismosVinculados.class);
+        OrganismosVinculados orgVin = new OrganismosVinculados();
+        orgVin = em.find(OrganismosVinculados.class, organismosVinculados.getRegistro());
+        orgVin.setPais(new Pais());
+        orgVin.setLocalidad(new Localidad());
+        facadeProntuario.edit(orgVin);
+        facadeProntuario.flush();
+        return true;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo eliminar la ubicación en el organismo vinculado.", e);
+            return false;
         }
     }
 

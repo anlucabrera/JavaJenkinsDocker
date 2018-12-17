@@ -22,6 +22,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Docencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreas;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreasPK;
+import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
 import mx.edu.utxj.pye.sgi.entity.ch.InformacionAdicionalPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
@@ -38,6 +39,7 @@ public class ControladorEmpleado implements Serializable {
 
     @Getter    @Setter    private List<Docencias> listaDocencias = new ArrayList<>();
     @Getter    @Setter    private List<Notificaciones> listaNotificaciones = new ArrayList<>();
+    @Getter    @Setter    private List<Incidencias> incidenciases = new ArrayList<>();
     @Getter    @Setter    private List<String> listaPaises = new ArrayList<>(),listaIdiomas = new ArrayList<>(),listaLenguas = new ArrayList<>();    
     @Getter    @Setter    private List<Eventos> nuevaListaEventos = new ArrayList<>();
     
@@ -62,6 +64,8 @@ public class ControladorEmpleado implements Serializable {
     @Getter    @Setter    private Date fechaActual = new Date();
     @Getter    @Setter    private DateFormat dateFormat = new SimpleDateFormat("EEEE d MMMM yyyy");
     @Getter    @Setter    private DateFormat dateFormatHora = new SimpleDateFormat("h:mm a");
+    @Getter    @Setter    private Date fechaI = new Date();
+    @Getter    @Setter    private Date fechaF = new Date();
             
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
 
@@ -73,7 +77,10 @@ public class ControladorEmpleado implements Serializable {
     @PostConstruct
     public void init() {
         System.out.println("ControladorEmpleado Inicio: " + System.currentTimeMillis());
+        // Comentar la siguiente asignación cuando saiiut falle//
         empleadoLogeado = Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
+//      empleadoLogeado = Integer.parseInt(logonMB.getListaUsuarioClaveNominaShiro().getClaveNomina());
+        // fin de asignación
 //        empleadoLogeado=49;
         clavePersonalLogeado = empleadoLogeado.toString();
         listaPaises.clear();
@@ -88,9 +95,38 @@ public class ControladorEmpleado implements Serializable {
 
     public void informacionComplementariaAEmpleadoLogeado() {
         try {
+            DateFormat dateFormatF = new SimpleDateFormat("dd/MM/yyyy");
+            incidenciases.clear();
             listaDocencias.clear();
             listaNotificaciones.clear();
-            
+
+            fechaI = new Date();
+            fechaF = new Date();
+            String mes = "";
+            if (fechaActual.getMonth() <= 8) {
+                mes = "0" + (fechaActual.getMonth() + 1);
+            } else {
+                mes = String.valueOf(fechaActual.getMonth() + 1);
+            }
+            System.out.println("dia " + fechaActual.getDate() + " mes" + fechaActual.getMonth());
+
+            fechaI = dateFormatF.parse("01/" + mes + "/20" + (fechaActual.getYear() - 100));
+            fechaF = dateFormatF.parse("31/" + mes + "/20" + (fechaActual.getYear() - 100));
+
+            if (!ejbNotificacionesIncidencias.mostrarIncidenciasReporte(fechaI, fechaF).isEmpty()) {
+                ejbNotificacionesIncidencias.mostrarIncidenciasReporte(fechaI, fechaF).forEach((t) -> {
+                    if (t.getEstatus().equals("Pendiente")) {
+                        if (nuevoOBJListaPersonal.getAreaOperativa() == t.getClavePersonal().getAreaOperativa()) {
+                            incidenciases.add(t);
+                        } else {
+                            if (nuevoOBJListaPersonal.getAreaOperativa() == t.getClavePersonal().getAreaSuperior()) {
+                                incidenciases.add(t);
+                            }
+                        }
+                    }
+                });
+            }
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.informacionComplementariaAEmpleadoLogeado()"+incidenciases.size());
             listaDocencias = ejbDatosUsuarioLogeado.mostrarListaDocencias(empleadoLogeado);
             listaNotificaciones = ejbNotificacionesIncidencias.mostrarListaDenotificacionesPorUsuarios(empleadoLogeado, 0);
         } catch (Throwable ex) {
@@ -221,7 +257,13 @@ public class ControladorEmpleado implements Serializable {
         try {
             nuevaAreasUniversidad = ejbAreasLogeo.mostrarAreasUniversidad(nuevoOBJListaPersonal.getAreaOperativa());
             if (nuevaAreasUniversidad != null) {
-                tienePOA = nuevaAreasUniversidad.getTienePoa();
+                if(nuevaAreasUniversidad.getTienePoa()){
+                    if(Objects.equals(nuevaAreasUniversidad.getResponsable(), empleadoLogeado)){
+                        tienePOA=true;
+                    }else{
+                        tienePOA=false;
+                    }
+                }
             }
             eventosRegistro();
         } catch (Throwable ex) {

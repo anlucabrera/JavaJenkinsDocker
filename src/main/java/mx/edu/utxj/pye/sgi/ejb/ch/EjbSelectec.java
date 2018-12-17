@@ -21,7 +21,6 @@ public interface EjbSelectec {
 
     public List<ListaPersonal> mostrarListaPersonalPorAreaOpySu(String area) throws Throwable;
 
-    
     public List<Personal> mostrarListaDePersonalParaJefes(Short area) throws Throwable;
 
     public List<Personal> mostrarListaDeEmpleadosTotalActivos() throws Throwable;
@@ -29,6 +28,5 @@ public interface EjbSelectec {
     public List<Personal> mostrarListaDeEmpleadosBajas() throws Throwable;
 
     public List<Personal> mostrarListaDeEmpleadosTotal() throws Throwable;
-
 
 }

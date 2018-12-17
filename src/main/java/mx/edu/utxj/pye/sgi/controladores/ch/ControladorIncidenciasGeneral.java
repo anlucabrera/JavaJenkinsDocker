@@ -21,7 +21,6 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.entity.ch.Incapacidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
-import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
@@ -36,6 +35,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
     @Getter    @Setter    private List<Incidencias> listaIncidencias = new ArrayList<>();
     @Getter    @Setter    private List<Incapacidad> listaIncapacidads = new ArrayList<>();
     @Getter    @Setter    private List<AreasUniversidad> listaAreasUniversidads = new ArrayList<>();
+    @Getter    @Setter    private AreasUniversidad au = new AreasUniversidad();
     @Getter    @Setter    private String[] nombreAr;
     @Getter    @Setter    private String areaNombre = "";
     @Getter    @Setter    private Short area=0;
@@ -55,6 +55,9 @@ public class ControladorIncidenciasGeneral implements Serializable {
     @PostConstruct
     public void init() {
         System.out.println("ControladorIncidenciasPersonal Inicio: " + System.currentTimeMillis());
+        
+        System.out.println("Dias"+(int) ((fechaActual.getTime() - new Date(07, 10, 118).getTime()) / 86400000));
+        
         fechaI = new Date();
         fechaF = new Date();
         fechaActual = new Date();
@@ -90,6 +93,14 @@ public class ControladorIncidenciasGeneral implements Serializable {
 
     public void mostrarIncidencias(String mActual) {
         try {
+            List<Incidencias> incidenciases = new ArrayList<>();
+            incidenciases.clear();
+            List<Incapacidad> incapacidads = new ArrayList<>();
+            incapacidads.clear();
+            if (area != 0) {
+            au = new AreasUniversidad();
+            au = areasLogeo.mostrarAreasUniversidad(area);
+            }
             mes = mActual;
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
             fechaI = new Date();
@@ -125,15 +136,22 @@ public class ControladorIncidenciasGeneral implements Serializable {
             fechaF = dateFormat.parse(diaf + "/" + mes + "/" + anio);
             listaIncidencias = new ArrayList<>();
             listaIncidencias.clear();
-            ejbNotificacionesIncidencias.mostrarIncidenciasReporte(fechaI, fechaF).forEach((t) -> {
-                if (area != 0) {
-                    if (t.getClavePersonal().getAreaOperativa() == area) {
+            incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(fechaI, fechaF);
+            if (!incidenciases.isEmpty()) {
+                incidenciases.forEach((t) -> {
+                    if (area != 0) {
+                        if (t.getClavePersonal().getAreaOperativa() == area) {
+                            if (t.getClavePersonal().getActividad().getActividad() == 1 || t.getClavePersonal().getActividad().getActividad() == 3) {
+                                listaIncidencias.add(t);
+                            }
+                        } else if (t.getClavePersonal().getAreaSuperior() == area) {
+                            listaIncidencias.add(t);
+                        }
+                    } else {
                         listaIncidencias.add(t);
                     }
-                } else {
-                    listaIncidencias.add(t);
-                }
-            });
+                });
+            }
             if (!listaIncidencias.isEmpty()) {
                 listaIncidencias.forEach((t) -> {
                     if (t.getEstatus().equals("Aceptado")) {
@@ -148,16 +166,21 @@ public class ControladorIncidenciasGeneral implements Serializable {
             
             listaIncapacidads = new ArrayList<>();
             listaIncapacidads.clear();
-            ejbNotificacionesIncidencias.mostrarIncapacidadReporte(fechaI, fechaF).forEach((t) -> {
-                if (area != 0) {
-                    if (t.getClavePersonal().getAreaOperativa() == area) {
+            incapacidads = ejbNotificacionesIncidencias.mostrarIncapacidadReporte(fechaI, fechaF);
+            if (!incapacidads.isEmpty()) {
+                incapacidads.forEach((t) -> {
+                    if (area != 0) {
+                        if (t.getClavePersonal().getAreaOperativa() == area) {
+                            listaIncapacidads.add(t);
+                        }
+                    } else {
                         listaIncapacidads.add(t);
                     }
-                } else {
-                    listaIncapacidads.add(t);
-                }
-            });         
-            
+                });
+            }
+
+            Ajax.update("frmInciGeneral");
+            Ajax.update("frmIncaGeneral");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
@@ -189,6 +212,36 @@ public class ControladorIncidenciasGeneral implements Serializable {
         mostrarIncidencias(mes);
     }
    
+    public void eliminarIncidencia(Incidencias incidencias) {
+        try {
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.eliminarIncidencia()");
+            if (incidencias.getEvidencia() != null) {
+                CargaArchivosCH.eliminarArchivo(incidencias.getEvidencia());
+            }
+            ejbNotificacionesIncidencias.eliminarIncidencias(incidencias);
+            mostrarIncidencias(mes);
+            Ajax.update("frmInciGeneral");
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.eliminarIncidencia()");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+     
+    public void eliminarIncapacidad(Incapacidad incapacidad) {
+        try {
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.eliminarIncidencia()");
+            if (incapacidad.getEvidencia() != null) {
+                CargaArchivosCH.eliminarArchivo(incapacidad.getEvidencia());
+            }
+            ejbNotificacionesIncidencias.eliminarIncapacidad(incapacidad);
+            mostrarIncidencias(mes);
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.eliminarIncidencia()");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
    
     public void numeroAnioAsiganado(ValueChangeEvent event) {
         anio = "";
@@ -228,7 +281,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
             File file = new File(ruta);
             return "evidencias2".concat(file.toURI().toString().split("archivos")[1]);
         } else {
-            Messages.addGlobalWarn("No fue posible cargar el archivo!!");
+            Messages.addGlobalWarn("No fue posible cargar el archivo1");
             return null;
         }
     }

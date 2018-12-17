@@ -163,13 +163,17 @@
                                                         <p:dataTable id="tblDistinciones" value="#{controladorPersonalconfiguracion.nuevaListaAreasUniversidads}"
                                                                      paginator="true" rows="15" rowsPerPageTemplate="15,20,25,30" emptyMessage="No se encontraron registros" rendered="true"
                                                                      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                                                     var="area">
+                                                                     var="area" editable="true" >
+
+                                                            <p:ajax event="rowEdit" listener="#{controladorPersonalconfiguracion.onRowEditModulos}" update="tblDistinciones" process="@this"/>
+                                                            <p:ajax event="rowEditCancel" listener="#{controladorPersonalconfiguracion.onRowCancel}" update="tblDistinciones" />
+
 
                                                             <p:column headerText="Clave" 
                                                                       filterBy="#{area.area}" 
                                                                       sortBy="#{area.area}" 
                                                                       filterMatchMode="contains"
-                                                                      style="width: 15%">
+                                                                      style="width: 8%">
                                                                 <h:outputText value="#{area.area}"/>
                                                             </p:column>
 
@@ -177,7 +181,7 @@
                                                                       filterBy="#{area.categoria.descripcion}" 
                                                                       sortBy="#{area.categoria.descripcion}" 
                                                                       filterMatchMode="contains"
-                                                                      style="width: 20%">
+                                                                      style="width: 15%">
                                                                 <h:outputText value="#{area.categoria.descripcion}" />
                                                             </p:column>
 
@@ -186,14 +190,40 @@
                                                                       sortBy="#{area.nombre}" 
                                                                       filterMatchMode="contains">
                                                                 <h:outputText value="#{area.nombre}" />
+                                                            </p:column>                                                             
+                                                            <p:column headerText="Responsable" 
+                                                                      filterBy="#{controladorPersonalconfiguracion.responsable(area.responsable)}" 
+                                                                      sortBy="#{controladorPersonalconfiguracion.responsable(area.responsable)}" 
+                                                                      filterMatchMode="contains">
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output"> 
+                                                                        <h:outputText value="#{controladorPersonalconfiguracion.responsable(area.responsable)}" />
+                                                                    </f:facet>
+                                                                    <f:facet name="input">
+                                                                        <h:selectOneMenu value="#{area.responsable}" style="width:100%">
+                                                                            <f:selectItems value="#{controladorPersonalconfiguracion.nuevaListaPersonals}" var="res" itemValue="#{res.clave}" itemLabel="#{res.nombre} -- #{res.categoriaOperativaNombre}" />
+                                                                        </h:selectOneMenu>
+                                                                    </f:facet>
+                                                                </p:cellEditor>
                                                             </p:column> 
-
                                                             <p:column headerText="Activa" 
                                                                       filterBy="#{area.vigente}" 
                                                                       sortBy="#{area.vigente}" 
                                                                       filterMatchMode="contains"
-                                                                      style="width: 10%">
-                                                                <h:outputText value="#{area.vigente eq 1 ?'SI':'NO'}" />
+                                                                      style="width: 8%">
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output"> 
+                                                                        <h:outputText value="#{area.vigente eq 1 ?'SI':'NO'}" />
+                                                                    </f:facet>
+                                                                    <f:facet name="input">
+                                                                        <h:selectOneMenu value="#{area.vigente}" style="width:100%">
+                                                                            <f:selectItems value="#{controladorPersonalconfiguracion.estatus}" var="estatus"  itemLabel="#{estatus eq 1 ?'SI':'NO'}" itemValue="#{estatus}" />
+                                                                        </h:selectOneMenu>
+                                                                    </f:facet>
+                                                                </p:cellEditor>
+                                                            </p:column> 
+                                                            <p:column style="width:32px;" class="noprint">
+                                                                <p:rowEditor />
                                                             </p:column>
                                                         </p:dataTable>     
                                                     </p:outputPanel>
@@ -309,8 +339,8 @@
 
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                                        <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Foto del perosnal" />
-                                                                                   <o:inputFile id="file" value="#{controladorPersonalconfiguracion.file}" accept="image/png||image/jpeg||image/pjpeg" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                                    <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Foto del perosnal" />
+                                                                                    <o:inputFile id="file" value="#{controladorPersonalconfiguracion.file}" accept="image/png||image/jpeg||image/pjpeg" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
                                                                                     <br/>
                                                                                     <h:message id="messageForFile" for="file" />
                                                                                     <br/>
@@ -351,6 +381,63 @@
 
                                         </h:form>
                                     </p:tab>
+                                    <p:tab title="Personal 360">  
+                                        <h:form id="frmListaper360">
+                                            <p:dataTable id="tblcat360" var="perosnalFoto" value="#{controladorPersonalconfiguracion.listPersonal}"
+                                                         rows="10" paginator="true" editable="true" 
+                                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="10,20,30">
+
+                                                <f:facet name="header">
+                                                    Plantilla Perosnal
+                                                </f:facet>
+
+                                                <p:ajax event="rowEdit" listener="#{controladorPersonalconfiguracion.onRowEdit}" update="tblcat360" process="@this"/>
+                                                <p:ajax event="rowEditCancel" listener="#{controladorPersonalconfiguracion.onRowCancel}" update="tblcat360" />
+
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column headerText="No." style="width: 4%; background-color: #cccccc; color: #000000;" sortBy="#{perosnalFoto.clave}" />
+                                                        <p:column headerText="Foto" style="width: 10%; background-color: #cccccc; color: #000000;" sortBy="#{perosnalFoto.clave}" />
+                                                        <p:column headerText="Nombre." style="width: 15%; background-color: #cccccc; color: #000000;" sortBy="#{perosnalFoto.nombre}" />
+                                                        <p:column headerText="Área" style="background-color: #cccccc; color: #000000;" sortBy="#{perosnalFoto.areaOperativa}" />
+                                                        <p:column headerText="Cat. OP" style="background-color: #cccccc; color: #000000;" sortBy="#{perosnalFoto.categoriaOperativa.categoria}" />
+                                                        <p:column headerText="Cat. 360°" style="background-color: #cccccc; color: #000000;" sortBy="#{perosnalFoto.categoria360.categoria}" />
+                                                        <p:column class="noprint" style="width: 5%; background-color: #cccccc; color: #000000;"/>
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <p:column> 
+                                                    <h:outputText value="#{perosnalFoto.clave}" />
+                                                </p:column>
+                                                <p:column> 
+                                                    <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{perosnalFoto.clave}.jpg" alt="#{perosnalFoto.clave}" class="img-circle" title="Personal #{perosnalFoto.clave}" style="width: 80px; height: 80px; align-content: center;"/>
+                                                </p:column>
+                                                <p:column> 
+                                                    <h:outputText value="#{perosnalFoto.nombre}" />
+                                                </p:column>
+                                                <p:column> 
+                                                    <h:outputText value="#{controladorPersonalconfiguracion.nombreArea(perosnalFoto.areaOperativa)}" />
+                                                </p:column>
+                                                <p:column> 
+                                                    <h:outputText value="#{perosnalFoto.categoriaOperativa.nombre}" />
+                                                </p:column>
+                                                <p:column> 
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"><h:outputText value="#{perosnalFoto.categoria360.nombre}" /></f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{perosnalFoto.categoria360.categoria}" style="width:100%">
+                                                                <f:selectItems value="#{controladorPersonalconfiguracion.nuevaListaPersonalCategoriases360}" var="cat" itemLabel="#{cat.nombre}" itemValue="#{cat.categoria}" />
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column class="noprint">
+                                                    <p:rowEditor />
+                                                </p:column>
+                                            </p:dataTable>
+                                        </h:form>
+                                    </p:tab>
+
                                 </p:tabView>
                             </div>
                         </div>

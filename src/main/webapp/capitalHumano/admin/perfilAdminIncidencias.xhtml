@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>  
+        <c:if test="#{!controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if> 
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <h:outputScript>
+            PrimeFaces.locales['es'] = {
+            closeText: 'Cerrar',
+            prevText: 'Anterior',
+            nextText: 'Siguiente',
+            monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+            dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+            dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+            dayNamesMin: ['D','L','M','M','J','V','S'],
+            weekHeader: 'Semana',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: '',
+            timeOnlyTitle: 'Sólo hora',
+            timeText: 'Tiempo',
+            hourText: 'Hora',
+            minuteText: 'Minuto',
+            secondText: 'Segundo',
+            currentText: 'Fecha actual',
+            ampm: false,
+            month: 'Mes',
+            week: 'Semana',
+            day: 'Día',
+            allDayText : 'Todo el día'
+            };
+        </h:outputScript>
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 49}">
+                <section class="content">
+                    <div class="row">
+                        <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                        <div class="col-md-10">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div>      
+                                </div>
+                                <p:tabView>
+                                    <p:tab title="Reporte Incidencias">
+                                        <h:form id="frmInciGeneral"> 
+                                            <p:remoteCommand name="actualizarTabla" actionListener="#{controladorIncidenciasGeneral.imprimirValores()}" update="tblActividades" /> 
+                                            <p:dataTable id="tblActividades"  value="#{controladorAdmin.listaIncidencias}"  var="incidencias"
+                                                         sortBy="#{incidencia.clavePersonal.areaOperativa}" expandableRowGroups="true"
+                                                         editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
+
+                                                <p:ajax event="rowEdit" listener="#{controladorAdmin.onRowEdit}"  process="@this" update="@this" oncomplete="actualizarTabla()"/>
+                                                <p:ajax event="rowEditCancel" listener="#{controladorAdmin.onRowCancel}" update="tblActividades" />
+
+                                                <p:headerRow>
+                                                    <p:column colspan="8" style="background: #2796cb; color: #FFFFFF;">
+                                                        <h:outputText value="#{controladorAdmin.buscarArea(incidencias.clavePersonal.areaOperativa)}" />
+                                                    </p:column>
+                                                </p:headerRow>
+
+                                                <p:column headerText="Nomina" style="width: 6%;text-align: center;"
+                                                          sortBy="#{incidencias.clavePersonal.clave}" 
+                                                          filterBy="#{incidencias.clavePersonal.clave}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{incidencias.clavePersonal.clave}" />
+                                                </p:column>
+                                                <p:column headerText="Nombre" style="width: 20%;text-align: justify;"
+                                                          sortBy="#{incidencias.clavePersonal.nombre}" 
+                                                          filterBy="#{incidencias.clavePersonal.nombre}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{incidencias.clavePersonal.nombre}" />
+                                                </p:column>        
+                                                <p:column headerText="Tipo"  style="width: 15%;text-align: center;"
+                                                          sortBy="#{incidencias.tipo}" 
+                                                          filterBy="#{incidencias.tipo}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{incidencias.tipo}" />
+                                                </p:column>  
+                                                <p:column headerText="Justificación" style="text-align: justify;">
+                                                    <h:outputText value="#{incidencias.justificacion}" />
+                                                </p:column> 
+                                                <p:column headerText="Fecha" style="width: 10%">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputLabel value="#{incidencias.fecha}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{incidencias.fecha}" pattern="dd-MM-yyyy" mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>                                                
+                                                <p:column headerText="Estado" style="width: 10%;text-align: center;">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"><h:outputText value="#{incidencias.estatus}" /></f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{incidencias.estatus}" style="width:100%">
+                                                                <f:selectItems value="#{controladorAdmin.estatus}" var="estatus" itemLabel="#{estatus}" itemValue="#{estatus}" />
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>     
+                                                <p:column headerText="Tiempo" style="width: 9%;text-align: center;">
+                                                    <h:outputText value="#{incidencias.tiempo}" />
+                                                </p:column>  
+                                                <p:column style="width:32px;" class="noprint">
+                                                    <p:rowEditor />
+                                                </p:column>
+                                            </p:dataTable>  
+
+                                        </h:form>
+                                    </p:tab>
+                                    <p:tab title="Opciones Incidencias">
+                                        <h:form id="frmModulos"> 
+                                            <p:outputPanel id="incidenciasReporte">
+                                                <p:dataTable id="tblActividades"  value="#{controladorAdmin.modulosregistros}"  var="modulos"
+                                                             editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
+
+                                                    <p:ajax event="rowEdit" listener="#{controladorAdmin.onRowEditModulos}" update="tblActividades" process="@this"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{controladorAdmin.onRowCancel}" update="tblActividades" />
+
+
+
+                                                    <p:column headerText="Nombre" style="width: 20%;text-align: justify;"
+                                                              sortBy="#{modulos.nombre}" 
+                                                              filterBy="#{modulos.nombre}" 
+                                                              filterMatchMode="contains">
+                                                        <h:outputText value="#{modulos.nombre}" />
+                                                    </p:column>                                                     
+
+                                                    <p:column headerText="Fecha Inicio" style="width: 10%">
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"> <h:outputLabel value="#{modulos.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:calendar locale="es" value="#{modulos.fechaInicio}" pattern="dd-MM-yyyy HH:mm:ss" mask="true" />
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>      
+                                                    <p:column headerText="Fecha Fin" style="width: 10%">
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"> <h:outputLabel value="#{modulos.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:calendar locale="es" value="#{modulos.fechaFin}" pattern="dd-MM-yyyy HH:mm:ss" mask="true" />
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>      
+                                                    <p:column style="width:32px;" class="noprint">
+                                                        <p:rowEditor />
+                                                    </p:column>
+                                                </p:dataTable>  
+                                            </p:outputPanel>    
+                                        </h:form>
+                                    </p:tab>
+                                </p:tabView>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </c:if>
+        </p:panel>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+</ui:composition>

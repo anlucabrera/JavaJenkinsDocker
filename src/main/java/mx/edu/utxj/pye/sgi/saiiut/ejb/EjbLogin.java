@@ -11,6 +11,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulos;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisos;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
+import mx.edu.utxj.pye.sgi.entity.ch.shiro.User;
 //import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.saiiut.entity.ListaUsuarioClaveNomina;
@@ -23,28 +24,36 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.VistaEvaluacionesTutores;
  */
 @Local
 public interface EjbLogin {
+// Comentar los siguiente métodos cuando falle saiiut //
+
     public Usuarios autenticar(String loginUsuario, String password);
-    
+
     public Usuarios getUsuarioPorLogin(String loginUsuario);
-    
-    public String encriptarContrasena(String contrasena);
-    
+
     public ListaUsuarioClaveNomina getListaUsuarioClaveNomina(String loginUsuario);
-    
+
+    public List<VistaEvaluacionesTutores> getTutoresPeriodoActual();
+// Fin de métodos 
+
+    public String encriptarContrasena(String contrasena);
+
     public UsuarioTipo getTipoUsuario(Usuarios usuario);
-    
+
+    public User getUsuarioPorLoginShiro(String loginUsuario);
+
+    public User autenticarShiro(String loginUsuario, String password);
+
     /*
      *Creacion del menu  posible migracion de metodos Ejb's a otro archivo
      */
-    public List<Modulos>  getCategoriaModulos();
-     
-    public List<Permisos>  getPermisosModulos();
-    
+    public List<Modulos> getCategoriaModulos();
+
+    public List<Permisos> getPermisosModulos();
+
     public AreasUniversidad getAreaByClave(Short area);
-    
+
     public PersonalCategorias getCategoriaPersonalByarea(Short categoria);
-    
+
     public Modulos getModuloByClave(Integer modulo);
-    
-    public List<VistaEvaluacionesTutores> getTutoresPeriodoActual();
+
 }

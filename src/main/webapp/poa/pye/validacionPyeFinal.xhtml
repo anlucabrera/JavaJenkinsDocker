@@ -70,7 +70,7 @@
                         <p:toolbar id="tb">
                             <f:facet name="left">
                                 <p:outputPanel>     
-                                    <p:outputLabel value="Área:" />
+                                    <p:outputLabel value="Área: #{controladorRegistroActividadesPOAPyE.areaPOASeleccionada.nombre}" />
                                     <p:autoUpdate/>
                                 </p:outputPanel>
                             </f:facet>
@@ -92,210 +92,135 @@
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 text-info text-center">
                                     <p:remoteCommand name="actualizarTabla2" actionListener="#{controladorRegistroActividadesPOAPyE.imprimirValores()}" update=":frm:dtbBajas" />
-                                    <p:dataTable id="dtbBajas" widgetVar="dtbBajas" var="ejesRegistro" paginator="true" rows="10"
-                                                 sortBy="#{ejesRegistro.ejeA.eje}" expandableRowGroups="true"
-                                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} "
-                                                 rowsPerPageTemplate="5,10,15,20,25,30"
+                                    <p:dataTable id="dtbBajas" widgetVar="dtbBajas" var="ejesRegistro" sortBy="#{ejesRegistro.ejeA.eje}" expandableRowGroups="true"
                                                  value="#{controladorRegistroActividadesPOAPyE.ejesEsLaAp}">
 
-                                        <f:facet name="header"></f:facet>
-
                                         <p:headerRow>
-                                            <p:column colspan="1" styleClass="eje">
-                                                <h:outputText value="#{ejesRegistro.ejeA.eje eq 2?'Capital Humano':
-                                                                       ejesRegistro.ejeA.eje eq 3?'Proceso Administrativo':
-                                                                       ejesRegistro.ejeA.eje eq 4?'Calidad Académica':'Vinculación con Enfoque Global'}"/>
+                                            <p:column colspan="1" styleClass="eje" style="text-align: left; color: #FFFFFF;">
+                                                <h:outputText value="#{ejesRegistro.ejeA.eje}.#{ejesRegistro.ejeA.nombre}" style="text-align: left"/>
                                             </p:column>
                                         </p:headerRow>
                                         <p:column colspan="1">
-                                            <p:dataTable value="#{ejesRegistro.listalistaEstrategiaLaAp}" var="estrategiasRegistro" sortBy="#{estrategiasRegistro.estrategias.estrategia}" expandableRowGroups="true">
+
+
+                                            <p:dataTable var="estrategiasRegistro"  sortBy="#{estrategiasRegistro.estrategias.estrategia}" expandableRowGroups="true"
+                                                         value="#{ejesRegistro.listalistaEstrategiaLaAp}">
 
                                                 <p:headerRow>
-                                                    <p:column colspan="1" styleClass="est">
-                                                        <h:outputText value="#{estrategiasRegistro.estrategias.nombre}"/>
+                                                    <p:column colspan="1" styleClass="est" style="text-align: left; color: #FFFFFF;">
+                                                        <h:outputText value="#{ejesRegistro.ejeA.eje}.#{estrategiasRegistro.estrategias.numero} -- #{estrategiasRegistro.estrategias.nombre}" style="text-align: left"/>
                                                     </p:column>
-                                                </p:headerRow>                            
-
-                                                <p:column  colspan="1">
+                                                </p:headerRow>
+                                                <p:column colspan="1">
                                                     <p:dataTable value="#{estrategiasRegistro.actividadesPoas}" 
-                                                                 var="poa" sortBy="#{poa.cuadroMandoInt.lineaAccion.lineaAccion}" 
-                                                                 expandedRow="true"
-                                                                 expandableRowGroups="true">
-
-                                                        <p:columnGroup type="header">
-                                                            <p:row class="success">
-                                                                <p:column rowspan="2" style="width:50px"/>
-                                                                <p:column rowspan="2" headerText="No." style="width: 50px;"/>
-                                                                <p:column rowspan="2" headerText="Actividad" />
-                                                                <p:column rowspan="2" headerText="Unidad de medida" />
-                                                                <p:column colspan="12" headerText="Calendarización de Metas" style="width: 700px;"/>  
-                                                                <p:column rowspan="2" headerText="Total" style="width: 80px;"/>
-                                                                <p:column rowspan="2" headerText="Descripción" />
-                                                            </p:row>
-                                                            <p:row class="success">
-                                                                <p:column headerText="Ene" />
-                                                                <p:column headerText="Feb" />
-                                                                <p:column headerText="Mar" />
-                                                                <p:column headerText="Abr" />
-                                                                <p:column headerText="May" />                                                    
-                                                                <p:column headerText="Jun" />
-                                                                <p:column headerText="Jul" />
-                                                                <p:column headerText="Ago" />
-                                                                <p:column headerText="Sep" />
-                                                                <p:column headerText="Oct" />
-                                                                <p:column headerText="Nov" />
-                                                                <p:column headerText="Dic" />
-                                                            </p:row>
-                                                        </p:columnGroup>
+                                                                 var="pOa" sortBy="#{pOa.cuadroMandoInt.lineaAccion.lineaAccion}" 
+                                                                 rowStyleClass="#{pOa.numeroS eq 0?'actividad':''}" 
+                                                                 emptyMessage="No hay actividades registradas">
 
                                                         <p:headerRow>
-                                                            <p:column colspan="18" styleClass="lac">
-                                                                <h:outputText value="#{poa.cuadroMandoInt.lineaAccion.nombre}"/>
+                                                            <p:column colspan="18" styleClass="lac" style="text-align: left">
+                                                                <h:outputText value="#{ejesRegistro.ejeA.eje}.#{estrategiasRegistro.estrategias.numero}.#{pOa.cuadroMandoInt.lineaAccion.numero} --#{pOa.cuadroMandoInt.lineaAccion.nombre}"/>
                                                             </p:column>
                                                         </p:headerRow>  
 
-                                                        <p:column rendered="#{poa.recursosActividadList.size() eq 0?false:true}">
-                                                            <p:rowToggler />
-                                                        </p:column>
-                                                        <p:column rendered="#{poa.recursosActividadList.size() eq 0?true:false}"/>
-                                                        <p:column>
-                                                            <h:outputText value="#{poa.numeroP}.#{poa.numeroS}" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{poa.denominacion}" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{poa.unidadMedida.nombre}" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{poa.NPEnero}" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{poa.NPFebrero}" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{poa.NPMarzo}" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{poa.NPAbril}" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{poa.NPMayo}" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{poa.NPJunio}" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{poa.NPJulio}" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{poa.NPAgosto}" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{poa.NPSeptiembre}" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{poa.NPOctubre}" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{poa.NPNoviembre}" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{poa.NPDiciembre}" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{poa.total}" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{poa.descripcion}" />
-                                                        </p:column>
+                                                        <f:facet name="header"></f:facet>
 
-                                                        <p:rowExpansion rendered="#{poa.recursosActividadList.size() eq 0?false:true}">
-                                                            <p:panelGrid id="pnlRecurso" style="text-align:justify;" columns="1">
-                                                                <p:dataTable id="dtbBajas" var="recurso"  sortBy="#{recurso.productoArea.partida.partida}" expandableRowGroups="true" value="#{poa.recursosActividadList}">
+                                                        <p:columnGroup type="header">
+                                                            <p:row class="success">
+                                                                <p:column colspan="2" rowspan="2" headerText="No." style="width: 3%; background-color: #cccccc; color: #000000;"/>
+                                                                <p:column rowspan="2" headerText="Actividad" style="width: 15%; background-color: #cccccc; color: #000000;"/>
+                                                                <p:column rowspan="2" headerText="Unidad de medida" style="width:6%; background-color: #cccccc; color: #000000;"/>
+                                                                <p:column colspan="12" headerText="Calendarización de Metas" style="width: 60%; background-color: #cccccc; color: #000000;"/>  
+                                                                <p:column rowspan="2" headerText="Total" style="width: 5%; background-color: #cccccc; color: #000000;"/>
+                                                                <p:column rowspan="2" headerText="Opciones" style="width:8%; background-color: #cccccc; color: #000000;"/>
+                                                            </p:row>
+                                                            <p:row class="success">
+                                                                <p:column headerText="Enero" style="background-color: #cccccc; color: #000000;"/>
+                                                                <p:column headerText="Febrero" style="background-color: #cccccc; color: #000000;"/>
+                                                                <p:column headerText="Marzo" style="background-color: #cccccc; color: #000000;"/>
+                                                                <p:column headerText="Abril" style="background-color: #cccccc; color: #000000;"/>
+                                                                <p:column headerText="Mayo" style="background-color: #cccccc; color: #000000;"/>                                                    
+                                                                <p:column headerText="Junio" style="background-color: #cccccc; color: #000000;"/>
+                                                                <p:column headerText="Julio" style="background-color: #cccccc; color: #000000;"/>
+                                                                <p:column headerText="Agosto" style="background-color: #cccccc; color: #000000;"/>
+                                                                <p:column headerText="Septiembre" style="background-color: #cccccc; color: #000000;"/>
+                                                                <p:column headerText="Octubre" style="background-color: #cccccc; color: #000000;"/>
+                                                                <p:column headerText="Noviembre" style="background-color: #cccccc; color: #000000;"/>
+                                                                <p:column headerText="Diciembre" style="background-color: #cccccc; color: #000000;"/>
+                                                            </p:row>
+                                                        </p:columnGroup>
 
-                                                                    <f:facet name="header"></f:facet>
-
-                                                                    <p:columnGroup type="header">
-                                                                        <p:row class="success">
-                                                                            <p:column rowspan="2" headerText="Producto" />
-                                                                            <p:column colspan="12" headerText="Calendarización de Metas" style="width: 1000px;"/>  
-                                                                            <p:column rowspan="2" headerText="Total" style="width: 80px;"/>
-                                                                        </p:row>
-                                                                        <p:row class="success">
-                                                                            <p:column headerText="Ene" />
-                                                                            <p:column headerText="Feb" />
-                                                                            <p:column headerText="Mar" />
-                                                                            <p:column headerText="Abr" />
-                                                                            <p:column headerText="May" />                                                    
-                                                                            <p:column headerText="Jun" />
-                                                                            <p:column headerText="Jul" />
-                                                                            <p:column headerText="Ago" />
-                                                                            <p:column headerText="Sep" />
-                                                                            <p:column headerText="Oct" />
-                                                                            <p:column headerText="Nov" />
-                                                                            <p:column headerText="Dic" />
-                                                                        </p:row>
-                                                                    </p:columnGroup>
-
-                                                                    <p:headerRow>
-                                                                        <p:column colspan="1">
-                                                                            <h:outputText value="Partida: #{recurso.productoArea.partida.partida}" />
-                                                                        </p:column>
-                                                                        <p:column colspan="13">
-                                                                            <h:outputText value="#{recurso.productoArea.partida.denominacion}" />
-                                                                        </p:column>
-                                                                    </p:headerRow>
-
-                                                                    <p:column> 
-                                                                        <h:outputText value="#{recurso.productoArea.productos.productosPK.producto} -- #{recurso.productoArea.productos.descripcion}" />
-                                                                    </p:column>
-                                                                    <p:column> 
-                                                                        <h:outputText value="#{recurso.RPEnero}" />
-                                                                    </p:column>
-                                                                    <p:column> 
-                                                                        <h:outputText value="#{recurso.RPFebero}" />
-                                                                    </p:column>
-                                                                    <p:column> 
-                                                                        <h:outputText value="#{recurso.RPMarzo}" />
-                                                                    </p:column>
-                                                                    <p:column> 
-                                                                        <h:outputText value="#{recurso.RPAbril}" />
-                                                                    </p:column>
-                                                                    <p:column> 
-                                                                        <h:outputText value="#{recurso.RPMayo}" />
-                                                                    </p:column>
-                                                                    <p:column> 
-                                                                        <h:outputText value="#{recurso.RPJunio}" />
-                                                                    </p:column>
-                                                                    <p:column> 
-                                                                        <h:outputText value="#{recurso.RPJulio}" />
-                                                                    </p:column>
-                                                                    <p:column> 
-                                                                        <h:outputText value="#{recurso.RPAgosto}" />
-                                                                    </p:column>
-                                                                    <p:column> 
-                                                                        <h:outputText value="#{recurso.RPSeptiembre}" />
-                                                                    </p:column>
-                                                                    <p:column> 
-                                                                        <h:outputText value="#{recurso.RPOctubre}" />
-                                                                    </p:column>
-                                                                    <p:column> 
-                                                                        <h:outputText value="#{recurso.RPNoviembre}" />
-                                                                    </p:column>
-                                                                    <p:column> 
-                                                                        <h:outputText value="#{recurso.RPDiciembre}" />
-                                                                    </p:column>
-                                                                    <p:column> 
-                                                                        <h:outputText value="#{recurso.total}" /> 
-                                                                    </p:column>
-                                                                </p:dataTable>
-                                                            </p:panelGrid>
-                                                        </p:rowExpansion>                                                       
+                                                        <p:column> 
+                                                            <h:outputText value="#{pOa.numeroP}" />
+                                                        </p:column>
+                                                        <p:column> 
+                                                            <h:outputText value="#{pOa.numeroS}" />
+                                                        </p:column>
+                                                        <p:column style="text-align: justify"> 
+                                                            <h:outputText value="#{pOa.denominacion}" /> 
+                                                        </p:column>
+                                                        <p:column style="text-align: justify"> 
+                                                            <h:outputText value="#{pOa.unidadMedida.nombre}" />
+                                                        </p:column>
+                                                        <p:column> 
+                                                            <h:outputText value="#{pOa.NPEnero}" />
+                                                        </p:column>
+                                                        <p:column> 
+                                                            <h:outputText value="#{pOa.NPFebrero}" /> 
+                                                        </p:column>
+                                                        <p:column> 
+                                                            <h:outputText value="#{pOa.NPMarzo}" /> 
+                                                        </p:column>
+                                                        <p:column> 
+                                                            <h:outputText value="#{pOa.NPAbril}" /> 
+                                                        </p:column>
+                                                        <p:column> 
+                                                            <h:outputText value="#{pOa.NPMayo}" /> 
+                                                        </p:column>
+                                                        <p:column> 
+                                                            <h:outputText value="#{pOa.NPJunio}" /> 
+                                                        </p:column>
+                                                        <p:column> 
+                                                            <h:outputText value="#{pOa.NPJulio}" /> 
+                                                        </p:column>
+                                                        <p:column> 
+                                                            <h:outputText value="#{pOa.NPAgosto}" /> 
+                                                        </p:column>
+                                                        <p:column> 
+                                                            <h:outputText value="#{pOa.NPSeptiembre}" /> 
+                                                        </p:column>
+                                                        <p:column> 
+                                                            <h:outputText value="#{pOa.NPOctubre}" /> 
+                                                        </p:column>
+                                                        <p:column> 
+                                                            <h:outputText value="#{pOa.NPNoviembre}" /> 
+                                                        </p:column>
+                                                        <p:column> 
+                                                            <h:outputText value="#{pOa.NPDiciembre}" /> 
+                                                        </p:column>
+                                                        <p:column> 
+                                                            <h:outputText value="#{pOa.total}"/> 
+                                                        </p:column> 
+                                                        <p:column>
+                                                            <p:column>
+                                                                <p:commandButton icon="fa fa-usd" styleClass="btn-primary" rendered="#{pOa.recursosActividadList.isEmpty()?false:true}"
+                                                                                 oncomplete="PF('dlgRecurso').show()" process="@this" update=":frmRecurso:pnlRecurso">
+                                                                    <f:setPropertyActionListener target="#{controladorRegistroActividadesPOAPyE.actividadesPoaEditando}" value="#{pOa}" />
+                                                                </p:commandButton>
+                                                            </p:column>
+                                                            <p:spacer width="10px"/>
+                                                            <p:column>
+                                                                <p:commandButton icon="fa fa-comment" styleClass="btn-primary" rendered="#{pOa.recursosActividadList.isEmpty()?false:true}"
+                                                                                 oncomplete="PF('dlgComentario').show()" process="@this" update=":frmComentario:pnlAgregarComentario">
+                                                                    <f:setPropertyActionListener target="#{controladorRegistroActividadesPOAPyE.actividadesPoaEditando}" value="#{pOa}" />
+                                                                </p:commandButton>
+                                                            </p:column>
+                                                        </p:column>                                                       
+                                                        <p:autoUpdate/>
                                                     </p:dataTable>
                                                 </p:column> 
                                             </p:dataTable>
-                                        </p:column>              
+                                        </p:column>
                                     </p:dataTable>
                                 </div>
                             </div>
@@ -304,5 +229,104 @@
                 </div>
             </div>
         </h:form>
+
+        <h:form id="frmComentario">
+            <p:dialog header="Justificacion" widgetVar="dlgComentario" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" height="100%" closeOnEscape="true">
+                <p:outputPanel id="pnlAgregarComentario" style="text-align:justify;" >
+                    <p:outputLabel value="Actividad: #{controladorRegistroActividadesPOAPyE.actividadesPoaEditando.denominacion}" />
+                    <hr/>
+                    <p:outputLabel id="txtComentario" value="#{controladorRegistroActividadesPOAPyE.actividadesPoaEditando.descripcion}" styleClass="form-control" />
+                </p:outputPanel>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="frmRecurso">
+            <p:dialog header="Consultar recurso" widgetVar="dlgRecurso" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="1000" closeOnEscape="true">
+                <p:panelGrid id="pnlRecurso" style="text-align:justify;" columns="1">
+                    <p:outputPanel>
+                        <p:dataTable id="dtbBajas" var="recurso"  sortBy="#{recurso.productoArea.partida.partida}" expandableRowGroups="true" value="#{controladorRegistroActividadesPOAPyE.actividadesPoaEditando.recursosActividadList}">
+
+                            <f:facet name="header"></f:facet>
+
+                            <p:columnGroup type="header">
+                                <p:row class="success">
+                                    <p:column rowspan="2" headerText="Producto" />
+                                    <p:column colspan="12" headerText="Calendarización de Metas" style="width: 700px;"/>  
+                                    <p:column rowspan="2" headerText="Total" style="width: 80px;"/>
+                                </p:row>
+                                <p:row class="success">
+                                    <p:column headerText="Ene" />
+                                    <p:column headerText="Feb" />
+                                    <p:column headerText="Mar" />
+                                    <p:column headerText="Abr" />
+                                    <p:column headerText="May" />                                                    
+                                    <p:column headerText="Jun" />
+                                    <p:column headerText="Jul" />
+                                    <p:column headerText="Ago" />
+                                    <p:column headerText="Sep" />
+                                    <p:column headerText="Oct" />
+                                    <p:column headerText="Nov" />
+                                    <p:column headerText="Dic" />
+                                </p:row>
+                            </p:columnGroup>
+
+                            <p:headerRow>
+                                <p:column colspan="1">
+                                    <h:outputText value="Partida: #{recurso.productoArea.partida.partida}" />
+                                </p:column>
+                                <p:column colspan="13">
+                                    <h:outputText value="#{recurso.productoArea.partida.denominacion}" />
+                                </p:column>
+                            </p:headerRow>
+
+                            <p:column> 
+                                <h:outputText value="#{recurso.productoArea.productos.productosPK.producto} -- #{recurso.productoArea.productos.descripcion}" />
+                            </p:column>
+                            <p:column> 
+                                <h:outputText value="#{recurso.RPEnero}" />
+                            </p:column>
+                            <p:column> 
+                                <h:outputText value="#{recurso.RPFebero}" />
+                            </p:column>
+                            <p:column> 
+                                <h:outputText value="#{recurso.RPMarzo}" />
+                            </p:column>
+                            <p:column> 
+                                <h:outputText value="#{recurso.RPAbril}" />
+                            </p:column>
+                            <p:column> 
+                                <h:outputText value="#{recurso.RPMayo}" />
+                            </p:column>
+                            <p:column> 
+                                <h:outputText value="#{recurso.RPJunio}" />
+                            </p:column>
+                            <p:column> 
+                                <h:outputText value="#{recurso.RPJulio}" />
+                            </p:column>
+                            <p:column> 
+                                <h:outputText value="#{recurso.RPAgosto}" />
+                            </p:column>
+                            <p:column> 
+                                <h:outputText value="#{recurso.RPSeptiembre}" />
+                            </p:column>
+                            <p:column> 
+                                <h:outputText value="#{recurso.RPOctubre}" />
+                            </p:column>
+                            <p:column> 
+                                <h:outputText value="#{recurso.RPNoviembre}" />
+                            </p:column>
+                            <p:column> 
+                                <h:outputText value="#{recurso.RPDiciembre}" />
+                            </p:column>
+                            <p:column> 
+                                <h:outputText value="#{recurso.total}" /> 
+                            </p:column>
+                        </p:dataTable>
+                        <p:autoUpdate/>
+                    </p:outputPanel>                    
+                </p:panelGrid>
+            </p:dialog>
+        </h:form>
+
     </ui:define>
 </ui:composition>

@@ -101,22 +101,34 @@
                                     <p:outputLabel value="Pretecho"/>                            
                                 </div>
                                 <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.pretecho2000}"/>
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.pretecho2000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
                                 </div>
                                 <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.pretecho3000}"/>
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.pretecho3000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
                                 </div>
                                 <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.pretecho4000}"/>
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.pretecho4000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
                                 </div>
                                 <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.pretecho5000}"/>
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.pretecho5000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
                                 </div>
                                 <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorRegistroActividadesPOAPyE.pretechoCPDD eq 0.0?'collapse':'visible'};">
-                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.pretechoCPDD}"/>
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.pretechoCPDD}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
                                 </div>
                                 <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
-                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.totalPretecho}"/>
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.totalPretecho}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
                                 </div>
                             </div>
                             <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center">
@@ -126,31 +138,46 @@
                                 <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
                                     <p:dataTable var="capitulo2" value="#{controladorRegistroActividadesPOAPyE.capitulo2000}" emptyMessage="Sin recurso asignado">
                                         <p:column headerText="Partida"><h:outputText value="#{capitulo2.partidas1.partida}" /></p:column>   
-                                        <p:column headerText="Programado"><h:outputText value="#{capitulo2.total}" /></p:column>                                         
+                                        <p:column headerText="Programado"><h:outputText value="#{capitulo2.total}" >
+                                                <f:convertNumber pattern="$ ###,###,###.00"/>
+                                            </h:outputText>
+                                        </p:column>                                         
                                     </p:dataTable>
                                 </div>
                                 <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
                                     <p:dataTable var="capitulo3" value="#{controladorRegistroActividadesPOAPyE.capitulo3000}" emptyMessage="Sin recurso asignado">
                                         <p:column headerText="Partida"><h:outputText value="#{capitulo3.partidas1.partida}" /></p:column>   
-                                        <p:column headerText="Programado"><h:outputText value="#{capitulo3.total}" /></p:column>                                         
+                                        <p:column headerText="Programado"><h:outputText value="#{capitulo3.total}" >
+                                                <f:convertNumber pattern="$ ###,###,###.00"/>
+                                            </h:outputText>
+                                        </p:column>                                                                     
                                     </p:dataTable>
                                 </div>
                                 <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
                                     <p:dataTable var="capitulo4" value="#{controladorRegistroActividadesPOAPyE.capitulo4000}" emptyMessage="Sin recurso asignado">
                                         <p:column headerText="Partida"><h:outputText value="#{capitulo4.partidas1.partida}" /></p:column>   
-                                        <p:column headerText="Programado"><h:outputText value="#{capitulo4.total}" /></p:column>                                         
+                                        <p:column headerText="Programado"><h:outputText value="#{capitulo4.total}" >
+                                                <f:convertNumber pattern="$ ###,###,###.00"/>
+                                            </h:outputText>
+                                        </p:column>                                                                            
                                     </p:dataTable>
                                 </div>
                                 <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
                                     <p:dataTable var="capitulo5" value="#{controladorRegistroActividadesPOAPyE.capitulo5000}" emptyMessage="Sin recurso asignado">
                                         <p:column headerText="Partida"><h:outputText value="#{capitulo5.partidas1.partida}" /></p:column>   
-                                        <p:column headerText="Programado"><h:outputText value="#{capitulo5.total}" /></p:column>                                         
+                                        <p:column headerText="Programado"><h:outputText value="#{capitulo5.total}">
+                                                <f:convertNumber pattern="$ ###,###,###.00"/>
+                                            </h:outputText>
+                                        </p:column>                                                                               
                                     </p:dataTable>
                                 </div>
                                 <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center visibility:#{controladorRegistroActividadesPOAPyE.pretechoCPDD eq 0.0?'collapse':'visible'};">
                                     <p:dataTable var="capituloCPDD" value="#{controladorRegistroActividadesPOAPyE.capituloCPDD}" emptyMessage="Sin recurso asignado" rendered="#{controladorRegistroActividadesPOAPyE.pretechoCPDD eq 0.0?false:true}">
                                         <p:column headerText="Partida"><h:outputText value="#{capituloCPDD.partidas1.partida}" /></p:column>   
-                                        <p:column headerText="Programado"><h:outputText value="#{capituloCPDD.total}" /></p:column>                                         
+                                        <p:column headerText="Programado"><h:outputText value="#{capituloCPDD.total}">
+                                                <f:convertNumber pattern="$ ###,###,###.00"/>
+                                            </h:outputText>
+                                        </p:column>                                                                                
                                     </p:dataTable>
                                 </div>
                                 <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
@@ -162,22 +189,34 @@
                                     <p:outputLabel value="Programado"/>                            
                                 </div>                                
                                 <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.totalCaptitulo2000}"/>
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.totalCaptitulo2000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
                                 </div>
                                 <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.totalCaptitulo3000}"/>
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.totalCaptitulo3000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
                                 </div>
                                 <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.totalCaptitulo4000}"/>
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.totalCaptitulo4000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
                                 </div>
                                 <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.totalCaptitulo5000}"/>
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.totalCaptitulo5000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
                                 </div>
                                 <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorRegistroActividadesPOAPyE.pretechoCPDD eq 0.0?'collapse':'visible'};">
-                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.totalCaptituloCPDD}"/>
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.totalCaptituloCPDD}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
                                 </div>
                                 <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
-                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.totalCaptitulos}"/>
+                                    <p:outputLabel value="#{controladorRegistroActividadesPOAPyE.totalCaptitulos}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
                                 </div>
                             </div>
                             <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center">
@@ -185,22 +224,34 @@
                                     <p:outputLabel value="Disponible"/>
                                 </div>
                                 <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                    <p:outputLabel style="#{controladorRegistroActividadesPOAPyE.claseP1 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorRegistroActividadesPOAPyE.pretecho2000-controladorRegistroActividadesPOAPyE.totalCaptitulo2000}"/>
+                                    <p:outputLabel style="#{controladorRegistroActividadesPOAPyE.claseP1 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorRegistroActividadesPOAPyE.pretecho2000-controladorRegistroActividadesPOAPyE.totalCaptitulo2000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
                                 </div>
                                 <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                    <p:outputLabel style="#{controladorRegistroActividadesPOAPyE.claseP2 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorRegistroActividadesPOAPyE.pretecho3000-controladorRegistroActividadesPOAPyE.totalCaptitulo3000}"/>
+                                    <p:outputLabel style="#{controladorRegistroActividadesPOAPyE.claseP2 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorRegistroActividadesPOAPyE.pretecho3000-controladorRegistroActividadesPOAPyE.totalCaptitulo3000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
                                 </div>
                                 <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                    <p:outputLabel style="#{controladorRegistroActividadesPOAPyE.claseP3 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorRegistroActividadesPOAPyE.pretecho4000-controladorRegistroActividadesPOAPyE.totalCaptitulo4000}"/>
+                                    <p:outputLabel style="#{controladorRegistroActividadesPOAPyE.claseP3 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorRegistroActividadesPOAPyE.pretecho4000-controladorRegistroActividadesPOAPyE.totalCaptitulo4000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
                                 </div>
                                 <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                    <p:outputLabel style="#{controladorRegistroActividadesPOAPyE.claseP4 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorRegistroActividadesPOAPyE.pretecho5000-controladorRegistroActividadesPOAPyE.totalCaptitulo5000}"/>
+                                    <p:outputLabel style="#{controladorRegistroActividadesPOAPyE.claseP4 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorRegistroActividadesPOAPyE.pretecho5000-controladorRegistroActividadesPOAPyE.totalCaptitulo5000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
                                 </div>
                                 <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorRegistroActividadesPOAPyE.pretechoCPDD eq 0.0?'collapse':'visible'};">
-                                    <p:outputLabel style="#{controladorRegistroActividadesPOAPyE.clasePC eq 'mayor'?'':'color: #ff0000'}" value="#{controladorRegistroActividadesPOAPyE.pretechoCPDD-controladorRegistroActividadesPOAPyE.totalCaptituloCPDD}"/>
+                                    <p:outputLabel style="#{controladorRegistroActividadesPOAPyE.clasePC eq 'mayor'?'':'color: #ff0000'}" value="#{controladorRegistroActividadesPOAPyE.pretechoCPDD-controladorRegistroActividadesPOAPyE.totalCaptituloCPDD}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
                                 </div>
                                 <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
-                                    <p:outputLabel style="#{controladorRegistroActividadesPOAPyE.clasePT eq 'mayor'?'':'color: #ff0000'}" value="#{controladorRegistroActividadesPOAPyE.totalPretecho-controladorRegistroActividadesPOAPyE.totalCaptitulos}"/>
+                                    <p:outputLabel style="#{controladorRegistroActividadesPOAPyE.clasePT eq 'mayor'?'':'color: #ff0000'}" value="#{controladorRegistroActividadesPOAPyE.totalPretecho-controladorRegistroActividadesPOAPyE.totalCaptitulos}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
                                 </div>
                             </div>
                         </p:outputPanel>
@@ -225,26 +276,22 @@
                                         <f:facet name="header"></f:facet>
 
                                         <p:headerRow>
-                                            <p:column colspan="1" styleClass="eje">
-                                                <h:outputText value="#{ejesRegistro.ejeA.eje eq 2?'Capital Humano':
-                                                                       ejesRegistro.ejeA.eje eq 3?'Proceso Administrativo':
-                                                                       ejesRegistro.ejeA.eje eq 4?'Calidad Académica':'Vinculación con Enfoque Global'}"/>
+                                            <p:column colspan="1" styleClass="eje" style="text-align: left; color: #FFFFFF;">
+                                                <h:outputText value="#{ejesRegistro.ejeA.eje}.#{ejesRegistro.ejeA.nombre}" style="text-align: left"/>
                                             </p:column>
                                         </p:headerRow>
                                         <p:column colspan="1">
                                             <p:dataTable value="#{ejesRegistro.listalistaEstrategiaLaAp}" var="estrategiasRegistro" sortBy="#{estrategiasRegistro.estrategias.estrategia}" expandableRowGroups="true">
 
                                                 <p:headerRow>
-                                                    <p:column colspan="1" styleClass="est">
-                                                        <h:outputText value="#{estrategiasRegistro.estrategias.nombre}"/>
+                                                    <p:column colspan="1" styleClass="est" style="text-align: left; color: #FFFFFF;">
+                                                        <h:outputText value="#{ejesRegistro.ejeA.eje}.#{estrategiasRegistro.estrategias.numero} -- #{estrategiasRegistro.estrategias.nombre}" style="text-align: left"/>
                                                     </p:column>
                                                 </p:headerRow>                            
 
                                                 <p:column  colspan="1">
-                                                    <p:dataTable value="#{estrategiasRegistro.actividadesPoas}" 
-                                                                 var="poa" sortBy="#{poa.cuadroMandoInt.lineaAccion.lineaAccion}" 
-                                                                 expandedRow="true"
-                                                                 expandableRowGroups="true">
+                                                    <p:dataTable value="#{estrategiasRegistro.actividadesPoas}" var="poa" sortBy="#{poa.cuadroMandoInt.lineaAccion.lineaAccion}"                                                                  expandedRow="true"
+                                                                 expandableRowGroups="true" rowStyleClass="#{poa.numeroS eq 0?'actividad':''}" emptyMessage="No hay actividades registradas">
 
                                                         <p:columnGroup type="header">
                                                             <p:row class="success">
@@ -343,7 +390,9 @@
 
                                                         <p:rowExpansion rendered="#{poa.recursosActividadList.size() eq 0?false:true}">
                                                             <p:panelGrid id="pnlRecurso" style="text-align:justify;" columns="1">
-                                                                <p:dataTable id="dtbBajas" var="recurso"  sortBy="#{recurso.productoArea.partida.partida}" expandableRowGroups="true" value="#{poa.recursosActividadList}">
+                                                                <p:dataTable id="dtbBajas" var="recurso" 
+                                                                             style="background:  #cccccc"                                                                        
+                                                                             sortBy="#{recurso.productoArea.partida.partida}" expandableRowGroups="true" value="#{poa.recursosActividadList}">
 
                                                                     <f:facet name="header"></f:facet>
 

@@ -122,22 +122,34 @@
                                         <p:outputLabel value="Pretecho"/>                            
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{controladorPOARecurso.pretecho2000}"/>
+                                        <p:outputLabel value="#{controladorPOARecurso.pretecho2000}">
+                                            <f:convertNumber pattern="$ ###,###,###.00"/>
+                                        </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{controladorPOARecurso.pretecho3000}"/>
+                                        <p:outputLabel value="#{controladorPOARecurso.pretecho3000}">
+                                            <f:convertNumber pattern="$ ###,###,###.00"/>
+                                        </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{controladorPOARecurso.pretecho4000}"/>
+                                        <p:outputLabel value="#{controladorPOARecurso.pretecho4000}">
+                                            <f:convertNumber pattern="$ ###,###,###.00"/>
+                                        </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{controladorPOARecurso.pretecho5000}"/>
+                                        <p:outputLabel value="#{controladorPOARecurso.pretecho5000}">
+                                            <f:convertNumber pattern="$ ###,###,###.00"/>
+                                        </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorPOARecurso.pretechoCPDD eq 0.0?'collapse':'visible'};">
-                                        <p:outputLabel value="#{controladorPOARecurso.pretechoCPDD}"/>
+                                        <p:outputLabel value="#{controladorPOARecurso.pretechoCPDD}">
+                                            <f:convertNumber pattern="$ ###,###,###.00"/>
+                                        </p:outputLabel>
                                     </div>
                                     <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
-                                        <p:outputLabel value="#{controladorPOARecurso.totalPretecho}"/>
+                                        <p:outputLabel value="#{controladorPOARecurso.totalPretecho}">
+                                            <f:convertNumber pattern="$ ###,###,###.00"/>
+                                        </p:outputLabel>
                                     </div>
                                 </div>
                                 <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center">
@@ -145,22 +157,34 @@
                                         <p:outputLabel value="Programado"/>                            
                                     </div>                                
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{controladorPOARecurso.totalCaptitulo2000}"/>
+                                        <p:outputLabel value="#{controladorPOARecurso.totalCaptitulo2000}">
+                                            <f:convertNumber pattern="$ ###,###,###.00"/>
+                                        </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{controladorPOARecurso.totalCaptitulo3000}"/>
+                                        <p:outputLabel value="#{controladorPOARecurso.totalCaptitulo3000}">
+                                            <f:convertNumber pattern="$ ###,###,###.00"/>
+                                        </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{controladorPOARecurso.totalCaptitulo4000}"/>
+                                        <p:outputLabel value="#{controladorPOARecurso.totalCaptitulo4000}">
+                                            <f:convertNumber pattern="$ ###,###,###.00"/>
+                                        </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{controladorPOARecurso.totalCaptitulo5000}"/>
+                                        <p:outputLabel value="#{controladorPOARecurso.totalCaptitulo5000}">
+                                            <f:convertNumber pattern="$ ###,###,###.00"/>
+                                        </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorPOARecurso.pretechoCPDD eq 0.0?'collapse':'visible'};">
-                                        <p:outputLabel value="#{controladorPOARecurso.totalCaptituloCPDD}"/>
+                                        <p:outputLabel value="#{controladorPOARecurso.totalCaptituloCPDD}">
+                                            <f:convertNumber pattern="$ ###,###,###.00"/>
+                                        </p:outputLabel>
                                     </div>
                                     <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
-                                        <p:outputLabel value="#{controladorPOARecurso.totalCaptitulos}"/>
+                                        <p:outputLabel value="#{controladorPOARecurso.totalCaptitulos}">
+                                            <f:convertNumber pattern="$ ###,###,###.00"/>
+                                        </p:outputLabel>
                                     </div>
                                 </div>
                                 <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center">
@@ -168,22 +192,34 @@
                                         <p:outputLabel value="Disponible"/>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel style="#{controladorPOARecurso.claseP1 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorPOARecurso.pretecho2000-controladorPOARecurso.totalCaptitulo2000}"/>
+                                        <p:outputLabel style="#{controladorPOARecurso.claseP1 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorPOARecurso.pretecho2000-controladorPOARecurso.totalCaptitulo2000}">
+                                            <f:convertNumber pattern="$ ###,###,###.00"/>
+                                        </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel style="#{controladorPOARecurso.claseP2 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorPOARecurso.pretecho3000-controladorPOARecurso.totalCaptitulo3000}"/>
+                                        <p:outputLabel style="#{controladorPOARecurso.claseP2 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorPOARecurso.pretecho3000-controladorPOARecurso.totalCaptitulo3000}">
+                                            <f:convertNumber pattern="$ ###,###,###.00"/>
+                                        </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel style="#{controladorPOARecurso.claseP3 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorPOARecurso.pretecho4000-controladorPOARecurso.totalCaptitulo4000}"/>
+                                        <p:outputLabel style="#{controladorPOARecurso.claseP3 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorPOARecurso.pretecho4000-controladorPOARecurso.totalCaptitulo4000}">
+                                            <f:convertNumber pattern="$ ###,###,###.00"/>
+                                        </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel style="#{controladorPOARecurso.claseP4 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorPOARecurso.pretecho5000-controladorPOARecurso.totalCaptitulo5000}"/>
+                                        <p:outputLabel style="#{controladorPOARecurso.claseP4 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorPOARecurso.pretecho5000-controladorPOARecurso.totalCaptitulo5000}">
+                                            <f:convertNumber pattern="$ ###,###,###.00"/>
+                                        </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorPOARecurso.pretechoCPDD eq 0.0?'collapse':'visible'};">
-                                        <p:outputLabel style="#{controladorPOARecurso.clasePC eq 'mayor'?'':'color: #ff0000'}" value="#{controladorPOARecurso.pretechoCPDD-controladorPOARecurso.totalCaptituloCPDD}"/>
+                                        <p:outputLabel style="#{controladorPOARecurso.clasePC eq 'mayor'?'':'color: #ff0000'}" value="#{controladorPOARecurso.pretechoCPDD-controladorPOARecurso.totalCaptituloCPDD}">
+                                            <f:convertNumber pattern="$ ###,###,###.00"/>
+                                        </p:outputLabel>
                                     </div>
                                     <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
-                                        <p:outputLabel style="#{controladorPOARecurso.clasePT eq 'mayor'?'':'color: #ff0000'}" value="#{controladorPOARecurso.totalPretecho-controladorPOARecurso.totalCaptitulos}"/>
+                                        <p:outputLabel style="#{controladorPOARecurso.clasePT eq 'mayor'?'':'color: #ff0000'}" value="#{controladorPOARecurso.totalPretecho-controladorPOARecurso.totalCaptitulos}">
+                                            <f:convertNumber pattern="$ ###,###,###.00"/>
+                                        </p:outputLabel>
                                     </div>
                                 </div>
                             </p:outputPanel>
@@ -221,7 +257,7 @@
                                                         </p:column>
                                                     </p:headerRow>
                                                     <p:column colspan="1">
-                                                        <p:dataTable id="dtbActividad" var="actividad" sortBy="#{actividad.actividadesPoa1.actividadPoa}" expandableRowGroups="true" rowExpandMode="single" expandedRow="false"
+                                                        <p:dataTable id="dtbActividad" var="actividad" expandableRowGroups="true" rowExpandMode="single" expandedRow="false"
                                                                      value="#{linea.listaRecursoActividadeses}">
 
                                                             <p:column styleClass="#{actividad.actividadesPoa1.numeroS eq 0?'actividad':''}" style="width:2%">
@@ -270,7 +306,7 @@
                                                                 <p> <h:outputText value="#{actividad.actividadesPoa1.NPSeptiembre}" />  </p>
                                                             </p:column>
                                                             <p:column styleClass="#{actividad.actividadesPoa1.numeroS eq 0?'actividad':''}" style="text-align: center; width: 5%;"> 
-                                                                <p><h:outputText value="Ocutubre" /> </p>
+                                                                <p><h:outputText value="Octubre" /> </p>
                                                                 <p> <h:outputText value="#{actividad.actividadesPoa1.NPOctubre}" />  </p>
                                                             </p:column>
                                                             <p:column styleClass="#{actividad.actividadesPoa1.numeroS eq 0?'actividad':''}" style="text-align: center; width: 5%;"> 

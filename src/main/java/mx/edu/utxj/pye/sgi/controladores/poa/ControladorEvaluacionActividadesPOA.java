@@ -507,7 +507,7 @@ public class ControladorEvaluacionActividadesPOA implements Serializable {
         ultimaEstrategiaExpandida = new Estrategias();
         ultimaEstrategiaExpandida = actividadesPoaEvidencias.getCuadroMandoInt().getEstrategia();
 
-        evidenciases = poaSelectec.mostrarEvidenciases(actividadesPoaEvidencias);
+        evidenciases = poaSelectec.mostrarEvidenciases(actividadesPoaEvidencias,actividadesPoaEvidencias.getRegistrosList());
         if (!evidenciases.isEmpty()) {
             evidenciases.forEach((t) -> {
                 evidenciasesDe = poaSelectec.mostrarEvidenciases(t);

@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>        
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+
+        <style>
+            .description-block{
+                text-align: justify;
+            }
+            .description-header{
+                text-align: center;
+            }
+
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            button, input, optgroup, select, textarea{
+                color: black;
+            }
+            .ui-tabs .ui-tabs-navscroller-btn-right{
+                right: .1em;
+                background: white;
+                block-size: 2.6em;
+            }
+            .ui-tabs .ui-tabs-navscroller-btn-left{
+                left: .1em;
+                background: white;
+                block-size: 2.6em;
+            }
+            .aceptado{
+                background-color: white;
+            }
+            .denegado{
+                background-color: #f39c12;
+            }
+        </style>
+        <h:outputScript>
+            PrimeFaces.locales['es'] = {
+            closeText: 'Cerrar',
+            prevText: 'Anterior',
+            nextText: 'Siguiente',
+            monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+            dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+            dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+            dayNamesMin: ['D','L','M','M','J','V','S'],
+            weekHeader: 'Semana',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: '',
+            timeOnlyTitle: 'Sólo hora',
+            timeText: 'Tiempo',
+            hourText: 'Hora',
+            minuteText: 'Minuto',
+            secondText: 'Segundo',
+            currentText: 'Fecha actual',
+            ampm: false,
+            month: 'Mes',
+            week: 'Semana',
+            day: 'Día',
+            allDayText : 'Todo el día'
+            };
+        </h:outputScript>
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 6}">
+                <section class="content">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div>      
+                                </div>
+                                <p:tabView>
+                                    <p:tab title="Currículum vitae">
+                                        <h:form> 
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-sm-6">
+                                                    <p:outputLabel for="ptc" value="Docentes" />
+                                                    <p:selectOneMenu  id="ptc" value="#{controladorDocentesActivos.docenteBusqueda}" valueChangeListener="#{controladorDocentesActivos.mostrarPerfilDocente}" filter="true" filterMatchMode="contains" style = "height:100%; width: 100%; object-fit: contain;" class="control-label">
+                                                        <f:selectItem itemValue="0" itemLabel=" Regresar "/>
+                                                        <f:selectItems value="#{controladorDocentesActivos.personalsD}" var="personal" itemValue="#{personal.clave}" itemLabel="#{personal.clave} - #{personal.nombre} - #{personal.categoriaOperativaNombre}" />
+                                                        <p:ajax listener="#{controladorIncidenciasGeneral.imprimirValores()}" process="ptc" update="@(form)"/>
+                                                    </p:selectOneMenu >                          
+                                                    <p:message for="ptc"/>
+                                                    <hr/>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <p:commandButton value="Imprimir currículum vitae" icon="fa fa-print" class="btn-success">                                        
+                                                        <p:printer target="CV" />
+                                                    </p:commandButton>
+                                                    <hr/>
+                                                </div>
+                                            </div>
+                                            <p:panel id="CV" >
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h1><strong>Currículum vitae</strong></h1>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div id="tituloCV" class="col-sm-12">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h2>Universidad Tecnológica De Xicotepec de Juárez</h2>
+                                                                        <h3>Contenido de currículum para expedientes</h3>
+                                                                        <h4>Departamento de personal</h4>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h3><strong>Datos personales</strong></h3>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-header with-border">                                                                    
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="row">
+                                                                                        <div  id="fotoPersonal" class="col-sm-2 pull-left">
+                                                                                            <div class="description-block" style="text-align: center" >
+                                                                                                <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{controladorDocentesActivos.listaPersonal.clave}.jpg" alt="#{controladorDocentesActivos.listaPersonal.clave}" title="Personal #{controladorDocentesActivos.listaPersonal.clave}" style="width: 140px; height: 140px; align-content: center;"/>
+                                                                                            </div>  
+                                                                                        </div>
+                                                                                        <div class="col-sm-6">
+                                                                                            <div  id="dstoasPerosonalesPersonal1" class="col-sm-3 pull-left" style="width: 250px;">        
+                                                                                                <div class="description-block" style="text-align: justify">
+                                                                                                    <strong>Nombre completo</strong>
+                                                                                                    <p class="text-muted">
+                                                                                                        #{controladorDocentesActivos.listaPersonal.nombre}
+                                                                                                    </p>
+                                                                                                    <hr/>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div  id="dstoasPerosonalesPersonal2" class="col-sm-3 pull-left" style="width: 200px;"> 
+                                                                                                <div class="description-block" style="text-align: justify">
+                                                                                                    <strong>CURP</strong>
+                                                                                                    <p class="text-muted" style="text-transform: uppercase">
+                                                                                                        #{controladorDocentesActivos.informacionAdicionalPersonal.curp}
+                                                                                                    </p>
+                                                                                                    <hr/>
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <div  id="dstoasPerosonalesPersonal1" class="col-sm-3 pull-left" style="width: 250px;">        
+                                                                                                <div class="description-block" style="text-align: justify">
+                                                                                                    <strong>Lugar de nacimiento</strong>
+                                                                                                    <p class="text-muted">
+                                                                                                        #{controladorDocentesActivos.informacionAdicionalPersonal.lugarProcedencia}
+                                                                                                    </p> 
+                                                                                                    <hr/>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div  id="dstoasPerosonalesPersonal2" class="col-sm-3 pull-left" style="width: 200px;"> 
+                                                                                                <div class="description-block" style="text-align: justify">
+                                                                                                    <strong>RFC</strong>
+                                                                                                    <p class="text-muted" style="text-transform: uppercase">
+                                                                                                        #{controladorDocentesActivos.informacionAdicionalPersonal.rfc}
+                                                                                                    </p>
+                                                                                                    <hr/>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal3" class="col-sm-2 pull-left" style="width: 150px;"> 
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Edad</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorDocentesActivos.informacionAdicionalPersonal.edad} años
+                                                                                                </p>                                                             
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal4" class="col-sm-2 pull-left" style="width: 180px;"> 
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Estado civil</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorDocentesActivos.informacionAdicionalPersonal.estadoCivil}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                        </div>
+
+
+                                                                                        <div  id="dstoasPerosonalesPersonal3" class="col-sm-2 pull-left" style="width: 150px;"> 
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Sexo</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorDocentesActivos.listaPersonal.generoNombre}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal4" class="col-sm-2 pull-left" style="width: 180px;"> 
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Fecha de nacimiento</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    <h:outputLabel value="#{controladorDocentesActivos.listaPersonal.fechaNacimiento}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                                </p>                                                                
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                    </div> 
+                                                                                    <div class="row">
+                                                                                        <div  id="dstoasPerosonalesPersonal5" class="col-sm-4 pull-left" style="width: 250px;">        
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Dirección</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorDocentesActivos.informacionAdicionalPersonal.direccion}
+                                                                                                </p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal6" class="col-sm-4 pull-left" style="width: 200px;">        
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Correo electrónico</strong>
+                                                                                                <ul style="list-style-type: square">
+                                                                                                    <li>
+                                                                                                        #{controladorDocentesActivos.listaPersonal.correoElectronico}
+                                                                                                        <br/>
+                                                                                                        #{controladorDocentesActivos.listaPersonal.correoElectronico2}
+                                                                                                    </li>
+                                                                                                </ul>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal7" class="col-sm-4 pull-left" style="width: 200px;">        
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Número de teléfono</strong>
+                                                                                                <ul style="list-style-type: square">
+                                                                                                    <li>
+                                                                                                        Casa: #{controladorDocentesActivos.informacionAdicionalPersonal.numTelFijo}
+                                                                                                    </li>
+                                                                                                    <li>
+                                                                                                        Cel.: #{controladorDocentesActivos.informacionAdicionalPersonal.numTelMovil}
+                                                                                                    </li>
+                                                                                                </ul>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorDocentesActivos.formacionAcademicas.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblFormaciónAcadémica" value="#{controladorDocentesActivos.formacionAcademicas}" var="formaAL"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorDocentesActivos.formacionAcademicas.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Formación académica</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 20%" headerText="Estudio realizado" >
+                                                                                    <h:outputText value="#{formaAL.estatus eq 'Denegado'?'*':''}" style="font-size: large; color: red"/>
+                                                                                    <h:outputText value="#{formaAL.nivelEscolaridad.nombre}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="Fecha" >
+                                                                                    <h:outputLabel value="#{formaAL.fechaObtencion}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="Institución" >
+                                                                                    <h:outputText value="#{formaAL.institucion}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="Modo titulación" >
+                                                                                    <h:outputText value="#{formaAL.modoTitulacion}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="No. cédula profesional" >
+                                                                                    <h:outputText value="#{formaAL.cedulaProfesional}" />
+                                                                                </p:column>
+
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorDocentesActivos.experienciasLaboraleses.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblExperienciaLaboral" value="#{controladorDocentesActivos.experienciasLaboraleses}" var="experiencL"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorDocentesActivos.experienciasLaboraleses.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Experiencia laboral</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 20%" headerText="Empresa o institución" >
+                                                                                    <h:outputText value="#{experiencL.estatus eq 'Denegado'?'*':''}" style="font-size: large; color: red"/>
+                                                                                    <h:outputText value="#{experiencL.institucionEmpresa}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 20%" headerText="Fechas" >   
+                                                                                    <h:outputLabel value="del"/>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="#{experiencL.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>                                                                                
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="al"/>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="#{experiencL.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                </p:column>
+                                                                                <p:column style="width: 20%" headerText="Puesto" >
+                                                                                    <h:outputText value="#{experiencL.puestoDesepenado}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 40%" headerText="Funciones realizadas" >
+                                                                                    <h:outputText value="#{experiencL.funcionesDesempenio}" />
+                                                                                </p:column>
+
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorDocentesActivos.capacitacionespersonals.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblCapacitación" value="#{controladorDocentesActivos.capacitacionespersonals}" var="capaci"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorDocentesActivos.capacitacionespersonals.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Actualización profesional</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 50%" headerText="Nombre de la capacitación" >
+                                                                                    <h:outputText value="#{capaci.estatus eq 'Denegado'?'*':''}" style="font-size: large; color: red"/>
+                                                                                    <h:outputText value="#{capaci.nombre}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 30%" headerText="Lugar" >
+                                                                                    <h:outputText value="#{capaci.lugar}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 20%" headerText="Fechas" >   
+                                                                                    <h:outputLabel value="del "/>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="#{capaci.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="al "/>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="#{capaci.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorDocentesActivos.investigacioneses.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblInvest" value="#{controladorDocentesActivos.investigacioneses}" var="inves"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorDocentesActivos.investigacioneses.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Investigaciones</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 20%" headerText="Nombre">
+                                                                                    <h:outputText value="#{inves.nombreInvestigacion}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="Tipo">
+                                                                                    <h:outputText value="#{inves.tipo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="Institucion">
+                                                                                    <h:outputText value="#{inves.institucion}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 50%" headerText="Descripcion">
+                                                                                    <h:outputText value="#{inves.decripcion}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorDocentesActivos.idiomases.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblIdiomas" value="#{controladorDocentesActivos.idiomases}" var="idiomasD"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorDocentesActivos.idiomases.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Idiomas</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 25%" headerText="Idioma">
+                                                                                    <h:outputText value="#{idiomasD.estatus eq 'Denegado'?'*':''}" style="font-size: large; color: red"/>
+                                                                                    <h:outputText value="#{idiomasD.idiomaHablado}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="% de conversación">
+                                                                                    <h:outputText value="#{idiomasD.nivelConversacion}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="% de escritura">
+                                                                                    <h:outputText value="#{idiomasD.nivelEscritura}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="% de lectura">
+                                                                                    <h:outputText value="#{idiomasD.nivelLectura}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorDocentesActivos.habilidadesInformaticases.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblInformática" value="#{controladorDocentesActivos.habilidadesInformaticases}" var="informaticD"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorDocentesActivos.habilidadesInformaticases.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Habilidades informáticas </h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 30%" headerText="Conocimiento informático" >
+                                                                                    <h:outputText value="#{informaticD.estatus eq 'Denegado'?'*':''}" style="font-size: large; color: red"/>
+                                                                                    <h:outputText value="#{informaticD.tipoConocimiento}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Programa dominado">
+                                                                                    <h:outputText value="#{informaticD.programaDominante}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Nivel de dominio">
+                                                                                    <h:outputText value="#{informaticD.nivelConocimiento}" />
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorDocentesActivos.lenguases.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblLenguas" value="#{controladorDocentesActivos.lenguases}" var="lenguasD"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorDocentesActivos.lenguases.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Lenguas indígenas</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 25%" headerText="Lengua">
+                                                                                    <h:outputText value="#{lenguasD.estatus eq 'Denegado'?'*':''}" style="font-size: large; color: red"/>
+                                                                                    <h:outputText value="#{lenguasD.tipoLengua}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="% de conversación">
+                                                                                    <h:outputText value="#{lenguasD.nivelConversacion}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="% de escritura">
+                                                                                    <h:outputText value="#{lenguasD.nivelEscritura}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="% de lectura">
+                                                                                    <h:outputText value="#{lenguasD.nivelLectura}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorDocentesActivos.desarrollosTecnologicoses.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblTrabajosdeInvestigación" value="#{controladorDocentesActivos.desarrollosTecnologicoses}" var="des"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorDocentesActivos.desarrollosTecnologicoses.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Desarrollos tecnológicos</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 30%" headerText="Tipo de desarrollo">
+                                                                                    <h:outputText value="#{des.estatus eq 'Denegado'?'*':''}" style="font-size: large; color: red"/>
+                                                                                    <h:outputText value="#{des.tipoDesarrollo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Objetivo" >
+                                                                                    <h:outputText value="#{des.objetivoDesarrollo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Resumen">
+                                                                                    <h:outputLabel value="#{des.resumenDesarrollo}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorDocentesActivos.innovacioneses.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblinnnovacion" value="#{controladorDocentesActivos.innovacioneses}" var="ino"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorDocentesActivos.innovacioneses.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Innovaciones</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column headerText="Tipo de innovación">
+                                                                                    <h:outputText value="#{ino.estatus eq 'Denegado'?'*':''}" style="font-size: large; color: red"/>
+                                                                                    <h:outputText value="#{ino.tipoInnovacion}"/>
+                                                                                </p:column>
+                                                                                <p:column headerText="Cobertura">
+                                                                                    <h:outputText value="#{ino.potencialCobertura}"/>
+                                                                                </p:column>
+                                                                                <p:column headerText="Aplicación">
+                                                                                    <h:outputText value="#{ino.aplicacionInnovacion}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorDocentesActivos.desarrolloSoftwares.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tbldesSof" value="#{controladorDocentesActivos.desarrolloSoftwares}" var="dess"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorDocentesActivos.desarrolloSoftwares.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Desarrollo de Software</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 20%" headerText="Tipo">
+                                                                                    <h:outputText value="#{dess.estatus eq 'Denegado'?'*':''}" style="font-size: large; color: red"/>
+                                                                                    <h:outputText value="#{dess.tipoDesarrollo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 20%" headerText="Lugar">
+                                                                                    <h:outputText value="#{dess.lugar}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="Horas invertidas">
+                                                                                    <h:outputText value="#{dess.horasHombre}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 45%" headerText="Logros">
+                                                                                    <h:outputText value="#{dess.logros}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorDocentesActivos.distincioneses.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tbldistin" value="#{controladorDocentesActivos.distincioneses}" var="dist"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorDocentesActivos.distincioneses.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Premios y Distinciones</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 30%" headerText="Instituto">
+                                                                                    <h:outputText value="#{dist.estatus eq 'Denegado'?'*':''}" style="font-size: large; color: red"/>
+                                                                                    <h:outputText value="#{dist.institucion}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 20%" headerText="Nombre">
+                                                                                    <h:outputText value="#{dist.nombreDistincion}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 50%" headerText="Motivo">
+                                                                                    <h:outputText value="#{dist.motivoDescripcion}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorDocentesActivos.librosPubs.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tbllibros" value="#{controladorDocentesActivos.librosPubs}" var="libro"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorDocentesActivos.librosPubs.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Libros Publicados</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 15%" headerText="ISBN">
+                                                                                    <h:outputText value="#{libro.estatus eq 'Denegado'?'*':''}" style="font-size: large; color: red"/>
+                                                                                    <h:outputText value="#{libro.isbn}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 55%" headerText="Título">
+                                                                                    <h:outputText value="#{libro.titulo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="Idioma">
+                                                                                    <h:outputText value="#{libro.idioma}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="País">
+                                                                                    <h:outputText value="#{libro.pasi}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorDocentesActivos.articulosps.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblarticulos" value="#{controladorDocentesActivos.articulosps}" var="articulo"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorDocentesActivos.articulosps.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold"> Artículos Publicados</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 15%" headerText="ISBN electrónico">
+                                                                                    <h:outputText value="#{articulo.estatus eq 'Denegado'?'*':''}" style="font-size: large; color: red"/>
+                                                                                    <h:outputText value="#{articulo.issnElectronico}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Nombre">
+                                                                                    <h:outputText value="#{articulo.nombre}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Título">
+                                                                                    <h:outputText value="#{articulo.tituloArticulo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="País">
+                                                                                    <h:outputText value="#{articulo.pais}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorDocentesActivos.memoriaspubs.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblmemorias" value="#{controladorDocentesActivos.memoriaspubs}" var="memoria"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorDocentesActivos.memoriaspubs.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Memorias Publicadas</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 29%" headerText="Título de memoria">
+                                                                                    <h:outputText value="#{memoria.estatus eq 'Denegado'?'*':''}" style="font-size: large; color: red"/>
+                                                                                    <h:outputText value="#{memoria.tituloDeMemoria}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 29%" headerText="Título de publicación">
+                                                                                    <h:outputText value="#{memoria.tituloDePublicacion}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 29%" headerText="Título de obra">
+                                                                                    <h:outputText value="#{memoria.tituloDeObra}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 13%" headerText="País">
+                                                                                    <h:outputText value="#{memoria.pais}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorDocentesActivos.congresoses.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblcongreso" value="#{controladorDocentesActivos.congresoses}" var="idiomasD"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorDocentesActivos.congresoses.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Congresos</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 20%" headerText="Tipo de participación">
+                                                                                    <h:outputText value="#{idiomasD.estatus eq 'Denegado'?'*':''}" style="font-size: large; color: red"/>
+                                                                                    <h:outputText value="#{idiomasD.participacion}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Nombre de congreso">
+                                                                                    <h:outputText value="#{idiomasD.nombreCongreso}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 30%" headerText="Título de trabajo">
+                                                                                    <h:outputText value="#{idiomasD.tituloTrabajo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="País">
+                                                                                    <h:outputText value="#{idiomasD.lugarPais}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p:panel>
+                                        </h:form>
+                                    </p:tab>
+                                </p:tabView>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </c:if>
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa != 6}">
+                <h1>
+                    Esta página está disponible solo para personal adscrito al área de Fortalecimiento de Desarrollo Académico
+                </h1>
+            </c:if>
+        </p:panel>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

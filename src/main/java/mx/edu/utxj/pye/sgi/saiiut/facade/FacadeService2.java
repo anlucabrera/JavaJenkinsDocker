@@ -17,22 +17,22 @@ import lombok.RequiredArgsConstructor;
 /**
  *
  * @author UTXJ
- * @param <T>
- * Inyección
+ * @param <T> Inyección
  * @EJB private Facade facade;
- * 
- * Uso
- * facade.setEntityClass(ListaPersonal.class);
-   List<ListaPersonal> lp = facade.findAll(); 
+ *
+ * Uso facade.setEntityClass(ListaPersonal.class); List<ListaPersonal> lp =
+ * facade.findAll();
  */
 @Stateful
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class FacadeService2<T> implements Facade2 {
-    @Getter @NonNull private Class<T> entityClass;
-    
+
+    @Getter    @NonNull    private Class<T> entityClass;
+    // Comentar el siguiente Contexto de persistencia cuando falle saiiut //
     @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb-saiiut_ejb_1.0PU")
     private EntityManager em;
+    // Fin del Contexto de persistencia //
 
     @Override
     public EntityManager getEntityManager() {

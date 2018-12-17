@@ -30,6 +30,7 @@ import org.xml.sax.SAXException;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -52,8 +53,10 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.sgi.entity.pye2.Localidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.MunicipioPK;
+import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAreas;
 import mx.edu.utxj.pye.sgi.entity.pye2.UsuariosRegistros;
 import mx.edu.utxj.pye.sgi.enums.ComisionOficioEstatus;
@@ -741,6 +744,21 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
                 .setParameter("pais", 42)
                 .getResultList();
     }
+    
+    @Override
+    public List<Pais> getPaises() {
+        return f.getEntityManager().createQuery("SELECT p FROM Pais p ORDER BY p.nombre", Pais.class)
+                .getResultList();
+    }
+    
+    @Override
+    public List<Estado> getEstadosPorPais(Pais pais) {
+        if(pais == null)
+            return Collections.EMPTY_LIST;
+        return f.getEntityManager().createQuery("SELECT e FROM Estado e WHERE e.idpais.idpais=:pais ORDER BY e.nombre", Estado.class)
+                .setParameter("pais", pais.getIdpais())
+                .getResultList();
+    }
 
     @Override
     public List<Municipio> getMunicipiosPorEstado(Estado estado) {
@@ -750,6 +768,16 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
         return f.getEntityManager().createQuery("SELECT m FROM Municipio m WHERE m.estado.idestado=:estado ORDER BY m.nombre", Municipio.class)
                 .setParameter("estado", estado.getIdestado())
                 .getResultList();
+    }
+    
+    @Override
+    public List<Localidad> getLocalidadesPorMunicipio(Municipio municipio) {
+        if(municipio == null)
+            return Collections.EMPTY_LIST;
+        return f.getEntityManager().createQuery("SELECT l FROM Localidad l WHERE l.municipio.municipioPK.claveEstado =:estado AND l.municipio.municipioPK.claveMunicipio = :municipio ORDER BY l.nombre", Localidad.class)
+                .setParameter("estado", municipio.getMunicipioPK().getClaveEstado())
+                .setParameter("municipio", municipio.getMunicipioPK().getClaveMunicipio())
+                .getResultList();   
     }
 
     @Override

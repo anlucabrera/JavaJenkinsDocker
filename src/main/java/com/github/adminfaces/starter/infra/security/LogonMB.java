@@ -25,6 +25,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulos;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisos;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.ch.shiro.User;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.saiiut.ejb.EjbLogin;
@@ -66,16 +67,28 @@ public class LogonMB extends AdminSession implements Serializable {
     
     @Getter private UsuarioTipo usuarioTipo;
     @Getter @Setter private Usuarios usuarioAutenticado;
+//    @Getter @Setter private User usuarioAutenticadoShiro;
     @Getter private Personal personal;
     @Getter @Setter private ListaUsuarioClaveNomina listaUsuarioClaveNomina;
+//    @Getter @Setter private User listaUsuarioClaveNominaShiro;
 
     @EJB private EjbLogin ejbLogin;
     @EJB private Facade f;    
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
  //accede al controlador que da permisos a los usuarios
     @Inject permisosUsuarios pUsuarios;
-    
-
+    /*Cuando saiiut falle hacer
+    Des comentar las variables :
+        usuarioAutenticadoShiro
+        listaUsuarioClaveNominaShiro
+        resShiro
+        usuarioShiro
+    y comentar las variables :
+        usuarioAutenticado
+        listaUsuarioClaveNomina
+        res
+        usuario
+    */   
     public void login() throws IOException {
         System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()");
 
@@ -88,17 +101,25 @@ public class LogonMB extends AdminSession implements Serializable {
         } else {
             Usuarios res = ejbLogin.getUsuarioPorLogin(email);
             Usuarios usuario = ejbLogin.autenticar(email, password);
+//            User resShiro = ejbLogin.getUsuarioPorLoginShiro(email);
+//            User usuarioShiro = ejbLogin.autenticarShiro(email, password);
 
+//            if (resShiro == null) {
             if (res == null) {
                 addDetailMessage("El usuario ingresado no existe.");
                 Faces.getExternalContext().getFlash().setKeepMessages(true);
                 Faces.redirect("login.xhtml");
             } else {
+//                if (usuarioShiro != null) {
                 if (usuario != null) {
                     currentUser = usuario.getLoginUsuario();
+//                    currentUser = usuarioShiro.getUsername();
                     usuarioAutenticado = usuario;
+//                    usuarioAutenticadoShiro = usuarioShiro;
                     usuarioTipo = ejbLogin.getTipoUsuario(usuario);
+//                    usuarioTipo = UsuarioTipo.TRABAJADOR;
                     listaUsuarioClaveNomina = ejbLogin.getListaUsuarioClaveNomina(currentUser);
+//                    listaUsuarioClaveNominaShiro = usuarioAutenticadoShiro;
                     if (usuarioTipo.equals(UsuarioTipo.TRABAJADOR)) {
                         f.setEntityClass(Personal.class);
                         personal = (Personal) f.find(Integer.parseInt(listaUsuarioClaveNomina.getNumeroNomina()));
@@ -107,7 +128,8 @@ public class LogonMB extends AdminSession implements Serializable {
 //                    getPermisosAcceso();
                     }
                     System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login() tipo: " + usuarioTipo);
-                    addDetailMessage("Bienvenido <b>" + usuario.getPersonas().getNombre() + "</b>");
+//                    addDetailMessage("Bienvenido <b>" + usuario.getPersonas().getNombre() + "</b>");
+                    addDetailMessage("Bienvenido");
                     Faces.getExternalContext().getFlash().setKeepMessages(true);
                     Faces.redirect("index.xhtml");
                 } else {
@@ -118,7 +140,7 @@ public class LogonMB extends AdminSession implements Serializable {
             }
         }
     }
-  
+
     public void getMenuCategorias() {
         listaModulos = new ArrayList<>();
         listaModulos = pUsuarios.getListaModulos();
@@ -136,12 +158,12 @@ public class LogonMB extends AdminSession implements Serializable {
 
         return currentUser != null;
     }
-    
+
     public void agregaBitacora() {
         try {
-            nombreTabla="Login";
-            numeroRegistro="";
-            accion="Acceso";
+            nombreTabla = "Login";
+            numeroRegistro = "";
+            accion = "Acceso";
             Date fechaActual = new Date();
             nuevaBitacoraacceso = new Bitacoraacceso();
             nuevaBitacoraacceso.setClavePersonal(Integer.parseInt(listaUsuarioClaveNomina.getNumeroNomina()));
@@ -149,10 +171,10 @@ public class LogonMB extends AdminSession implements Serializable {
             nuevaBitacoraacceso.setTabla(nombreTabla);
             nuevaBitacoraacceso.setAccion(accion);
             nuevaBitacoraacceso.setFechaHora(fechaActual);
-            nuevaBitacoraacceso=ejbDatosUsuarioLogeado.crearBitacoraacceso(nuevaBitacoraacceso);
-            nombreTabla="";
-            numeroRegistro="";
-            accion="";
+            nuevaBitacoraacceso = ejbDatosUsuarioLogeado.crearBitacoraacceso(nuevaBitacoraacceso);
+            nombreTabla = "";
+            numeroRegistro = "";
+            accion = "";
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(LogonMB.class.getName()).log(Level.SEVERE, null, ex);

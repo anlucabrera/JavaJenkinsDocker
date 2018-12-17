@@ -8,12 +8,15 @@ package mx.edu.utxj.pye.sgi.saiiut.ejb;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulos;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisos;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
+import mx.edu.utxj.pye.sgi.entity.ch.shiro.User;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Listaperiodosescolares;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -30,24 +33,32 @@ import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
  */
 @Stateful
 public class ServicioLogin implements EjbLogin {
-    @EJB Facade f2;// mysql
-    @EJB Facade2 f;
-    private final Patron patronMatricula = new PatronMatricula();
 
+    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb-shiro.0PU")
+    private EntityManager em;
+
+    @EJB    Facade f2;// mysql
+    // Comentar las siguiente Importaciones cuando falle saiiut //
+    @EJB    Facade2 f;
+    // Fin de Importaciones 
+    
+    private final Patron patronMatricula = new PatronMatricula();   
+    
+// Comentar los siguiente métodos cuando falle saiiut //
     @Override
     public Usuarios autenticar(String loginUsuario, String password) {
 //        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.autenticar() loginUsuario: " + loginUsuario + ", password: " + password);
         Usuarios usuarioBd = getUsuarioPorLogin(loginUsuario);
-        if(usuarioBd != null){
+        if (usuarioBd != null) {
 //            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.autenticar() usuarioBd no nulo");
-            if(usuarioBd.getContrasena().equals(encriptarContrasena(password))){
+            if (usuarioBd.getContrasena().equals(encriptarContrasena(password))) {
 //                System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.autenticar() las contraseñas coinciden");
                 return usuarioBd;
-            }else{
+            } else {
 //                System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.autenticar() las contraseñas no coinciden");
                 return null;
             }
-        }else{
+        } else {
 //            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.autenticar() usuarioBd es nulo");
             return null;
         }
@@ -59,9 +70,8 @@ public class ServicioLogin implements EjbLogin {
         TypedQuery<Usuarios> q = f.getEntityManager().createNamedQuery("Usuarios.findByLoginUsuario", Usuarios.class);
         q.setParameter("loginUsuario", loginUsuario);
         List<Usuarios> l = q.getResultList();
-        
+
 //        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.getUsuarioPorLogin() l: " + l);
-        
         if (l.isEmpty()) {
             return null;
         } else {
@@ -70,8 +80,32 @@ public class ServicioLogin implements EjbLogin {
     }
 
     @Override
+    public ListaUsuarioClaveNomina getListaUsuarioClaveNomina(String loginUsuario) {
+        f.setEntityClass(ListaUsuarioClaveNomina.class);
+        return (ListaUsuarioClaveNomina) f.find(loginUsuario);
+    }
+
+    @Override
+    public List<VistaEvaluacionesTutores> getTutoresPeriodoActual() {
+        TypedQuery<Listaperiodosescolares> periodo = f2.getEntityManager().createQuery("SELECT p from Listaperiodosescolares p ORDER BY p.periodo DESC", Listaperiodosescolares.class);
+        if (periodo.getResultList().isEmpty() || periodo.getResultList() == null) {
+            System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getTutoresPeriodoActual() no se encontro periodo::: ");
+        } else {
+//            System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getTutoresPeriodoActual() el periodo es ::: " + periodo.getSingleResult());
+        }
+        TypedQuery<VistaEvaluacionesTutores> q = f.getEntityManager().createQuery("SELECT v FROM VistaEvaluacionesTutores v WHERE v.pk.periodo = :periodo", VistaEvaluacionesTutores.class);
+        q.setParameter("periodo", periodo.getResultList().get(0).getPeriodo());
+        if (q.getResultList().isEmpty() || q.getResultList() == null) {
+            return null;
+        } else {
+            return q.getResultList();
+        }
+    }
+// Fin de métodos 
+
+    @Override
     public String encriptarContrasena(String contrasena) {
-        String original =   "ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz1234567890!$%&/()=?¿¡,.-;:_ ";
+        String original = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz1234567890!$%&/()=?¿¡,.-;:_ ";
         String encriptada = "Uqyh.-aJ,g4TPVDE/2WZ15uBC78b3X:_ 6AOHIYrstNFGvcjñzÑdef)=?¿¡omKL90!(i$%&QRklwxnMSp;";
         String temporal = "";
         for (int x = 0; x < contrasena.length(); x++) {
@@ -99,20 +133,42 @@ public class ServicioLogin implements EjbLogin {
     }
 
     @Override
-    public ListaUsuarioClaveNomina getListaUsuarioClaveNomina(String loginUsuario) {
-        f.setEntityClass(ListaUsuarioClaveNomina.class);
-        return (ListaUsuarioClaveNomina) f.find(loginUsuario);
+    public UsuarioTipo getTipoUsuario(Usuarios usuario) {
+        if (usuario != null) {
+            if (patronMatricula.coincide(usuario.getLoginUsuario().trim())) {
+                return UsuarioTipo.ESTUDIANTE;
+            } else {
+                return UsuarioTipo.TRABAJADOR;
+            }
+        } else {
+            return null;
+        }
     }
 
     @Override
-    public UsuarioTipo getTipoUsuario(Usuarios usuario) {
-        if(usuario != null){
-            if(patronMatricula.coincide(usuario.getLoginUsuario().trim())){
-                return UsuarioTipo.ESTUDIANTE;
-            }else{
-                return UsuarioTipo.TRABAJADOR;
+    public User getUsuarioPorLoginShiro(String loginUsuario) {
+        TypedQuery<User> q = em.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class);
+        q.setParameter("username", loginUsuario);
+        List<User> l = q.getResultList();
+
+//        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.getUsuarioPorLogin() l: " + l);
+        if (l.isEmpty()) {
+            return null;
+        } else {
+            return l.get(0);
+        }
+    }
+
+    @Override
+    public User autenticarShiro(String loginUsuario, String password) {
+        User usuarioBd = getUsuarioPorLoginShiro(loginUsuario);
+        if (usuarioBd != null) {
+            if (usuarioBd.getPassword().equals(password)) {
+                return usuarioBd;
+            } else {
+                return null;
             }
-        }else{
+        } else {
             return null;
         }
     }
@@ -136,23 +192,6 @@ public class ServicioLogin implements EjbLogin {
             return null;
         } else {
             return l;
-        }
-    }
-
-    @Override
-    public List<VistaEvaluacionesTutores> getTutoresPeriodoActual() {
-        TypedQuery<Listaperiodosescolares> periodo = f2.getEntityManager().createQuery("SELECT p from Listaperiodosescolares p ORDER BY p.periodo DESC", Listaperiodosescolares.class);
-        if (periodo.getResultList().isEmpty() || periodo.getResultList() == null) {
-            System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getTutoresPeriodoActual() no se encontro periodo::: ");
-        } else {
-//            System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getTutoresPeriodoActual() el periodo es ::: " + periodo.getSingleResult());
-        }
-        TypedQuery<VistaEvaluacionesTutores> q = f.getEntityManager().createQuery("SELECT v FROM VistaEvaluacionesTutores v WHERE v.pk.periodo = :periodo", VistaEvaluacionesTutores.class);
-        q.setParameter("periodo", periodo.getResultList().get(0).getPeriodo());
-        if (q.getResultList().isEmpty() || q.getResultList() == null) {
-            return null;
-        } else {
-            return q.getResultList();
         }
     }
 

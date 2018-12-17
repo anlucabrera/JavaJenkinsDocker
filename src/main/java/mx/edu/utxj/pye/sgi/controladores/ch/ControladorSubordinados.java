@@ -32,6 +32,8 @@ import mx.edu.utxj.pye.sgi.entity.ch.InformacionAdicionalPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.Investigaciones;
+import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
+import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.RowEditEvent;
 
@@ -52,13 +54,18 @@ public class ControladorSubordinados implements Serializable {
     @Getter    @Setter    private List<Investigaciones> listaInvestigaciones = new ArrayList<>();
     @Getter    @Setter    private List<String> nuevaListaFuncionesEspecificas = new ArrayList<>(), nuevaListaFuncionesGenerales = new ArrayList<>(), estatus = new ArrayList<>();
     @Getter    @Setter    private List<Incidencias> listaIncidencias = new ArrayList<>();
+    @Getter    @Setter    private List<Incidencias> listaIncidenciasReporteImpresion = new ArrayList<>();
+    @Getter    @Setter    private List<Incidencias> listaIncidenciasIndividuales = new ArrayList<>();
     @Getter    @Setter    private List<Incapacidad> listaIncapacidads = new ArrayList<>();
+    @Getter    @Setter    private List<Incapacidad> listaIncapacidadsReporteImpresion = new ArrayList<>();
     @Getter    @Setter    private List<Docencias> listaDocencias = new ArrayList<>();
+    @Getter    @Setter    private Modulosregistro modulosRegistro = new Modulosregistro();
+    @Getter    @Setter    private String[] nombreAr;
 
-    @Getter    @Setter    private Date fechaActual = new Date(), fechaI = new Date(), fechaF = new Date();
+    @Getter    @Setter    private Date fechaActual = new Date(), fechaI = new Date(), fechaF = new Date(),fechaIR = new Date(), fechaFR = new Date();;
     @Getter    @Setter    private Integer empleadoLogeado, contactoDestino, anioNumero = 0;
     @Getter    @Setter    private String mensajeDNotificacion = "", mes = "", numeroQuincena = "1", anio = "";
-    @Getter    @Setter    private Boolean visible = false, vistaMensual = true;
+    @Getter    @Setter    private Boolean visible = false, vistaMensual = true,fechaReportesActiva=false;
 
     @Getter    @Setter    private Funciones nuevoOBJFunciones;
     @Getter    @Setter    private InformacionAdicionalPersonal nuevoOBJInformacionAdicionalPersonal;
@@ -99,8 +106,96 @@ public class ControladorSubordinados implements Serializable {
         anio = "20" + anioNumero;
         visible = false;
         mostrarContactosParaNotificacion();
+        modulosEventos();
         mostrarIncidencias(mes);
         System.out.println("ControladorSubordinados Fin: " + System.currentTimeMillis());
+    }
+
+    public void modulosEventos() {
+        try {
+            fechaReportesActiva=false;
+             List<Incidencias> incidenciases = new ArrayList<>();
+            incidenciases.clear();
+            List<Incapacidad> incapacidads = new ArrayList<>();
+            incapacidads.clear();
+            
+            listaIncidenciasReporteImpresion=new ArrayList<>();
+            
+            modulosRegistro = ejbDatosUsuarioLogeado.mostrarModuloregistro("Incidencia");
+            fechaIR = new Date();
+            fechaFR = new Date(); 
+            String m="",a="",d="";
+            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            if (modulosRegistro != null) {
+                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.modulosEventos(1)"+fechaActual.compareTo(modulosRegistro.getFechaInicio()));
+                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.modulosEventos(2)"+fechaActual.compareTo(modulosRegistro.getFechaFin()));
+                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.modulosEventos(3)"+(fechaActual.compareTo(modulosRegistro.getFechaInicio()) >= 0));
+                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.modulosEventos(4)"+(fechaActual.compareTo(modulosRegistro.getFechaFin()) <= 0));
+                if ((fechaActual.compareTo(modulosRegistro.getFechaInicio()) >= 0) && (fechaActual.compareTo(modulosRegistro.getFechaFin()) <= 0)) {
+                    fechaReportesActiva=true;
+                    if (modulosRegistro.getFechaFin().getDate() > 15) {
+                        fechaIR = dateFormat.parse("01" + "/" + mes + "/" + anio);
+                        fechaFR = dateFormat.parse("15" + "/" + mes + "/" + anio);
+                    } else {
+                        a = "20" + (fechaActual.getYear() - 100);
+                        switch (modulosRegistro.getFechaFin().getMonth()) {
+                            case 0:
+                                d = "31";                                m = "12";                                a = "20" + (fechaActual.getYear() - 101);                                break;
+                            case 1:                                d = "31";                                m = "01";                                break;
+                            case 2:                                d = "28";                                m = "02";                                break;
+                            case 3:                                d = "31";                                m = "03";                                break;
+                            case 4:                                d = "30";                                m = "04";                                break;
+                            case 5:                                d = "31";                                m = "05";                                break;
+                            case 6:                                d = "30";                                m = "06";                                break;
+                            case 7:                                d = "31";                                m = "07";                                break;
+                            case 8:                                d = "31";                                m = "08";                                break;
+                            case 9:                                d = "30";                                m = "09";                                break;
+                            case 10:                                d = "31";                                m = "10";                                break;
+                            case 11:                                d = "30";                                m = "11";                                break;
+                        }
+                        fechaIR = dateFormat.parse("16" + "/" + m + "/" + a);
+                        fechaFR = dateFormat.parse(d + "/" + m + "/" + a);
+                    }
+
+                    incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(fechaIR, fechaFR);
+                    if (!incidenciases.isEmpty()) {
+                        incidenciases.forEach((Incidencias t) -> {
+                            if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
+                                listaIncidenciasReporteImpresion.add(t);
+                            }
+                        });
+                    }
+
+                    listaIncapacidadsReporteImpresion = new ArrayList<>();
+                    listaIncapacidadsReporteImpresion.clear();
+                    incapacidads = ejbNotificacionesIncidencias.mostrarIncapacidadReporte(fechaIR, fechaFR);
+                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.modulosEventos()"+incapacidads.size());
+                    if (!incapacidads.isEmpty()) {
+                        incapacidads.forEach((t) -> {
+                            if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
+                                listaIncapacidadsReporteImpresion.add(t);
+                            }
+                        });
+                    }
+                }
+
+            }
+            if (!listaIncidenciasReporteImpresion.isEmpty()) {
+                listaIncidenciasReporteImpresion.forEach((t) -> {
+                    if (t.getEstatus().equals("Aceptado")) {
+                        t.setEstatus("JUSTIFICADO");
+                    } else if (t.getEstatus().equals("Denegado")) {
+                        t.setEstatus("NO JUSTIFICADO");
+                    } else if (t.getEstatus().equals("Pendiente")) {
+                        t.setEstatus("");
+                    }
+                });
+            }
+
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void mostrarPerfilSubordinado() {
@@ -119,20 +214,23 @@ public class ControladorSubordinados implements Serializable {
 
     public void informacionCV() {
         try {
+            listaIdiomas.clear();
+            listaDocencias.clear();
+            listaInvestigaciones.clear();
             listaFormacionAcademica.clear();
             listaExperienciasLaborales.clear();
             listaCapacitacionespersonal.clear();
-            listaIdiomas.clear();
             listaHabilidadesInformaticas.clear();
-            listaInvestigaciones.clear();
-            listaDocencias.clear();
+            listaIncidenciasIndividuales.clear();
+            
+            listaIdiomas = ejbHabilidades.mostrarIdiomas(contactoDestino);
+            listaDocencias = ejbDatosUsuarioLogeado.mostrarListaDocencias(contactoDestino);
             listaFormacionAcademica = ejbEducacion.mostrarFormacionAcademica(contactoDestino);
+            listaInvestigaciones = ejbProduccionProfecional.mostrarInvestigacion(contactoDestino);
             listaExperienciasLaborales = ejbEducacion.mostrarExperienciasLaborales(contactoDestino);
             listaCapacitacionespersonal = ejbEducacion.mostrarCapacitacionespersonal(contactoDestino);
-            listaIdiomas = ejbHabilidades.mostrarIdiomas(contactoDestino);
+            listaIncidenciasIndividuales=ejbNotificacionesIncidencias.mostrarIncidencias(contactoDestino);
             listaHabilidadesInformaticas = ejbHabilidades.mostrarHabilidadesInformaticas(contactoDestino);
-            listaInvestigaciones = ejbProduccionProfecional.mostrarInvestigacion(contactoDestino);
-            listaDocencias = ejbDatosUsuarioLogeado.mostrarListaDocencias(contactoDestino);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
@@ -199,6 +297,11 @@ public class ControladorSubordinados implements Serializable {
 
     public void mostrarIncidencias(String mActual) {
         try {
+            List<Incidencias> incidenciases = new ArrayList<>();
+            incidenciases.clear();
+            List<Incapacidad> incapacidads = new ArrayList<>();
+            incapacidads.clear();
+            
             mes = mActual;
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
             fechaI = new Date();
@@ -232,27 +335,49 @@ public class ControladorSubordinados implements Serializable {
             }
             fechaI = dateFormat.parse(diai + "/" + mes + "/" + anio);
             fechaF = dateFormat.parse(diaf + "/" + mes + "/" + anio);
+
             listaIncidencias = new ArrayList<>();
             listaIncidencias.clear();
-            listaIncapacidads = new ArrayList<>();
-            listaIncapacidads.clear();
-
-            ejbNotificacionesIncidencias.mostrarIncidenciasReporte(fechaI, fechaF).forEach((Incidencias t) -> {
-                if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
-                    if (visible) {
-                        if (t.getEstatus().equals("Pendiente")) {
+            incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(fechaI, fechaF);
+            if (!incidenciases.isEmpty()) {
+                incidenciases.forEach((t) -> {
+                    if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
+                        if (visible) {
+                            if (t.getEstatus().equals("Pendiente")) {
+                                listaIncidencias.add(t);
+                            }
+                        } else {
                             listaIncidencias.add(t);
                         }
-                    } else {
-                        listaIncidencias.add(t);
                     }
-                }
-            });
-            ejbNotificacionesIncidencias.mostrarIncapacidadReporte(fechaI, fechaF).forEach((t) -> {
-                if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
-                    listaIncapacidads.add(t);
-                }
-            });
+                });
+            }
+            if (!listaIncidencias.isEmpty()) {
+                listaIncidencias.forEach((t) -> {
+                    if (t.getEstatus().equals("Aceptado")) {
+                        t.setEstatus("JUSTIFICADO");
+                    } else if (t.getEstatus().equals("Denegado")) {
+                        t.setEstatus("NO JUSTIFICADO");
+                    } else if (t.getEstatus().equals("Pendiente")) {
+                        t.setEstatus("");
+                    }
+                });
+            }
+
+            listaIncapacidads = new ArrayList<>();
+            listaIncapacidads.clear();
+            incapacidads = ejbNotificacionesIncidencias.mostrarIncapacidadReporte(fechaI, fechaF);
+            if (!incapacidads.isEmpty()) {
+                incapacidads.forEach((t) -> {
+                    if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
+                        listaIncapacidads.add(t);
+                    }
+                });
+            }
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.mostrarIncidencias(1)"+listaIncidencias.size());
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.mostrarIncidencias(2)"+listaIncapacidads.size());
+            Ajax.update("@(form)");
+            Ajax.update("@(form)");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
@@ -264,16 +389,20 @@ public class ControladorSubordinados implements Serializable {
             Incidencias incidencias = (Incidencias) event.getObject();
             Integer dias = (int) ((fechaActual.getTime() - incidencias.getFecha().getTime()) / 86400000);
             Integer maximo = 0;
-            if (incidencias.getFecha().getDay() == 5) {
-                maximo = 5;
-            } else {
-                maximo = 3;
+            switch (incidencias.getFecha().getDay()){
+                case 1:  maximo = 3; break;
+                case 2:  maximo = 3; break;
+                case 3:  maximo = 5; break;
+                case 4:  maximo = 5; break;
+                case 5:  maximo = 5; break;
+                case 6:  maximo = 4; break;
             }
+            
             if (dias <= maximo) {
                 ejbNotificacionesIncidencias.actualizarIncidencias(incidencias);
-                Messages.addGlobalInfo("¡Operación exitosa!!");
+                Messages.addGlobalInfo("¡Operación exitosa!");
             } else {
-                Messages.addGlobalInfo("¡El timepo asiganado para valiadar incidencia a expirado!!");
+                Messages.addGlobalInfo("¡El timepo asiganado para validar incidencia a expirado!");
             }
             mostrarIncidencias(mes);
         } catch (Throwable ex) {
@@ -307,7 +436,7 @@ public class ControladorSubordinados implements Serializable {
     }
 
     public void onRowCancel(RowEditEvent event) {
-        Messages.addGlobalWarn("¡Operación cancelada!!");
+        Messages.addGlobalWarn("¡Operación cancelada!");
     }
 
      public String convertirRutaVistaEvidencia(String ruta) {
@@ -315,12 +444,24 @@ public class ControladorSubordinados implements Serializable {
             File file = new File(ruta);
             return "evidencias2".concat(file.toURI().toString().split("archivos")[1]);
         } else {
-            Messages.addGlobalWarn("No fue posible cargar el archivo!!");
+            Messages.addGlobalWarn("No fue posible cargar el archivo!");
             return null;
         }
     }
 
-     
+      public String calculaM(String area) {
+        nombreAr = area.split(":");
+        String hora = nombreAr[0];
+        String minu = nombreAr[1];
+        Integer h = 0;
+        Integer m = 0;
+        Integer t = 0;
+        h = Integer.parseInt(hora) * 60;
+        m = Integer.parseInt(minu);
+        t = h + m;
+        return t.toString();
+    }
+      
     public void imprimirValores() {
     }
 }

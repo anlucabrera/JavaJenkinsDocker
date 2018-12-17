@@ -53,17 +53,21 @@ public class permisosUsuarios implements Serializable{
     @Inject LogonMB logonMB;
     
     @PostConstruct
-    public void init(){
+    public void init() {
         ev.init();
-        listaPermisosGeneral = new ArrayList<>();listaNumeroNominaTutor = new ArrayList<>();listaTutores = new ArrayList<>();
+        listaPermisosGeneral = new ArrayList<>();
+        listaNumeroNominaTutor = new ArrayList<>();
+        listaTutores = new ArrayList<>();
         listaPermisosGeneral = ejbLogin.getPermisosModulos();
+// Comentar la siguiente Expresión lamda cuando falle saiiut //
         ejbLogin.getTutoresPeriodoActual().forEach(x -> {
             listaTutores.add(Integer.parseInt(x.getPk().getNumeroNomina()));
         });
+//Fin de Expresión lamda //
         listaNumeroNominaTutor.addAll(listaTutores.stream().distinct().collect(Collectors.toList()));
 //        System.out.println("mx.edu.utxj.pye.sgi.util.permisosUsuarios.init() lista de tutores : " + listaNumeroNominaTutor.size());
 //        listaNumeroNominaTutor.forEach(System.out::println);
-        tutor = listaNumeroNominaTutor.stream().filter(t-> t.equals(logonMB.getPersonal().getClave())).collect(Collectors.toList()).isEmpty();
+        tutor = listaNumeroNominaTutor.stream().filter(t -> t.equals(logonMB.getPersonal().getClave())).collect(Collectors.toList()).isEmpty();
 //        if(!tutor) {
 ////            System.out.println("mx.edu.utxj.pye.sgi.util.permisosUsuarios.init() es tutor " + logonMB.getPersonal().getNombre());
 //        } else {

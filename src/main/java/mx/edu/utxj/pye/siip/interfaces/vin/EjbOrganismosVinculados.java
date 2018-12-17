@@ -10,14 +10,21 @@ package mx.edu.utxj.pye.siip.interfaces.vin;
 import java.util.List;
 import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesVinculacion;
+import mx.edu.utxj.pye.sgi.entity.pye2.ContactosEmpresa;
+import mx.edu.utxj.pye.sgi.entity.pye2.CorreosEmpresa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EmpresasTipo;
+import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.GirosTipo;
+import mx.edu.utxj.pye.sgi.entity.pye2.Localidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
+import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.SectoresTipo;
+import mx.edu.utxj.pye.sgi.entity.pye2.TelefonosEmpresa;
 import mx.edu.utxj.pye.siip.dto.vinculacion.DTOActividadesVinculacion;
 
 /**
@@ -118,4 +125,97 @@ public interface EjbOrganismosVinculados {
     public Boolean guardarActividadVinculacionEmpresa(OrganismosVinculados empresa, DTOActividadesVinculacion actividadVinculacion);
     
     public void bajaOrganismoVinculado(OrganismosVinculados registro);
+    
+    /**
+     * Realiza la búsqueda de los contactos extras asignados a cada organismo vinculado
+     * @param organismoVinculado
+     * @return 
+     */
+    public List<ContactosEmpresa> consultaContactosEmpresa(OrganismosVinculados organismoVinculado);
+    
+    /**
+     * Método que almacena los representantes o contactos secundarios de los organismos vinculados
+     * @param contactoEmpresa
+     * @return 
+     */
+    public Boolean guardarContactoEmpresa(ContactosEmpresa contactoEmpresa);
+    
+    /**
+     * Método que elimina el contacto secundario del organismo seleccionado seleccionado
+     * @param contactosEmpresa
+     * @return 
+     */
+    public Boolean eliminarContactoEmpresa(ContactosEmpresa contactosEmpresa);
+    
+    /**
+     * Método que edita los contactos de la empresa previamente ya registrados
+     * @param contactoEmpresa
+     * @return 
+     */
+    public Boolean editaContactoEmpresa(ContactosEmpresa contactoEmpresa);
+    
+    /**
+     * Realiza la búsqueda de los correos extras asignados a cada organismo vinculado
+     * @param organismoVinculado
+     * @return 
+     */
+    public List<CorreosEmpresa> consultaCorreosEmpresa(OrganismosVinculados organismoVinculado);
+    
+    /**
+     * Método que almacena los correos secundarios de los organismos vinculados
+     * @param correoEmpresa
+     * @return 
+     */
+    public Boolean guardarCorreoEmpresa(CorreosEmpresa correoEmpresa);
+    
+    /**
+     * Método que elimina el correo secundario del organismo seleccionado seleccionado
+     * @param correoEmpresa
+     * @return 
+     */
+    public Boolean eliminarCorreoEmpresa(CorreosEmpresa correoEmpresa);
+    
+    /**
+     * Método que edita los correos de la empresa previamente ya registrados
+     * @param correoEmpresa
+     * @return 
+     */
+    public Boolean editaCorreoEmpresa(CorreosEmpresa correoEmpresa);
+    
+    /**
+     * Realiza la búsqueda de los teléfonos extras asignados a cada organismo vinculado
+     * @param organismoVinculado
+     * @return 
+     */
+    public List<TelefonosEmpresa> consultaTelefonosEmpresa(OrganismosVinculados organismoVinculado);
+    
+    /**
+     * Método que almacena los teléfonos secundarios de los organismos vinculados
+     * @param telefonoEmpresa
+     * @return 
+     */
+    public Boolean guardaTelefonoEmpresa(TelefonosEmpresa telefonoEmpresa);
+    
+    /**
+     * Método que elimina el teléfono secundario del organismo seleccionado seleccionado
+     * @param telefonoEmpresa
+     * @return 
+     */
+    public Boolean eliminarTelefonoEmpresa(TelefonosEmpresa telefonoEmpresa);
+    
+    /**
+     * Método que edita los teléfonos de la empresa previamente ya registrados
+     * @param telefonosEmpresa
+     * @return 
+     */
+    public Boolean editaTelefonoEmpresa(TelefonosEmpresa telefonosEmpresa);
+    
+    public Pais getPaisOrganismoVinculado(OrganismosVinculados organismoVinculado);
+    
+    public Localidad getLocalidadOrganismoVinculado(OrganismosVinculados organismoVinculado);
+    
+    public Boolean guardaUbicacion(OrganismosVinculados organismoVinculado, Pais pais, Estado estado, Municipio municipio, Localidad localidad);
+    
+    public Boolean eliminaUbicacion(OrganismosVinculados organismosVinculados);
+    
 }

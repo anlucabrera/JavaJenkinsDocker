@@ -53,37 +53,42 @@ public class AdministracionEncuestaTsu implements Serializable{
     @EJB private EjbAdministracionEncuesta ejbAdmEncuesta;
     
     @PostConstruct
-    public void init(){
-        Long inicio= System.currentTimeMillis();
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuestaTsu.init() inicio de componentes:"+inicio);
-        String verdadero = "Verdadero";
+    public void init() {
         try {
-            if(logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)){
-                usuarioNomina=Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
-                cveTrabajador= logonMB.getListaUsuarioClaveNomina().getCvePersona();
-                cveDirector = cveTrabajador.toString();
-                if (!ejbAdmEncuesta.esDirectorDeCarrera(2, 2, 18, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
-                    System.out.println("Es director de carrera:"+ verdadero);
-                    director = true;
-                    seguimientoEncuestaDirectores();
+            Long inicio = System.currentTimeMillis();
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuestaTsu.init() inicio de componentes:" + inicio);
+            String verdadero = "Verdadero";
+            try {
+                if (logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+                    usuarioNomina = Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
+                    cveTrabajador = logonMB.getListaUsuarioClaveNomina().getCvePersona();
+                    cveDirector = cveTrabajador.toString();
+                    if (!ejbAdmEncuesta.esDirectorDeCarrera(2, 2, 18, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
+                        System.out.println("Es director de carrera:" + verdadero);
+                        director = true;
+                        seguimientoEncuestaDirectores();
+                    }
+                    if (logonMB.getPersonal().getAreaOperativa() == 9 || usuarioNomina.equals(579)) {
+                        //|| claveTrabajador.equals(579) esta parte va dentro del if de arriba
+                        esDeIyE = true;
+                        seguimientoEncuestaIyE();
+                    }
                 }
-                if (logonMB.getPersonal().getAreaOperativa() == 9 || usuarioNomina.equals(579) ) {
-                    //|| claveTrabajador.equals(579) esta parte va dentro del if de arriba
-                    esDeIyE = true;
-                    seguimientoEncuestaIyE();
-                }
+            } catch (Throwable e) {
+                director = false;
+                esDeIyE = false;
+                Logger.getLogger(AdministracionEncuestaTsu.class.getName()).log(Level.SEVERE, null, e);
             }
-        } catch (Throwable e) {
-            director = false;
-            esDeIyE = false;
-            Logger.getLogger(AdministracionEncuestaTsu.class.getName()).log(Level.SEVERE, null, e);
+
+            Long fin = System.currentTimeMillis();
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuestaTsu.init() Fin de los componentes" + fin);
+
+            Long retardo = inicio - fin;
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuestaTsu.init() El retardo de carga de componentes es:" + retardo);
+
+        } catch (Exception e) {
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionControlInterno.init() e: " + e.getMessage());
         }
-        
-        Long fin= System.currentTimeMillis();
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuestaTsu.init() Fin de los componentes"+ fin);
-        
-        Long retardo = inicio-fin;
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuestaTsu.init() El retardo de carga de componentes es:"+ retardo);
     }
     
     public void seguimientoEncuestaIyE() {

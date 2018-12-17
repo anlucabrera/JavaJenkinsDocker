@@ -29,6 +29,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
+import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import org.omnifaces.util.Messages;
 import org.omnifaces.util.Servlets;
 import org.primefaces.event.RowEditEvent;
@@ -75,8 +76,7 @@ public class ControladorPOAEvaluacionAreas implements Serializable {
     @Getter    private String ruta;
     @Getter    StreamedContent content;
     
-    @EJB
-    EjbPoaSelectec poaSelectec;
+    @EJB    EjbPoaSelectec poaSelectec;
     @Inject    ControladorEmpleado controladorEmpleado;
     @EJB    EjbCarga carga;
 
@@ -485,8 +485,27 @@ public class ControladorPOAEvaluacionAreas implements Serializable {
     }
     
     public String convertirRutaMP(String ruta) {
+        String mn="";
         File file = new File(ruta);
-        return "EVALUACION_POA".concat(file.toURI().toString().split("EVALUACION_POA")[1]);
+        if (ruta.contains("EVALUACION_POA")) {
+            return "EVALUACION_POA".concat(file.toURI().toString().split("EVALUACION_POA")[1]);
+        } else {
+            switch (fechaActual.getMonth()){
+                case 0: mn="enero"; break;
+                case 1: mn="febrero"; break;
+                case 2: mn="marzo"; break;
+                case 3: mn="abril"; break;
+                case 4: mn="mayo"; break;
+                case 5: mn="junio"; break;
+                case 6: mn="julio"; break;
+                case 7: mn="agosto"; break;
+                case 8: mn="septiembre"; break;
+                case 9: mn="octubre"; break;
+                case 10: mn="noviembre"; break;
+                case 11: mn="diciembre"; break;
+            }
+            return "Registro_Mensual".concat(file.toURI().toString().split(mn)[1]);
+        }
     }
 
     public String convertirRutaVistaEvidencia(String ruta) {
@@ -505,18 +524,28 @@ public class ControladorPOAEvaluacionAreas implements Serializable {
         evidenciasesDetalles.clear();
         ultimaEstrategiaExpandida = new Estrategias();
         ultimaEstrategiaExpandida = actividadesPoaEvidencias.getCuadroMandoInt().getEstrategia();
+        List<Registros> rs = new ArrayList<>();
+        rs = poaSelectec.mostrarRegistrosActividad(actividadesPoaEvidencias);
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOAEvaluacionAreas.consultarEvidencias(1)" + actividadesPoaEvidencias.getActividadPoa());
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOAEvaluacionAreas.consultarEvidencias(2)" + rs.size());
 
-        evidenciases = poaSelectec.mostrarEvidenciases(actividadesPoaEvidencias);
+        evidenciases = poaSelectec.mostrarEvidenciases(actividadesPoaEvidencias, rs);
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOAEvaluacionAreas.consultarEvidencias(3)" + evidenciases.size());
         if (!evidenciases.isEmpty()) {
             evidenciases.forEach((t) -> {
+                evidenciasesDe = new ArrayList<>();
+                evidenciasesDe.clear();
                 evidenciasesDe = poaSelectec.mostrarEvidenciases(t);
                 if (!evidenciasesDe.isEmpty()) {
                     evidenciasesDe.forEach((e) -> {
+                        if(mesNombre.equals(e.getMes())){                            
                         evidenciasesDetalles.add(e);
+                        }
                     });
                 }
             });
         }
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOAEvaluacionAreas.consultarEvidencias(4)" + evidenciasesDetalles.size());
     }
 
     public void subirEvidenciaPOA() {

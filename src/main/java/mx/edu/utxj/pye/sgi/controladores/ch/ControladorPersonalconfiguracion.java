@@ -18,11 +18,14 @@ import org.omnifaces.cdi.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
+import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import org.omnifaces.util.Messages;
+import org.primefaces.event.RowEditEvent;
 import org.primefaces.model.StreamedContent;
 
 @Named
@@ -34,9 +37,12 @@ public class ControladorPersonalconfiguracion implements Serializable {
 
     @Getter    @Setter    private List<ListaPersonal> nuevaListaPersonals = new ArrayList<>();
     @Getter    @Setter    private List<ListaPersonal> nuevaListaPersonalsFotosFaltantes = new ArrayList<>();
+    @Getter    @Setter    private List<Personal> listPersonal = new ArrayList<>();
     @Getter    @Setter    private List<AreasUniversidad> nuevaListaAreasUniversidads = new ArrayList<>();
     @Getter    @Setter    private List<Categorias> nuevaListaCategoriases = new ArrayList<>();
     @Getter    @Setter    private List<PersonalCategorias> nuevaListaPersonalCategoriases = new ArrayList<>();
+    @Getter    @Setter    private List<PersonalCategorias> nuevaListaPersonalCategoriases360 = new ArrayList<>();
+    @Getter    @Setter    private List<String> estatus = new ArrayList<>();
 
     @Getter    @Setter    private Iterator<ListaPersonal> empleadoActual;
 
@@ -57,6 +63,10 @@ public class ControladorPersonalconfiguracion implements Serializable {
     @PostConstruct
     public void init() {
         System.out.println("ControladorPersonalconfiguracion Inicio: " + System.currentTimeMillis());
+        estatus=new ArrayList<>();
+        estatus.clear();
+        estatus.add("0");
+        estatus.add("1");
         nuevoOBJAreasUniversidad = new AreasUniversidad();
         nuevoOBJPersonalCategorias=new PersonalCategorias();
         generarListas();
@@ -71,28 +81,40 @@ public class ControladorPersonalconfiguracion implements Serializable {
             nuevoOBJCategorias = new Categorias();
 
             nuevaListaPersonalsFotosFaltantes.clear();
+            nuevaListaPersonalCategoriases360.clear();
             nuevaListaPersonalCategoriases.clear();
             nuevaListaAreasUniversidads.clear();
             nuevaListaCategoriases.clear();
             nuevaListaPersonals.clear();
+            listPersonal.clear();
 
-            nuevaListaPersonals = ejbSelectec.mostrarListaDeEmpleados();
-            nuevaListaPersonalsFotosFaltantes = ejbSelectec.mostrarListaDeEmpleados();
             nuevaListaPersonalCategoriases = ejbDatosUsuarioLogeado.mostrarListaPersonalCategorias();
-            nuevaListaCategoriases = ejbAreasLogeo.mostrarCategorias();
+            nuevaListaPersonalsFotosFaltantes = ejbSelectec.mostrarListaDeEmpleados();
             nuevaListaAreasUniversidads = ejbAreasLogeo.mostrarAreasUniversidad();
+            listPersonal = ejbSelectec.mostrarListaDeEmpleadosTotalActivos();
+            nuevaListaPersonals = ejbSelectec.mostrarListaDeEmpleados();
+            nuevaListaCategoriases = ejbAreasLogeo.mostrarCategorias();
 
             empleadoActual = nuevaListaPersonals.iterator();
             while (empleadoActual.hasNext()) {
                 ListaPersonal next = empleadoActual.next();
-                if (next.getActividad() == 1 || next.getActividad() == 3) {
-                    empleadoActual.remove();
+                if (next.getClave() != 343) {
+                    if (next.getActividad() == 1 || next.getActividad() == 3) {
+                        empleadoActual.remove();
+                    }
                 }
             }
-            
+
+            nuevaListaPersonalCategoriases.forEach((t) -> {
+                if (t.getTipo().equals("Específica")) {
+                    nuevaListaPersonalCategoriases360.add(t);
+                }
+            });
+
             Collections.sort(nuevaListaAreasUniversidads, (x, y) -> x.getCategoria().getCategoria().compareTo(y.getCategoria().getCategoria()));
+            Collections.sort(nuevaListaPersonalsFotosFaltantes, (x, y) -> Short.compare(x.getAreaOperativa(), y.getAreaOperativa()));
+            Collections.sort(nuevaListaPersonals, (x, y) -> Short.compare(x.getCategoriaOperativa(), y.getCategoriaOperativa()));
             Collections.sort(nuevaListaPersonalCategoriases, (x, y) -> x.getTipo().compareTo(y.getTipo()));
-            Collections.sort(nuevaListaPersonals, (x, y) -> Short.compare(x.getCategoriaOperativa(),y.getCategoriaOperativa()));
             
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -149,4 +171,70 @@ public class ControladorPersonalconfiguracion implements Serializable {
         }
         file = null;
     }
+    
+    public String nombreArea(Short clave) {
+        try {
+            AreasUniversidad areasUniversidad = new AreasUniversidad();
+            areasUniversidad = ejbAreasLogeo.mostrarAreasUniversidad(clave);
+            return areasUniversidad.getNombre();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        }
+    }
+  
+    public String responsable(Integer clave) {
+        try {
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonalconfiguracion.responsable()" + clave);
+            if (clave != null) {
+                ListaPersonal listaPersonal = new ListaPersonal();
+                listaPersonal = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeado(clave);
+                if (listaPersonal == null) {
+                    return "";
+                } else {
+                    return listaPersonal.getNombre() + " -- " + listaPersonal.getCategoriaOperativaNombre();
+                }
+            } else {
+                return "";
+            }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        }
+    }
+    public void onRowEdit(RowEditEvent event) {
+        try {
+            Personal p = new Personal();
+            Personal p2 = new Personal();
+            p = (Personal) event.getObject();
+            p2 = ejbDatosUsuarioLogeado.mostrarPersonalLogeado(p.getClave());
+            p2.setCategoria360(new PersonalCategorias(p.getCategoria360().getCategoria()));
+            ejbDatosUsuarioLogeado.actualizarPersonal(p2);
+            generarListas();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void onRowEditModulos(RowEditEvent event) {
+        try {
+            AreasUniversidad au = new AreasUniversidad();
+            au = (AreasUniversidad) event.getObject();
+
+            ejbAreasLogeo.actualizarAreasUniversidad(au);
+            Messages.addGlobalInfo("¡Operación exitosa!");
+            generarListas();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorAdmin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+     
+    public void onRowCancel(RowEditEvent event) {
+        Messages.addGlobalWarn("¡Operación cancelada!");
+    }
+
 }

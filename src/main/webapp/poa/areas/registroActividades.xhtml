@@ -47,11 +47,17 @@
                     <div class="box-header with-border">
                         <div id="main-buttons" class="hidden-sm hidden-xs" >
                             <p:panel>
-                                <p:commandButton value="Vidualizar Reporte" id="btnReporte" 
+                                <p:commandButton value="Visualizar Reporte" id="btnReporte" 
                                                  actionListener="#{controladorPOARegistro.recargarPag()}"  
                                                  process=":frmopciones" icon="fa fa-th-list" 
                                                  styleClass="btn-primary" update=":frm2 :frm :frmAlineacionEstratejica" 
                                                  oncomplete="actualizarTabla2()"/>
+
+                                <p:commandButton value="Instrucciones y Simbología" id="btninsSim" 
+                                                 actionListener="#{controladorPOARegistro.imprimirValores()}"  
+                                                 oncomplete="PF('dlgRdVPC').show()" process="@this" 
+                                                 icon="fa fa-info-circle" styleClass="btn-primary"/>
+
 
                             </p:panel>
                         </div>
@@ -167,7 +173,7 @@
                                     <p:autoUpdate/>
                                     <div class="col-sm-12 col-md-12 col-lg-12" style="#{controladorPOARegistro.tipo eq 'Subactividad'?'visibility:visible':'visibility:collapse'}">
                                         <p:outputLabel for="actividadP"  value="Actividad principal" />
-                                        <p:selectOneMenu filter="true" filterMatchMode="contains" id="actividadP" value="#{controladorPOARegistro.numeroActividadPrincipal}" 
+                                        <p:selectOneMenu filter="true" filterMatchMode="contains" id="actividadP" required="true" value="#{controladorPOARegistro.numeroActividadPrincipal}" 
                                                          valueChangeListener="#{controladorPOARegistro.asignarActividadPrincipal}"
                                                          disabled="#{controladorPOARegistro.tipo eq 'Actividad'?true:controladorPOARegistro.tipo eq ''?true:false}" >
                                             <f:selectItem itemValue="#{0}" itemLabel="Seleccione uno"/>
@@ -267,7 +273,7 @@
                                                              emptyMessage="No hay actividades registradas">
 
                                                     <p:headerRow>
-                                                        <p:column colspan="18" styleClass="lac" style="text-align: left">
+                                                        <p:column colspan="19" styleClass="lac" style="text-align: left">
                                                             <h:outputText value="#{ejesRegistro.ejeA.eje}.#{estrategiasRegistro.estrategias.numero}.#{pOa.cuadroMandoInt.lineaAccion.numero} --#{pOa.cuadroMandoInt.lineaAccion.nombre}"/>
                                                         </p:column>
                                                     </p:headerRow>  
@@ -276,12 +282,13 @@
 
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
-                                                            <p:column colspan="2" rowspan="2" headerText="No." style="width: 50px; background-color: #cccccc; color: #000000;"/>
-                                                            <p:column rowspan="2" headerText="Actividad" style="background-color: #cccccc; color: #000000;"/>
-                                                            <p:column rowspan="2" headerText="Unidad de medida" style="width:150px; background-color: #cccccc; color: #000000;"/>
-                                                            <p:column colspan="12" headerText="Calendarización de Metas" style="width: 1000px; background-color: #cccccc; color: #000000;"/>  
-                                                            <p:column rowspan="2" headerText="Total" style="width: 50px; background-color: #cccccc; color: #000000;"/>
-                                                            <p:column rowspan="2" headerText="Opciones" style="width:150px; background-color: #cccccc; color: #000000;"/>
+                                                            <p:column colspan="2" rowspan="2" headerText="No." style="width: 3%; background-color: #cccccc; color: #000000;"/>
+                                                            <p:column rowspan="2" headerText="Actividad" style="width:15%; background-color: #cccccc; color: #000000;"/>
+                                                            <p:column rowspan="2" headerText="Unidad de medida" style="width:6%; background-color: #cccccc; color: #000000;"/>
+                                                            <p:column colspan="12" headerText="Calendarización de Metas" style="width: 60%; background-color: #cccccc; color: #000000;"/>  
+                                                            <p:column rowspan="2" headerText="Total" style="width: 5%; background-color: #cccccc; color: #000000;"/>
+                                                            <p:column rowspan="2" headerText="Opciones" style="width:8%; background-color: #cccccc; color: #000000;"/>
+                                                            <p:column rowspan="2" headerText="T" style="width: 3%; background-color: #cccccc; color: #000000;"/>
                                                         </p:row>
                                                         <p:row class="success">
                                                             <p:column headerText="Enero" style="background-color: #cccccc; color: #000000;"/>
@@ -348,7 +355,7 @@
                                                         <h:outputText value="#{pOa.NPDiciembre}" /> 
                                                     </p:column>
                                                     <p:column> 
-                                                        <h:outputText value="#{pOa.total}" /> 
+                                                        <h:outputText value="#{pOa.total}"/> 
                                                     </p:column>
                                                     <p:column>
                                                         <p:commandButton icon="fa fa-edit" title="Editar actividad" styleClass="btn-primary" oncomplete="PF('dlgActualizacionActividad').show()" process="@this" update=":frmActualizaActividad"
@@ -358,11 +365,13 @@
                                                         </p:commandButton>
                                                         <p:spacer width="20px"/>
                                                         <p:commandButton icon="fa fa-trash" title="Eliminar actividad" styleClass="btn-primary" oncomplete="PF('eliminar').show()" process="@this" update=":frmEliminarActividad"
-                                                                         actionListener="#{controladorPOARegistro.buscarActividadeaEliminar(pOa)}" onsuccess="actualizarTabla2()">
+                                                                         actionListener="#{controladorPOARegistro.buscarActividadeaEliminar(pOa)}" onsuccess="actualizarTabla2()" disabled="#{pOa.esPIDE eq 'PIDE O' ?true:pOa.esPIDE eq 'PIDE' ?true:false}">
                                                             <span class="label label-success"></span>
                                                             <f:setPropertyActionListener target="#{controladorPOARegistro.actividadPoaEliminado}" value="#{pOa}" />
                                                         </p:commandButton>
 
+                                                    </p:column>
+                                                    <p:column style="#{pOa.esPIDE eq 'PIDE O' ?'background: #ff3300':pOa.esPIDE eq 'PIDE' ?'background: #008A17':pOa.actividadPasada eq true ?'background: #33ff00':'background: #cccccc'}">
                                                     </p:column>
                                                     <p:autoUpdate/>
                                                 </p:dataTable>
@@ -405,7 +414,7 @@
                         <div class="col-sm-12 col-md-12 col-lg-12">
                             <div class="col-sm-6 col-md-4 col-lg-4">
                                 <p:outputLabel for="medida1"  value="Unidad de medida" />
-                                <p:selectOneMenu filter="true" filterMatchMode="contains" required="true" requiredMessage="Es necesario que la actividad cuente con una unidad de medida" id="medida1"  value="#{controladorPOARegistro.unidadDMedida}" >
+                                <p:selectOneMenu filter="true" filterMatchMode="contains" required="true" disabled="#{controladorPOARegistro.actividadPoaEditando.esPIDE ne 'NO PIDE'}" requiredMessage="Es necesario que la actividad cuente con una unidad de medida" id="medida1"  value="#{controladorPOARegistro.unidadDMedida}" >
                                     <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                     <f:selectItems value="#{controladorPOARegistro.listaUnidadMedidases}" var="unidadMedida" itemValue="#{unidadMedida.unidadMedida}" itemLabel="#{unidadMedida.nombre}" />
                                 </p:selectOneMenu> 
@@ -414,7 +423,7 @@
                             </div> 
                             <div class="col-sm-12 col-md-8 col-lg-8">
                                 <p:outputLabel for="nombre1"  value="Nombre de la actividad" />
-                                <p:inputText id="nombre1" value="#{controladorPOARegistro.actividadPoaEditando.denominacion}" required="true" requiredMessage="La actividad debe contar con un nombre" style="height:100%; width: 100%;" placeholder="Nombre de la actividad" />
+                                <p:inputText id="nombre1" value="#{controladorPOARegistro.actividadPoaEditando.denominacion}" disabled="#{controladorPOARegistro.actividadPoaEditando.esPIDE ne 'NO PIDE'}" required="true" requiredMessage="La actividad debe contar con un nombre" style="height:100%; width: 100%;" placeholder="Nombre de la actividad" />
                                 <p:message for="nombre1" display="tooltip"/>    
                                 <hr/>  
                             </div> 
@@ -462,6 +471,43 @@
                     <p:commandButton value="Cancelar" id="btnCancelar" actionListener="#{controladorPOARegistro.resetearValores()}"  oncomplete="PF('dlgActualizacionActividad').hide()" process=":frmActualizaActividad" icon="fa fa-times" styleClass="btn-primary" update=":frm2" />
 
                 </h:form>
+            </p:dialog>
+
+            <p:dialog header="Instrucciones y Simbología" widgetVar="dlgRdVPC" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
+                <p:tabView>
+                    <p:tab title="Instrucciones">
+                        <h3>Registro de actividades</h3> 
+
+                        <ul>
+                            <li>1.- Seleccione una alineación estratégica
+                                <ul>
+                                    <li>A.- Eje rector</li>
+                                    <li>B.- Estrategia</li>
+                                    <li>C.- Línea de acción</li>
+                                </ul>
+                            </li>
+                            <li>2.- Llene los campos solicitados
+                                <ul>
+                                    <li>A.- Tipo (Actividad o sub-actividad)</li>
+                                    <li>B.- Unidad de medida</li>
+                                    <li>C.- Contará con sub-actividades (En caso de ser una Actividad Principal)</li>
+                                    <li>D.- Nombre de la actividad</li>
+                                    <li>E.- Calendarización (si tiene sub-actividades puede quedar en 0)</li>
+                                    <li>F.- En caso de ser Sub-actividad seleccione la actividad Padre</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </p:tab>        
+                    <p:tab title="Simbología">
+                        <h3>Simbología</h3> 
+                        <ul>
+                            <li><p:outputLabel value="__________" style="background: #cccccc; color: #cccccc;"/> Actividad del año anterior que debe ser modificada y asignar calendarización o eliminada.</li>
+                            <li><p:outputLabel value="__________" style="background: #33ff00; color: #33ff00;"/> Actividad del año anterior que puede ser modificada y asignar calendarización o eliminada.</li>
+                            <li><p:outputLabel value="__________" style="background: #008A17; color: #008A17;"/> Actividad PIDE no obligatoria, Puede quedar programada en 0 pero no se puede eliminar.</li>
+                            <li><p:outputLabel value="__________" style="background: #ff3300; color: #ff3300;"/> Actividad PIDE Obligatoria, no debe quedar programada en 0 y no se puede eliminar.</li>
+                        </ul>
+                    </p:tab>                    
+                </p:tabView>
             </p:dialog>
 
             <p:dialog id="validacion" header="Error" widgetVar="validacion" modal="true" 

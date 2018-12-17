@@ -17,7 +17,9 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.sgi.entity.pye2.Localidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
+import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAreas;
 import mx.edu.utxj.pye.sgi.entity.pye2.UsuariosRegistros;
 import mx.edu.utxj.pye.sgi.util.XMLReader;
@@ -241,12 +243,22 @@ public interface EjbFiscalizacion {
      */
     public List<Estado> getEstados();
     
+    public List<Pais> getPaises();
+    public List<Estado> getEstadosPorPais(Pais pais);
+    
     /**
      * Obtiene la lista de municipios ordenados alfabéticamente y que pertenecen al estado especificado.
      * @param estado Estado que sirve para filtrar los municipios.
      * @return Lista de municipios por estado.
      */
     public List<Municipio> getMunicipiosPorEstado(Estado estado);
+    
+    /**
+     * Obtiene la lista de localidades ordenadas alfabéticamente y pertenecientes al municipio especificado.
+     * @param municipio Filtra las localidades
+     * @return  Lista de localidades por municipio
+     */
+    public List<Localidad> getLocalidadesPorMunicipio(Municipio municipio);
     
     /**
      * Permite obtener la referencia al jefe inmediato de una persona

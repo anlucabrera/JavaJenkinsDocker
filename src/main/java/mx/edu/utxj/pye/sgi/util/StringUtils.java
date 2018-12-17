@@ -31,6 +31,18 @@ public class StringUtils {
                 .replaceAll("[^A-Za-z0-9-_.()]+", "_");
     }
     
+    public static String quitarGuionesEspacios(String string){
+        if (string == null) {
+            return null;
+        }
+
+        return Normalizer.normalize(string.toLowerCase(), Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                /*.replaceAll("[^\\p{Alnum}]+", ".")*/
+                .replaceAll("[\\D]+", "")
+                .replaceAll(" ", "");
+    }
+    
     public static void main(String[] args) {
         String original = "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝßàáâãäåæçèéêëìíî ïðñòóôõöøùúûü ýÿ";
         String cadenaNormalize = Normalizer.normalize(original, Normalizer.Form.NFD);

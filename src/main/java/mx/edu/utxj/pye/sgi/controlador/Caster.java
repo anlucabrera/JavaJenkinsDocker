@@ -78,7 +78,7 @@ public class Caster {
     }
     
     public long getEvidenciasTamanioLimite() {
-        return 25 * 1024 * 1024;
+        return 50 * 1024 * 1024;
     }
 
     public String bytesToMegabytes(long bytes) {

@@ -78,11 +78,12 @@ public class ControladorPersonal implements Serializable {
     @Getter    @Setter    private List<Personal> listaPersonal = new ArrayList<>(), listaPersonalSubordinado = new ArrayList<>();
     @Getter    @Setter    private List<ListaPersonal> nuevaListaListaPersonaSubordinado = new ArrayList<>();
     @Getter    @Setter    private List<PersonalCategorias> listaPersonalCategorias = new ArrayList<>();
+    @Getter    @Setter    private List<PersonalCategorias> listaPersonalCategorias360 = new ArrayList<>();
     @Getter    @Setter    private List<Grados> listaGrados = new ArrayList<>();
     @Getter    @Setter    private List<Actividades> listaActividades = new ArrayList<>();
     @Getter    @Setter    private List<Short> listaClaveAS = new ArrayList<>();
 
-    @Getter    @Setter    private Short actividad=0,categoriaOP=0,categoriaOF=0,grado=0;
+    @Getter    @Setter    private Short actividad=0,categoriaOP=0,categoriaOF=0,categoria360 = 0,grado=0;
     @Getter    @Setter    private String clase = "";
     @Getter    @Setter    private Funciones nuevoOBJFunciones;
     @Getter    @Setter    private InformacionAdicionalPersonal nuevoOBJInformacionAdicionalPersonal;
@@ -142,6 +143,8 @@ public class ControladorPersonal implements Serializable {
             listareasSuperiores.clear();
             listaAreasUniversidads.clear();
             listaPersonalCategorias.clear();
+            listaPersonalCategorias360.clear();
+            
             
             listaAreasUniversidads = ejbAreasLogeo.mostrarAreasUniversidad();
             listaAreasUniversidads.forEach((t) -> {
@@ -150,10 +153,17 @@ public class ControladorPersonal implements Serializable {
                     listareasSuperiores.add(t);
                 }
             });
+
             Collections.sort(listareasSuperiores, (x, y) -> x.getNombre().compareTo(y.getNombre()));
             listaGrados = ejbDatosUsuarioLogeado.mostrarListaGrados();
             listaActividades = ejbDatosUsuarioLogeado.mostrarListaActividades();
             listaPersonalCategorias = ejbDatosUsuarioLogeado.mostrarListaPersonalCategorias();
+            
+            listaPersonalCategorias.forEach((t) -> {
+                if (t.getTipo().equals("Específica")) {
+                    listaPersonalCategorias360.add(t);
+                }
+            });
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorPersonal.class.getName()).log(Level.SEVERE, null, ex);
@@ -177,6 +187,7 @@ public class ControladorPersonal implements Serializable {
             actividad = nuevOBJPersonalSubordinado.getActividad().getActividad();
             categoriaOP = nuevOBJPersonalSubordinado.getCategoriaOperativa().getCategoria();
             categoriaOF = nuevOBJPersonalSubordinado.getCategoriaOficial().getCategoria();
+            categoria360 = nuevOBJPersonalSubordinado.getCategoria360().getCategoria();
             grado = nuevOBJPersonalSubordinado.getGrado().getGrado();
 
         } catch (Throwable ex) {
@@ -422,11 +433,13 @@ public class ControladorPersonal implements Serializable {
             nuevOBJPersonalSubordinado.setActividad(new Actividades());
             nuevOBJPersonalSubordinado.setCategoriaOficial(new PersonalCategorias());
             nuevOBJPersonalSubordinado.setCategoriaOperativa(new PersonalCategorias());
+            nuevOBJPersonalSubordinado.setCategoria360(new PersonalCategorias());
             nuevOBJPersonalSubordinado.setGrado(new Grados());
 
             nuevOBJPersonalSubordinado.getActividad().setActividad(actividad);
             nuevOBJPersonalSubordinado.getCategoriaOperativa().setCategoria(categoriaOP);
             nuevOBJPersonalSubordinado.getCategoriaOficial().setCategoria(categoriaOF);
+            nuevOBJPersonalSubordinado.getCategoria360().setCategoria(categoria360);
             nuevOBJPersonalSubordinado.getGrado().setGrado(grado);
 
             ejbDatosUsuarioLogeado.actualizarPersonal(nuevOBJPersonalSubordinado);
@@ -603,6 +616,7 @@ public class ControladorPersonal implements Serializable {
             Logger.getLogger(ControladorPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
     public void listaArchivos() {
         try {
             rutasEvidencias.clear();

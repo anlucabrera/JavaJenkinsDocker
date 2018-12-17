@@ -131,9 +131,10 @@ public class ServicioEvaluacionDesempenio implements EjbEvaluacionDesempenio {
     public List<ListaPersonal> getListaSubordinados(ListaPersonal directivo) {
 //        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDesempenio.getListaSubordinados(): " + (directivo.getActividad() == 2));
         if (directivo.getActividad() == 2 || directivo.getActividad() == 4) {
-            TypedQuery<ListaPersonal> q = f.getEntityManager().createQuery("from ListaPersonal lp where (lp.areaOperativa = :areaOperativa and lp.actividad <> 2 and lp.status <> :status) or (lp.areaSuperior = :areaOperativa and lp.status <> :status) or (lp.areaOperativa = :areaOperativa and lp.actividad <> 4 and lp.status <> :status) order by lp.categoriaOperativaNombre, lp.nombre", ListaPersonal.class);
+            TypedQuery<ListaPersonal> q = f.getEntityManager().createQuery("from ListaPersonal lp where (lp.areaOperativa = :areaOperativa and lp.actividad <> 2 and lp.status <> :status and lp.clave <> :dir) or (lp.areaSuperior = :areaOperativa and lp.status <> :status and lp.clave <> :dir) or (lp.areaOperativa = :areaOperativa and lp.actividad <> 4 and lp.status <> :status and lp.clave <> :dir) order by lp.categoriaOperativaNombre, lp.nombre", ListaPersonal.class);
             q.setParameter("areaOperativa", directivo.getAreaOperativa());
             q.setParameter("status", 'B');
+            q.setParameter("dir", directivo.getClave());
             List<ListaPersonal> l = q.getResultList();
             if (l.isEmpty() || l == null) {
                 return null;

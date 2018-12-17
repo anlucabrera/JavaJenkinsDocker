@@ -37,12 +37,6 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Estrategias.findByNombre", query = "SELECT e FROM Estrategias e WHERE e.nombre = :nombre")})
 public class Estrategias implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "estrategia")
-    private Short estrategia;
     @Basic(optional = false)
     @NotNull
     @Column(name = "numero")
@@ -52,6 +46,13 @@ public class Estrategias implements Serializable {
     @Size(min = 1, max = 200)
     @Column(name = "nombre")
     private String nombre;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "estrategia")
+    private Short estrategia;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estrategia")
     private List<CuadroMandoIntegral> cuadroMandoIntegralList;
 
@@ -76,21 +77,6 @@ public class Estrategias implements Serializable {
         this.estrategia = estrategia;
     }
 
-    public short getNumero() {
-        return numero;
-    }
-
-    public void setNumero(short numero) {
-        this.numero = numero;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
 
     @XmlTransient
     public List<CuadroMandoIntegral> getCuadroMandoIntegralList() {
@@ -124,6 +110,22 @@ public class Estrategias implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.pye2.Estrategias[ estrategia=" + estrategia + " ]";
+    }
+
+    public short getNumero() {
+        return numero;
+    }
+
+    public void setNumero(short numero) {
+        this.numero = numero;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
     
 }

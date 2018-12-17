@@ -7,6 +7,7 @@ import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.entity.ch.Cuidados;
 import mx.edu.utxj.pye.sgi.entity.ch.Incapacidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Notificaciones;
@@ -21,25 +22,10 @@ public class ServiciosNotificacionesIncidencias implements EjbNotificacionesInci
     @EJB
     Facade facade;
 
-    @Override
-    public Notificaciones agregarNotificacion(Notificaciones nuevoNotificaciones) throws Throwable {
-        facade.setEntityClass(Notificaciones.class);
-        facade.create(nuevoNotificaciones);
-        facade.flush();
-        return nuevoNotificaciones;
-    }
-
-    @Override
-    public Notificaciones actualizarNotificaciones(Notificaciones nuevoNotificaciones) throws Throwable {
-        facade.setEntityClass(Notificaciones.class);
-        facade.edit(nuevoNotificaciones);
-        facade.flush();
-        return nuevoNotificaciones;
-    }
-
+    // ------------------------------------------------------------- Notificaciones -------------------------------------------------------------
     @Override
     public List<Notificaciones> mostrarListaDenotificacionesPorUsuario(Integer clave) throws Throwable {
-        TypedQuery<Notificaciones> q = em.createQuery("SELECT n FROM Notificaciones n JOIN n.claveTDestino cd JOIN n.claveTRemitente cr WHERE cd.clave=:claveD OR cr.clave=:claveR ", Notificaciones.class);
+        TypedQuery<Notificaciones> q = em.createQuery("SELECT n FROM Notificaciones n JOIN n.claveTDestino cd JOIN n.claveTRemitente cr WHERE cd.clave=:claveD OR cr.clave=:claveR ORDER BY n.fecha DESC ", Notificaciones.class);
         q.setParameter("claveD", clave);
         q.setParameter("claveR", clave);
         List<Notificaciones> pr = q.getResultList();
@@ -47,7 +33,7 @@ public class ServiciosNotificacionesIncidencias implements EjbNotificacionesInci
     }
 
     @Override
-    public List<Notificaciones> mostrarListaDenotificacionesPorUsuariosyEstatus(Integer claveD, Integer claveR, Integer estaus) throws Throwable {
+    public List<Notificaciones> mostrarListaDenotificacionesPorUsuariosyEstatus(Integer claveD, Integer claveR, Integer estaus) {
         TypedQuery<Notificaciones> q = em.createQuery("SELECT n FROM Notificaciones n JOIN n.claveTDestino cd JOIN n.claveTRemitente cr WHERE cd.clave=:claveD AND cr.clave=:claveR AND n.status=:status", Notificaciones.class);
         q.setParameter("claveD", claveD);
         q.setParameter("claveR", claveR);
@@ -66,9 +52,35 @@ public class ServiciosNotificacionesIncidencias implements EjbNotificacionesInci
     }
 
     @Override
+    public Notificaciones agregarNotificacion(Notificaciones nuevoNotificaciones) throws Throwable {
+        facade.setEntityClass(Notificaciones.class);
+        facade.create(nuevoNotificaciones);
+        facade.flush();
+        return nuevoNotificaciones;
+    }
+
+    @Override
+    public Notificaciones actualizarNotificaciones(Notificaciones nuevaNotificacion) {
+        facade.setEntityClass(Notificaciones.class);
+        facade.edit(nuevaNotificacion);
+        facade.flush();
+        return nuevaNotificacion;
+    }
+
+// ------------------------------------------------------------- Incidencias -------------------------------------------------------------
+    @Override
     public List<Incidencias> mostrarIncidenciasTotales() throws Throwable {
         facade.setEntityClass(Incidencias.class);
         return facade.findAll();
+    }
+
+    @Override
+    public List<Incidencias> mostrarIncidenciasArea(Short area) throws Throwable{
+        TypedQuery<Incidencias> q = em.createQuery("SELECT i FROM Incidencias i JOIN i.clavePersonal cp WHERE cp.areaOperativa=:areaOperativa OR cp.areaSuperior=:areaSuperior", Incidencias.class);
+        q.setParameter("areaOperativa", area);
+        q.setParameter("areaSuperior", area);
+        List<Incidencias> pr = q.getResultList();
+        return pr;
     }
 
     @Override
@@ -103,7 +115,7 @@ public class ServiciosNotificacionesIncidencias implements EjbNotificacionesInci
         facade.flush();
         return nuevaIncidencias;
     }
-    
+
     @Override
     public Incidencias eliminarIncidencias(Incidencias nuevaIncidencias) throws Throwable {
         facade.setEntityClass(Incidencias.class);
@@ -111,11 +123,21 @@ public class ServiciosNotificacionesIncidencias implements EjbNotificacionesInci
         facade.flush();
         return nuevaIncidencias;
     }
-    
-     @Override
+// ------------------------------------------------------------- Incapacidad -------------------------------------------------------------
+
+    @Override
     public List<Incapacidad> mostrarIncapacidadTotales() throws Throwable {
         facade.setEntityClass(Incapacidad.class);
         return facade.findAll();
+    }
+
+    @Override
+    public List<Incapacidad> mostrarIncapacidadArea(Short area) throws Throwable{
+        TypedQuery<Incapacidad> q = em.createQuery("SELECT i FROM Incapacidad i JOIN i.clavePersonal cp WHERE cp.areaOperativa=:areaOperativa OR cp.areaSuperior=:areaSuperior", Incapacidad.class);
+        q.setParameter("areaOperativa", area);
+        q.setParameter("areaSuperior", area);
+        List<Incapacidad> pr = q.getResultList();
+        return pr;
     }
 
     @Override
@@ -149,5 +171,61 @@ public class ServiciosNotificacionesIncidencias implements EjbNotificacionesInci
         facade.edit(nuevaIncapacidad);
         facade.flush();
         return nuevaIncapacidad;
+    }
+
+    @Override
+    public Incapacidad eliminarIncapacidad(Incapacidad nuevaIncapacidad) throws Throwable {
+        facade.setEntityClass(Incapacidad.class);
+        facade.remove(nuevaIncapacidad);
+        facade.flush();
+        return nuevaIncapacidad;
+    }
+// ------------------------------------------------------------- Cuidados -------------------------------------------------------------
+
+    @Override
+    public List<Cuidados> mostrarCuidadosTotales() throws Throwable {
+        facade.setEntityClass(Cuidados.class);
+        return facade.findAll();
+    }
+
+    @Override
+    public List<Cuidados> mostrarCuidadosArea(Short area) throws Throwable {
+        TypedQuery<Cuidados> q = em.createQuery("SELECT c FROM Cuidados c JOIN c.personal cp WHERE cp.areaOperativa=:areaOperativa OR cp.areaSuperior=:areaSuperior", Cuidados.class);
+        q.setParameter("areaOperativa", area);
+        q.setParameter("areaSuperior", area);
+        List<Cuidados> pr = q.getResultList();
+        return pr;
+    }
+
+    @Override
+    public List<Cuidados> mostrarCuidados(Integer clave) throws Throwable {
+        TypedQuery<Cuidados> q = em.createQuery("SELECT c FROM Cuidados c JOIN c.personal cp WHERE cp.clave = :clave", Cuidados.class);
+        q.setParameter("clave", clave);
+        List<Cuidados> pr = q.getResultList();
+        return pr;
+    }
+
+    @Override
+    public Cuidados agregarCuidados(Cuidados nuevaCuidados) throws Throwable {
+        facade.setEntityClass(Cuidados.class);
+        facade.create(nuevaCuidados);
+        facade.flush();
+        return nuevaCuidados;
+    }
+
+    @Override
+    public Cuidados actualizarCuidados(Cuidados nuevaCuidados) throws Throwable {
+        facade.setEntityClass(Cuidados.class);
+        facade.edit(nuevaCuidados);
+        facade.flush();
+        return nuevaCuidados;
+    }
+
+    @Override
+    public Cuidados eliminarCuidados(Cuidados nuevaCuidados) throws Throwable {
+        facade.setEntityClass(Cuidados.class);
+        facade.remove(nuevaCuidados);
+        facade.flush();
+        return nuevaCuidados;
     }
 }

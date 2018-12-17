@@ -105,7 +105,7 @@
                                 <c:if test="#{controladorArchivoOrganismosVinculados.etapa eq etapa.MOSTRAR}">
                                     <p:remoteCommand update="@form:formMuestraDatosActivos" name="actualizar"/>
                                     <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parámetros seleccionados: Ejercicio: #{organismosVinculadosC.dtoOrganismosVinculado.anioConsulta} y Mes: #{organismosVinculadosC.dtoOrganismosVinculado.mesConsulta}"
-                                                 paginator="true" 
+                                                 paginator="true" lazy="true"
                                                  rows="10" 
                                                  rowsPerPageTemplate="10,20,30,40,50" 
                                                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
@@ -121,16 +121,18 @@
                                                 <p:column headerText="Tipo de Organización" width="100"/>
                                                 <p:column headerText="Tipo de Empresa" width="130"/>
                                                 <p:column headerText="Giro" width="300"/>
+                                                <p:column headerText="Actividad Principal" width="300"/>
                                                 <p:column headerText="Sector" width="100"/>
                                                 <p:column headerText="Dirección" width="250"/>
-                                                <p:column headerText="País" width="150"/>
-                                                <p:column headerText="Estado" width="250"/>
-                                                <p:column headerText="Municipio" width="250"/>
+                                                <p:column headerText="Localidad" width="80"/>
                                                 <p:column headerText="Codigo Postal" width="100"/>
                                                 <p:column headerText="Representante" width="300"/>
+                                                <p:column headerText="Cargo" width="300"/>
+                                                <p:column headerText="Otro Representante" width="90"/>
                                                 <p:column headerText="Teléfono" width="130"/>
-                                                <p:column headerText="Otro Teléfono" width="130"/>
+                                                <p:column headerText="Otro Teléfono" width="80"/>
                                                 <p:column headerText="Email" width="200"/>
+                                                <p:column headerText="Otro Email" width="80"/>
                                                 <p:column headerText="Convenio" width="80"/>
                                             </p:row>
                                         </p:columnGroup>
@@ -140,7 +142,6 @@
                                                 <p:commandButton class="btn btn-info btn-sm"
                                                                  icon="fa fa-trash"
                                                                  actionListener="#{organismosVinculadosC.eliminarRegistro(orgVinEliminado, organismoVinculado)}"
-                                                                 onsuccess="actualizar();"
                                                                  title="#{organismosVinculadosC.verificarSiTieneConvenio(organismoVinculado.empresa)?'El registro esta ligado al menos a un convenio':'Dar de baja'}"
                                                                  disabled="#{organismosVinculadosC.verificarSiTieneConvenio(organismoVinculado.empresa)}"
                                                                  rendered="#{organismosVinculadosC.dtoOrganismosVinculado.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and organismosVinculadosC.dtoOrganismosVinculado.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
@@ -186,6 +187,10 @@
                                         </p:column>
 
                                         <p:column>
+                                            <h:outputText value="#{organismoVinculado.giroEspecifico}"/>
+                                        </p:column>
+
+                                        <p:column>
                                             <h:outputText value="#{organismoVinculado.sector.descripcion}"/>
                                         </p:column>
 
@@ -193,16 +198,13 @@
                                             <h:outputText value="#{organismoVinculado.direccion}"/>
                                         </p:column>
 
-                                        <p:column>
-                                            <h:outputText value="#{organismoVinculado.pais.nombre}"/>
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{organismoVinculado.municipio.estado.nombre}"/>
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{organismoVinculado.municipio.nombre}"/>
+                                        <p:column style="text-align: center;">
+                                            <div class="btn-group"> 
+                                                <p:commandButton actionListener="#{organismosVinculadosC.abrirUbicacion(organismoVinculado)}" 
+                                                                 class="btn btn-sm btn-info"
+                                                                 icon="fa fa-map"
+                                                                 title="Ubicación."/>
+                                            </div>
                                         </p:column>
 
                                         <p:column>
@@ -210,19 +212,44 @@
                                         </p:column>
 
                                         <p:column>
-                                            <h:outputText value="#{organismoVinculado.representante}"/>
-                                        </p:column>
-
-                                        <p:column >
-                                            <h:outputText value="#{organismoVinculado.telefono}"/>
+                                            <h:outputText value="#{organismoVinculado.representantePrincipal}"/>
                                         </p:column>
 
                                         <p:column>
-                                            <h:outputText value="#{organismoVinculado.telefonoOtro}"/>
+                                            <h:outputText value="#{organismoVinculado.cargoRepresentantePrincipal}"/>
+                                        </p:column>
+
+                                        <p:column style="text-align: center;">
+                                            <div class="btn-group"> 
+                                                <p:commandButton actionListener="#{organismosVinculadosC.abrirRepresentantesSecundarios(organismoVinculado)}"
+                                                                 class="btn btn-sm btn-info"
+                                                                 icon="fa fa-address-book"
+                                                                 title="Otro Representante."/>
+                                            </div>
                                         </p:column>
 
                                         <p:column>
-                                            <h:outputText value="#{organismoVinculado.email}"/>
+                                            <h:outputText value="#{organismoVinculado.telefonoPrincipal}"/>
+                                        </p:column>
+
+                                        <p:column style="text-align: center;">
+                                            <div class="btn-group"> 
+                                                <p:commandButton actionListener="#{organismosVinculadosC.abrirOtrosTelfonos(organismoVinculado)}" class="btn btn-sm btn-info"
+                                                                 icon="fa fa-phone-square"
+                                                                 title="Otro Teléfono."/>
+                                            </div>
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{organismoVinculado.emailPrincipal}"/>
+                                        </p:column>
+
+                                        <p:column style="text-align: center;">
+                                            <div class="btn-group"> 
+                                                <p:commandButton actionListener="#{organismosVinculadosC.abrirOtrosCorreos(organismoVinculado)}" class="btn btn-sm btn-info"
+                                                                 icon="fa fa-at"
+                                                                 title="Otro Email."/>
+                                            </div>
                                         </p:column>
 
                                         <p:column>
@@ -483,6 +510,374 @@
                         </h:form>
                     </p:dialog>
 
+                    <!-- Modal de registro de contactos secundarios de cada organismo vinculado-->
+                    <p:dialog id="modalRepresentantesSecundarios"
+                              widgetVar="modalRepresentantesSecundarios"
+                              width="800"
+                              height="auto"
+                              closeOnEscape="true"
+                              visible="#{organismosVinculadosC.dtoOrganismosVinculado.forzarAperturaDialogo}"
+                              showEffect="fade"
+                              hideEffect="fade"
+                              modal="true" 
+                              draggable="true" 
+                              header="Otros Contactos"
+                              styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h:form id="frmOtroContacto"
+                                        class="form-inline">
+                                    <h:panelGrid columns="2" cellpadding="5">
+                                        <p:outputLabel value="Nombre del representante: " for="nombreRepresentante" />
+                                        <h:inputText id="nombreRepresentante" 
+                                                     label="nombreRepresentante"
+                                                     required="true" 
+                                                     size="50" 
+                                                     class="form-control" 
+                                                     requiredMessage="Por favor ingrese el nombre del representante"
+                                                     value="#{organismosVinculadosC.dtoOrganismosVinculado.contactoEmpresa.representante}"/>
+                                        <p:watermark for="nombreRepresentante" value="Ing. Jesus Santos Picazo *" />
+                                        <p:message for="nombreRepresentante" />
+                                        
+                                        <p:outputLabel value="Cargo del representante: " for="cargoRepresentante" />
+                                        <h:inputText id="cargoRepresentante" 
+                                                     label="cargoRepresentante"
+                                                     required="true" 
+                                                     size="50" 
+                                                     class="form-control"
+                                                     requiredMessage="Por favor ingrese el cargo del representante"
+                                                     value="#{organismosVinculadosC.dtoOrganismosVinculado.contactoEmpresa.cargoRepresentante}"/>
+                                        <p:watermark for="cargoRepresentante" value="Rector *" />
+                                        <p:message for="cargoRepresentante" />
+                                        
+                                        <p:commandButton id="btnGuardaOtroContacto" 
+                                                         value="Guardar" 
+                                                         icon="fa fa-save" 
+                                                         class="btn-primary"
+                                                         actionListener="#{organismosVinculadosC.guardaRepresentanteSecundario()}"/>
+                                    </h:panelGrid>
+                                </h:form>
+                                <p></p>
+                            </div>
+                        </div>
+                        <h:form id="frmRepresentantesSecundarios">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizarRepresentantesSecundarios"
+                                                     update="@form:tblRepresentantesSecundarios" />
+                                    <p:dataTable id="tblRepresentantesSecundarios"
+                                                 value="#{organismosVinculadosC.dtoOrganismosVinculado.listaContactosEmpresas}"
+                                                 var="contactoEmpresa"
+                                                 emptyMessage="No se han encontrado otros contactos en este organismo vinculado"
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Opciones" width="50"/>
+                                                <p:column headerText="Nombre" width="150"/>
+                                                <p:column headerText="Cargo en la empresa" width="150"/>
+                                                <p:column headerText="Empresa" width="150" />
+                                            </p:row>
+                                        </p:columnGroup>
+
+                                        <p:column>
+                                            <div class="btn-group">
+                                                <p:commandButton class="btn btn-danger btn-sm"
+                                                                 icon="fa fa-trash"
+                                                                 actionListener="#{organismosVinculadosC.eliminarRepresentanteSecundario(contactoEmpresa)}"
+                                                                 title="Eliminar contacto">
+                                                    <p:confirm header="Eliminar contacto"
+                                                               message="¿Está seguro que desa eliminar el contacto: #{contactoEmpresa.representante}?"
+                                                               icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:commandButton class="btn btn-sm btn-info"
+                                                                 actionListener="#{organismosVinculadosC.seleccionaRepresentanteSecundario(contactoEmpresa)}"
+                                                                 icon="fa fa-edit"
+                                                                 title="Editar contacto"/>
+                                            </div>
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{contactoEmpresa.representante}" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{contactoEmpresa.cargoRepresentante}" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{contactoEmpresa.empresa.nombre}" />
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    
+                    <!-- Modal de registro de teléfonos secundarios de cada organismo vinculado-->
+                    <p:dialog id="modalOtrosTelefonos"
+                              widgetVar="modalOtrosTelefonos"
+                              width="800"
+                              height="auto"
+                              closeOnEscape="true"
+                              visible="#{organismosVinculadosC.dtoOrganismosVinculado.forzarAperturaDialogo}"
+                              showEffect="fade"
+                              hideEffect="fade"
+                              modal="true" 
+                              draggable="true" 
+                              header="Otros Teléfonos"
+                              styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h:form id="frmOtroTelefono"
+                                        class="form-inline">
+                                    <h:panelGrid columns="2" cellpadding="5">
+                                        <p:outputLabel value="Número Télefonico: " for="otroNumeroTelefonico" />
+                                        <p:inputMask id="otroNumeroTelefonico" 
+                                                     label="otroNumeroTelefonico"
+                                                     required="true" 
+                                                     size="50" 
+                                                     class="form-control" 
+                                                     mask="(999) 999-9999"
+                                                     requiredMessage="Por favor ingrese un número telefónico"
+                                                     value="#{organismosVinculadosC.dtoOrganismosVinculado.telefonoEmpresa.telefonoPrincipal}"/>
+                                        <p:watermark for="otroNumeroTelefonico" value="Ej.- (764) 764-5240 *" />
+                                        <p:message for="otroNumeroTelefonico" />
+                                        <p:commandButton id="btnGuardaOtroTelefono" 
+                                                         value="Guardar" 
+                                                         icon="fa fa-save" 
+                                                         class="btn-primary"
+                                                         actionListener="#{organismosVinculadosC.guardaOtroTelefono()}"/>
+                                    </h:panelGrid>
+                                </h:form>
+                                <p></p>
+                            </div>
+                        </div>
+                        <h:form id="frmOtrosTelefonos">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizarTelefonoSecundario"
+                                                     update="@form:tblTelefonosSecundarios" />
+                                    <p:dataTable id="tblTelefonosSecundarios"
+                                                 value="#{organismosVinculadosC.dtoOrganismosVinculado.listaTelefonosEmpresa}"
+                                                 var="telefonoEmpresa"
+                                                 emptyMessage="No se han encontrado otros teléfonos en este organismo vinculado"
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Opciones" width="50"/>
+                                                <p:column headerText="Número Teléfonico" width="150"/>
+                                                <p:column headerText="Empresa" width="150" />
+                                            </p:row>
+                                        </p:columnGroup>
+
+                                        <p:column>
+                                            <div class="btn-group">
+                                                <p:commandButton class="btn btn-danger btn-sm"
+                                                                 icon="fa fa-trash"
+                                                                 actionListener="#{organismosVinculadosC.eliminarOtroTelefono(telefonoEmpresa)}"
+                                                                 title="Eliminar teléfono">
+                                                    <p:confirm header="Eliminar teléfono"
+                                                               message="¿Está seguro que desa eliminar el teléfono: #{telefonoEmpresa.telefonoPrincipal}?"
+                                                               icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:commandButton class="btn btn-sm btn-info"
+                                                                 actionListener="#{organismosVinculadosC.seleccionaOtroTelefono(telefonoEmpresa)}"
+                                                                 icon="fa fa-edit"
+                                                                 title="Editar teléfono"/>
+                                            </div>
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{telefonoEmpresa.telefonoPrincipal}" />
+                                        </p:column>
+                                        
+                                        <p:column>
+                                            <h:outputText value="#{telefonoEmpresa.empresa.nombre}" />
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    
+                    <!-- Modal de registro de correos electrónicos secundarios de cada organismo vinculado-->
+                    <p:dialog id="modalOtrosCorreos"
+                              widgetVar="modalOtrosCorreos"
+                              width="800"
+                              height="auto"
+                              closeOnEscape="true"
+                              visible="#{organismosVinculadosC.dtoOrganismosVinculado.forzarAperturaDialogo}"
+                              showEffect="fade"
+                              hideEffect="fade"
+                              modal="true" 
+                              draggable="true" 
+                              header="Otros Correos"
+                              styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h:form id="frmOtroCorreo"
+                                        class="form-inline">
+                                    <h:panelGrid columns="2" cellpadding="5">
+                                        <p:outputLabel value="Correo Electrónico " for="otroCorreoElectronico" />
+                                        <p:inputText id="otroCorreoElectronico" required="true" label="otroCorreoElectronico" size="50"
+                                                     requiredMessage="Por favor ingrese un correo electrónico."
+                                                     validatorMessage="Correo electrónico invalido"
+                                                     value="#{organismosVinculadosC.dtoOrganismosVinculado.correoEmpresa.email}">
+                                            <f:validateRegex
+                                                pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                                        </p:inputText>
+                                        
+                                        <p:watermark for="otroCorreoElectronico" value="ejemplo@utxicotepec.edu.mx *" />
+                                        <p:message for="otroCorreoElectronico" />
+                                        
+                                        <p:commandButton id="btnGuardaOtroCorreo" 
+                                                         value="Guardar" 
+                                                         icon="fa fa-save" 
+                                                         class="btn-primary"
+                                                         actionListener="#{organismosVinculadosC.guardaOtroCorreo()}"/>
+                                    </h:panelGrid>
+                                </h:form>
+                                <p></p>
+                            </div>
+                        </div>
+                        <h:form id="frmOtrosCorreos">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizarOtrosCorreos"
+                                                     update="@form:tblOtrosCorreos" />
+                                    <p:dataTable id="tblOtrosCorreos"
+                                                 value="#{organismosVinculadosC.dtoOrganismosVinculado.listaCorreosEmpresa}"
+                                                 var="correoEmpresa"
+                                                 emptyMessage="No se han encontrado otros correos electrónicos en este organismo vinculado"
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Opciones" width="50"/>
+                                                <p:column headerText="Correo electrónico" width="150"/>
+                                                <p:column headerText="Empresa" width="150" />
+                                            </p:row>
+                                        </p:columnGroup>
+
+                                        <p:column>
+                                            <div class="btn-group">
+                                                <p:commandButton class="btn btn-danger btn-sm"
+                                                                 icon="fa fa-trash"
+                                                                 actionListener="#{organismosVinculadosC.eliminarOtroCorreo(correoEmpresa)}"
+                                                                 title="Eliminar correo electrónico">
+                                                    <p:confirm header="Eliminar correo electrónico"
+                                                               message="¿Está seguro que desa eliminar el correo electrónico: #{correoEmpresa.email}?"
+                                                               icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:commandButton class="btn btn-sm btn-info"
+                                                                 actionListener="#{organismosVinculadosC.seleccionaOtroCorreo(correoEmpresa)}"
+                                                                 icon="fa fa-edit"
+                                                                 title="Editar correo electrónico"/>
+                                            </div>
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{correoEmpresa.email}" />
+                                        </p:column>
+                                        
+                                        <p:column>
+                                            <h:outputText value="#{correoEmpresa.empresa.nombre}" />
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    
+                    <!-- Modal de registro de ubicación de cada organismo vinculado-->
+                    <p:dialog id="modalUbicacion" 
+                              widgetVar="modalUbicacion" 
+                              width="900" 
+                              height="auto"  
+                              closeOnEscape="true"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true"
+                              draggable="true" 
+                              header="Ubicación de Organismo Vinculado."
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">                        
+                        <h:form id="frmUbicacion" >
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar>
+                                        <f:facet name="left">
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandButton class="btn btn-primary" value="Guardar Ubicación" actionListener="#{organismosVinculadosC.guardaUbicacion()}" icon="fa fa-save" />
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Organismo Vinculado #{organismosVinculadosC.dtoOrganismosVinculado.registro.organismoVinculado.nombre} " /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                            <c:set var="col1" value="#{'col-md-2'}" />
+                            <c:set var="col2" value="#{'col-md-10'}" />
+                            
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="pais" value="País: "/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="pais" required="true" value="#{organismosVinculadosC.dtoOrganismosVinculado.pais}" valueChangeListener="#{organismosVinculadosC.actualizarEstados}" filter="true" filterPlaceholder="Buscar" filterMatchMode="contains" converter="entidadConverter2">
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{organismosVinculadosC.dtoOrganismosVinculado.paises}" var="pais" itemValue="#{pais}" itemLabel="#{pais.nombre}" itemDescription="#{pais.nombre}" />
+                                        <p:ajax process="pais" update="@form:estado,@form:municipio,@form:localidad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="pais" />
+                                </div>
+                            </div>
+                            
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="estado" value="Estado: "/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="estado" required="true" value="#{organismosVinculadosC.dtoOrganismosVinculado.estado}" valueChangeListener="#{organismosVinculadosC.actualizarMunicipios}" filter="true" filterPlaceholder="Buscar" filterMatchMode="contains" converter="entidadConverter2">
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{organismosVinculadosC.dtoOrganismosVinculado.estados}" var="estado" itemValue="#{estado}" itemLabel="#{estado.nombre}" itemDescription="#{estado.nombre}" />
+                                        <p:ajax process="estado" update="@form:municipio,@form:localidad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="estado" />
+                                </div>
+                            </div>
+                            
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="municipio" value="Municipio: "/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="municipio" required="true" value="#{organismosVinculadosC.dtoOrganismosVinculado.municipio}" valueChangeListener="#{organismosVinculadosC.actualizarLocalidades}" filter="true" filterPlaceholder="Buscar" filterMatchMode="contains" converter="entidadConverter2">
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{organismosVinculadosC.dtoOrganismosVinculado.municipios}" var="municipio" itemValue="#{municipio}" itemLabel="#{municipio.nombre}" itemDescription="#{municipio.nombre}" />
+                                        <p:ajax process="municipio" update="@form:localidad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="municipio" />
+                                </div>
+                            </div>
+                            
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="localidad" value="Localidad: "/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="localidad" required="true" value="#{organismosVinculadosC.dtoOrganismosVinculado.localidad}" filter="true" filterPlaceholder="Buscar" filterMatchMode="contains" converter="entidadConverter2">
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{organismosVinculadosC.dtoOrganismosVinculado.localidades}" var="localidad" itemValue="#{localidad}" itemLabel="#{localidad.nombre}" itemDescription="#{localidad.nombre}" />
+                                        <p:ajax process="localidad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="localidad" />
+                                </div>
+                            </div>
+                            
+                        </h:form>
+                    </p:dialog>
+
                     <!-- Sección de subida -->
                     <div class="row">
                         <div class="col-lg-12 col-md-12">
@@ -508,15 +903,13 @@
                                                         <p:column headerText="Tipo de Organización" width="250"/>
                                                         <p:column headerText="Tipo de Empresa" width="250"/>
                                                         <p:column headerText="Giro" width="200"/>
+                                                        <p:column headerText="Actividad Principal (Giro Específico)" width="250"/>
                                                         <p:column headerText="Sector" width="200"/>
                                                         <p:column headerText="Dirección" width="250"/>
-                                                        <p:column headerText="País" width="200"/>
-                                                        <p:column headerText="Estado" width="250"/>
-                                                        <p:column headerText="Municipio" width="250"/>
                                                         <p:column headerText="Codigo Postal" width="200"/>
                                                         <p:column headerText="Representante" width="300"/>
+                                                        <p:column headerText="Cargo" width="300"/>
                                                         <p:column headerText="Teléfono" width="200"/>
-                                                        <p:column headerText="Otro Teléfono" width="200"/>
                                                         <p:column headerText="Email" width="200"/>
                                                         <p:column headerText="Convenio" width="100"/>
                                                         <p:column/>
@@ -545,6 +938,10 @@
                                                 </p:column>
 
                                                 <p:column>
+                                                    <h:outputText value="#{organismoVinculado.giroEspecifico}"/>
+                                                </p:column>
+
+                                                <p:column>
                                                     <h:outputText value="#{organismoVinculado.sector.descripcion}"/>
                                                 </p:column>
 
@@ -553,35 +950,23 @@
                                                 </p:column>
 
                                                 <p:column>
-                                                    <h:outputText value="#{organismoVinculado.pais.nombre}"/>
-                                                </p:column>
-
-                                                <p:column>
-                                                    <h:outputText value="#{organismoVinculado.municipio.estado.nombre}"/>
-                                                </p:column>
-
-                                                <p:column>
-                                                    <h:outputText value="#{organismoVinculado.municipio.nombre}"/>
-                                                </p:column>
-
-                                                <p:column>
                                                     <h:outputText value="#{organismoVinculado.cp}"/>
                                                 </p:column>
 
                                                 <p:column>
-                                                    <h:outputText value="#{organismoVinculado.representante}"/>
+                                                    <h:outputText value="#{organismoVinculado.representantePrincipal}"/>
                                                 </p:column>
 
                                                 <p:column>
-                                                    <h:outputText value="#{organismoVinculado.telefono}"/>
+                                                    <h:outputText value="#{organismoVinculado.cargoRepresentantePrincipal}"/> 
                                                 </p:column>
 
                                                 <p:column>
-                                                    <h:outputText value="#{organismoVinculado.telefonoOtro}"/>
+                                                    <h:outputText value="#{organismoVinculado.telefonoPrincipal}"/>
                                                 </p:column>
 
                                                 <p:column>
-                                                    <h:outputText value="#{organismoVinculado.email}"/>
+                                                    <h:outputText value="#{organismoVinculado.emailPrincipal}"/>
                                                 </p:column>
 
                                                 <p:column>

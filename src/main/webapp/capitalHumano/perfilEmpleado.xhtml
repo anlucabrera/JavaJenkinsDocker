@@ -103,6 +103,18 @@
                                                     <div class="col-sm-12 border-right">
                                                         <div class="description-block">
                                                             <div class="row">
+                                                                <div class="col-lg-4 col-md-12 col-xs-12">
+                                                                    <div class="small-box bg-aqua-active">
+                                                                        <div class="inner">
+                                                                            <h3>Incidencias</h3>
+                                                                            <p>Registro</p>
+                                                                        </div>
+                                                                        <div class="icon">
+                                                                            <i class="fa fa-clock-o"/>
+                                                                        </div>
+                                                                        <a href="capitalHumano/perfilEmpleadoIn.xhtml" class="small-box-footer">Registrar</a>
+                                                                    </div>
+                                                                </div>
                                                                 <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                                                                     <div class="col-lg-4 col-md-12 col-xs-12">
                                                                         <div class="small-box bg-aqua-active">
@@ -130,20 +142,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </c:if>
-
-                                                                <!--div class="col-lg-4 col-xs-6">
-                                                                    <div class="small-box bg-aqua-active">
-                                                                        <div class="inner">
-                                                                            <h3>Incidencias</h3>
-                                                                            <p>Registro</p>
-                                                                        </div>
-                                                                        <div class="icon">
-                                                                            <i class="fa fa-exclamation-triangle"/>
-                                                                        </div>
-                                                                        <a href="../capitalHumano/perfilEmpleadoIn.xhtml" class="small-box-footer">Incidencias</a>
-                                                                    </div>
-                                                                </div-->
-                                                                <c:if test="#{controladorEmpleadoLogeado.nuevoOBJListaListaPersonal.actividadNombre eq 'Directivo'}">
+                                                                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividad eq 2 || controladorEmpleado.nuevoOBJListaPersonal.actividad eq 4}"> 
                                                                     <div class="col-lg-4 col-md-12 col-xs-12">
                                                                         <div class="small-box bg-aqua-active">
                                                                             <div class="inner">
@@ -157,6 +156,18 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-lg-4 col-md-12 col-xs-12">
+                                                                        <div class="small-box bg-green">
+                                                                            <div class="inner">
+                                                                                <h3>Incidencias</h3>
+                                                                                <p>Validacion</p>
+                                                                            </div>
+                                                                            <div class="icon">
+                                                                                <i class="fa fa-check-square-o"/>
+                                                                            </div>
+                                                                            <a href="capitalHumano/directivos/perfilSubordinadosIn.xhtml" class="small-box-footer">Validar</a>
+                                                                        </div>
+                                                                    </div>     
+                                                                    <div class="col-lg-4 col-md-12 col-xs-12">
                                                                         <div class="small-box bg-blue">
                                                                             <div class="inner">
                                                                                 <h3>Subordinados</h3>
@@ -168,7 +179,7 @@
                                                                             <a href="../capitalHumano/directivos/perfilEmpleadoSubordinados.xhtml" class="small-box-footer">Perfil de subordinados</a>
                                                                         </div>
                                                                     </div>
-                                                                </c:if>
+                                                                </c:if>                                                                
                                                                 <div class="col-lg-4 col-md-12 col-xs-12">
                                                                     <div class="small-box bg-blue">
                                                                         <div class="inner">
@@ -194,7 +205,21 @@
                                                                             <a href="../capitalHumano/perfilEmpleadoExDoc.xhtml" class="small-box-footer">Experiencia docente UTXJ</a>
                                                                         </div>
                                                                     </div>
-                                                                </c:if>                                                                
+                                                                </c:if>   
+                                                                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530}">
+                                                                    <div class="col-lg-4 col-md-12 col-xs-12">
+                                                                        <div class="small-box bg-blue">
+                                                                            <div class="inner">
+                                                                                <h3>Incidencias</h3>
+                                                                                <p>Consulta</p>
+                                                                            </div>
+                                                                            <div class="icon">
+                                                                                <i class="fa fa-file-text-o"/>
+                                                                            </div>
+                                                                            <a href="capitalHumano/personal/perfilPersonalIn.xhtml" class="small-box-footer">Generar Reporte</a>
+                                                                        </div>
+                                                                    </div> 
+                                                                </c:if>      
                                                             </div>
                                                         </div>
                                                     </div>

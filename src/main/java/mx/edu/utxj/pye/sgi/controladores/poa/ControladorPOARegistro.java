@@ -126,7 +126,6 @@ public class ControladorPOARegistro implements Serializable {
                             List<ActividadesPoa> listaActividadesPoasFiltradas = new ArrayList<>();
                             listaActividadesPoasFiltradas.clear();
                             listaActividadesPoasFiltradas = poaSelectec.getActividadesPoasporEstarategias(t, e.getEjess(), ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
-                            Collections.sort(listaActividadesPoasFiltradas, (x, y) -> (x.getNumeroP() + "." + x.getNumeroS()).compareTo(y.getNumeroP() + "." + y.getNumeroS()));
                             listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(t, listaActividadesPoasFiltradas));
                             Collections.sort(listaEstrategiaActividadesesEje, (x, y) -> Short.compare(x.getEstrategias().getEstrategia(), y.getEstrategias().getEstrategia()));
                         });
@@ -496,6 +495,13 @@ public class ControladorPOARegistro implements Serializable {
     }
 
     public void anadirNuavUnidadDeMedida() {
+        if ("Subactividad".equals(tipo)) {
+            if (numeroActividadPrincipal == null || numeroActividadPrincipal == 0) {
+                mensajeValidacion = "La actividad principal no puede quedar vacia";
+                        Ajax.oncomplete("PF('validacion').show();");
+                return;
+            }
+        }
         if (permitirRegistro == true) {
             if (unidadDMedida != null) {
                 if (unidadDMedida == 0) {
@@ -547,6 +553,8 @@ public class ControladorPOARegistro implements Serializable {
             actividadesPoa.setActividadPadre(actividadPoaPrincipal.getActividadPoa());
             actividadesPoa.setCuadroMandoInt(new CuadroMandoIntegral(actividadPoaPrincipal.getCuadroMandoInt().getCuadroMandoInt()));
         }
+        actividadesPoa.setEsPIDE("NO PIDE");
+        actividadesPoa.setActividadPasada(false);
         actividadesPoa.setUnidadMedida(new UnidadMedidas(unidadDMedida));
         actividadesPoa.setArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
         actividadesPoa = poaSelectec.agregarActividadesPoa(actividadesPoa);

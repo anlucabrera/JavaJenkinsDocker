@@ -40,9 +40,7 @@ public class ControladorPOAJustificacion implements Serializable {
     @Getter    @Setter    private List<listaEjesEsLaAp> ejesEsLaAp = new ArrayList<>();
     @Getter    @Setter    private List<listaEjeEstrategia> listaListaEjeEstrategia = new ArrayList<>();
     @Getter    @Setter    private List<listaEstrategiaActividades> listaEstrategiaActividadesesEje = new ArrayList<>();
-    @Getter    @Setter    private List<listaEstrategiaActividades> listaEstrategiaActividadesesEje1 = new ArrayList<>(), listaEstrategiaActividadesesEje2 = new ArrayList<>(), listaEstrategiaActividadesesEje3 = new ArrayList<>(), listaEstrategiaActividadesesEje4 = new ArrayList<>(), listaEstrategiaActividadesesEje5 = new ArrayList<>();
-
-
+    
     @EJB    EjbPoaSelectec poaSelectec;
     @Inject    ControladorEmpleado controladorEmpleado;
 
@@ -86,7 +84,6 @@ public class ControladorPOAJustificacion implements Serializable {
                             List<ActividadesPoa> listaActividadesPoasFiltradas = new ArrayList<>();
                             listaActividadesPoasFiltradas.clear();
                             listaActividadesPoasFiltradas = poaSelectec.getActividadesPoasporEstarategias(t, e.getEjess(), ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
-                            Collections.sort(listaActividadesPoasFiltradas, (x, y) -> (x.getNumeroP() + "." + x.getNumeroS()).compareTo(y.getNumeroP() + "." + y.getNumeroS()));
                             listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(t, listaActividadesPoasFiltradas));
                             Collections.sort(listaEstrategiaActividadesesEje, (x, y) -> Short.compare(x.getEstrategias().getEstrategia(), y.getEstrategias().getEstrategia()));
 
@@ -169,9 +166,6 @@ public class ControladorPOAJustificacion implements Serializable {
     }
 
     public void actualizarNuavActividad() {
-        if (!(actividadesPoa.getDescripcion() == null || "".equals(actividadesPoa.getDescripcion()))) {
-            actividadesPoa.setValidadoSistema(true);
-        }
         actividadesPoa = poaSelectec.actualizaActividadesPoa(actividadesPoa);
         if(alineacionActiva=false){
             consultarListasInit();

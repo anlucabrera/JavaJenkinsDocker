@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.ManagedBean;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
@@ -17,8 +18,10 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbPoaSelectec;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
+import mx.edu.utxj.pye.sgi.entity.ch.Incapacidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
@@ -28,7 +31,9 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Partidas;
 import mx.edu.utxj.pye.sgi.entity.pye2.PretechoFinanciero;
 import mx.edu.utxj.pye.sgi.entity.pye2.RecursosActividad;
+import mx.edu.utxj.pye.sgi.facade.Facade;
 import org.omnifaces.util.Messages;
+import org.primefaces.event.RowEditEvent;
 
 @Named
 @ManagedBean
@@ -71,6 +76,7 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
     @EJB    EjbPoaSelectec poaSelectec;
     @Inject    ControladorEmpleado controladorEmpleado;
     @EJB    EjbAreasLogeo ejbAreasLogeo;
+    @EJB    Facade f;
 
     @PostConstruct
     public void init() {
@@ -90,6 +96,13 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
         System.out.println(" ControladorHabilidadesIIL Fin: " + System.currentTimeMillis());
     }
 
+//     @PreDestroy
+//    public void fin(){
+//        actividadesPoasAreas.forEach((t) -> {
+//            f.getEntityManager().detach(t);
+//        });
+//    }
+    
     public void consultarListas() {
         try {
             actividadesPoasAreasConRegistros.clear();
@@ -171,7 +184,6 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
                             List<ActividadesPoa> listaActividadesPoasFiltradas = new ArrayList<>();
                             listaActividadesPoasFiltradas.clear();
                             listaActividadesPoasFiltradas = poaSelectec.getActividadesPoasporEstarategias(t, e.getEjess(), ejercicioFiscal, claveArea);
-                            Collections.sort(listaActividadesPoasFiltradas, (x, y) -> (x.getNumeroP() + "." + x.getNumeroS()).compareTo(y.getNumeroP() + "." + y.getNumeroS()));
                             listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(t, listaActividadesPoasFiltradas));
                             Collections.sort(listaEstrategiaActividadesesEje, (x, y) -> Short.compare(x.getEstrategias().getEstrategia(), y.getEstrategias().getEstrategia()));
 
@@ -401,12 +413,27 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
         }
     }
 
+       public void onRowEditAc(RowEditEvent event) {
+        try {
+            ActividadesPoa ap = (ActividadesPoa) event.getObject();
+            poaSelectec.actualizaActividadesPoa(ap);            
+            consultarListasValidacionFinal();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
+     public void onRowCancel(RowEditEvent event) {
+        Messages.addGlobalInfo("¡Operación cancelada!");
+    }
     
-    public void validarPlaneacion(ActividadesPoa actividadesPoa) {
-        actividadesPoa.setValidadoPyE(!actividadesPoa.getValidadoPyE());
-        poaSelectec.actualizaActividadesPoa(actividadesPoa);
-        consultarListasValidacionFinal();
+    public void validarPlaneacion() {
+         actividadesPoasAreas.forEach((t) -> {
+            t.setValidadoPyE(true);
+            poaSelectec.actualizaActividadesPoa(t);
+        });
+        liberado=true;
     }
 
     public void validarFinanzas(ActividadesPoa actividadesPoa) {

@@ -115,7 +115,7 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
     @EJB EJBSelectItems eJBSelectItems;
     @PostConstruct
     public void init() {
-
+try {
         if (logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
 //            if (!eJBAdministracionEncuestas.esDirectorDeCarrera(Short.parseShort("28"), 2, 18, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
             if(logonMB.getPersonal().getCategoriaOperativa().getCategoria() == 18 && logonMB.getPersonal().getAreaSuperior() == 2){
@@ -162,6 +162,11 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
 //        selectItemPeriodoDesempenio = eJBSelectItems.itemPeriodosDesempenio();
         selectItemPeriodo360 = eJBSelectItems.itemsPeriodos360();
         periodoEscolar= eJBAdministracionEncuestas.getPeriodoActual();
+
+        } catch (Exception e) {
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionControlInterno.init() e: " + e.getMessage());
+        }
+
     }
 
     public void obtenerPeriodosPorEvaluacion() {

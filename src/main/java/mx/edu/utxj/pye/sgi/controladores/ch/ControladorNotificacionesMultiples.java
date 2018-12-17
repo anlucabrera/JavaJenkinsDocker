@@ -58,16 +58,17 @@ public class ControladorNotificacionesMultiples implements Serializable {
             if ("".equals(menajeNot) || "".equals(nombreO) || "".equals(tipo)) {
 
             } else {
+                nuevOBJNotificaciones = new Notificaciones();
                 nuevOBJNotificaciones.setClaveTDestino(new Personal());
                 nuevOBJNotificaciones.setClaveTRemitente(new Personal());
                 listaListaPersonal.clear();
-                nuevOBJNotificaciones = new Notificaciones();
                 nuevOBJNotificaciones.setMensaje(menajeNot);
-                nuevOBJNotificaciones.getClaveTRemitente().setClave(usuario);
+                nuevOBJNotificaciones.setClaveTRemitente(new Personal(usuario));
                 nuevOBJNotificaciones.setStatus(0);
                 nuevOBJNotificaciones.setFecha(fechaActual);
                 switch (tipo) {
                     case "Categoria":
+                        nuevOBJNotificaciones.setTipo(1);
                         listaListaPersonal.clear();
                         listaListaPersonal = ejbSelectec.mostrarListaPersonalPorCategoria(nombreO);
                         for (int i = 0; i <= listaListaPersonal.size() - 1; i++) {
@@ -79,6 +80,7 @@ public class ControladorNotificacionesMultiples implements Serializable {
                         Messages.addGlobalInfo("Mensaje enviado a los empleados con la categoría/puesto: " + nombreO);
                         break;
                     case "Actividad":
+                        nuevOBJNotificaciones.setTipo(2);
                         listaListaPersonal.clear();
                         listaListaPersonal = ejbSelectec.mostrarListaPersonalPorActividad(nombreO);
                         for (int i = 0; i <= listaListaPersonal.size() - 1; i++) {
@@ -90,6 +92,7 @@ public class ControladorNotificacionesMultiples implements Serializable {
                         Messages.addGlobalInfo("Mensaje enviado a los empleados con la actividad: " + nombreO);
                         break;
                     case "Area":
+                        nuevOBJNotificaciones.setTipo(3);
                         listaListaPersonal.clear();
                         listaListaPersonal = ejbSelectec.mostrarListaPersonalPorAreaOpySu(nombreO);
                         for (int i = 0; i <= listaListaPersonal.size() - 1; i++) {
@@ -101,12 +104,13 @@ public class ControladorNotificacionesMultiples implements Serializable {
                         Messages.addGlobalInfo("Mensaje enviado a los empleados del área: " + nombreO);
                         break;
                     case "Personal":
+                        nuevOBJNotificaciones.setTipo(4);
                         listaListaPersonal.clear();
                         listaListaPersonal = ejbSelectec.mostrarListaDeEmpleadosN(nombreO);
                         for (int i = 0; i <= listaListaPersonal.size() - 1; i++) {
                             nuevoOBJListaPersonal = new ListaPersonal();
                             nuevoOBJListaPersonal = listaListaPersonal.get(i);
-                            nuevOBJNotificaciones.getClaveTDestino().setClave(nuevoOBJListaPersonal.getClave());
+                            nuevOBJNotificaciones.setClaveTDestino(new Personal(nuevoOBJListaPersonal.getClave()));
                             nuevOBJNotificaciones = ejbCreate.agregarNotificacion(nuevOBJNotificaciones);
                         }
                         Messages.addGlobalInfo("Mensaje enviado a:" + nombreO);

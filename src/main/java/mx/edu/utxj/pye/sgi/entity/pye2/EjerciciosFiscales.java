@@ -35,16 +35,17 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "EjerciciosFiscales.findByAnio", query = "SELECT e FROM EjerciciosFiscales e WHERE e.anio = :anio")})
 public class EjerciciosFiscales implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "anio")
+    private short anio;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "ejercicio_fiscal")
     private Short ejercicioFiscal;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "anio")
-    private short anio;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejerciciosFiscales")
     private List<Productos> productosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejerciciosFiscales")
@@ -76,13 +77,6 @@ public class EjerciciosFiscales implements Serializable {
         this.ejercicioFiscal = ejercicioFiscal;
     }
 
-    public short getAnio() {
-        return anio;
-    }
-
-    public void setAnio(short anio) {
-        this.anio = anio;
-    }
 
     @XmlTransient
     public List<Productos> getProductosList() {
@@ -152,6 +146,14 @@ public class EjerciciosFiscales implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.pye2.EjerciciosFiscales[ ejercicioFiscal=" + ejercicioFiscal + " ]";
+    }
+
+    public short getAnio() {
+        return anio;
+    }
+
+    public void setAnio(short anio) {
+        this.anio = anio;
     }
     
 }

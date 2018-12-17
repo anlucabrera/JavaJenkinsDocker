@@ -23,11 +23,20 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.pye2.ContactosEmpresa;
+import mx.edu.utxj.pye.sgi.entity.pye2.CorreosEmpresa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
+import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.sgi.entity.pye2.Localidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.LocalidadPK;
+import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
+import mx.edu.utxj.pye.sgi.entity.pye2.MunicipioPK;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
+import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
+import mx.edu.utxj.pye.sgi.entity.pye2.TelefonosEmpresa;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.vin.DtoOrganismosVinculados;
@@ -66,7 +75,19 @@ public class ControladorOrganismosVinculados implements Serializable {
     public void init() {
         dtoOrganismosVinculado = new DtoOrganismosVinculados();
         dtoOrganismosVinculado.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        inicializarUbicacion();
         filtros();
+    }
+    
+    public void inicializarUbicacion(){
+        dtoOrganismosVinculado.setPais(new Pais(42));
+        dtoOrganismosVinculado.setEstado(new Estado(21));
+        dtoOrganismosVinculado.setMunicipio(new Municipio(new MunicipioPK(21, 197)));
+        dtoOrganismosVinculado.setLocalidad(new Localidad(new LocalidadPK(21,191,1)));
+        dtoOrganismosVinculado.setPaises(ejbFiscalizacion.getPaises());
+        dtoOrganismosVinculado.setEstados(ejbFiscalizacion.getEstadosPorPais(dtoOrganismosVinculado.getPais()));
+        dtoOrganismosVinculado.setMunicipios(ejbFiscalizacion.getMunicipiosPorEstado(dtoOrganismosVinculado.getEstado()));
+        dtoOrganismosVinculado.setLocalidades(ejbFiscalizacion.getLocalidadesPorMunicipio(dtoOrganismosVinculado.getMunicipio()));
     }
 
     public void listaOrganismosVinculadosPrevia(String rutaArchivo) {
@@ -156,9 +177,6 @@ public class ControladorOrganismosVinculados implements Serializable {
     public void eliminarRegistro(Integer registro, OrganismosVinculados orgVin) {
         try {
             ejbOrganismosVinculados.bajaOrganismoVinculado(orgVin);
-            
-//            ejbModulos.eliminarEvidenciasEnRegistroGeneral(registro, ejbModulos.getListaEvidenciasPorRegistro(registro));
-//            ejbModulos.eliminarRegistro(registro);
             filtros();
         } catch (Throwable ex) {
             Logger.getLogger(ControladorOrganismosVinculados.class.getName()).log(Level.SEVERE, null, ex);
@@ -364,6 +382,270 @@ public class ControladorOrganismosVinculados implements Serializable {
     
     public Boolean verificarSiTieneConvenio(Integer empresa){
         return ejbConvenios.verificaConvenio(empresa);
+    }
+    
+    public void forzarAperturaRepresentantesSecundario(){
+        if(dtoOrganismosVinculado.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalRepresentantesSecundarios').show();");
+            dtoOrganismosVinculado.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void consultaRepresentantesSecundario(){
+        dtoOrganismosVinculado.setListaContactosEmpresas(ejbOrganismosVinculados.consultaContactosEmpresa(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado()));
+    }
+    
+    public void actualizaInterfazRepresentanteSecundario(){
+        Ajax.update("frmRepresentantesSecundarios");
+        Ajax.update("frmOtroContacto");
+        Ajax.oncomplete("skin();");
+        dtoOrganismosVinculado.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaRepresentantesSecundario(); 
+    }
+    
+    public void abrirRepresentantesSecundarios(OrganismosVinculados organismosVinculados){
+        DTOOrganismoVinculado registro = new DTOOrganismoVinculado();
+        registro.setOrganismoVinculado(organismosVinculados);
+        dtoOrganismosVinculado.setRegistro(registro);
+        consultaRepresentantesSecundario();
+        actualizaInterfazRepresentanteSecundario();
+    }
+    
+    public void guardaRepresentanteSecundario() {
+        if (dtoOrganismosVinculado.getContactoEmpresa().getContactoEmpresa() != null) {
+            ejbOrganismosVinculados.editaContactoEmpresa(dtoOrganismosVinculado.getContactoEmpresa());
+            dtoOrganismosVinculado.setContactoEmpresa(new ContactosEmpresa());
+            Messages.addGlobalInfo("El contacto se editó de manera correcta");
+            abrirRepresentantesSecundarios(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
+        } else {
+            dtoOrganismosVinculado.getContactoEmpresa().setEmpresa(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
+            if (ejbOrganismosVinculados.guardarContactoEmpresa(dtoOrganismosVinculado.getContactoEmpresa())) {
+                dtoOrganismosVinculado.setContactoEmpresa(new ContactosEmpresa());
+                Messages.addGlobalInfo("El contacto se agregó de manera correcta.");
+                abrirRepresentantesSecundarios(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
+            } else {
+                Messages.addGlobalInfo("El contacto no se ha guardado en la base de datos.");
+            }
+        }
+    }
+    
+    public void eliminarRepresentanteSecundario(ContactosEmpresa contactoEmpresa){
+        Boolean eliminado = ejbOrganismosVinculados.eliminarContactoEmpresa(contactoEmpresa);
+        if(eliminado){
+            abrirRepresentantesSecundarios(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
+            Messages.addGlobalInfo("El contacto se ha eliminado de la base de datos.");
+        }else{
+            Messages.addGlobalInfo("El contacto no se ha eliminado de la base de datos.");
+        }
+    }
+    
+    public void seleccionaRepresentanteSecundario(ContactosEmpresa contactoEmpresa) {
+        dtoOrganismosVinculado.setContactoEmpresa(contactoEmpresa);
+        abrirRepresentantesSecundarios(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
+    }
+    
+    public void forzarAperturaOtrosCorreos(){
+        if(dtoOrganismosVinculado.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalOtrosCorreos').show();");
+            dtoOrganismosVinculado.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void consultaOtrosCorreos(){
+        dtoOrganismosVinculado.setListaCorreosEmpresa(ejbOrganismosVinculados.consultaCorreosEmpresa(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado()));
+    }
+    
+    public void actualizaInterfazCorreo(){
+        Ajax.update("frmOtrosCorreos");
+        Ajax.update("frmOtroCorreo");
+        Ajax.oncomplete("skin();");
+        dtoOrganismosVinculado.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaOtrosCorreos(); 
+    }
+    
+    public void abrirOtrosCorreos(OrganismosVinculados organismosVinculados){
+        DTOOrganismoVinculado registro = new DTOOrganismoVinculado();
+        registro.setOrganismoVinculado(organismosVinculados);
+        dtoOrganismosVinculado.setRegistro(registro);
+        consultaOtrosCorreos();
+        actualizaInterfazCorreo();
+    }
+     
+    public void guardaOtroCorreo() {
+        if (dtoOrganismosVinculado.getCorreoEmpresa().getCorreoEmpresa()!= null) {
+            ejbOrganismosVinculados.editaCorreoEmpresa(dtoOrganismosVinculado.getCorreoEmpresa());
+            dtoOrganismosVinculado.setCorreoEmpresa(new CorreosEmpresa());
+            Messages.addGlobalInfo("El correo electrónico se editó de manera correcta");
+            abrirOtrosCorreos(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
+            
+        } else {
+            dtoOrganismosVinculado.getCorreoEmpresa().setEmpresa(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
+            if (ejbOrganismosVinculados.guardarCorreoEmpresa(dtoOrganismosVinculado.getCorreoEmpresa())) {
+                dtoOrganismosVinculado.setCorreoEmpresa(new CorreosEmpresa());
+                Messages.addGlobalInfo("El correo electrónico se agregó de manera correcta.");
+                abrirOtrosCorreos(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
+            } else {
+                Messages.addGlobalInfo("El correo electrónico no se ha guardado en la base de datos.");
+            }
+        }
+    }
+    
+    public void eliminarOtroCorreo(CorreosEmpresa correoEmpresa){
+        Boolean eliminado = ejbOrganismosVinculados.eliminarCorreoEmpresa(correoEmpresa);
+        if(eliminado){
+            abrirOtrosCorreos(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
+            Messages.addGlobalInfo("El contacto se ha eliminado de la base de datos.");
+        }else{
+            Messages.addGlobalInfo("El contacto no se ha eliminado de la base de datos.");
+        }
+    }
+    
+    public void seleccionaOtroCorreo(CorreosEmpresa correoEmpresa) {
+        dtoOrganismosVinculado.setCorreoEmpresa(correoEmpresa);
+        abrirOtrosCorreos(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
+    }
+    
+    public void forzarAperturaOtrosTelefonos(){
+        if(dtoOrganismosVinculado.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalOtrosTelefonos').show();");
+            dtoOrganismosVinculado.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void consultaOtrosTelefonos(){
+        dtoOrganismosVinculado.setListaTelefonosEmpresa(ejbOrganismosVinculados.consultaTelefonosEmpresa(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado()));
+    }
+    
+    public void actualizaInterfazTelefonos(){
+        Ajax.update("frmOtrosTelefonos");
+        Ajax.update("frmOtroTelefono");
+        Ajax.oncomplete("skin();");
+        dtoOrganismosVinculado.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaOtrosTelefonos(); 
+    }
+    
+    public void abrirOtrosTelfonos(OrganismosVinculados organismosVinculados){
+        DTOOrganismoVinculado registro = new DTOOrganismoVinculado();
+        registro.setOrganismoVinculado(organismosVinculados);
+        dtoOrganismosVinculado.setRegistro(registro);
+        consultaOtrosTelefonos();
+        actualizaInterfazTelefonos();
+    }
+     
+    public void guardaOtroTelefono() {
+        if (dtoOrganismosVinculado.getTelefonoEmpresa().getTelefonoEmpresa()!= null) {
+            ejbOrganismosVinculados.editaTelefonoEmpresa(dtoOrganismosVinculado.getTelefonoEmpresa());
+            dtoOrganismosVinculado.setTelefonoEmpresa(new TelefonosEmpresa());
+            Messages.addGlobalInfo("El número télefononico se editó de manera correcta");
+            abrirOtrosTelfonos(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
+            
+        } else {
+            dtoOrganismosVinculado.getTelefonoEmpresa().setEmpresa(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
+            if (ejbOrganismosVinculados.guardaTelefonoEmpresa(dtoOrganismosVinculado.getTelefonoEmpresa())) {
+                dtoOrganismosVinculado.setTelefonoEmpresa(new TelefonosEmpresa());
+                Messages.addGlobalInfo("El número telefonico se agregó de manera correcta.");
+                abrirOtrosTelfonos(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
+            } else {
+                Messages.addGlobalInfo("El número telefonico no se ha guardado en la base de datos.");
+            }
+        }
+    }
+    
+    public void eliminarOtroTelefono(TelefonosEmpresa telefonoEmpresa){
+        Boolean eliminado = ejbOrganismosVinculados.eliminarTelefonoEmpresa(telefonoEmpresa);
+        if(eliminado){
+            abrirOtrosTelfonos(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
+            Messages.addGlobalInfo("El número telefonico se ha eliminado de la base de datos.");
+        }else{
+            Messages.addGlobalInfo("El número telefonico no se ha eliminado de la base de datos.");
+        }
+    }
+    
+    public void seleccionaOtroTelefono(TelefonosEmpresa telefonoEmpresa) {
+        dtoOrganismosVinculado.setTelefonoEmpresa(telefonoEmpresa);
+        abrirOtrosTelfonos(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
+    }
+    
+    public void actualizarEstados(ValueChangeEvent event){
+        dtoOrganismosVinculado.setPais((Pais)event.getNewValue());
+        dtoOrganismosVinculado.setEstados(ejbFiscalizacion.getEstadosPorPais(dtoOrganismosVinculado.getPais()));
+        if(dtoOrganismosVinculado.getPais().getIdpais()!=42){
+            dtoOrganismosVinculado.setMunicipio(null);
+            dtoOrganismosVinculado.setLocalidad(null);
+        }
+        Faces.setSessionAttribute("estados", dtoOrganismosVinculado.getEstados());
+    }
+    
+    public void actualizarMunicipios(ValueChangeEvent event){
+        dtoOrganismosVinculado.setEstado((Estado)event.getNewValue());
+        dtoOrganismosVinculado.setMunicipios(ejbFiscalizacion.getMunicipiosPorEstado(dtoOrganismosVinculado.getEstado()));
+        Faces.setSessionAttribute("municipios", dtoOrganismosVinculado.getMunicipios());
+        dtoOrganismosVinculado.setLocalidad(null);
+    }
+    
+    public void actualizarLocalidades(ValueChangeEvent event){
+        dtoOrganismosVinculado.setMunicipio((Municipio)event.getNewValue());
+        dtoOrganismosVinculado.setLocalidades(ejbFiscalizacion.getLocalidadesPorMunicipio(dtoOrganismosVinculado.getMunicipio()));
+        Faces.setSessionAttribute("localidades", dtoOrganismosVinculado.getLocalidades());
+    }
+
+    public void cargarUbicacionXOrganismo(){
+        if(dtoOrganismosVinculado.getLocalidad() != null && dtoOrganismosVinculado.getPais()!= null){
+            dtoOrganismosVinculado.setPaises(ejbFiscalizacion.getPaises());
+            dtoOrganismosVinculado.setPais(dtoOrganismosVinculado.getPais());
+            Faces.setSessionAttribute("paises", dtoOrganismosVinculado.getPaises());
+            
+            dtoOrganismosVinculado.setEstados(ejbFiscalizacion.getEstadosPorPais(dtoOrganismosVinculado.getPais()));
+            dtoOrganismosVinculado.setEstado(dtoOrganismosVinculado.getLocalidad().getMunicipio().getEstado());
+            Faces.setSessionAttribute("estados", dtoOrganismosVinculado.getEstados());
+            
+            dtoOrganismosVinculado.setMunicipios(ejbFiscalizacion.getMunicipiosPorEstado(dtoOrganismosVinculado.getEstado()));
+            dtoOrganismosVinculado.setMunicipio(dtoOrganismosVinculado.getLocalidad().getMunicipio());
+            Faces.setSessionAttribute("municipios", dtoOrganismosVinculado.getMunicipios());
+            
+            dtoOrganismosVinculado.setLocalidades(ejbFiscalizacion.getLocalidadesPorMunicipio(dtoOrganismosVinculado.getMunicipio()));;
+            Faces.setSessionAttribute("localidades", dtoOrganismosVinculado.getLocalidades());
+            
+        }else{
+            dtoOrganismosVinculado.setPais(null);
+            dtoOrganismosVinculado.nulificarPais();
+        }
+    }
+    
+    public void abrirUbicacion(OrganismosVinculados organismoVinculado){
+        try {
+            DTOOrganismoVinculado dtoOrgVin = new DTOOrganismoVinculado();
+            dtoOrgVin.setOrganismoVinculado(organismoVinculado);
+            dtoOrganismosVinculado.setRegistro(dtoOrgVin);
+            if(ejbOrganismosVinculados.getPaisOrganismoVinculado(organismoVinculado) == null){
+                inicializarUbicacion();
+            }else{
+                dtoOrganismosVinculado.setPais(ejbOrganismosVinculados.getPaisOrganismoVinculado(organismoVinculado));
+                dtoOrganismosVinculado.setLocalidad(ejbOrganismosVinculados.getLocalidadOrganismoVinculado(organismoVinculado));
+                cargarUbicacionXOrganismo();
+            }
+            Ajax.update("frmUbicacion");
+            Ajax.oncomplete("skin();");
+            Ajax.oncomplete("PF('modalUbicacion').show();");
+        } catch (Throwable e) {
+            Logger.getLogger(ControladorOrganismosVinculados.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+    
+    public void guardaUbicacion(){
+        Boolean actualizado = ejbOrganismosVinculados.guardaUbicacion(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado(), dtoOrganismosVinculado.getPais(), dtoOrganismosVinculado.getEstado(), dtoOrganismosVinculado.getMunicipio(), dtoOrganismosVinculado.getLocalidad());
+        if(actualizado){
+            abrirUbicacion(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
+            Messages.addGlobalInfo("La ubicación se guardó de manera correcta.");
+        }else Messages.addGlobalError("La ubicación no se pudo guardar.");
+    }
+    
+    public void eliminarUbicacion(){
+        Boolean eliminado = ejbOrganismosVinculados.eliminaUbicacion(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
+        if(eliminado){
+            abrirUbicacion(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
+            Messages.addGlobalInfo("La ubicación se eliminó de manera correcta.");
+        }else Messages.addGlobalError("La ubicación no se pudo eliminar.");
     }
     
 }

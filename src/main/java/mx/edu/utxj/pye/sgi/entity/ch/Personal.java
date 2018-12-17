@@ -138,6 +138,8 @@ public class Personal implements Serializable {
     @Size(max = 200)
     @Column(name = "correo_electronico2")
     private String correoElectronico2;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
+    private List<Cuidados> cuidadosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
     private List<Incapacidad> incapacidadList;
     @JoinColumn(name = "categoria_360", referencedColumnName = "categoria")
@@ -844,5 +846,13 @@ public class Personal implements Serializable {
     public void setIncapacidadList(List<Incapacidad> incapacidadList) {
         this.incapacidadList = incapacidadList;
     }
+    
+      @XmlTransient
+    public List<Cuidados> getCuidadosList() {
+        return cuidadosList;
+    }
 
+    public void setCuidadosList(List<Cuidados> cuidadosList) {
+        this.cuidadosList = cuidadosList;
+    }
 }

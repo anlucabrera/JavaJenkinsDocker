@@ -1,6 +1,7 @@
 package mx.edu.utxj.pye.sgi.controladores.poa;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -144,7 +145,6 @@ public class ControladorPOARecurso implements Serializable {
                                         recursosActividadsP.clear();
                                     });
                                 }
-                                Collections.sort(listaRecursoActividadeses, (x, y) -> (x.getActividadesPoa1().getNumeroP() + "." + x.getActividadesPoa1().getNumeroS()).compareTo(y.getActividadesPoa1().getNumeroP() + "." + y.getActividadesPoa1().getNumeroS()));
                                 accionListaActividads.add(new lineasAccionListaActividad(li, listaRecursoActividadeses));
                                 listaRecursoActividadeses = new ArrayList<>();
                                 listaRecursoActividadeses.clear();
@@ -211,7 +211,6 @@ public class ControladorPOARecurso implements Serializable {
                         recursosActividadsP.clear();
                     });
                 }
-                Collections.sort(listaRecursoActividadeses, (x, y) -> (x.getActividadesPoa1().getNumeroP() + "." + x.getActividadesPoa1().getNumeroS()).compareTo(y.getActividadesPoa1().getNumeroP() + "." + y.getActividadesPoa1().getNumeroS()));
                 accionListaActividads.add(new lineasAccionListaActividad(li, listaRecursoActividadeses));
                 listaRecursoActividadeses = new ArrayList<>();
                 listaRecursoActividadeses.clear();

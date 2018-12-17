@@ -104,34 +104,33 @@
                                             </p:outputPanel>
                                         </div>
                                         <div class="row">
-
-                                            <hr/>
-                                            <p:outputPanel>            
-                                                <p:autoUpdate/>
-                                                <p:commandButton value="Ene" id="mes0" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('01')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 0?true:false:false}"/>
-                                                <p:commandButton value="Feb" id="mes1" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('02')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 1?true:false:false}"/>
-                                                <p:commandButton value="Mar" id="mes2" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('03')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 2?true:false:false}"/>
-                                                <p:commandButton value="Abr" id="mes3" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('04')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 3?true:false:false}"/>
-                                                <p:commandButton value="May" id="mes4" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('05')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 4?true:false:false}"/>
-                                                <p:commandButton value="Jun" id="mes5" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('06')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 5?true:false:false}"/>
-                                                <p:commandButton value="Jul" id="mes6" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('07')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 6?true:false:false}"/>
-                                                <p:commandButton value="Ago" id="mes7" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('08')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 7?true:false:false}"/>
-                                                <p:commandButton value="Sep" id="mes8" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('09')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 8?true:false:false}"/>
-                                                <p:commandButton value="Oct" id="mes9" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('10')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 9?true:false:false}"/>
-                                                <p:commandButton value="Nob" id="mes10" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('11')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 10?true:false:false}"/>
-                                                <p:commandButton value="Dic" id="mes11" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('12')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 11?true:false:false}"/>
-                                            </p:outputPanel>
-                                            <div class="row">
-                                                <div class="col-lg-12 col-xs-12">
-                                                    <p:outputLabel for="area" value="Área" />
-                                                    <p:selectOneMenu filter="true" filterMatchMode="contains" id="area" style="height:100%; width: 100%; object-fit: contain; font-size: large" widgetVar="area" value="#{controladorIncidenciasGeneral.area}" valueChangeListener="#{controladorIncidenciasGeneral.numeroAreaAsiganado}">
-                                                        <f:selectItem itemValue="#{0}" itemLabel="Todas las áreas"/>
-                                                        <f:selectItems value="#{controladorIncidenciasGeneral.listaAreasUniversidads}" var="area" itemValue="#{area.area}" itemLabel="#{area.area} -- #{area.nombre}" />
-                                                        <p:ajax update="reportes" process="@this"/>
-                                                    </p:selectOneMenu>
-                                                    <p:message for="area" />
-                                                    <hr/>
-                                                </div>    
+                                            <div class="col-lg-12 col-xs-12">
+                                                <hr/>
+                                                <p:outputPanel>            
+                                                    <p:autoUpdate/>
+                                                    <p:commandButton value="Ene" id="mes0" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('01')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 0?true:false:false}"/>
+                                                    <p:commandButton value="Feb" id="mes1" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('02')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 1?true:false:false}"/>
+                                                    <p:commandButton value="Mar" id="mes2" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('03')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 2?true:false:false}"/>
+                                                    <p:commandButton value="Abr" id="mes3" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('04')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 3?true:false:false}"/>
+                                                    <p:commandButton value="May" id="mes4" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('05')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 4?true:false:false}"/>
+                                                    <p:commandButton value="Jun" id="mes5" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('06')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 5?true:false:false}"/>
+                                                    <p:commandButton value="Jul" id="mes6" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('07')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 6?true:false:false}"/>
+                                                    <p:commandButton value="Ago" id="mes7" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('08')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 7?true:false:false}"/>
+                                                    <p:commandButton value="Sep" id="mes8" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('09')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 8?true:false:false}"/>
+                                                    <p:commandButton value="Oct" id="mes9" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('10')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 9?true:false:false}"/>
+                                                    <p:commandButton value="Nov" id="mes10" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('11')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 10?true:false:false}"/>
+                                                    <p:commandButton value="Dic" id="mes11" actionListener="#{controladorIncidenciasGeneral.mostrarIncidencias('12')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update="reportes" disabled="#{controladorIncidenciasGeneral.anioNumero eq (controladorIncidenciasGeneral.fechaActual.year-100)?controladorIncidenciasGeneral.fechaActual.month lt 11?true:false:false}"/>
+                                                </p:outputPanel>
+                                            </div>
+                                            <div class="col-lg-12 col-xs-12">
+                                                <p:outputLabel for="area" value="Área" />
+                                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="area" style="height:100%; width: 100%; object-fit: contain; font-size: large" widgetVar="area" value="#{controladorIncidenciasGeneral.area}" valueChangeListener="#{controladorIncidenciasGeneral.numeroAreaAsiganado}">
+                                                    <f:selectItem itemValue="#{0}" itemLabel="Todas las áreas"/>
+                                                    <f:selectItems value="#{controladorIncidenciasGeneral.listaAreasUniversidads}" var="area" itemValue="#{area.area}" itemLabel="#{area.area} -- #{area.nombre}" />
+                                                    <p:ajax update="reportes" process="@this"/>
+                                                </p:selectOneMenu>
+                                                <p:message for="area" />
+                                                <hr/>
                                             </div>
                                         </div>
                                     </p:outputPanel>
@@ -166,36 +165,46 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </p:outputPanel>   
+                                                    </p:outputPanel>  
+                                                    <p:remoteCommand name="actualizarTabla" actionListener="#{controladorIncidenciasGeneral.imprimirValores()}" update="tblActividades" /> 
                                                     <p:dataTable id="tblActividades"  value="#{controladorIncidenciasGeneral.listaIncidencias}"  var="incidencia"
-                                                                 sortBy="#{incidencia.clavePersonal.areaOperativa}" expandableRowGroups="true"
+                                                                 sortBy="#{incidencia.clavePersonal.actividad.actividad eq 1?incidencia.clavePersonal.areaOperativa:incidencia.clavePersonal.areaSuperior}" expandableRowGroups="true"
                                                                  emptyMessage="No se encontraron Registros." rendered="true">
                                                         <p:headerRow>
-                                                            <p:column colspan="8" style="background: #2796cb; color: #FFFFFF;">
-                                                                <h:outputText value="#{controladorIncidenciasGeneral.buscarArea(incidencia.clavePersonal.areaOperativa)}" />
+                                                            <p:column colspan="10" style="background: #2796cb; color: #FFFFFF;">
+                                                                <h:outputText value="#{controladorIncidenciasGeneral.buscarArea(incidencia.clavePersonal.actividad.actividad eq 1?incidencia.clavePersonal.areaOperativa:incidencia.clavePersonal.areaSuperior)}" />
                                                             </p:column>
                                                         </p:headerRow>
-                                                        <p:column headerText="Nomina" style="width: 9%;text-align: center;">
+                                                        <p:column style="width: 50px;">
+                                                            <p:commandButton actionListener="#{controladorIncidenciasGeneral.eliminarIncidencia(incidencia)}" process="@this" update="@this" oncomplete="actualizarTabla()" icon="fa fa-trash" 
+                                                                             onsuccess="PF('frmInci').update();" styleClass="btn-primary" title="Eliminar Incidencias">
+                                                                <p:confirm header="Confirmación" message="¿Confirma la eliminación de la incidencia de #{incidencia.tipo} del dia #{incidencia.fecha}?" icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                        </p:column>
+                                                        <p:column headerText="Nomina" style="width: 5%;text-align: center;">
                                                             <h:outputText value="#{incidencia.clavePersonal.clave}" />
                                                         </p:column>
-                                                        <p:column headerText="Nombre" style="width: 20%;text-align: justify;">
+                                                        <p:column headerText="Nombre" style="width: 15%;text-align: justify;">
                                                             <h:outputText value="#{incidencia.clavePersonal.nombre}" />
                                                         </p:column>                                                
-                                                        <p:column headerText="Fecha" style="width: 12%">
+                                                        <p:column headerText="Fecha" style="width: 7%">
                                                             <h:outputLabel value="#{incidencia.fecha}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
                                                         </p:column>    
-                                                        <p:column headerText="Justificacion" style="text-align: justify;">
+                                                        <p:column headerText="Justificación" style="text-align: justify;">
                                                             <h:outputText value="#{incidencia.justificacion}" />
                                                         </p:column> 
-                                                        <p:column headerText="Estado" style="width: 15%;text-align: center;">
+                                                        <p:column headerText="Estado" style="width: 10%;text-align: center;">
                                                             <h:outputText value="#{incidencia.estatus}" />
                                                         </p:column>    
                                                         <p:column headerText="Tipo" style="width: 15%;text-align: center;">
                                                             <h:outputText value="#{incidencia.tipo}" />
                                                         </p:column> 
-                                                        <p:column headerText="Minutos" style="width: 9%;text-align: center;">
+                                                        <p:column headerText="Minutos" style="width: 5%;text-align: center;">
                                                             <h:outputText value="#{controladorIncidenciasGeneral.calculaM(incidencia.tiempo)}" />
                                                         </p:column>  
+                                                        <p:column headerText="No. Ofi" style="width: 5%;text-align: center;">
+                                                            <h:outputText value="#{incidencia.numeroOficio}" />
+                                                        </p:column> 
                                                         <p:column headerText="Evidencia(s)" style="width:85px;text-align: center;">
                                                             <p:link href="http://siip.utxj.edu.mx/archivos/#{controladorIncidenciasGeneral.convertirRutaVistaEvidencia(incidencia.evidencia)}" target="_blank" style=" visibility:#{incidencia.evidencia eq null?'hidden':'visible'};">
                                                                 <i class="fa fa-search"></i>
@@ -218,6 +227,10 @@
                                                     </div>
                                                 </p:outputPanel>    
                                             </p:outputPanel>
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                            </p:confirmDialog>   
                                         </h:form>
                                     </p:tab>
                                     <p:tab title="Reporte Incapacidades">
@@ -245,19 +258,26 @@
                                                         <div class="row">
                                                             <div class="col-sm-12 border-right">
                                                                 <div class="description-block" style="text-align: center">
-                                                                    <h3><strong>Incidencias</strong></h3>
+                                                                    <h3><strong>Incapacidades</strong></h3>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </p:outputPanel>   
+                                                    <p:remoteCommand name="actualizarTabla" actionListener="#{controladorIncidenciasGeneral.imprimirValores()}" update="tblActividades" /> 
                                                     <p:dataTable id="tblActividades"  value="#{controladorIncidenciasGeneral.listaIncapacidads}"  var="incapacidades"
                                                                  sortBy="#{incapacidades.clavePersonal.areaOperativa}" expandableRowGroups="true"
                                                                  emptyMessage="No se encontraron Registros." rendered="true">
                                                         <p:headerRow>
-                                                            <p:column colspan="5" style="background: #2796cb; color: #FFFFFF;">
+                                                            <p:column colspan="6" style="background: #2796cb; color: #FFFFFF;">
                                                                 <h:outputText value="#{controladorIncidenciasGeneral.buscarArea(incapacidades.clavePersonal.areaOperativa)}" />
                                                             </p:column>
                                                         </p:headerRow>
+                                                        <p:column style="width: 50px;">
+                                                            <p:commandButton actionListener="#{controladorIncidenciasGeneral.eliminarIncapacidad(incapacidades)}" update="@this" oncomplete="actualizarTabla()" icon="fa fa-trash" 
+                                                                             onsuccess="PF('frmInci').update();" styleClass="btn-primary" title="Eliminar Incidencias">
+                                                                <p:confirm header="Confirmación" message="¿Confirma la eliminación de la incapacidad de #{incapacidades.clavePersonal.nombre} de la fecha #{incidencia.fecha}?" icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                        </p:column>
                                                         <p:column headerText="Nomina" style="width: 9%;text-align: center;">
                                                             <h:outputText value="#{incapacidades.clavePersonal.clave}" />
                                                         </p:column>
@@ -292,6 +312,10 @@
                                                     </div>
                                                 </p:outputPanel>    
                                             </p:outputPanel>
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                            </p:confirmDialog>   
                                         </h:form>
                                     </p:tab>
                                 </p:tabView>

@@ -38,12 +38,6 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Proyectos.findByNumero", query = "SELECT p FROM Proyectos p WHERE p.numero = :numero")})
 public class Proyectos implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "proyecto")
-    private Integer proyecto;
     @Basic(optional = false)
     @NotNull
     @Column(name = "numero")
@@ -54,6 +48,13 @@ public class Proyectos implements Serializable {
     @Size(min = 1, max = 16777215)
     @Column(name = "nombre")
     private String nombre;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "proyecto")
+    private Integer proyecto;
     @ManyToMany(mappedBy = "proyectosList")
     private List<IndicadoresPide> indicadoresPideList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "proyectos")
@@ -82,21 +83,6 @@ public class Proyectos implements Serializable {
         this.proyecto = proyecto;
     }
 
-    public short getNumero() {
-        return numero;
-    }
-
-    public void setNumero(short numero) {
-        this.numero = numero;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
 
     @XmlTransient
     public List<IndicadoresPide> getIndicadoresPideList() {
@@ -148,6 +134,22 @@ public class Proyectos implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.pye2.Proyectos[ proyecto=" + proyecto + " ]";
+    }
+
+    public short getNumero() {
+        return numero;
+    }
+
+    public void setNumero(short numero) {
+        this.numero = numero;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
     
 }

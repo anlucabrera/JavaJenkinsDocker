@@ -32,7 +32,11 @@ import lombok.ToString;
 @Entity
 @Table(name = "lista_personal", catalog = "capital_humano", schema = "")
 @XmlRootElement
-@ToString @AllArgsConstructor @NoArgsConstructor @RequiredArgsConstructor @lombok.EqualsAndHashCode(of = "clave")
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
+@RequiredArgsConstructor
+@lombok.EqualsAndHashCode(of = "clave")
 @NamedQueries({
     @NamedQuery(name = "ListaPersonal.findAll", query = "SELECT l FROM ListaPersonal l")
     , @NamedQuery(name = "ListaPersonal.findByClave", query = "SELECT l FROM ListaPersonal l WHERE l.clave = :clave")
@@ -65,7 +69,9 @@ import lombok.ToString;
     , @NamedQuery(name = "ListaPersonal.findBySni", query = "SELECT l FROM ListaPersonal l WHERE l.sni = :sni")
     , @NamedQuery(name = "ListaPersonal.findByPerfilProdep", query = "SELECT l FROM ListaPersonal l WHERE l.perfilProdep = :perfilProdep")
     , @NamedQuery(name = "ListaPersonal.findByCorreoElectronico", query = "SELECT l FROM ListaPersonal l WHERE l.correoElectronico = :correoElectronico")
-    , @NamedQuery(name = "ListaPersonal.findByCorreoElectronico2", query = "SELECT l FROM ListaPersonal l WHERE l.correoElectronico2 = :correoElectronico2")})
+    , @NamedQuery(name = "ListaPersonal.findByCorreoElectronico2", query = "SELECT l FROM ListaPersonal l WHERE l.correoElectronico2 = :correoElectronico2")
+    , @NamedQuery(name = "ListaPersonal.findByCategoria360", query = "SELECT l FROM ListaPersonal l WHERE l.categoria360 = :categoria360")
+    , @NamedQuery(name = "ListaPersonal.findByCategoria360mombre", query = "SELECT l FROM ListaPersonal l WHERE l.categoria360mombre = :categoria360mombre")})
 public class ListaPersonal implements Serializable {
 
     @Id
@@ -218,6 +224,11 @@ public class ListaPersonal implements Serializable {
     @Size(max = 200)
     @Column(name = "correo_electronico2", length = 200)
     private String correoElectronico2;
+    @Column(name = "categoria_360")
+    private Short categoria360;
+    @Size(max = 100)
+    @Column(name = "Categoria_360_mombre")
+    private String categoria360mombre;
 
 
     public String getNombre() {
@@ -459,10 +470,10 @@ public class ListaPersonal implements Serializable {
     public void setCorreoElectronico2(String correoElectronico2) {
         this.correoElectronico2 = correoElectronico2;
     }
-    
+
     public Integer getClave() {
         return clave;
-}
+    }
 
     public void setClave(Integer clave) {
         this.clave = clave;
@@ -476,6 +487,22 @@ public class ListaPersonal implements Serializable {
         this.areaSuperior = areaSuperior;
     }
 
+    public Short getCategoria360() {
+        return categoria360;
+    }
+
+    public void setCategoria360(Short categoria360) {
+        this.categoria360 = categoria360;
+    }
+
+    public String getCategoria360mombre() {
+        return categoria360mombre;
+    }
+
+    public void setCategoria360mombre(String categoria360mombre) {
+        this.categoria360mombre = categoria360mombre;
+    }
+
     public String getAreaSuperiorNombre() {
         return areaSuperiorNombre;
     }
@@ -483,5 +510,5 @@ public class ListaPersonal implements Serializable {
     public void setAreaSuperiorNombre(String areaSuperiorNombre) {
         this.areaSuperiorNombre = areaSuperiorNombre;
     }
-    
+
 }

@@ -80,7 +80,7 @@ public class ServicioBolsaTrabajo implements EjbBolsaTrabajo{
                 
                 switch (fila.getCell(1).getCellTypeEnum()) {
                     case FORMULA:
-                        bolsaTrabajo.setBolsatrab((int)fila.getCell(1).getNumericCellValue());
+//                        bolsaTrabajo.setBolsatrab((int)fila.getCell(1).getNumericCellValue());
                         break;
                     default:
                         break;
@@ -160,7 +160,7 @@ public class ServicioBolsaTrabajo implements EjbBolsaTrabajo{
             Boolean registroAlmacenado = false;
 
             if (bolTrabEncontrada != null) {
-                listaCondicional.add(bolsa.getBolsaTrabajo().getBolsatrab());
+//                listaCondicional.add(bolsa.getBolsaTrabajo().getBolsatrab());
                 registroAlmacenado = true;
             }
             if (registroAlmacenado) {

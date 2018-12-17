@@ -261,7 +261,7 @@ public class ControladorProduccionPersonal implements Serializable {
             numeroRegistro = investigaciones.getInvestigacion().toString();
             accion = "Delate";
             agregaBitacora();
-            ejbProduccionProfecional.actualizarInvestigacion(investigaciones);
+            ejbProduccionProfecional.eliminarInvestigacion(investigaciones);
             Messages.addGlobalInfo("¡Operación exitosa!!");
             mostrarListas();
             pestaniaActiva = 3;

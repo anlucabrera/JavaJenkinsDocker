@@ -100,7 +100,7 @@
                                     <p:remoteCommand name="actualizarTabla" actionListener="#{controladorPOAEvaluacionAreas.imprimirValores()}" update=":frm:dtbBajas" />
 
                                     <p:dataTable id="dtbBajas" value="#{controladorPOAEvaluacionAreas.listaEstrategiaActividadesesEje}" rowExpandMode="single"
-                                                 expandedRow="#{estrategiasRegistro.estrategias.estrategia eq controladorPOAEvaluacionAreas.ultimaEstrategiaExpandida.estrategia?true:false}"
+                                                 expandedRow="#{false}"
                                                  var="estrategiasRegistro" sortBy="#{estrategiasRegistro.estrategias.estrategia}" expandableRowGroups="false">
 
                                         <f:facet name="header">

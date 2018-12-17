@@ -302,8 +302,8 @@
                                     </h:form>
                                     <h:form id="frmLista1">
                                         <p:outputPanel >
-                                            <p:remoteCommand name="actualizarTabla" actionListener="#{controladorProduccionPersonal.metodoBase()}" update="tblActividades" />
-                                            <p:dataTable id="tblActividades" value="#{controladorProduccionPersonal.nuevaListaLibrosPub}" var="lib"
+                                            <p:remoteCommand name="actualizarTabla" actionListener="#{controladorProduccionPersonal.metodoBase()}" update="tblLibros" />
+                                            <p:dataTable id="tblLibros" value="#{controladorProduccionPersonal.nuevaListaLibrosPub}" var="lib"
                                                          paginator="true" rows="5"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30"
@@ -317,8 +317,8 @@
                                                 </f:facet>
 
                                                 <p:column style="width: 50px;">
-                                                    <p:commandButton actionListener="#{controladorProduccionPersonal.eliminaLibros(lib)}" update="tblActividades" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{lib.titulo}?" icon="ui-icon-alert" />
+                                                    <p:commandButton actionListener="#{controladorProduccionPersonal.eliminaLibros(lib)}" update="tblLibros" process="@this" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar Libro">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación del libro #{lib.titulo}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
 
@@ -532,8 +532,8 @@
                                     </h:form>
                                     <h:form id="frmLista2">
                                         <p:outputPanel >
-                                            <p:remoteCommand name="actualizarTabla2" actionListener="#{controladorProduccionPersonal.metodoBase()}" update="tblActividades" />
-                                            <p:dataTable id="tblActividades" value="#{controladorProduccionPersonal.nuevaListaArticulosp}" var="articulos"
+                                            <p:remoteCommand name="actualizarTabla2" actionListener="#{controladorProduccionPersonal.metodoBase()}" update="tblArticulos" />
+                                            <p:dataTable id="tblArticulos" value="#{controladorProduccionPersonal.nuevaListaArticulosp}" var="articulos"
                                                          paginator="true" rows="5"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30"
@@ -547,8 +547,8 @@
                                                 </f:facet>
 
                                                 <p:column style="width: 50px;">
-                                                    <p:commandButton actionListener="#{controladorProduccionPersonal.eliminaArticulos(articulos)}" update="tblActividades" oncomplete="actualizarTabla2()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{articulos.tituloArticulo}?" icon="ui-icon-alert" />
+                                                    <p:commandButton actionListener="#{controladorProduccionPersonal.eliminaArticulos(articulos)}" update="tblArticulos" process="@this" oncomplete="actualizarTabla2()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación del articulo #{articulos.tituloArticulo}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
 
@@ -742,8 +742,8 @@
                                     </h:form>
                                     <h:form id="frmLista3">
                                         <p:outputPanel >
-                                            <p:remoteCommand name="actualizarTabla3" actionListener="#{controladorProduccionPersonal.metodoBase()}" update="tblActividades" />
-                                            <p:dataTable id="tblActividades" value="#{controladorProduccionPersonal.nuevaListaMemoriaspub}" var="memorias"
+                                            <p:remoteCommand name="actualizarTabla3" actionListener="#{controladorProduccionPersonal.metodoBase()}" update="tblMemorias" />
+                                            <p:dataTable id="tblMemorias" value="#{controladorProduccionPersonal.nuevaListaMemoriaspub}" var="memorias"
                                                          paginator="true" rows="5"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30"
@@ -757,8 +757,8 @@
                                                 </f:facet>
 
                                                 <p:column style="width: 50px;">
-                                                    <p:commandButton actionListener="#{controladorProduccionPersonal.eliminaMemorias(memorias)}" update="tblActividades" oncomplete="actualizarTabla3()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{memorias.tituloDeMemoria}?" icon="ui-icon-alert" />
+                                                    <p:commandButton actionListener="#{controladorProduccionPersonal.eliminaMemorias(memorias)}" update="tblMemorias" process="@this" oncomplete="actualizarTabla3()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la memoria #{memorias.tituloDeMemoria}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
 
@@ -858,12 +858,14 @@
                                                                                 <div class="col-sm-12 col-md-6 col-lg-6"> 
                                                                                     <p:outputLabel for="fechaIn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de inicio" />
                                                                                     <p:calendar navigator="true" locale="es" required="true" requiredMessage="No puede tener un campo vacío" id="fechaIn" value="#{controladorProduccionPersonal.fechaI}" pattern="dd-MM-yyyy" mask="true" />
-                                                                                    <p:message for="fechaIn" display="tooltip" />      
+                                                                                    <p:message for="fechaIn" display="tooltip" /> 
+                                                                                    <hr/>     
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-6 col-lg-6"> 
                                                                                     <p:outputLabel for="fechaFin" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de fin, vació si esta en proceso" />
                                                                                     <p:calendar navigator="true" title="En caso de estar en proceso dejar vacío el campo" locale="es" id="fechaFin" value="#{controladorProduccionPersonal.fechaF}" pattern="dd-MM-yyyy" mask="true" />
                                                                                     <p:message for="fechaFin" display="tooltip" />
+                                                                                    <hr/>
                                                                                 </div>
                                                                             </div>                                                                 
                                                                         </div>
@@ -875,11 +877,9 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                        <hr/>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                            <hr/>                                                        
+                                                            </div>                                           
                                                         </div>
                                                     </div>
                                                 </div>
@@ -904,8 +904,8 @@
                                         <p:outputPanel >
                                             <p:tabView >
                                                 <p:tab title="Proyectos" >
-                                                    <p:remoteCommand name="actualizarTabla4" actionListener="#{controladorProduccionPersonal.metodoBase()}" update="tblActividades" />
-                                                    <p:dataTable id="tblActividades" value="#{controladorProduccionPersonal.nuevaListatProyectos}" var="proyIn"
+                                                    <p:remoteCommand name="actualizarTabla4" actionListener="#{controladorProduccionPersonal.metodoBase()}" update="tblProyecto" />
+                                                    <p:dataTable id="tblProyecto" value="#{controladorProduccionPersonal.nuevaListatProyectos}" var="proyIn"
                                                                  paginator="true" rows="5"
                                                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                                  rowsPerPageTemplate="5,10,15,20,25,30"
@@ -920,7 +920,7 @@
                                                         </f:facet>
 
                                                         <p:column style="width: 50px;">
-                                                            <p:commandButton actionListener="#{controladorProduccionPersonal.eliminaInvestigacion(proyIn)}" update="tblActividades" oncomplete="actualizarTabla4()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar Investigacion">
+                                                            <p:commandButton actionListener="#{controladorProduccionPersonal.eliminaInvestigacion(proyIn)}" process="@this" update="tblProyecto" oncomplete="actualizarTabla4()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar Investigacion">
                                                                 <p:confirm header="Confirmación" message="¿Confirma la eliminación del proyecto #{proyIn.nombreInvestigacion}?" icon="ui-icon-alert" />
                                                             </p:commandButton>
                                                         </p:column>
@@ -972,7 +972,7 @@
                                                         </f:facet>
 
                                                         <p:column style="width: 50px;">
-                                                            <p:commandButton actionListener="#{controladorProduccionPersonal.eliminaInvestigacion(trabIn)}" update="tblInvestigaciones" oncomplete="actualizarTabla5()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                            <p:commandButton actionListener="#{controladorProduccionPersonal.eliminaInvestigacion(trabIn)}" process="@this" update="tblInvestigaciones" oncomplete="actualizarTabla5()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
                                                                 <p:confirm header="Confirmación" message="¿Confirma la eliminación del trabajo #{trabIn.nombreInvestigacion}?" icon="ui-icon-alert" />
                                                             </p:commandButton>
                                                         </p:column>
@@ -1089,16 +1089,14 @@
                                                                                 </div>    
                                                                             </div>
                                                                         </div>
-                                                                        <hr/>
                                                                         <div class="row">
                                                                             <div class="form-group">
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                    <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{controladorProduccionPersonal.createrCongreso()}" icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form tblActividades" process="@form" />                                               
+                                                                                    <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{controladorProduccionPersonal.createrCongreso()}" icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form tblCongresos" process="@form" />                                               
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                        <hr/>
                                                                     </div>
                                                                 </div>
                                                             </div>                                                        
@@ -1124,8 +1122,8 @@
                                             </c:if>
                                         </p:outputPanel>        
                                         <p:outputPanel >
-                                            <p:remoteCommand name="actualizarTabla6" actionListener="#{controladorProduccionPersonal.metodoBase()}" update="tblActividades" />
-                                            <p:dataTable id="tblActividades" value="#{controladorProduccionPersonal.nuevaListaCongresos}" var="congre"
+                                            <p:remoteCommand name="actualizarTabla6" actionListener="#{controladorProduccionPersonal.metodoBase()}" update="tblCongresos" />
+                                            <p:dataTable id="tblCongresos" value="#{controladorProduccionPersonal.nuevaListaCongresos}" var="congre"
                                                          paginator="true" rows="5"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30"
@@ -1139,7 +1137,7 @@
                                                 </f:facet>
 
                                                 <p:column style="width: 50px;">
-                                                    <p:commandButton actionListener="#{controladorProduccionPersonal.eliminaCongreso(congre)}" update="tblActividades" oncomplete="actualizarTabla6()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                    <p:commandButton actionListener="#{controladorProduccionPersonal.eliminaCongreso(congre)}" update="tblCongresos" process="@this" oncomplete="actualizarTabla6()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
                                                         <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{congre.nombreCongreso}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>

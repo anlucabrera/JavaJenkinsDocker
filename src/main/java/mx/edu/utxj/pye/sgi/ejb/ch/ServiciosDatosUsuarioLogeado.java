@@ -55,9 +55,11 @@ public class ServiciosDatosUsuarioLogeado implements EjbDatosUsuarioLogeado {
 
     @Override
     public Personal actualizarPersonal(Personal nuevoPersonal) throws Throwable {
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosDatosUsuarioLogeado.actualizarPersonal(1)");
         facade.setEntityClass(Personal.class);
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosDatosUsuarioLogeado.actualizarPersonal(2)");
         facade.edit(nuevoPersonal);
-        facade.flush();
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosDatosUsuarioLogeado.actualizarPersonal(3)");
         return nuevoPersonal;
     }
 
@@ -170,8 +172,9 @@ public class ServiciosDatosUsuarioLogeado implements EjbDatosUsuarioLogeado {
         List<PersonalCategorias> pr = q.getResultList();
         return pr;
     }
+
     @Override
-    public Integer mostrarListaPersonalCategoriasAreas(Short categoria, Short area) throws Throwable{
+    public Integer mostrarListaPersonalCategoriasAreas(Short categoria, Short area) throws Throwable {
         TypedQuery<ListaPersonal> q = em.createQuery("SELECT l FROM ListaPersonal l WHERE  l.areaSuperior=:area AND l.categoriaOperativa=:categoria", ListaPersonal.class);
         q.setParameter("categoria", categoria);
         q.setParameter("area", area);
@@ -185,6 +188,17 @@ public class ServiciosDatosUsuarioLogeado implements EjbDatosUsuarioLogeado {
         facade.create(nuevoPersonalCategorias);
         facade.flush();
         return nuevoPersonalCategorias;
+    }
+
+    @Override
+    public PersonalCategorias mostrarPersonalCategorias(Short cat) throws Throwable {
+        facade.setEntityClass(PersonalCategorias.class);
+        PersonalCategorias pr = facade.getEntityManager().find(PersonalCategorias.class, cat);
+        if (pr == null) {
+            return null;
+        } else {
+            return pr;
+        }
     }
 
     @Override
@@ -204,6 +218,32 @@ public class ServiciosDatosUsuarioLogeado implements EjbDatosUsuarioLogeado {
     }
 
     @Override
+    public Modulosregistro actualizarModulosregistro(Modulosregistro m) throws Throwable {
+        facade.setEntityClass(Modulosregistro.class);
+        facade.edit(m);
+        return m;
+    }
+
+    @Override
+    public List<Modulosregistro> mostrarModulosregistrosGeneral() throws Throwable {
+        TypedQuery<Modulosregistro> q = em.createQuery("SELECT m FROM Modulosregistro m", Modulosregistro.class);
+        List<Modulosregistro> pr = q.getResultList();
+        return pr;
+    }
+
+    @Override
+    public Modulosregistro mostrarModuloregistro(String nombre) throws Throwable {
+        TypedQuery<Modulosregistro> q = em.createQuery("SELECT m FROM Modulosregistro m WHERE m.nombre = :nombre", Modulosregistro.class);
+        q.setParameter("nombre", nombre);
+        List<Modulosregistro> pr = q.getResultList();
+        if (!pr.isEmpty()) {
+            return pr.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public List<Eventos> mostrarEventoses() throws Throwable {
         facade.setEntityClass(Eventos.class);
         List<Eventos> es = facade.findAll();
@@ -213,6 +253,53 @@ public class ServiciosDatosUsuarioLogeado implements EjbDatosUsuarioLogeado {
             return es;
         }
     }
+
+    @Override
+    public List<EventosAreas> mostrarEventosesAreases() throws Throwable {
+        facade.setEntityClass(EventosAreas.class);
+        List<EventosAreas> es = facade.findAll();
+        if (es.isEmpty()) {
+            return null;
+        } else {
+            return es;
+        }
+    }
+
+    @Override
+    public EventosAreas agregarEventosesAreases(EventosAreas ea) throws Throwable {
+        facade.setEntityClass(EventosAreas.class);
+        facade.create(ea);
+        return ea;
+    }
+
+    @Override
+    public EventosAreas actualizarEventosesAreases(EventosAreas ea) throws Throwable {
+        facade.setEntityClass(EventosAreas.class);
+        facade.edit(ea);
+        return ea;
+    }
+
+    @Override
+    public Eventos actualizarEventoses(Eventos e) throws Throwable {
+        facade.setEntityClass(Eventos.class);
+        facade.edit(e);
+        return e;
+    }
+
+    @Override
+    public EventosAreas eliminarEventosesEventosAreas(EventosAreas ea) throws Throwable {
+        facade.setEntityClass(EventosAreas.class);
+        facade.remove(ea);
+        return ea;
+    }
+
+    @Override
+    public Eventos eliminarEventosesEventos(Eventos e) throws Throwable {
+        facade.setEntityClass(Eventos.class);
+        facade.remove(e);
+        return e;
+    }
+
     @Override
     public EventosAreas mostrarEventoAreas(EventosAreasPK areasPK) {
         facade.setEntityClass(EventosAreas.class);

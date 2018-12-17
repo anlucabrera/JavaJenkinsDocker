@@ -55,7 +55,7 @@
                 <section class="content">
                     <div class="row">
                         <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
-                        <div class="col-md-9">
+                        <div class="col-md-10">
                             <div class="nav-tabs-custom">
                                 <div class="row">
                                     <div class="col-lg-10 col-xs-10"/>
@@ -188,6 +188,13 @@
                                                                                     <f:selectItems value="#{controladorPersonalAltasYBajas.listareasSuperiores}" var="arSP" itemValue="#{arSP.area}" itemLabel="#{arSP.nombre}" />
                                                                                 </p:selectOneMenu> 
                                                                                 <hr/> 
+                                                                            </div>
+                                                                            <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                <label for="categoria360" class="col-sm-12 control-label">Categoría 360°</label>
+                                                                                <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" id="categoria360" value="#{controladorPersonalAltasYBajas.categoria360}">
+                                                                                    <f:selectItems value="#{controladorPersonalAltasYBajas.listaPersonalCategorias360}" var="caOF" itemValue="#{caOF.categoria}" itemLabel="#{caOF.nombre}" />
+                                                                                </p:selectOneMenu> 
+                                                                                <hr/>
                                                                             </div>
                                                                         </div>
                                                                         <label class="col-sm-12 control-label"><h1 style="text-align: center">Estudios</h1></label>

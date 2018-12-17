@@ -37,12 +37,6 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "LineasAccion.findByNombre", query = "SELECT l FROM LineasAccion l WHERE l.nombre = :nombre")})
 public class LineasAccion implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "linea_accion")
-    private Short lineaAccion;
     @Basic(optional = false)
     @NotNull
     @Column(name = "numero")
@@ -52,6 +46,13 @@ public class LineasAccion implements Serializable {
     @Size(min = 1, max = 500)
     @Column(name = "nombre")
     private String nombre;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "linea_accion")
+    private Short lineaAccion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "lineaAccion")
     private List<CuadroMandoIntegral> cuadroMandoIntegralList;
 
@@ -76,21 +77,6 @@ public class LineasAccion implements Serializable {
         this.lineaAccion = lineaAccion;
     }
 
-    public short getNumero() {
-        return numero;
-    }
-
-    public void setNumero(short numero) {
-        this.numero = numero;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
 
     @XmlTransient
     public List<CuadroMandoIntegral> getCuadroMandoIntegralList() {
@@ -124,6 +110,22 @@ public class LineasAccion implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion[ lineaAccion=" + lineaAccion + " ]";
+    }
+
+    public short getNumero() {
+        return numero;
+    }
+
+    public void setNumero(short numero) {
+        this.numero = numero;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
     
 }

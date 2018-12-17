@@ -40,6 +40,7 @@ public class ControladorPersonalAltasYBajas implements Serializable {
 
     @Getter    @Setter    private List<AreasUniversidad> listaAreasUniversidads = new ArrayList<>(),listareasSuperiores = new ArrayList<>();
     @Getter    @Setter    private List<PersonalCategorias> listaPersonalCategorias = new ArrayList<>();
+    @Getter    @Setter    private List<PersonalCategorias> listaPersonalCategorias360 = new ArrayList<>();
     @Getter    @Setter    private List<Actividades> listaActividades = new ArrayList<>();
     @Getter    @Setter    private List<Generos> listaGeneros = new ArrayList<>();
     @Getter    @Setter    private List<Grados> listaGrados = new ArrayList<>();
@@ -50,7 +51,7 @@ public class ControladorPersonalAltasYBajas implements Serializable {
     
     @Getter    @Setter    private DateFormat formatoF = new SimpleDateFormat("dd/MM/yyyy");
     @Getter    @Setter    private String fechaN, fechaI;
-    @Getter    @Setter    private Short actividad = 0, categoriaOP = 0, categoriaOF = 0, grado = 0, genero = 0;
+    @Getter    @Setter    private Short actividad = 0, categoriaOP = 0, categoriaOF = 0,categoria360 = 0, grado = 0, genero = 0;
     @Getter    @Setter    private Integer claveUltimaEmpleado = 0;
     @Getter    @Setter    private ListaPersonal nuevoOBJListaPersonalFiltroAreas;
     @Getter    @Setter    private Personal nuevOBJPersonalSubordinado,nuevOBJPersonalUltimoAgragado;
@@ -90,6 +91,7 @@ public class ControladorPersonalAltasYBajas implements Serializable {
             listareasSuperiores.clear();
             listaAreasUniversidads.clear();
             listaPersonalCategorias.clear();
+            listaPersonalCategorias360.clear();
 
             listaAreasUniversidads = ejbAreasLogeo.mostrarAreasUniversidad();
             listaAreasUniversidads.forEach((t) -> {
@@ -105,6 +107,12 @@ public class ControladorPersonalAltasYBajas implements Serializable {
             listaPersonalTotal = ejbSelectec.mostrarListaDeEmpleadosTotal();
             listaPersonalBajas = ejbSelectec.mostrarListaDeEmpleadosBajas();
             listaPersonalCategorias = ejbDatosUsuarioLogeado.mostrarListaPersonalCategorias();
+            
+            listaPersonalCategorias.forEach((t) -> {
+                if (t.getTipo().equals("Específica")) {                    
+                    listaPersonalCategorias360.add(t);
+                }
+            });
 
             nuevOBJPersonalUltimoAgragado = listaPersonalTotal.get(listaPersonalTotal.size() - 1);
             claveUltimaEmpleado = nuevOBJPersonalUltimoAgragado.getClave();
@@ -130,6 +138,7 @@ public class ControladorPersonalAltasYBajas implements Serializable {
             nuevOBJPersonalSubordinado.setActividad(new Actividades());
             nuevOBJPersonalSubordinado.setCategoriaOficial(new PersonalCategorias());
             nuevOBJPersonalSubordinado.setCategoriaOperativa(new PersonalCategorias());
+            nuevOBJPersonalSubordinado.setCategoria360(new PersonalCategorias());
             nuevOBJPersonalSubordinado.setGrado(new Grados());
             nuevOBJPersonalSubordinado.setGenero(new Generos());
             nuevOBJPersonalSubordinado.setCategoriaEspecifica(new Categoriasespecificasfunciones());
@@ -139,6 +148,7 @@ public class ControladorPersonalAltasYBajas implements Serializable {
             nuevOBJPersonalSubordinado.getCategoriaOficial().setCategoria(categoriaOF);
             nuevOBJPersonalSubordinado.getActividad().setActividad(actividad);
             nuevOBJPersonalSubordinado.getCategoriaOperativa().setCategoria(categoriaOP);
+            nuevOBJPersonalSubordinado.getCategoria360().setCategoria(categoria360);
             nuevOBJPersonalSubordinado.setFechaIngreso(formatoF.parse(fechaI));
             nuevOBJPersonalSubordinado.setFechaNacimiento(formatoF.parse(fechaN));
             nuevOBJPersonalSubordinado.setSni(false);

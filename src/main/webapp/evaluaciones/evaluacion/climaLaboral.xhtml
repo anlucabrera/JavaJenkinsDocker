@@ -171,9 +171,9 @@
                                                         <p:outputLabel for="p#{index}_1" value="De: " />
                                                         <f:ajax execute="p#{index}_1">
                                                             <p:selectOneMenu  id="p#{index}_1" value="#{climaLaboral.respuestas['p'.concat(index).concat('_1')]}" valueChangeListener="#{climaLaboral.guardarRespuesta}" style="width: 30px;">
-                                                                <c:if test="#{climaLaboral.respuestas['p'.concat(index).concat('_1')] == null}">
+                                                                <!--<c:if test="# {climaLaboral.respuestas['p'.concat(index).concat('_1')] == null}">-->
                                                                     <f:selectItem itemValue="#{null}" itemLabel="--" />
-                                                                </c:if>
+                                                                <!--</c:if>-->
                                                                 <f:selectItem itemValue="1" itemLabel="07:00" />
                                                                 <f:selectItem itemValue="2" itemLabel="07:30" />
                                                                 <f:selectItem itemValue="3" itemLabel="08:00" />
@@ -211,9 +211,9 @@
                                                         <p:outputLabel for="p#{index}_2" value="a: " />
                                                         <f:ajax execute="p#{index}_2">
                                                             <p:selectOneMenu  id="p#{index}_2" value="#{climaLaboral.respuestas['p'.concat(index).concat('_2')]}" valueChangeListener="#{climaLaboral.guardarRespuesta}" style="width: 30px;">
-                                                                <c:if test="#{climaLaboral.respuestas['p'.concat(index).concat('_2')] == null}">
+<!--                                                                <c:if test="# {climaLaboral.respuestas['p'.concat(index).concat('_2')] == null}">-->
                                                                     <f:selectItem itemValue="#{null}" itemLabel="--" />
-                                                                </c:if>
+                                                                <!--</c:if>-->
                                                                 <f:selectItem itemValue="1" itemLabel="07:00" />
                                                                 <f:selectItem itemValue="2" itemLabel="07:30" />
                                                                 <f:selectItem itemValue="3" itemLabel="08:00" />
@@ -276,7 +276,7 @@
                                                         </f:ajax>
                                                     </td>
                                                 </tr>
-                                                <c:if test="#{climaLaboral.respuestas['p'.concat(index)] eq 'Sí'}">
+                                                <!--<c:if test="# {climaLaboral.respuestas['p'.concat(index)] eq 'Sí'}">-->
                                                     <tr>
                                                         <td style="#{styleColPregunta}">¿Cuál?</td>
                                                         <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
@@ -290,7 +290,7 @@
                                                             </f:ajax>
                                                         </td>
                                                     </tr>
-                                                </c:if>
+                                                <!--</c:if>-->
                                                 <c:set var="index" value="#{index+1}" />
                                             </tbody>
                                         </table>
@@ -1198,31 +1198,31 @@
                                                         <c:set var="index" value="#{index+1}" />
                                                     </td>
                                                 </tr>
-                                                <c:if test="#{climaLaboral.enviable}">
-                                                    <tr>
-                                                        <th style="#{styleColPregunta}background-color: #E53935; color:white;">
+<!--                                                <c:if test="# {climaLaboral.enviable}">-->
+<!--                                                    <tr>
+                                                        <th style="# {styleColPregunta}background-color: #E53935; color:white;">
                                                             ¿Autoriza usted el envío de sus datos y respuestas para que sea usted atendida o atendido por la Ombudswoman de la Universidad?<br/>
                                                             Nota: La información proporcionada, será enviada en un archivo comprimido que tendrá una contraseña que sólo es del conocimiento de la Ombudswoman.
                                                         </th>
-                                                        <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
-                                                            <f:ajax execute="p#{index}">
-                                                                <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                        <td class="# {classColRespuesta}" style="# {styleColRespuesta}">
+                                                            <f:ajax execute="p# {index}">
+                                                                <p:selectOneButton id="p# {index}" value="# {climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="# {climaLaboral.guardarRespuesta}">
                                                                     <f:selectItem itemValue="1" itemLabel="Sí" itemDescription="Sí" />
                                                                     <f:selectItem itemValue="0" itemLabel="No" itemDescription="No" />
                                                                 </p:selectOneButton>
                                                             </f:ajax>
                                                         </td>
-                                                    </tr>
-                                                    <c:if test="#{climaLaboral.respuestas['p'.concat(index)] eq '0'}">
-                                                        <tr class="info">
+                                                    </tr>-->
+                                                    <!--<c:if test="# {climaLaboral.respuestas['p'.concat(index)] eq '0'}">-->
+<!--                                                        <tr class="info">
                                                             <td colspan="2">
                                                                 <p>Su respuesta solo quedará como referencia, es importante se acerque a la Ombudswoman para poder dar atención a su situación y mejorar el Clima Laboral y evitar la discriminación en la Universidad. </p>
                                                                 <p>Lic. María del Carmen Vázquez Molina<br/>Telefono de Oficina: 764 764 3210<br/> marycarva@hotmail.com</p>
                                                             </td>
-                                                        </tr>
-                                                    </c:if>
-                                                    <c:set var="index" value="#{index+1}" />
-                                                </c:if>
+                                                        </tr>-->
+                                                    <!--</c:if>-->
+                                                    <!--<c:set var="index" value="# {index+1}" />-->
+                                                <!--</c:if>-->
                                             </tbody>
                                         </table>
                                     </p:outputPanel>

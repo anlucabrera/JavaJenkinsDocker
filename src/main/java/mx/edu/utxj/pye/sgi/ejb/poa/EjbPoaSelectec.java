@@ -17,6 +17,8 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Partidas;
 import mx.edu.utxj.pye.sgi.entity.pye2.PretechoFinanciero;
 import mx.edu.utxj.pye.sgi.entity.pye2.Productos;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosPK;
+import mx.edu.utxj.pye.sgi.entity.pye2.Proyectos;
+import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 
 @Local
 public interface EjbPoaSelectec {
@@ -26,17 +28,22 @@ public interface EjbPoaSelectec {
 
     public List<ActividadesPoa> mostrarActividadesPoasAreaEjeyEjercicioFiscal(Short area, Short ejerciciosFiscales, EjesRegistro ejesRegistro);
 
+    public List<ActividadesPoa> mostrarActividadesPoasUniversidadaEjeyEjercicioFiscal(Short ejerciciosFiscales, EjesRegistro ejesRegistro);
+
+    public List<ActividadesPoa> mostrarActividadesPoasUniversidadaEjercicioFiscal(Short ejerciciosFiscales);
+
     public List<ActividadesPoa> mostrarActividadesPoaCuadroDeMando(Short area, Short ejercicioFiscal, CuadroMandoIntegral cuadroMando);
 
     public List<ActividadesPoa> mostrarActividadesPoaCuadroDeMandoRecurso(Short area, Short ejercicioFiscal, CuadroMandoIntegral cuadroMando);
 //  -------------------------------------------- EjesRegistro --------------------------------------------------
-
 
     public EjesRegistro mostrarEjeRegistro(Integer clave);
 
     public List<EjesRegistro> mostrarEjesRegistros();
 
     public List<EjesRegistro> mostrarEjesRegistrosAreas(Short area, Short ejerciciosFiscales);
+
+    public List<EjesRegistro> mostrarEjesRegistrosAreasCMI(Short area, Short ejerciciosFiscales);
 //  -------------------------------------------- Estrategias -------------------------------------------------
 
     public Estrategias mostrarEstrategia(Short clave);
@@ -121,12 +128,28 @@ public interface EjbPoaSelectec {
 
     public EvidenciasDetalle agregarEvidenciasesEvidenciasDetalle(EvidenciasDetalle evidenciasDetalle);
 
-    public List<Evidencias> mostrarEvidenciases(ActividadesPoa actividad);
+    public List<Evidencias> mostrarEvidenciases(ActividadesPoa actividad, List<Registros> registroses);
 
     public List<EvidenciasDetalle> mostrarEvidenciases(Evidencias evidencias);
 //  -------------------------------------------------------------------------------------------------------------
 
     public List<ActividadesPoa> getActividadesPoasporEstarategias(Estrategias estrategia, EjesRegistro eje, Short ejercicio, Short area);
 
-    public List<ActividadesPoa> getActividadesEvaluacionMadre(CuadroMandoIntegral cuadroDmando, Short numeroP,Short area);
+    public List<ActividadesPoa> getActividadesEvaluacionMadre(CuadroMandoIntegral cuadroDmando, Short numeroP, Short area);
+
+    public List<Proyectos> getProyectosPorEje(EjesRegistro eje, Short ejercicio, Short area);
+
+    public List<Proyectos> getProyectos(EjesRegistro eje, Short ejercicio);
+
+    public List<Estrategias> getEstrategiaPorProyectos(Proyectos proyectos, Short ejercicio, Short area);
+
+    public List<Estrategias> getEstrategiaProyectos(Proyectos proyectos, Short ejercicio);
+
+    public List<ActividadesPoa> getActividadesPoasporProyecto(Estrategias estrategia, EjesRegistro eje, Proyectos proyectos, Short ejercicio, Short area);
+
+    public List<ActividadesPoa> getActividadesPoasProyecto(Estrategias estrategia, EjesRegistro eje, Proyectos proyectos, Short ejercicio);
+
+    public List<ActividadesPoa> getActividadesPoasProyectoGrfica(EjesRegistro eje, Proyectos proyectos, Short ejercicio);
+
+    public List<Registros> mostrarRegistrosActividad(ActividadesPoa actividadesPoa);
 }
