@@ -26,13 +26,13 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.VistaEvaluacionesTutores;
 public interface EjbLogin {
 // Comentar los siguiente métodos cuando falle saiiut //
 
-//    public Usuarios autenticar(String loginUsuario, String password);
-//
-//    public Usuarios getUsuarioPorLogin(String loginUsuario);
-//
-//    public ListaUsuarioClaveNomina getListaUsuarioClaveNomina(String loginUsuario);
-//
-//    public List<VistaEvaluacionesTutores> getTutoresPeriodoActual();
+    public Usuarios autenticar(String loginUsuario, String password);
+
+    public Usuarios getUsuarioPorLogin(String loginUsuario);
+
+    public ListaUsuarioClaveNomina getListaUsuarioClaveNomina(String loginUsuario);
+
+    public List<VistaEvaluacionesTutores> getTutoresPeriodoActual();
 // Fin de métodos 
 
     public String encriptarContrasena(String contrasena);

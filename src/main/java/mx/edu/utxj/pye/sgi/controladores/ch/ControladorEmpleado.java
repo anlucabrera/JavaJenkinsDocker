@@ -78,8 +78,8 @@ public class ControladorEmpleado implements Serializable {
     public void init() {
         System.out.println("ControladorEmpleado Inicio: " + System.currentTimeMillis());
         // Comentar la siguiente asignación cuando saiiut falle//
-//        empleadoLogeado = Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
-      empleadoLogeado = Integer.parseInt(logonMB.getListaUsuarioClaveNominaShiro().getClaveNomina());
+        empleadoLogeado = Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
+//      empleadoLogeado = Integer.parseInt(logonMB.getListaUsuarioClaveNominaShiro().getClaveNomina());
         // fin de asignación
 //        empleadoLogeado=49;
         clavePersonalLogeado = empleadoLogeado.toString();
