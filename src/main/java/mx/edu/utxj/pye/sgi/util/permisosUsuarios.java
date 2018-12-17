@@ -60,9 +60,9 @@ public class permisosUsuarios implements Serializable{
         listaTutores = new ArrayList<>();
         listaPermisosGeneral = ejbLogin.getPermisosModulos();
 // Comentar la siguiente Expresión lamda cuando falle saiiut //
-        ejbLogin.getTutoresPeriodoActual().forEach(x -> {
-            listaTutores.add(Integer.parseInt(x.getPk().getNumeroNomina()));
-        });
+//        ejbLogin.getTutoresPeriodoActual().forEach(x -> {
+//            listaTutores.add(Integer.parseInt(x.getPk().getNumeroNomina()));
+//        });
 //Fin de Expresión lamda //
         listaNumeroNominaTutor.addAll(listaTutores.stream().distinct().collect(Collectors.toList()));
 //        System.out.println("mx.edu.utxj.pye.sgi.util.permisosUsuarios.init() lista de tutores : " + listaNumeroNominaTutor.size());

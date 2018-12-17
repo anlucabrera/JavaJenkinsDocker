@@ -45,62 +45,62 @@ public class ServicioLogin implements EjbLogin {
     private final Patron patronMatricula = new PatronMatricula();   
     
 // Comentar los siguiente métodos cuando falle saiiut //
-    @Override
-    public Usuarios autenticar(String loginUsuario, String password) {
-//        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.autenticar() loginUsuario: " + loginUsuario + ", password: " + password);
-        Usuarios usuarioBd = getUsuarioPorLogin(loginUsuario);
-        if (usuarioBd != null) {
-//            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.autenticar() usuarioBd no nulo");
-            if (usuarioBd.getContrasena().equals(encriptarContrasena(password))) {
-//                System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.autenticar() las contraseñas coinciden");
-                return usuarioBd;
-            } else {
-//                System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.autenticar() las contraseñas no coinciden");
-                return null;
-            }
-        } else {
-//            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.autenticar() usuarioBd es nulo");
-            return null;
-        }
-    }
-
-    @Override
-    public Usuarios getUsuarioPorLogin(String loginUsuario) {
-//        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.getUsuarioPorLogin() loginUsuario: " + loginUsuario);
-        TypedQuery<Usuarios> q = f.getEntityManager().createNamedQuery("Usuarios.findByLoginUsuario", Usuarios.class);
-        q.setParameter("loginUsuario", loginUsuario);
-        List<Usuarios> l = q.getResultList();
-
-//        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.getUsuarioPorLogin() l: " + l);
-        if (l.isEmpty()) {
-            return null;
-        } else {
-            return l.get(0);
-        }
-    }
-
-    @Override
-    public ListaUsuarioClaveNomina getListaUsuarioClaveNomina(String loginUsuario) {
-        f.setEntityClass(ListaUsuarioClaveNomina.class);
-        return (ListaUsuarioClaveNomina) f.find(loginUsuario);
-    }
-
-    @Override
-    public List<VistaEvaluacionesTutores> getTutoresPeriodoActual() {
-        TypedQuery<Listaperiodosescolares> periodo = f2.getEntityManager().createQuery("SELECT p from Listaperiodosescolares p ORDER BY p.periodo DESC", Listaperiodosescolares.class);
-        if (periodo.getResultList().isEmpty() || periodo.getResultList() == null) {
-            System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getTutoresPeriodoActual() no se encontro periodo::: ");
-        } else {
-//            System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getTutoresPeriodoActual() el periodo es ::: " + periodo.getSingleResult());
-        }
-        TypedQuery<VistaEvaluacionesTutores> q = f.getEntityManager().createQuery("SELECT v FROM VistaEvaluacionesTutores v WHERE v.pk.periodo = :periodo", VistaEvaluacionesTutores.class);
-        q.setParameter("periodo", periodo.getResultList().get(0).getPeriodo());
-        if (q.getResultList().isEmpty() || q.getResultList() == null) {
-            return null;
-        } else {
-            return q.getResultList();
-        }
-    }
+//    @Override
+//    public Usuarios autenticar(String loginUsuario, String password) {
+////        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.autenticar() loginUsuario: " + loginUsuario + ", password: " + password);
+//        Usuarios usuarioBd = getUsuarioPorLogin(loginUsuario);
+//        if (usuarioBd != null) {
+////            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.autenticar() usuarioBd no nulo");
+//            if (usuarioBd.getContrasena().equals(encriptarContrasena(password))) {
+////                System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.autenticar() las contraseñas coinciden");
+//                return usuarioBd;
+//            } else {
+////                System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.autenticar() las contraseñas no coinciden");
+//                return null;
+//            }
+//        } else {
+////            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.autenticar() usuarioBd es nulo");
+//            return null;
+//        }
+//    }
+//
+//    @Override
+//    public Usuarios getUsuarioPorLogin(String loginUsuario) {
+////        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.getUsuarioPorLogin() loginUsuario: " + loginUsuario);
+//        TypedQuery<Usuarios> q = f.getEntityManager().createNamedQuery("Usuarios.findByLoginUsuario", Usuarios.class);
+//        q.setParameter("loginUsuario", loginUsuario);
+//        List<Usuarios> l = q.getResultList();
+//
+////        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.getUsuarioPorLogin() l: " + l);
+//        if (l.isEmpty()) {
+//            return null;
+//        } else {
+//            return l.get(0);
+//        }
+//    }
+//
+//    @Override
+//    public ListaUsuarioClaveNomina getListaUsuarioClaveNomina(String loginUsuario) {
+//        f.setEntityClass(ListaUsuarioClaveNomina.class);
+//        return (ListaUsuarioClaveNomina) f.find(loginUsuario);
+//    }
+//
+//    @Override
+//    public List<VistaEvaluacionesTutores> getTutoresPeriodoActual() {
+//        TypedQuery<Listaperiodosescolares> periodo = f2.getEntityManager().createQuery("SELECT p from Listaperiodosescolares p ORDER BY p.periodo DESC", Listaperiodosescolares.class);
+//        if (periodo.getResultList().isEmpty() || periodo.getResultList() == null) {
+//            System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getTutoresPeriodoActual() no se encontro periodo::: ");
+//        } else {
+////            System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getTutoresPeriodoActual() el periodo es ::: " + periodo.getSingleResult());
+//        }
+//        TypedQuery<VistaEvaluacionesTutores> q = f.getEntityManager().createQuery("SELECT v FROM VistaEvaluacionesTutores v WHERE v.pk.periodo = :periodo", VistaEvaluacionesTutores.class);
+//        q.setParameter("periodo", periodo.getResultList().get(0).getPeriodo());
+//        if (q.getResultList().isEmpty() || q.getResultList() == null) {
+//            return null;
+//        } else {
+//            return q.getResultList();
+//        }
+//    }
 // Fin de métodos 
 
     @Override

@@ -67,10 +67,10 @@ public class LogonMB extends AdminSession implements Serializable {
     
     @Getter private UsuarioTipo usuarioTipo;
     @Getter @Setter private Usuarios usuarioAutenticado;
-//    @Getter @Setter private User usuarioAutenticadoShiro;
+    @Getter @Setter private User usuarioAutenticadoShiro;
     @Getter private Personal personal;
     @Getter @Setter private ListaUsuarioClaveNomina listaUsuarioClaveNomina;
-//    @Getter @Setter private User listaUsuarioClaveNominaShiro;
+    @Getter @Setter private User listaUsuarioClaveNominaShiro;
 
     @EJB private EjbLogin ejbLogin;
     @EJB private Facade f;    
@@ -84,8 +84,6 @@ public class LogonMB extends AdminSession implements Serializable {
         resShiro
         usuarioShiro
     y comentar las variables :
-        usuarioAutenticado
-        listaUsuarioClaveNomina
         res
         usuario
     */   
@@ -99,30 +97,31 @@ public class LogonMB extends AdminSession implements Serializable {
             Faces.getExternalContext().getFlash().setKeepMessages(true);
             Faces.redirect("estudioEgresadosDestiempo.xhtml");
         } else {
-            Usuarios res = ejbLogin.getUsuarioPorLogin(email);
-            Usuarios usuario = ejbLogin.autenticar(email, password);
-//            User resShiro = ejbLogin.getUsuarioPorLoginShiro(email);
-//            User usuarioShiro = ejbLogin.autenticarShiro(email, password);
+//            Usuarios res = ejbLogin.getUsuarioPorLogin(email);
+//            Usuarios usuario = ejbLogin.autenticar(email, password);
+            User resShiro = ejbLogin.getUsuarioPorLoginShiro(email);
+            User usuarioShiro = ejbLogin.autenticarShiro(email, password);
 
-//            if (resShiro == null) {
-            if (res == null) {
+            if (resShiro == null) {
+//            if (res == null) {
                 addDetailMessage("El usuario ingresado no existe.");
                 Faces.getExternalContext().getFlash().setKeepMessages(true);
                 Faces.redirect("login.xhtml");
             } else {
-//                if (usuarioShiro != null) {
-                if (usuario != null) {
-                    currentUser = usuario.getLoginUsuario();
-//                    currentUser = usuarioShiro.getUsername();
-                    usuarioAutenticado = usuario;
-//                    usuarioAutenticadoShiro = usuarioShiro;
-                    usuarioTipo = ejbLogin.getTipoUsuario(usuario);
-//                    usuarioTipo = UsuarioTipo.TRABAJADOR;
-                    listaUsuarioClaveNomina = ejbLogin.getListaUsuarioClaveNomina(currentUser);
-//                    listaUsuarioClaveNominaShiro = usuarioAutenticadoShiro;
+                if (usuarioShiro != null) {
+//                if (usuario != null) {
+//                    currentUser = usuario.getLoginUsuario();
+                    currentUser = usuarioShiro.getUsername();
+//                    usuarioAutenticado = usuario;
+                    usuarioAutenticadoShiro = usuarioShiro;
+//                    usuarioTipo = ejbLogin.getTipoUsuario(usuario);
+                    usuarioTipo = UsuarioTipo.TRABAJADOR;
+//                    listaUsuarioClaveNomina = ejbLogin.getListaUsuarioClaveNomina(currentUser);
+                    listaUsuarioClaveNominaShiro = usuarioAutenticadoShiro;
                     if (usuarioTipo.equals(UsuarioTipo.TRABAJADOR)) {
                         f.setEntityClass(Personal.class);
-                        personal = (Personal) f.find(Integer.parseInt(listaUsuarioClaveNomina.getNumeroNomina()));
+                        personal = (Personal) f.find(Integer.parseInt(usuarioAutenticadoShiro.getClaveNomina()));  
+//                        personal = (Personal) f.find(Integer.parseInt(listaUsuarioClaveNomina.getNumeroNomina()));
                         listaUsuarioClaveNomina.getNumeroNomina();
 //                    agregaBitacora();
 //                    getPermisosAcceso();
