@@ -9,11 +9,11 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -30,13 +30,14 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "EvidenciaContratosPersonal.findAll", query = "SELECT e FROM EvidenciaContratosPersonal e")
     , @NamedQuery(name = "EvidenciaContratosPersonal.findByClave", query = "SELECT e FROM EvidenciaContratosPersonal e WHERE e.clave = :clave")
     , @NamedQuery(name = "EvidenciaContratosPersonal.findByPeriodo", query = "SELECT e FROM EvidenciaContratosPersonal e WHERE e.periodo = :periodo")
-    , @NamedQuery(name = "EvidenciaContratosPersonal.findByContratoEvidencia", query = "SELECT e FROM EvidenciaContratosPersonal e WHERE e.contratoEvidencia = :contratoEvidencia")})
+    , @NamedQuery(name = "EvidenciaContratosPersonal.findByContratoEvidencia", query = "SELECT e FROM EvidenciaContratosPersonal e WHERE e.contratoEvidencia = :contratoEvidencia")
+    , @NamedQuery(name = "EvidenciaContratosPersonal.findByCategoria", query = "SELECT e FROM EvidenciaContratosPersonal e WHERE e.categoria = :categoria")})
 public class EvidenciaContratosPersonal implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @NotNull
     @Column(name = "clave")
     private Integer clave;
     @Basic(optional = false)
@@ -49,9 +50,10 @@ public class EvidenciaContratosPersonal implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "contrato_evidencia")
     private String contratoEvidencia;
-    @JoinColumn(name = "clave", referencedColumnName = "clave", insertable = false, updatable = false)
-    @OneToOne(optional = false)
-    private Personal personal;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "categoria")
+    private short categoria;
 
     public EvidenciaContratosPersonal() {
     }
@@ -60,10 +62,11 @@ public class EvidenciaContratosPersonal implements Serializable {
         this.clave = clave;
     }
 
-    public EvidenciaContratosPersonal(Integer clave, String periodo, String contratoEvidencia) {
+    public EvidenciaContratosPersonal(Integer clave, String periodo, String contratoEvidencia, short categoria) {
         this.clave = clave;
         this.periodo = periodo;
         this.contratoEvidencia = contratoEvidencia;
+        this.categoria = categoria;
     }
 
     public Integer getClave() {
@@ -90,12 +93,12 @@ public class EvidenciaContratosPersonal implements Serializable {
         this.contratoEvidencia = contratoEvidencia;
     }
 
-    public Personal getPersonal() {
-        return personal;
+    public short getCategoria() {
+        return categoria;
     }
 
-    public void setPersonal(Personal personal) {
-        this.personal = personal;
+    public void setCategoria(short categoria) {
+        this.categoria = categoria;
     }
 
     @Override

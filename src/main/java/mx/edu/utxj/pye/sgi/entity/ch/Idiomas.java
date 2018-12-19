@@ -90,7 +90,7 @@ public class Idiomas implements Serializable {
     @Column(name = "fecha_evaluacion")
     @Temporal(TemporalType.DATE)
     private Date fechaEvaluacion;
-    @Size(max = 255)
+    @Size(max = 500)
     @Column(name = "evidencia_doc")
     private String evidenciaDoc;
     @Column(name = "fecha_vigencia_de")
@@ -101,7 +101,7 @@ public class Idiomas implements Serializable {
     private Date fechaVigenciaA;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 500)
+    @Size(min = 1, max = 255)
     @Column(name = "estatus")
     private String estatus;
     @JoinColumn(name = "clave_personal", referencedColumnName = "clave")

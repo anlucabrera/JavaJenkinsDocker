@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "DesempenioEvaluacionResultados.findAll", query = "SELECT d FROM DesempenioEvaluacionResultados d")
-    , @NamedQuery(name = "DesempenioEvaluacionResultados.findByEvaluacion", query = "SELECT d FROM DesempenioEvaluacionResultados d WHERE d.pk.evaluacion = :evaluacion")
-    , @NamedQuery(name = "DesempenioEvaluacionResultados.findByEvaluador", query = "SELECT d FROM DesempenioEvaluacionResultados d WHERE d.pk.evaluador = :evaluador")
-    , @NamedQuery(name = "DesempenioEvaluacionResultados.findByEvaluado", query = "SELECT d FROM DesempenioEvaluacionResultados d WHERE d.pk.evaluado = :evaluado")
+    , @NamedQuery(name = "DesempenioEvaluacionResultados.findByEvaluacion", query = "SELECT d FROM DesempenioEvaluacionResultados d WHERE d.desempenioEvaluacionResultadosPK.evaluacion = :evaluacion")
+    , @NamedQuery(name = "DesempenioEvaluacionResultados.findByEvaluador", query = "SELECT d FROM DesempenioEvaluacionResultados d WHERE d.desempenioEvaluacionResultadosPK.evaluador = :evaluador")
+    , @NamedQuery(name = "DesempenioEvaluacionResultados.findByEvaluado", query = "SELECT d FROM DesempenioEvaluacionResultados d WHERE d.desempenioEvaluacionResultadosPK.evaluado = :evaluado")
     , @NamedQuery(name = "DesempenioEvaluacionResultados.findByR1", query = "SELECT d FROM DesempenioEvaluacionResultados d WHERE d.r1 = :r1")
     , @NamedQuery(name = "DesempenioEvaluacionResultados.findByR2", query = "SELECT d FROM DesempenioEvaluacionResultados d WHERE d.r2 = :r2")
     , @NamedQuery(name = "DesempenioEvaluacionResultados.findByR3", query = "SELECT d FROM DesempenioEvaluacionResultados d WHERE d.r3 = :r3")
@@ -54,7 +54,7 @@ public class DesempenioEvaluacionResultados implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
-    protected DesempenioEvaluacionResultadosPK pk;
+    protected DesempenioEvaluacionResultadosPK desempenioEvaluacionResultadosPK;
     @Column(name = "r1")
     private Short r1;
     @Column(name = "r2")
@@ -112,19 +112,19 @@ public class DesempenioEvaluacionResultados implements Serializable {
     }
 
     public DesempenioEvaluacionResultados(DesempenioEvaluacionResultadosPK desempenioEvaluacionResultadosPK) {
-        this.pk = desempenioEvaluacionResultadosPK;
+        this.desempenioEvaluacionResultadosPK = desempenioEvaluacionResultadosPK;
     }
 
     public DesempenioEvaluacionResultados(int evaluacion, int evaluador, int evaluado) {
-        this.pk = new DesempenioEvaluacionResultadosPK(evaluacion, evaluador, evaluado);
+        this.desempenioEvaluacionResultadosPK = new DesempenioEvaluacionResultadosPK(evaluacion, evaluador, evaluado);
     }
 
-    public DesempenioEvaluacionResultadosPK getPk() {
-        return pk;
+    public DesempenioEvaluacionResultadosPK getDesempenioEvaluacionResultadosPK() {
+        return desempenioEvaluacionResultadosPK;
     }
 
-    public void setPk(DesempenioEvaluacionResultadosPK pk) {
-        this.pk = pk;
+    public void setDesempenioEvaluacionResultadosPK(DesempenioEvaluacionResultadosPK desempenioEvaluacionResultadosPK) {
+        this.desempenioEvaluacionResultadosPK = desempenioEvaluacionResultadosPK;
     }
 
     public Short getR1() {
@@ -322,7 +322,7 @@ public class DesempenioEvaluacionResultados implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (pk != null ? pk.hashCode() : 0);
+        hash += (desempenioEvaluacionResultadosPK != null ? desempenioEvaluacionResultadosPK.hashCode() : 0);
         return hash;
     }
 
@@ -333,7 +333,7 @@ public class DesempenioEvaluacionResultados implements Serializable {
             return false;
         }
         DesempenioEvaluacionResultados other = (DesempenioEvaluacionResultados) object;
-        if ((this.pk == null && other.pk != null) || (this.pk != null && !this.pk.equals(other.pk))) {
+        if ((this.desempenioEvaluacionResultadosPK == null && other.desempenioEvaluacionResultadosPK != null) || (this.desempenioEvaluacionResultadosPK != null && !this.desempenioEvaluacionResultadosPK.equals(other.desempenioEvaluacionResultadosPK))) {
             return false;
         }
         return true;
@@ -341,7 +341,7 @@ public class DesempenioEvaluacionResultados implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluacionResultados[ desempenioEvaluacionResultadosPK=" + pk + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluacionResultados[ desempenioEvaluacionResultadosPK=" + desempenioEvaluacionResultadosPK + " ]";
     }
     
 }

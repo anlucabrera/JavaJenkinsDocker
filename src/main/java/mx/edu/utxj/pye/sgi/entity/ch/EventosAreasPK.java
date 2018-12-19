@@ -43,7 +43,7 @@ public class EventosAreasPK implements Serializable {
         this.evento = evento;
     }
 
-    public int getAreaOperativa() {
+    public short getAreaOperativa() {
         return areaOperativa;
     }
 
@@ -79,5 +79,5 @@ public class EventosAreasPK implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.EventosAreasPK[ evento=" + evento + ", areaOperativa=" + areaOperativa + " ]";
     }
-
+    
 }

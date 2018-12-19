@@ -98,7 +98,7 @@ public class EvaluacionTutor implements Serializable {
                 //paso8 inicializar claves de opciones
                 clavesOpciones.clear();
                 for (int i = 0; (i < maxEvaluando && i < listaEvaluados.size()); i++) {
-                    clavesOpciones.add(listaEvaluados.get(i).getPk().getEvaluado());
+                    clavesOpciones.add(listaEvaluados.get(i).getEvaluacionesTutoresResultadosPK().getEvaluado());
                 }
 
                 //paso 9 inicializar opciones
@@ -138,7 +138,7 @@ public class EvaluacionTutor implements Serializable {
             //opcionesSelect.get(index).add(e)
             for (EvaluacionesTutoresResultados lp : listaEvaluados) {
 //                System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor.initOpciones() res: " + (!clavesOpciones.contains(lp.getPk().getEvaluado()) || clave.equals(lp.getPk().getEvaluado())) + ", lp: " + lp);
-                if ((!clavesOpciones.contains(lp.getPk().getEvaluado()) || clave.equals(lp.getPk().getEvaluado())) && !opciones.get(index).contains(lp)) {
+                if ((!clavesOpciones.contains(lp.getEvaluacionesTutoresResultadosPK().getEvaluado()) || clave.equals(lp.getEvaluacionesTutoresResultadosPK().getEvaluado())) && !opciones.get(index).contains(lp)) {
                     opciones.get(index).add(lp);
                 }
             }
@@ -150,14 +150,14 @@ public class EvaluacionTutor implements Serializable {
     private void initRespuestas() {
 //        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor.initRespuestas() listaevaluados: " + listaEvaluados);
         listaEvaluados.stream().map((subordinado) -> {
-            respuestas.put(subordinado.getPk().getEvaluado(), new HashMap<>());
+            respuestas.put(subordinado.getEvaluacionesTutoresResultadosPK().getEvaluado(), new HashMap<>());
             return subordinado;
         }).forEachOrdered((subordinado) -> {
-            Integer index = evaluacion.getEvaluacionesTutoresResultadosList().indexOf(new EvaluacionesTutoresResultados(evaluacion.getEvaluacion(), Integer.parseInt(evaluador.getPk().getMatricula()), subordinado.getPk().getEvaluado()));
+            Integer index = evaluacion.getEvaluacionesTutoresResultadosList().indexOf(new EvaluacionesTutoresResultados(evaluacion.getEvaluacion(), Integer.parseInt(evaluador.getPk().getMatricula()), subordinado.getEvaluacionesTutoresResultadosPK().getEvaluado()));
             EvaluacionesTutoresResultados resultado = evaluacion.getEvaluacionesTutoresResultadosList().get(index);
 //            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor.initRespuestas(10) resultado: " + resultado);
             for (float fi = 1.0f; fi <= 21.0f; fi++) {
-                respuestas.get(subordinado.getPk().getEvaluado()).put(fi, ejbEvaluacionTutor.obtenerRespuestaPorPregunta(resultado, fi));
+                respuestas.get(subordinado.getEvaluacionesTutoresResultadosPK().getEvaluado()).put(fi, ejbEvaluacionTutor.obtenerRespuestaPorPregunta(resultado, fi));
             }
         });
     }
@@ -240,7 +240,7 @@ public class EvaluacionTutor implements Serializable {
         for (EvaluacionesTutoresResultados lpde : listaEvaluado.stream().filter(personal -> comparador.isCompleto(personal)).collect(Collectors.toList())) {
 //            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.continuarEvaluando() incompleto: " + lpde);
             if (total < 4) {
-                clavesOpciones.add(lpde.getPk().getEvaluado());
+                clavesOpciones.add(lpde.getEvaluacionesTutoresResultadosPK().getEvaluado());
                 total++;
             } else {
                 break;
@@ -251,7 +251,7 @@ public class EvaluacionTutor implements Serializable {
             for (EvaluacionesTutoresResultados lpde : listaEvaluado.stream().filter(personal -> comparador.isCompleto(personal)).collect(Collectors.toList())) {
 //                System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.continuarEvaluando() completo: " + lpde);
                 if (total < 4) {
-                    clavesOpciones.add(lpde.getPk().getEvaluado());
+                    clavesOpciones.add(lpde.getEvaluacionesTutoresResultadosPK().getEvaluado());
                     total++;
                 } else {
                     break;

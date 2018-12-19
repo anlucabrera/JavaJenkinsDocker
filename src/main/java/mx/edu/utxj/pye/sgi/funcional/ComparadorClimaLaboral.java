@@ -12,8 +12,8 @@ public class ComparadorClimaLaboral implements Comparador<EvaluacionesClimaLabor
                 resultado.getR3() == null ||
                 resultado.getR4() == null ||
                 resultado.getR5() == null ||
-                resultado.getR6_1() == null ||
-                resultado.getR6_2() == null ||
+                resultado.getR61() == null ||
+                resultado.getR62() == null ||
                 resultado.getR7() == null ||
                 resultado.getR8() == null ||
                 resultado.getR9() == null ||
@@ -67,8 +67,8 @@ public class ComparadorClimaLaboral implements Comparador<EvaluacionesClimaLabor
                 resultado.getR58() == null ||
                 resultado.getR59() == null ||
                 resultado.getR60() == null ||
-                resultado.getR6_1() == null ||
-                resultado.getR6_2() == null ||
+                resultado.getR611() == null ||
+                resultado.getR621() == null ||
                 resultado.getR64() == null ||
                 resultado.getR65() == null ||
                 resultado.getR66() == null ||
@@ -84,7 +84,7 @@ public class ComparadorClimaLaboral implements Comparador<EvaluacionesClimaLabor
         
 //        System.out.println("mx.edu.utxj.pye.sgi.funcional.ComparadorClimaLaboral.isCompleto(2)");
         
-        if(resultado.getR8() != null && resultado.getR8().equals("Sí") && resultado.getR8_1() == null){
+        if(resultado.getR8() != null && resultado.getR8().equals("Sí") && resultado.getR81() == null){
             return false;
         }
         

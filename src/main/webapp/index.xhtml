@@ -474,6 +474,43 @@
                     </div>
                 </div>
             </c:if>
+            <c:if test="#{premios.aplica}">
+                <div class="box box-primary">
+                    <div class="box box-solid">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Votación de premios</h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>       
+                        <div class="box-body">  
+                            <div class="row">        
+                                <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-sm-12'}" />
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="premios();">
+                                            <h3>
+                                                <h:outputLabel value="#{premios.avance}">
+                                                </h:outputLabel>
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Premios <br/>Periodo: #{caster.periodoToString(premios.periodo)}</p>
+                                        </div>                                        
+                                        <div class="icon">
+                                            <i class="fa fa-calendar-check-o"></i>
+                                        </div>                                        
+                                        <p:link outcome="#{premios.outcome}"  class="small-box-footer">
+                                            Ingresar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="premios" action="#{premios.abrir()}" /></h:form>
+                                    </div>
+                                </div>                        
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </c:if>
         </c:if>
     </ui:define>
 </ui:composition>

@@ -84,7 +84,7 @@ public class ValidadorPlaneacionCuatrimestralLAB
     public Boolean call() throws Exception {
 //        System.out.println("mx.edu.utxj.pye.sgi.funcional.ValidadorPlaneacionCuatrimestralLAB.call()");
         this.t.setValidacionSistema(esCorrecta(t));
-        return this.t.isValidacionSistema();
+        return this.t.getValidacionSistema();
     }
     
     

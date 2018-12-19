@@ -34,15 +34,22 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Modulos.findAll", query = "SELECT m FROM Modulos m")
     , @NamedQuery(name = "Modulos.findByModulo", query = "SELECT m FROM Modulos m WHERE m.modulo = :modulo")
     , @NamedQuery(name = "Modulos.findByNombre", query = "SELECT m FROM Modulos m WHERE m.nombre = :nombre")
-    , @NamedQuery(name = "Modulos.findByDescripcion", query = "SELECT m FROM Modulos m WHERE m.descripcion = :descripcion")})
+    , @NamedQuery(name = "Modulos.findByDescripcion", query = "SELECT m FROM Modulos m WHERE m.descripcion = :descripcion")
+    , @NamedQuery(name = "Modulos.findByIcono", query = "SELECT m FROM Modulos m WHERE m.icono = :icono")
+    , @NamedQuery(name = "Modulos.findByActivo", query = "SELECT m FROM Modulos m WHERE m.activo = :activo")})
 public class Modulos implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "modulo")
+    private Integer modulo;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "nombre")
     private String nombre;
-
     @Size(max = 1000)
     @Column(name = "descripcion")
     private String descripcion;
@@ -55,13 +62,6 @@ public class Modulos implements Serializable {
     @NotNull
     @Column(name = "activo")
     private boolean activo;
-
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "modulo")
-    private Integer modulo;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "modulo")
     private List<Permisos> permisosList;
 
@@ -72,9 +72,11 @@ public class Modulos implements Serializable {
         this.modulo = modulo;
     }
 
-    public Modulos(Integer modulo, String nombre) {
+    public Modulos(Integer modulo, String nombre, String icono, boolean activo) {
         this.modulo = modulo;
         this.nombre = nombre;
+        this.icono = icono;
+        this.activo = activo;
     }
 
     public Integer getModulo() {
@@ -85,6 +87,37 @@ public class Modulos implements Serializable {
         this.modulo = modulo;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public String getIcono() {
+        return icono;
+    }
+
+    public void setIcono(String icono) {
+        this.icono = icono;
+    }
+
+    public boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
 
     @XmlTransient
     public List<Permisos> getPermisosList() {
@@ -118,38 +151,6 @@ public class Modulos implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Modulos[ modulo=" + modulo + " ]";
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public String getIcono() {
-        return icono;
-    }
-
-    public void setIcono(String icono) {
-        this.icono = icono;
-    }
-
-    public boolean getActivo() {
-        return activo;
-    }
-
-    public void setActivo(boolean activo) {
-        this.activo = activo;
     }
     
 }
