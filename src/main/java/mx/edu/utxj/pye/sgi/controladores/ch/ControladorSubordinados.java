@@ -19,8 +19,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.entity.ch.Articulosp;
 import mx.edu.utxj.pye.sgi.entity.ch.ExperienciasLaborales;
 import mx.edu.utxj.pye.sgi.entity.ch.Capacitacionespersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.Congresos;
+import mx.edu.utxj.pye.sgi.entity.ch.DesarrolloSoftware;
+import mx.edu.utxj.pye.sgi.entity.ch.DesarrollosTecnologicos;
+import mx.edu.utxj.pye.sgi.entity.ch.Distinciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Docencias;
 import mx.edu.utxj.pye.sgi.entity.ch.FormacionAcademica;
 import mx.edu.utxj.pye.sgi.entity.ch.Funciones;
@@ -29,9 +34,13 @@ import mx.edu.utxj.pye.sgi.entity.ch.Idiomas;
 import mx.edu.utxj.pye.sgi.entity.ch.Incapacidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
 import mx.edu.utxj.pye.sgi.entity.ch.InformacionAdicionalPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.Innovaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.Investigaciones;
+import mx.edu.utxj.pye.sgi.entity.ch.Lenguas;
+import mx.edu.utxj.pye.sgi.entity.ch.LibrosPub;
+import mx.edu.utxj.pye.sgi.entity.ch.Memoriaspub;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
@@ -46,12 +55,21 @@ public class ControladorSubordinados implements Serializable {
 
     @Getter    @Setter    private List<ListaPersonal> nuevaListaListaPersonal = new ArrayList<>(), nuevaListaListaPersonalJefes = new ArrayList<>();
     @Getter    @Setter    private List<Funciones> listaFuncioneSubordinado = new ArrayList<>();
-    @Getter    @Setter    private List<Idiomas> listaIdiomas = new ArrayList<>();
     @Getter    @Setter    private List<FormacionAcademica> listaFormacionAcademica = new ArrayList<>();
     @Getter    @Setter    private List<ExperienciasLaborales> listaExperienciasLaborales = new ArrayList<>();
     @Getter    @Setter    private List<Capacitacionespersonal> listaCapacitacionespersonal = new ArrayList<>();
+    @Getter    @Setter    private List<Idiomas> listaIdiomas = new ArrayList<>();
     @Getter    @Setter    private List<HabilidadesInformaticas> listaHabilidadesInformaticas = new ArrayList<>();
-    @Getter    @Setter    private List<Investigaciones> listaInvestigaciones = new ArrayList<>();
+    @Getter    @Setter    private List<Lenguas> listaLenguas = new ArrayList<>();
+    @Getter    @Setter    private List<DesarrolloSoftware> listaDesarrolloSoftwar = new ArrayList<>();
+    @Getter    @Setter    private List<DesarrollosTecnologicos> listaDesarrollosTecnologicos = new ArrayList<>();
+    @Getter    @Setter    private List<Innovaciones> listaInnovaciones = new ArrayList<>();
+    @Getter    @Setter    private List<Distinciones> listaDistinciones = new ArrayList<>();
+    @Getter    @Setter    private List<LibrosPub> listaLibrosPubs = new ArrayList<>();
+    @Getter    @Setter    private List<Articulosp> listaArticulosp = new ArrayList<>();
+    @Getter    @Setter    private List<Memoriaspub> listaMemoriaspub = new ArrayList<>();
+    @Getter    @Setter    private List<Investigaciones> listaInvestigacion = new ArrayList<>();
+    @Getter    @Setter    private List<Congresos> listaCongresos = new ArrayList<>();
     @Getter    @Setter    private List<String> nuevaListaFuncionesEspecificas = new ArrayList<>(), nuevaListaFuncionesGenerales = new ArrayList<>(), estatus = new ArrayList<>();
     @Getter    @Setter    private List<Incidencias> listaIncidencias = new ArrayList<>();
     @Getter    @Setter    private List<Incidencias> listaIncidenciasReporteImpresion = new ArrayList<>();
@@ -75,6 +93,8 @@ public class ControladorSubordinados implements Serializable {
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbFunciones ejbFunciones;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbTecnologia ejbTecnologia;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPremios ejbPremios;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbEducacion ejbEducacion;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbHabilidades ejbHabilidades;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbProduccionProfecional ejbProduccionProfecional;
@@ -214,23 +234,38 @@ public class ControladorSubordinados implements Serializable {
 
     public void informacionCV() {
         try {
-            listaIdiomas.clear();
-            listaDocencias.clear();
-            listaInvestigaciones.clear();
             listaFormacionAcademica.clear();
             listaExperienciasLaborales.clear();
             listaCapacitacionespersonal.clear();
+            listaIdiomas.clear();
             listaHabilidadesInformaticas.clear();
-            listaIncidenciasIndividuales.clear();
+            listaLenguas.clear();
+            listaDesarrolloSoftwar.clear();
+            listaDesarrollosTecnologicos.clear();
+            listaInnovaciones.clear();
+            listaDistinciones.clear();
+            listaLibrosPubs.clear();
+            listaArticulosp.clear();
+            listaMemoriaspub.clear();
+            listaInvestigacion.clear();
+            listaCongresos.clear();
             
-            listaIdiomas = ejbHabilidades.mostrarIdiomas(contactoDestino);
-            listaDocencias = ejbDatosUsuarioLogeado.mostrarListaDocencias(contactoDestino);
             listaFormacionAcademica = ejbEducacion.mostrarFormacionAcademica(contactoDestino);
-            listaInvestigaciones = ejbProduccionProfecional.mostrarInvestigacion(contactoDestino);
             listaExperienciasLaborales = ejbEducacion.mostrarExperienciasLaborales(contactoDestino);
             listaCapacitacionespersonal = ejbEducacion.mostrarCapacitacionespersonal(contactoDestino);
-            listaIncidenciasIndividuales=ejbNotificacionesIncidencias.mostrarIncidencias(contactoDestino);
+            listaIdiomas = ejbHabilidades.mostrarIdiomas(contactoDestino);
             listaHabilidadesInformaticas = ejbHabilidades.mostrarHabilidadesInformaticas(contactoDestino);
+            listaLenguas = ejbHabilidades.mostrarLenguas(contactoDestino);
+            listaDesarrolloSoftwar = ejbTecnologia.mostrarDesarrolloSoftware(contactoDestino);
+            listaDesarrollosTecnologicos = ejbTecnologia.mostrarDesarrollosTecnologicos(contactoDestino);
+            listaInnovaciones = ejbTecnologia.mostrarInnovaciones(contactoDestino);
+            listaDistinciones = ejbPremios.mostrarDistinciones(contactoDestino);
+            listaLibrosPubs = ejbProduccionProfecional.mostrarLibrosPub(contactoDestino);
+            listaArticulosp = ejbProduccionProfecional.mostrarArticulosp(contactoDestino);
+            listaMemoriaspub = ejbProduccionProfecional.mostrarMemoriaspub(contactoDestino);
+            listaInvestigacion = ejbProduccionProfecional.mostrarInvestigacion(contactoDestino);
+            listaCongresos = ejbProduccionProfecional.mostrarCongresos(contactoDestino);
+            
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);

@@ -49,7 +49,15 @@
                 <div class="box box-primary">
                     <div class="box-header with-border">
                         <div id="main-buttons" class="hidden-sm hidden-xs" >
-                            <p:panel>
+                            <p:panel header="Simbología">
+                                <p:outputLabel value="Actividades que no cuentan con recurso="/>
+                                <p:commandButton id="btnRSimbo1" actionListener="#{controladorPOARecurso.imprimirValores()}"
+                                                 icon="fa fa-usd" styleClass="btn-primary"/> 
+                                <p:spacer width="30px"/>
+                                <p:outputLabel value="Actividades que ya cuentan con recurso="/>
+                                <p:commandButton id="btnRSimbo2" actionListener="#{controladorPOARecurso.imprimirValores()}"
+                                                 icon="fa fa-usd" styleClass="btn-success"/> 
+
                             </p:panel>
                         </div>
                     </div>
@@ -232,7 +240,7 @@
                     <div class="box-body">
                         <div class="row">
                             <div class="col-lg-12 col-md-12 text-info text-center">
-                                <p:remoteCommand name="actualizarTabla" actionListener="#{controladorPOARecurso.imprimirValores()}" update=":frm:dtbEje:dtbEstra:dtbLinea:dtbActividad:dtbRecurso" />
+                                <p:remoteCommand name="actualizarTabla" actionListener="#{controladorPOARecurso.imprimirValores()}" update="@(form)" />
                                 <p:dataTable id="dtbEje" widgetVar="dtbEje" var="eje" sortBy="#{eje.ejeA.eje}" expandableRowGroups="true"
                                              value="#{controladorPOARecurso.listaEstrategiases}">
                                     <p:headerRow>
@@ -324,7 +332,7 @@
                                                             <p:column styleClass="#{actividad.actividadesPoa1.numeroS eq 0?'actividad':''}" style="text-align: center; width: 3%;"> 
                                                                 <p:commandButton id="btnRecurso" actionListener="#{controladorPOARecurso.asignarRecursoActividad(actividad.actividadesPoa1)}"
                                                                                  process="@this" update="frm" oncomplete="PF('delRegistroProdustos').show()" icon="fa fa-usd" 
-                                                                                 styleClass="btn-primary" title="Agregar recurso" onsuccess="actualizarTabla()"/> 
+                                                                                 styleClass="#{actividad.actividadesPoa1.recursosActividadList.size() eq 0?'btn-primary':'btn-success'}" title="Agregar recurso" onsuccess="actualizarTabla()"/> 
                                                             </p:column>
 
                                                             <p:rowExpansion>

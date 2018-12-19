@@ -123,7 +123,6 @@ public class ControladorIncidenciasPersonal implements Serializable {
             listaIncapacidades = ejbNotificacionesIncidencias.mostrarIncapacidad(usuario);
             listaCuidados = ejbNotificacionesIncidencias.mostrarCuidados(usuario);
 
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.mostrarLista()" + listaIncidencias.size());
             List<Incidencias> incidenciases = new ArrayList<>();
             incidenciases.clear();
             fechaI = new Date();
@@ -149,7 +148,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
                     }
                 });
             }
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.mostrarLista()" + incidenciases.size());
+            
             if (!incidenciases.isEmpty()) {
                 if (incidenciases.size() >= 2) {
                     registro = false;
@@ -185,11 +184,14 @@ public class ControladorIncidenciasPersonal implements Serializable {
             nuevOBJIncidencias.setClavePersonal(new Personal());
             nuevOBJIncidencias.getClavePersonal().setClave(usuario);
             nuevOBJIncidencias.setEstatus("Pendiente");
-            if ((tiempo.getHours() == 0 && tiempo.getMinutes() == 0) && !nuevOBJIncidencias.getTipo().equals("Inasistencia")) {
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearIncidencia()"+nuevOBJIncidencias.getTipo());
+            if ((tiempo.getHours() == 0 && tiempo.getMinutes() == 0) && (nuevOBJIncidencias.getTipo().equals("Retardo menor") || nuevOBJIncidencias.getTipo().equals("Retardo mayor") || nuevOBJIncidencias.getTipo().equals("Salida anticipada"))) {
                 Messages.addGlobalWarn("¡No puede registrar una incidencia con el tiempo 00:00!");
             } else {
                 if (nuevOBJIncidencias.getNumeroOficio() != 0) {
+                    if(nuevOBJIncidencias.getTipo().equals("Inasistencia")){
                     tiempo = new Date(0, 0, 0, 8, 0);
+                    }
                     nuevOBJIncidencias.setTiempo(dateFormat.format(tiempo));
                     Integer dias = (int) ((fechaActual.getTime() - nuevOBJIncidencias.getFecha().getTime()) / 86400000);
                     Integer maximo = 0;

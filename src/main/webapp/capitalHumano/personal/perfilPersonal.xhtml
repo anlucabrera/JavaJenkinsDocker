@@ -653,6 +653,41 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
+                                                                <div class="row" style="display: #{controladorPersonal.listaInvestigacion.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblInvestigaciones" value="#{controladorPersonal.listaInvestigacion}" var="invest"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorPersonal.listaInvestigacion.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Investigación</h4>
+                                                                                </f:facet>
+                                                                                
+                                                                                <p:column style="width: 10%" headerText="Tipo de Investigación">
+                                                                                    <h:outputText value="#{invest.tipo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="Nombre de la Investigación" >
+                                                                                    <h:outputText value="#{invest.nombreInvestigacion}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 30%" headerText="Descripción" >
+                                                                                    <h:outputText value="#{invest.decripcion}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 20%" headerText="Fechas" >   
+                                                                                    <h:outputLabel value="del "/>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="#{invest.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="al "/>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="#{invest.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                </p:column>  
+                                                                                <p:column style="width: 15%" headerText="Institución">
+                                                                                    <h:outputText value="#{invest.institucion}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>

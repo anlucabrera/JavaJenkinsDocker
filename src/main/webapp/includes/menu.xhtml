@@ -14,7 +14,7 @@
             </li>
         </c:if>
         <c:if test="#{logonMB.usuarioTipo eq 'ESTUDIANTE'}">
-            <h4>Menu estudiante</h4>
+            <h4>Menú estudiante</h4>
             <li class="treeview ">
                 <a href="#">
                     <i class="fa fa-list-alt"></i> <span>Evaluaciones Estudiante</span>
@@ -25,8 +25,8 @@
                 <c:if test="#{evaluacionDoncenteMateriaControler.cargada}"><li><p:link href="/evaluaciones/evaluacion/docentesMateria.xhtml"><i class="fa fa-group"></i><span>Docente</span></p:link></li></c:if>
                 <c:if test="#{evaluacionTutor2.cargada}"><li><p:link href="/evaluaciones/evaluacion/tutores2.xhtml"><i class="fa fa-legal"></i><span>Tutor</span></p:link></li></c:if>
                 <c:if test="#{estudioEgresados.cargada}"><li><p:link href="/evaluaciones/evaluacion/estudioEgresados.xhtml"><i class="fa fa-graduation-cap"></i><span>Estudio egresado</span></p:link></li></c:if>
-                <c:if test="#{encuestaSatisfaccionEgresadosIng.cargada}"><li><p:link href="/satisfaccionEgresadosIng.xhtml"><i class="fa fa-graduation-cap"></i><span>SatisfacciÃ³n ING.</span></p:link></li></c:if>
-                <c:if test="#{encuestaSatisfaccionEgresadosIng.cargada}"><li><p:link href="/satisfaccionEgresadosIng.xhtml"><i class="fa fa-graduation-cap"></i><span>SatisfacciÃ³n T.S.U.</span></p:link></li></c:if>
+                <c:if test="#{encuestaSatisfaccionEgresadosIng.cargada}"><li><p:link href="/satisfaccionEgresadosIng.xhtml"><i class="fa fa-graduation-cap"></i><span>Satisfacción ING.</span></p:link></li></c:if>
+                <c:if test="#{encuestaSatisfaccionEgresadosIng.cargada}"><li><p:link href="/satisfaccionEgresadosIng.xhtml"><i class="fa fa-graduation-cap"></i><span>Satisfacción T.S.U.</span></p:link></li></c:if>
                 <c:if test="#{encuestaServicios.cargada}"><li><p:link href="/servicios.xhtml"><i class="fa fa-tty"></i><span>Servicios</span></p:link></li></c:if>
             </li>
         </c:if>
@@ -60,23 +60,26 @@
                     <span>Perfil</span>
                 </p:link>
             </li>
+            <c:if test="#{evaluacionDesempenioAdmin.cargada || evaluacion360Admin1.cargada || evaluacionControlInterno.cargada || climaLaboral.cargada}">
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-list-alt"></i> <span>Evaluaciones</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <c:if test="#{evaluacionDesempenioAdmin.cargada}"><li><p:link href="/evaluaciones/evaluacion/desempenio.xhtml"><i class="fa fa-line-chart"></i><span>Desempeño</span></p:link></li></c:if>
+                        <c:if test="#{evaluacion360Admin1.cargada}"><li><p:link href="/evaluaciones/evaluacion/360_1.xhtml"><i class="fa fa-group"></i><span>360 grados</span></p:link></li></c:if>
+                        <c:if test="#{evaluacionControlInterno.cargada}"><li><p:link href="/evaluaciones/evaluacion/evaControlInterno.xhtml"><i class="fa fa-group"></i><span>Evaluación de control interno</span></p:link></li></c:if>
+                        <c:if test="#{climaLaboral.cargada}"><li><p:link href="/evaluaciones/evaluacion/climaLaboral.xhtml"><i class="fa fa-group"></i><span>Clima laboral</span></p:link></li></c:if>
+                    </ul>
+                </li>
+            </c:if>
+
             <li class="treeview">
                 <a href="#">
-                    <i class="fa fa-list-alt"></i> <span>Evaluaciones</span>
-                    <span class="pull-right-container">
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </span>
-                </a>
-                <ul class="treeview-menu" style="display: none;">
-                    <c:if test="#{evaluacionDesempenioAdmin.cargada}"><li><p:link href="/evaluaciones/evaluacion/desempenio.xhtml"><i class="fa fa-line-chart"></i><span>DesempeÃ±o</span></p:link></li></c:if>
-                    <c:if test="#{evaluacion360Admin1.cargada}"><li><p:link href="/evaluaciones/evaluacion/360_1.xhtml"><i class="fa fa-group"></i><span>360 grados</span></p:link></li></c:if>
-                    <c:if test="#{evaluacionControlInterno.cargada}"><li><p:link href="/evaluaciones/evaluacion/evaControlInterno.xhtml"><i class="fa fa-group"></i><span>EvaluaciÃ³n de control interno</span></p:link></li></c:if>
-                    <c:if test="#{climaLaboral.cargada}"><li><p:link href="/evaluaciones/evaluacion/climaLaboral.xhtml"><i class="fa fa-group"></i><span>Clima laboral</span></p:link></li></c:if>
-                </ul>
-            </li>
-            <li class="treeview">
-                <a href="#">
-                    <i class="fa fa-list-alt"></i> <span>Admin evaluaciones</span>
+                    <i class="fa fa-list-alt"></i> <span>Administración evaluaciones</span>
                     <span class="pull-right-container">
                         <i class="fa fa-angle-left pull-right"></i>
                     </span>
@@ -98,7 +101,7 @@
                         </li>
                     </c:if>
                     <!--Directivos/Directores de carrera-->
-                    <c:if test="#{utilidadesAdministracionEvaluaciones.directorDeCarrera}"><li><p:link href="/evaluaciones/administracion/administracionDirectivos.xhtml" ><i class="fa fa-bookmark"></i><span>AdministraciÃ³n de evaluaciones</span></p:link></li></c:if>
+                    <c:if test="#{utilidadesAdministracionEvaluaciones.directorDeCarrera}"><li><p:link href="/evaluaciones/administracion/administracionDirectivos.xhtml" ><i class="fa fa-bookmark"></i><span>Administración de evaluaciones</span></p:link></li></c:if>
                     <c:if test="#{utilidadesAdministracionEvaluaciones.directivo}"><li><p:link href="/evaluaciones/administracion/administracionDirectivos.xhtml" ><i class="fa fa-bookmark"></i><span>Resultados subordinados</span></p:link></li></c:if>
 
                     <c:if test="#{administracionEncuestaTsu.director and administracionAvanceEncSatTsu.director}">
@@ -107,7 +110,7 @@
 
 
                     <!--tutores-->
-                    <c:if test="#{utilidadesAdministracionEvaluaciones.tutor}"><li><p:link href="/evaluaciones/administracion/administracionTutores.xhtml"><i class="fa fa-clipboard"></i><span>AdministraciÃ³n como tutor</span></p:link></li></c:if>
+                    <c:if test="#{utilidadesAdministracionEvaluaciones.tutor}"><li><p:link href="/evaluaciones/administracion/administracionTutores.xhtml"><i class="fa fa-clipboard"></i><span>Administración como tutor</span></p:link></li></c:if>
 
                     <!--************ administradores especiales********-->
                     <!--Jefe de personal-->
@@ -123,7 +126,7 @@
                     <c:if test="#{administracionEncuesta.esDeInformacionYEst }"><li><p:link href="/admEncuestaServicio.xhtml"><i class="fa fa-list-ol"></i><span>Resultados encuesta por servicio</span></p:link></li></c:if>
                     -->
                     <c:if test="#{administracionEncuestaTsu.esDeIyE and administracionAvanceEncSatTsu.esDeInformacionYEst }">
-                        <li><p:link href="/encuestas/seguimiento/admEncuestaEgreTsu.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacciÃ³n TSU</span></p:link></li>
+                        <li><p:link href="/encuestas/seguimiento/admEncuestaEgreTsu.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción TSU</span></p:link></li>
                     </c:if>
                     <!--Visible para todos los trabajadores-->
                     <li><p:link href="/capitalHumano/perfilEmpleadoEvaluaciones.xhtml"><i class="fa fa-exclamation"></i><span>Resultados de evaluaciones</span></p:link></li>
@@ -142,10 +145,17 @@
                     </a>
 
                     <ul class="treeview-menu" style="display: none;">
-                        <li><p:link href="/capitalHumano/directivos/perfilEmpleadoFun.xhtml"><i class="fa fa-sitemap"></i>
-                                <span>Organigramas y funciones</span>
+                        <li><p:link href="/capitalHumano/directivos/perfilEmpleadoFun.xhtml"><i class="fa fa-list-alt"></i>
+                                <span>funciones</span>
                             </p:link>
                         </li>
+                        <!--li>
+                                <p:link href="/capitalHumano/organigramaPrototipo.xhtml">
+                                    <i class="fa fa-sitemap"></i>
+                                    <span>Organigrama Operativo</span>
+                                </p:link>
+                            </li>
+                        </c:if-->
                     </ul>
                 </li>
                 <li class="treeview">
@@ -168,18 +178,18 @@
                             </p:link>
                         </li>
                         <li>
-                            <p:link href="/capitalHumano/directivos/perfilSubordinadosIn.xhtml">
-                                <i class="fa fa-clock-o"></i>
-                                <span>Incidencias Subordinados</span>
+                            <p:link href="/capitalHumano/directivos/perfilSubordinadosIn.xhtml"><i class="fa fa-calendar-check-o"></i>
+                                <span>Incidencias Subordinados</span>                                
+                            </p:link>
+                        </li>
+                        <!--li>
+                            <p:link href="/capitalHumano/directivos/perfilEmpleadoNotM.xhtml"><i class="fa fa-users"></i>
+                                <span>Mensajes</span>
                                 <span class="pull-right-container">
                                     <small class="label pull-right bg-green">Nuevo</small>
                                 </span>
                             </p:link>
-                        </li>
-                        <li><p:link href="/capitalHumano/directivos/perfilEmpleadoNotM.xhtml"><i class="fa fa-users"></i>
-                                <span>Mensajes</span>
-                            </p:link>
-                        </li>  
+                        </li-->  
                     </ul>
                 </li>  
             </c:if>
@@ -204,19 +214,16 @@
                                 </p:link>
                             </li>
                             <li>
-                                <p:link href="/capitalHumano/personal/perfilPersonalconfiguracion.xhtml"><i class="fa fa-wrench"></i>
-                                    <span>Configuracion</span>
+                                <p:link href="/capitalHumano/personal/perfilPersonalconfiguracion.xhtml"><i class="fa fa-cogs"></i>
+                                    <span>Configuración</span>
                                 </p:link>
                             </li>
                         </c:if>
                         <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530}">
                             <li>
                                 <p:link href="/capitalHumano/personal/perfilPersonalIn.xhtml">
-                                    <i class="fa fa-list-alt"></i>
+                                    <i class="fa fa-folder-open"></i>
                                     <span>Incidencias Personal</span>
-                                    <span class="pull-right-container">
-                                        <small class="label pull-right bg-green">Nuevo</small>
-                                    </span>
                                 </p:link>
                             </li>
                         </c:if>
@@ -231,7 +238,7 @@
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9}">
                 <li class="treeview">
                     <a href="#">
-                        <i class="fa fa-history"></i> <span>Estadistica</span>
+                        <i class="fa fa-history"></i> <span>Estadística</span>
                         <span class="pull-right-container">
                             <i class="fa fa-angle-left pull-right"></i>
                         </span>
@@ -242,7 +249,7 @@
                             </p:link>
                         </li>
                         <li><p:link href="/capitalHumano/estadistica/perfilEstadisticaHistoricos.xhtml"><i class="fa fa-book"></i>
-                                <span>Historico Plantilla Personal</span>
+                                <span>Histórico Plantilla Personal</span>
                             </p:link>
                         </li>
                     </ul>
@@ -286,20 +293,20 @@
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
                 <li class="treeview">
                     <a href="#">
-                        <i class="fa fa-check-square-o"></i> <span>Administracion Sistema</span>
+                        <i class="fa fa-desktop"></i> <span>Administración Sistema</span>
                         <span class="pull-right-container">
                             <i class="fa fa-angle-left pull-right"></i>
                         </span>
                     </a>
 
                     <ul class="treeview-menu" style="display: none;">
-                        <li><p:link href="/capitalHumano/admin/perfilAdminIncidencias.xhtml"><i class="fa fa-sitemap"></i>
+                        <li><p:link href="/capitalHumano/admin/perfilAdminIncidencias.xhtml"><i class="fa fa-hourglass-half"></i>
                                 <span>Incidencias</span>
                             </p:link>
                         </li>
                         <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
-                            <li><p:link href="/capitalHumano/admin/perfilAdminPOA.xhtml"><i class="fa fa-sitemap"></i>
-                                    <span>Admin POA</span>
+                            <li><p:link href="/capitalHumano/admin/perfilAdminPOA.xhtml"><i class="fa fa-calendar"></i>
+                                    <span>Programa Anual de Trabajo</span>
                                 </p:link>
                             </li>
                         </c:if>
@@ -328,7 +335,6 @@
                 </li>
             </c:if>
 
-            <!--c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 6 }"-->
             <c:if test="#{controladorEmpleado.tienePOA}">
                 <li class="treeview">
 
@@ -371,42 +377,47 @@
                                 </p:link>
                             </li>
                         </c:if>
-                        <!--li>
-                            <p:link href="/poa/areas/areaCMI.xhtml"><i class="fa fa-calendar-check-o"></i>
-                                <span>Caudro Mando Integar</span>
+                        <li>
+                            <p:link href="/poa/areas/areaCMI.xhtml"><i class="fa fa-bar-chart"></i>
+                                <span>CMI Área</span>
                             </p:link>
-                        </li--> 
+                        </li> 
+                        <li>
+                            <p:link href="/poa/pye/universidadCMI.xhtml"><i class="fa fa-line-chart"></i>
+                                <span>CMI Institucional</span>
+                            </p:link>
+                        </li> 
                     </ul>
                 </li>
             </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 7 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 148 ||controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 6}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 7 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 148 ||controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 6 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 360}">
                 <li class="treeview">
 
                     <a href="#">
-                        <i class="fa fa-clipboard"></i> <span>Administracioin POA</span>
+                        <i class="fa fa-clipboard"></i> <span>Administración POA</span>
                         <span class="pull-right-container">
                             <i class="fa fa-angle-left pull-right"></i>
                         </span>
                     </a>
 
                     <ul class="treeview-menu" style="display: none;">
-                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 7 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 7 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 360}">
                             <li>
                                 <p:link href="/poa/pye/validacionFinanzas.xhtml"><i class="fa fa-credit-card"></i>
-                                    <span>Validacion finanzas</span>
+                                    <span>Validación finanzas</span>
                                 </p:link>
                             </li>
                         </c:if>
                         <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 148 ||controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 6}">
                             <li>
                                 <p:link href="/poa/pye/validacionProgramacionActividades.xhtml"><i class="fa fa-wechat"></i>
-                                    <span>Validacion Programacion</span>
+                                    <span>Validación Programación</span>
                                 </p:link>
                             </li>
 
                             <li>
                                 <p:link href="/poa/pye/validacionPyeFinal.xhtml"><i class="fa fa-check-square"></i>
-                                    <span>Validacion final</span>
+                                    <span>Validación final</span>
                                 </p:link>
                             </li>
                             <li>
@@ -415,28 +426,14 @@
                                 </p:link>
                             </li> 
                         </c:if>
-                        <!--li>
-                            <p:link href="/poa/pye/universidadCMI.xhtml"><i class="fa fa-calendar-check-o"></i>
-                                <span>Cuadro Mando Integral</span>
-                            </p:link>
-                        </li--> 
                     </ul>
                 </li>               
-
-
-
-                <li>
-                    <p:link href="/capitalHumano/organigramaPrototipo.xhtml">
-                        <i class="fa fa-wrench"></i>
-                        <span>Prototipo Organigrama</span>
-                    </p:link>
-                </li>
 
             </c:if>
             <!--li class="treeview">
                 <a href="#"><i class="fa fa-money"></i><span>Finanzas</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
                 <ul class="treeview-menu">
-                    <li><p:link href="/capitalHumano/perfilEmpleadoExDoc.xhtml"><i class="fa fa-shopping-bag"></i> <span>Seguimiento a trÃ¡mites</span></p:link></li>
+                    <li><p:link href="/capitalHumano/perfilEmpleadoExDoc.xhtml"><i class="fa fa-shopping-bag"></i> <span>Seguimiento a trámites</span></p:link></li>
                 </ul>
             </li>
             <li class="treeview">
@@ -468,35 +465,36 @@
                 <li>
                     <p:link href="/capitalHumano/fda/perfilPersonalDocente.xhtml">
                         <i class="fa fa-users"></i>
-                        <span>Plantilla doncente</span>
+                        <span>Plantilla docente</span>
                     </p:link>
                 </li>
             </c:if>
 
             <li>
                 <p:link href="/capitalHumano/perfilEmpleadoIn.xhtml">
-                    <i class="fa fa-hourglass-2"></i>
+                    <i class="fa fa-clock-o"></i>
                     <span>Incidencias</span>
-                    <span class="pull-right-container">
-                        <small class="label pull-right bg-green">Nuevo</small>
-                    </span>
                 </p:link>
             </li>
+
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+
+                <li>
+                    <p:link href="/siiFaces.xhtml">
+                        <i class="fa fa-comments"></i>
+                        <span>Mensajería</span>
+                        <span class="pull-right-container">
+                            <small class="label pull-right bg-green">Nuevo</small>
+                        </span>
+                    </p:link>
+                </li>
+            </c:if>
             <li>
                 <p:link href="/manuales.xhtml">
                     <i class="fa fa-book"></i>
                     <span>Manuales</span>
                 </p:link>
             </li>
- 
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
-                <li>
-                    <p:link href="/siiFaces.xhtml">
-                        <i class="fa fa-wrench"></i>
-                        <span>Mensajería</span>
-                    </p:link>
-                </li>
-            </c:if>
             <li>
                 <p:link href="/soporteTecnico.xhtml">
                     <i class="fa fa-wrench"></i>

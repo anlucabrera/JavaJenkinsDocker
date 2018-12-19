@@ -603,7 +603,7 @@ public class ServiciosPoaSelectec implements EjbPoaSelectec {
         List<ActividadesPoa> actividades = new ArrayList<>();
         facadePoa.flush();
         actividades.clear();
-        actividades = facadePoa.getEntityManager().createQuery("SELECT a FROM ActividadesPoa a INNER JOIN a.cuadroMandoInt cm INNER JOIN cm.eje ej INNER JOIN cm.ejercicioFiscal ef INNER JOIN cm.proyecto p WHERE cm.estrategia.estrategia=:estrategia AND ej.eje=:eje AND ef.ejercicioFiscal=:ejercicioFiscal AND p.proyecto=:proyecto GROUP BY a.actividadPoa ORDER BY a.numeroP, a.numeroS, a.area ", ActividadesPoa.class)
+        actividades = facadePoa.getEntityManager().createQuery("SELECT a FROM ActividadesPoa a INNER JOIN a.cuadroMandoInt cm INNER JOIN cm.eje ej INNER JOIN cm.ejercicioFiscal ef INNER JOIN cm.proyecto p WHERE cm.estrategia.estrategia=:estrategia AND ej.eje=:eje AND ef.ejercicioFiscal=:ejercicioFiscal AND p.proyecto=:proyecto GROUP BY a.actividadPoa ORDER BY cm.cuadroMandoInt, a.numeroP, a.numeroS, a.area ", ActividadesPoa.class)
                 .setParameter("estrategia", estrategia.getEstrategia())
                 .setParameter("eje", eje.getEje())
                 .setParameter("ejercicioFiscal", ejercicio)

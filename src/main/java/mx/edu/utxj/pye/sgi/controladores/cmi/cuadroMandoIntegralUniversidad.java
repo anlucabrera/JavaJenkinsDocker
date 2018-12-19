@@ -311,7 +311,8 @@ public class cuadroMandoIntegralUniversidad implements Serializable {
         actividadesPoas = new ArrayList<>();
         actividadesPoas.clear();
         actividadesPoas = poaSelectec.mostrarActividadesPoasUniversidadaEjercicioFiscal(ejercicioFiscal);
-        if (!actividadesPoas.isEmpty()) {
+        cMIArea = new resultadosCMI(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativaNombre(), 0, 0, 0.0, graf, new MeterGaugeChartModel());
+        if (!actividadesPoas.isEmpty()) {            
             List<ActividadesPoa> actividadesPoasFiltradas = new ArrayList<>();
             actividadesPoasFiltradas.clear();
             actividadesPoasFiltradas = actividadesFiltradas(actividadesPoas);
@@ -373,7 +374,6 @@ public class cuadroMandoIntegralUniversidad implements Serializable {
                                 listaActividadesPoasFiltradas.clear();
                                 listaActividadesPoasFiltradas = actividadesFiltradas(poaSelectec.getActividadesPoasProyecto(es, ej, pr, ejercicioFiscal));
                                 if (!listaActividadesPoasFiltradas.isEmpty()) {
-                                    Collections.sort(listaActividadesPoasFiltradas, (x, y) -> (x.getNumeroP() + "." + x.getNumeroS()).compareTo(y.getNumeroP() + "." + y.getNumeroS()));
                                     listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(es, listaActividadesPoasFiltradas));
                                     Collections.sort(listaEstrategiaActividadesesEje, (x, y) -> Short.compare(x.getEstrategias().getEstrategia(), y.getEstrategias().getEstrategia()));
                                     calculosCMI(listaActividadesPoasFiltradas);
