@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Planeacion
+ * @author UTXJ
  */
 @Entity
 @Table(name = "habilidades_360", catalog = "capital_humano", schema = "")

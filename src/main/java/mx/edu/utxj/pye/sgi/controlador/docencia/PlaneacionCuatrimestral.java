@@ -249,20 +249,20 @@ public class PlaneacionCuatrimestral implements Serializable{
     }
 
     public Long getDirectorCorrectas() {
-        return planeaciones.stream().filter(pc -> pc.isValidacionSistema()).count();
+        return planeaciones.stream().filter(pc -> pc.getValidacionSistema()).count();
     }
 
     public Long getDirectorValidados() {
         getDirectorPlaneacioFinalizado();
-        return planeaciones.stream().filter(pc -> pc.isValidacionDirector()).count();
+        return planeaciones.stream().filter(pc -> pc.getValidacionDirector()).count();
     }
 
     public Boolean getDirectorFinalizado() {
-        return planeaciones.stream().anyMatch(pc -> !pc.isValidacionSistema());
+        return planeaciones.stream().anyMatch(pc -> !pc.getValidacionSistema());
     }
 
     public void getDirectorPlaneacioFinalizado() {
-        if (planeaciones.stream().filter(pc -> pc.isValidacionSistema()).count() == planeaciones.stream().filter(pc -> pc.isValidacionDirector()).count()) {
+        if (planeaciones.stream().filter(pc -> pc.getValidacionSistema()).count() == planeaciones.stream().filter(pc -> pc.getValidacionDirector()).count()) {
             if (detalles.getEstudiantesEstadia() == estudiantesAsigandos && detalles.getProyectosEstadia() == proyectosAsignados) {
                 planeacionesFinalizadas = true;
             }
@@ -417,7 +417,7 @@ public class PlaneacionCuatrimestral implements Serializable{
         if (planeaciones == null) {
             return 0L;
         } else {
-            return planeaciones.stream().filter(pc -> pc.isValidacionDirector()).count();
+            return planeaciones.stream().filter(pc -> pc.getValidacionDirector()).count();
         }
     }
 
@@ -426,13 +426,13 @@ public class PlaneacionCuatrimestral implements Serializable{
             return 0L;
         } else {
             getSecretarioAcademicoPlaneacioFinalizado();
-            return planeaciones.stream().filter(pc -> pc.isValidacionSecretarioAdemico()).count();
+            return planeaciones.stream().filter(pc -> pc.getValidacionSecretarioAdemico()).count();
         }
     }
 
     public void getSecretarioAcademicoPlaneacioFinalizado() {
         if (planeaciones != null) {
-            if (planeaciones.stream().filter(pc -> pc.isValidacionSistema()).count() == planeaciones.stream().filter(pc -> pc.isValidacionSecretarioAdemico()).count()) {
+            if (planeaciones.stream().filter(pc -> pc.getValidacionSistema()).count() == planeaciones.stream().filter(pc -> pc.getValidacionSecretarioAdemico()).count()) {
                 planeacionesFinalizadas = true;
             } else {
                 planeacionesFinalizadas = false;
@@ -508,7 +508,7 @@ public class PlaneacionCuatrimestral implements Serializable{
         if (planeaciones == null) {
             return 0L;
         } else {
-            return planeaciones.stream().filter(pc -> pc.isValidacionSecretarioAdemico()).count();
+            return planeaciones.stream().filter(pc -> pc.getValidacionSecretarioAdemico()).count();
         }
     }
 
@@ -517,13 +517,13 @@ public class PlaneacionCuatrimestral implements Serializable{
             return 0L;
         } else {
             getJefePersonalPlaneacioFinalizado();
-            return planeaciones.stream().filter(pc -> pc.isValidacionJefePersonal()).count();
+            return planeaciones.stream().filter(pc -> pc.getValidacionJefePersonal()).count();
         }
     }
 
     public void getJefePersonalPlaneacioFinalizado() {
         if (planeaciones != null) {
-            if (planeaciones.stream().filter(pc -> pc.isValidacionSistema()).count() == planeaciones.stream().filter(pc -> pc.isValidacionJefePersonal()).count()) {
+            if (planeaciones.stream().filter(pc -> pc.getValidacionSistema()).count() == planeaciones.stream().filter(pc -> pc.getValidacionJefePersonal()).count()) {
                 planeacionesFinalizadas = true;
             } else {
                 planeacionesFinalizadas = false;
@@ -709,7 +709,7 @@ public class PlaneacionCuatrimestral implements Serializable{
             switch (tipo) {
                 case "Director":
                     planeaciones.forEach((t) -> {
-                        if (t.isValidacionDirector()) {
+                        if (t.getValidacionDirector()) {
                             totalValidados = totalValidados + 1;
                         }
                     });
@@ -722,7 +722,7 @@ public class PlaneacionCuatrimestral implements Serializable{
                                 if (pl.getLiberacionDirector() == true) {
                                     if (Objects.equals(pl.getPersonal().getClave(), t.getDirector().getClave())) {
                                         planeacionesTotalesDirectores = planeacionesTotalesDirectores + 1;
-                                        if (t.isValidacionSecretarioAdemico()) {
+                                        if (t.getValidacionSecretarioAdemico()) {
                                             totalValidados = totalValidados + 1;
                                         }
                                     }
@@ -738,7 +738,7 @@ public class PlaneacionCuatrimestral implements Serializable{
                                 if (pl.getValidacionSecretarioAcademico() == true) {
                                     if (Objects.equals(pl.getPersonal().getClave(), t.getDirector().getClave())) {
                                         planeacionesTotalesDirectores = planeacionesTotalesDirectores + 1;
-                                        if (t.isValidacionJefePersonal()) {
+                                        if (t.getValidacionJefePersonal()) {
                                             totalValidados = totalValidados + 1;
                                         }
                                     }

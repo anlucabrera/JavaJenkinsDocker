@@ -277,7 +277,7 @@ public class EvaluacionDoncenteMateriaControler implements Serializable {
         for (EvaluacionDocentesMateriaResultados lpde : listaDocentesEvaluados.stream().filter(personal -> !personal.getCompleto()).collect(Collectors.toList())) {
             System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.continuarEvaluando() incompleto: " + lpde);
             if (total < 4) {
-                clavesOpcionesMateria.add(lpde.getPk().getCveMateria());
+                clavesOpcionesMateria.add(lpde.getEvaluacionDocentesMateriaResultadosPK().getCveMateria());
                 total++;
             } else {
                 break;
@@ -288,7 +288,7 @@ public class EvaluacionDoncenteMateriaControler implements Serializable {
             for (EvaluacionDocentesMateriaResultados lpde : listaDocentesEvaluados.stream().filter(personal -> personal.getCompleto()).collect(Collectors.toList())) {
                 System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.continuarEvaluando() completo: " + lpde);
                 if (total < 4) {
-                    clavesOpcionesMateria.add(lpde.getPk().getCveMateria());
+                    clavesOpcionesMateria.add(lpde.getEvaluacionDocentesMateriaResultadosPK().getCveMateria());
                     total++;
                 } else {
                     break;

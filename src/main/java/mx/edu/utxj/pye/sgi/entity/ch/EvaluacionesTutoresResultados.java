@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "EvaluacionesTutoresResultados.findAll", query = "SELECT e FROM EvaluacionesTutoresResultados e")
-    , @NamedQuery(name = "EvaluacionesTutoresResultados.findByEvaluacion", query = "SELECT e FROM EvaluacionesTutoresResultados e WHERE e.pk.evaluacion = :evaluacion")
-    , @NamedQuery(name = "EvaluacionesTutoresResultados.findByEvaluador", query = "SELECT e FROM EvaluacionesTutoresResultados e WHERE e.pk.evaluador = :evaluador")
-    , @NamedQuery(name = "EvaluacionesTutoresResultados.findByEvaluado", query = "SELECT e FROM EvaluacionesTutoresResultados e WHERE e.pk.evaluado = :evaluado")
+    , @NamedQuery(name = "EvaluacionesTutoresResultados.findByEvaluacion", query = "SELECT e FROM EvaluacionesTutoresResultados e WHERE e.evaluacionesTutoresResultadosPK.evaluacion = :evaluacion")
+    , @NamedQuery(name = "EvaluacionesTutoresResultados.findByEvaluador", query = "SELECT e FROM EvaluacionesTutoresResultados e WHERE e.evaluacionesTutoresResultadosPK.evaluador = :evaluador")
+    , @NamedQuery(name = "EvaluacionesTutoresResultados.findByEvaluado", query = "SELECT e FROM EvaluacionesTutoresResultados e WHERE e.evaluacionesTutoresResultadosPK.evaluado = :evaluado")
     , @NamedQuery(name = "EvaluacionesTutoresResultados.findByR1", query = "SELECT e FROM EvaluacionesTutoresResultados e WHERE e.r1 = :r1")
     , @NamedQuery(name = "EvaluacionesTutoresResultados.findByR2", query = "SELECT e FROM EvaluacionesTutoresResultados e WHERE e.r2 = :r2")
     , @NamedQuery(name = "EvaluacionesTutoresResultados.findByR3", query = "SELECT e FROM EvaluacionesTutoresResultados e WHERE e.r3 = :r3")
@@ -42,7 +42,7 @@ public class EvaluacionesTutoresResultados implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
-    protected EvaluacionesTutoresResultadosPK pk;
+    protected EvaluacionesTutoresResultadosPK evaluacionesTutoresResultadosPK;
     @Column(name = "r1")
     private Short r1;
     @Column(name = "r2")
@@ -73,19 +73,19 @@ public class EvaluacionesTutoresResultados implements Serializable {
     }
 
     public EvaluacionesTutoresResultados(EvaluacionesTutoresResultadosPK evaluacionesTutoresResultadosPK) {
-        this.pk = evaluacionesTutoresResultadosPK;
+        this.evaluacionesTutoresResultadosPK = evaluacionesTutoresResultadosPK;
     }
 
     public EvaluacionesTutoresResultados(int evaluacion, int evaluador, int evaluado) {
-        this.pk = new EvaluacionesTutoresResultadosPK(evaluacion, evaluador, evaluado);
+        this.evaluacionesTutoresResultadosPK = new EvaluacionesTutoresResultadosPK(evaluacion, evaluador, evaluado);
     }
 
-    public EvaluacionesTutoresResultadosPK getPk() {
-        return pk;
+    public EvaluacionesTutoresResultadosPK getEvaluacionesTutoresResultadosPK() {
+        return evaluacionesTutoresResultadosPK;
     }
 
-    public void setPk(EvaluacionesTutoresResultadosPK pk) {
-        this.pk = pk;
+    public void setEvaluacionesTutoresResultadosPK(EvaluacionesTutoresResultadosPK evaluacionesTutoresResultadosPK) {
+        this.evaluacionesTutoresResultadosPK = evaluacionesTutoresResultadosPK;
     }
 
     public Short getR1() {
@@ -179,7 +179,7 @@ public class EvaluacionesTutoresResultados implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (pk != null ? pk.hashCode() : 0);
+        hash += (evaluacionesTutoresResultadosPK != null ? evaluacionesTutoresResultadosPK.hashCode() : 0);
         return hash;
     }
 
@@ -190,7 +190,7 @@ public class EvaluacionesTutoresResultados implements Serializable {
             return false;
         }
         EvaluacionesTutoresResultados other = (EvaluacionesTutoresResultados) object;
-        if ((this.pk == null && other.pk != null) || (this.pk != null && !this.pk.equals(other.pk))) {
+        if ((this.evaluacionesTutoresResultadosPK == null && other.evaluacionesTutoresResultadosPK != null) || (this.evaluacionesTutoresResultadosPK != null && !this.evaluacionesTutoresResultadosPK.equals(other.evaluacionesTutoresResultadosPK))) {
             return false;
         }
         return true;
@@ -198,7 +198,7 @@ public class EvaluacionesTutoresResultados implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesTutoresResultados[ evaluacionesTutoresResultadosPK=" + pk + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesTutoresResultados[ evaluacionesTutoresResultadosPK=" + evaluacionesTutoresResultadosPK + " ]";
     }
     
 }

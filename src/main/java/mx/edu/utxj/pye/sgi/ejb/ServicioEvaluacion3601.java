@@ -3,7 +3,6 @@ package mx.edu.utxj.pye.sgi.ejb;
 import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.faces.model.SelectItem;

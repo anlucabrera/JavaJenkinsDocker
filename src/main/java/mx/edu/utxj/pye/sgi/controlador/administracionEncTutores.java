@@ -25,8 +25,6 @@ import mx.edu.utxj.pye.sgi.dto.ListadoEvaluacionEgresados;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuesta;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaSatisfaccionEgresadosIng;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaEncuestaSatisfaccionEgresadosIng;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaEncuestaServicios;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEncuestaSatisfaccionEgresadosIng;
@@ -35,7 +33,6 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestas;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Grupos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.ViewAlumnos;
-import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
 
 /**

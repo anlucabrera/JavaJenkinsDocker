@@ -22,7 +22,6 @@ import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluacionResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360Resultados;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonalEvaluacion360;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Listaperiodosescolares;
@@ -49,7 +48,7 @@ public class ServicioEvaluacion360Combinaciones implements EjbEvaluacion360Combi
             Integer claveIgual = getIgual(directivosOperativos.containsKey(evaluado), evaluado, evaluadoresAnteriores, directivosOperativos.keySet(), plantilla);
             Evaluaciones360Resultados igual = new Evaluaciones360Resultados(evaluacion.getEvaluacion(), claveIgual, evaluado.getClave());
 
-            if (superior.getPk().getEvaluador() != 0) {
+            if (superior.getEvaluaciones360ResultadosPK().getEvaluador() != 0) {
                 superior.setTipo("Superior");
                 f.setEntityClass(PersonalCategorias.class);
                 PersonalCategorias categoria = f.getEntityManager().find(PersonalCategorias.class, evaluado.getCategoria360().getCategoria());
@@ -58,8 +57,8 @@ public class ServicioEvaluacion360Combinaciones implements EjbEvaluacion360Combi
                 l.add(superior);
             }
 
-            if (subordinado.getPk().getEvaluador() != 0) {
-                if (subordinado.getPk().getEvaluado() == subordinado.getPk().getEvaluador()) {
+            if (subordinado.getEvaluaciones360ResultadosPK().getEvaluador() != 0) {
+                if (subordinado.getEvaluaciones360ResultadosPK().getEvaluado() == subordinado.getEvaluaciones360ResultadosPK().getEvaluador()) {
                     subordinado.setTipo("Autoevaluación");
                 } else {
                     subordinado.setTipo("Subordinado");
@@ -70,18 +69,18 @@ public class ServicioEvaluacion360Combinaciones implements EjbEvaluacion360Combi
                 l.add(subordinado);
             }
 
-            if (igual.getPk().getEvaluador() != 0) {
+            if (igual.getEvaluaciones360ResultadosPK().getEvaluador() != 0) {
                 igual.setTipo("Igual");
                 f.setEntityClass(PersonalCategorias.class);
                 PersonalCategorias categoria = f.getEntityManager().find(PersonalCategorias.class, evaluado.getCategoria360().getCategoria());
                 igual.setCategoria(categoria);//igual.setCategoria((short)50);
                 l.add(igual);
             }
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.generar() evaluadores de: " + evaluado.getClave());
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.generar() evaluador superior: " + superior.getPk().getEvaluador());
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.generar() evaluador subordinado: " + subordinado.getPk().getEvaluador());
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.generar() evaluador igual: " + igual.getPk().getEvaluador());
-            System.out.println();
+//            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.generar() evaluadores de: " + evaluado.getClave());
+//            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.generar() evaluador superior: " + superior.getPk().getEvaluador());
+//            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.generar() evaluador subordinado: " + subordinado.getPk().getEvaluador());
+//            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.generar() evaluador igual: " + igual.getPk().getEvaluador());
+//            System.out.println();
         });
 
         return l;
@@ -117,7 +116,7 @@ public class ServicioEvaluacion360Combinaciones implements EjbEvaluacion360Combi
             f.setEntityClass(PeriodosEscolares.class);
             PeriodosEscolares periodo = (PeriodosEscolares) f.find(r.getEvaluaciones360().getPeriodo());
 //            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.getEvaluadoresAnteriores() periodo: " + periodo);
-            map.put(periodo, r.getPersonalEvaluador());
+            map.put(periodo, r.getPersonal1());
         });
 
         return map;
@@ -337,7 +336,7 @@ public class ServicioEvaluacion360Combinaciones implements EjbEvaluacion360Combi
             return null;
         } else {
             l.forEach(x-> {
-                Evaluaciones360Resultados e = f.getEntityManager().find(Evaluaciones360Resultados.class, x.getPk());
+                Evaluaciones360Resultados e = f.getEntityManager().find(Evaluaciones360Resultados.class, x.getEvaluaciones360ResultadosPK());
                 f.refresh(e);
             });
             return l;
@@ -452,11 +451,11 @@ public class ServicioEvaluacion360Combinaciones implements EjbEvaluacion360Combi
         f.setEntityClass(Evaluaciones360Resultados.class);
         Evaluaciones360Resultados viejaEvaluacion = evaluacion;
         Integer evaluadorClave = evaluador, evaluadoClave = evaluado;
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.editaCombinacion360() evaluacion anterior para eliminar : " + viejaEvaluacion.getPk());
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.editaCombinacion360() evaluacion anterior para eliminar : " + viejaEvaluacion.getEvaluaciones360ResultadosPK());
         // se crea la evaluacion nueva
-        Evaluaciones360Resultados nuevaEvaluacion = new Evaluaciones360Resultados(viejaEvaluacion.getPk().getEvaluacion(), evaluadorClave, evaluadoClave);
+        Evaluaciones360Resultados nuevaEvaluacion = new Evaluaciones360Resultados(viejaEvaluacion.getEvaluaciones360ResultadosPK().getEvaluacion(), evaluadorClave, evaluadoClave);
 
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.editaCombinacion360() evaluacion recien creada= : " + nuevaEvaluacion.getPk());
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.editaCombinacion360() evaluacion recien creada= : " + nuevaEvaluacion.getEvaluaciones360ResultadosPK());
         // se edita la evaluacion   
 
         f.setEntityClass(PersonalCategorias.class);
@@ -468,7 +467,7 @@ public class ServicioEvaluacion360Combinaciones implements EjbEvaluacion360Combi
         f.flush();
         f.refresh(nuevaEvaluacion);
         //se elimina la evaluacion
-        Evaluaciones360Resultados eEliminada = f.getEntityManager().find(Evaluaciones360Resultados.class, viejaEvaluacion.getPk());
+        Evaluaciones360Resultados eEliminada = f.getEntityManager().find(Evaluaciones360Resultados.class, viejaEvaluacion.getEvaluaciones360ResultadosPK());
         f.remove(eEliminada);
         f.flush();
         return nuevaEvaluacion;
@@ -477,14 +476,14 @@ public class ServicioEvaluacion360Combinaciones implements EjbEvaluacion360Combi
     @Override
     public DesempenioEvaluacionResultados editaCombinacionDesempenio(DesempenioEvaluacionResultados evaluacion, Integer evaluado, Integer evaluador) {
         f.setEntityClass(DesempenioEvaluacionResultados.class);
-        DesempenioEvaluacionResultados evaluacionAntigua = f.getEntityManager().find(DesempenioEvaluacionResultados.class, evaluacion.getPk());
+        DesempenioEvaluacionResultados evaluacionAntigua = f.getEntityManager().find(DesempenioEvaluacionResultados.class, evaluacion.getDesempenioEvaluacionResultadosPK());
         Integer evaluadorClave = evaluador, evaluadoClave = evaluado;
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.editaCombinacionDesempenio() la evaluacion a eliminar : " + evaluacionAntigua.getPk());
-        DesempenioEvaluacionResultados nuevaEvaluacion = new DesempenioEvaluacionResultados(evaluacionAntigua.getPk().getEvaluacion(), evaluadorClave, evaluadoClave);
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.editaCombinacionDesempenio() la evaluacion a eliminar : " + evaluacionAntigua.getDesempenioEvaluacionResultadosPK());
+        DesempenioEvaluacionResultados nuevaEvaluacion = new DesempenioEvaluacionResultados(evaluacionAntigua.getDesempenioEvaluacionResultadosPK().getEvaluacion(), evaluadorClave, evaluadoClave);
         f.create(nuevaEvaluacion);
         f.flush();
         f.refresh(nuevaEvaluacion);
-        DesempenioEvaluacionResultados eEliminada = f.getEntityManager().find(DesempenioEvaluacionResultados.class, evaluacionAntigua.getPk());
+        DesempenioEvaluacionResultados eEliminada = f.getEntityManager().find(DesempenioEvaluacionResultados.class, evaluacionAntigua.getDesempenioEvaluacionResultadosPK());
         f.remove(eEliminada);
         f.flush();
         return evaluacionAntigua;
@@ -495,7 +494,7 @@ public class ServicioEvaluacion360Combinaciones implements EjbEvaluacion360Combi
         f.setEntityClass(Evaluaciones360Resultados.class);
         // se crea la evaluacion nueva
         Evaluaciones360Resultados nuevaEvaluacion = new Evaluaciones360Resultados(evaluacion, evaluador, evaluado);
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.editaCombinacion360() evaluacion recien creada= : " + nuevaEvaluacion.getPk());
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.editaCombinacion360() evaluacion recien creada= : " + nuevaEvaluacion.getEvaluaciones360ResultadosPK());
         // se edita la evaluacion   
         f.setEntityClass(PersonalCategorias.class);
         PersonalCategorias personaC = f.getEntityManager().find(PersonalCategorias.class, categoria);
@@ -532,7 +531,7 @@ public class ServicioEvaluacion360Combinaciones implements EjbEvaluacion360Combi
             System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.eliminaCombinacion360() no se pudo encontrar la ecombinacion por lo tanto no se elimino");
             return null;
         } else {
-            Evaluaciones360Resultados evaluacionElimina = f.getEntityManager().find(Evaluaciones360Resultados.class, l.get(0).getPk());
+            Evaluaciones360Resultados evaluacionElimina = f.getEntityManager().find(Evaluaciones360Resultados.class, l.get(0).getEvaluaciones360ResultadosPK());
             f.remove(evaluacionElimina);
 //            f.refresh(evaluacionElimina);
             f.flush();
@@ -554,8 +553,8 @@ public class ServicioEvaluacion360Combinaciones implements EjbEvaluacion360Combi
             System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.eliminaCombinacionDes() no se pudo encontrar la combinacion po lo tanto no se elimino");
             return null;
         } else {
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.eliminaCombinacionDes() pasa la validacion y encuentra la combinacion : " + l.get(0).getPk());
-            DesempenioEvaluacionResultados evaluacionElimina = f.getEntityManager().find(DesempenioEvaluacionResultados.class, l.get(0).getPk());
+            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.eliminaCombinacionDes() pasa la validacion y encuentra la combinacion : " + l.get(0).getDesempenioEvaluacionResultadosPK());
+            DesempenioEvaluacionResultados evaluacionElimina = f.getEntityManager().find(DesempenioEvaluacionResultados.class, l.get(0).getDesempenioEvaluacionResultadosPK());
             f.remove(evaluacionElimina);
 //            f.refresh(evaluacionElimina);
             f.flush();

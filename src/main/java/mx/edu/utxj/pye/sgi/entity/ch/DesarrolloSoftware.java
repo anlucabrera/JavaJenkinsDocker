@@ -83,8 +83,6 @@ public class DesarrolloSoftware implements Serializable {
     @Column(name = "fecha_inicio")
     @Temporal(TemporalType.DATE)
     private Date fechaInicio;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "fecha_fin")
     @Temporal(TemporalType.DATE)
     private Date fechaFin;
@@ -119,7 +117,7 @@ public class DesarrolloSoftware implements Serializable {
         this.desarrollo = desarrollo;
     }
 
-    public DesarrolloSoftware(Integer desarrollo, String tipoDesarrollo, String derechosAutor, String lugar, String horasHombre, String costo, Date fechaInicio, Date fechaFin, String apoyoRecibido, String nombreBeneficiario, String logros, String estatus) {
+    public DesarrolloSoftware(Integer desarrollo, String tipoDesarrollo, String derechosAutor, String lugar, String horasHombre, String costo, Date fechaInicio, String apoyoRecibido, String nombreBeneficiario, String logros, String estatus) {
         this.desarrollo = desarrollo;
         this.tipoDesarrollo = tipoDesarrollo;
         this.derechosAutor = derechosAutor;
@@ -127,7 +125,6 @@ public class DesarrolloSoftware implements Serializable {
         this.horasHombre = horasHombre;
         this.costo = costo;
         this.fechaInicio = fechaInicio;
-        this.fechaFin = fechaFin;
         this.apoyoRecibido = apoyoRecibido;
         this.nombreBeneficiario = nombreBeneficiario;
         this.logros = logros;

@@ -33,11 +33,11 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR3", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r3 = :r3")
     , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR4", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r4 = :r4")
     , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR5", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r5 = :r5")
-    , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR61", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r6_1 = :r6_1")
-    , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR62", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r6_2 = :r6_2")
+    , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR61", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r61 = :r61")
+    , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR62", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r62 = :r62")
     , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR7", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r7 = :r7")
     , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR8", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r8 = :r8")
-    , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR81", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r8_1 = :r8_1")
+    , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR81", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r81 = :r81")
     , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR9", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r9 = :r9")
     , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR10", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r10 = :r10")
     , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR11", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r11 = :r11")
@@ -90,8 +90,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR58", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r58 = :r58")
     , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR59", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r59 = :r59")
     , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR60", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r60 = :r60")
-    , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR611", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r61 = :r61")
-    , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR621", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r62 = :r62")
+    , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR611", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r611 = :r611")
+    , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR621", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r621 = :r621")
     , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR63", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r63 = :r63")
     , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR64", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r64 = :r64")
     , @NamedQuery(name = "EvaluacionesClimaLaboralResultados.findByR65", query = "SELECT e FROM EvaluacionesClimaLaboralResultados e WHERE e.r65 = :r65")
@@ -125,9 +125,9 @@ public class EvaluacionesClimaLaboralResultados implements Serializable {
     @Column(name = "r5")
     private String r5;
     @Column(name = "r6_1")
-    private Short r6_1;
+    private Short r61;
     @Column(name = "r6_2")
-    private Short r6_2;
+    private Short r62;
     @Size(max = 50)
     @Column(name = "r7")
     private String r7;
@@ -136,7 +136,7 @@ public class EvaluacionesClimaLaboralResultados implements Serializable {
     private String r8;
     @Size(max = 50)
     @Column(name = "r8_1")
-    private String r8_1;
+    private String r81;
     @Size(max = 50)
     @Column(name = "r9")
     private String r9;
@@ -251,9 +251,9 @@ public class EvaluacionesClimaLaboralResultados implements Serializable {
     @Column(name = "r60")
     private Short r60;
     @Column(name = "r61")
-    private Short r61;
+    private Short r611;
     @Column(name = "r62")
-    private Short r62;
+    private Short r621;
     @Column(name = "r63")
     private Short r63;
     @Column(name = "r64")
@@ -344,20 +344,20 @@ public class EvaluacionesClimaLaboralResultados implements Serializable {
         this.r5 = r5;
     }
 
-    public Short getR6_1() {
-        return r6_1;
+    public Short getR61() {
+        return r61;
     }
 
-    public void setR6_1(Short r6_1) {
-        this.r6_1 = r6_1;
+    public void setR61(Short r61) {
+        this.r61 = r61;
     }
 
-    public Short getR6_2() {
-        return r6_2;
+    public Short getR62() {
+        return r62;
     }
 
-    public void setR6_2(Short r6_2) {
-        this.r6_2 = r6_2;
+    public void setR62(Short r62) {
+        this.r62 = r62;
     }
 
     public String getR7() {
@@ -376,12 +376,12 @@ public class EvaluacionesClimaLaboralResultados implements Serializable {
         this.r8 = r8;
     }
 
-    public String getR8_1() {
-        return r8_1;
+    public String getR81() {
+        return r81;
     }
 
-    public void setR8_1(String r8_1) {
-        this.r8_1 = r8_1;
+    public void setR81(String r81) {
+        this.r81 = r81;
     }
 
     public String getR9() {
@@ -800,20 +800,20 @@ public class EvaluacionesClimaLaboralResultados implements Serializable {
         this.r60 = r60;
     }
 
-    public Short getR61() {
-        return r61;
+    public Short getR611() {
+        return r611;
     }
 
-    public void setR61(Short r61) {
-        this.r61 = r61;
+    public void setR611(Short r611) {
+        this.r611 = r611;
     }
 
-    public Short getR62() {
-        return r62;
+    public Short getR621() {
+        return r621;
     }
 
-    public void setR62(Short r62) {
-        this.r62 = r62;
+    public void setR621(Short r621) {
+        this.r621 = r621;
     }
 
     public Short getR63() {

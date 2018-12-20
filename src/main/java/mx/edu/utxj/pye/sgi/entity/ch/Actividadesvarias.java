@@ -14,9 +14,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -39,9 +36,6 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Actividadesvarias.findByNombreAcctividad", query = "SELECT a FROM Actividadesvarias a WHERE a.nombreAcctividad = :nombreAcctividad")})
 public class Actividadesvarias implements Serializable {
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "actividadesvarias")
-    private List<Atividadesvariasplaneacionescuatrimestrales> atividadesvariasplaneacionescuatrimestralesList;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,11 +47,8 @@ public class Actividadesvarias implements Serializable {
     @Size(min = 1, max = 250)
     @Column(name = "nombreAcctividad")
     private String nombreAcctividad;
-    @JoinTable(name = "atividadesvariasplaneacionescuatrimestrales", joinColumns = {
-        @JoinColumn(name = "actividad", referencedColumnName = "actividad")}, inverseJoinColumns = {
-        @JoinColumn(name = "planeacion", referencedColumnName = "planeacion")})
-    @ManyToMany
-    private List<PlaneacionesCuatrimestrales> planeacionesCuatrimestralesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "actividadesvarias")
+    private List<Atividadesvariasplaneacionescuatrimestrales> atividadesvariasplaneacionescuatrimestralesList;
 
     public Actividadesvarias() {
     }
@@ -88,12 +79,12 @@ public class Actividadesvarias implements Serializable {
     }
 
     @XmlTransient
-    public List<PlaneacionesCuatrimestrales> getPlaneacionesCuatrimestralesList() {
-        return planeacionesCuatrimestralesList;
+    public List<Atividadesvariasplaneacionescuatrimestrales> getAtividadesvariasplaneacionescuatrimestralesList() {
+        return atividadesvariasplaneacionescuatrimestralesList;
     }
 
-    public void setPlaneacionesCuatrimestralesList(List<PlaneacionesCuatrimestrales> planeacionesCuatrimestralesList) {
-        this.planeacionesCuatrimestralesList = planeacionesCuatrimestralesList;
+    public void setAtividadesvariasplaneacionescuatrimestralesList(List<Atividadesvariasplaneacionescuatrimestrales> atividadesvariasplaneacionescuatrimestralesList) {
+        this.atividadesvariasplaneacionescuatrimestralesList = atividadesvariasplaneacionescuatrimestralesList;
     }
 
     @Override
@@ -119,15 +110,6 @@ public class Actividadesvarias implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Actividadesvarias[ actividad=" + actividad + " ]";
-    }
-
-    @XmlTransient
-    public List<Atividadesvariasplaneacionescuatrimestrales> getAtividadesvariasplaneacionescuatrimestralesList() {
-        return atividadesvariasplaneacionescuatrimestralesList;
-    }
-
-    public void setAtividadesvariasplaneacionescuatrimestralesList(List<Atividadesvariasplaneacionescuatrimestrales> atividadesvariasplaneacionescuatrimestralesList) {
-        this.atividadesvariasplaneacionescuatrimestralesList = atividadesvariasplaneacionescuatrimestralesList;
     }
     
 }

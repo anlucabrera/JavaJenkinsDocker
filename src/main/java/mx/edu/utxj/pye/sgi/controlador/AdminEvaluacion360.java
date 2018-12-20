@@ -235,10 +235,10 @@ public class AdminEvaluacion360 implements Serializable {
                 if (lr == null || lr.isEmpty()) {
                     System.out.println("Persona inactiva durante el periodo : " + p.getNombre());
                 } else {
-                    System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.getListaCombinaciones() si tiene datos como evaluador " + lr.get(0).getPersonalEvaluado().getNombre());
+                    //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.getListaCombinaciones() si tiene datos como evaluador " + lr.get(0).getPersonalEvaluado().getNombre());
                     lr.forEach(lr360 -> {
                         System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.getListaCombinaciones() busca resultados para llenar el dto");
-                        Personal evaluador = ejbEvaluacion360Combinaciones.getPersonalEvaluador(lr360.getPersonalEvaluador().getClave());
+                        Personal evaluador = ejbEvaluacion360Combinaciones.getPersonalEvaluador(lr360.getPersonal1().getClave());
                         String claveLista = evaluacion + "" + evaluador.getClave() + "" + p.getClave();
                         listaCombinacion360.add(new ListaEvaluacion360Combinaciones(Integer.parseInt(claveLista), evaluacion, lr360.getTipo(),
                                 p.getClave(), p.getNombre(), ejbEvaluacion360Combinaciones.getAreaPorClave(p.getAreaOperativa()).getNombre(),

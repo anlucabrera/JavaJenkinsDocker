@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Planeación
+ * @author UTXJ
  */
 @Entity
 @Table(name = "encuesta_satisfaccion_egresados_ing", catalog = "capital_humano", schema = "")
@@ -34,7 +34,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "EncuestaSatisfaccionEgresadosIng.findByR5", query = "SELECT e FROM EncuestaSatisfaccionEgresadosIng e WHERE e.r5 = :r5")
     , @NamedQuery(name = "EncuestaSatisfaccionEgresadosIng.findByR6", query = "SELECT e FROM EncuestaSatisfaccionEgresadosIng e WHERE e.r6 = :r6")
     , @NamedQuery(name = "EncuestaSatisfaccionEgresadosIng.findByR7", query = "SELECT e FROM EncuestaSatisfaccionEgresadosIng e WHERE e.r7 = :r7")
-    , @NamedQuery(name = "EncuestaSatisfaccionEgresadosIng.findByR8", query = "SELECT e FROM EncuestaSatisfaccionEgresadosIng e WHERE e.r8 = :r8")})
+    , @NamedQuery(name = "EncuestaSatisfaccionEgresadosIng.findByR8", query = "SELECT e FROM EncuestaSatisfaccionEgresadosIng e WHERE e.r8 = :r8")
+    , @NamedQuery(name = "EncuestaSatisfaccionEgresadosIng.findByR9", query = "SELECT e FROM EncuestaSatisfaccionEgresadosIng e WHERE e.r9 = :r9")})
 public class EncuestaSatisfaccionEgresadosIng implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -144,7 +145,7 @@ public class EncuestaSatisfaccionEgresadosIng implements Serializable {
     public void setR8(Short r8) {
         this.r8 = r8;
     }
-    
+
     public Short getR9() {
         return r9;
     }

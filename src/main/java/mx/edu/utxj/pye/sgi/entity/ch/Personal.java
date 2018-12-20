@@ -58,24 +58,28 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Personal.findByCorreoElectronico2", query = "SELECT p FROM Personal p WHERE p.correoElectronico2 = :correoElectronico2")})
 public class Personal implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "clave")
+    private Integer clave;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 250)
     @Column(name = "nombre")
     private String nombre;
-
     @Basic(optional = false)
     @NotNull
     @Column(name = "fecha_ingreso")
     @Temporal(TemporalType.DATE)
     private Date fechaIngreso;
-
     @Basic(optional = false)
     @NotNull
     @Column(name = "status")
     private Character status;
     @Basic(optional = false)
-    @NotNull()
+    @NotNull
     @Column(name = "area_operativa")
     private short areaOperativa;
     @Basic(optional = false)
@@ -138,23 +142,6 @@ public class Personal implements Serializable {
     @Size(max = 200)
     @Column(name = "correo_electronico2")
     private String correoElectronico2;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
-    private List<Cuidados> cuidadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
-    private List<Incapacidad> incapacidadList;
-    @JoinColumn(name = "categoria_360", referencedColumnName = "categoria")
-    @ManyToOne
-    private PersonalCategorias categoria360;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
-    private List<PlaneacionesDetalles> planeacionesDetallesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
-    private List<PlaneacionesLiberaciones> planeacionesLiberacionesList;
-    private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "clave")
-    private Integer clave;
     @ManyToMany(mappedBy = "personalList")
     private List<Eventos> eventosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
@@ -177,6 +164,9 @@ public class Personal implements Serializable {
     private List<EvaluacionesClimaLaboralResultados> evaluacionesClimaLaboralResultadosList;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "personal")
     private InformacionAdicionalPersonal informacionAdicionalPersonal;
+    @JoinColumn(name = "categoria_360", referencedColumnName = "categoria")
+    @ManyToOne
+    private PersonalCategorias categoria360;
     @JoinColumn(name = "actividad", referencedColumnName = "actividad")
     @ManyToOne(optional = false)
     private Actividades actividad;
@@ -215,12 +205,18 @@ public class Personal implements Serializable {
     private List<Incidencias> incidenciasList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
     private List<HabilidadesInformaticas> habilidadesInformaticasList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
+    private List<EvaluacionesPremiosResultados> evaluacionesPremiosResultadosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal1")
+    private List<EvaluacionesPremiosResultados> evaluacionesPremiosResultadosList1;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
     private List<Divulgaciones> divulgacionesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "director")
     private List<PlaneacionesCuatrimestrales> planeacionesCuatrimestralesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "docente")
     private List<PlaneacionesCuatrimestrales> planeacionesCuatrimestralesList1;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
+    private List<PlaneacionesDetalles> planeacionesDetallesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "claveEmpleado")
     private List<Distinciones> distincionesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
@@ -232,19 +228,23 @@ public class Personal implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
     private List<EvaluacionesTutoresResultados> evaluacionesTutoresResultadosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
+    private List<Incapacidad> incapacidadList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
     private List<Memoriaspub> memoriaspubList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personalEvaluado")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
     private List<Evaluaciones360Resultados> evaluaciones360ResultadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personalEvaluador")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal1")
     private List<Evaluaciones360Resultados> evaluaciones360ResultadosList1;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
+    private List<PlaneacionesLiberaciones> planeacionesLiberacionesList;
     @OneToMany(mappedBy = "clave")
     private List<Permisos> permisosList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "personal")
-    private EvidenciaContratosPersonal evidenciaContratosPersonal;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
     private List<DesarrolloSoftware> desarrolloSoftwareList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clave")
     private List<CursosPersonal> cursosPersonalList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
+    private List<Cuidados> cuidadosList;
 
     public Personal() {
     }
@@ -281,12 +281,28 @@ public class Personal implements Serializable {
         this.clave = clave;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
     public Date getFechaIngreso() {
         return fechaIngreso;
     }
 
     public void setFechaIngreso(Date fechaIngreso) {
         this.fechaIngreso = fechaIngreso;
+    }
+
+    public Character getStatus() {
+        return status;
+    }
+
+    public void setStatus(Character status) {
+        this.status = status;
     }
 
     public short getAreaOperativa() {
@@ -343,6 +359,46 @@ public class Personal implements Serializable {
 
     public void setFechaNacimiento(Date fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public String getMunicipio() {
+        return municipio;
+    }
+
+    public void setMunicipio(String municipio) {
+        this.municipio = municipio;
+    }
+
+    public String getLocalidad() {
+        return localidad;
+    }
+
+    public void setLocalidad(String localidad) {
+        this.localidad = localidad;
+    }
+
+    public String getPais() {
+        return pais;
+    }
+
+    public void setPais(String pais) {
+        this.pais = pais;
+    }
+
+    public boolean getSni() {
+        return sni;
+    }
+
+    public void setSni(boolean sni) {
+        this.sni = sni;
     }
 
     public boolean getPerfilProdep() {
@@ -465,6 +521,14 @@ public class Personal implements Serializable {
 
     public void setInformacionAdicionalPersonal(InformacionAdicionalPersonal informacionAdicionalPersonal) {
         this.informacionAdicionalPersonal = informacionAdicionalPersonal;
+    }
+
+    public PersonalCategorias getCategoria360() {
+        return categoria360;
+    }
+
+    public void setCategoria360(PersonalCategorias categoria360) {
+        this.categoria360 = categoria360;
     }
 
     public Actividades getActividad() {
@@ -606,6 +670,24 @@ public class Personal implements Serializable {
     }
 
     @XmlTransient
+    public List<EvaluacionesPremiosResultados> getEvaluacionesPremiosResultadosList() {
+        return evaluacionesPremiosResultadosList;
+    }
+
+    public void setEvaluacionesPremiosResultadosList(List<EvaluacionesPremiosResultados> evaluacionesPremiosResultadosList) {
+        this.evaluacionesPremiosResultadosList = evaluacionesPremiosResultadosList;
+    }
+
+    @XmlTransient
+    public List<EvaluacionesPremiosResultados> getEvaluacionesPremiosResultadosList1() {
+        return evaluacionesPremiosResultadosList1;
+    }
+
+    public void setEvaluacionesPremiosResultadosList1(List<EvaluacionesPremiosResultados> evaluacionesPremiosResultadosList1) {
+        this.evaluacionesPremiosResultadosList1 = evaluacionesPremiosResultadosList1;
+    }
+
+    @XmlTransient
     public List<Divulgaciones> getDivulgacionesList() {
         return divulgacionesList;
     }
@@ -630,6 +712,15 @@ public class Personal implements Serializable {
 
     public void setPlaneacionesCuatrimestralesList1(List<PlaneacionesCuatrimestrales> planeacionesCuatrimestralesList1) {
         this.planeacionesCuatrimestralesList1 = planeacionesCuatrimestralesList1;
+    }
+
+    @XmlTransient
+    public List<PlaneacionesDetalles> getPlaneacionesDetallesList() {
+        return planeacionesDetallesList;
+    }
+
+    public void setPlaneacionesDetallesList(List<PlaneacionesDetalles> planeacionesDetallesList) {
+        this.planeacionesDetallesList = planeacionesDetallesList;
     }
 
     @XmlTransient
@@ -678,6 +769,15 @@ public class Personal implements Serializable {
     }
 
     @XmlTransient
+    public List<Incapacidad> getIncapacidadList() {
+        return incapacidadList;
+    }
+
+    public void setIncapacidadList(List<Incapacidad> incapacidadList) {
+        this.incapacidadList = incapacidadList;
+    }
+
+    @XmlTransient
     public List<Memoriaspub> getMemoriaspubList() {
         return memoriaspubList;
     }
@@ -702,6 +802,15 @@ public class Personal implements Serializable {
 
     public void setEvaluaciones360ResultadosList1(List<Evaluaciones360Resultados> evaluaciones360ResultadosList1) {
         this.evaluaciones360ResultadosList1 = evaluaciones360ResultadosList1;
+    }
+
+    @XmlTransient
+    public List<PlaneacionesLiberaciones> getPlaneacionesLiberacionesList() {
+        return planeacionesLiberacionesList;
+    }
+
+    public void setPlaneacionesLiberacionesList(List<PlaneacionesLiberaciones> planeacionesLiberacionesList) {
+        this.planeacionesLiberacionesList = planeacionesLiberacionesList;
     }
 
     @XmlTransient
@@ -731,6 +840,15 @@ public class Personal implements Serializable {
         this.cursosPersonalList = cursosPersonalList;
     }
 
+    @XmlTransient
+    public List<Cuidados> getCuidadosList() {
+        return cuidadosList;
+    }
+
+    public void setCuidadosList(List<Cuidados> cuidadosList) {
+        this.cuidadosList = cuidadosList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -755,104 +873,5 @@ public class Personal implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Personal[ clave=" + clave + " ]";
     }
-
-    @XmlTransient
-    public List<PlaneacionesLiberaciones> getPlaneacionesLiberacionesList() {
-        return planeacionesLiberacionesList;
-    }
-
-    public void setPlaneacionesLiberacionesList(List<PlaneacionesLiberaciones> planeacionesLiberacionesList) {
-        this.planeacionesLiberacionesList = planeacionesLiberacionesList;
-    }
-
-    @XmlTransient
-    public List<PlaneacionesDetalles> getPlaneacionesDetallesList() {
-        return planeacionesDetallesList;
-    }
-
-    public void setPlaneacionesDetallesList(List<PlaneacionesDetalles> planeacionesDetallesList) {
-        this.planeacionesDetallesList = planeacionesDetallesList;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public Character getStatus() {
-        return status;
-    }
-
-    public void setStatus(Character status) {
-        this.status = status;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public String getMunicipio() {
-        return municipio;
-    }
-
-    public void setMunicipio(String municipio) {
-        this.municipio = municipio;
-    }
-
-    public String getLocalidad() {
-        return localidad;
-    }
-
-    public void setLocalidad(String localidad) {
-        this.localidad = localidad;
-    }
-
-    public String getPais() {
-        return pais;
-    }
-
-    public void setPais(String pais) {
-        this.pais = pais;
-    }
-
-    public boolean getSni() {
-        return sni;
-    }
-
-    public void setSni(boolean sni) {
-        this.sni = sni;
-    }
-
-    public PersonalCategorias getCategoria360() {
-        return categoria360;
-    }
-
-    public void setCategoria360(PersonalCategorias categoria360) {
-        this.categoria360 = categoria360;
-    }
-
-    @XmlTransient
-    public List<Incapacidad> getIncapacidadList() {
-        return incapacidadList;
-    }
-
-    public void setIncapacidadList(List<Incapacidad> incapacidadList) {
-        this.incapacidadList = incapacidadList;
-    }
     
-      @XmlTransient
-    public List<Cuidados> getCuidadosList() {
-        return cuidadosList;
-    }
-
-    public void setCuidadosList(List<Cuidados> cuidadosList) {
-        this.cuidadosList = cuidadosList;
-    }
 }

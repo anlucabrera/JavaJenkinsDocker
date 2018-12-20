@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Finanzas1
+ * @author UTXJ
  */
 @Entity
 @Table(name = "categoriasespecificasfunciones", catalog = "capital_humano", schema = "")
@@ -53,6 +53,8 @@ public class Categoriasespecificasfunciones implements Serializable {
     private int area;
     @OneToMany(mappedBy = "categoriaEspecifica")
     private List<Personal> personalList;
+    @OneToMany(mappedBy = "categoriaEspecifica")
+    private List<PersonalBitacora> personalBitacoraList;
     @OneToMany(mappedBy = "categoriaEspesifica")
     private List<Funciones> funcionesList;
 
@@ -100,6 +102,15 @@ public class Categoriasespecificasfunciones implements Serializable {
 
     public void setPersonalList(List<Personal> personalList) {
         this.personalList = personalList;
+    }
+
+    @XmlTransient
+    public List<PersonalBitacora> getPersonalBitacoraList() {
+        return personalBitacoraList;
+    }
+
+    public void setPersonalBitacoraList(List<PersonalBitacora> personalBitacoraList) {
+        this.personalBitacoraList = personalBitacoraList;
     }
 
     @XmlTransient

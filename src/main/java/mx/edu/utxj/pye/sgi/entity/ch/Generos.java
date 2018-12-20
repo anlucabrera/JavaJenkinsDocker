@@ -54,6 +54,8 @@ public class Generos implements Serializable {
     private String nombre;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "genero")
     private List<Personal> personalList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "genero")
+    private List<PersonalBitacora> personalBitacoraList;
 
     public Generos() {
     }
@@ -99,6 +101,15 @@ public class Generos implements Serializable {
 
     public void setPersonalList(List<Personal> personalList) {
         this.personalList = personalList;
+    }
+
+    @XmlTransient
+    public List<PersonalBitacora> getPersonalBitacoraList() {
+        return personalBitacoraList;
+    }
+
+    public void setPersonalBitacoraList(List<PersonalBitacora> personalBitacoraList) {
+        this.personalBitacoraList = personalBitacoraList;
     }
 
     @Override

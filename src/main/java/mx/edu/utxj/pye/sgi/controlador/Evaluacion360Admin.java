@@ -175,7 +175,7 @@ public class Evaluacion360Admin implements Serializable {
 
         //1 detectar si ya se tiene la respuesta, de lo contrario generarla
         Evaluaciones360Resultados resultado = new Evaluaciones360Resultados(evaluaciones360.getEvaluacion(), evaluador.getClave(), clave);
-        ListaPersonalEvaluacion360 resultadoVista = new ListaPersonalEvaluacion360(resultado.getPk());
+        ListaPersonalEvaluacion360 resultadoVista = new ListaPersonalEvaluacion360(resultado.getEvaluaciones360ResultadosPK());
         if(evaluaciones360.getEvaluaciones360ResultadosList().contains(resultado)){
             int index = evaluaciones360.getEvaluaciones360ResultadosList().indexOf(resultado);
             resultado = evaluaciones360.getEvaluaciones360ResultadosList().get(index);

@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Evaluaciones360Resultados.findAll", query = "SELECT e FROM Evaluaciones360Resultados e")
-    , @NamedQuery(name = "Evaluaciones360Resultados.findByEvaluacion", query = "SELECT e FROM Evaluaciones360Resultados e WHERE e.pk.evaluacion = :evaluacion")
-    , @NamedQuery(name = "Evaluaciones360Resultados.findByEvaluador", query = "SELECT e FROM Evaluaciones360Resultados e WHERE e.pk.evaluador = :evaluador")
-    , @NamedQuery(name = "Evaluaciones360Resultados.findByEvaluado", query = "SELECT e FROM Evaluaciones360Resultados e WHERE e.pk.evaluado = :evaluado")
+    , @NamedQuery(name = "Evaluaciones360Resultados.findByEvaluacion", query = "SELECT e FROM Evaluaciones360Resultados e WHERE e.evaluaciones360ResultadosPK.evaluacion = :evaluacion")
+    , @NamedQuery(name = "Evaluaciones360Resultados.findByEvaluador", query = "SELECT e FROM Evaluaciones360Resultados e WHERE e.evaluaciones360ResultadosPK.evaluador = :evaluador")
+    , @NamedQuery(name = "Evaluaciones360Resultados.findByEvaluado", query = "SELECT e FROM Evaluaciones360Resultados e WHERE e.evaluaciones360ResultadosPK.evaluado = :evaluado")
     , @NamedQuery(name = "Evaluaciones360Resultados.findByTipo", query = "SELECT e FROM Evaluaciones360Resultados e WHERE e.tipo = :tipo")
     , @NamedQuery(name = "Evaluaciones360Resultados.findByR1", query = "SELECT e FROM Evaluaciones360Resultados e WHERE e.r1 = :r1")
     , @NamedQuery(name = "Evaluaciones360Resultados.findByR2", query = "SELECT e FROM Evaluaciones360Resultados e WHERE e.r2 = :r2")
@@ -72,7 +72,7 @@ public class Evaluaciones360Resultados implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
-    protected Evaluaciones360ResultadosPK pk;
+    protected Evaluaciones360ResultadosPK evaluaciones360ResultadosPK;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 41)
@@ -163,10 +163,10 @@ public class Evaluaciones360Resultados implements Serializable {
     private Evaluaciones360 evaluaciones360;
     @JoinColumn(name = "evaluado", referencedColumnName = "clave", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    private Personal personalEvaluado;
+    private Personal personal;
     @JoinColumn(name = "evaluador", referencedColumnName = "clave", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    private Personal personalEvaluador;
+    private Personal personal1;
     @JoinColumn(name = "categoria", referencedColumnName = "categoria")
     @ManyToOne(optional = false)
     private PersonalCategorias categoria;
@@ -175,11 +175,11 @@ public class Evaluaciones360Resultados implements Serializable {
     }
 
     public Evaluaciones360Resultados(Evaluaciones360ResultadosPK evaluaciones360ResultadosPK) {
-        this.pk = evaluaciones360ResultadosPK;
+        this.evaluaciones360ResultadosPK = evaluaciones360ResultadosPK;
     }
 
     public Evaluaciones360Resultados(Evaluaciones360ResultadosPK evaluaciones360ResultadosPK, String tipo, boolean completo, boolean incompleto, double promedio) {
-        this.pk = evaluaciones360ResultadosPK;
+        this.evaluaciones360ResultadosPK = evaluaciones360ResultadosPK;
         this.tipo = tipo;
         this.completo = completo;
         this.incompleto = incompleto;
@@ -187,15 +187,15 @@ public class Evaluaciones360Resultados implements Serializable {
     }
 
     public Evaluaciones360Resultados(int evaluacion, int evaluador, int evaluado) {
-        this.pk = new Evaluaciones360ResultadosPK(evaluacion, evaluador, evaluado);
+        this.evaluaciones360ResultadosPK = new Evaluaciones360ResultadosPK(evaluacion, evaluador, evaluado);
     }
 
-    public Evaluaciones360ResultadosPK getPk() {
-        return pk;
+    public Evaluaciones360ResultadosPK getEvaluaciones360ResultadosPK() {
+        return evaluaciones360ResultadosPK;
     }
 
-    public void setPk(Evaluaciones360ResultadosPK pk) {
-        this.pk = pk;
+    public void setEvaluaciones360ResultadosPK(Evaluaciones360ResultadosPK evaluaciones360ResultadosPK) {
+        this.evaluaciones360ResultadosPK = evaluaciones360ResultadosPK;
     }
 
     public String getTipo() {
@@ -502,20 +502,20 @@ public class Evaluaciones360Resultados implements Serializable {
         this.evaluaciones360 = evaluaciones360;
     }
 
-    public Personal getPersonalEvaluado() {
-        return personalEvaluado;
+    public Personal getPersonal() {
+        return personal;
     }
 
-    public void setPersonalEvaluado(Personal personalEvaluado) {
-        this.personalEvaluado = personalEvaluado;
+    public void setPersonal(Personal personal) {
+        this.personal = personal;
     }
 
-    public Personal getPersonalEvaluador() {
-        return personalEvaluador;
+    public Personal getPersonal1() {
+        return personal1;
     }
 
-    public void setPersonalEvaluador(Personal personalEvaluador) {
-        this.personalEvaluador = personalEvaluador;
+    public void setPersonal1(Personal personal1) {
+        this.personal1 = personal1;
     }
 
     public PersonalCategorias getCategoria() {
@@ -529,7 +529,7 @@ public class Evaluaciones360Resultados implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (pk != null ? pk.hashCode() : 0);
+        hash += (evaluaciones360ResultadosPK != null ? evaluaciones360ResultadosPK.hashCode() : 0);
         return hash;
     }
 
@@ -540,21 +540,15 @@ public class Evaluaciones360Resultados implements Serializable {
             return false;
         }
         Evaluaciones360Resultados other = (Evaluaciones360Resultados) object;
-        if ((this.pk == null && other.pk != null) || (this.pk != null && !this.pk.equals(other.pk))) {
+        if ((this.evaluaciones360ResultadosPK == null && other.evaluaciones360ResultadosPK != null) || (this.evaluaciones360ResultadosPK != null && !this.evaluaciones360ResultadosPK.equals(other.evaluaciones360ResultadosPK))) {
             return false;
         }
         return true;
     }
 
-//    @Override
-//    public String toString() {
-//        return "mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360Resultados[ evaluaciones360ResultadosPK=" + pk + " ]";
-//    }
-
     @Override
     public String toString() {
-        return "Evaluaciones360Resultados{" + "completo=" + completo + ", incompleto=" + incompleto + ", promedio=" + promedio + ", evaluaciones360=" + evaluaciones360 + ", personalEvaluado=" + personalEvaluado + ", personalEvaluador=" + personalEvaluador + ", categoria=" + categoria + '}';
+        return "mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360Resultados[ evaluaciones360ResultadosPK=" + evaluaciones360ResultadosPK + " ]";
     }
-    
     
 }
