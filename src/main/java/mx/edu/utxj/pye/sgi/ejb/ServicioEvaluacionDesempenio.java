@@ -247,7 +247,7 @@ public class ServicioEvaluacionDesempenio implements EjbEvaluacionDesempenio {
         });
 
 //        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDesempenio.cargarResultadosAlmacenados() claves: " + claves);
-        TypedQuery<DesempenioEvaluacionResultados> q = f.getEntityManager().createQuery("select a from DesempenioEvaluacionResultados a where a.pk.evaluacion=:evaluacion and a.pk.evaluador = :evaluador and a.pk.evaluado in :claves", DesempenioEvaluacionResultados.class);
+        TypedQuery<DesempenioEvaluacionResultados> q = f.getEntityManager().createQuery("select a from DesempenioEvaluacionResultados a where a.desempenioEvaluacionResultadosPK.evaluacion=:evaluacion and a.desempenioEvaluacionResultadosPK.evaluador = :evaluador and a.desempenioEvaluacionResultadosPK.evaluado in :claves", DesempenioEvaluacionResultados.class);
         q.setParameter("evaluacion", desempenioEvaluacion.getEvaluacion());
         q.setParameter("evaluador", directivo.getClave());
         q.setParameter("claves", claves);

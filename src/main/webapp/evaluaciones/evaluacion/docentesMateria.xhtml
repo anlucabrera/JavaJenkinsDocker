@@ -101,7 +101,7 @@
                                             <p:outputPanel >
                                                 <p:autoUpdate/>
                                                 <h4 class="#{evaluado.completo?'text-info':'text-warn'} " style="margin: 0px;">#{evaluado.completo?'Finalizado':'Pendiente'}</h4>
-                                                <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{evaluado.pk.evaluado}.jpg" width="150" alt="#{evaluado.pk.evaluado}" title="Personal #{evaluado.pk.evaluado}" style="border-color: black; border-style: solid; border-width: 2px;" />
+                                                <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{evaluado.evaluacionDocentesMateriaResultadosPK.evaluado}.jpg" width="150" alt="#{evaluado.evaluacionDocentesMateriaResultadosPK.evaluado}" title="Personal #{evaluado.evaluacionDocentesMateriaResultadosPK.evaluado}" style="border-color: black; border-style: solid; border-width: 2px;" />
                                                 <br/>
                                                 <h:outputText class="#{evaluado.completo?'text-info':'text-warn'} " style="margin: 0px;" value="Promedio: " /> 
                                                 <h:outputText class="#{evaluado.completo?'text-info':'text-warn'} " style="margin: 0px;" value="#{evaluado.promedio}" >
@@ -158,12 +158,12 @@
                                             <c:forEach items="#{evaluacionDoncenteMateriaControler.listaDocentesEvaluando}" var="evaluado2">
                                                 <div class="col-lg-2 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
 
-                                                    <c:set var="id" value="#{'r'.concat(pregunta.numero).replace('.','-').concat('_').concat(evaluado2.pk.cveMateria.toString())}" />
+                                                    <c:set var="id" value="#{'r'.concat(pregunta.numero).replace('.','-').concat('_').concat(evaluado2.evaluacionDocentesMateriaResultadosPK.cveMateria.toString())}" />
                                                     <!--id # {id}-->
                                                     <p:outputLabel id="lbl#{id}" for="#{id}" value="#{evaluado2.personal.nombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
                                                     <c:if test="#{pregunta.tipo == 3}">
                                                         <f:ajax id="ajx#{id}" execute="#{id}">
-                                                            <p:selectOneButton id="#{id}" value="#{evaluacionDoncenteMateriaControler.respuestas[evaluado2.pk.cveMateria][pregunta.numero]}"
+                                                            <p:selectOneButton id="#{id}" value="#{evaluacionDoncenteMateriaControler.respuestas[evaluado2.evaluacionDocentesMateriaResultadosPK.cveMateria][pregunta.numero]}"
                                                                                required="true" requiredMessage="Falta respuesta"
                                                                                valueChangeListener="#{evaluacionDoncenteMateriaControler.guardarRespuesta}"
                                                                                style="font-size: small;" >
@@ -175,7 +175,7 @@
                                                     <c:if test="#{pregunta.tipo == 1}">
                                                         <f:ajax execute="#{id}">
                                                             <p:inputTextarea id="#{id}" class="form-control" 
-                                                                             value="#{evaluacionDoncenteMateriaControler.respuestas[evaluado2.pk.cveMateria][pregunta.numero]}"
+                                                                             value="#{evaluacionDoncenteMateriaControler.respuestas[evaluado2.evaluacionDocentesMateriaResultadosPK.cveMateria][pregunta.numero]}"
                                                                              rows="6" placeholder="Ingrese sus comentarios aquí..." maxlength="500" counter="display" counterTemplate="{0} Caracteres restantes."
                                                                              valueChangeListener="#{evaluacionDoncenteMateriaControler.guardarRespuesta}" queryDelay="1500" />
                                                             <br/><h:outputText id="display" />

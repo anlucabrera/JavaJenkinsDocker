@@ -168,7 +168,7 @@
                                                     </p:outputPanel>  
                                                     <p:remoteCommand name="actualizarTabla" actionListener="#{controladorIncidenciasGeneral.imprimirValores()}" update="tblActividades" /> 
                                                     <p:dataTable id="tblActividades"  value="#{controladorIncidenciasGeneral.listaIncidencias}"  var="incidencia"
-                                                                 sortBy="#{incidencia.clavePersonal.actividad.actividad eq 1?incidencia.clavePersonal.areaOperativa:incidencia.clavePersonal.areaSuperior}" expandableRowGroups="true"
+                                                                 sortBy="#{incidencia.clavePersonal.areaSuperior}" expandableRowGroups="true"
                                                                  emptyMessage="No se encontraron Registros." rendered="true">
                                                         <p:headerRow>
                                                             <p:column colspan="10" style="background: #2796cb; color: #FFFFFF;">

@@ -130,9 +130,18 @@ public class EjbPremios implements Serializable {
                 .collect(Collectors.toList());
         switch (dto.getTipo()){
             case ACADEMIA:
+                if (dto.getEvaluador().getAreaOperativa() == 23) {
+                    l = l.stream()
+                            .filter(p -> {
+                                if (dto.getEvaluador().getAreaOperativa() == 23) return p.getAreaOperativa() == 23;
+                                else return true;
+                            })
+                            .collect(Collectors.toList());
+                    break;
+                }
                 l = l.stream()
                         .filter(p -> {
-                            if(dto.getEvaluador().getAreaOperativa() == 23) return p.getAreaOperativa() == 23;
+                            if (dto.getEvaluador().getAreaOperativa() == 23) return p.getAreaOperativa() == 23;
                             else return true;
                         })
                         .filter(p -> {
@@ -180,7 +189,8 @@ public class EjbPremios implements Serializable {
         System.out.println("dto.getEvaluado() = " + dto.getEvaluado());
         try{
             EvaluacionesPremiosResultados resultado = getResultado(dto.getEvaluacion(), dto.getEvaluador());
-            f.remove(resultado);
+            if(resultado!= null)
+                f.remove(resultado);
             /*if(resultado != null) {
                 dto.setResultado(resultado);
                 dto.getResultado().setPersonal(dto.getEvaluado());
