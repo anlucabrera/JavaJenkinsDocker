@@ -58,6 +58,8 @@ public interface EjbNotificacionesIncidencias {
 
     public List<Cuidados> mostrarCuidadosArea(Short area) throws Throwable;
 
+    public List<Cuidados> mostrarCuidadosReporte(Date fechaI, Date fechaF) throws Throwable;
+
     public List<Cuidados> mostrarCuidados(Integer clave) throws Throwable;
 
     public Cuidados agregarCuidados(Cuidados nuevaCuidados) throws Throwable;

@@ -37,7 +37,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
 
     private static final long serialVersionUID = -8842055922698338073L;
 
-    @Getter    @Setter    private Integer usuario,pestaniaActiva;
+    @Getter    @Setter    private Integer usuario,pestaniaActiva,numeroIN=0;
     @Getter    @Setter    private String tipo;
     @Getter    @Setter    private List<String> tiposIncidencias = new ArrayList<>();
     @Getter    @Setter    private List<String> tiposCuidados = new ArrayList<>();
@@ -50,7 +50,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
     @Getter    @Setter    private Date tiempo=new Date();
     @Getter    @Setter    private DateFormat dateFormat = new SimpleDateFormat("HH:mm");
     @Getter    @Setter    private Date fechaActual = new Date();
-    @Getter    @Setter    private Boolean registro = true,activo=false,archivoSC=false,numOficioAutomatico=false;
+    @Getter    @Setter    private Boolean registro = true,activo=false,archivoSC=false;
     @Getter    @Setter    private Date fechaI = new Date();
     @Getter    @Setter    private Date fechaF = new Date();
 
@@ -154,24 +154,18 @@ public class ControladorIncidenciasPersonal implements Serializable {
                     registro = false;
                 }
             }
-            
-            if ((fechaActual.getYear() - 100) != 18) {
-                numOficioAutomatico=true;
-                List<Incidencias> list1 = new ArrayList<>();
-                List<Incapacidad> list2 = new ArrayList<>();
-                List<Cuidados> list3 = new ArrayList<>();
-               
-                list1 = ejbNotificacionesIncidencias.mostrarIncidenciasArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
-                list2 = ejbNotificacionesIncidencias.mostrarIncapacidadArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
-                list3 = ejbNotificacionesIncidencias.mostrarCuidadosArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
 
-                nuevOBJIncidencias.setNumeroOficio(list1.size() + 1);
-                nuevOBJIncapacidad.setNumeroIncapacidad(list2.size() + 1);
-                nuevOBJCuidados.setNumero(list3.size() + 1);
-            }
+            List<Incidencias> list1 = new ArrayList<>();
 
-            
-            
+            list1 = ejbNotificacionesIncidencias.mostrarIncidenciasArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+
+            list1.forEach((t) -> {
+                if ((t.getFecha().getYear() - 100) == (fechaActual.getYear() - 100)) {
+                    numeroIN = numeroIN + 1;
+                }
+            });
+            nuevOBJIncidencias.setNumeroOficio(numeroIN + 1);
+
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause());
             Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
@@ -385,6 +379,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
 
     public void crearCuidado() {
         try {
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearCuidado()");
             nuevOBJCuidados.setPersonal(new Personal());
             nuevOBJCuidados.getPersonal().setClave(usuario);
             Integer dias = (int) ((nuevOBJCuidados.getFechaFin().getTime() - nuevOBJCuidados.getFechaInicio().getTime()) / 86400000);
@@ -398,7 +393,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
 
             pestaniaActiva = 2;
             mostrarLista();
-
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearCuidado()");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);

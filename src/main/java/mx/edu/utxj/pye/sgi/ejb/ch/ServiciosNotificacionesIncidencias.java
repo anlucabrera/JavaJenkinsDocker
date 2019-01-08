@@ -75,7 +75,7 @@ public class ServiciosNotificacionesIncidencias implements EjbNotificacionesInci
     }
 
     @Override
-    public List<Incidencias> mostrarIncidenciasArea(Short area) throws Throwable{
+    public List<Incidencias> mostrarIncidenciasArea(Short area) throws Throwable {
         TypedQuery<Incidencias> q = em.createQuery("SELECT i FROM Incidencias i JOIN i.clavePersonal cp WHERE cp.areaOperativa=:areaOperativa OR cp.areaSuperior=:areaSuperior", Incidencias.class);
         q.setParameter("areaOperativa", area);
         q.setParameter("areaSuperior", area);
@@ -132,7 +132,7 @@ public class ServiciosNotificacionesIncidencias implements EjbNotificacionesInci
     }
 
     @Override
-    public List<Incapacidad> mostrarIncapacidadArea(Short area) throws Throwable{
+    public List<Incapacidad> mostrarIncapacidadArea(Short area) throws Throwable {
         TypedQuery<Incapacidad> q = em.createQuery("SELECT i FROM Incapacidad i JOIN i.clavePersonal cp WHERE cp.areaOperativa=:areaOperativa OR cp.areaSuperior=:areaSuperior", Incapacidad.class);
         q.setParameter("areaOperativa", area);
         q.setParameter("areaSuperior", area);
@@ -193,6 +193,15 @@ public class ServiciosNotificacionesIncidencias implements EjbNotificacionesInci
         TypedQuery<Cuidados> q = em.createQuery("SELECT c FROM Cuidados c JOIN c.personal cp WHERE cp.areaOperativa=:areaOperativa OR cp.areaSuperior=:areaSuperior", Cuidados.class);
         q.setParameter("areaOperativa", area);
         q.setParameter("areaSuperior", area);
+        List<Cuidados> pr = q.getResultList();
+        return pr;
+    }
+
+    @Override
+    public List<Cuidados> mostrarCuidadosReporte(Date fechaI, Date fechaF) throws Throwable {
+        TypedQuery<Cuidados> q = em.createQuery("SELECT c FROM Cuidados c JOIN c.personal cp WHERE c.fechaInicio BETWEEN :fechaI AND :frchaF OR c.fechaFin BETWEEN :fechaI AND :frchaF ORDER BY cp.areaOperativa , cp.clave", Cuidados.class);
+        q.setParameter("fechaI", fechaI);
+        q.setParameter("frchaF", fechaF);
         List<Cuidados> pr = q.getResultList();
         return pr;
     }

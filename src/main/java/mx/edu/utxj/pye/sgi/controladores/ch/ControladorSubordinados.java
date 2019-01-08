@@ -23,6 +23,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Articulosp;
 import mx.edu.utxj.pye.sgi.entity.ch.ExperienciasLaborales;
 import mx.edu.utxj.pye.sgi.entity.ch.Capacitacionespersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Congresos;
+import mx.edu.utxj.pye.sgi.entity.ch.Cuidados;
 import mx.edu.utxj.pye.sgi.entity.ch.DesarrolloSoftware;
 import mx.edu.utxj.pye.sgi.entity.ch.DesarrollosTecnologicos;
 import mx.edu.utxj.pye.sgi.entity.ch.Distinciones;
@@ -76,6 +77,7 @@ public class ControladorSubordinados implements Serializable {
     @Getter    @Setter    private List<Incidencias> listaIncidenciasIndividuales = new ArrayList<>();
     @Getter    @Setter    private List<Incapacidad> listaIncapacidads = new ArrayList<>();
     @Getter    @Setter    private List<Incapacidad> listaIncapacidadsReporteImpresion = new ArrayList<>();
+    @Getter    @Setter    private List<Cuidados> listaCuidados = new ArrayList<>();
     @Getter    @Setter    private List<Docencias> listaDocencias = new ArrayList<>();
     @Getter    @Setter    private Modulosregistro modulosRegistro = new Modulosregistro();
     @Getter    @Setter    private String[] nombreAr;
@@ -336,6 +338,8 @@ public class ControladorSubordinados implements Serializable {
             incidenciases.clear();
             List<Incapacidad> incapacidads = new ArrayList<>();
             incapacidads.clear();
+            List<Cuidados> cuidadoses = new ArrayList<>();
+            cuidadoses.clear();
             
             mes = mActual;
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -406,6 +410,17 @@ public class ControladorSubordinados implements Serializable {
                 incapacidads.forEach((t) -> {
                     if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
                         listaIncapacidads.add(t);
+                    }
+                });
+            }
+            
+            listaCuidados = new ArrayList<>();
+            listaCuidados.clear();
+            cuidadoses = ejbNotificacionesIncidencias.mostrarCuidadosReporte(fechaI, fechaF);
+            if (!cuidadoses.isEmpty()) {
+                cuidadoses.forEach((t) -> {
+                    if ((t.getPersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getPersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getPersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
+                        listaCuidados.add(t);
                     }
                 });
             }

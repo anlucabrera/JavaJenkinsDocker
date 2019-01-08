@@ -238,6 +238,7 @@
                                                     <p:selectOneMenu  id="anio" value="#{controladorSubordinados.anioNumero}" valueChangeListener="#{controladorSubordinados.numeroAnioAsiganado}">
                                                         <f:selectItem itemValue="17" itemLabel="2017" />
                                                         <f:selectItem itemValue="18" itemLabel="2018" />
+                                                        <f:selectItem itemValue="19" itemLabel="2019" />
                                                         <p:ajax listener="#{controladorSubordinados.imprimirValores()}" process="anio" update="tblActividades"/>
                                                     </p:selectOneMenu >
                                                 </div>
@@ -336,6 +337,7 @@
                                                     <p:selectOneMenu  id="anio" value="#{controladorSubordinados.anioNumero}" valueChangeListener="#{controladorSubordinados.numeroAnioAsiganado}">
                                                         <f:selectItem itemValue="17" itemLabel="2017" />
                                                         <f:selectItem itemValue="18" itemLabel="2018" />
+                                                        <f:selectItem itemValue="19" itemLabel="2019" />
                                                         <p:ajax listener="#{controladorSubordinados.imprimirValores()}" process="anio" update="tblActividades"/>
                                                     </p:selectOneMenu >
                                                 </div>
@@ -361,6 +363,58 @@
                                                         </p:column>                                                
                                                         <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
                                                             <p:link href="http://siip.utxj.edu.mx/archivos/#{controladorSubordinados.convertirRutaVistaEvidencia(incapacidad.evidencia)}" target="_blank">
+                                                                <i class="fa fa-search"></i>
+                                                                <span>Ver</span>
+                                                            </p:link>
+                                                        </p:column>
+                                                    </p:dataTable>                                                  
+                                                </p:outputPanel>   
+                                            </p:outputPanel>    
+                                        </h:form>
+                                    </p:tab>  
+                                    <p:tab title="Cuidados">
+                                        <h:form id="frmCuidGeneral"> 
+                                            <div class="row">
+                                                <div class="col-sm-2 border-right">
+                                                    <p:outputLabel for="anio" value="Año" />
+                                                    <p:selectOneMenu  id="anio" value="#{controladorSubordinados.anioNumero}" valueChangeListener="#{controladorSubordinados.numeroAnioAsiganado}">
+                                                        <f:selectItem itemValue="17" itemLabel="2017" />
+                                                        <f:selectItem itemValue="18" itemLabel="2018" />
+                                                        <f:selectItem itemValue="19" itemLabel="2019" />
+                                                        <p:ajax listener="#{controladorSubordinados.imprimirValores()}" process="anio" update="tblActividades"/>
+                                                    </p:selectOneMenu >
+                                                </div>
+                                            </div>
+                                            <hr/>
+                                            <p:outputPanel>
+                                                <p:outputPanel id="incidenciasReporte">
+                                                    <p:dataTable id="tblActividades"  value="#{controladorSubordinados.listaCuidados}"  var="cuidados"
+                                                                 style="margin-bottom:20px"
+                                                                 emptyMessage="No se encontraron Registros." rendered="true">
+
+                                                        <p:column headerText="Nomina" style="width: 9%;text-align: center;">
+                                                            <h:outputText value="#{cuidados.personal.clave}" />
+                                                        </p:column>
+                                                        <p:column headerText="Nombre" style="width: 30%;text-align: justify;">
+                                                            <h:outputText value="#{cuidados.personal.nombre}" />
+                                                        </p:column>     
+                                                        <p:column headerText="Tipo" style="width: 16%;text-align: justify;">
+                                                            <h:outputText value="Cuidados #{cuidados.tipo}" />
+                                                        </p:column>      
+                                                        <p:column headerText="Días" style="width: 5%;text-align: justify;">
+                                                            <h:outputText value="#{cuidados.numeroDias}" />
+                                                        </p:column>                                        
+                                                        <p:column headerText="Fecha" style="width: 20%">
+                                                            <h:outputLabel value="del"/>
+                                                            <p:spacer width="10px"/>
+                                                            <h:outputLabel value="#{cuidados.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>                                                                                
+                                                            <p:spacer width="10px"/>
+                                                            <h:outputLabel value="al"/>
+                                                            <p:spacer width="10px"/>
+                                                            <h:outputLabel value="#{cuidados.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                        </p:column>     
+                                                        <p:column headerText="Evidencia(s)" style="width:15%;text-align: center;">
+                                                            <p:link href="http://siip.utxj.edu.mx/archivos/#{controladorIncidenciasGeneral.convertirRutaVistaEvidencia(cuidados.evidencia)}" target="_blank" style=" visibility:#{cuidados.evidencia eq null?'hidden':'visible'};">
                                                                 <i class="fa fa-search"></i>
                                                                 <span>Ver</span>
                                                             </p:link>

@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:o="http://omnifaces.org/ui"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+
+        </style>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>        
+        <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Plan de Trabajo Anual
+    </ui:define>
+
+    <ui:define name="description">
+        Descripción y Justificación
+    </ui:define>
+
+    <ui:define name="body">
+
+
+        <adm:sidebar collapsed="true"/>
+
+        <h:form id="frmAlineacionEstratejica" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    <p:panel header="Alineación estratégica">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3 col-lg-3">            
+                                <p:autoUpdate/>
+                                <p:outputLabel value="Eje rector:" />
+
+                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" value="#{controladorPOAEvaluacionAreas.ejes.eje}" valueChangeListener="#{controladorPOAEvaluacionAreas.consultarEje}">
+                                    <f:selectItems value="#{controladorPOAEvaluacionAreas.ejesesFiltrado}" var="eje" itemValue="#{eje.eje}" itemLabel="#{eje.eje} -- #{eje.nombre}" />
+                                    <p:ajax update=":frm" listener="#{controladorPOAEvaluacionAreas.imprimirValores()}"/>
+                                </p:selectOneMenu> 
+                                <p:message for="eje" display="tooltip" />
+                            </div>
+                        </div>
+                    </p:panel>
+                </div>
+            </div>
+        </h:form>
+
+
+        <h:form id="frm" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                        <p:toolbar id="tb">
+                            <f:facet name="left">
+                                <p:outputPanel>     
+                                    <p:outputLabel value="Área: #{controladorEmpleado.nuevoOBJListaPersonal.areaOperativaNombre}" />
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <p:outputLabel value="Eje: #{controladorPOAEvaluacionAreas.ejes.nombre}" />       
+                                    <p:autoUpdate/>
+                                </p:outputPanel>
+                            </f:facet>
+                            <f:facet name="right">
+
+                                <p:outputPanel>            
+                                    <p:autoUpdate/>      
+                                    <p:outputLabel value="Mostrar todoas las actividades programadas"/>
+                                    <p:inputSwitch value="#{controladorPOAEvaluacionAreas.general}" offLabel="NO" onLabel="SI">
+                                        <p:ajax listener="#{controladorPOAEvaluacionAreas.tipoVista}" update=":frm" />
+                                    </p:inputSwitch>              
+                                </p:outputPanel>
+                            </f:facet>
+                        </p:toolbar>
+                    </div>
+                    <p:separator/>
+                    <div class="box box-solid">
+                        <div class="box-body">
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 text-info text-center">
+                                    <p:remoteCommand name="actualizarTabla" actionListener="#{controladorPOAEvaluacionAreas.imprimirValores()}" update=":frm:dtbBajas" />
+
+                                    <p:dataTable id="dtbBajas" value="#{controladorPOAEvaluacionAreas.listaEstrategiaActividadesesEje}" rowExpandMode="single"
+                                                 expandedRow="#{false}"
+                                                 var="estrategiasRegistro" sortBy="#{estrategiasRegistro.estrategias.estrategia}" expandableRowGroups="false">
+
+                                        <f:facet name="header">
+                                            #{controladorPOAEvaluacionAreas.ejes.eje}.-#{controladorPOAEvaluacionAreas.ejes.nombre}
+                                        </f:facet>
+
+                                        <p:headerRow>
+                                            <p:column colspan="1" styleClass="est">
+                                                <h:outputText value="#{controladorPOAEvaluacionAreas.ejes.eje}.#{estrategiasRegistro.estrategias.numero}. #{estrategiasRegistro.estrategias.nombre}"/>
+                                            </p:column>
+                                        </p:headerRow>       
+
+                                        <p:column>  
+                                            <p:rowExpansion>
+                                                <p:dataTable id="dtbPoaEvaluacion" value="#{estrategiasRegistro.actividadesPoas}" var="poa" emptyMessage="No hay actividades a evaluar en este mes"
+                                                             editable="true" editMode="row" widgetVar="dtbPoaEvaluacion" rowKey="#{poa.actividadesPoa.actividadPoa}" 
+                                                             rowStyleClass="#{poa.actividadesPoa.numeroS eq 0?'actividad':''}" 
+                                                             sortBy="#{poa.actividadesPoa.cuadroMandoInt.lineaAccion.lineaAccion}" expandableRowGroups="true">
+
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <!--p:column rowspan="2" style="width:30px"/-->
+                                                            <p:column rowspan="2" headerText="No." style="width: 50px;"/>
+                                                            <p:column rowspan="2" headerText="Actividad" style="width: 200px;"/>
+                                                            <p:column rowspan="2" headerText="Unidad de medida" style="width: 150px;"/>
+                                                            <p:column colspan="12" headerText="Calendarización de Metas:" style="width: 400px;"/> 
+                                                            <p:column rowspan="2" headerText="Total" style="width: 50px;"/>
+                                                        </p:row>
+                                                        <p:row class="success">
+                                                            <p:column headerText="Ene"/>
+                                                            <p:column headerText="Feb"/>
+                                                            <p:column headerText="Mar"/>
+                                                            <p:column headerText="Abr"/>
+                                                            <p:column headerText="May"/>
+                                                            <p:column headerText="Jun"/>
+                                                            <p:column headerText="Jul"/>
+                                                            <p:column headerText="Ago"/>
+                                                            <p:column headerText="Sep"/>
+                                                            <p:column headerText="Oct"/>
+                                                            <p:column headerText="Nov"/>
+                                                            <p:column headerText="Dic"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+
+                                                    <p:ajax event="rowEdit" listener="#{controladorPOAEvaluacionAreas.onRowEdit}" update="@this" oncomplete="actualizarTabla()"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{controladorPOAEvaluacionAreas.onRowCancel}" update="@this" oncomplete="actualizarTabla()"/>
+
+                                                    <p:headerRow>
+                                                        <p:column colspan="16" style="text-align: justify" styleClass="lac">
+                                                            <h:outputText value="#{controladorPOAEvaluacionAreas.ejes.eje}.#{estrategiasRegistro.estrategias.numero}.#{poa.actividadesPoa.cuadroMandoInt.lineaAccion.numero}.#{poa.actividadesPoa.cuadroMandoInt.lineaAccion.nombre}"/>
+                                                        </p:column>
+                                                    </p:headerRow>
+
+                                                    <!--p:column>
+                                                        <p:rowToggler />
+                                                    </p:column-->
+                                                    <p:column>
+                                                        <h:outputText value="#{poa.actividadesPoa.numeroP}.#{poa.actividadesPoa.numeroS}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{poa.actividadesPoa.denominacion}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{poa.actividadesPoa.unidadMedida.nombre}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{poa.actividadesPoa.NPEnero}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{poa.actividadesPoa.NPFebrero}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{poa.actividadesPoa.NPMarzo}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{poa.actividadesPoa.NPAbril}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{poa.actividadesPoa.NPMayo}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{poa.actividadesPoa.NPJunio}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{poa.actividadesPoa.NPJulio}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{poa.actividadesPoa.NPAgosto}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{poa.actividadesPoa.NPSeptiembre}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{poa.actividadesPoa.NPOctubre}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{poa.actividadesPoa.NPNoviembre}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{poa.actividadesPoa.NPDiciembre}" />
+                                                    </p:column>                                                    
+                                                    <p:column>
+                                                        <h:outputText value="#{poa.actividadesPoa.total}" />
+                                                    </p:column>
+
+                                                    <p:rowExpansion>
+                                                        <p:panelGrid  columns="13">
+                                                            <h:outputText value="." />
+                                                            <h:outputText value="Enero" />
+                                                            <h:outputText value="Febrero" />
+                                                            <h:outputText value="Marzo" />
+                                                            <h:outputText value="Abril" />
+                                                            <h:outputText value="Mayo" />                                                    
+                                                            <h:outputText value="Junio" />
+                                                            <h:outputText value="Julio" />
+                                                            <h:outputText value="Agosto" />
+                                                            <h:outputText value="Septiembre" />
+                                                            <h:outputText value="Octubre" />
+                                                            <h:outputText value="Noviembre" />
+                                                            <h:outputText value="Diciembre" />
+
+                                                            <h:outputText value="Planeadas" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NPEnero}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NPFebrero}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NPMarzo}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NPAbril}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NPMayo}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NPJunio}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NPJulio}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NPAgosto}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NPSeptiembre}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NPOctubre}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NPNoviembre}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NPDiciembre}" />
+
+                                                            <h:outputText value="Alcanzadas" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NAEnero}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NAFebrero}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NAMarzo}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NAAbril}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NAMayo}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NAJunio}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NAJulio}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NAAgosto}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NASeptiembre}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NAOctubre}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NANoviembre}" />
+                                                            <h:outputText value="#{poa.actividadesPoa.NADiciembre}" />
+                                                        </p:panelGrid>
+                                                    </p:rowExpansion>
+                                                </p:dataTable>
+                                            </p:rowExpansion>  
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

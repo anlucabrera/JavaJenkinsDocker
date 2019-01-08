@@ -19,6 +19,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
+import mx.edu.utxj.pye.sgi.entity.ch.Cuidados;
 import mx.edu.utxj.pye.sgi.entity.ch.Incapacidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -34,6 +35,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
 
     @Getter    @Setter    private List<Incidencias> listaIncidencias = new ArrayList<>();
     @Getter    @Setter    private List<Incapacidad> listaIncapacidads = new ArrayList<>();
+    @Getter    @Setter    private List<Cuidados> listaCuidadoses = new ArrayList<>();
     @Getter    @Setter    private List<AreasUniversidad> listaAreasUniversidads = new ArrayList<>();
     @Getter    @Setter    private AreasUniversidad au = new AreasUniversidad();
     @Getter    @Setter    private String[] nombreAr;
@@ -97,6 +99,8 @@ public class ControladorIncidenciasGeneral implements Serializable {
             incidenciases.clear();
             List<Incapacidad> incapacidads = new ArrayList<>();
             incapacidads.clear();
+            List<Cuidados> cuidadoses = new ArrayList<>();
+            cuidadoses.clear();
             if (area != 0) {
             au = new AreasUniversidad();
             au = areasLogeo.mostrarAreasUniversidad(area);
@@ -171,6 +175,10 @@ public class ControladorIncidenciasGeneral implements Serializable {
                 incapacidads.forEach((t) -> {
                     if (area != 0) {
                         if (t.getClavePersonal().getAreaOperativa() == area) {
+                            if (t.getClavePersonal().getActividad().getActividad() == 1 || t.getClavePersonal().getActividad().getActividad() == 3) {
+                                listaIncapacidads.add(t);
+                            }
+                        } else if (t.getClavePersonal().getAreaSuperior() == area) {
                             listaIncapacidads.add(t);
                         }
                     } else {
@@ -178,9 +186,26 @@ public class ControladorIncidenciasGeneral implements Serializable {
                     }
                 });
             }
-
+            cuidadoses = ejbNotificacionesIncidencias.mostrarCuidadosReporte(fechaI, fechaF);
+            if (!cuidadoses.isEmpty()) {
+                cuidadoses.forEach((t) -> {
+                   if (area != 0) {
+                        if (t.getPersonal().getAreaOperativa() == area) {
+                            if (t.getPersonal().getActividad().getActividad() == 1 || t.getPersonal().getActividad().getActividad() == 3) {
+                                listaCuidadoses.add(t);
+                            }
+                        } else if (t.getPersonal().getAreaSuperior() == area) {
+                            listaCuidadoses.add(t);
+                        }
+                    } else {
+                        listaCuidadoses.add(t);
+                    }
+                });
+            }
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasGeneral.mostrarIncidencias()"+listaCuidadoses.size());
             Ajax.update("frmInciGeneral");
             Ajax.update("frmIncaGeneral");
+            Ajax.update("frmCuidGeneral");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
