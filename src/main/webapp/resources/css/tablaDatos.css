@@ -39,3 +39,7 @@ table[role="grid"]{
 .ui-dialog-titlebar-close{
     margin-top: 25px !important;
 }
+
+.ui-selectonemenu{
+    padding-top: 0px !important;
+}

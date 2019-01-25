@@ -67,18 +67,12 @@ public class ProgramasPertcal implements Serializable {
     @Size(min = 1, max = 3)
     @Column(name = "pertinente")
     private String pertinente;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 15)
+    @Size(max = 15)
     @Column(name = "org_acreditador")
     private String orgAcreditador;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "fecini_acred")
     @Temporal(TemporalType.DATE)
     private Date feciniAcred;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "fecfin_acred")
     @Temporal(TemporalType.DATE)
     private Date fecfinAcred;
@@ -101,15 +95,12 @@ public class ProgramasPertcal implements Serializable {
         this.registro = registro;
     }
 
-    public ProgramasPertcal(Integer registro, short programaEducativo, short anioInicio, String evaluable, String pertinente, String orgAcreditador, Date feciniAcred, Date fecfinAcred, short anioEstfac, short anioUltast) {
+    public ProgramasPertcal(Integer registro, short programaEducativo, short anioInicio, String evaluable, String pertinente, short anioEstfac, short anioUltast) {
         this.registro = registro;
         this.programaEducativo = programaEducativo;
         this.anioInicio = anioInicio;
         this.evaluable = evaluable;
         this.pertinente = pertinente;
-        this.orgAcreditador = orgAcreditador;
-        this.feciniAcred = feciniAcred;
-        this.fecfinAcred = fecfinAcred;
         this.anioEstfac = anioEstfac;
         this.anioUltast = anioUltast;
     }

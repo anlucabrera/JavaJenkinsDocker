@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.sgi.entity.finanzas;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -48,6 +50,8 @@ public class CatalogoPresupuestos implements Serializable {
     private String denominacion;
     @ManyToMany(mappedBy = "catalogoPresupuestosList")
     private List<Facturas> facturasList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "presupuesto")
+    private List<PartidasFiscales> partidasFiscalesList;
 
     public CatalogoPresupuestos() {
     }
@@ -84,6 +88,15 @@ public class CatalogoPresupuestos implements Serializable {
 
     public void setFacturasList(List<Facturas> facturasList) {
         this.facturasList = facturasList;
+    }
+
+    @XmlTransient
+    public List<PartidasFiscales> getPartidasFiscalesList() {
+        return partidasFiscalesList;
+    }
+
+    public void setPartidasFiscalesList(List<PartidasFiscales> partidasFiscalesList) {
+        this.partidasFiscalesList = partidasFiscalesList;
     }
 
     @Override

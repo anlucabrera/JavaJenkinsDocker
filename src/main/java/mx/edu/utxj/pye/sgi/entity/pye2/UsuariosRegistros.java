@@ -6,7 +6,9 @@
 package mx.edu.utxj.pye.sgi.entity.pye2;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,10 +16,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -53,6 +57,8 @@ public class UsuariosRegistros implements Serializable {
     @NotNull
     @Column(name = "clave_personal")
     private int clavePersonal;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuariosRegistros")
+    private List<UsuariosRegistroEspecifico> usuariosRegistroEspecificoList;
 
     public UsuariosRegistros() {
     }
@@ -98,6 +104,15 @@ public class UsuariosRegistros implements Serializable {
 
     public void setClavePersonal(int clavePersonal) {
         this.clavePersonal = clavePersonal;
+    }
+
+    @XmlTransient
+    public List<UsuariosRegistroEspecifico> getUsuariosRegistroEspecificoList() {
+        return usuariosRegistroEspecificoList;
+    }
+
+    public void setUsuariosRegistroEspecificoList(List<UsuariosRegistroEspecifico> usuariosRegistroEspecificoList) {
+        this.usuariosRegistroEspecificoList = usuariosRegistroEspecificoList;
     }
 
     @Override

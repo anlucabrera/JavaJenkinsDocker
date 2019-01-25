@@ -30,7 +30,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "CuerpacadLineas.findAll", query = "SELECT c FROM CuerpacadLineas c")
     , @NamedQuery(name = "CuerpacadLineas.findByRegistro", query = "SELECT c FROM CuerpacadLineas c WHERE c.registro = :registro")
-    , @NamedQuery(name = "CuerpacadLineas.findByNombre", query = "SELECT c FROM CuerpacadLineas c WHERE c.nombre = :nombre")})
+    , @NamedQuery(name = "CuerpacadLineas.findByNombre", query = "SELECT c FROM CuerpacadLineas c WHERE c.nombre = :nombre")
+    , @NamedQuery(name = "CuerpacadLineas.findByEstatus", query = "SELECT c FROM CuerpacadLineas c WHERE c.estatus = :estatus")})
 public class CuerpacadLineas implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -44,6 +45,10 @@ public class CuerpacadLineas implements Serializable {
     @Size(min = 1, max = 200)
     @Column(name = "nombre")
     private String nombre;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "estatus")
+    private boolean estatus;
     @JoinColumn(name = "cuerpo_academico", referencedColumnName = "cuerpo_academico")
     @ManyToOne(optional = false)
     private CuerposAcademicosRegistro cuerpoAcademico;
@@ -58,9 +63,10 @@ public class CuerpacadLineas implements Serializable {
         this.registro = registro;
     }
 
-    public CuerpacadLineas(Integer registro, String nombre) {
+    public CuerpacadLineas(Integer registro, String nombre, boolean estatus) {
         this.registro = registro;
         this.nombre = nombre;
+        this.estatus = estatus;
     }
 
     public Integer getRegistro() {
@@ -77,6 +83,14 @@ public class CuerpacadLineas implements Serializable {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public boolean getEstatus() {
+        return estatus;
+    }
+
+    public void setEstatus(boolean estatus) {
+        this.estatus = estatus;
     }
 
     public CuerposAcademicosRegistro getCuerpoAcademico() {

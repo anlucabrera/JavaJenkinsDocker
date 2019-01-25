@@ -11,9 +11,23 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.ApplicationScoped;
+
+import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
+import mx.edu.utxj.pye.sgi.dto.finanzas.TramitesDto;
+import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PlaneacionesCuatrimestrales;
+import mx.edu.utxj.pye.sgi.entity.finanzas.ComisionOficios;
+import mx.edu.utxj.pye.sgi.entity.finanzas.Tramites;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
+import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
+import mx.edu.utxj.pye.sgi.entity.pye2.MunicipioPK;
+import mx.edu.utxj.pye.sgi.enums.ComisionOficioEstatus;
+import mx.edu.utxj.pye.sgi.enums.TramiteEstatus;
+import mx.edu.utxj.pye.sgi.enums.converter.ComisionOficioEstatusConverter;
+import mx.edu.utxj.pye.sgi.facade.Facade;
 import org.apache.commons.io.FilenameUtils;
 
 /**
@@ -27,6 +41,8 @@ public class Caster {
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
     @EJB EjbPropiedades ep;
     private DecimalFormat df = new DecimalFormat("0.##");
+    @EJB Facade f;
+    @EJB EjbPersonalBean ejbPersonalBean;
 
     public Caster() {
     }
@@ -86,6 +102,42 @@ public class Caster {
             default:
                 return "NA";
         }
+    }
+
+    public String numeroOficioToPath(ComisionOficios oficio){
+        char[] chars = oficio.getOficio().toCharArray();
+        chars[9] = '_';
+        chars[14] = '_';
+        return String.valueOf(chars);
+    }
+
+    public TramitesDto tramiteToListaTramitesDto(Tramites tramite){
+        PersonalActivo seguidor = ejbPersonalBean.pack(f.getEntityManager().find(Personal.class, tramite.getClave()));
+        PersonalActivo comisionado = ejbPersonalBean.pack(f.getEntityManager().find(Personal.class, tramite.getComisionOficios().getComisionado()));
+        return new TramitesDto(seguidor,comisionado,tramite);
+    }
+
+    public String tramiteToDestino(Tramites tramite){
+        if(tramite == null) return "";
+        Municipio municipio = f.getEntityManager().find(Municipio.class, new MunicipioPK(tramite.getComisionOficios().getEstado(), tramite.getComisionOficios().getMunicipio()));
+        Estado estado = f.getEntityManager().find(Estado.class, tramite.getComisionOficios().getEstado());
+        return tramite.getComisionOficios().getDependencia().concat(", ").concat(municipio.getNombre()).concat(", ").concat(estado.getNombre());
+    }
+
+    public String comisionOficioEstatusToLabel(ComisionOficioEstatus estatus){
+        return estatus.getLabel().replaceAll("_", " ");
+    }
+
+    public String enumLabelToString(String label){
+        return label.replaceAll("_", " ");
+    }
+
+    public Boolean tramiteEditablePorOperativo(Tramites tramite, Personal logueado){
+        if(tramite == null) return false;
+        ComisionOficioEstatus estatus = ComisionOficioEstatusConverter.of(tramite.getComisionOficios().getEstatus());
+        if(estatus == null) return false;
+        return (estatus.getId() < ComisionOficioEstatus.APROBADO_POR_SUPERIOR.getId() || estatus == ComisionOficioEstatus.REGRESADO_PARA_REVISION_POR_FIZCALIZACION)
+                && (logueado.getClave() == tramite.getComisionOficios().getComisionado() || logueado.getClave() == tramite.getClave());
     }
 
     public static void main(String[] args) {

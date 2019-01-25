@@ -46,7 +46,8 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "PersonalCapacitado.findByEmpresaImpartidora", query = "SELECT p FROM PersonalCapacitado p WHERE p.empresaImpartidora = :empresaImpartidora")
     , @NamedQuery(name = "PersonalCapacitado.findByObjetivo", query = "SELECT p FROM PersonalCapacitado p WHERE p.objetivo = :objetivo")
     , @NamedQuery(name = "PersonalCapacitado.findByLugarImparticion", query = "SELECT p FROM PersonalCapacitado p WHERE p.lugarImparticion = :lugarImparticion")
-    , @NamedQuery(name = "PersonalCapacitado.findByMontoInvertido", query = "SELECT p FROM PersonalCapacitado p WHERE p.montoInvertido = :montoInvertido")})
+    , @NamedQuery(name = "PersonalCapacitado.findByMontoInvertido", query = "SELECT p FROM PersonalCapacitado p WHERE p.montoInvertido = :montoInvertido")
+    , @NamedQuery(name = "PersonalCapacitado.findByPeriodo", query = "SELECT p FROM PersonalCapacitado p WHERE p.periodo = :periodo")})
 public class PersonalCapacitado implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -100,6 +101,10 @@ public class PersonalCapacitado implements Serializable {
     @NotNull
     @Column(name = "monto_invertido")
     private BigDecimal montoInvertido;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "periodo")
+    private int periodo;
     @JoinColumn(name = "modalidad", referencedColumnName = "percap_mod")
     @ManyToOne(optional = false)
     private PercapModalidad modalidad;
@@ -119,7 +124,7 @@ public class PersonalCapacitado implements Serializable {
         this.registro = registro;
     }
 
-    public PersonalCapacitado(Integer registro, String curso, String nombre, Date fechaInicial, Date fechaFinal, String duracion, String empresaImpartidora, String objetivo, String lugarImparticion, BigDecimal montoInvertido) {
+    public PersonalCapacitado(Integer registro, String curso, String nombre, Date fechaInicial, Date fechaFinal, String duracion, String empresaImpartidora, String objetivo, String lugarImparticion, BigDecimal montoInvertido, int periodo) {
         this.registro = registro;
         this.curso = curso;
         this.nombre = nombre;
@@ -130,6 +135,7 @@ public class PersonalCapacitado implements Serializable {
         this.objetivo = objetivo;
         this.lugarImparticion = lugarImparticion;
         this.montoInvertido = montoInvertido;
+        this.periodo = periodo;
     }
 
     public Integer getRegistro() {
@@ -210,6 +216,14 @@ public class PersonalCapacitado implements Serializable {
 
     public void setMontoInvertido(BigDecimal montoInvertido) {
         this.montoInvertido = montoInvertido;
+    }
+
+    public int getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(int periodo) {
+        this.periodo = periodo;
     }
 
     public PercapModalidad getModalidad() {

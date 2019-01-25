@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.entity.finanzas;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +18,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -37,7 +40,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "ComisionAvisos.findByPasajes", query = "SELECT c FROM ComisionAvisos c WHERE c.pasajes = :pasajes")
     , @NamedQuery(name = "ComisionAvisos.findByCasetas", query = "SELECT c FROM ComisionAvisos c WHERE c.casetas = :casetas")
     , @NamedQuery(name = "ComisionAvisos.findByOtros", query = "SELECT c FROM ComisionAvisos c WHERE c.otros = :otros")
-    , @NamedQuery(name = "ComisionAvisos.findByTotal", query = "SELECT c FROM ComisionAvisos c WHERE c.total = :total")})
+    , @NamedQuery(name = "ComisionAvisos.findByTotal", query = "SELECT c FROM ComisionAvisos c WHERE c.total = :total")
+    , @NamedQuery(name = "ComisionAvisos.findByFormatosAutorizados", query = "SELECT c FROM ComisionAvisos c WHERE c.formatosAutorizados = :formatosAutorizados")
+    , @NamedQuery(name = "ComisionAvisos.findByLiquidacionFecha", query = "SELECT c FROM ComisionAvisos c WHERE c.liquidacionFecha = :liquidacionFecha")})
 public class ComisionAvisos implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -70,15 +75,21 @@ public class ComisionAvisos implements Serializable {
     @NotNull
     @Column(name = "otros")
     private double otros;
-    @Basic(optional = false)
     @Lob
-    @Size(min = 0, max = 65535)
+    @Size(max = 65535)
     @Column(name = "comentarios")
     private String comentarios;
     @Basic(optional = false)
     @NotNull
     @Column(name = "total")
     private double total;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "formatos_autorizados")
+    private boolean formatosAutorizados;
+    @Column(name = "liquidacion_fecha")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date liquidacionFecha;
     @JoinColumn(name = "tramite", referencedColumnName = "tramite", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private ComisionOficios comisionOficios;
@@ -96,7 +107,7 @@ public class ComisionAvisos implements Serializable {
         this.tramite = tramite;
     }
 
-    public ComisionAvisos(Integer tramite, short zona, short pernoctando, short sinPernoctar, boolean pasajes, boolean casetas, double otros, String comentarios, double total) {
+    public ComisionAvisos(Integer tramite, short zona, short pernoctando, short sinPernoctar, boolean pasajes, boolean casetas, double otros, double total, boolean formatosAutorizados) {
         this.tramite = tramite;
         this.zona = zona;
         this.pernoctando = pernoctando;
@@ -104,8 +115,8 @@ public class ComisionAvisos implements Serializable {
         this.pasajes = pasajes;
         this.casetas = casetas;
         this.otros = otros;
-        this.comentarios = comentarios;
         this.total = total;
+        this.formatosAutorizados = formatosAutorizados;
     }
 
     public Integer getTramite() {
@@ -178,6 +189,22 @@ public class ComisionAvisos implements Serializable {
 
     public void setTotal(double total) {
         this.total = total;
+    }
+
+    public boolean getFormatosAutorizados() {
+        return formatosAutorizados;
+    }
+
+    public void setFormatosAutorizados(boolean formatosAutorizados) {
+        this.formatosAutorizados = formatosAutorizados;
+    }
+
+    public Date getLiquidacionFecha() {
+        return liquidacionFecha;
+    }
+
+    public void setLiquidacionFecha(Date liquidacionFecha) {
+        this.liquidacionFecha = liquidacionFecha;
     }
 
     public ComisionOficios getComisionOficios() {

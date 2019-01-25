@@ -251,7 +251,7 @@
                     </li>
                 </ul>
             </li>
-            
+
             <!-- Se agregó la siguiente sección de código para el listado de Módulos de Registro por usuario - Menú de registros -->
             <li class="treeview">
                 <a>
@@ -281,7 +281,7 @@
                     </li>
                 </ul>
             </li>
-            
+
             <c:if test="#{controladorEmpleado.listaDocencias.size() != 0}">
                 <li class="treeview">
 
@@ -427,6 +427,30 @@
                     <span>Soporte técnico</span>
                 </p:link>
             </li>
+            <!--Menu original jonny-->
+            <!--            <li class="treeview">
+                            <a href="#"><i class="fa fa-money"></i><span>Finanzas</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
+                            <ul class="treeview-menu">
+                                <li><p:link href="/finanzas/tramites.xhtml"><i class="fa fa-shopping-bag"></i> <span>Seguimiento a trámites</span></p:link></li>
+                                <li><p:link href="/finanzas/tramites_comisionar.xhtml"><i class="fa fa-shopping-bag"></i> <span>Comisionar personal</span></p:link></li>
+                            </ul>
+                        </li>-->
+
+            <li class="treeview">
+                <a href="#"><i class="fa fa-money"></i><span>Finanzas</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
+                <ul class="treeview-menu">
+                    <c:if test="#{tramitesSupervisor.tieneAcceso}" >
+                        <li><p:link href="/finanzas/tramites_supervisor.xhtml" ><i class="fa fa-shopping-bag"></i>Administración de trámites</p:link></li>
+                        <li><p:link href="/finanzas/tramites_supervisor_tarifas_viajes.xhtml" ><i class="fa fa-shopping-bag"></i>Tarifas de viajes</p:link></li>
+                    </c:if>
+                    <c:if test="#{tramitesSuperior.tieneAcceso}" >
+                        <li><p:link href="/finanzas/tramites_superior.xhtml" ><i class="fa fa-shopping-bag"></i>Revisión de trámites</p:link></li>
+                    </c:if>
+                    <li><p:link href="/finanzas/tramites_operativo.xhtml"><i class="fa fa-shopping-bag"></i> <span>Seguimiento a trámites</span></p:link></li>
+                    <li><p:link href="/finanzas/tramites_comisionar.xhtml"><i class="fa fa-shopping-bag"></i> <span>Comisionar personal</span></p:link></li>
+                </ul>
+            </li>
+
         </c:if>
     </ul>
     <script type="text/javascript">

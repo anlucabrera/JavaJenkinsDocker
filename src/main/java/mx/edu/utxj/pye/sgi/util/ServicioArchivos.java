@@ -25,7 +25,6 @@ import java.util.logging.Logger;
 import javax.servlet.http.Part;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.exception.EvidenciaRegistroExtensionNoValidaException;
-import mx.edu.utxj.pye.siip.dto.escolar.DTOAsesoriasTutoriasCicloPeriodos;
 import org.apache.commons.io.FilenameUtils;
 import org.primefaces.model.UploadedFile;
 
@@ -178,36 +177,5 @@ public class ServicioArchivos implements Serializable{
             
         return null;
     }
-    
-    
-    public static String almacenarEvidenciaRegistro(AreasUniversidad area, DTOAsesoriasTutoriasCicloPeriodos registro, Part archivo) throws IOException, EvidenciaRegistroExtensionNoValidaException{        
-        if(!extensiones.contains(FilenameUtils.getExtension(archivo.getSubmittedFileName()).toLowerCase())){
-            throw new EvidenciaRegistroExtensionNoValidaException(archivo.getSubmittedFileName());
-        }
-        
-        String ruta = ServicioArchivos.genRutaRelativa(
-                String.valueOf(registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()), //ejercicio fiscal
-                area.getSiglas(),
-                registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getEventoRegistro().getMes(),
-                registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getTipo().getNombre());
-        System.out.println("mx.edu.utxj.pye.sgi.util.ServicioArchivos.almacenarEvidenciaRegistro(" + registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getTipo().getNombre() + ") ruta: " + ruta);
-        
-        String nombreArchivo = sdf.format(new Date()).concat("_").concat(archivo.getSubmittedFileName());
-        String rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
-        String rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-        
-        //si el archivo se agrega un contador extra
-        Integer cont = 1;
-        while(Files.exists(Paths.get(rutaAbsoluta))){
-            nombreArchivo = sdf.format(new Date()).concat("_").concat(cont.toString()).concat("_").concat(archivo.getSubmittedFileName());
-            rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
-            rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-            cont++;
-        }
-        
-        ServicioArchivos.addCarpetaRelativa(ServicioArchivos.carpetaRaiz.concat(ruta));
-                
-        archivo.write(rutaArchivo);
-        return rutaAbsoluta;
-    }
+
 }

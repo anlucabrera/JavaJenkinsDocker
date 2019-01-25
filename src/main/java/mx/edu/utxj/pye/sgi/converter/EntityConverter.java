@@ -44,6 +44,7 @@ public class EntityConverter implements Converter{
                     return ejes.get(ejes.indexOf(eje));
                 case "estrategia":
                     List<Estrategias> estrategias = Faces.getSessionAttribute("estrategias");
+                    System.out.println("estrategias = " + estrategias);
                     Estrategias estrategia = new Estrategias(Short.valueOf(value));
                     return estrategias.get(estrategias.indexOf(estrategia));
                 case "lineaAccion":

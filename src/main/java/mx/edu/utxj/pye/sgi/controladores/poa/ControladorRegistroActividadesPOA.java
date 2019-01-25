@@ -504,7 +504,7 @@ public class ControladorRegistroActividadesPOA implements Serializable {
 
     public void actualizarNuavActividad() {
         if (!(actividadesPoaEditando.getDescripcion() == null || "".equals(actividadesPoaEditando.getDescripcion()))) {
-            actividadesPoa.setValidadoSistema(true);
+            //actividadesPoa.setva.setValidadoSistema(true);
         }
         actividadesPoa = poaSelectec.actualizaActividadesPoa(actividadesPoaEditando);
         consultarActividadesPorParametros();

@@ -5,6 +5,8 @@ import java.time.Period;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -28,6 +30,7 @@ import mx.edu.utxj.pye.sgi.util.DateUtils;
  * Las claves de las entidades de alineación al POA se sincronizan de forma automática.
  * @author UTXJ
  */
+@AllArgsConstructor
 public class Comision implements Serializable{
     public static void main(String[] args) {
         Comision comision = new Comision(new Tramites());
@@ -268,6 +271,9 @@ public class Comision implements Serializable{
 //        System.out.println("mx.edu.utxj.pye.sgi.dto.Comision.setPernoctando(" + (pernoctando + sinPernoctar) + "): " + pernoctando);
         this.pernoctando = pernoctando;
         tramite.getComisionOficios().getComisionAvisos().setPernoctando(pernoctando);
+        /*System.out.println("sinPernoctar = " + sinPernoctar);
+        System.out.println("inicio = " + inicio);
+        System.out.println("fin = " + fin);*/
         if((pernoctando + sinPernoctar) > calcularDiasTranscurridos() && (pernoctando + sinPernoctar) > 0)
             setPernoctando(--pernoctando);
     }

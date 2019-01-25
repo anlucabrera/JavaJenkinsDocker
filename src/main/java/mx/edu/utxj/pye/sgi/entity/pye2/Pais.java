@@ -51,7 +51,7 @@ public class Pais implements Serializable {
     private List<ProductosAcademicos> productosAcademicosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idpais")
     private List<Estado> estadoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pais")
+    @OneToMany(mappedBy = "pais")
     private List<OrganismosVinculados> organismosVinculadosList;
 
     public Pais() {

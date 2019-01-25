@@ -181,7 +181,14 @@ public class Tarifas implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.finanzas.Tarifas[ tarifa=" + tarifa + " ]";
+        return "Tarifas{" +
+                "tarifa=" + tarifa +
+                ", tipo='" + tipo + '\'' +
+                ", fechaAplicacion=" + fechaAplicacion +
+                ", fechaCancelacion=" + fechaCancelacion +
+                ", tarifasPorKilometro=" + tarifasPorKilometro +
+                ", tarifasViajes=" + tarifasViajes +
+                ", tarifasPorZona=" + tarifasPorZona +
+                '}';
     }
-    
 }

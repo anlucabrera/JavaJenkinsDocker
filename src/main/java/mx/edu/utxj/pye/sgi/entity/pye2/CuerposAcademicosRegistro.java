@@ -42,7 +42,8 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "CuerposAcademicosRegistro.findByFechaTermino", query = "SELECT c FROM CuerposAcademicosRegistro c WHERE c.fechaTermino = :fechaTermino")
     , @NamedQuery(name = "CuerposAcademicosRegistro.findByNombre", query = "SELECT c FROM CuerposAcademicosRegistro c WHERE c.nombre = :nombre")
     , @NamedQuery(name = "CuerposAcademicosRegistro.findByNivelProdep", query = "SELECT c FROM CuerposAcademicosRegistro c WHERE c.nivelProdep = :nivelProdep")
-    , @NamedQuery(name = "CuerposAcademicosRegistro.findByArea", query = "SELECT c FROM CuerposAcademicosRegistro c WHERE c.area = :area")})
+    , @NamedQuery(name = "CuerposAcademicosRegistro.findByArea", query = "SELECT c FROM CuerposAcademicosRegistro c WHERE c.area = :area")
+    , @NamedQuery(name = "CuerposAcademicosRegistro.findByEstatus", query = "SELECT c FROM CuerposAcademicosRegistro c WHERE c.estatus = :estatus")})
 public class CuerposAcademicosRegistro implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -80,10 +81,18 @@ public class CuerposAcademicosRegistro implements Serializable {
     @NotNull
     @Column(name = "area")
     private short area;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "estatus")
+    private boolean estatus;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpoAcademico")
     private List<CuerpacadIntegrantes> cuerpacadIntegrantesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpoAcademico")
+    private List<CuerpacadIntegrantesBitacora> cuerpacadIntegrantesBitacoraList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpAcad")
     private List<ReconocimientoProdepRegistros> reconocimientoProdepRegistrosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpoAcademico")
+    private List<CuerpacadLineasBitacora> cuerpacadLineasBitacoraList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpoAcademico")
     private List<CuerpacadLineas> cuerpacadLineasList;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
@@ -103,7 +112,7 @@ public class CuerposAcademicosRegistro implements Serializable {
         this.registro = registro;
     }
 
-    public CuerposAcademicosRegistro(Integer registro, String cuerpoAcademico, Date fechaInicio, Date fechaTermino, String nombre, String nivelProdep, short area) {
+    public CuerposAcademicosRegistro(Integer registro, String cuerpoAcademico, Date fechaInicio, Date fechaTermino, String nombre, String nivelProdep, short area, boolean estatus) {
         this.registro = registro;
         this.cuerpoAcademico = cuerpoAcademico;
         this.fechaInicio = fechaInicio;
@@ -111,6 +120,7 @@ public class CuerposAcademicosRegistro implements Serializable {
         this.nombre = nombre;
         this.nivelProdep = nivelProdep;
         this.area = area;
+        this.estatus = estatus;
     }
 
     public Integer getRegistro() {
@@ -169,6 +179,14 @@ public class CuerposAcademicosRegistro implements Serializable {
         this.area = area;
     }
 
+    public boolean getEstatus() {
+        return estatus;
+    }
+
+    public void setEstatus(boolean estatus) {
+        this.estatus = estatus;
+    }
+
     @XmlTransient
     public List<CuerpacadIntegrantes> getCuerpacadIntegrantesList() {
         return cuerpacadIntegrantesList;
@@ -179,12 +197,30 @@ public class CuerposAcademicosRegistro implements Serializable {
     }
 
     @XmlTransient
+    public List<CuerpacadIntegrantesBitacora> getCuerpacadIntegrantesBitacoraList() {
+        return cuerpacadIntegrantesBitacoraList;
+    }
+
+    public void setCuerpacadIntegrantesBitacoraList(List<CuerpacadIntegrantesBitacora> cuerpacadIntegrantesBitacoraList) {
+        this.cuerpacadIntegrantesBitacoraList = cuerpacadIntegrantesBitacoraList;
+    }
+
+    @XmlTransient
     public List<ReconocimientoProdepRegistros> getReconocimientoProdepRegistrosList() {
         return reconocimientoProdepRegistrosList;
     }
 
     public void setReconocimientoProdepRegistrosList(List<ReconocimientoProdepRegistros> reconocimientoProdepRegistrosList) {
         this.reconocimientoProdepRegistrosList = reconocimientoProdepRegistrosList;
+    }
+
+    @XmlTransient
+    public List<CuerpacadLineasBitacora> getCuerpacadLineasBitacoraList() {
+        return cuerpacadLineasBitacoraList;
+    }
+
+    public void setCuerpacadLineasBitacoraList(List<CuerpacadLineasBitacora> cuerpacadLineasBitacoraList) {
+        this.cuerpacadLineasBitacoraList = cuerpacadLineasBitacoraList;
     }
 
     @XmlTransient

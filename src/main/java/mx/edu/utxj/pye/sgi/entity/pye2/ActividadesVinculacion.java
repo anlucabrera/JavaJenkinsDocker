@@ -48,7 +48,7 @@ public class ActividadesVinculacion implements Serializable {
     @Size(min = 1, max = 60)
     @Column(name = "nombre")
     private String nombre;
-    @JoinTable(name = "pye2.actividad_vinculacion_empresa", joinColumns = {
+    @JoinTable(name = "actividad_vinculacion_empresa", joinColumns = {
         @JoinColumn(name = "actividad_vinculacion", referencedColumnName = "actividad_vinculacion")}, inverseJoinColumns = {
         @JoinColumn(name = "empresa", referencedColumnName = "empresa")})
     @ManyToMany

@@ -18,7 +18,7 @@
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omnifaces</artifactId>
-            <version>2.7</version>
+            <version>3.2</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -124,6 +124,17 @@
             <version>${adminfaces.version}</version>
             <!--<classifier>dev</classifier> uncompressed theme.css (note that you need to exclude admin-theme brought by admin-template dependency)-->
         </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>font-awesome</artifactId>
+            <version>5.3.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.highfaces/highfaces -->
+        <dependency>
+            <groupId>org.highfaces</groupId>
+            <artifactId>highfaces</artifactId>
+            <version>1.2</version>
+        </dependency>
     </dependencies>
     <repositories>
         <repository>
@@ -169,7 +180,7 @@
                 </configuration>
             </plugin>
         </plugins>
-        <finalName>admin-starter</finalName>
+        <finalName>sii2</finalName>
     </build>
     <profiles>
         <profile>
