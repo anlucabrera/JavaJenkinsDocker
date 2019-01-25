@@ -27,7 +27,7 @@ public class EjbTarifasViajes {
 
     /**
      * Crea una nueva tarifa
-     * @param tarifa Tarifa a persistir
+     * @param tarifa Tarifa a persistir de la cual se ha capturado los datos en interface grafica
      * @return Resultado del proceso
      */
     public ResultadoEJB<Tarifas> crearTarifa(@NonNull Tarifas tarifa){
@@ -40,12 +40,12 @@ public class EjbTarifasViajes {
                     f.edit(bdTarifa);
                     f.create(tarifa);
                     tarifa.getTarifasViajes().setTarifa(tarifa.getTarifa());
-                    f.create(tarifa.getTarifasPorZona());
+                    f.create(tarifa.getTarifasViajes());
                     return ResultadoEJB.crearCorrecto(tarifa, "La tarifa se creó correctamente y reemplazó a una existente como vigente.");
                 case 1: //no existe
                     f.create(tarifa);
                     tarifa.getTarifasViajes().setTarifa(tarifa.getTarifa());
-                    f.create(tarifa.getTarifasPorZona());
+                    f.create(tarifa.getTarifasViajes());
                     return ResultadoEJB.crearCorrecto(tarifa, "Tarifa creada correctamente.");
                 case 3: case 4: case 5: //error
                     return existe;
@@ -71,6 +71,7 @@ public class EjbTarifasViajes {
                     .setParameter("origen", tarifa.getTarifasViajes().getOrigen().trim())
                     .setParameter("destino", tarifa.getTarifasViajes().getDestino().trim())
                     .getResultStream()
+                    .filter(t -> t.getFechaCancelacion() == null)//filtra tarifas no canceladas
                     .map(t -> ResultadoEJB.crearCorrecto(t, "Tarifa encontrada."))
                     .findAny()
                     .orElse(ResultadoEJB.crearErroneo(1, "La tarifa no existe.", Tarifas.class));
