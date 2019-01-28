@@ -5,21 +5,43 @@
  */
 package mx.edu.utxj.pye.siip.interfaces.ch;
 
+import java.util.List;
 import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.pye2.ComisionesAcademicasParticipantes;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
-import mx.edu.utxj.pye.siip.entity.caphum.list.ListaComAcadParticipantes;
+import mx.edu.utxj.pye.siip.dto.caphum.DTOComAcadParticipantes;
 /**
  *
  * @author UTXJ
  */
 @Local
 public interface EjbComAcadParticipantes {
-    
-   public ListaComAcadParticipantes getListaComAcadParticipantes(String rutaArchivo) throws Throwable;
-   public void guardaComAcadParticipantes(ListaComAcadParticipantes listaComAcadParticipantes, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros);
+   
+   /**
+     * Obtiene la lista de registros leídos del archivo de Excel.
+     * @param rutaArchivo ruta en la que se guarda el archivo.
+     * @return Lista de registros que se desean subir.
+     * @throws java.lang.Throwable
+   */
+   public List<DTOComAcadParticipantes> getListaComAcadParticipantes(String rutaArchivo) throws Throwable;
+   
+    /**
+     * Método que guarda registros del archivo de Excel en la tabla de la base de datos.
+     * @param lista lista de registros que se guardaran.
+     * @param registrosTipo tipo de registro.
+     * @param ejesRegistro eje al que pertenece el registro.
+     * @param area area que está registrando.
+     * @param eventosRegistros evento de registro vigente.
+     */
+   public void guardaComAcadParticipantes(List<DTOComAcadParticipantes> lista, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros);
+   
+    /**
+     * Método que verifica si existe otro registro en la tabla de la base de datos con la misma información.
+     * @param comisionesAcademicasParticipantes
+     * @return entity.
+     */
    public ComisionesAcademicasParticipantes getRegistroComisionesAcademicasParticipantes(ComisionesAcademicasParticipantes comisionesAcademicasParticipantes);
-
+  
 }

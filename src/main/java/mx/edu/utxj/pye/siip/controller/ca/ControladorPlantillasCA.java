@@ -38,4 +38,25 @@ public class ControladorPlantillasCA implements Serializable{
         File f = new File(ejbPlantillasCAExcel.getPlantillaProductosAcademicos());
         Faces.sendFile(f, true);
     }
+    
+    public void descargarPlantillaAsesoriasTutorias(Short area) throws IOException, Throwable{
+        File f = new File(ejbPlantillasCAExcel.getPlantillaAsesoriasTutorias(area));
+        Faces.sendFile(f, true);
+    }
+    
+    public void descargarPlantillaActVar() throws IOException, Throwable{
+        File f = new File(ejbPlantillasCAExcel.getPlantillaActividadesVarias());
+        Faces.sendFile(f, true);
+    }
+    
+    public void descargarPlantillaEstadias(Short area) throws IOException, Throwable{
+        File f = new File(ejbPlantillasCAExcel.getPlantillaEstadiasPorEstudiante(area));
+        Faces.sendFile(f, true);
+    }
+    
+    public void descargarPlantillaServiciosEnfermeria() throws IOException, Throwable{
+        File f = new File(ejbPlantillasCAExcel.getPlantillaServiciosEnfermeria());
+        Faces.sendFile(f, true);
+    }
+    
 }

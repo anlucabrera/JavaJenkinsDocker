@@ -6,18 +6,24 @@
 package mx.edu.utxj.pye.siip.services.ca;
 
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
-import edu.mx.utxj.pye.seut.util.collection.SerializableArrayList;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.controlador.Caster;
+import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuestas;
+import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.ExaniResultadosCiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
@@ -26,7 +32,6 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.dto.escolar.DTOExani;
-import mx.edu.utxj.pye.siip.entity.escolar.list.ListaExaniResultados;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbExaniResultados;
 import org.apache.poi.ss.usermodel.Row;
@@ -40,19 +45,17 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 @Stateful
 public class ServicioExaniResultados implements EjbExaniResultados{
-    @EJB
-    Facade facdepye;
-    @EJB
-    EjbModulos ejbModulos;
-    
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
-    
+    @EJB EjbModulos ejbModulos;
+    @EJB EjbAdministracionEncuestas eJBAdministracionEncuestas;
+    @EJB Facade f;
+    @EJB EjbPropiedades ep;
+    @EJB EjbFiscalizacion ejbFiscalizacion;
+    @Inject Caster caster; 
+    @Inject ControladorEmpleado controladorEmpleado;
+  
     @Override
-    public ListaExaniResultados getListaExaniResultados(String rutaArchivo) throws Throwable {
-      
-        ListaExaniResultados listaExaniResultados = new  ListaExaniResultados();
-
+    public List<DTOExani> getListaExaniResultadosCiclosEscolares(String rutaArchivo) throws Throwable {
+        
         List<DTOExani> listaDtoExani = new ArrayList<>();
         AreasUniversidad areaUniversidad;
         ExaniResultadosCiclosEscolares exaniResultadosCiclosEscolares;
@@ -154,8 +157,6 @@ public class ServicioExaniResultados implements EjbExaniResultados{
                listaDtoExani.add(dTOExani);
             }
             }
-            listaExaniResultados.setExanis(listaDtoExani);
-
             libroRegistro.close();
             addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
         } else {
@@ -164,50 +165,43 @@ public class ServicioExaniResultados implements EjbExaniResultados{
             ServicioArchivos.eliminarArchivo(rutaArchivo);
             addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
         }
-        return listaExaniResultados;
+        return listaDtoExani;
         
     }
     
     
     @Override
-    public void guardaExaniResultados(ListaExaniResultados listaExaniResultados, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
-
-//            listaExaniResultados.getExanis().forEach((exanis) -> {
-//            Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-//           
-//            facdepye.setEntityClass(ExaniResultadosCiclosEscolares.class);
-//            exanis.getExaniResultadosCiclosEscolares().setRegistro(registro.getRegistro());
-//            facdepye.create(exanis.getExaniResultadosCiclosEscolares());
-//            facdepye.flush();
-//        });
-        List<String> validaciones = new SerializableArrayList<>();
+    public void guardaExaniResultadosCiclosEscolares(List<DTOExani> lista, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
         List<String> listaCondicional = new ArrayList<>();
-        listaExaniResultados.getExanis().forEach((exanis) -> {
-            
-                facdepye.setEntityClass(ExaniResultadosCiclosEscolares.class);
-                ExaniResultadosCiclosEscolares erce = getRegistroExaniResultadosCiclosEscolares(exanis.getExaniResultadosCiclosEscolares().getCicloEscolar(), exanis.getExaniResultadosCiclosEscolares().getProgramaEducativo());
+        lista.forEach((exaniRes) -> {
+           
+                f.setEntityClass(ExaniResultadosCiclosEscolares.class);
+                ExaniResultadosCiclosEscolares erce = getRegistroExaniResultadosCiclosEscolares(exaniRes.getExaniResultadosCiclosEscolares().getCicloEscolar(), exaniRes.getExaniResultadosCiclosEscolares().getProgramaEducativo());
                 Boolean registroAlmacenado = false;
                 if (erce != null) {
-                    listaCondicional.add(exanis.getCicloEscolar());
+                    listaCondicional.add(exaniRes.getCicloEscolar()+ " " +exaniRes.getAreasUniversidad().getNombre());
                     registroAlmacenado = true;
                 }
                 if (registroAlmacenado) {
-                    exanis.getExaniResultadosCiclosEscolares().setRegistro(erce.getRegistro());
-                    facdepye.edit(exanis.getExaniResultadosCiclosEscolares());
+                    exaniRes.getExaniResultadosCiclosEscolares().setRegistro(erce.getRegistro());
+                    f.edit(exaniRes.getExaniResultadosCiclosEscolares());
+                    f.flush();
+                    addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
                 } else {
                     Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-                    exanis.getExaniResultadosCiclosEscolares().setRegistro(registro.getRegistro());
-                    facdepye.create(exanis.getExaniResultadosCiclosEscolares());
+                    exaniRes.getExaniResultadosCiclosEscolares().setRegistro(registro.getRegistro());
+                    f.create(exaniRes.getExaniResultadosCiclosEscolares());
+                    f.flush();
+                    addDetailMessage("<b>Se guardaron los registros correctamente </b>");
                 }
-                facdepye.flush();
+                f.flush();
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
     public ExaniResultadosCiclosEscolares getRegistroExaniResultadosCiclosEscolares(Integer cicloEscolar, Short programaEducativo) {
         ExaniResultadosCiclosEscolares exaniResultadosCiclosEscolares = new ExaniResultadosCiclosEscolares();
-        TypedQuery<ExaniResultadosCiclosEscolares> query = em.createQuery("SELECT e FROM ExaniResultadosCiclosEscolares e WHERE e.cicloEscolar = :cicloEscolar AND e.programaEducativo = :programaEducativo", ExaniResultadosCiclosEscolares.class);
+        TypedQuery<ExaniResultadosCiclosEscolares> query = f.getEntityManager().createQuery("SELECT e FROM ExaniResultadosCiclosEscolares e WHERE e.cicloEscolar = :cicloEscolar AND e.programaEducativo = :programaEducativo", ExaniResultadosCiclosEscolares.class);
         query.setParameter("cicloEscolar", cicloEscolar);
         query.setParameter("programaEducativo", programaEducativo);
         try {
@@ -218,4 +212,39 @@ public class ServicioExaniResultados implements EjbExaniResultados{
         }
         return exaniResultadosCiclosEscolares;   
     }
+  
+    /* Filtrado */
+    @Override
+    public List<DTOExani> filtroExani(Integer cicloEsc) {
+        
+        if(cicloEsc == null){
+            return null;
+        }
+        
+        //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+        List<DTOExani> l = new ArrayList<>();
+        List<ExaniResultadosCiclosEscolares> entities = f.getEntityManager().createQuery("SELECT e FROM ExaniResultadosCiclosEscolares e WHERE e.cicloEscolar =:cicloEsc",  ExaniResultadosCiclosEscolares.class)
+                .setParameter("cicloEsc", cicloEsc)
+                .getResultList();
+      
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            
+            CiclosEscolares c = f.getEntityManager().find(CiclosEscolares.class, e.getCicloEscolar());
+            String strDateFormat = "yyyy";
+            SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+            String cicloe = sdf.format(c.getInicio()) + " - " + sdf.format(c.getFin());
+            
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            l.add(new DTOExani(
+                    e,
+                    f.getEntityManager().find(CiclosEscolares.class, e.getCicloEscolar()),
+                    f.getEntityManager().find(AreasUniversidad.class, e.getProgramaEducativo()),
+                    a,
+                    cicloe));
+        });
+        return l;
+    }
+
 }

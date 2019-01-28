@@ -6,18 +6,20 @@
 package mx.edu.utxj.pye.siip.services.ch;
 
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
-import edu.mx.utxj.pye.seut.util.collection.SerializableArrayList;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.ReconocimientoProdepRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.ReconocimientoProdepTiposApoyo;
@@ -28,7 +30,6 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.dto.caphum.DTOReconocimientoProdep;
-import mx.edu.utxj.pye.siip.entity.caphum.list.ListaReconocimientoProdep;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.ch.EjbReconocimientoProdep;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbCuerposAcademicos;
@@ -45,20 +46,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 @Stateful
 public class ServicioReconocimientoProdep implements EjbReconocimientoProdep{
-    @EJB
-    Facade facadepye;
-    @EJB
-    EjbModulos ejbModulos;
-    @EJB
-    EjbCuerposAcademicos ejbCuerposAcademicos;
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
+    @EJB Facade f;
+    @EJB EjbModulos ejbModulos;
+    @EJB EjbCuerposAcademicos ejbCuerposAcademicos;
+    @Inject ControladorEmpleado controladorEmpleado;
    
     @Override
-    public ListaReconocimientoProdep getListaReconocimientoProdep(String rutaArchivo) throws Throwable {
+    public List<DTOReconocimientoProdep> getListaReconocimientoProdep(String rutaArchivo) throws Throwable {
        
-        ListaReconocimientoProdep listaReconocimientoProdep = new  ListaReconocimientoProdep();
-
         List<DTOReconocimientoProdep> listaDtoRecProdep = new ArrayList<>();
         Personal personal;
         ReconocimientoProdepRegistros reconocimientoProdepRegistros;
@@ -116,6 +111,7 @@ public class ServicioReconocimientoProdep implements EjbReconocimientoProdep{
                 switch (fila.getCell(4).getCellTypeEnum()) {
                     case STRING: 
                         reconocimientoProdepTiposApoyo.setDescripcion(fila.getCell(4).getStringCellValue());
+                        dTOReconocimientoProdep.setTipo(fila.getCell(4).getStringCellValue());
                         break;
                     default:
                         break;
@@ -158,7 +154,6 @@ public class ServicioReconocimientoProdep implements EjbReconocimientoProdep{
                     listaDtoRecProdep.add(dTOReconocimientoProdep);
                 }
             }
-            listaReconocimientoProdep.setReconocimientos(listaDtoRecProdep);
             libroRegistro.close();
             addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
         } else {
@@ -167,26 +162,15 @@ public class ServicioReconocimientoProdep implements EjbReconocimientoProdep{
             ServicioArchivos.eliminarArchivo(rutaArchivo);
             addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
         }
-        return listaReconocimientoProdep;
+        return listaDtoRecProdep;
     }
 
     @Override
-    public void guardaReconocimientoProdep(ListaReconocimientoProdep listaReconocimientoProdep, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
-//
-//            listaReconocimientoProdep.getReconocimientos().forEach((reconocimientos) -> {
-//            Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-//            
-////            reconocimientos.getReconocimientoProdepRegistros().getCuerpAcad().setRegistro(ejbCuerposAcademicos.getRegistroCuerposAcademicosEspecifico(reconocimientos.getReconocimientoProdepRegistros().getCuerpoAcademico().getCuerpAcad().getCuerpoAcademico()));
-//            reconocimientos.getReconocimientoProdepRegistros().getCuerpAcad().setRegistro(328);
-//             
-//            facadepye.setEntityClass(ReconocimientoProdepRegistros.class);
-//            reconocimientos.getReconocimientoProdepRegistros().setRegistro(registro.getRegistro());
-//            facadepye.create(reconocimientos.getReconocimientoProdepRegistros());
-//            facadepye.flush();
-//        });
+    public void guardaReconocimientoProdep(List<DTOReconocimientoProdep> lista, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
+
             List<String> listaCondicional = new ArrayList<>();
-            listaReconocimientoProdep.getReconocimientos().forEach((reconocimientos) -> {
-            facadepye.setEntityClass(ReconocimientoProdepRegistros.class);
+            lista.forEach((reconocimientos) -> {
+            f.setEntityClass(ReconocimientoProdepRegistros.class);
             ReconocimientoProdepRegistros recProReEncontrado = getRegistroReconocimientoProdepRegistros(reconocimientos.getReconocimientoProdepRegistros());
             Boolean registroAlmacenado = false;
             if (recProReEncontrado != null) {
@@ -194,23 +178,29 @@ public class ServicioReconocimientoProdep implements EjbReconocimientoProdep{
                 registroAlmacenado = true;
             }
             if (registroAlmacenado) {
-                reconocimientos.getReconocimientoProdepRegistros().setRegistro(recProReEncontrado.getRegistro());
-                reconocimientos.getReconocimientoProdepRegistros().getCuerpAcad().setRegistro(recProReEncontrado.getCuerpAcad().getRegistro());
-                facadepye.edit(reconocimientos.getReconocimientoProdepRegistros());
+                
+                if (ejbModulos.validaEventoRegistro(ejbModulos.getEventoRegistro(), recProReEncontrado.getRegistros().getEventoRegistro().getEventoRegistro())) {
+                    reconocimientos.getReconocimientoProdepRegistros().setRegistro(recProReEncontrado.getRegistro());
+                    reconocimientos.getReconocimientoProdepRegistros().getCuerpAcad().setRegistro(recProReEncontrado.getCuerpAcad().getRegistro());
+                    f.edit(reconocimientos.getReconocimientoProdepRegistros());
+                    addDetailMessage("<b>Se actualizaron los registros del o la Docente con Clave: </b> " + recProReEncontrado.getDocente());
+                } else {
+                    addDetailMessage("<b>No se pueden actualizar los registros del o la Docente con Clave: </b> " + recProReEncontrado.getDocente() + "<b> porque pertenece a otro mes</b>");
+                }
             } else {
                 Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                 reconocimientos.getReconocimientoProdepRegistros().getCuerpAcad().setRegistro(ejbCuerposAcademicos.getRegistroCuerpoAcademicoEspecifico(reconocimientos.getReconocimientoProdepRegistros().getCuerpAcad().getCuerpoAcademico()));
                 reconocimientos.getReconocimientoProdepRegistros().setRegistro(registro.getRegistro());
-                facadepye.create(reconocimientos.getReconocimientoProdepRegistros());
+                f.create(reconocimientos.getReconocimientoProdepRegistros());
+                addDetailMessage("<b>Se guardaron los registros correctamente </b> ");
             }
-            facadepye.flush();
+            f.flush();
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
     public ReconocimientoProdepRegistros getRegistroReconocimientoProdepRegistros(ReconocimientoProdepRegistros reconocimientoProdepRegistros) {
-        TypedQuery<ReconocimientoProdepRegistros> query = em.createQuery("SELECT r FROM ReconocimientoProdepRegistros r JOIN r.cuerpAcad c JOIN r.tipoApoyo t WHERE r.docente = :docente AND c.cuerpoAcademico = :cuerpAcad AND t.tipo = :tipoApoyo", ReconocimientoProdepRegistros.class);
+        TypedQuery<ReconocimientoProdepRegistros> query = f.getEntityManager().createQuery("SELECT r FROM ReconocimientoProdepRegistros r JOIN r.cuerpAcad c JOIN r.tipoApoyo t WHERE r.docente = :docente AND c.cuerpoAcademico = :cuerpAcad AND t.tipo = :tipoApoyo", ReconocimientoProdepRegistros.class);
         query.setParameter("docente",reconocimientoProdepRegistros.getDocente());
         query.setParameter("cuerpAcad", reconocimientoProdepRegistros.getCuerpAcad().getCuerpoAcademico());
         query.setParameter("tipoApoyo", reconocimientoProdepRegistros.getTipoApoyo().getTipo());
@@ -225,7 +215,7 @@ public class ServicioReconocimientoProdep implements EjbReconocimientoProdep{
     @Override
     public List<ReconocimientoProdepTiposApoyo> getReconocimientoProdepTiposApoyoAct() {
         List<ReconocimientoProdepTiposApoyo> genLst = new ArrayList<>();
-        TypedQuery<ReconocimientoProdepTiposApoyo> query = em.createQuery("SELECT r FROM ReconocimientoProdepTiposApoyo r", ReconocimientoProdepTiposApoyo.class);
+        TypedQuery<ReconocimientoProdepTiposApoyo> query = f.getEntityManager().createQuery("SELECT r FROM ReconocimientoProdepTiposApoyo r", ReconocimientoProdepTiposApoyo.class);
         
         try {
             genLst = query.getResultList();
@@ -234,5 +224,42 @@ public class ServicioReconocimientoProdep implements EjbReconocimientoProdep{
 
         }
           return genLst;
+    }
+
+    @Override
+    public List<DTOReconocimientoProdep> getRegistroDTOReconocimientosProdep(String mes, Short ejercicio) {
+        List<DTOReconocimientoProdep> ldto = new ArrayList<>();
+        TypedQuery<ReconocimientoProdepRegistros> q = f.getEntityManager()
+                .createQuery("SELECT r from ReconocimientoProdepRegistros r WHERE r.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND r.registros.eventoRegistro.mes = :mes AND r.registros.area = :area", ReconocimientoProdepRegistros.class);
+        q.setParameter("mes", mes);
+        q.setParameter("ejercicio", ejercicio);
+        q.setParameter("area", controladorEmpleado.getNuevaAreasUniversidad().getArea());
+        List<ReconocimientoProdepRegistros> l = q.getResultList();
+        if (l.isEmpty() || l == null) {
+            return null;
+        } else {
+            TypedQuery<EventosRegistros> query = f.getEntityManager().createQuery("SELECT er FROM EventosRegistros er WHERE :fecha BETWEEN er.fechaInicio AND er.fechaFin", EventosRegistros.class);
+            query.setParameter("fecha", new Date());
+            EventosRegistros eventoRegistro = query.getSingleResult();
+            l.forEach(x -> {
+                Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());
+                EventosRegistros eventos = f.getEntityManager().find(EventosRegistros.class,registro.getEventoRegistro().getEventoRegistro());
+                Personal personal = f.getEntityManager().find(Personal.class, x.getDocente());
+                ReconocimientoProdepTiposApoyo reconocimientoProdepTiposApoyo = f.getEntityManager().find(ReconocimientoProdepTiposApoyo.class, x.getTipoApoyo().getTipo());
+                TypedQuery<CuerposAcademicosRegistro> cuerposAcad = f.getEntityManager().createQuery("SELECT ca FROM CuerposAcademicosRegistro ca WHERE ca.cuerpoAcademico = :cuerpoAcademico", CuerposAcademicosRegistro.class);
+                cuerposAcad.setParameter("cuerpoAcademico", x.getCuerpAcad().getCuerpoAcademico());
+                CuerposAcademicosRegistro cuerposAcademicosRegistro = f.getEntityManager().find(CuerposAcademicosRegistro.class, cuerposAcad.getSingleResult().getRegistro());
+                AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, registro.getArea());
+                ActividadesPoa a = registro.getActividadesPoaList().isEmpty() ? null :registro.getActividadesPoaList().get(0);
+                DTOReconocimientoProdep dto;
+                if (eventoRegistro.equals(registro.getEventoRegistro())) {
+                    dto = new DTOReconocimientoProdep(x, personal, cuerposAcademicosRegistro, reconocimientoProdepTiposApoyo, a, eventos, reconocimientoProdepTiposApoyo.getDescripcion());
+                } else {
+                    dto = new DTOReconocimientoProdep(x, personal, cuerposAcademicosRegistro, reconocimientoProdepTiposApoyo, a, eventos, reconocimientoProdepTiposApoyo.getDescripcion());
+                }
+                ldto.add(dto);
+            });
+            return ldto;
+    }
     }
 }

@@ -6,32 +6,47 @@
 package mx.edu.utxj.pye.siip.services.ca;
 
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
-import edu.mx.utxj.pye.seut.util.collection.SerializableArrayList;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuestas;
+import mx.edu.utxj.pye.sgi.controlador.Caster;
+import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Meses;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesFormacionIntegral;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
+import mx.edu.utxj.pye.sgi.entity.pye2.ParticipantesActividadesFormacionIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesTipos;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosTipos;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
+import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
 import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
+import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.dto.pye.DTOActFormacionIntegral;
-import mx.edu.utxj.pye.siip.entity.pye.list.ListaActFormacionIntegral;
+import mx.edu.utxj.pye.siip.dto.pye.DTOParticipantesActFormInt;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbActFormacionIntegral;
+import mx.edu.utxj.pye.siip.interfaces.vin.EjbOrganismosVinculados;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -44,23 +59,20 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 @Stateful
 public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
-    
-    @EJB
-    Facade facdepye;
-    @EJB
-    EjbModulos ejbModulos;
-    @EJB
-    EjbAdministracionEncuestas eJBAdministracionEncuestas;
    
-    
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
+    @EJB EjbModulos ejbModulos;
+    @EJB Facade f;
+    @EJB EjbOrganismosVinculados ejbOrganismosVinculados;
+    @EJB EjbPropiedades ep;
+    @EJB EjbFiscalizacion ejbFiscalizacion;
+    @Inject Caster caster; 
     
     @Override
-    public ListaActFormacionIntegral getListaActFormacionIntegral(String rutaArchivo) throws Throwable {
-       
-        ListaActFormacionIntegral  listaActFormacionIntegral = new ListaActFormacionIntegral();
-
+    public List<DTOActFormacionIntegral> getListaActFormacionIntegral(String rutaArchivo) throws Throwable {
+        
+        List<Boolean> validarCelda = new ArrayList<>();
+        List<String> datosInvalidos = new ArrayList<>();
+        
         List<DTOActFormacionIntegral> listaDtoActFormacionIntegral = new ArrayList<>();
         ActividadesTipos actividadesTipos;
         EventosTipos eventosTipos;
@@ -74,6 +86,12 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
         XSSFSheet primeraHoja = libroRegistro.getSheetAt(0);
         XSSFRow fila;
         
+        int act=0;
+        int obj=0;
+        int lug=0;
+        int fac=0;
+        
+        try{
         if (primeraHoja.getSheetName().equals("Actividades Formación Integral")) {
         for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
             fila = (XSSFRow) (Row) primeraHoja.getRow(i);
@@ -92,13 +110,20 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
                     default:
                         break;
                 }
-                switch (fila.getCell(4).getCellTypeEnum()) {
-                    case STRING: 
-                         dTOActFormacionIntegral.setPeriodoEscolar(fila.getCell(2).getStringCellValue());
-                        break;
-                    default:
-                        break;
-                }
+//                switch (fila.getCell(2).getCellTypeEnum()) {
+//                    case STRING: 
+//                         dTOActFormacionIntegral.setCicloEscolar(fila.getCell(2).getStringCellValue());
+//                        break;
+//                    default:
+//                        break;
+//                }
+//                switch (fila.getCell(4).getCellTypeEnum()) {
+//                    case STRING: 
+//                         dTOActFormacionIntegral.setPeriodoEscolar(fila.getCell(4).getStringCellValue());
+//                        break;
+//                    default:
+//                        break;
+//                }
                 switch (fila.getCell(5).getCellTypeEnum()) {
                     case FORMULA: 
                         periodosEscolares.setPeriodo((int)fila.getCell(5).getNumericCellValue());
@@ -202,8 +227,8 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
                         actividadesFormacionIntegral.setEquiposParticipantes(fila.getCell(23).getStringCellValue());
                         break;
                     case NUMERIC: 
-                        String cadena = Integer.toString((int) fila.getCell(23).getNumericCellValue());
-                        actividadesFormacionIntegral.setEquiposParticipantes(cadena);
+                        String eqPart = Integer.toString((int) fila.getCell(23).getNumericCellValue());
+                        actividadesFormacionIntegral.setEquiposParticipantes(eqPart);
                         break;
                     default:
                         break;
@@ -212,45 +237,96 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
                     case STRING: 
                         actividadesFormacionIntegral.setEquiposGanadores(fila.getCell(24).getStringCellValue());
                         break;
+                    case NUMERIC: 
+                        String eqGan = Integer.toString((int) fila.getCell(24).getNumericCellValue());
+                        actividadesFormacionIntegral.setEquiposGanadores(eqGan);
+                        break;
                     default:
                         break;
                 }
+                switch (fila.getCell(29).getCellTypeEnum()) {
+                   case FORMULA:
+                        act= (int) fila.getCell(29).getNumericCellValue();
+                        break;
+                    default:
+                        break;
+                }
+                switch (fila.getCell(30).getCellTypeEnum()) {
+                    case FORMULA:
+                        obj= (int) fila.getCell(30).getNumericCellValue();
+                        break;
+                    default:
+                        break;
+                }
+                switch (fila.getCell(31).getCellTypeEnum()) {
+                   case FORMULA:
+                        lug= (int) fila.getCell(31).getNumericCellValue();
+                        break;
+                    default:
+                        break;
+                }
+                switch (fila.getCell(32).getCellTypeEnum()) {
+                   case FORMULA:
+                        fac= (int) fila.getCell(32).getNumericCellValue();
+                        break;
+                    default:
+                        break;
+                }
+                
+                    if (act == 1) {
+                        validarCelda.add(false);
+                        datosInvalidos.add("Dato incorrecto: Nombre de la Actividad en la columna: <b>" + (5 + 1) + " y fila: " + (i + 1) + "</b> \n");
+                    }
+                    if (obj == 1) {
+                        validarCelda.add(false);
+                        datosInvalidos.add("Dato incorrecto: Objetivo en la columna: <b>" + (9 + 1) + " y fila: " + (i + 1) + "</b> \n");
+                    }
+                    if (lug == 1) {
+                        validarCelda.add(false);
+                        datosInvalidos.add("Dato incorrecto: Lugar en la columna: <b>" + (10 + 1) + " y fila: " + (i + 1) + "</b> \n");
+                    }
+                    if (fac == 1) {
+                        validarCelda.add(false);
+                        datosInvalidos.add("Dato incorrecto: Facilitador/Facilitadora en la columna: <b>" + (14 + 1) + " y fila: " + (i + 1) + "</b> \n");
+                    }
                     
                     dTOActFormacionIntegral.setActividadesFormacionIntegral(actividadesFormacionIntegral);
                     listaDtoActFormacionIntegral.add(dTOActFormacionIntegral);
                 }
             }
-            listaActFormacionIntegral.setActFormacionIntegral(listaDtoActFormacionIntegral);
-
             libroRegistro.close();
-            addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+            if (validarCelda.contains(false)) {
+                    addDetailMessage("<b>La hoja de registros de Actividades de Formación Integral contiene datos que no son válidos, verifique los datos de la plantilla</b>");
+                    addDetailMessage(datosInvalidos.toString());
+                    return Collections.EMPTY_LIST;
+                } else {
+                    addDetailMessage("<b>Hoja de Actividades de Formación Integral Validada favor de verificar sus datos antes de guardar su información</b>");
+                    return listaDtoActFormacionIntegral;
+                }
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
             addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            return Collections.EMPTY_LIST;
         }
-        return listaActFormacionIntegral;
-        
+    } catch (IOException e) {
+            libroRegistro.close();
+            ServicioArchivos.eliminarArchivo(rutaArchivo);
+            addDetailMessage("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
+            return Collections.EMPTY_LIST;
+    }
+
     }
 
     @Override
-    public void guardaActFormacionIntegral(ListaActFormacionIntegral listaActFormacionIntegral, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
-//
-//            listaActFormacionIntegral.getActFormacionIntegral().forEach((actFormacionIntegral) -> {
-//            Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-//            
-//            facdepye.setEntityClass(ActividadesFormacionIntegral.class);
-//            actFormacionIntegral.getActividadesFormacionIntegral().setRegistro(registro.getRegistro());
-//            facdepye.create(actFormacionIntegral.getActividadesFormacionIntegral());
-//            facdepye.flush();
-//        });
-            
-        List<String> validaciones = new SerializableArrayList<>();
+    public void guardaActFormacionIntegral(List<DTOActFormacionIntegral> lista, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
+       
         List<String> listaCondicional = new ArrayList<>();
-        listaActFormacionIntegral.getActFormacionIntegral().forEach((actFormacionIntegral) -> {
-                if (ejbModulos.validaPeriodoRegistro(eJBAdministracionEncuestas.getPeriodoActual(), actFormacionIntegral.getActividadesFormacionIntegral().getPeriodo())) {
-                facdepye.setEntityClass(ActividadesFormacionIntegral.class);
+        lista.forEach((actFormacionIntegral) -> {
+           
+            if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), actFormacionIntegral.getActividadesFormacionIntegral().getPeriodo())) {
+                f.setEntityClass(ActividadesFormacionIntegral.class);
                 ActividadesFormacionIntegral afi = getRegistroActividadesFormacionIntegral(actFormacionIntegral.getActividadesFormacionIntegral().getActividadFormacionIntegral());
                 Boolean registroAlmacenado = false;
                 if (afi != null) {
@@ -258,23 +334,32 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
                     registroAlmacenado = true;
                 }
                 if (registroAlmacenado) {
-                    actFormacionIntegral.getActividadesFormacionIntegral().setRegistro(afi.getRegistro());
-                    facdepye.edit(actFormacionIntegral.getActividadesFormacionIntegral());
+                    if(ejbModulos.comparaPeriodoRegistro(afi.getPeriodo(), actFormacionIntegral.getActividadesFormacionIntegral().getPeriodo())){
+                        actFormacionIntegral.getActividadesFormacionIntegral().setRegistro(afi.getRegistro());
+                        f.edit(actFormacionIntegral.getActividadesFormacionIntegral());
+                        addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + afi.getActividadFormacionIntegral());
+                    } else{
+                        addDetailMessage("<b>No se pueden actualizar los registros con los siguientes datos: </b> " + afi.getActividadFormacionIntegral());
+                    }
                 } else {
-                    Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
+                   Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                     actFormacionIntegral.getActividadesFormacionIntegral().setRegistro(registro.getRegistro());
-                    facdepye.create(actFormacionIntegral.getActividadesFormacionIntegral());
+                    f.create(actFormacionIntegral.getActividadesFormacionIntegral());
+                    addDetailMessage("<b>Se guardaron los registros correctamente </b>");
                 }
-                facdepye.flush();
-                }
+                f.flush();
+            } else{
+               addDetailMessage("<b>No puede registrar información de periodos anteriores</b>");
+            }
+                
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+       
     }
     
     @Override
     public ActividadesFormacionIntegral getRegistroActividadesFormacionIntegral(String actividadFormacionIntegral) {
         ActividadesFormacionIntegral actividadesFormacionIntegral = new ActividadesFormacionIntegral();
-        TypedQuery<ActividadesFormacionIntegral> query = em.createQuery("SELECT a FROM ActividadesFormacionIntegral a WHERE a.actividadFormacionIntegral = :actividadFormacionIntegral", ActividadesFormacionIntegral.class);
+        TypedQuery<ActividadesFormacionIntegral> query = f.getEntityManager().createQuery("SELECT a FROM ActividadesFormacionIntegral a WHERE a.actividadFormacionIntegral = :actividadFormacionIntegral", ActividadesFormacionIntegral.class);
         query.setParameter("actividadFormacionIntegral", actividadFormacionIntegral);
         try {
             actividadesFormacionIntegral = query.getSingleResult();
@@ -287,7 +372,7 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
     
     @Override
     public Integer getRegistroActFormacionIntegralEspecifico(String actividadFormacionIntegral) {
-        TypedQuery<ActividadesFormacionIntegral> query = em.createNamedQuery("ActividadesFormacionIntegral.findByActividadFormacionIntegral", ActividadesFormacionIntegral.class);
+        TypedQuery<ActividadesFormacionIntegral> query = f.getEntityManager().createNamedQuery("ActividadesFormacionIntegral.findByActividadFormacionIntegral", ActividadesFormacionIntegral.class);
         query.setParameter("actividadFormacionIntegral", actividadFormacionIntegral);
         Integer registro = query.getSingleResult().getRegistro();
         return registro;
@@ -296,7 +381,7 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
     @Override
     public List<ActividadesTipos> getActividadesTiposAct() {
         List<ActividadesTipos> genLst = new ArrayList<>();
-        TypedQuery<ActividadesTipos> query = em.createQuery("SELECT a FROM ActividadesTipos a", ActividadesTipos.class);
+        TypedQuery<ActividadesTipos> query = f.getEntityManager().createQuery("SELECT a FROM ActividadesTipos a ORDER BY a.nombre ASC", ActividadesTipos.class);
         
         try {
             genLst = query.getResultList();
@@ -310,7 +395,7 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
     @Override
     public List<EventosTipos> getEventosTiposAct() {
         List<EventosTipos> genLst = new ArrayList<>();
-        TypedQuery<EventosTipos> query = em.createQuery("SELECT e FROM EventosTipos e", EventosTipos.class);
+        TypedQuery<EventosTipos> query = f.getEntityManager().createQuery("SELECT e FROM EventosTipos e ORDER BY e.nombre ASC", EventosTipos.class);
         
         try {
             genLst = query.getResultList();
@@ -320,4 +405,228 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
         }
           return genLst;
     }
+
+    @Override
+    public List<PeriodosEscolares> getPeriodosConregistro() {
+        List<Integer> claves = f.getEntityManager().createQuery("SELECT a FROM ActividadesFormacionIntegral a", ActividadesFormacionIntegral.class)
+                .getResultStream()
+                .map(a -> a.getPeriodo())
+                .collect(Collectors.toList());
+        
+         if(claves.isEmpty())
+       {
+           claves.add(0, ejbModulos.getPeriodoEscolarActual().getPeriodo());
+       
+       }
+         
+        return f.getEntityManager().createQuery("SELECT periodo FROM PeriodosEscolares periodo WHERE periodo.periodo IN :claves ORDER BY periodo.periodo desc", PeriodosEscolares.class)
+                .setParameter("claves", claves)
+                .getResultList();
+    }
+
+    @Override
+    public List<EventosRegistros> getEventosPorPeriodo(PeriodosEscolares periodo) {
+         if(periodo == null){
+            return null;
+        }
+
+        List<String> meses = f.getEntityManager().createQuery("SELECT m FROM Meses m where m.numero BETWEEN :inicio AND :fin ORDER BY m.numero", Meses.class)
+                .setParameter("inicio", periodo.getMesInicio().getNumero())
+                .setParameter("fin", periodo.getMesFin().getNumero())
+                .getResultList()
+                .stream()
+                .map(m -> m.getMes())
+                .collect(Collectors.toList());
+
+        return f.getEntityManager().createQuery("SELECT er from EventosRegistros er INNER JOIN er.ejercicioFiscal ef WHERE ef.anio=:anio AND er.mes in :meses AND er.fechaInicio <= :fecha ORDER BY er.fechaInicio DESC, er.fechaFin DESC", EventosRegistros.class)
+                .setParameter("fecha", new Date())
+                .setParameter("anio", periodo.getAnio())
+                .setParameter("meses", meses)
+                .getResultList();
+    }
+
+    @Override
+    public List<DTOActFormacionIntegral> getListaRegistrosPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo) {
+           //verificar que los parametros no sean nulos
+        if(evento == null || claveArea == null || periodo == null){
+            return null;
+        }
+        List<Short> areas = new ArrayList<>();
+        
+        //obtener la referencia al area operativa del trabajador
+        AreasUniversidad area = f.getEntityManager().find(AreasUniversidad.class, claveArea);
+      
+        //comprobar si el area operativa es un programa educativo referenciar a su area superior para obtener la referencia al area academica
+        Short programaCategoria = (short)ep.leerPropiedadEntera("modulosRegistroProgramaEducativoCategoria").orElse(9);
+        
+        if (Objects.equals(area.getCategoria().getCategoria(), programaCategoria)) {            
+            area = f.getEntityManager().find(AreasUniversidad.class, area.getAreaSuperior());
+
+            //Obtener las claves de todas las areas que dependan de área academicoa
+            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
+                    .setParameter("areaSuperior", area.getArea())
+                    .getResultStream()
+                    .map(au -> au.getArea())
+                    .collect(Collectors.toList());
+
+        }else{//si no es area academica solo filtrar los datos del area operativa del trabajador
+            areas.add(claveArea);
+        }
+        
+        //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+        List<DTOActFormacionIntegral> l = new ArrayList<>();
+        List<ActividadesFormacionIntegral> entities = f.getEntityManager().createQuery("SELECT a FROM ActividadesFormacionIntegral a INNER JOIN a.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND a.periodo =:periodo AND reg.area IN :areas", ActividadesFormacionIntegral.class)
+                .setParameter("evento", evento.getEventoRegistro())
+                .setParameter("periodo", periodo.getPeriodo())
+                .setParameter("areas", areas)
+                .getResultList();
+      
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+//            ActividadesPoa a = e.getRegistros().getActividadesPoaList().isEmpty()?null:e.getRegistros().getActividadesPoaList().get(0);
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            l.add(new DTOActFormacionIntegral(
+                    e,
+                    f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodo()),
+                    a));
+        });
+        
+
+
+        return l;
+    }
+
+    @Override
+    public List<DTOParticipantesActFormInt> getListaRegistrosPorEventoAreaPeriodoPart(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo) {
+           //verificar que los parametros no sean nulos
+        if(evento == null || claveArea == null || periodo == null){
+            return null;
+        }
+        List<Short> areas = new ArrayList<>();
+        
+        //obtener la referencia al area operativa del trabajador
+        AreasUniversidad area = f.getEntityManager().find(AreasUniversidad.class, claveArea);
+      
+        //comprobar si el area operativa es un programa educativo referenciar a su area superior para obtener la referencia al area academica
+        Short programaCategoria = (short)ep.leerPropiedadEntera("modulosRegistroProgramaEducativoCategoria").orElse(9);
+        if (Objects.equals(area.getCategoria().getCategoria(), programaCategoria)) {            
+            area = f.getEntityManager().find(AreasUniversidad.class, area.getAreaSuperior());
+
+            //Obtener las claves de todas las areas que dependan de área academicoa
+            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
+                    .setParameter("areaSuperior", area.getArea())
+                    .getResultStream()
+                    .map(au -> au.getArea())
+                    .collect(Collectors.toList());
+
+        }else{//si no es area academica solo filtrar los datos del area operativa del trabajador
+            areas.add(claveArea);
+        }
+        
+        //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+        List<DTOParticipantesActFormInt> l = new ArrayList<>();
+        List<ParticipantesActividadesFormacionIntegral> entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p INNER JOIN p.actividadFormacionIntegral a INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND a.periodo=:periodo AND reg.area IN :areas", ParticipantesActividadesFormacionIntegral.class)
+                .setParameter("evento", evento.getEventoRegistro())
+                .setParameter("periodo", periodo.getPeriodo())
+                .setParameter("areas", areas)
+                .getResultList();
+     
+
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+//            ActividadesPoa a = e.getRegistros().getActividadesPoaList().isEmpty()?null:e.getRegistros().getActividadesPoaList().get(0);
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+
+
+            l.add(new DTOParticipantesActFormInt(
+                    e,
+                    a));
+        });
+        
+
+
+        return l;
+    }
+
+    @Override
+    public Map.Entry<List<PeriodosEscolares>, List<EventosRegistros>> comprobarEventoActual(List<PeriodosEscolares> periodos, List<EventosRegistros> eventos, EventosRegistros eventoActual) throws PeriodoEscolarNecesarioNoRegistradoException {
+       
+        if(periodos==null || periodos.isEmpty()) periodos = getPeriodosConregistro();
+        if(periodos==null || periodos.isEmpty()) return null;
+        if(eventoActual == null) eventoActual = ejbModulos.getEventoRegistro();
+        if(eventoActual == null) return null;
+        
+        PeriodosEscolares reciente = periodos.get(0);
+        Boolean existe = eventos.contains(eventoActual);        
+    
+        if(!existe){//si el evento no existe en la lista de eventos del periodo mas reciente
+            if(eventos.size() <3){//si el evento deberia pertenecer al periodo mas reciente
+                eventos = new ArrayList<>(Stream.concat(Stream.of(eventoActual), eventos.stream()).collect(Collectors.toList())); //.add(eventoActual);
+
+            }else{//si el evento debería pertenecer al periodo inmediato al mas reciente detectado
+                PeriodosEscolares periodo = f.getEntityManager().find(PeriodosEscolares.class, reciente.getPeriodo() + 1);
+                if(periodo == null) throw new PeriodoEscolarNecesarioNoRegistradoException(reciente.getPeriodo() + 1, caster.periodoToString(reciente));
+                periodos = new ArrayList<>(Stream.concat(Stream.of(periodo), periodos.stream()).collect(Collectors.toList()));
+                eventos.clear();
+                eventos.add(eventoActual);
+            }
+        }
+        Map<List<PeriodosEscolares>,List<EventosRegistros>> map = new HashMap<>();
+        map.put(periodos, eventos);
+        return map.entrySet().iterator().next();
+    }
+
+    @Override
+    public List<Integer> buscaRegistroParticipantesActFormInt(String clave) throws Throwable {
+       List<Integer> registros = new ArrayList<>();
+        try {
+            registros = f.getEntityManager().createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p WHERE p.actividadFormacionIntegral.actividadFormacionIntegral = :clave", ParticipantesActividadesFormacionIntegral.class)
+                    .setParameter("clave", clave)
+                    .getResultStream()
+                    .map(s -> s.getRegistro())
+                    .collect(Collectors.toList());
+            return registros;
+            
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
+    
+    @Override
+    public List<Integer> buscaRegistroEvidenciasPartActFormInt(String clave) throws Throwable {
+        List<Integer> registros = new ArrayList<>();
+        List<Integer> evidencias = new ArrayList<>();
+        try {
+            registros = f.getEntityManager().createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p WHERE p.actividadFormacionIntegral.actividadFormacionIntegral= :clave", ParticipantesActividadesFormacionIntegral.class)
+                    .setParameter("clave", clave)
+                    .getResultStream()
+                    .map(s -> s.getRegistro())
+                    .collect(Collectors.toList());
+           
+            registros.stream().forEach((reg)-> {
+		
+                List<Integer> evidenciasReg = f.getEntityManager().createQuery("SELECT e FROM Evidencias e INNER JOIN e.registrosList r WHERE r.registro = :registro",  Evidencias.class)
+                    .setParameter("registro", reg)
+                    .getResultStream()
+                    .map(s -> s.getEvidencia())
+                    .collect(Collectors.toList());
+              
+                    evidenciasReg.stream().forEach((evidencia)-> {
+                     
+                     evidencias.add(evidencia);
+                     
+                 });
+               
+            });
+           
+                return evidencias;
+            
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
+
 }

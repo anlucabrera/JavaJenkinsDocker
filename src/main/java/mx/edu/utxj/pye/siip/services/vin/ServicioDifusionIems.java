@@ -8,14 +8,17 @@ package mx.edu.utxj.pye.siip.services.vin;
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.DifusionIems;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
@@ -26,6 +29,7 @@ import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.dto.vinculacion.DTODifusion;
 import mx.edu.utxj.pye.siip.entity.vinculacion.list.ListaDifusionIems;
+import mx.edu.utxj.pye.siip.entity.vinculacion.list.ListaDifusionIemsDTO;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbDifusionIems;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -43,15 +47,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 @Stateful
 public class ServicioDifusionIems implements EjbDifusionIems{
-    
-    @EJB
-    Facade facdepye;
-    @EJB
-    EjbModulos ejbModulos;
-    
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
-    
+ 
+    @EJB EjbModulos ejbModulos;
+    @EJB Facade f;
+    @Inject ControladorEmpleado controladorEmpleado;
+   
     @Override
     public ListaDifusionIems getListaDifusionIems(String rutaArchivo) throws Throwable {
         
@@ -72,7 +72,7 @@ public class ServicioDifusionIems implements EjbDifusionIems{
         for (int i = 3; i <= primeraHoja.getLastRowNum(); i++) {
             fila = (XSSFRow) (Row) primeraHoja.getRow(i);
 
-            if ((!"".equals(fila.getCell(0).getDateCellValue()))) {
+             if ((!"".equals(fila.getCell(22).getStringCellValue()))) {
                 iems = new Iems();
                 difusionIems = new DifusionIems();
                 dTODifusion = new DTODifusion();
@@ -139,7 +139,6 @@ public class ServicioDifusionIems implements EjbDifusionIems{
                 }
                    
                     dTODifusion.setDifusionIems(difusionIems);
-                    
                     listaDtoDifusion.add(dTODifusion);
                 }
             }
@@ -159,33 +158,37 @@ public class ServicioDifusionIems implements EjbDifusionIems{
 
     @Override
     public void guardaDifusionIems(ListaDifusionIems listaDifusionIems, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
-            List<String> listaCondicional = new ArrayList<>();
+            
             listaDifusionIems.getDifusion().forEach((difusion) -> {
-            facdepye.setEntityClass(DifusionIems.class);
+            f.setEntityClass(DifusionIems.class);
             DifusionIems difIemsEncontrada = getRegistroDifusionIems(difusion.getDifusionIems());
             Boolean registroAlmacenado = false;
 
             if (difIemsEncontrada != null) {
-                listaCondicional.add(difusion.getDifusionIems().getIems().getNombre()+" - "+ difusion.getDifusionIems().getTipo());
                 registroAlmacenado = true;
             }
             if (registroAlmacenado) {
+                if (ejbModulos.validaEventoRegistro(ejbModulos.getEventoRegistro(), difIemsEncontrada.getRegistros().getEventoRegistro().getEventoRegistro())) {
                 difusion.getDifusionIems().setRegistro(difIemsEncontrada.getRegistro());
-                facdepye.edit(difusion.getDifusionIems());
+                f.edit(difusion.getDifusionIems());
+                addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + difIemsEncontrada.getIems().getNombre()+" - "+ difIemsEncontrada.getTipo());
+                } else{
+                    addDetailMessage("<b>No se pueden actualizar los registros con los siguientes datos: </b> " + difIemsEncontrada.getIems().getNombre()+" - "+ difIemsEncontrada.getTipo());
+                }
             } else {
                 Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
 //                difusion.getDifusionIems().getIems().setRegistro(ejbDifusionIems.getRegistroIemsEspecifico(difusion.getDifusionIems().getIems().getIems()));
                 difusion.getDifusionIems().setRegistro(registro.getRegistro());
-                facdepye.create(difusion.getDifusionIems());
+                f.create(difusion.getDifusionIems());
+                addDetailMessage("<b>Se guardaron los registros correctamente </b> ");
             }
-            facdepye.flush();
+            f.flush();
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
     public DifusionIems getRegistroDifusionIems(DifusionIems difusionIems) {
-        TypedQuery<DifusionIems> query = em.createQuery("SELECT d FROM DifusionIems d JOIN d.iems i WHERE i.iems = :iems AND d.tipo = :tipo AND d.fechaInicio = :fechaInicio", DifusionIems.class);
+        TypedQuery<DifusionIems> query = f.getEntityManager().createQuery("SELECT d FROM DifusionIems d JOIN d.iems i WHERE i.iems = :iems AND d.tipo = :tipo AND d.fechaInicio = :fechaInicio", DifusionIems.class);
         query.setParameter("iems", difusionIems.getIems().getIems());
         query.setParameter("tipo", difusionIems.getTipo());
         query.setParameter("fechaInicio", difusionIems.getFechaInicio());
@@ -196,5 +199,38 @@ public class ServicioDifusionIems implements EjbDifusionIems{
             System.out.println(ex.toString());
         }
         return difusionIems;
+    }
+    
+    @Override
+    public List<ListaDifusionIemsDTO> getRegistroDifusionIemsDTO(String mes, Short ejercicio) {
+        List<ListaDifusionIemsDTO> ldto = new ArrayList<>();
+        TypedQuery<DifusionIems> q = f.getEntityManager()
+                .createQuery("SELECT a from DifusionIems a WHERE a.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND a.registros.eventoRegistro.mes = :mes AND a.registros.area = :area", DifusionIems.class);
+        q.setParameter("mes", mes);
+        q.setParameter("ejercicio", ejercicio);
+        q.setParameter("area", controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        List<DifusionIems> l = q.getResultList();
+        if (l.isEmpty() || l == null) {
+            return null;
+        } else {
+//            l.forEach(System.err::println);
+            TypedQuery<EventosRegistros> query = f.getEntityManager().createQuery("SELECT er FROM EventosRegistros er WHERE :fecha BETWEEN er.fechaInicio AND er.fechaFin", EventosRegistros.class);
+            query.setParameter("fecha", new Date());
+            EventosRegistros eventoRegistro = query.getSingleResult();
+            l.forEach(x -> {
+
+                ListaDifusionIemsDTO dto;
+                Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());
+                AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, registro.getArea());
+                ActividadesPoa a = registro.getActividadesPoaList().isEmpty()?null:registro.getActividadesPoaList().get(0);
+                if (eventoRegistro.equals(registro.getEventoRegistro())) {
+                    dto = new ListaDifusionIemsDTO(Boolean.TRUE, x, au, a);
+                } else {
+                    dto = new ListaDifusionIemsDTO(Boolean.FALSE, x, au, a);
+                }
+                ldto.add(dto);
+            });
+            return ldto;
+        }
     }
 }

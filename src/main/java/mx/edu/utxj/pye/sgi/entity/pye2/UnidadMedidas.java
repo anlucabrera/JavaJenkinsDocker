@@ -36,18 +36,17 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "UnidadMedidas.findByNombre", query = "SELECT u FROM UnidadMedidas u WHERE u.nombre = :nombre")})
 public class UnidadMedidas implements Serializable {
 
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 90)
-    @Column(name = "nombre")
-    private String nombre;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "unidad_medida")
     private Short unidadMedida;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 90)
+    @Column(name = "nombre")
+    private String nombre;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "unidadMedida")
     private List<ActividadesPoa> actividadesPoaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "unidadMedida")
@@ -73,6 +72,13 @@ public class UnidadMedidas implements Serializable {
         this.unidadMedida = unidadMedida;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
     @XmlTransient
     public List<ActividadesPoa> getActividadesPoaList() {
@@ -115,14 +121,6 @@ public class UnidadMedidas implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.pye2.UnidadMedidas[ unidadMedida=" + unidadMedida + " ]";
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
     }
     
 }

@@ -111,6 +111,22 @@ public class EntityConverter implements Converter{
                     List<ActividadesPoa> actividadesParticipantes2 = Faces.getSessionAttribute("actividades");
                     ActividadesPoa actividadParticipante2 = new ActividadesPoa(Integer.valueOf(value));            
                     return actividadesParticipantes2.get(actividadesParticipantes2.indexOf(actividadParticipante2));
+                case "ejeParticipante3":
+                    List<EjesRegistro> ejesParticipantes3 = Faces.getSessionAttribute("ejes");
+                    EjesRegistro ejeParticipante3 = new EjesRegistro(Integer.valueOf(value));
+                    return ejesParticipantes3.get(ejesParticipantes3.indexOf(ejeParticipante3));
+                case "estrategiaParticipante3":
+                    List<Estrategias> estrategiasParticipantes3 = Faces.getSessionAttribute("estrategias");
+                    Estrategias estrategiaParticipante3 = new Estrategias(Short.valueOf(value));
+                    return estrategiasParticipantes3.get(estrategiasParticipantes3.indexOf(estrategiaParticipante3));
+                case "lineaAccionParticipante3":
+                    List<LineasAccion> lineasAccionParticipantes3 = Faces.getSessionAttribute("lineasAccion");
+                    LineasAccion lineaAccionParticipante3 = new LineasAccion(Short.valueOf(value));
+                    return lineasAccionParticipantes3.get(lineasAccionParticipantes3.indexOf(lineaAccionParticipante3));
+                case "actividadParticipante3":
+                    List<ActividadesPoa> actividadesParticipantes3 = Faces.getSessionAttribute("actividades");
+                    ActividadesPoa actividadParticipante3 = new ActividadesPoa(Integer.valueOf(value));
+                    return actividadesParticipantes3.get(actividadesParticipantes3.indexOf(actividadParticipante3));
                 default:
                     throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "", component.getClientId() + " no es un componente válido."));
             }
@@ -146,7 +162,7 @@ public class EntityConverter implements Converter{
                 return ((Estado)value).getIdestado().toString();
             else if(value instanceof Municipio){
                 String json = (new Gson()).toJson(((Municipio)value).getMunicipioPK());
-                return json;//((Municipio)value).getMunicipioPK().toString();    
+                return json;
             }else if(value instanceof Localidad){
                 String jsonLoc = (new Gson()).toJson(((Localidad)value).getLocalidadPK());
                 return jsonLoc;

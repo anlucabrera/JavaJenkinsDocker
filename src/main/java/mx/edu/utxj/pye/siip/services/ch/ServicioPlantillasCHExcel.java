@@ -100,6 +100,7 @@ public class ServicioPlantillasCHExcel implements EjbPlantillasCHExcel{
         String plantilla = rutaPlantilla.concat(PERSCAPACITADO_PLANTILLA);
         String plantillaC = rutaPlantillaC.concat(PERSCAPACITADO_ACTUALIZADO);
         Map beans = new HashMap();
+        beans.put("periodosEscolares", ejbCatalogos.getPeriodosEscolaresAct());
         beans.put("listaPersonal", ejbSelectec.mostrarListaDeEmpleados());
         beans.put("tipoPerCap",  ejbPersonalCapacitado.getPerCapTipoAct());
         beans.put("modalidadPerCap", ejbPersonalCapacitado.getPerCapModalidadAct());

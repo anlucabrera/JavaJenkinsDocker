@@ -48,4 +48,24 @@ public interface EJBSelectItems {
     
     public List<SelectItem> itemPeriodosByClave(Integer ciclo);
     
+     /*Se agregan los select item que obtienen los datos para el filtrado de los ejercicios y meses */
+    /**
+     * Lena la lista de selectitems de meses por registro, busca dependiendo dl paramaetro tipo
+     * para encontrar el tipo de registro y el parametro ejercicio indica que el ejercicio en el que se buscara para
+     * obtener los meses que llenaran la lista
+     * @param tipo
+     * @param ejercicio
+     * @return 
+     */
+    public List<SelectItem> itemMesesPorRegistro(Short tipo, Short ejercicio);
+    /**
+     * Llena la lista de select items de ejercicios activos segun sea ale tipo de registro
+     * definido con el parametro tipo
+     * @param tipo
+     * @return 
+     */
+    public List<SelectItem> itemEjercicioFiscalPorRegistro(Short tipo);
+    
+    public List<SelectItem> itemGeneraciones();
+    
 }

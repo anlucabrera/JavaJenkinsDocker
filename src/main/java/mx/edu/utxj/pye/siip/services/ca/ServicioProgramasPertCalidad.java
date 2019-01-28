@@ -6,19 +6,20 @@
 package mx.edu.utxj.pye.siip.services.ca;
 
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
-import edu.mx.utxj.pye.seut.util.collection.SerializableArrayList;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.prontuario.OrganismosEvaluadores;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasPertcal;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
@@ -27,7 +28,6 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.dto.pye.DTOProgramasPertCalidad;
-import mx.edu.utxj.pye.siip.entity.pye.list.ListaProgramasPertCalidad;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbProgramasPertCalidad;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -36,30 +36,25 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 /**
  *
  * @author UTXJ
  */
 @Stateful
 public class ServicioProgramasPertCalidad implements EjbProgramasPertCalidad{
-     
-    @EJB
-    Facade facadepye;
-    @EJB
-    EjbModulos ejbModulos;
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
+    
+    @EJB Facade f;
+    @EJB EjbModulos ejbModulos;
+    @EJB EjbFiscalizacion ejbFiscalizacion;
+    @Inject ControladorEmpleado controladorEmpleado;
     
     @Override
-    public  ListaProgramasPertCalidad getListaProgramasPertCalidad(String rutaArchivo) throws Throwable {
-       
-        ListaProgramasPertCalidad listaProgramasPertCalidad = new  ListaProgramasPertCalidad();
-
-        List<DTOProgramasPertCalidad> listaDtoProgramasPertCalidad = new ArrayList<>();
-        AreasUniversidad areaUniversidad;
-        OrganismosEvaluadores organismosEvaluadores;
+    public List<DTOProgramasPertCalidad> getListaProgramasPertCalidad(String rutaArchivo) throws Throwable {
+        List<DTOProgramasPertCalidad> listaDtoProgPertCal = new ArrayList<>();
         ProgramasPertcal programasPertcal;
-        DTOProgramasPertCalidad  dTOProgramasPertCalidad;
+        AreasUniversidad areasUniversidad;
+        DTOProgramasPertCalidad dTOProgramasPertCalidad;
 
         File excel = new File(rutaArchivo);
         XSSFWorkbook libroRegistro = new XSSFWorkbook();
@@ -67,60 +62,54 @@ public class ServicioProgramasPertCalidad implements EjbProgramasPertCalidad{
         XSSFSheet primeraHoja = libroRegistro.getSheetAt(0);
         XSSFRow fila;
         
-        if (primeraHoja.getSheetName().equals("PE's Pertinentes y de Calidad")) {
+        if (primeraHoja.getSheetName().equals("Programas Pertinentes y Calidad")) {
         for (int i = 3; i <= primeraHoja.getLastRowNum(); i++) {
             fila = (XSSFRow) (Row) primeraHoja.getRow(i);
 
-             if ((!"".equals(fila.getCell(0).getStringCellValue()))) {
-                areaUniversidad = new AreasUniversidad();
-                organismosEvaluadores = new OrganismosEvaluadores();
+                if ((fila.getCell(3).getNumericCellValue()!= 0)) {
                 programasPertcal = new ProgramasPertcal();
+                areasUniversidad = new AreasUniversidad();
                 dTOProgramasPertCalidad = new DTOProgramasPertCalidad();
                 
                 switch (fila.getCell(0).getCellTypeEnum()) {
                     case STRING:
-                        areaUniversidad.setNombre(fila.getCell(0).getStringCellValue());
+                        areasUniversidad.setNombre(fila.getCell(0).getStringCellValue());
                         break;
                     default:
                         break;
                 }
-                switch (fila.getCell(2).getCellTypeEnum()) {
+                 switch (fila.getCell(2).getCellTypeEnum()) {
                     case FORMULA:
-                        areaUniversidad.setArea((short) fila.getCell(2).getNumericCellValue());
-                        programasPertcal.setProgramaEducativo(areaUniversidad.getArea());
+                        areasUniversidad.setArea((short)fila.getCell(2).getNumericCellValue());
+                        programasPertcal.setProgramaEducativo(areasUniversidad.getArea());
                         break;
                     default:
                         break;
                 }
                 switch (fila.getCell(3).getCellTypeEnum()) {
-                   case NUMERIC:
-                        programasPertcal.setAnioInicio((short) fila.getCell(3).getNumericCellValue());
+                    case NUMERIC:
+                        programasPertcal.setAnioInicio((short)fila.getCell(3).getNumericCellValue());
                         break;
                     default:
                         break;
                 }
-                
                 switch (fila.getCell(4).getCellTypeEnum()) {
                     case STRING:
                         programasPertcal.setEvaluable(fila.getCell(4).getStringCellValue());
                         break;
                     default:
                         break;
-
                 }
-                 switch (fila.getCell(5).getCellTypeEnum()) {
+                switch (fila.getCell(5).getCellTypeEnum()) {
                     case STRING:
                         programasPertcal.setPertinente(fila.getCell(5).getStringCellValue());
                         break;
                     default:
                         break;
-
                 }
-               
                 switch (fila.getCell(6).getCellTypeEnum()) {
                     case STRING:
-                        organismosEvaluadores.setSiglas(fila.getCell(6).getStringCellValue());
-                        programasPertcal.setOrgAcreditador(organismosEvaluadores.getSiglas());
+                        programasPertcal.setOrgAcreditador(fila.getCell(6).getStringCellValue());
                         break;
                     default:
                         break;
@@ -145,27 +134,23 @@ public class ServicioProgramasPertCalidad implements EjbProgramasPertCalidad{
                 }
                 switch (fila.getCell(9).getCellTypeEnum()) {
                     case NUMERIC:
-                        programasPertcal.setAnioEstfac((short) fila.getCell(9).getNumericCellValue());
+                        programasPertcal.setAnioEstfac((short)fila.getCell(9).getNumericCellValue());
                         break;
                     default:
                         break;
                 }
                 switch (fila.getCell(10).getCellTypeEnum()) {
                     case NUMERIC:
-                        programasPertcal.setAnioUltast((short) fila.getCell(10).getNumericCellValue());
+                        programasPertcal.setAnioUltast((short)fila.getCell(10).getNumericCellValue());
                         break;
                     default:
                         break;
                 }
-                 
-               dTOProgramasPertCalidad.setAreasUniversidad(areaUniversidad);
-               dTOProgramasPertCalidad.setProgramasPertcal(programasPertcal);
-                    
-               listaDtoProgramasPertCalidad.add(dTOProgramasPertCalidad);
+                    dTOProgramasPertCalidad.setAreasUniversidad(areasUniversidad);
+                    dTOProgramasPertCalidad.setProgramasPertcal(programasPertcal);
+                    listaDtoProgPertCal.add(dTOProgramasPertCalidad);
                 }
             }
-            listaProgramasPertCalidad.setProgramasPertCalidad(listaDtoProgramasPertCalidad);
-
             libroRegistro.close();
             addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
         } else {
@@ -174,57 +159,82 @@ public class ServicioProgramasPertCalidad implements EjbProgramasPertCalidad{
             ServicioArchivos.eliminarArchivo(rutaArchivo);
             addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
         }
-        return listaProgramasPertCalidad;
-        
-    }
-    
-   @Override
-    public void guardaProgramasPertCalidad(ListaProgramasPertCalidad listaProgramasPertCalidad, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
-//
-//            listaProgramasPertCalidad.getProgramasPertCalidad().forEach((programasPertCalidad) -> {
-//            Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-//           
-//            facadepye.setEntityClass(ProgramasPertcal.class);
-//            programasPertCalidad.getProgramasPertcal().setRegistro(registro.getRegistro());
-//            facadepye.create(programasPertCalidad.getProgramasPertcal());
-//            facadepye.flush();
-//        });
-        List<String> validaciones = new SerializableArrayList<>();
-        List<Short> listaCondicional = new ArrayList<>();
-        listaProgramasPertCalidad.getProgramasPertCalidad().forEach((programasPertCalidad) -> {
-            
-                facadepye.setEntityClass(ProgramasPertcal.class);
-                ProgramasPertcal pp = getRegistroProgramasPertcal(programasPertCalidad.getProgramasPertcal().getProgramaEducativo(), programasPertCalidad.getProgramasPertcal().getAnioInicio());
-                Boolean registroAlmacenado = false;
-                if (pp != null) {
-                    listaCondicional.add(programasPertCalidad.getProgramasPertcal().getProgramaEducativo());
-                    registroAlmacenado = true;
-                }
-                if (registroAlmacenado) {
-                    programasPertCalidad.getProgramasPertcal().setRegistro(pp.getRegistro());
-                    facadepye.edit(programasPertCalidad.getProgramasPertcal());
-                } else {
-                    Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-                    programasPertCalidad.getProgramasPertcal().setRegistro(registro.getRegistro());
-                    facadepye.create(programasPertCalidad.getProgramasPertcal());
-                }
-                facadepye.flush();
-        });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        return listaDtoProgPertCal;
     }
 
     @Override
-    public ProgramasPertcal getRegistroProgramasPertcal(Short programaEducativo, Short anioInicio) {
-        ProgramasPertcal programasPertcal = new ProgramasPertcal();
-        TypedQuery<ProgramasPertcal> query = em.createQuery("SELECT p FROM ProgramasPertcal p WHERE p.programaEducativo = :programaEducativo AND p.anioInicio = :anioInicio",ProgramasPertcal.class);
-        query.setParameter("programaEducativo", programaEducativo);
-        query.setParameter("anioInicio", anioInicio);
+    public void guardaProgramasPertCalidad(List<DTOProgramasPertCalidad> lista, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
+         List<String> listaCondicional = new ArrayList<>();
+            lista.forEach((programas) -> {
+            f.setEntityClass(ProgramasPertcal.class);
+            ProgramasPertcal progPertCalEncontrado = getRegistroProgramasPertcal(programas.getProgramasPertcal());
+            Boolean registroAlmacenado = false;
+            if (progPertCalEncontrado != null) {
+                listaCondicional.add(programas.getAreasUniversidad().getSiglas()+ " " + programas.getProgramasPertcal().getOrgAcreditador());
+                registroAlmacenado = true;
+            }
+            if (registroAlmacenado) {
+                AreasUniversidad programaEducativo = f.getEntityManager().find(AreasUniversidad.class, progPertCalEncontrado.getProgramaEducativo());
+                
+                if (ejbModulos.validaEventoRegistro(ejbModulos.getEventoRegistro(), progPertCalEncontrado.getRegistros().getEventoRegistro().getEventoRegistro())) {
+                    programas.getProgramasPertcal().setRegistro(progPertCalEncontrado.getRegistro());
+                    f.edit(programas.getProgramasPertcal());
+                    addDetailMessage("<b>Se actualizaron los registros del Programa Educativo: </b> " + programaEducativo.getSiglas());
+                } else {
+                    addDetailMessage("<b>No se pueden actualizar los registros del Programa Educativo: </b> " + programaEducativo.getSiglas());
+                }
+            } else {
+                Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
+                programas.getProgramasPertcal().setRegistro(registro.getRegistro());
+                f.create(programas.getProgramasPertcal());
+                addDetailMessage("<b>Se guardaron los registros correctamente </b> ");
+            }
+            f.flush();
+        });
+    }
+
+    @Override
+    public ProgramasPertcal getRegistroProgramasPertcal(ProgramasPertcal programasPertcal) {
+        TypedQuery<ProgramasPertcal> query = f.getEntityManager().createQuery("SELECT p FROM ProgramasPertcal p WHERE p.programaEducativo = :programaEducativo AND p.anioInicio = :anioInicio", ProgramasPertcal.class);
+        query.setParameter("programaEducativo",programasPertcal.getProgramaEducativo());
+        query.setParameter("anioInicio", programasPertcal.getAnioInicio());
         try {
             programasPertcal = query.getSingleResult();
         } catch (NoResultException | NonUniqueResultException ex) {
             programasPertcal = null;
-            ex.toString();
         }
         return programasPertcal;
+    }
+
+    @Override
+    public List<DTOProgramasPertCalidad> getRegistroDTOProgramasPertCalidad(String mes, Short ejercicio) {
+        List<DTOProgramasPertCalidad> ldto = new ArrayList<>();
+        TypedQuery<ProgramasPertcal> q = f.getEntityManager()
+                .createQuery("SELECT p FROM ProgramasPertcal p WHERE p.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND p.registros.eventoRegistro.mes = :mes AND p.registros.area = :area", ProgramasPertcal.class);
+        q.setParameter("mes", mes);
+        q.setParameter("ejercicio", ejercicio);
+        q.setParameter("area", controladorEmpleado.getNuevaAreasUniversidad().getArea());
+        List<ProgramasPertcal> l = q.getResultList();
+        if (l.isEmpty() || l == null) {
+            return null;
+        } else {
+            TypedQuery<EventosRegistros> query = f.getEntityManager().createQuery("SELECT er FROM EventosRegistros er WHERE :fecha BETWEEN er.fechaInicio AND er.fechaFin", EventosRegistros.class);
+            query.setParameter("fecha", new Date());
+            EventosRegistros eventoRegistro = query.getSingleResult();
+            l.forEach(x -> {
+                Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());
+                EventosRegistros eventos = f.getEntityManager().find(EventosRegistros.class,registro.getEventoRegistro().getEventoRegistro());
+                AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, x.getProgramaEducativo());
+                ActividadesPoa a = registro.getActividadesPoaList().isEmpty() ? null :registro.getActividadesPoaList().get(0);
+                DTOProgramasPertCalidad dto;
+                if (eventoRegistro.equals(registro.getEventoRegistro())) {
+                    dto = new DTOProgramasPertCalidad(x, au, a, eventos);
+                } else {
+                    dto = new DTOProgramasPertCalidad(x, au, a, eventos);
+                }
+                ldto.add(dto);
+            });
+            return ldto;
+    }
     }
 }

@@ -6,7 +6,10 @@
 package mx.edu.utxj.pye.siip.services.vin;
 
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +34,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
-import mx.edu.utxj.pye.siip.dto.vinculacion.DTOProgramasBeneficiadosVinculacion;
+import mx.edu.utxj.pye.siip.dto.vin.DTOProgramasBeneficiadosVinculacion;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -41,6 +44,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbConvenios;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbOrganismosVinculados;
+import org.apache.poi.ss.usermodel.CellType;
 import org.omnifaces.util.Messages;
 
 /**
@@ -67,121 +71,207 @@ public class ServicioConvenios implements EjbConvenios {
     
     @Override
     public List<Convenios> getListaConvenios(String rutaArchivo) throws Throwable {
-        List<Convenios> convenios = new ArrayList<>();
-        Convenios convenio;
-        OrganismosVinculados organismoVinculado;
+        if (Files.exists(Paths.get(rutaArchivo))) {
+            List<Boolean> validarCelda = new ArrayList<>();
+            List<String> datosInvalidos = new ArrayList<>();
 
-        File excelConvenios = new File(rutaArchivo);
-        XSSFWorkbook workBookConvenios = new XSSFWorkbook();
-        workBookConvenios = (XSSFWorkbook) WorkbookFactory.create(excelConvenios);
-        XSSFSheet primeraHoja = workBookConvenios.getSheetAt(0);
-        XSSFRow fila;
+            List<Convenios> convenios = new ArrayList<>();
+            Convenios convenio;
+            OrganismosVinculados organismoVinculado;
 
-        if (primeraHoja.getSheetName().equals("Convenios")) {
-            for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
-                fila = (XSSFRow) (Row) primeraHoja.getRow(i);
-                if (fila.getCell(2).getDateCellValue() != null) {
-                    convenio = new Convenios();
-                    organismoVinculado = new OrganismosVinculados();
-                    switch (fila.getCell(1).getCellTypeEnum()) {
-                        case FORMULA:
-                            organismoVinculado.setEmpresa((int) fila.getCell(1).getNumericCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(2).getCellTypeEnum()) {
-                        case NUMERIC:
-                            if (DateUtil.isCellDateFormatted(fila.getCell(2))) {
-                                convenio.setFechaFirma(fila.getCell(2).getDateCellValue());
+            File excelConvenios = new File(rutaArchivo);
+            XSSFWorkbook workBookConvenios = new XSSFWorkbook();
+            workBookConvenios = (XSSFWorkbook) WorkbookFactory.create(excelConvenios);
+            XSSFSheet primeraHoja = workBookConvenios.getSheetAt(0);
+            XSSFRow fila;
+
+            if (primeraHoja.getSheetName().equals("Convenios")) {
+                for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
+                    fila = (XSSFRow) (Row) primeraHoja.getRow(i);
+                    if (fila.getCell(2).getDateCellValue() != null) {
+                        convenio = new Convenios();
+                        organismoVinculado = new OrganismosVinculados();
+
+                        if (fila.getCell(1).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(1).getCellTypeEnum()) {
+                                case FORMULA:
+                                    organismoVinculado.setEmpresa((int) fila.getCell(1).getNumericCellValue());
+                                    break;
+                                default:
+                                    break;
                             }
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(3).getCellTypeEnum()) {
-                        case NUMERIC:
-                            if (DateUtil.isCellDateFormatted(fila.getCell(3))) {
-                                convenio.setVigencia(fila.getCell(3).getDateCellValue());
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(4).getCellTypeEnum()) {
-                        case STRING:
-                            convenio.setObjetivo(fila.getCell(4).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(5).getCellTypeEnum()) {
-                        case STRING:
-                            convenio.setDescripcion(fila.getCell(5).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(6).getCellTypeEnum()) {
-                        case STRING:
-                            convenio.setImpacto(fila.getCell(6).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(7).getCellTypeEnum()) {
-                        case NUMERIC:
-                            convenio.setEbh((short) fila.getCell(7).getNumericCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(8).getCellTypeEnum()) {
-                        case NUMERIC:
-                            convenio.setEbm((short) fila.getCell(8).getNumericCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(9).getCellTypeEnum()) {
-                        case NUMERIC:
-                            convenio.setDbh((short) fila.getCell(9).getNumericCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(10).getCellTypeEnum()) {
-                        case NUMERIC:
-                            convenio.setDbm((short) fila.getCell(10).getNumericCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(12).getCellTypeEnum()) {
-                        case FORMULA:
-                            convenio.setRecursosObtenidos(fila.getCell(12).getNumericCellValue());
-                            organismoVinculado.setNombre(fila.getCell(13).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Empresa en la columna: " + (1 + 1) + " y fila: " + (i + 1));
+                        }
 
-                    if(!organismoVinculado.getNombre().isEmpty()){
-                        convenio.setEmpresa(organismoVinculado);
-                        convenios.add(convenio);
+                        if (fila.getCell(2).getCellTypeEnum() == CellType.NUMERIC) {
+                            switch (fila.getCell(2).getCellTypeEnum()) {
+                                case NUMERIC:
+                                    if (DateUtil.isCellDateFormatted(fila.getCell(2))) {
+                                        convenio.setFechaFirma(fila.getCell(2).getDateCellValue());
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Fecha de firma en la columna: " + (2 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(3).getCellTypeEnum() == CellType.NUMERIC) {
+                            switch (fila.getCell(3).getCellTypeEnum()) {
+                                case NUMERIC:
+                                    if (DateUtil.isCellDateFormatted(fila.getCell(3))) {
+                                        convenio.setVigencia(fila.getCell(3).getDateCellValue());
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Fecha de vigencia en la columna: " + (3 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(4).getCellTypeEnum() == CellType.STRING) {
+                            switch (fila.getCell(4).getCellTypeEnum()) {
+                                case STRING:
+                                    convenio.setObjetivo(fila.getCell(4).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Objetivo en la columna: " + (4 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(5).getCellTypeEnum() == CellType.STRING) {
+                            switch (fila.getCell(5).getCellTypeEnum()) {
+                                case STRING:
+                                    convenio.setDescripcion(fila.getCell(5).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Descripción en la columna: " + (5 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(6).getCellTypeEnum() == CellType.STRING) {
+                            switch (fila.getCell(6).getCellTypeEnum()) {
+                                case STRING:
+                                    convenio.setImpacto(fila.getCell(6).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Impacto en la columna: " + (6 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(7).getCellTypeEnum() == CellType.NUMERIC) {
+                            switch (fila.getCell(7).getCellTypeEnum()) {
+                                case NUMERIC:
+                                    convenio.setEbh((short) fila.getCell(7).getNumericCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Estudiantes Beneficiados Hombres en la columna: " + (7 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(8).getCellTypeEnum() == CellType.NUMERIC) {
+                            switch (fila.getCell(8).getCellTypeEnum()) {
+                                case NUMERIC:
+                                    convenio.setEbm((short) fila.getCell(8).getNumericCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Estudiantes Beneficiados Mujeres en la columna: " + (8 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(9).getCellTypeEnum() == CellType.NUMERIC) {
+                            switch (fila.getCell(9).getCellTypeEnum()) {
+                                case NUMERIC:
+                                    convenio.setDbh((short) fila.getCell(9).getNumericCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Docentes Beneficiados Hombres en la columna: " + (9 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(10).getCellTypeEnum() == CellType.NUMERIC) {
+                            switch (fila.getCell(10).getCellTypeEnum()) {
+                                case NUMERIC:
+                                    convenio.setDbm((short) fila.getCell(10).getNumericCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Docentes Beneficiados Mujeres en la columna: " + (10 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(12).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(12).getCellTypeEnum()) {
+                                case FORMULA:
+                                    convenio.setRecursosObtenidos(fila.getCell(12).getNumericCellValue());
+                                    organismoVinculado.setNombre(fila.getCell(13).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Recursos Obtenidos en la columna: " + (13 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (!organismoVinculado.getNombre().isEmpty()) {
+                            convenio.setEmpresa(organismoVinculado);
+                            convenios.add(convenio);
+                        }
+
                     }
-                    
                 }
+                workBookConvenios.close();
+
+                if (validarCelda.contains(false)) {
+                    addDetailMessage("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                    addDetailMessage(datosInvalidos.toString());
+
+                    excelConvenios.delete();
+                    ServicioArchivos.eliminarArchivo(rutaArchivo);
+                    return Collections.EMPTY_LIST;
+                } else {
+                    addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                    return convenios;
+                }
+
+            } else {
+                workBookConvenios.close();
+                excelConvenios.delete();
+                ServicioArchivos.eliminarArchivo(rutaArchivo);
+                Messages.addGlobalInfo("<b>El archivo cargado no corresponde al registro</b>");
+                return Collections.EMPTY_LIST;
             }
-            workBookConvenios.close();
-            Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
         } else {
-            workBookConvenios.close();
-            excelConvenios.delete();
-            ServicioArchivos.eliminarArchivo(rutaArchivo);
-           Messages.addGlobalInfo("<b>El archivo cargado no corresponde al registro</b>");
+            addDetailMessage("<b>Ocurrio un error en la lectura del archivo</b>");
+            return Collections.EMPTY_LIST;
         }
-        return convenios;
     }
 
     @Override
@@ -196,9 +286,13 @@ public class ServicioConvenios implements EjbConvenios {
                 registroAlmacenado = true;
             }
             if (registroAlmacenado) {
-                convenios.setRegistro(convenioEncontrado.getRegistro());
-                convenios.getEmpresa().setRegistro(convenioEncontrado.getEmpresa().getRegistro());
-                facadeVinculacion.edit(convenios);
+                if(ejbModulos.getEventoRegistro().getEventoRegistro().equals(convenioEncontrado.getRegistros().getEventoRegistro().getEventoRegistro())){
+                    convenios.setRegistro(convenioEncontrado.getRegistro());
+                    convenios.getEmpresa().setRegistro(convenioEncontrado.getEmpresa().getRegistro());
+                    facadeVinculacion.edit(convenios);
+                }else{
+                    listaCondicional.remove(convenios.getEmpresa().getEmpresa() + " " + convenios.getFechaFirma());
+                }
             } else {
                 Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                 convenios.getEmpresa().setRegistro(ejbOrganismosVinculados.getRegistroOrganismoEspecifico(convenios.getEmpresa().getEmpresa()));
@@ -236,6 +330,7 @@ public class ServicioConvenios implements EjbConvenios {
             
             convenios.forEach((c) -> {
                 em.refresh(c);
+                em.refresh(c.getEmpresa());
             });
             
             return convenios;

@@ -7,8 +7,12 @@ package mx.edu.utxj.pye.sgi.ejb.prontuario;
 
 import java.util.List;
 import javax.ejb.Local;
+import mx.edu.utxj.pye.sgi.dto.listaDTOCiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.BajasCausa;
+import mx.edu.utxj.pye.sgi.entity.prontuario.BajasTipo;
+import mx.edu.utxj.pye.sgi.entity.prontuario.BecaTipos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.OrganismosEvaluadores;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -53,5 +57,23 @@ public interface EjbCatalogos {
      * @return  Lista de entidades de AreasUniversidad
      */
     public List<AreasUniversidad> getAreasAcademicasDistribucionAulas();
+    
+     /**
+     * Devuelve una lista de los tipos de Becas para el llenado de la plantilla de registro de becas
+     * @return  Lista de entidades de BecaTipos
+     */
+    public List<BecaTipos> getBecaTiposAct();
+     /**
+     * Devuelve una lista de las causa de baja para el llenado de la plantilla de registro de deserción
+     * @return  Lista de entidades de BecaTipos
+     */
+    public List<BajasCausa> getCausasBajaAct();
+     /**
+     * Devuelve una lista de los tipos de baja para el llenado de la plantilla de registro de desercion
+     * @return  Lista de entidades de BecaTipos
+     */
+    public List<BajasTipo> getTipoBajaAct();
+    
+    public List<listaDTOCiclosEscolares> getCiclosEscolaresDTO();
     
 }

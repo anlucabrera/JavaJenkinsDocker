@@ -20,10 +20,9 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
-import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
-import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistroUsuario;
-import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
+import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
+//import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistroUsuario;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import org.omnifaces.util.Messages;
 
@@ -48,19 +47,18 @@ public class ControladorModulosRegistro implements Serializable {
     @EJB
     private EjbModulos ejbModulos;
 
-    @Getter @Setter private List<ModulosRegistroUsuario> listaEjes = new ArrayList<>();
-    @Getter @Setter private List<ModulosRegistroUsuario> listaModulosRegistroEB = new ArrayList<>();
-    @Getter @Setter private List<ModulosRegistroUsuario> listaModulosRegistroCH = new ArrayList<>();
-    @Getter @Setter private List<ModulosRegistroUsuario> listaModulosRegistroPA = new ArrayList<>();
-    @Getter @Setter private List<ModulosRegistroUsuario> listaModulosRegistroVIN = new ArrayList<>();
-    @Getter @Setter private List<ModulosRegistroUsuario> listaModulosRegistroCA = new ArrayList<>();
+    @Getter @Setter private List<ModulosRegistrosUsuarios> listaEjes = new ArrayList<>();
+    @Getter @Setter private List<ModulosRegistrosUsuarios> listaModulosRegistroEB = new ArrayList<>();
+    @Getter @Setter private List<ModulosRegistrosUsuarios> listaModulosRegistroCH = new ArrayList<>();
+    @Getter @Setter private List<ModulosRegistrosUsuarios> listaModulosRegistroPA = new ArrayList<>();
+    @Getter @Setter private List<ModulosRegistrosUsuarios> listaModulosRegistroVIN = new ArrayList<>();
+    @Getter @Setter private List<ModulosRegistrosUsuarios> listaModulosRegistroCA = new ArrayList<>();
 
     @PostConstruct
     public void init() {
         personal = controladorEmpleado.getEmpleadoLogeado();
         mostrarEjes();
         mostrarRegistros();
-        System.out.println("mx.edu.utxj.pye.siip.controller.ControladorModulosRegistro.init() " + personal);
         iniciarEventoRegistro();
     }
 
@@ -92,4 +90,5 @@ public class ControladorModulosRegistro implements Serializable {
         eventosRegistros = new EventosRegistros();
         eventosRegistros = ejbModulos.getEventoRegistro();
     }
+   
 }

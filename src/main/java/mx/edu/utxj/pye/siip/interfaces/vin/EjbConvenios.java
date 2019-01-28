@@ -20,7 +20,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasBeneficiadosVinculacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
-import mx.edu.utxj.pye.siip.dto.vinculacion.DTOProgramasBeneficiadosVinculacion;
+import mx.edu.utxj.pye.siip.dto.vin.DTOProgramasBeneficiadosVinculacion;
 
 /**
  *

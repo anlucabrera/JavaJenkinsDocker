@@ -8,16 +8,19 @@ package mx.edu.utxj.pye.siip.services.vin;
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.FeriasParticipantes;
 import mx.edu.utxj.pye.sgi.entity.pye2.FeriasProfesiograficas;
@@ -29,9 +32,11 @@ import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.dto.vinculacion.DTOFeriasParticipantes;
 import mx.edu.utxj.pye.siip.entity.vinculacion.list.ListaFeriasParticipantes;
+import mx.edu.utxj.pye.siip.entity.vinculacion.list.ListaFeriasParticipantesDTO;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbFeriasParticipantes;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbFeriasProfesiograficas;
+import mx.edu.utxj.pye.siip.interfaces.vin.EjbIems;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -44,15 +49,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 @Stateful
 public class ServicioFeriasParticipantes implements EjbFeriasParticipantes{
     
-    @EJB
-    Facade facdepye;
-    @EJB
-    EjbModulos ejbModulos;
-    @EJB
-    EjbFeriasProfesiograficas ejbFeriasProfesiograficas;
-    
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
+    @EJB Facade f;
+    @EJB EjbModulos ejbModulos;
+    @EJB EjbFeriasProfesiograficas ejbFeriasProfesiograficas;
+    @EJB EjbIems ejbIems;
+    @Inject ControladorEmpleado controladorEmpleado;
     
     @Override
     public  ListaFeriasParticipantes getListaFeriasParticipantes(String rutaArchivo) throws Throwable {
@@ -75,7 +76,7 @@ public class ServicioFeriasParticipantes implements EjbFeriasParticipantes{
         for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
             fila = (XSSFRow) (Row) primeraHoja.getRow(i);
 
-                if ((!"".equals(fila.getCell(23).getNumericCellValue()))) {
+                if ((!"".equals(fila.getCell(0).getStringCellValue()))) {
                 iems = new Iems();
                 feriasProfesiograficas = new FeriasProfesiograficas();
                 feriasParticipantes = new FeriasParticipantes();
@@ -118,60 +119,66 @@ public class ServicioFeriasParticipantes implements EjbFeriasParticipantes{
             }
             listaFeriasParticipantes.setFeriasParticipantes(listaDtoFeriasParticipantes);
             libroRegistro.close();
-            addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+            addDetailMessage("<b>Hoja de Participantes de Ferias Profesiográficas Validada favor de verificar sus datos antes de guardar su información</b>");
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
             addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
         }
+        
         return listaFeriasParticipantes;
         
     }
 
     @Override
     public void guardaFeriasParticipantes(ListaFeriasParticipantes listaFeriasParticipantes, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
-//            listaFeriasParticipantes.getFeriasParticipantes().forEach((feriasParticipantes) -> {
-//            Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-//            
-//            feriasParticipantes.getFeriasParticipantes().getFeria().setRegistro(ejbFeriasProfesiograficas.getRegistroFeriasProfesiograficasEspecifico(feriasParticipantes.getFeriasParticipantes().getFeria().getFeria()));
-//                        
-//            facdepye.setEntityClass(FeriasParticipantes.class);
-//            feriasParticipantes.getFeriasParticipantes().setRegistro(registro.getRegistro());
-//            facdepye.create(feriasParticipantes.getFeriasParticipantes());
-//            facdepye.flush();
-//        });
-            List<String> listaCondicional = new ArrayList<>();
+            
             listaFeriasParticipantes.getFeriasParticipantes().forEach((feriasParticipantes) -> {
-            try {
-                facdepye.setEntityClass(FeriasParticipantes.class);
-                FeriasParticipantes ferPartEncontrado = getRegistroFeriasParticipantes(feriasParticipantes.getFeriasParticipantes());
-                Boolean registroAlmacenado = false;
-                if (ferPartEncontrado != null) {
-                    listaCondicional.add(feriasParticipantes.getFeriasParticipantes().getFeria().getFeria()+ " - " + feriasParticipantes.getFeriasParticipantes().getIems().getNombre());
-                    registroAlmacenado = true;
-                }
-                if (registroAlmacenado) {
-                    feriasParticipantes.getFeriasParticipantes().setRegistro(ferPartEncontrado.getRegistro());
-                    feriasParticipantes.getFeriasParticipantes().getFeria().setRegistro(ferPartEncontrado.getFeria().getRegistro());
-                    facdepye.edit(feriasParticipantes.getFeriasParticipantes());
+
+            FeriasProfesiograficas feriasProfesiograficas = ejbFeriasProfesiograficas.getRegistroFeriasProfesiograficas(feriasParticipantes.getFeriasParticipantes().getFeria());
+            if (feriasProfesiograficas == null || feriasProfesiograficas.getFeria().isEmpty()) {
+                addDetailMessage("<b>No existe la Clave de Feria Profesiográfica</b>");
+
+            } else {
+                if (ejbModulos.validaEventoRegistro(ejbModulos.getEventoRegistro(), feriasProfesiograficas.getRegistros().getEventoRegistro().getEventoRegistro())) {
+                    List<String> listaCondicional = new ArrayList<>();
+                    try {
+                        f.setEntityClass(FeriasParticipantes.class);
+                        FeriasParticipantes ferPartEncontrado = getRegistroFeriasParticipantes(feriasParticipantes.getFeriasParticipantes());
+                        Boolean registroAlmacenado = false;
+                        if (ferPartEncontrado != null) {
+                            listaCondicional.add(feriasParticipantes.getFeriasParticipantes().getFeria().getFeria() + " - " + feriasParticipantes.getFeriasParticipantes().getIems().getNombre());
+                            registroAlmacenado = true;
+                        }
+                        if (registroAlmacenado) {
+                            feriasParticipantes.getFeriasParticipantes().setRegistro(ferPartEncontrado.getRegistro());
+                            feriasParticipantes.getFeriasParticipantes().getFeria().setRegistro(ferPartEncontrado.getFeria().getRegistro());
+                            f.edit(feriasParticipantes.getFeriasParticipantes());
+                            addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
+                        } else {
+                            Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
+                            feriasParticipantes.getFeriasParticipantes().getIems().setIems(ejbIems.getRegistroIemsEspecifico(feriasParticipantes.getFeriasParticipantes().getIems().getIems()));
+                            feriasParticipantes.getFeriasParticipantes().getFeria().setRegistro(ejbFeriasProfesiograficas.getRegistroFeriasProfesiograficasEspecifico(feriasParticipantes.getFeriasParticipantes().getFeria().getFeria()));
+                            feriasParticipantes.getFeriasParticipantes().setRegistro(registro.getRegistro());
+                            f.create(feriasParticipantes.getFeriasParticipantes());
+                            addDetailMessage("<b>Se guardaron los registros correctamente </b> ");
+                        }
+                        f.flush();
+                    } catch (Throwable ex) {
+                        Logger.getLogger(ServicioFeriasProfesiograficas.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 } else {
-                    Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-                    feriasParticipantes.getFeriasParticipantes().getFeria().setRegistro(ejbFeriasProfesiograficas.getRegistroFeriasProfesiograficasEspecifico(feriasParticipantes.getFeriasParticipantes().getFeria().getFeria()));
-                    feriasParticipantes.getFeriasParticipantes().setRegistro(registro.getRegistro());
-                    facdepye.create(feriasParticipantes.getFeriasParticipantes());
+
+                    addDetailMessage("<b>No puede registrar información de periodos anteriores</b>");
                 }
-                facdepye.flush();
-            } catch (Throwable ex) {
-                Logger.getLogger(ServicioFeriasProfesiograficas.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
     public FeriasParticipantes getRegistroFeriasParticipantes(FeriasParticipantes feriasParticipantes) {
-        TypedQuery<FeriasParticipantes> query = em.createQuery("SELECT p FROM FeriasParticipantes p JOIN p.feria f JOIN p.iems i WHERE f.feria =:feria AND i.iems = :iems", FeriasParticipantes.class);
+        TypedQuery<FeriasParticipantes> query = f.getEntityManager().createQuery("SELECT p FROM FeriasParticipantes p JOIN p.feria f JOIN p.iems i WHERE f.feria =:feria AND i.iems = :iems", FeriasParticipantes.class);
         query.setParameter("feria", feriasParticipantes.getFeria().getFeria());
         query.setParameter("iems", feriasParticipantes.getIems().getIems());
         try {
@@ -182,5 +189,37 @@ public class ServicioFeriasParticipantes implements EjbFeriasParticipantes{
         }
         return feriasParticipantes; 
     }
-    
+
+    @Override
+    public List<ListaFeriasParticipantesDTO> getRegistrosFParticipantes(String mes, Short ejercicio) {
+        List<ListaFeriasParticipantesDTO> ldto = new ArrayList<>();
+        TypedQuery<FeriasParticipantes> q = f.getEntityManager()
+                .createQuery("SELECT p from FeriasParticipantes p WHERE p.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND p.registros.eventoRegistro.mes = :mes AND p.registros.area = :area", FeriasParticipantes.class);
+        q.setParameter("mes", mes);
+        q.setParameter("ejercicio", ejercicio);
+        q.setParameter("area", controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        List<FeriasParticipantes> l = q.getResultList();
+        if (l.isEmpty() || l == null) {
+            return null;
+        } else {
+//            l.forEach(System.err::println);
+            TypedQuery<EventosRegistros> query = f.getEntityManager().createQuery("SELECT er FROM EventosRegistros er WHERE :fecha BETWEEN er.fechaInicio AND er.fechaFin", EventosRegistros.class);
+            query.setParameter("fecha", new Date());
+            EventosRegistros eventoRegistro = query.getSingleResult();
+            l.forEach(x -> {
+
+                ListaFeriasParticipantesDTO dto;
+                Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());
+                AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, registro.getArea());
+                ActividadesPoa a = registro.getActividadesPoaList().isEmpty() ? null : registro.getActividadesPoaList().get(0);
+                if (eventoRegistro.equals(registro.getEventoRegistro())) {
+                    dto = new ListaFeriasParticipantesDTO(Boolean.TRUE, x, au, a);
+                } else {
+                    dto = new ListaFeriasParticipantesDTO(Boolean.FALSE, x, au, a);
+                }
+                ldto.add(dto);
+            });
+            return ldto;
+        }
+    }
 }

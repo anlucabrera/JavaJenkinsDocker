@@ -25,7 +25,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.SectoresTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.TelefonosEmpresa;
-import mx.edu.utxj.pye.siip.dto.vinculacion.DTOActividadesVinculacion;
+import mx.edu.utxj.pye.siip.dto.vin.DTOActividadesVinculacion;
 
 /**
  *

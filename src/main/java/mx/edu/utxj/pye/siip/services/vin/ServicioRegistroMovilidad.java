@@ -6,32 +6,50 @@
 package mx.edu.utxj.pye.siip.services.vin;
 
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
-import edu.mx.utxj.pye.seut.util.collection.SerializableArrayList;
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.controlador.Caster;
+import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Meses;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasMovilidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosMovilidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.RegistroMovilidadDocente;
+import mx.edu.utxj.pye.sgi.entity.pye2.RegistroMovilidadEstudiante;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
+import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
 import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
+import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
+import mx.edu.utxj.pye.siip.dto.vinculacion.DTOMovilidadDocente;
+import mx.edu.utxj.pye.siip.dto.vinculacion.DTOMovilidadEstudiante;
 import mx.edu.utxj.pye.siip.dto.vinculacion.DTORegistroMovilidad;
-import mx.edu.utxj.pye.siip.entity.vinculacion.list.ListaRegistroMovilidad;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbRegistroMovilidad;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbOrganismosVinculados;
@@ -47,26 +65,24 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 @Stateful
 public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
-    @EJB
-    Facade facdepye;
-    @EJB
-    EjbModulos ejbModulos;
-    @EJB
-    EjbOrganismosVinculados ejbOrganismosVinculados;
-    
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
-        
+    @EJB Facade f;
+    @EJB EjbModulos ejbModulos;
+    @EJB EjbOrganismosVinculados ejbOrganismosVinculados;
+    @EJB EjbPropiedades ep;
+    @Inject Caster caster;
+    @Inject ControladorEmpleado controladorEmpleado;
+      
     @Override
-    public ListaRegistroMovilidad getListaRegistroMovilidad(String rutaArchivo) throws Throwable {
+    public List<DTORegistroMovilidad> getListaRegistroMovilidad(String rutaArchivo) throws Throwable {
+        List<Boolean> validarCelda = new ArrayList<>();
+        List<String> datosInvalidos = new ArrayList<>();
        
-        ListaRegistroMovilidad listaRegistroMovilidad = new  ListaRegistroMovilidad();
-
         List<DTORegistroMovilidad> listaDtoMovilidad = new ArrayList<>();
         Pais pais;
         Estado estado;
         OrganismosVinculados organismosVinculados;
         AreasUniversidad areasUniversidad;
+        PeriodosEscolares periodosEscolares;
         ProgramasMovilidad programasMovilidad;
         RegistrosMovilidad registrosMovilidad;
         DTORegistroMovilidad dTORegistroMovilidad;
@@ -77,6 +93,12 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
         XSSFSheet primeraHoja = libroRegistro.getSheetAt(0);
         XSSFRow fila;
         
+        int par =0;
+        int pro =0;
+        int des =0;
+        int ie=0;
+        
+        try{
         if (primeraHoja.getSheetName().equals("Registro Movilidad")) {
         for (int i = 3; i <= primeraHoja.getLastRowNum(); i++) {
             fila = (XSSFRow) (Row) primeraHoja.getRow(i);
@@ -86,6 +108,7 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
                 estado = new Estado();
                 organismosVinculados = new OrganismosVinculados();
                 areasUniversidad =  new AreasUniversidad();
+                periodosEscolares = new PeriodosEscolares();
                 programasMovilidad = new ProgramasMovilidad();
                 registrosMovilidad = new  RegistrosMovilidad();
                 dTORegistroMovilidad = new DTORegistroMovilidad();
@@ -166,23 +189,24 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
                     default:
                         break;
                 }
-                switch (fila.getCell(12).getCellTypeEnum()) {
-                    case STRING:
-                         dTORegistroMovilidad.setCicloEscolar(fila.getCell(12).getStringCellValue());
-                        break;
-                    default:
-                        break;
-                }
-                switch (fila.getCell(14).getCellTypeEnum()) {
-                    case STRING:
-                         dTORegistroMovilidad.setPeriodoEscolarCursado(fila.getCell(14).getStringCellValue());
-                        break;
-                    default:
-                        break;
-                }
+//                switch (fila.getCell(12).getCellTypeEnum()) {
+//                    case STRING:
+//                        dTORegistroMovilidad.setCicloEscolar(fila.getCell(12).getStringCellValue());
+//                        break;
+//                    default:
+//                        break;
+//                }
+//                switch (fila.getCell(14).getCellTypeEnum()) {
+//                    case STRING:
+//                         registrosMovilidad.setPeriodoEscolarCursado(fila.getCell(14).getStringCellValue());
+//                        break;
+//                    default:
+//                        break;
+//                }
                 switch (fila.getCell(15).getCellTypeEnum()) {
                     case FORMULA:
-                         registrosMovilidad.setPeriodoEscolarCursado((int)fila.getCell(15).getNumericCellValue());
+                        periodosEscolares.setPeriodo((int) fila.getCell(15).getNumericCellValue());
+                        registrosMovilidad.setPeriodoEscolarCursado(periodosEscolares.getPeriodo());
                         break;
                     default:
                         break;
@@ -303,65 +327,120 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
                     default:
                         break;
                 }
+                switch (fila.getCell(43).getCellTypeEnum()) {
+                    case FORMULA:
+                        par= (int) fila.getCell(43).getNumericCellValue();
+                        break;
+                    default:
+                        break;
+                }
+                switch (fila.getCell(44).getCellTypeEnum()) {
+                   case FORMULA:
+                        pro= (int) fila.getCell(44).getNumericCellValue();
+                        break;
+                    default:
+                        break;
+                }
+                switch (fila.getCell(45).getCellTypeEnum()) {
+                    case FORMULA:
+                        des= (int) fila.getCell(45).getNumericCellValue();
+                        break;
+                    default:
+                        break;
+                }
+                switch (fila.getCell(46).getCellTypeEnum()) {
+                   case FORMULA:
+                        ie= (int) fila.getCell(46).getNumericCellValue();
+                        break;
+                    default:
+                        break;
+                }
+                    if (par == 1) {
+                        validarCelda.add(false);
+                        datosInvalidos.add("Dato incorrecto: Nombre de la o el participante en la columna: <b>" + (7 + 1) + " y fila: " + (i + 1) + "</b> \n");
+                    }
+                    if (pro == 1) {
+                        validarCelda.add(false);
+                        datosInvalidos.add("Dato incorrecto: Nombre proyecto en la columna: <b>" + (15 + 1) + " y fila: " + (i + 1) + "</b> \n");
+                    }
+                    if (des == 1) {
+                        validarCelda.add(false);
+                        datosInvalidos.add("Dato incorrecto: Descripción en la columna: <b>" + (16 + 1) + " y fila: " + (i + 1) + "</b> \n");
+                    }
+                    if (ie == 1) {
+                        validarCelda.add(false);
+                        datosInvalidos.add("Dato incorrecto: Descripción de Ing. Extraordinarios en la columna: <b>" + (22 + 1) + " y fila: " + (i + 1) + "</b> \n");
+                    }
                     dTORegistroMovilidad.setAreasUniversidad(areasUniversidad);
                     dTORegistroMovilidad.setRegistrosMovilidad(registrosMovilidad);
                     listaDtoMovilidad.add(dTORegistroMovilidad);
                 }
             }
-            listaRegistroMovilidad.setMovilidad(listaDtoMovilidad);
-
             libroRegistro.close();
-            addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+            if (validarCelda.contains(false)) {
+                    addDetailMessage("<b>Hoja de Registros de Movilidad contiene datos que no son válidos, verifique los datos de la plantilla</b>");
+                    addDetailMessage(datosInvalidos.toString());
+                    return Collections.EMPTY_LIST;
+                } else {
+                    addDetailMessage("<b>Hoja de Registros de Movilidad Validada favor de verificar sus datos antes de guardar su información</b>");
+                    return listaDtoMovilidad;
+                }
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
             addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            return Collections.EMPTY_LIST;
         }
-        return listaRegistroMovilidad;
+    } catch (IOException e) {
+            libroRegistro.close();
+            ServicioArchivos.eliminarArchivo(rutaArchivo);
+            addDetailMessage("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
+            return Collections.EMPTY_LIST;
+    }
+
     }
 
     @Override
-    public void guardaRegistroMovilidad(ListaRegistroMovilidad listaRegistroMovilidad, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
-//            listaRegistroMovilidad.getMovilidad().forEach((movilidad) -> {
-//            Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-//            
-//            movilidad.getRegistrosMovilidad().getInstitucionOrganizacion().setRegistro(ejbOrganismosVinculados.getRegistroOrganismoEspecifico(movilidad.getRegistrosMovilidad().getInstitucionOrganizacion().getEmpresa()));
-//            
-//            facdepye.setEntityClass(RegistrosMovilidad.class);
-//            movilidad.getRegistrosMovilidad().setRegistro(registro.getRegistro());
-//            facdepye.create(movilidad.getRegistrosMovilidad());
-//            facdepye.flush();
-//        });
-        List<String> validaciones = new SerializableArrayList<>();
+    public void guardaRegistroMovilidad(List<DTORegistroMovilidad> lista, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
         List<String> listaCondicional = new ArrayList<>();
-        listaRegistroMovilidad.getMovilidad().forEach((movilidad) -> {
-               
-                facdepye.setEntityClass(RegistrosMovilidad.class);
+        lista.forEach((movilidad) -> {
+            
+            if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), movilidad.getRegistrosMovilidad().getPeriodoEscolarCursado())) {
+                f.setEntityClass(RegistrosMovilidad.class);
                 RegistrosMovilidad regMovEncontrada = getRegistrosMovilidad(movilidad.getRegistrosMovilidad());
                 Boolean registroAlmacenado = false;
                 if (regMovEncontrada != null) {
-                    listaCondicional.add(movilidad.getRegistrosMovilidad().getRegistroMovilidad());
+                    listaCondicional.add(regMovEncontrada.getRegistroMovilidad()+ " " + regMovEncontrada.getProyecto());
                     registroAlmacenado = true;
                 }
                 if (registroAlmacenado) {
-                    movilidad.getRegistrosMovilidad().setRegistro(regMovEncontrada.getRegistro());
-                    movilidad.getRegistrosMovilidad().getInstitucionOrganizacion().setRegistro(ejbOrganismosVinculados.getRegistroOrganismoEspecifico(movilidad.getRegistrosMovilidad().getInstitucionOrganizacion().getEmpresa()));
-                    facdepye.edit(movilidad.getRegistrosMovilidad());
+                    if(ejbModulos.comparaPeriodoRegistro(regMovEncontrada.getPeriodoEscolarCursado(), movilidad.getRegistrosMovilidad().getPeriodoEscolarCursado())){
+                        movilidad.getRegistrosMovilidad().setRegistro(regMovEncontrada.getRegistro());
+                        movilidad.getRegistrosMovilidad().getInstitucionOrganizacion().setRegistro(ejbOrganismosVinculados.getRegistroOrganismoEspecifico(movilidad.getRegistrosMovilidad().getInstitucionOrganizacion().getEmpresa()));
+                        f.edit(movilidad.getRegistrosMovilidad());
+                        f.flush();
+                        addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + regMovEncontrada.getRegistroMovilidad());
+                    } else{
+                        addDetailMessage("<b>No se pueden actualizar los registros con los siguientes datos: </b> " + regMovEncontrada.getRegistroMovilidad());
+                    }
                 } else {
                     Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                     movilidad.getRegistrosMovilidad().setRegistro(registro.getRegistro());
                     movilidad.getRegistrosMovilidad().getInstitucionOrganizacion().setRegistro(ejbOrganismosVinculados.getRegistroOrganismoEspecifico(movilidad.getRegistrosMovilidad().getInstitucionOrganizacion().getEmpresa()));
-                    facdepye.create(movilidad.getRegistrosMovilidad());
+                    f.create(movilidad.getRegistrosMovilidad());
+                    addDetailMessage("<b>Se guardaron los registros correctamente </b> ");
                 }
-                facdepye.flush();
-                
+                f.flush();
+            } else{
+            
+             addDetailMessage("<b>No puede registrar información de periodos anteriores</b>");
+            }   
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
 }
     @Override
     public Integer getRegistroMovilidadEspecifico(String registroMovilidad) {
-        TypedQuery<RegistrosMovilidad> query = em.createNamedQuery("RegistrosMovilidad.findByRegistroMovilidad", RegistrosMovilidad.class);
+        TypedQuery<RegistrosMovilidad> query = f.getEntityManager().createNamedQuery("RegistrosMovilidad.findByRegistroMovilidad", RegistrosMovilidad.class);
         query.setParameter("registroMovilidad", registroMovilidad);
         Integer registro = query.getSingleResult().getRegistro();
         return registro;
@@ -369,7 +448,7 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
 
     @Override
     public RegistrosMovilidad getRegistrosMovilidad(RegistrosMovilidad registrosMovilidad) {
-        TypedQuery<RegistrosMovilidad> query = em.createQuery("SELECT r FROM RegistrosMovilidad r WHERE r.registroMovilidad = :registroMovilidad", RegistrosMovilidad.class);
+        TypedQuery<RegistrosMovilidad> query = f.getEntityManager().createQuery("SELECT r FROM RegistrosMovilidad r WHERE r.registroMovilidad = :registroMovilidad", RegistrosMovilidad.class);
         query.setParameter("registroMovilidad", registrosMovilidad.getRegistroMovilidad());
         try {
             registrosMovilidad = query.getSingleResult();
@@ -383,7 +462,7 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
     @Override
     public List<ProgramasMovilidad> getProgramasMovilidadAct() {
         List<ProgramasMovilidad> genLst = new ArrayList<>();
-        TypedQuery<ProgramasMovilidad> query = em.createQuery("SELECT p FROM ProgramasMovilidad p", ProgramasMovilidad.class);
+        TypedQuery<ProgramasMovilidad> query = f.getEntityManager().createQuery("SELECT p FROM ProgramasMovilidad p", ProgramasMovilidad.class);
         
         try {
             genLst = query.getResultList();
@@ -393,4 +472,350 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
         }
           return genLst;
     }
+
+   
+    @Override
+    public List<PeriodosEscolares> getPeriodosConregistro() {
+        List<Integer> claves = f.getEntityManager().createQuery("SELECT r FROM RegistrosMovilidad r", RegistrosMovilidad.class)
+                .getResultStream()
+                .map(r -> r.getPeriodoEscolarCursado())
+                .collect(Collectors.toList());
+        
+        if(claves.isEmpty())
+       {
+           claves.add(0,  ejbModulos.getPeriodoEscolarActual().getPeriodo());
+       
+       }
+         
+        return f.getEntityManager().createQuery("SELECT periodo FROM PeriodosEscolares periodo WHERE periodo.periodo IN :claves ORDER BY periodo.periodo desc", PeriodosEscolares.class)
+                .setParameter("claves", claves)
+                .getResultList();
+    }
+
+    @Override
+    public List<EventosRegistros> getEventosPorPeriodo(PeriodosEscolares periodo) {
+         if(periodo == null){
+            return null;
+        }
+
+        List<String> meses = f.getEntityManager().createQuery("SELECT m FROM Meses m where m.numero BETWEEN :inicio AND :fin ORDER BY m.numero", Meses.class)
+                .setParameter("inicio", periodo.getMesInicio().getNumero())
+                .setParameter("fin", periodo.getMesFin().getNumero())
+                .getResultList()
+                .stream()
+                .map(m -> m.getMes())
+                .collect(Collectors.toList());
+
+        return f.getEntityManager().createQuery("SELECT er from EventosRegistros er INNER JOIN er.ejercicioFiscal ef WHERE ef.anio=:anio AND er.mes in :meses AND er.fechaInicio <= :fecha ORDER BY er.fechaInicio DESC, er.fechaFin DESC", EventosRegistros.class)
+                .setParameter("fecha", new Date())
+                .setParameter("anio", periodo.getAnio())
+                .setParameter("meses", meses)
+                .getResultList();
+    }
+
+    @Override
+    public List<DTORegistroMovilidad> getListaRegistrosPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo) {
+          //verificar que los parametros no sean nulos
+        if(evento == null || claveArea == null || periodo == null){
+            return null;
+        }
+        List<Short> areas = new ArrayList<>();
+        
+        //obtener la referencia al area operativa del trabajador
+        AreasUniversidad area = f.getEntityManager().find(AreasUniversidad.class, claveArea);
+      
+        //comprobar si el area operativa es un programa educativo referenciar a su area superior para obtener la referencia al area academica
+        Short programaCategoria = (short)ep.leerPropiedadEntera("modulosRegistroProgramaEducativoCategoria").orElse(9);
+        if (Objects.equals(area.getCategoria().getCategoria(), programaCategoria)) {            
+            area = f.getEntityManager().find(AreasUniversidad.class, area.getAreaSuperior());
+
+            //Obtener las claves de todas las areas que dependan de área academicoa
+            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
+                    .setParameter("areaSuperior", area.getArea())
+                    .getResultStream()
+                    .map(au -> au.getArea())
+                    .collect(Collectors.toList());
+
+        }else{//si no es area academica solo filtrar los datos del area operativa del trabajador
+            areas.add(claveArea);
+
+        }
+        
+//        //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+//        List<DTORegistroMovilidad> l = new ArrayList<>();
+//        List<RegistrosMovilidad> entities = f.getEntityManager().createQuery("SELECT r FROM RegistrosMovilidad r INNER JOIN r.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.programaEducativo in :areas AND r.periodoEscolarCursado=:periodo", RegistrosMovilidad.class)
+//                .setParameter("areas", areas)
+//                .setParameter("evento", evento.getEventoRegistro())
+//                .setParameter("periodo", periodo.getPeriodo())
+//                .getResultList();
+
+        List<DTORegistroMovilidad> l = new ArrayList<>();
+        List<RegistrosMovilidad> entities = f.getEntityManager().createQuery("SELECT r FROM RegistrosMovilidad r INNER JOIN r.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.periodoEscolarCursado=:periodo", RegistrosMovilidad.class)
+                .setParameter("evento", evento.getEventoRegistro())
+                .setParameter("periodo", periodo.getPeriodo())
+                .getResultList();
+     
+
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            l.add(new DTORegistroMovilidad(
+                    e,
+                    f.getEntityManager().find(AreasUniversidad.class, e.getProgramaEducativo()),
+                    f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodoEscolarCursado()),
+                    a));
+        });
+        
+        return l;
+    }
+    
+    
+
+    @Override
+    public Map.Entry<List<PeriodosEscolares>, List<EventosRegistros>> comprobarEventoActual(List<PeriodosEscolares> periodos, List<EventosRegistros> eventos, EventosRegistros eventoActual) throws PeriodoEscolarNecesarioNoRegistradoException {
+       
+        if(periodos==null || periodos.isEmpty()) periodos = getPeriodosConregistro();
+        if(periodos==null || periodos.isEmpty()) return null;
+        if(eventoActual == null) eventoActual = ejbModulos.getEventoRegistro();
+        if(eventoActual == null) return null;
+        
+        PeriodosEscolares reciente = periodos.get(0);
+        Boolean existe = eventos.contains(eventoActual);   
+        
+        if(!existe){//si el evento no existe en la lista de eventos del periodo mas reciente
+            if(eventos.size() <3){//si el evento deberia pertenecer al periodo mas reciente
+                eventos = new ArrayList<>(Stream.concat(Stream.of(eventoActual), eventos.stream()).collect(Collectors.toList())); //.add(eventoActual);
+//                System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.comprobarEventoActual(2a) dentro del periodo");
+            }else{//si el evento debería pertenecer al periodo inmediato al mas reciente detectado
+                PeriodosEscolares periodo = f.getEntityManager().find(PeriodosEscolares.class, reciente.getPeriodo() + 1);
+                if(periodo == null) throw new PeriodoEscolarNecesarioNoRegistradoException(reciente.getPeriodo() + 1, caster.periodoToString(reciente));
+//                System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.comprobarEventoActual(2b) en nuevo periodo: " + periodo);
+                periodos = new ArrayList<>(Stream.concat(Stream.of(periodo), periodos.stream()).collect(Collectors.toList()));
+                eventos.clear();
+                eventos.add(eventoActual);
+            }
+        }
+        Map<List<PeriodosEscolares>,List<EventosRegistros>> map = new HashMap<>();
+        map.put(periodos, eventos);
+        return map.entrySet().iterator().next();
+    }
+
+    @Override
+    public List<DTOMovilidadDocente> getListaRegistrosPorEventoAreaPeriodoDoc(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo) {
+          //verificar que los parametros no sean nulos
+        if(evento == null || claveArea == null || periodo == null){
+            return null;
+        }
+        List<Short> areas = new ArrayList<>();
+        
+        //obtener la referencia al area operativa del trabajador
+        AreasUniversidad area = f.getEntityManager().find(AreasUniversidad.class, claveArea);
+      
+        //comprobar si el area operativa es un programa educativo referenciar a su area superior para obtener la referencia al area academica
+        Short programaCategoria = (short)ep.leerPropiedadEntera("modulosRegistroProgramaEducativoCategoria").orElse(9);
+        if (Objects.equals(area.getCategoria().getCategoria(), programaCategoria)) {            
+            area = f.getEntityManager().find(AreasUniversidad.class, area.getAreaSuperior());
+
+            //Obtener las claves de todas las areas que dependan de área academicoa
+            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
+                    .setParameter("areaSuperior", area.getArea())
+                    .getResultStream()
+                    .map(au -> au.getArea())
+                    .collect(Collectors.toList());
+
+        }else{//si no es area academica solo filtrar los datos del area operativa del trabajador
+            areas.add(claveArea);
+
+        }
+        
+//        //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+//        List<DTOMovilidadDocente> l = new ArrayList<>();
+//        List<RegistroMovilidadDocente> entities = f.getEntityManager().createQuery("SELECT d FROM RegistroMovilidadDocente d INNER JOIN d.registroMovilidad r INNER JOIN d.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.programaEducativo in :areas AND r.periodoEscolarCursado=:periodo", RegistroMovilidadDocente.class)
+//                .setParameter("areas", areas)
+//                .setParameter("evento", evento.getEventoRegistro())
+//                .setParameter("periodo", periodo.getPeriodo())
+//                .getResultList();
+        
+         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+        List<DTOMovilidadDocente> l = new ArrayList<>();
+        List<RegistroMovilidadDocente> entities = f.getEntityManager().createQuery("SELECT d FROM RegistroMovilidadDocente d INNER JOIN d.registroMovilidad r INNER JOIN d.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.periodoEscolarCursado=:periodo", RegistroMovilidadDocente.class)
+                .setParameter("evento", evento.getEventoRegistro())
+                .setParameter("periodo", periodo.getPeriodo())
+                .getResultList();
+     
+
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            l.add(new DTOMovilidadDocente(
+                    e,
+                    f.getEntityManager().find(Personal.class, e.getClavePersonal()),
+                    a));
+        });
+        
+
+
+        return l;
+    }
+
+    @Override
+    public List<DTOMovilidadEstudiante> getListaRegistrosPorEventoAreaPeriodoEst(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo) {
+         //verificar que los parametros no sean nulos
+        if(evento == null || claveArea == null || periodo == null){
+            return null;
+        }
+        List<Short> areas = new ArrayList<>();
+        
+        //obtener la referencia al area operativa del trabajador
+        AreasUniversidad area = f.getEntityManager().find(AreasUniversidad.class, claveArea);
+      
+        //comprobar si el area operativa es un programa educativo referenciar a su area superior para obtener la referencia al area academica
+        Short programaCategoria = (short)ep.leerPropiedadEntera("modulosRegistroProgramaEducativoCategoria").orElse(9);
+        if (Objects.equals(area.getCategoria().getCategoria(), programaCategoria)) {            
+            area = f.getEntityManager().find(AreasUniversidad.class, area.getAreaSuperior());
+
+            //Obtener las claves de todas las areas que dependan de área academicoa
+            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
+                    .setParameter("areaSuperior", area.getArea())
+                    .getResultStream()
+                    .map(au -> au.getArea())
+                    .collect(Collectors.toList());
+
+        }else{//si no es area academica solo filtrar los datos del area operativa del trabajador
+            areas.add(claveArea);
+
+        }
+        
+//        //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+//        List<DTOMovilidadEstudiante> l = new ArrayList<>();
+//        List<RegistroMovilidadEstudiante> entities = f.getEntityManager().createQuery("SELECT e FROM RegistroMovilidadEstudiante e INNER JOIN e.registroMovilidad r INNER JOIN e.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.programaEducativo in :areas AND r.periodoEscolarCursado=:periodo", RegistroMovilidadEstudiante.class)
+//                .setParameter("areas", areas)
+//                .setParameter("evento", evento.getEventoRegistro())
+//                .setParameter("periodo", periodo.getPeriodo())
+//                .getResultList();
+        
+         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+        List<DTOMovilidadEstudiante> l = new ArrayList<>();
+        List<RegistroMovilidadEstudiante> entities = f.getEntityManager().createQuery("SELECT e FROM RegistroMovilidadEstudiante e INNER JOIN e.registroMovilidad r INNER JOIN e.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.periodoEscolarCursado=:periodo", RegistroMovilidadEstudiante.class)
+                .setParameter("evento", evento.getEventoRegistro())
+                .setParameter("periodo", periodo.getPeriodo())
+                .getResultList();
+     
+
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            l.add(new DTOMovilidadEstudiante(
+                    e,
+                    a));
+        });
+        
+
+
+        return l;
+    }
+
+    @Override
+    public List<Integer> buscaRegistroDocentesRegMovilidad(String clave) throws Throwable {
+       List<Integer> registros = new ArrayList<>();
+        try {
+            registros = f.getEntityManager().createQuery("SELECT d FROM RegistroMovilidadDocente d WHERE d.registroMovilidad.registroMovilidad = :clave", RegistroMovilidadDocente.class)
+                    .setParameter("clave", clave)
+                    .getResultStream()
+                    .map(s -> s.getRegistro())
+                    .collect(Collectors.toList());
+            return registros;
+            
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<Integer> buscaRegistroEstudiantesRegMovilidad(String clave) throws Throwable {
+        List<Integer> registros = new ArrayList<>();
+        try {
+            registros = f.getEntityManager().createQuery("SELECT e FROM RegistroMovilidadEstudiante e WHERE e.registroMovilidad.registroMovilidad = :clave", RegistroMovilidadEstudiante.class)
+                    .setParameter("clave", clave)
+                    .getResultStream()
+                    .map(s -> s.getRegistro())
+                    .collect(Collectors.toList());
+            return registros;
+            
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
+   
+    @Override
+    public List<Integer> buscaRegistroEvidenciasDocente(String clave) throws Throwable {
+        List<Integer> registros = new ArrayList<>();
+        List<Integer> evidencias = new ArrayList<>();
+        try {
+            registros = f.getEntityManager().createQuery("SELECT d FROM RegistroMovilidadDocente d WHERE d.registroMovilidad.registroMovilidad = :clave", RegistroMovilidadDocente.class)
+                    .setParameter("clave", clave)
+                    .getResultStream()
+                    .map(s -> s.getRegistro())
+                    .collect(Collectors.toList());
+           
+            registros.stream().forEach((reg)-> {
+		
+                List<Integer> evidenciasReg = f.getEntityManager().createQuery("SELECT e FROM Evidencias e INNER JOIN e.registrosList r WHERE r.registro = :registro",  Evidencias.class)
+                    .setParameter("registro", reg)
+                    .getResultStream()
+                    .map(s -> s.getEvidencia())
+                    .collect(Collectors.toList());
+              
+                    evidenciasReg.stream().forEach((evidencia)-> {
+                     
+                     evidencias.add(evidencia);
+                     
+                 });
+               
+            });
+           
+                return evidencias;
+            
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<Integer> buscaRegistroEvidenciasEstudiante(String clave) throws Throwable {
+         List<Integer> registros = new ArrayList<>();
+        List<Integer> evidencias = new ArrayList<>();
+        try {
+            registros = f.getEntityManager().createQuery("SELECT e FROM RegistroMovilidadEstudiante e WHERE e.registroMovilidad.registroMovilidad = :clave", RegistroMovilidadEstudiante.class)
+                    .setParameter("clave", clave)
+                    .getResultStream()
+                    .map(s -> s.getRegistro())
+                    .collect(Collectors.toList());
+           
+            registros.stream().forEach((reg)-> {
+		
+                List<Integer> evidenciasReg = f.getEntityManager().createQuery("SELECT e FROM Evidencias e INNER JOIN e.registrosList r WHERE r.registro = :registro",  Evidencias.class)
+                    .setParameter("registro", reg)
+                    .getResultStream()
+                    .map(s -> s.getEvidencia())
+                    .collect(Collectors.toList());
+              
+                    evidenciasReg.stream().forEach((evidencia)-> {
+                     
+                     evidencias.add(evidencia);
+                     
+                 });
+               
+            });
+           
+                return evidencias;
+            
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
+
 }

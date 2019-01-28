@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.util;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -22,9 +23,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.Part;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
+import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.exception.EvidenciaRegistroExtensionNoValidaException;
-import mx.edu.utxj.pye.siip.dto.escolar.DTOAsesoriasTutoriasCicloPeriodos;
 import org.apache.commons.io.FilenameUtils;
 import org.primefaces.model.UploadedFile;
 
@@ -46,8 +48,8 @@ public class ServicioArchivos implements Serializable{
     public static final String[] EJES = {/*0*/"estadistica_basica", 
                                          /*1*/"calidad_academica", 
                                          /*2*/"vinculacion", 
-                                         /*3*/"proceso_administrativo", 
-                                         /*4*/"capital_humano"};
+                                         /*3*/"gestion_institucional", 
+                                         /*4*/"talento_humano"};
     
     static{
         carpetaRaiz = carpetaW;
@@ -202,27 +204,38 @@ public class ServicioArchivos implements Serializable{
         archivo.write(rutaArchivo);
         return rutaAbsoluta;
     }
-    
-    public static String almacenarEvidenciaRegistro(AreasUniversidad area, DTOAsesoriasTutoriasCicloPeriodos registro, Part archivo) throws IOException, EvidenciaRegistroExtensionNoValidaException{        
+ 
+    /**
+     * Almacena la evidencia de los Registros de SII
+     * @param area
+     * @param registro
+     * @param archivo
+     * @param eventosRegistros
+     * @param tipo
+     * @return
+     * @throws IOException
+     * @throws EvidenciaRegistroExtensionNoValidaException 
+     */
+    public static String almacenarEvidenciaRegistroSII(AreasUniversidad area, Integer registro, Part archivo, EventosRegistros eventosRegistros, RegistrosTipo tipo) throws IOException, EvidenciaRegistroExtensionNoValidaException{        
         if(!extensiones.contains(FilenameUtils.getExtension(archivo.getSubmittedFileName()).toLowerCase())){
             throw new EvidenciaRegistroExtensionNoValidaException(archivo.getSubmittedFileName());
         }
         
         String ruta = ServicioArchivos.genRutaRelativa(
-                String.valueOf(registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()), //ejercicio fiscal
+                String.valueOf(eventosRegistros.getEjercicioFiscal().getAnio()), //ejercicio fiscal
                 area.getSiglas(),
-                registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getEventoRegistro().getMes(),
-                registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getTipo().getNombre());
-        System.out.println("mx.edu.utxj.pye.sgi.util.ServicioArchivos.almacenarEvidenciaRegistro(" + registro.getAsesoriasTutoriasCicloPeriodos().getRegistros().getTipo().getNombre() + ") ruta: " + ruta);
+                eventosRegistros.getMes(),
+                tipo.getNombre());
         
         String nombreArchivo = sdf.format(new Date()).concat("_").concat(archivo.getSubmittedFileName());
-        String rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
+        String rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(StringUtils.prettyURL(nombreArchivo.toLowerCase()))));
         String rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
         
         //si el archivo se agrega un contador extra
         Integer cont = 1;
         while(Files.exists(Paths.get(rutaAbsoluta))){
             nombreArchivo = sdf.format(new Date()).concat("_").concat(cont.toString()).concat("_").concat(archivo.getSubmittedFileName());
+            StringUtils.prettyURL(nombreArchivo.toLowerCase());
             rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
             rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
             cont++;
@@ -234,317 +247,22 @@ public class ServicioArchivos implements Serializable{
         return rutaAbsoluta;
     }
     
-//    /**
-//     * Almacena la evidencia de los registros de becas por periodo
-//     * @param area
-//     * @param registro
-//     * @param archivo
-//     * @return
-//     * @throws IOException
-//     * @throws EvidenciaRegistroExtensionNoValidaException 
-//     */
-//    public static String almacenarEvidenciaRegistroBP(AreasUniversidad area, ListaBecasDto registro, Part archivo) throws IOException, EvidenciaRegistroExtensionNoValidaException{        
-//        if(!extensiones.contains(FilenameUtils.getExtension(archivo.getSubmittedFileName()).toLowerCase())){
-//            throw new EvidenciaRegistroExtensionNoValidaException(archivo.getSubmittedFileName());
-//        }
-//        
-//        String ruta = ServicioArchivos.genRutaRelativa(
-//                String.valueOf(registro.getBecasPeriodosEscolares().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()), //ejercicio fiscal
-//                area.getSiglas(),
-//                registro.getBecasPeriodosEscolares().getRegistros().getEventoRegistro().getMes(),
-//                registro.getBecasPeriodosEscolares().getRegistros().getTipo().getNombre());
-//        System.out.println("mx.edu.utxj.pye.sgi.util.ServicioArchivos.almacenarEvidenciaRegistro(" + registro.getBecasPeriodosEscolares().getRegistros().getTipo().getNombre() + ") ruta: " + ruta);
-//        
-//        String nombreArchivo = sdf.format(new Date()).concat("_").concat(archivo.getSubmittedFileName());
-//        String rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
-//        String rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-//        
-//        //si el archivo se agrega un contador extra
-//        Integer cont = 1;
-//        while(Files.exists(Paths.get(rutaAbsoluta))){
-//            nombreArchivo = sdf.format(new Date()).concat("_").concat(cont.toString()).concat("_").concat(archivo.getSubmittedFileName());
-//            rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
-//            rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-//            cont++;
-//        }
-//        
-//        ServicioArchivos.addCarpetaRelativa(ServicioArchivos.carpetaRaiz.concat(ruta));
-//                
-//        archivo.write(rutaArchivo);
-//        return rutaAbsoluta;
-//    }
-//    /**
-//     * Almacena la evidencia de los registros de la difusion de las iems
-//     * @param area
-//     * @param registro
-//     * @param archivo
-//     * @return
-//     * @throws IOException
-//     * @throws EvidenciaRegistroExtensionNoValidaException 
-//     */
-//    public static String almacenarEvidenciaRegistroDI(AreasUniversidad area, ListaDifusionIemsDTO registro, Part archivo) throws IOException, EvidenciaRegistroExtensionNoValidaException{        
-//        if(!extensiones.contains(FilenameUtils.getExtension(archivo.getSubmittedFileName()).toLowerCase())){
-//            throw new EvidenciaRegistroExtensionNoValidaException(archivo.getSubmittedFileName());
-//        }
-//        
-//        String ruta = ServicioArchivos.genRutaRelativa(
-//                String.valueOf(registro.getDifusion().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()), //ejercicio fiscal
-//                area.getSiglas(),
-//                registro.getDifusion().getRegistros().getEventoRegistro().getMes(),
-//                registro.getDifusion().getRegistros().getTipo().getNombre());
-//        System.out.println("mx.edu.utxj.pye.sgi.util.ServicioArchivos.almacenarEvidenciaRegistro(" + registro.getDifusion().getRegistros().getTipo().getNombre() + ") ruta: " + ruta);
-//        
-//        String nombreArchivo = sdf.format(new Date()).concat("_").concat(archivo.getSubmittedFileName());
-//        String rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
-//        String rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-//        
-//        //si el archivo se agrega un contador extra
-//        Integer cont = 1;
-//        while(Files.exists(Paths.get(rutaAbsoluta))){
-//            nombreArchivo = sdf.format(new Date()).concat("_").concat(cont.toString()).concat("_").concat(archivo.getSubmittedFileName());
-//            rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
-//            rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-//            cont++;
-//        }
-//        
-//        ServicioArchivos.addCarpetaRelativa(ServicioArchivos.carpetaRaiz.concat(ruta));
-//                
-//        archivo.write(rutaArchivo);
-//        return rutaAbsoluta;
-//    }
-//    /**
-//     * Almacena la evidencia de los registros de matricula
-//     * @param area
-//     * @param registro
-//     * @param archivo
-//     * @return
-//     * @throws IOException
-//     * @throws EvidenciaRegistroExtensionNoValidaException 
-//     */
-//    public static String almacenarEvidenciaRegistroMPE(AreasUniversidad area, ListaDtoMatricula registro, Part archivo) throws IOException, EvidenciaRegistroExtensionNoValidaException{        
-//        if(!extensiones.contains(FilenameUtils.getExtension(archivo.getSubmittedFileName()).toLowerCase())){
-//            throw new EvidenciaRegistroExtensionNoValidaException(archivo.getSubmittedFileName());
-//        }
-//        
-//        String ruta = ServicioArchivos.genRutaRelativa(
-//                String.valueOf(registro.getMatricula().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()), //ejercicio fiscal
-//                area.getSiglas(),
-//                registro.getMatricula().getRegistros().getEventoRegistro().getMes(),
-//                registro.getMatricula().getRegistros().getTipo().getNombre());
-//        System.out.println("mx.edu.utxj.pye.sgi.util.ServicioArchivos.almacenarEvidenciaRegistro(" + registro.getMatricula().getRegistros().getTipo().getNombre() + ") ruta: " + ruta);
-//        
-//        String nombreArchivo = sdf.format(new Date()).concat("_").concat(archivo.getSubmittedFileName());
-//        String rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
-//        String rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-//        
-//        //si el archivo se agrega un contador extra
-//        Integer cont = 1;
-//        while(Files.exists(Paths.get(rutaAbsoluta))){
-//            nombreArchivo = sdf.format(new Date()).concat("_").concat(cont.toString()).concat("_").concat(archivo.getSubmittedFileName());
-//            rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
-//            rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-//            cont++;
-//        }
-//        
-//        ServicioArchivos.addCarpetaRelativa(ServicioArchivos.carpetaRaiz.concat(ruta));
-//                
-//        archivo.write(rutaArchivo);
-//        return rutaAbsoluta;
-//    }
-//    
-//    /**
-//     * Almacena la evidencia de visitas industriales ligadas a la tabla de  visitas industriales
-//     * @param area
-//     * @param registro
-//     * @param archivo
-//     * @return
-//     * @throws IOException
-//     * @throws EvidenciaRegistroExtensionNoValidaException 
-//     */
-//    public static String almacenarEvidenciaRegistroVINDUSTRIALES(AreasUniversidad area, ListaDtoVisitasIndustriales registro, Part archivo) throws IOException, EvidenciaRegistroExtensionNoValidaException{        
-//        if(!extensiones.contains(FilenameUtils.getExtension(archivo.getSubmittedFileName()).toLowerCase())){
-//            throw new EvidenciaRegistroExtensionNoValidaException(archivo.getSubmittedFileName());
-//        }
-//        
-//        String ruta = ServicioArchivos.genRutaRelativa(
-//                String.valueOf(registro.getVisitasIndustriales().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()), //ejercicio fiscal
-//                area.getSiglas(),
-//                registro.getVisitasIndustriales().getRegistros().getEventoRegistro().getMes(),
-//                registro.getVisitasIndustriales().getRegistros().getTipo().getNombre());
-//        System.out.println("mx.edu.utxj.pye.sgi.util.ServicioArchivos.almacenarEvidenciaRegistro(" + registro.getVisitasIndustriales().getRegistros().getTipo().getNombre() + ") ruta: " + ruta);
-//        
-//        String nombreArchivo = sdf.format(new Date()).concat("_").concat(archivo.getSubmittedFileName());
-//        String rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
-//        String rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-//        
-//        //si el archivo se agrega un contador extra
-//        Integer cont = 1;
-//        while(Files.exists(Paths.get(rutaAbsoluta))){
-//            nombreArchivo = sdf.format(new Date()).concat("_").concat(cont.toString()).concat("_").concat(archivo.getSubmittedFileName());
-//            rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
-//            rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-//            cont++;
-//        }
-//        
-//        ServicioArchivos.addCarpetaRelativa(ServicioArchivos.carpetaRaiz.concat(ruta));
-//                
-//        archivo.write(rutaArchivo);
-//        return rutaAbsoluta;
-//    }
-//    /**
-//     * Almacena la evidencia de ligada a los registros de la tabla de desercion por periodos
-//     * @param area
-//     * @param registro
-//     * @param archivo
-//     * @return
-//     * @throws IOException
-//     * @throws EvidenciaRegistroExtensionNoValidaException 
-//     */
-//    public static String almacenarEvidenciaRegistroDesPer(AreasUniversidad area, ListaDtoDesercion registro, Part archivo) throws IOException, EvidenciaRegistroExtensionNoValidaException{        
-//        if(!extensiones.contains(FilenameUtils.getExtension(archivo.getSubmittedFileName()).toLowerCase())){
-//            throw new EvidenciaRegistroExtensionNoValidaException(archivo.getSubmittedFileName());
-//        }
-//        
-//        String ruta = ServicioArchivos.genRutaRelativa(
-//                String.valueOf(registro.getDesercionPeriodosEscolares().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()), //ejercicio fiscal
-//                area.getSiglas(),
-//                registro.getDesercionPeriodosEscolares().getRegistros().getEventoRegistro().getMes(),
-//                registro.getDesercionPeriodosEscolares().getRegistros().getTipo().getNombre());
-//        System.out.println("mx.edu.utxj.pye.sgi.util.ServicioArchivos.almacenarEvidenciaRegistro(" + registro.getDesercionPeriodosEscolares().getRegistros().getTipo().getNombre() + ") ruta: " + ruta);
-//        
-//        String nombreArchivo = sdf.format(new Date()).concat("_").concat(archivo.getSubmittedFileName());
-//        String rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
-//        String rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-//        
-//        //si el archivo se agrega un contador extra
-//        Integer cont = 1;
-//        while(Files.exists(Paths.get(rutaAbsoluta))){
-//            nombreArchivo = sdf.format(new Date()).concat("_").concat(cont.toString()).concat("_").concat(archivo.getSubmittedFileName());
-//            rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
-//            rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-//            cont++;
-//        }
-//        
-//        ServicioArchivos.addCarpetaRelativa(ServicioArchivos.carpetaRaiz.concat(ruta));
-//                
-//        archivo.write(rutaArchivo);
-//        return rutaAbsoluta;
-//    }
-//    /**
-//     * Almacena la evidencia de deseercion
-//     * @param area
-//     * @param registro
-//     * @param archivo
-//     * @return
-//     * @throws IOException
-//     * @throws EvidenciaRegistroExtensionNoValidaException 
-//     */
-//    public static String almacenarEvidenciaRegistroDesRep(AreasUniversidad area, ListaDtoReprobacion registro, Part archivo) throws IOException, EvidenciaRegistroExtensionNoValidaException{        
-//        if(!extensiones.contains(FilenameUtils.getExtension(archivo.getSubmittedFileName()).toLowerCase())){
-//            throw new EvidenciaRegistroExtensionNoValidaException(archivo.getSubmittedFileName());
-//        }
-//        
-//        String ruta = ServicioArchivos.genRutaRelativa(
-//                String.valueOf(registro.getDesercionReprobacionMaterias().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()), //ejercicio fiscal
-//                area.getSiglas(),
-//                registro.getDesercionReprobacionMaterias().getRegistros().getEventoRegistro().getMes(),
-//                registro.getDesercionReprobacionMaterias().getRegistros().getTipo().getNombre());
-//        System.out.println("mx.edu.utxj.pye.sgi.util.ServicioArchivos.almacenarEvidenciaRegistro(" + registro.getDesercionReprobacionMaterias().getRegistros().getTipo().getNombre() + ") ruta: " + ruta);
-//        
-//        String nombreArchivo = sdf.format(new Date()).concat("_").concat(archivo.getSubmittedFileName());
-//        String rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
-//        String rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-//        
-//        //si el archivo se agrega un contador extra
-//        Integer cont = 1;
-//        while(Files.exists(Paths.get(rutaAbsoluta))){
-//            nombreArchivo = sdf.format(new Date()).concat("_").concat(cont.toString()).concat("_").concat(archivo.getSubmittedFileName());
-//            rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
-//            rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-//            cont++;
-//        }
-//        
-//        ServicioArchivos.addCarpetaRelativa(ServicioArchivos.carpetaRaiz.concat(ruta));
-//                
-//        archivo.write(rutaArchivo);
-//        return rutaAbsoluta;
-//    }
-//    /**
-//     * Almacena la evidencia de las ferias profesiograficas
-//     * @param area
-//     * @param registro
-//     * @param archivo
-//     * @return
-//     * @throws IOException
-//     * @throws EvidenciaRegistroExtensionNoValidaException 
-//     */
-//    public static String almacenarEvidenciaRegistroFProfes(AreasUniversidad area, ListaFeriasDTO registro, Part archivo) throws IOException, EvidenciaRegistroExtensionNoValidaException{        
-//        if(!extensiones.contains(FilenameUtils.getExtension(archivo.getSubmittedFileName()).toLowerCase())){
-//            throw new EvidenciaRegistroExtensionNoValidaException(archivo.getSubmittedFileName());
-//        }
-//        
-//        String ruta = ServicioArchivos.genRutaRelativa(
-//                String.valueOf(registro.getFeriasProfesiograficas().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()), //ejercicio fiscal
-//                area.getSiglas(),
-//                registro.getFeriasProfesiograficas().getRegistros().getEventoRegistro().getMes(),
-//                registro.getFeriasProfesiograficas().getRegistros().getTipo().getNombre());
-//        System.out.println("mx.edu.utxj.pye.sgi.util.ServicioArchivos.almacenarEvidenciaRegistro(" + registro.getFeriasProfesiograficas().getRegistros().getTipo().getNombre() + ") ruta: " + ruta);
-//        
-//        String nombreArchivo = sdf.format(new Date()).concat("_").concat(archivo.getSubmittedFileName());
-//        String rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
-//        String rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-//        
-//        //si el archivo se agrega un contador extra
-//        Integer cont = 1;
-//        while(Files.exists(Paths.get(rutaAbsoluta))){
-//            nombreArchivo = sdf.format(new Date()).concat("_").concat(cont.toString()).concat("_").concat(archivo.getSubmittedFileName());
-//            rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
-//            rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-//            cont++;
-//        }
-//        
-//        ServicioArchivos.addCarpetaRelativa(ServicioArchivos.carpetaRaiz.concat(ruta));
-//                
-//        archivo.write(rutaArchivo);
-//        return rutaAbsoluta;
-//    }
-//    /**
-//     * Almacena la evidencia de los participantes en las ferias profesiograficas
-//     * @param area
-//     * @param registro
-//     * @param archivo
-//     * @return
-//     * @throws IOException
-//     * @throws EvidenciaRegistroExtensionNoValidaException 
-//     */
-//    public static String almacenarEvidenciaRegistroFPart(AreasUniversidad area, ListaFeriasParticipantesDTO registro, Part archivo) throws IOException, EvidenciaRegistroExtensionNoValidaException{        
-//        if(!extensiones.contains(FilenameUtils.getExtension(archivo.getSubmittedFileName()).toLowerCase())){
-//            throw new EvidenciaRegistroExtensionNoValidaException(archivo.getSubmittedFileName());
-//        }
-//        
-//        String ruta = ServicioArchivos.genRutaRelativa(
-//                String.valueOf(registro.getFeriasParticipantes().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()), //ejercicio fiscal
-//                area.getSiglas(),
-//                registro.getFeriasParticipantes().getRegistros().getEventoRegistro().getMes(),
-//                registro.getFeriasParticipantes().getRegistros().getTipo().getNombre());
-//        System.out.println("mx.edu.utxj.pye.sgi.util.ServicioArchivos.almacenarEvidenciaRegistro(" + registro.getFeriasParticipantes().getRegistros().getTipo().getNombre() + ") ruta: " + ruta);
-//        
-//        String nombreArchivo = sdf.format(new Date()).concat("_").concat(archivo.getSubmittedFileName());
-//        String rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
-//        String rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-//        
-//        //si el archivo se agrega un contador extra
-//        Integer cont = 1;
-//        while(Files.exists(Paths.get(rutaAbsoluta))){
-//            nombreArchivo = sdf.format(new Date()).concat("_").concat(cont.toString()).concat("_").concat(archivo.getSubmittedFileName());
-//            rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(nombreArchivo)));
-//            rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-//            cont++;
-//        }
-//        
-//        ServicioArchivos.addCarpetaRelativa(ServicioArchivos.carpetaRaiz.concat(ruta));
-//                
-//        archivo.write(rutaArchivo);
-//        return rutaAbsoluta;
-//    }
+    public static void escribeLog(List<String> datosInvalidos) {
+        FileWriter fichero = null;
+        try {
+
+            fichero = new FileWriter("C:\\archivos\\modulos_registro\\logs\\calidad_academica\\actividades_varias.txt");
+
+            // Escribimos linea a linea en el fichero159
+            for (String linea : datosInvalidos) {
+                fichero.write(linea + "\n");
+            }
+
+            fichero.close();
+
+        } catch (IOException ex) {
+            System.out.println("Mensaje de la excepción: " + ex.getMessage());
+        }
+    }
+
 }

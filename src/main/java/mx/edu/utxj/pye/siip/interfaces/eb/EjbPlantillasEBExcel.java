@@ -13,5 +13,33 @@ import javax.ejb.Local;
  */
 @Local
 public interface EjbPlantillasEBExcel {
+    
+    /**
+     * Actualiza los catálogos de la plantilla de Matricula Inicial
+     * @return  Devuelve la ruta de la plantilla actualizada
+     * @throws Throwable 
+     */
     public String getPlantillaMatriculaPeriodosEscolares() throws Throwable;
+    
+    /**
+     * Actualiza los catálogos de la plantilla de eficiencia terminal
+     * @return  Devuelve la ruta de la plantilla actualizada
+     * @throws Throwable 
+     */
+    public String getPlantillaEficienciaTerminal() throws Throwable;
+    
+    /**
+     * Actualiza los catálogos de la plantilla de distribución de equipamiento
+     * @return Devuelve la ruta de la plantilla actualizada
+     * @throws Throwable 
+     */
+    public String getPlantillaDistribucionEquipamiento() throws Throwable;
+    
+    /**
+     * Actualiza los catálogos de la plantilla de distribución de instalaciones
+     * @return  Devuelve la ruta de la plantilla actualizada
+     * @throws Throwable 
+     */
+    public String getPlantillaDistribucionInstalaciones() throws Throwable;
+
 }

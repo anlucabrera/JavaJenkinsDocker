@@ -6,18 +6,24 @@
 package mx.edu.utxj.pye.siip.services.ca;
 
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
-import edu.mx.utxj.pye.seut.util.collection.SerializableArrayList;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.controlador.Caster;
+import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.BecaTipos;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.BecasPeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
@@ -27,6 +33,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.dto.escolar.DTOBecasPeriodosEscolares;
+import mx.edu.utxj.pye.siip.entity.escolar.list.ListaBecasDto;
 import mx.edu.utxj.pye.siip.entity.escolar.list.ListaBecasPeriodo;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbMatriculaPeriodosEscolares;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
@@ -45,17 +52,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 @Stateful
 public class ServicioBecasPeriodo implements EjbBecasPeriodo{
     
-    @EJB
-    Facade facdepye;
-    @EJB
-    EjbModulos ejbModulos;
-    @EJB
-    EjbMatriculaPeriodosEscolares ejbMatriculaPeriodosEscolares;
-    
-    
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
-
+ 
+    @EJB EjbModulos ejbModulos;
+    @EJB EjbMatriculaPeriodosEscolares ejbMatriculaPeriodosEscolares;
+    @EJB Facade f;
+    @EJB EjbFiscalizacion ejbFiscalizacion;
+    @Inject ControladorEmpleado controladorEmpleado;
+   
     @Override
     public ListaBecasPeriodo getListaBecasPeriodo(String rutaArchivo) throws Throwable {
     
@@ -109,14 +112,8 @@ public class ServicioBecasPeriodo implements EjbBecasPeriodo{
                         break;
                 }
                 switch (fila.getCell(4).getCellTypeEnum()) {
-                     case NUMERIC:
-                            matricula = (int) fila.getCell(4).getNumericCellValue();
-                            if (matricula > 20000 && matricula < 99999) {
-                                matriculaNueva = "0" + String.valueOf(matricula);
-                            } else {
-                                matriculaNueva = String.valueOf(matricula);
-                            }
-                            matriculaPeriodosEscolar.setMatricula(matriculaNueva);
+                     case STRING:
+                            matriculaPeriodosEscolar.setMatricula(fila.getCell(4).getStringCellValue());
                             break;
                         default:
                             break;
@@ -171,53 +168,89 @@ public class ServicioBecasPeriodo implements EjbBecasPeriodo{
     
    @Override
     public void guardaBecasPeriodo(ListaBecasPeriodo listaBecasPeriodo, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
-//            listaBecasPeriodo.getBecasPeriodosEscolares().forEach((becasPeriodosEscolares) -> {
-//            Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-//            
-//            becasPeriodosEscolares.getBecasPeriodosEscolares().getMatriculaPeriodosEscolares().setRegistro(ejbMatriculaPeriodosEscolares.getRegistroMatriculaEspecifico(becasPeriodosEscolares.getBecasPeriodosEscolares().getMatriculaPeriodosEscolares().getMatricula(), becasPeriodosEscolares.getBecasPeriodosEscolares().getMatriculaPeriodosEscolares().getPeriodo()));
-//            
-//            facdepye.setEntityClass(BecasPeriodosEscolares.class);
-//            becasPeriodosEscolares.getBecasPeriodosEscolares().setRegistro(registro.getRegistro());
-//            facdepye.create(becasPeriodosEscolares.getBecasPeriodosEscolares());
-//            facdepye.flush();
-//        });
+
         List<String> listaCondicional = new ArrayList<>();
         listaBecasPeriodo.getBecasPeriodosEscolares().forEach((becasPeriodosEscolares) -> {
-            facdepye.setEntityClass(BecasPeriodosEscolares.class);
+            if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), becasPeriodosEscolares.getBecasPeriodosEscolares().getMatriculaPeriodosEscolares().getPeriodo())) {
+            f.setEntityClass(BecasPeriodosEscolares.class);
             BecasPeriodosEscolares becasperescEncontrada = getRegistroBecasPeriodosEscolares(becasPeriodosEscolares.getBecasPeriodosEscolares());
             Boolean registroAlmacenado = false;
 
             if (becasperescEncontrada != null) {
-                listaCondicional.add(becasPeriodosEscolares.getPeriodoAsignacion()+ " " + becasPeriodosEscolares.getBecasPeriodosEscolares().getMatriculaPeriodosEscolares().getMatricula());
+                listaCondicional.add(becasPeriodosEscolares.getPeriodoAsignacion() + " " + becasPeriodosEscolares.getBecasPeriodosEscolares().getMatriculaPeriodosEscolares().getMatricula());
                 registroAlmacenado = true;
             }
             if (registroAlmacenado) {
                 becasPeriodosEscolares.getBecasPeriodosEscolares().setRegistro(becasperescEncontrada.getRegistro());
                 becasPeriodosEscolares.getBecasPeriodosEscolares().getMatriculaPeriodosEscolares().setRegistro(ejbMatriculaPeriodosEscolares.getRegistroMatriculaEspecifico(becasPeriodosEscolares.getBecasPeriodosEscolares().getMatriculaPeriodosEscolares().getMatricula(), becasPeriodosEscolares.getBecasPeriodosEscolares().getMatriculaPeriodosEscolares().getPeriodo()));
-                facdepye.edit(becasPeriodosEscolares.getBecasPeriodosEscolares());
+                f.edit(becasPeriodosEscolares.getBecasPeriodosEscolares());
+                addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
             } else {
                 Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                 becasPeriodosEscolares.getBecasPeriodosEscolares().getMatriculaPeriodosEscolares().setRegistro(ejbMatriculaPeriodosEscolares.getRegistroMatriculaEspecifico(becasPeriodosEscolares.getBecasPeriodosEscolares().getMatriculaPeriodosEscolares().getMatricula(), becasPeriodosEscolares.getBecasPeriodosEscolares().getMatriculaPeriodosEscolares().getPeriodo()));
                 becasPeriodosEscolares.getBecasPeriodosEscolares().setRegistro(registro.getRegistro());
-                facdepye.create(becasPeriodosEscolares.getBecasPeriodosEscolares());
+                f.create(becasPeriodosEscolares.getBecasPeriodosEscolares());
+                addDetailMessage("<b>Se guardaron los registros correctamente </b> ");
             }
-            facdepye.flush();
+            f.flush();
+            }else{
+                addDetailMessage("<b>No puede registrar información de periodos anteriores </b> ");
+            }
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
     public BecasPeriodosEscolares getRegistroBecasPeriodosEscolares(BecasPeriodosEscolares becasPeriodosEscolares) {
         BecasPeriodosEscolares becasperescEncontrada = new BecasPeriodosEscolares();
-        TypedQuery<BecasPeriodosEscolares> query = em.createQuery("SELECT b FROM BecasPeriodosEscolares b JOIN b.matriculaPeriodosEscolares m WHERE m.periodo = :periodoAsignacion AND m.matricula = :matricula",  BecasPeriodosEscolares.class);
+        TypedQuery<BecasPeriodosEscolares> query = f.getEntityManager().createQuery("SELECT b FROM BecasPeriodosEscolares b JOIN b.matriculaPeriodosEscolares m WHERE m.periodo = :periodoAsignacion AND m.matricula = :matricula", BecasPeriodosEscolares.class);
         query.setParameter("periodoAsignacion", becasPeriodosEscolares.getMatriculaPeriodosEscolares().getPeriodo());
         query.setParameter("matricula", becasPeriodosEscolares.getMatriculaPeriodosEscolares().getMatricula());
         try {
             becasperescEncontrada = query.getSingleResult();
         } catch (NoResultException | NonUniqueResultException ex) {
             becasperescEncontrada = null;
-            System.out.println(ex.toString());
+//            System.out.println(ex.toString());
         }
         return becasperescEncontrada;
     }
+   
+    @Override
+    public List<ListaBecasDto> getRegistroBecas(String mes, Short ejercicio) {
+        List<ListaBecasDto> ldto = new ArrayList<>();
+        TypedQuery<BecasPeriodosEscolares> q = f.getEntityManager()
+                .createQuery("SELECT a from BecasPeriodosEscolares a WHERE a.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND a.registros.eventoRegistro.mes = :mes AND a.registros.area = :area", BecasPeriodosEscolares.class);
+        q.setParameter("mes", mes);
+        q.setParameter("ejercicio", ejercicio);
+        q.setParameter("area", controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        List<BecasPeriodosEscolares> l = q.getResultList();
+        if (l.isEmpty() || l == null) {
+            return null;
+        } else {
+            TypedQuery<EventosRegistros> query = f.getEntityManager().createQuery("SELECT er FROM EventosRegistros er WHERE :fecha BETWEEN er.fechaInicio AND er.fechaFin", EventosRegistros.class);
+            query.setParameter("fecha", new Date());
+            EventosRegistros eventoRegistro = query.getSingleResult();
+            l.forEach(x -> {
+                PeriodosEscolares p = f.getEntityManager().find(PeriodosEscolares.class, x.getMatriculaPeriodosEscolares().getPeriodo());
+                Caster caster = new Caster();
+                String periodoAsignacion = caster.periodoToString(p);
+                String strDateFormat = "yyyy";
+                SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+                String cicloEscolar = sdf.format(p.getCiclo().getInicio()) + " - " + sdf.format(p.getCiclo().getFin());
+                BecaTipos becaTipos = f.getEntityManager().find(BecaTipos.class, x.getBeca());
+
+                Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());
+                AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, registro.getArea());
+                ActividadesPoa a = registro.getActividadesPoaList().isEmpty() ? null :registro.getActividadesPoaList().get(0);
+                ListaBecasDto dto;
+                if (eventoRegistro.equals(registro.getEventoRegistro())) {
+                    dto = new ListaBecasDto(Boolean.TRUE, cicloEscolar, periodoAsignacion, becaTipos, x, au, a);
+                } else {
+                    dto = new ListaBecasDto(Boolean.FALSE, cicloEscolar, periodoAsignacion, becaTipos, x, au, a);
+                }
+                ldto.add(dto);
+            });
+            return ldto;
+        }
+    }
+
 }

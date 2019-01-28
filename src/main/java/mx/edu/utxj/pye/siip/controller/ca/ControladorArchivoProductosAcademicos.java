@@ -5,10 +5,12 @@
  */
 package mx.edu.utxj.pye.siip.controller.ca;
 
+import java.io.IOException;
 import java.io.Serializable;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.Part;
@@ -16,7 +18,10 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
+import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
 
@@ -34,8 +39,9 @@ public class ControladorArchivoProductosAcademicos implements Serializable{
     //    Variables de Lectura
     @Getter private Short ejercicio;
     @Getter private String eje;
-    @Getter private Short area;
+    @Getter private AreasUniversidad area;
     @Getter private final String[] ejes = ServicioArchivos.EJES;
+    @Getter private RegistroSiipEtapa etapa;
     
     //    Variables de Lectura y Escritura
     @Getter @Setter private String rutaArchivo;
@@ -48,25 +54,40 @@ public class ControladorArchivoProductosAcademicos implements Serializable{
     
     @EJB
     EjbCarga ejbCarga;
+    @EJB
+    EjbModulos ejbModulos;
     
     @PostConstruct
     public void init(){
         eje = ejes[1];
-        ejercicio = 2018;
-        area = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
+        ejercicio = ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio();
+        area = ejbModulos.getAreaUniversidadPrincipalRegistro(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        setEtapa(RegistroSiipEtapa.MOSTRAR);
     }
     
-    public void subirExcelProductosAcademicos(){
+    public void recibirArchivo(ValueChangeEvent e){
+        file = (Part)e.getNewValue();
+    }
+    
+    public void setEtapa(RegistroSiipEtapa etapa){
+        this.etapa = etapa;
+    }
+    
+    public void subirExcelProductosAcademicos() throws IOException{
         if (file != null) {
-            rutaArchivo = ejbCarga.subirExcelRegistro(String.valueOf(ejercicio),String.valueOf(area),eje,"productos_academicos",file);
+            rutaArchivo = ejbCarga.subirExcelRegistroMensual(String.valueOf(ejercicio),String.valueOf(area.getSiglas()),eje,ejbModulos.getEventoRegistro().getMes(),"productos_academicos",file);
             if (!"Error: No se pudo leer el archivo".equals(rutaArchivo)) {
+                setEtapa(RegistroSiipEtapa.CARGAR);
                 controladorProductosAcademicos.listaProductosAcademicosPrevia(rutaArchivo);
+                rutaArchivo = null;
+                file.delete();
             } else {
                 rutaArchivo = null;
-                Messages.addGlobalWarn("No fue posible cargar el archivo, Intentelo nuevamente !!");
+                file.delete();
+                Messages.addGlobalWarn("¡No fue posible cargar el archivo, Intentelo nuevamente!");
             }
         } else {
-             Messages.addGlobalWarn("Es necesario seleccionar un archivo !!");
+             Messages.addGlobalWarn("¡Es necesario seleccionar un archivo!");
         }
     }
     

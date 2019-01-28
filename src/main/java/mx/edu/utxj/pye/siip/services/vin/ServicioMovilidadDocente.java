@@ -11,11 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.controlador.Caster;
+import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosMovilidad;
@@ -26,7 +28,6 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.dto.vinculacion.DTOMovilidadDocente;
-import mx.edu.utxj.pye.siip.entity.vinculacion.list.ListaMovilidadDocente;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbRegistroMovilidad;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbMovilidadDocente;
@@ -43,21 +44,16 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 @Stateful
 public class ServicioMovilidadDocente implements EjbMovilidadDocente{
     
-    @EJB
-    Facade facadepye;
-    @EJB
-    EjbModulos ejbModulos;
-    @EJB
-    EjbRegistroMovilidad ejbRegistroMovilidad;
+    @EJB Facade f;
+    @EJB EjbModulos ejbModulos;
+    @EJB EjbRegistroMovilidad ejbRegistroMovilidad;
+    @EJB EjbPropiedades ep;
+    @Inject Caster caster;
+    @Inject ControladorEmpleado controladorEmpleado;
    
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
-    
     @Override
-    public ListaMovilidadDocente getListaMovilidadDocente(String rutaArchivo) throws Throwable {
-       
-        ListaMovilidadDocente listaMovilidadDocente = new ListaMovilidadDocente();
-
+    public List<DTOMovilidadDocente> getListaMovilidadDocente(String rutaArchivo) throws Throwable {
+     
         List<DTOMovilidadDocente> listaDtoMovilidadDocente = new ArrayList<>();
         Personal personal;
         RegistrosMovilidad registrosMovilidad;
@@ -90,13 +86,13 @@ public class ServicioMovilidadDocente implements EjbMovilidadDocente{
                     default:
                         break;
                 }
-                switch (fila.getCell(1).getCellTypeEnum()) {
-                    case FORMULA: 
-                        dTOMovilidadDocente.setParticipanteProyecto(fila.getCell(1).getStringCellValue());
-                        break;
-                    default:
-                        break;
-                }
+//                switch (fila.getCell(1).getCellTypeEnum()) {
+//                    case FORMULA: 
+//                        dTOMovilidadDocente.setParticipanteProyecto(fila.getCell(1).getStringCellValue());
+//                        break;
+//                    default:
+//                        break;
+//                }
                 switch (fila.getCell(4).getCellTypeEnum()) {
                     case STRING:
                         personal.setNombre(fila.getCell(4).getStringCellValue());
@@ -118,40 +114,63 @@ public class ServicioMovilidadDocente implements EjbMovilidadDocente{
                     
                 }
             }
-            listaMovilidadDocente.setMovilidadDocente(listaDtoMovilidadDocente);
             libroRegistro.close();
-            addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+            addDetailMessage("<b>Hoja de Movilidad Docente Validada favor de verificar sus datos antes de guardar su información</b>");
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
             addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
         }
-        return listaMovilidadDocente;
+        return listaDtoMovilidadDocente;
     }
 
     @Override
-    public void guardaMovilidadDocente(ListaMovilidadDocente listaMovilidadDocente, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
-//        listaPartActFormInt.getParticipantesActFormInt().forEach((t) -> {
-//            System.out.println(t.getParticipantesActividadesFormacionIntegral().getRegistro()+ " " +t.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getMatricula() + " " + t.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getPeriodo() + " " + t.getParticipantesActividadesFormacionIntegral().getActividadFormacionIntegral().getActividadFormacionIntegral());
-//            
-//        });
-            
-            listaMovilidadDocente.getMovilidadDocente().forEach((movilidadDocente) -> {
-            Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-            
-            movilidadDocente.getRegistroMovilidadDocente().getRegistroMovilidad().setRegistro(ejbRegistroMovilidad.getRegistroMovilidadEspecifico(movilidadDocente.getRegistroMovilidadDocente().getRegistroMovilidad().getRegistroMovilidad()));
-                        
-            facadepye.setEntityClass(RegistroMovilidadDocente.class);
-            movilidadDocente.getRegistroMovilidadDocente().setRegistro(registro.getRegistro());
-            facadepye.create(movilidadDocente.getRegistroMovilidadDocente());
-            facadepye.flush();
+    public void guardaMovilidadDocente(List<DTOMovilidadDocente> lista, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
+           
+            lista.forEach((movDoc) -> {
+
+            RegistrosMovilidad registrosMovilidad = ejbRegistroMovilidad.getRegistrosMovilidad(movDoc.getRegistroMovilidadDocente().getRegistroMovilidad());
+            if (registrosMovilidad == null || registrosMovilidad.getRegistroMovilidad().isEmpty()) {
+                addDetailMessage("<b>No existe la Clave del Registro de Movilidad</b>");
+
+            } else {
+                if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), registrosMovilidad.getPeriodoEscolarCursado())) {
+
+                    List<String> listaCondicional = new ArrayList<>();
+                    f.setEntityClass(RegistroMovilidadDocente.class);
+                    RegistroMovilidadDocente movDocEncontrada = getRegistroMovilidadDocente(movDoc.getRegistroMovilidadDocente());
+                    Boolean registroAlmacenado = false;
+                    if (movDocEncontrada != null) {
+                        listaCondicional.add(movDocEncontrada.getRegistroMovilidad().getRegistroMovilidad() + " " + movDocEncontrada.getClavePersonal());
+                        registroAlmacenado = true;
+                    }
+
+                    if (registroAlmacenado) {
+                        movDoc.getRegistroMovilidadDocente().setRegistro(movDocEncontrada.getRegistro());
+                        movDoc.getRegistroMovilidadDocente().getRegistroMovilidad().setRegistro(ejbRegistroMovilidad.getRegistroMovilidadEspecifico(movDoc.getRegistroMovilidadDocente().getRegistroMovilidad().getRegistroMovilidad()));
+                        f.edit(movDoc.getRegistroMovilidadDocente());
+                        addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
+                    } else {
+                        Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
+                        movDoc.getRegistroMovilidadDocente().setRegistro(registro.getRegistro());
+                        movDoc.getRegistroMovilidadDocente().getRegistroMovilidad().setRegistro(ejbRegistroMovilidad.getRegistroMovilidadEspecifico(movDoc.getRegistroMovilidadDocente().getRegistroMovilidad().getRegistroMovilidad()));
+                        f.create(movDoc.getRegistroMovilidadDocente());
+                        addDetailMessage("<b>Se guardaron los registros correctamente </b> ");
+                    }
+                    f.flush();
+                } else {
+
+                    addDetailMessage("<b>No puede registrar información de periodos anteriores</b>");
+                }
+            }
         });
+            
     }
 
     @Override
     public RegistroMovilidadDocente getRegistroMovilidadDocente(RegistroMovilidadDocente registroMovilidadDocente) {
-        TypedQuery<RegistroMovilidadDocente> query = em.createQuery("SELECT r FROM RegistroMovilidadDocente r JOIN r.registroMovilidad m WHERE m.registroMovilidad = :registroMovilidad AND r.clavePersonal = :clavePersonal", RegistroMovilidadDocente.class);
+        TypedQuery<RegistroMovilidadDocente> query = f.getEntityManager().createQuery("SELECT r FROM RegistroMovilidadDocente r JOIN r.registroMovilidad m WHERE m.registroMovilidad = :registroMovilidad AND r.clavePersonal = :clavePersonal", RegistroMovilidadDocente.class);
         query.setParameter("registroMovilidad", registroMovilidadDocente.getRegistroMovilidad().getRegistroMovilidad());
         query.setParameter("clavePersonal", registroMovilidadDocente.getClavePersonal());
         try {

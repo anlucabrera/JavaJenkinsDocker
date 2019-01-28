@@ -7,10 +7,13 @@ package mx.edu.utxj.pye.siip.dto.pye;
 
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.ParticipantesActividadesFormacionIntegral;
 
 
@@ -20,11 +23,11 @@ import mx.edu.utxj.pye.sgi.entity.pye2.ParticipantesActividadesFormacionIntegral
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(of = "participantesActividadesFormacionIntegral")
+@EqualsAndHashCode
 public class DTOParticipantesActFormInt implements Serializable{
 
     private static final long serialVersionUID = 3274421349867352931L;
-    
-    @Getter @Setter private String periodoEscolar;
-    @Getter @Setter private ParticipantesActividadesFormacionIntegral participantesActividadesFormacionIntegral;
+    @Getter @Setter @NonNull private ParticipantesActividadesFormacionIntegral participantesActividadesFormacionIntegral; //se declara como llave primaria para interacturar con sus eviedencias
+    @Getter @Setter private ActividadesPoa actividadAlineada;
 }

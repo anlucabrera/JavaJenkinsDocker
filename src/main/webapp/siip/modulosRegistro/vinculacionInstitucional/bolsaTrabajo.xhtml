@@ -1,0 +1,673 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="true"/>
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
+        <h:outputScript library="js" name="dialogs.js" />
+    </ui:define>
+    <ui:define name="title">
+        Bolsa de Trabajo
+    </ui:define>
+
+    <ui:define name="description">
+        Consolidar la Vinculación Institucional
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Consolidar la Vinculación Institucional - Bolsa de Trabajo"/>
+        <adm:sidebar collapsed="true"/>
+        <p:importEnum type="mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa" var="etapa" allSuffix="ETAPAS" />
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <c:if test="#{bolTrab.listaReg ne null}">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    <h:form prependId="true" id="frmMainButtons" class="form-inline">
+                        <p:outputPanel >
+                            <p:autoUpdate/>
+                            <p:toolbar id="tb">
+                                <f:facet name="left">
+                                    <p:spacer width="10" />
+                                    <c:if test="#{controladorArchivoBolsa.etapa eq etapa.MOSTRAR}">
+                                        <p:outputLabel value="Periodo: " for="periodo" />
+                                        <p:spacer width="3" />
+                                        <p:selectOneMenu id="periodo" converter="entityConverter"
+                                                         value="#{bolTrab.dto.periodo}" valueChangeListener="#{bolTrab.actualizarMeses}"
+                                                         class="form-control" style="padding-top: 0px;">
+                                            <f:selectItems value="#{bolTrab.dto.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" itemDescription="#{caster.periodoToString(periodo)}" />
+                                            <p:ajax process="@this" update="@(form)" />
+                                        </p:selectOneMenu>
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Mes: " for="mes" />
+                                        <p:spacer width="3" />
+                                        <p:selectOneMenu id="mes" value="#{bolTrab.dto.eventoSeleccionado}" converter="entityConverter" class="form-control" style="padding-top: 0px;">
+                                            <f:selectItems value="#{bolTrab.dto.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" itemDescription="#{evento.mes}"  />
+                                            <p:ajax process="@this" listener="#{bolTrab.cargarListaPorEvento()}" update="@(form)" />
+                                        </p:selectOneMenu>
+                                    </c:if>
+                                </f:facet>
+                                <f:facet name="right">
+                                    <div class="btn-group">
+                                        <p:commandButton value="Cargar Archivo de Excel" icon="fa fa-file-excel-o" onclick="PF('modalCargaArchivo').show()" class="btn btn-primary btn-sm"/>
+                                    </div>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <c:if test="#{controladorArchivoBolsa.etapa eq etapa.CARGAR}">
+                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="bolsaTrabajo?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
+                                    </c:if>
+                                    <p:commandLink class="btn btn-info" ajax="false" target="_blank" action="#{bolTrab.descargarPlantilla()}" title="Descargar Plantilla Bolsa de Trabajo"><i class="fa fa-download" /></p:commandLink>
+                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
+
+                                </f:facet>
+                            </p:toolbar>
+                            <p:sticky target="tb" />
+                        </p:outputPanel>
+                    </h:form>
+                </div>
+                <p:separator/>
+
+                <div class="box-body">
+                    <!-- Sección de visualización y eliminación -->
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                             <center>
+                            <p:tabView>
+                            <c:if test="#{controladorArchivoBolsa.etapa eq etapa.MOSTRAR}">
+                            <p:tab id="twbBTAct" title="Bolsa de Trabajo">
+                            <h:form id="formMuestraDatosActivos">
+                                    <p:remoteCommand name="actualizar" update="@form:dtbBolTrab" />
+                                    <p:dataTable id="dtbBolTrab" emptyMessage="Sin datos en el periodo seleccionado." value="#{bolTrab.dto.lista}" var="BolTrab"
+                                                 paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                 resizeMode="expand"
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                       <c:set var="bolTrabReg" value="#{BolTrab.bolsaTrabajo.registro}"/>
+                                       <c:set var="bolTrabClave" value="#{BolTrab.bolsaTrabajo.bolsatrab}"/>
+                                       <p:columnGroup type="header">
+                                           <p:row>
+                                               <p:column headerText="Opciones" style="width: 100px;"/>
+                                               <p:column headerText="Clave" style="width: 80px;"/>
+                                               <p:column headerText="Fecha" style="width: 100px;"/>
+                                               <p:column headerText="Empresa" style="width: 250px;"/>
+                                               <p:column headerText="Puesto Ofertado" style="width: 200px;"/>
+                                               <p:column headerText="Plazas Ofertadas" style="width: 80px;"/>
+                                           </p:row>
+                                       </p:columnGroup>
+                                        <p:column style="width: 100px; text-align: center;">
+                                            <div class="btn-group">
+                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{bolTrab.eliminarRegistro(bolTrabReg, bolTrabClave)}" onsuccess="actualizar(); actualizar1();" title="Eliminar registro." disabled="#{bolTrab.dto.eventoActual ne bolTrab.dto.eventoSeleccionado}">
+                                                    <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la Bolsa de Trabajo #{BolTrab.bolsaTrabajo.bolsatrab}?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <c:set var="evidencias" value="#{bolTrab.consultarEvidencias(BolTrab)}" />
+                                                <p:commandButton actionListener="#{bolTrab.seleccionarRegistro(BolTrab)}"
+                                                                 class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                 icon="fa fa-image"
+                                                                 title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                <p:commandButton actionListener="#{bolTrab.abrirAlineacionPOA(BolTrab)}"
+                                                                 class="btn btn-sm #{!empty BolTrab.actividadAlineada?'btn-info':'btn-warning'}" icon="fa fa-cog"
+                                                                 title="Alineación a POA." />
+                                            </div>
+                                       </p:column>
+                                       <p:column style="width: 80px; text-align: center;"><h:outputText value="#{BolTrab.bolsaTrabajo.bolsatrab}"/></p:column> 
+                                       <p:column style="width: 100px; text-align: center;"><h:outputText value="#{BolTrab.bolsaTrabajo.fecha}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
+                                       <p:column style="width: 250px;"><h:outputText value="#{BolTrab.bolsaTrabajo.empresa.nombre}"/></p:column>
+                                       <p:column style="width: 200px;"><h:outputText value="#{BolTrab.bolsaTrabajo.puestoOfertado}"/></p:column>
+                                       <p:column style="width: 80px; text-align: center;"><h:outputText value="#{BolTrab.bolsaTrabajo.plazas}"/></p:column>
+                                    </p:dataTable>
+                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
+                                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
+                                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
+                                    </p:confirmDialog>
+                            </h:form>
+                            </p:tab>
+                                <p:tab id="twbEBTAct" title="Entrevistas de Bolsa de Trabajo">
+                                     <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                         <h:form id="formMuestraDatosActivosEnt" prependId="false">
+                                            <p:remoteCommand name="actualizar1" update="@form:dtbEntBolTrab" />
+                                            <p:dataTable  id="dtbEntBolTrab" emptyMessage="Sin datos en el periodo seleccionado." value="#{bolTrab.dtopart.lista}" var="EntBolTrab"
+                                                           paginator="true" rows="10" rowsPerPageTemplate="5,10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                           resizeMode="expand"
+                                                           tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                 <c:set var="EntBolTrabEliminado" value="#{EntBolTrab.bolsaTrabajoEntrevistas.registro}"/>
+                                                 <p:column headerText="Opciones" style="text-align: center; width:100px">
+                                                     <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{bolTrab.eliminarRegistroParticipante(EntBolTrabEliminado)}" onsuccess="actualizar1();" title="Eliminar registro." disabled="#{bolTrab.dto.eventoActual ne bolTrab.dto.eventoSeleccionado}">
+                                                         <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de Participación del estudiante #{EntBolTrab.bolsaTrabajoEntrevistas.matricula} en la Bolsa de Trabajo #{EntBolTrab.bolsaTrabajoEntrevistas.bolsatrabent.bolsatrab}?" icon="ui-icon-alert" />
+                                                     </p:commandButton>
+                                                     <c:set var="evidencias" value="#{entBolTrab.consultarEvidencias(EntBolTrab)}" />
+                                                     <p:commandButton actionListener="#{entBolTrab.seleccionarRegistro(EntBolTrab)}"
+                                                                      class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                      icon="fa fa-image"
+                                                                      title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                     <p:commandButton actionListener="#{entBolTrab.abrirAlineacionPOA(EntBolTrab)}"
+                                                                      class="btn btn-sm #{!empty EntBolTrab.actividadAlineada?'btn-info':'btn-warning'}" icon="fa fa-cog"
+                                                                      title="Alineación a POA." />
+                                                 </p:column>
+                                                
+                                                     <p:column headerText="Clave" style="text-align: center; width:100px">
+                                                        <h:outputText value="#{EntBolTrab.bolsaTrabajoEntrevistas.bolsatrabent.bolsatrab}">
+                                                        </h:outputText>
+                                                    </p:column>
+
+                                                    <p:column headerText="Generación" style="width: 100px; text-align: center;">
+                                                        <h:outputText value="#{EntBolTrab.generaciones.inicio} - #{EntBolTrab.generaciones.fin}"/>
+                                                    </p:column>
+
+                                                    <p:column headerText="Matricula" style="text-align: center; width:100px">
+                                                        <h:outputText value="#{EntBolTrab.bolsaTrabajoEntrevistas.matricula}">
+                                                        </h:outputText>
+                                                    </p:column>
+
+                                                    <p:column headerText="Programa Educativo" style="width:300px">
+                                                        <h:outputText value="#{EntBolTrab.areasUniversidad.nombre}"/>
+                                                    </p:column>
+
+                                                    <p:column headerText="Contratado" style="text-align: center; width:100px">
+                                                        <h:outputText value="#{EntBolTrab.bolsaTrabajoEntrevistas.contratado}">
+                                                        </h:outputText>
+                                                    </p:column>
+
+                                                    <p:column headerText="Observaciones" style="width:250px">
+                                                        <h:outputText value="#{EntBolTrab.bolsaTrabajoEntrevistas.observaciones}"/>
+                                                    </p:column>
+                                             </p:dataTable>
+                                             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
+                                                 <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
+                                                 <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
+                                             </p:confirmDialog>
+                                         </h:form>
+                                     </div>
+                                 </p:tab>
+                                </c:if>
+                            </p:tabView>
+                             </center>
+                        </div>
+                    </div>
+                    <!-- Modal Evidencia Bolsa de Trabajo -->
+                    <p:dialog id="modalCargaEvidencia" 
+                              widgetVar="modalCargaEvidencia" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{bolTrab.dto.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Carga de evidencias" 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:spacer width="10" />
+                                        <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px;" />
+                                        <p:spacer width="10" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <o:form id="formularioEvidencia" 
+                                                enctype="multipart/form-data" 
+                                                class="form-inline"  >
+                                            <o:inputFile id="files" 
+                                                         value="#{bolTrab.dto.archivos}"  
+                                                         multiple="true" 
+                                                         class="form-control"
+                                                         accept="image/png,image/jpg,image/jpeg,application/pdf" 
+                                                         acceptMessage="Solo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         maxsize="#{caster.evidenciasTamanioLimite}" 
+                                                         maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                         required="true" 
+                                                         requiredMessage="Debe elegir al menos un archivo." >
+                                            </o:inputFile>
+                                            <h:commandButton id="btnuploadFiles" value="Subir archivos" class="btn btn-primary" actionListener="#{bolTrab.subirEvidencias()}" />
+                                        </o:form>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </div>
+                        <h:form id="frmEvidencias" >
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-2"><p:outputLabel value="Clave: " /></div>
+                                <div class="col-md-10"><p:outputLabel value="#{bolTrab.dto.registro.bolsaTrabajo.bolsatrab}" /></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2"><p:outputLabel value="Fecha: " /></div>
+                                <div class="col-md-10"><p:outputLabel value="#{bolTrab.dto.registro.bolsaTrabajo.fecha}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:outputLabel></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
+                                    <p:dataTable id="tblEvidencias" value="#{bolTrab.dto.listaEvidencias}" var="evidencia"
+                                                 emptyMessage="No se han registrado evidencias de éste registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
+                                                 >
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Opciones" width="80"/>
+                                                <p:column headerText="Archivo" />
+                                                <p:column headerText="Tipo"     width="80" />
+                                                <p:column headerText="Tamanio"  width="80" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;">
+                                            <div class="btn-group">
+                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{bolTrab.eliminarEvidencia(evidencia)}" onsuccess="actualizar2();" title="Eliminar evidencia.">
+                                                    <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{bolTrab.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                            </div>
+                                        </p:column>
+                                        <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
+                                        <f:facet name="footer">
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(bolTrab.dto.listaEvidencias)}.</span>
+                                        </f:facet>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    <p:dialog id="modalAlineacion" widgetVar="modalAlineacion" width="900" height="auto"  closeOnEscape="true"
+                              showEffect="fade" hideEffect="fade" modal="true" draggable="true" header="Alineación a POA." onHide="actualizar();"
+                              styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">                        
+                        <h:form id="frmAlineacion" >
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar>
+                                        <f:facet name="left">
+                                            
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{bolTrab.eliminarAlineacion()}" rendered="#{!empty bolTrab.dto.registro.actividadAlineada}" >
+                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{bolTrab.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>                            
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-2"><p:outputLabel value="Clave: " /></div>
+                                <div class="col-md-10"><p:outputLabel value="#{bolTrab.dto.registro.bolsaTrabajo.bolsatrab}" /></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2"><p:outputLabel value="Fecha: " /></div>
+                                <div class="col-md-10"><p:outputLabel value="#{bolTrab.dto.registro.bolsaTrabajo.fecha}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:outputLabel></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                            <c:set var="col1" value="#{'col-md-2'}" />
+                            <c:set var="col2" value="#{'col-md-10'}" />
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="eje" value="#{bolTrab.dto.alineacionEje}" valueChangeListener="#{bolTrab.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{bolTrab.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="eje"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="estrategia" value="#{bolTrab.dto.alineacionEstrategia}" valueChangeListener="#{bolTrab.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{bolTrab.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <p:ajax process="estrategia" update="lineaAccion,actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="estrategia"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="lineaAccion" value="#{bolTrab.dto.alineacionLinea}" valueChangeListener="#{bolTrab.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{bolTrab.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <p:ajax process="lineaAccion" update="actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="lineaAccion"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="actividad" value="#{bolTrab.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{bolTrab.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <p:ajax process="actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="actividad"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    <!-- Modal Evidencia Entrevistas Bolsa de Trabajo -->
+                    <p:dialog id="modalCargaEvidenciaPart" 
+                              widgetVar="modalCargaEvidenciaPart" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{entBolTrab.dto.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Carga de evidencias" 
+                              onHide="actualizar1();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:toolbar id="tbPart">
+                                    <f:facet name="left">
+                                        <p:spacer width="10" />
+                                        <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px;" />
+                                        <p:spacer width="10" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <o:form id="formularioEvidenciaPart" 
+                                                enctype="multipart/form-data" 
+                                                class="form-inline"  >
+                                            <o:inputFile id="filesPart" 
+                                                         value="#{entBolTrab.dto.archivos}"  
+                                                         multiple="true" 
+                                                         class="form-control"
+                                                         accept="image/png,image/jpg,image/jpeg,application/pdf" 
+                                                         acceptMessage="Solo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         maxsize="#{caster.evidenciasTamanioLimite}" 
+                                                         maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                         required="true" 
+                                                         requiredMessage="Debe elegir al menos un archivo." >
+                                            </o:inputFile>
+                                            <h:commandButton id="btnuploadFilesPart" value="Subir archivos" class="btn btn-primary" actionListener="#{entBolTrab.subirEvidencias()}" />
+                                        </o:form>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </div>
+                        <h:form id="frmEvidenciasPart" >
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-2"><p:outputLabel value="Clave " /></div>
+                                <div class="col-md-10"><p:outputLabel value="#{entBolTrab.dto.registro.bolsaTrabajoEntrevistas.bolsatrabent.bolsatrab}" /></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2"><p:outputLabel value="Matricula: " /></div>
+                                <div class="col-md-10"><p:outputLabel value="#{entBolTrab.dto.registro.bolsaTrabajoEntrevistas.matricula}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizar3" update="@form:tblEvidenciasPart" />
+                                    <p:dataTable id="tblEvidenciasPart" value="#{entBolTrab.dto.listaEvidencias}" var="evidenciaPart"
+                                                 emptyMessage="No se han registrado evidencias de éste registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
+                                                 >
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Opciones" width="80"/>
+                                                <p:column headerText="Archivo" />
+                                                <p:column headerText="Tipo"     width="80" />
+                                                <p:column headerText="Tamanio"  width="80" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;">
+                                            <div class="btn-group">
+                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{entBolTrab.eliminarEvidencia(evidenciaPart)}" onsuccess="actualizar3();" title="Eliminar evidencia.">
+                                                    <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidenciaPart.ruta)}?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{entBolTrab.descargarEvidencia(evidenciaPart)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                            </div>
+                                        </p:column>
+                                        <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidenciaPart.ruta)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidenciaPart.mime)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidenciaPart.tamanioBytes)}" /></p:column>
+                                        <f:facet name="footer">
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(entBolTrab.dto.listaEvidencias)}.</span>
+                                        </f:facet>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    <p:dialog id="modalAlineacionPart" widgetVar="modalAlineacionPart" width="900" height="auto"  closeOnEscape="true"
+                              showEffect="fade" hideEffect="fade" modal="true" draggable="true" header="Alineación a POA." onHide="actualizar1();"
+                              styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">                        
+                        <h:form id="frmAlineacionPart" >
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar>
+                                        <f:facet name="left">
+                                            
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{entBolTrab.eliminarAlineacion()}" rendered="#{!empty entBolTrab.dto.registro.actividadAlineada}" >
+                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{entBolTrab.alinearRegistro()}" oncomplete="PF('modalAlineacionPart').hide();" />
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>                            
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-2"><p:outputLabel value="Clave: " /></div>
+                                <div class="col-md-10"><p:outputLabel value="#{entBolTrab.dto.registro.bolsaTrabajoEntrevistas.bolsatrabent.bolsatrab}" /></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2"><p:outputLabel value="Matricula: " /></div>
+                                <div class="col-md-10"><p:outputLabel value="#{entBolTrab.dto.registro.bolsaTrabajoEntrevistas.matricula}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                            <c:set var="col1" value="#{'col-md-2'}" />
+                            <c:set var="col2" value="#{'col-md-10'}" />
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="eje" value="#{entBolTrab.dto.alineacionEje}" valueChangeListener="#{entBolTrab.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{entBolTrab.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="eje"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="estrategia" value="#{entBolTrab.dto.alineacionEstrategia}" valueChangeListener="#{entBolTrab.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{entBolTrab.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <p:ajax process="estrategia" update="lineaAccion,actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="estrategia"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="lineaAccion" value="#{entBolTrab.dto.alineacionLinea}" valueChangeListener="#{entBolTrab.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{entBolTrab.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <p:ajax process="lineaAccion" update="actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="lineaAccion"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="actividad" value="#{entBolTrab.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{entBolTrab.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <p:ajax process="actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="actividad"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                  <div class="row">
+                      <!-- Sección de carga de excel -->
+                        <div class="col-lg-12 col-md-12">
+                                    <center>
+                            <p:tabView>
+                                <c:if test="#{controladorArchivoBolsa.etapa eq etapa.CARGAR}">
+                                        <p:tab id="twbBTPrev" title="Bolsa de Trabajo">
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <p></p>
+                                                <center>
+                                                    <h:form id="formPrevisualizacionDatosBT" prependId="false">
+                                                        <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
+                                                                     paginator="true"
+                                                                     rows="10"
+                                                                     rowsPerPageTemplate="5,10,20,30,40,50"
+                                                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                                     id="dtbBolTrab"
+                                                                     var="BolTrab" value="#{bolTrab.dto.lista}"
+                                                                     resizeMode="expand"
+                                                                     tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                            <p:columnGroup type="header">
+                                                                <p:row>
+                                                                    <p:column headerText="Clave" style="width: 100px;"/>
+                                                                    <p:column headerText="Fecha" style="width: 100px;"/>
+                                                                    <p:column headerText="Empresa" style="width: 200px;"/>
+                                                                    <p:column headerText="Puesto Ofertado" style="width: 150px;"/>
+                                                                    <p:column headerText="Plazas Ofertadas" style="width: 100px;"/>
+                                                                </p:row>
+                                                            </p:columnGroup>
+
+                                                            <p:column style="text-align: center; width:100px"><h:outputText value="#{BolTrab.bolsaTrabajo.bolsatrab}"/></p:column> 
+                                                            <p:column style="text-align: center; width:100px"><h:outputText value="#{BolTrab.bolsaTrabajo.fecha}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
+                                                            <p:column style="width:200px"><h:outputText value="#{BolTrab.bolsaTrabajo.empresa.nombre}"/></p:column>
+                                                            <p:column style="width:150px"><h:outputText value="#{BolTrab.bolsaTrabajo.puestoOfertado}"/></p:column>
+                                                            <p:column style="text-align: center; width:100px"><h:outputText value="#{BolTrab.bolsaTrabajo.plazas}"/></p:column>
+                                                           
+                                                        </p:dataTable>
+                                                    <p></p>
+                                                    <center>
+                                                        <p:commandButton id="btnGuardarBT" value="Guardar Datos" actionListener="#{bolTrab.guardaBolsaTrabajo()}" icon="fa fa-pencil-square-o" class="btn-primary" update="formPrevisualizacionDatosBT"/>
+                                                        <p:spacer width="5" />
+                                                        <p:commandButton id="btnCancelar" value="Cancelar" actionListener="#{bolTrab.cancelarArchivo()}" icon="fa fa-times-circle" class="btn-danger" update="@form"/>
+                                                    </center>
+                                                </h:form>
+                                        </center>
+                                            </div>
+                                </p:tab>
+                                <p:tab id="twbEntBTPrev" title="Entrevistas de Bolsa de Trabajo">
+                                        <p></p>
+                                        <center>
+                                                <h:form id="formPrevisualizacionDatosEntBT" prependId="false">
+                                                    <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
+                                                                 paginator="true"
+                                                                 rows="10"
+                                                                 rowsPerPageTemplate="5,10,20,30,40,50"
+                                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                                 id="dtbEntBolTrab"
+                                                                 var="EntBolTrab" value="#{entBolTrab.dto.lista}"
+                                                                 resizeMode="expand"
+                                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                      
+                                                    <p:column headerText="Clave" style="text-align: center; width:100px">
+                                                        <h:outputText value="#{EntBolTrab.bolsaTrabajoEntrevistas.bolsatrabent.bolsatrab}">
+                                                        </h:outputText>
+                                                    </p:column>
+                                                    <p:column headerText="Generación" style="text-align: center; width:100px">
+                                                        <h:outputText value="#{EntBolTrab.generacion}"/>
+                                                    </p:column>
+                                                        
+                                                    <p:column headerText="Matricula" style="text-align: center; width:100px">
+                                                        <h:outputText value="#{EntBolTrab.bolsaTrabajoEntrevistas.matricula}">
+                                                        </h:outputText>
+                                                    </p:column>
+
+                                                    <p:column headerText="Programa Educativo" style="width:250px">
+                                                        <h:outputText value="#{EntBolTrab.programaEducativo}"/>
+                                                    </p:column>
+
+                                                    <p:column headerText="Contratado" style="text-align: center; width:100px">
+                                                        <h:outputText value="#{EntBolTrab.bolsaTrabajoEntrevistas.contratado}">
+                                                        </h:outputText>
+                                                    </p:column>
+
+                                                    <p:column headerText="Observaciones" style="width:200px">
+                                                        <h:outputText value="#{EntBolTrab.bolsaTrabajoEntrevistas.observaciones}"/>
+                                                    </p:column>
+                                                    </p:dataTable>
+                                                    <p></p>
+                                                    <center>
+                                                        <p:commandButton id="btnGuardarEntBT" value="Guardar Datos" actionListener="#{entBolTrab.guardaBolsaEntrevistas()}" icon="fa fa-pencil-square-o" class="btn-primary" update="formPrevisualizacionDatosEntBT"/>
+                                                        <p:spacer width="5" />
+                                                        <p:commandButton id="btnCancelarEntBT" value="Cancelar" actionListener="#{entBolTrab.cancelarArchivo()}" icon="fa fa-times-circle" class="btn-danger" update="@form"/>
+                                                    </center>
+                                                </h:form>
+                                        </center>
+                                 </p:tab>
+                                </c:if>
+                            </p:tabView>
+                                    </center>
+                         </div>
+            </div>  
+                    
+                </div>
+                <p:dialog widgetVar="modalCargaArchivo" width="400" height="auto" showEffect="fade" hideEffect="fade" modal="true" header="Carga de Archivo" styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
+                    <center>
+                        <h:form id="formularioContenedor" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <o:inputFile id="file" value="#{controladorArchivoBolsa.file}" 
+                                             accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" acceptMessage="Solo se permiten archivos XLSX." 
+                                             maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." 
+                                             required="true" requiredMessage="Debe elegir un archivo." >
+                                </o:inputFile>
+                                <p:messages for="file" ><p:autoUpdate/></p:messages>
+                            </div>
+                            <p:separator />
+                            <div class="col-md-12">
+                                <h:commandButton id="btnuploadFile" value="Subir archivo" class="btn btn-primary" action="#{controladorArchivoBolsa.subirExcelBolsa()}" />
+                            </div>
+                        </div>
+                    </h:form>
+                    <p:blockUI block="formularioContenedor" widgetVar="bloqueoCargaFile" trigger="formularioContenedor:btnuploadFile">
+                        Cargando archivo espere por favor.<br />
+                    </p:blockUI>
+                    </center>
+                </p:dialog>
+            </div>
+        </div>
+        </c:if>
+    </ui:define>
+</ui:composition>

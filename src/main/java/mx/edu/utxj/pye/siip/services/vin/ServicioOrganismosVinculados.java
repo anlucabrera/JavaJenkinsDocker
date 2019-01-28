@@ -6,7 +6,10 @@
 package mx.edu.utxj.pye.siip.services.vin;
 
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,6 +35,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.GirosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.Localidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.LocalidadPK;
 import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.MunicipioPK;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosTipo;
@@ -44,7 +48,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.TelefonosEmpresa;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.sgi.util.StringUtils;
-import mx.edu.utxj.pye.siip.dto.vinculacion.DTOActividadesVinculacion;
+import mx.edu.utxj.pye.siip.dto.vin.DTOActividadesVinculacion;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -53,6 +57,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbOrganismosVinculados;
+import org.apache.poi.ss.usermodel.CellType;
 import org.omnifaces.util.Messages;
 
 /**
@@ -80,159 +85,266 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
 
     @Override
     public List<OrganismosVinculados> getListaOrganismosVinculados(String rutaArchivo) throws Throwable {
-        //Creacion de una lista que almacenará todas los nuevos orgnanismos vinculados del archivo de excel
-        List<OrganismosVinculados> organismosVinculados = new ArrayList<>();
-        //Declaración del objeto que será ocupado para almanar cada registro y almacenarlo como nuevo en la lista de organismos vinculados.
-        OrganismosVinculados organismoVinculado;
-        OrganismosTipo organismosTipo;
-        EmpresasTipo empresasTipo;
-        GirosTipo girosTipo;
-        SectoresTipo sectoresTipo;
-        
-        File excelOrgVin = new File(rutaArchivo);
-        XSSFWorkbook workBookOrgVin = new XSSFWorkbook();
-        workBookOrgVin = (XSSFWorkbook) WorkbookFactory.create(excelOrgVin);
-        XSSFSheet primeraHoja = workBookOrgVin.getSheetAt(0);
-        XSSFRow fila;
+        if (Files.exists(Paths.get(rutaArchivo))) {
+            List<Boolean> validarCelda = new ArrayList<>();
+            List<String> datosInvalidos = new ArrayList<>();
+            //Creacion de una lista que almacenará todas los nuevos orgnanismos vinculados del archivo de excel
+            List<OrganismosVinculados> organismosVinculados = new ArrayList<>();
+            //Declaración del objeto que será ocupado para almanar cada registro y almacenarlo como nuevo en la lista de organismos vinculados.
+            OrganismosVinculados organismoVinculado;
+            OrganismosTipo organismosTipo;
+            EmpresasTipo empresasTipo;
+            GirosTipo girosTipo;
+            SectoresTipo sectoresTipo;
 
-        if (primeraHoja.getSheetName().equals("Organismos Vinculados")) {
-            for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
-                fila = (XSSFRow) (Row) primeraHoja.getRow(i);
-                if ((fila.getCell(0).getDateCellValue() != null)) {
-                    organismoVinculado = new OrganismosVinculados();
-                    organismosTipo = new OrganismosTipo();
-                    empresasTipo = new EmpresasTipo();
-                    girosTipo = new GirosTipo();
-                    sectoresTipo = new SectoresTipo();
-                    
-                    switch (fila.getCell(0).getCellTypeEnum()) {
-                        case NUMERIC:
-                            if (DateUtil.isCellDateFormatted(fila.getCell(0))) {
-                                organismoVinculado.setFecha(fila.getCell(0).getDateCellValue());
+            Pais pais = new Pais(42);
+            LocalidadPK localidadPK = new LocalidadPK(1, 1, 1);
+            Localidad localidad = new Localidad(localidadPK);
+            
+            File excelOrgVin = new File(rutaArchivo);
+            XSSFWorkbook workBookOrgVin = new XSSFWorkbook();
+            workBookOrgVin = (XSSFWorkbook) WorkbookFactory.create(excelOrgVin);
+            XSSFSheet primeraHoja = workBookOrgVin.getSheetAt(0);
+            XSSFRow fila;
+
+            if (primeraHoja.getSheetName().equals("Organismos Vinculados")) {
+                for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
+                    fila = (XSSFRow) (Row) primeraHoja.getRow(i);
+                    if ((fila.getCell(0).getDateCellValue() != null)) {
+                        organismoVinculado = new OrganismosVinculados();
+                        organismosTipo = new OrganismosTipo();
+                        empresasTipo = new EmpresasTipo();
+                        girosTipo = new GirosTipo();
+                        sectoresTipo = new SectoresTipo();
+
+                        if (fila.getCell(0).getCellTypeEnum() == CellType.NUMERIC) {
+                            switch (fila.getCell(0).getCellTypeEnum()) {
+                                case NUMERIC:
+                                    if (DateUtil.isCellDateFormatted(fila.getCell(0))) {
+                                        organismoVinculado.setFecha(fila.getCell(0).getDateCellValue());
+                                    }
+                                    break;
+                                default:
+                                    break;
                             }
-                            break;
-                        default:
-                            break;
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Fecha en la columna: " + (0 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(1).getCellTypeEnum() == CellType.STRING) {
+                            switch (fila.getCell(1).getCellTypeEnum()) {
+                                case STRING:
+                                    organismoVinculado.setNombre(fila.getCell(1).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Nombre en la columna: " + (1 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(3).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(3).getCellTypeEnum()) {
+                                case FORMULA:
+                                    organismosTipo.setOrgtipo((short) fila.getCell(3).getNumericCellValue());
+                                    organismosTipo.setDescripcion(fila.getCell(2).getStringCellValue());
+                                    organismoVinculado.setOrgTip(organismosTipo);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Tipo de Organismo en la columna: " + (2 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(5).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(5).getCellTypeEnum()) {
+                                case FORMULA:
+                                    empresasTipo.setEmptipo((short) fila.getCell(5).getNumericCellValue());
+                                    empresasTipo.setDescripcion(fila.getCell(4).getStringCellValue());
+                                    organismoVinculado.setEmpTip(empresasTipo);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Tipo en la columna: " + (4 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(7).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(7).getCellTypeEnum()) {
+                                case FORMULA:
+                                    girosTipo.setGiro((short) fila.getCell(7).getNumericCellValue());
+                                    girosTipo.setDescripcion(fila.getCell(6).getStringCellValue());
+                                    organismoVinculado.setGiro(girosTipo);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Tipo de giro en la columna: " + (6 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(8).getCellTypeEnum() == CellType.STRING) {
+                            switch (fila.getCell(8).getCellTypeEnum()) {
+                                case STRING:
+                                    organismoVinculado.setGiroEspecifico(fila.getCell(8).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Giro específico en la columna: " + (8 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(10).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(10).getCellTypeEnum()) {
+                                case FORMULA:
+                                    sectoresTipo.setSector((short) fila.getCell(10).getNumericCellValue());
+                                    sectoresTipo.setDescripcion(fila.getCell(9).getStringCellValue());
+                                    organismoVinculado.setSector(sectoresTipo);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Sector en la columna: " + (9 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(11).getCellTypeEnum() == CellType.STRING) {
+                            switch (fila.getCell(11).getCellTypeEnum()) {
+                                case STRING:
+                                    organismoVinculado.setDireccion(fila.getCell(11).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Dirección en la columna: " + (11 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(12).getCellTypeEnum() == CellType.STRING || fila.getCell(12).getCellTypeEnum() == CellType.NUMERIC) {
+                            switch (fila.getCell(12).getCellTypeEnum()) {
+                                case STRING:
+                                    organismoVinculado.setCp(fila.getCell(12).getStringCellValue());
+                                    break;
+                                case NUMERIC:
+                                    Integer empresInt = (int) fila.getCell(12).getNumericCellValue();
+                                    organismoVinculado.setCp(String.valueOf(empresInt));
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Codigo Postal en la columna: " + (12 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(13).getCellTypeEnum() == CellType.STRING) {
+                            switch (fila.getCell(13).getCellTypeEnum()) {
+                                case STRING:
+                                    organismoVinculado.setRepresentantePrincipal(fila.getCell(13).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Representante Principal en la columna: " + (13 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(14).getCellTypeEnum() == CellType.STRING) {
+                            switch (fila.getCell(14).getCellTypeEnum()) {
+                                case STRING:
+                                    organismoVinculado.setCargoRepresentantePrincipal(fila.getCell(14).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Cargo Representante Principal en la columna: " + (14 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(16).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(16).getCellTypeEnum()) {
+                                case FORMULA:
+                                    String telefono = fila.getCell(16).getStringCellValue();
+                                    String telefonoConvertido = StringUtils.quitarGuionesEspacios(telefono);
+                                    organismoVinculado.setTelefonoPrincipal(String.valueOf(telefonoConvertido));
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Teléfono Principal en la columna: " + (16 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(17).getCellTypeEnum() == CellType.STRING) {
+                            switch (fila.getCell(17).getCellTypeEnum()) {
+                                case STRING:
+                                    organismoVinculado.setEmailPrincipal(fila.getCell(17).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Email Principal en la columna: " + (17 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(18).getCellTypeEnum() == CellType.STRING) {
+                            switch (fila.getCell(18).getCellTypeEnum()) {
+                                case STRING:
+                                    organismoVinculado.setConvenio(fila.getCell(18).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Convenio en la columna: " + (18 + 1) + " y fila: " + (i + 1));
+                        }
+                        
+                        organismoVinculado.setPais(pais);
+                        organismoVinculado.setLocalidad(localidad);
+
+                        organismosVinculados.add(organismoVinculado);
                     }
-                    switch (fila.getCell(1).getCellTypeEnum()) {
-                        case STRING:
-                            organismoVinculado.setNombre(fila.getCell(1).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(3).getCellTypeEnum()) {
-                        case FORMULA:
-                            organismosTipo.setOrgtipo((short) fila.getCell(3).getNumericCellValue());
-                            organismosTipo.setDescripcion(fila.getCell(2).getStringCellValue());
-                            organismoVinculado.setOrgTip(organismosTipo);
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(5).getCellTypeEnum()) {
-                        case FORMULA:
-                            empresasTipo.setEmptipo((short) fila.getCell(5).getNumericCellValue());
-                            empresasTipo.setDescripcion(fila.getCell(4).getStringCellValue());
-                            organismoVinculado.setEmpTip(empresasTipo);
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(7).getCellTypeEnum()) {
-                        case FORMULA:
-                            girosTipo.setGiro((short) fila.getCell(7).getNumericCellValue());
-                            girosTipo.setDescripcion(fila.getCell(6).getStringCellValue());
-                            organismoVinculado.setGiro(girosTipo);
-                            break;
-                        default:
-                            break;
-                    }
-                    
-                    switch (fila.getCell(8).getCellTypeEnum()) {
-                        case STRING:
-                            organismoVinculado.setGiroEspecifico(fila.getCell(8).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    
-                    switch (fila.getCell(10).getCellTypeEnum()) {
-                        case FORMULA:
-                            sectoresTipo.setSector((short) fila.getCell(10).getNumericCellValue());
-                            sectoresTipo.setDescripcion(fila.getCell(9).getStringCellValue());
-                            organismoVinculado.setSector(sectoresTipo);
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(11).getCellTypeEnum()) {
-                        case STRING:
-                            organismoVinculado.setDireccion(fila.getCell(11).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(12).getCellTypeEnum()) {
-                        case STRING:
-                            organismoVinculado.setCp(fila.getCell(12).getStringCellValue());
-                            break;
-                        case NUMERIC:
-                            Integer empresInt = (int) fila.getCell(12).getNumericCellValue();
-                            organismoVinculado.setCp(String.valueOf(empresInt));
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(13).getCellTypeEnum()) {
-                        case STRING:
-                            organismoVinculado.setRepresentantePrincipal(fila.getCell(13).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(14).getCellTypeEnum()) {
-                        case STRING:
-                            organismoVinculado.setCargoRepresentantePrincipal(fila.getCell(14).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(16).getCellTypeEnum()) {
-                        case FORMULA:
-                            String telefono = fila.getCell(16).getStringCellValue();
-                            String telefonoConvertido = StringUtils.quitarGuionesEspacios(telefono);
-                            organismoVinculado.setTelefonoPrincipal(String.valueOf(telefonoConvertido));
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(17).getCellTypeEnum()) {
-                        case STRING:
-                            organismoVinculado.setEmailPrincipal(fila.getCell(17).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(18).getCellTypeEnum()) {
-                        case STRING:
-                            organismoVinculado.setConvenio(fila.getCell(18).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    organismosVinculados.add(organismoVinculado);
                 }
+                workBookOrgVin.close();
+
+                if (validarCelda.contains(false)) {
+                    addDetailMessage("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                    addDetailMessage(datosInvalidos.toString());
+
+                    excelOrgVin.delete();
+                    ServicioArchivos.eliminarArchivo(rutaArchivo);
+                    return Collections.EMPTY_LIST;
+                } else {
+                    addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                    return organismosVinculados;
+                }
+            } else {
+                workBookOrgVin.close();
+                excelOrgVin.delete();
+                ServicioArchivos.eliminarArchivo(rutaArchivo);
+                Messages.addGlobalError("<b>El archivo cargado no corresponde al registro</b>");
+                return Collections.EMPTY_LIST;
             }
-            workBookOrgVin.close();
-            Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
         } else {
-            workBookOrgVin.close();
-            excelOrgVin.delete();
-            ServicioArchivos.eliminarArchivo(rutaArchivo);
-            Messages.addGlobalError("<b>El archivo cargado no corresponde al registro</b>");
+            addDetailMessage("<b>Ocurrio un error en la lectura del archivo</b>");
+            return Collections.EMPTY_LIST;
         }
-        return organismosVinculados;
     }
 
     @Override
@@ -354,9 +466,8 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     @Override
     public List<OrganismosVinculados> getFiltroOrganismoVinculadoEjercicioMesArea(Short ejercicio, String mes, Short area){
         try {
-            return em.createQuery("SELECT o FROM OrganismosVinculados o JOIN o.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes AND r.area = :area AND o.estatus = :estatus", OrganismosVinculados.class)
+            return em.createQuery("SELECT o FROM OrganismosVinculados o JOIN o.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND r.area = :area AND o.estatus = :estatus", OrganismosVinculados.class)
                     .setParameter("anio", ejercicio)
-                    .setParameter("mes", mes)
                     .setParameter("area", area)
                     .setParameter("estatus", true)
                     .getResultList();
