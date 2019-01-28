@@ -6,11 +6,14 @@
 package mx.edu.utxj.pye.sgi.ejb;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.ch.ResultadosEncuestaSatisfaccionTsu;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AperturaVisualizacionEncuestas;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestasTsu;
@@ -25,6 +28,29 @@ public class ServicioAdministracionEncuestaTsu implements EjbAdministracionEncue
     
     @EJB private Facade f;
     @EJB private Facade2 f2;
+    @EJB private EjbSatisfaccionEgresadosTsu ejbES;
+    
+    @Override
+    public AperturaVisualizacionEncuestas getAperturaActiva() {
+        List<AperturaVisualizacionEncuestas> aVE = new ArrayList<>();
+        Integer encuesta = ejbES.getEvaluacionActiva().getEvaluacion();
+
+             aVE = f.getEntityManager()
+                    .createQuery("SELECT a FROM AperturaVisualizacionEncuestas a "
+                            + "WHERE a.encuesta =:encuesta AND :fecha "
+                            + "BETWEEN a.fechaInicial AND a.fechaFinal ORDER BY a.encuesta DESC", AperturaVisualizacionEncuestas.class)
+                    .setParameter("encuesta", encuesta)
+                    .setParameter("fecha", new Date()).getResultStream()
+                    .collect(Collectors.toList());
+
+        if(aVE.isEmpty()){
+            return new AperturaVisualizacionEncuestas();
+
+        }else{
+            return aVE.get(0);
+        }
+    }
+    
     
     @Override
     public ResultadosEncuestaSatisfaccionTsu getResultadoEncPorEvaluador(Integer matricula){
@@ -32,7 +58,7 @@ public class ServicioAdministracionEncuestaTsu implements EjbAdministracionEncue
         q.setParameter("matricula", matricula);
         List<ResultadosEncuestaSatisfaccionTsu> pr=q.getResultList();
         if(pr.isEmpty()){
-            return null;
+            return new ResultadosEncuestaSatisfaccionTsu();
         }else{
             return pr.get(0);
         }
@@ -50,10 +76,11 @@ public class ServicioAdministracionEncuestaTsu implements EjbAdministracionEncue
         TypedQuery<AlumnosEncuestasTsu> q= f2.getEntityManager().createQuery("SELECT a FROM AlumnosEncuestasTsu a WHERE a.cveDirector= :cveDirector",AlumnosEncuestasTsu.class);
         q.setParameter("cveDirector", cveDirector);
         List<AlumnosEncuestasTsu> l = q.getResultList();
-        if(!l.isEmpty()){
-            return l;
-        }else{
+
+        if(l.isEmpty()){
             return new ArrayList<>();
+        }else{
+            return l;
         }
     }
     
@@ -65,7 +92,7 @@ public class ServicioAdministracionEncuestaTsu implements EjbAdministracionEncue
         if(!l.isEmpty()){
             return l.get(0);
         }else{
-            return null;
+            return new Alumnos();
         }
     }
 

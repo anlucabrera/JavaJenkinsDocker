@@ -31,6 +31,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.DatosGraficaEncuestaServicio;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaSatisfaccionEgresadosIng;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEncuestaSatisfaccionEgresadosIng;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEncuestaServicios;
@@ -77,6 +78,7 @@ public class AdministracionEncuesta implements Serializable{
     @Getter @Setter private List<ListadoGraficaEncuestaServicios> listGrafEncServ;
     @Getter @Setter private Map<String,Long> collect = new HashMap<>();
     @Getter @Setter private Map<String,Long> collect2 = new HashMap<>();
+    @Getter private UsuarioTipo usuarioTipo;
     @Inject private LogonMB logonMB;
     @EJB private EjbAdministracionEncuesta ejbAdmEncuesta;
     
@@ -86,7 +88,7 @@ public class AdministracionEncuesta implements Serializable{
         
         Long inicio=System.currentTimeMillis();
         System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuesta.init()"+ inicio);
-//        try {
+        try {
 //            if (logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
 //                claveTrabajador = Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
 //                cveMaestro = logonMB.getListaUsuarioClaveNomina().getCvePersona();
@@ -96,21 +98,21 @@ public class AdministracionEncuesta implements Serializable{
 //                    initSeguimientoEncuestasDirector();
 //                    datosTablaAvance();
 //                }
-//                if (claveTrabajador != null && claveTrabajador.equals(148) || claveTrabajador.equals(240) || claveTrabajador.equals(28) ) {
+//                if (claveTrabajador.equals(579) || claveTrabajador != null && claveTrabajador.equals(148) || claveTrabajador.equals(240) || claveTrabajador.equals(28) ) {
 //                    //|| claveTrabajador.equals(579) esta parte va dentro del if de arriba
 //                    esDeInformacionYEst = true;
-//                    initSeguimientoEncuetasEstadistica();
-//                    datosTablaAvance();
+//                    //initSeguimientoEncuetasEstadistica();
+//                    //datosTablaAvance();
 //                }
 //            }
 //            datosTablaAvance();
 ////            contarAlumnosPorCarDeEncSer();
 ////            contarAlumnosPorCarrera();
-//        } catch (Throwable ex) {
-//            director = false;
-//            esDeInformacionYEst = false;
-//            Logger.getLogger(AdministracionEncuesta.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        } catch (Throwable ex) {
+            director = false;
+            esDeInformacionYEst = false;
+            Logger.getLogger(AdministracionEncuesta.class.getName()).log(Level.SEVERE, null, ex);
+        }
         Long fin=System.currentTimeMillis();
         System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuesta.init()"+ fin);
         

@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.sgi.ejb;
 import java.util.List;
 import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.ch.ResultadosEncuestaSatisfaccionTsu;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AperturaVisualizacionEncuestas;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
  import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestasTsu;
 
@@ -17,6 +18,8 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
  */
 @Local
 public interface EjbAdministracionEncuestaTsu {
+    
+    public AperturaVisualizacionEncuestas getAperturaActiva();
     
     public ResultadosEncuestaSatisfaccionTsu getResultadoEncPorEvaluador(Integer matricula);
     

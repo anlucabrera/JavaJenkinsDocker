@@ -71,14 +71,14 @@ public class EncuestaSatisfaccionEgresadosTsu implements Serializable {
             if (evaluacion != null) {
                 
                 evaluador = logonMB.getCurrentUser();
-                System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaSatisfaccionEgresadosTsu.init()" + evaluador);
+                //System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaSatisfaccionEgresadosTsu.init()" + evaluador);
                 estudiante=ejbAdmEncTsu.getAlumnoEvaluadorTsu(evaluador);
                 if (estudiante.getGrupos().getGrado()==6) {
                     estSexto=true;
                     evaluadorr = Integer.parseInt(evaluador);
-                    System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaSatisfaccionEgresadosTsu.init()" + estudiante);
+                    //System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaSatisfaccionEgresadosTsu.init()" + estudiante);
                     periodoEsc = ejbAdmEncuesta.getPeriodo(evaluacion);
-                    System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaSatisfaccionEgresadosTsu.init()" + periodoEsc);
+                    //System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaSatisfaccionEgresadosTsu.init()" + periodoEsc);
                     if (estudiante != null) {
                         resultado = ejb.getResultado(evaluacion, evaluadorr, respuestas);
                         if (resultado != null) {

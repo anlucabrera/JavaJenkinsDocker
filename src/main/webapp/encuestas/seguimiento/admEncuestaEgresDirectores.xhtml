@@ -81,36 +81,26 @@
             </p:toolbar>
             <p:sticky target="tb" />
         </div>
-        <p:tabView>
+        <p:tabView id="tabView">
             <p:tab title="Porcentaje de avance por carrera">
                 <h:form>
                     <p:outputPanel >
-                        <p:dataTable id="tblAlumnosNoAccedieron" lazy="false" value="#{administracionEncuesta.listDatosEncEgre}"   var="datosEncEgre" 
+                        <p:dataTable id="tblAvance" lazy="false" value="#{administracionAvanceEncuestaSatIng.avanceEncServ}"   var="datosEncEgre"
                                      paginator="true" rows="15" 
                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                                      rowsPerPageTemplate="10,20,30,40,50" 
-                                     emptyMessage="No se encontraron registros" filteredValue="#{administracionEncuesta.listaSatFiltrado}" >
-
-
-                            <!--f:facet name="header">
-                                <p:commandLink  ajax="false" class="denegado btn">
-                                    <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
-                                    <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblAlumnosNoAccedieron" 
-                                                    fileName="Reporte_alumnos_que_no_accedieron"/>
-                                </p:commandLink>
-
-                            </f:facet-->
+                                     emptyMessage="No se encontraron registros" >
                             <p:column headerText="Carrera">
                                 <h:outputText value="#{datosEncEgre.siglas}"/>
                             </p:column>
                             <p:column headerText="Total matrícula">
-                                <h:outputText value="#{datosEncEgre.totalEncuestados}"/>
-                            </p:column>
-                            <p:column headerText="Estudiantes que han finalizado encuesta">
                                 <h:outputText value="#{datosEncEgre.totalPorCarrera}"/>
                             </p:column>
+                            <p:column headerText="Estudiantes que han finalizado encuesta">
+                                <h:outputText value="#{datosEncEgre.totalAlumnoEncTer}"/>
+                            </p:column>
                             <p:column headerText="Estudiantes con encuesta incompleta">
-                                <h:outputText value="#{datosEncEgre.faltantesDeContestar}"/>
+                                <h:outputText value="#{datosEncEgre.faltantesPorCont}"/>
                             </p:column>
                             <p:column headerText="Porcentaje de avance: Meta 100%" exportable="false">
                                 <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="#{datosEncEgre.porcentaje}" 
@@ -120,7 +110,7 @@
                             </p:column>
                             <f:facet name="footer">
                                 <p:commandButton id="actualizar" value="Actualizar tabla" icon="fa fa-refresh" class="btn btn-primary" 
-                                                 actionListener="#{administracionEncuesta.datosTablaAvance()}" process="@form" update="@form"/>
+                                                 actionListener="#{administracionAvanceEncuestaSatIng.mostrarAvanceEncSatIng()}" process="@form" update="@form"/>
                             </f:facet>
                         </p:dataTable>           
                     </p:outputPanel>
@@ -128,122 +118,83 @@
                 </h:form>
             </p:tab>
             <p:tab title="Estudiantes que han finalizado encuesta" titleStyleClass="aceptado" titletip="Estudiantes que han finalizado encuesta">
-                <h:form>
+                <h:form id="fr1">
                     <p:outputPanel>
-                        <p:dataTable id="tblEvaluacionesCompletas" lazy="false" value="#{administracionEncuesta.listadoEvaluacionCompleta}"   var="encuestaEstudiate" 
+                        <p:dataTable id="tblEvaluacionesCompletas" lazy="false" value="#{administracionEncuestaIng.listEvaCompletaDir}"   var="encuestaEstudiate" 
                                      paginator="true" rows="7" 
                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                                      rowsPerPageTemplate="10,20,30,40,50" 
-                                     emptyMessage="El cuerpo estudiantil aún no ha finalizado la encuesta, " filteredValue="#{administracionEncuesta.listaFiltrado}"   >
+                                     emptyMessage="El cuerpo estudiantil aún no ha finalizado la encuesta, " filteredValue="#{administracionEncuestaIng.listaFiltradoDir}"   >
 
                             <f:facet name="header">
-                                <p:commandLink  ajax="false" class="denegado btn">
+                                <p:commandLink  ajax="false">
                                     <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
                                     <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblEvaluacionesCompletas" 
                                                     fileName="Reporte_encuesta_finalizadas"/>
                                 </p:commandLink>
                             </f:facet>
-                            <p:column headerText="Matricula" 
-                                      filterBy="#{encuestaEstudiate.clave}" 
-                                      filterMatchMode="contains" 
-                                      sortBy="#{encuestaEstudiate.clave}"   >                           
+                            <p:column headerText="Matricula" filterBy="#{encuestaEstudiate.clave}"  filterMatchMode="contains" sortBy="#{encuestaEstudiate.clave}"   >
                                 <h:outputText value="#{encuestaEstudiate.clave}" />
                             </p:column>
-                            <p:column headerText="Nombre Completo" 
-                                      filterBy="#{encuestaEstudiate.nombre}" 
-                                      filterMatchMode="contains" 
-                                      sortBy="#{encuestaEstudiate.nombre}"   >                           
+                            <p:column headerText="Nombre Completo" filterBy="#{encuestaEstudiate.nombre}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.nombre}"   >
                                 <h:outputText value="#{encuestaEstudiate.nombre}" />
                             </p:column >
-                            <p:column headerText="Carrera"
-                                      filterBy="#{encuestaEstudiate.siglas}"
-                                      filterMatchMode="contains"
-                                      sortBy="#{encuestaEstudiate.siglas}">
+                            <p:column headerText="Carrera" filterBy="#{encuestaEstudiate.siglas}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.siglas}">
                                 <h:outputText value="#{encuestaEstudiate.siglas}"/>
                             </p:column>
-                            <p:column headerText="Grado"
-                                      filterBy="#{encuestaEstudiate.grado}"
-                                      filterMatchMode="contains"
-                                      sortBy="#{encuestaEstudiate.grado}">
+                            <p:column headerText="Grado" filterBy="#{encuestaEstudiate.grado}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.grado}">
                                 <h:outputText value="#{encuestaEstudiate.grado}"/>
                             </p:column>
-                            <p:column headerText="Grupo"
-                                      filterBy="#{encuestaEstudiate.grupo}"
-                                      filterMatchMode="contains"
-                                      sortBy="#{encuestaEstudiate.grupo}">
+                            <p:column headerText="Grupo" filterBy="#{encuestaEstudiate.grupo}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.grupo}">
                                 <h:outputText value="#{encuestaEstudiate.grupo}"/>
                             </p:column>
-                            <p:column headerText="Tutor"
-                                      filterBy="#{encuestaEstudiate.tutor}"
-                                      filterMatchMode="contains"
-                                      sortBy="#{encuestaEstudiate.tutor}">
+                            <p:column headerText="Tutor" filterBy="#{encuestaEstudiate.tutor}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.tutor}">
                                 <h:outputText value="#{encuestaEstudiate.tutor}"/>
                             </p:column>
                             <f:facet name="footer">
-                                <p:commandButton actionListener="#{administracionEncuesta.alumnosNoAccedieronVistaDirector()}" value="Actualizar información"
-                                                 icon="fa fa-refresh" class="btn btn-primary" update="@this" process="@this"/>
+                                <p:commandButton actionListener="#{administracionEncuestaIng.seguimientoEncuestaDirectores}" value="Actualizar información" icon="fa fa-refresh" class="btn btn-primary"
+                                                 update="tabView:fr1:tblEvaluacionesCompletas tabView:fr2:tblEvaluacionesIncompletas tabView:fr3:tblAlumnosNoAccedieron" process="@form"/>
                             </f:facet>
                         </p:dataTable>           
                     </p:outputPanel>
                 </h:form>
             </p:tab>
+
             <p:tab title="Estudiantes que no han finalizado encuesta" titleStyleClass="denegado">
-                <h:form>
+                <h:form id="fr2">
                     <p:outputPanel>
-                        <p:dataTable id="tblEvaluacionesIncompletas" lazy="false" value="#{administracionEncuesta.listadoEvaluacionIncompleta}"   var="encuestaEstudiate"
+                        <p:dataTable id="tblEvaluacionesIncompletas" lazy="false" value="#{administracionEncuestaIng.listEvaIncompletaDir}"   var="encuestaEstudiate"
                                      paginator="true" rows="7"
                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                                      rowsPerPageTemplate="10,20,30,40,50" 
-                                     emptyMessage="No se encontrarono registros" filteredValue="#{administracionEncuesta.listaSatFiltrado}" >
+                                     emptyMessage="No se encontrarono registros" filteredValue="#{administracionEncuestaIng.listaFiltradoDir}" >
 
 
                             <f:facet name="header">
-                                <p:commandLink  ajax="false" class="denegado btn">
+                                <p:commandLink  ajax="false">
                                     <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
                                     <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblEvaluacionesIncompletas" 
                                                     fileName="Reporte_encuestas_incompletas"/>
                                 </p:commandLink>
                             </f:facet>
-                            <p:column headerText="Matricula" 
-                                      filterBy="#{encuestaEstudiate.clave}" 
-                                      filterMatchMode="contains" 
-                                      sortBy="#{encuestaEstudiate.clave}"   >                           
+                            <p:column headerText="Matricula" filterBy="#{encuestaEstudiate.clave}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.clave}" >
                                 <h:outputText value="#{encuestaEstudiate.clave}" />
                             </p:column>
-                            <p:column headerText="Nombre Completo" 
-                                      filterBy="#{encuestaEstudiate.nombre} " 
-                                      filterMatchMode="contains" 
-                                      sortBy="#{encuestaEstudiate.nombre} "   >                           
+                            <p:column headerText="Nombre Completo" filterBy="#{encuestaEstudiate.nombre} " filterMatchMode="contains" sortBy="#{encuestaEstudiate.nombre} "   >
                                 <h:outputText value="#{encuestaEstudiate.nombre}" />
                             </p:column >
-                            <p:column headerText="Carrera"
-                                      filterBy="#{encuestaEstudiate.siglas}"
-                                      filterMatchMode="contains"
-                                      sortBy="#{encuestaEstudiate.siglas}">
+                            <p:column headerText="Carrera" filterBy="#{encuestaEstudiate.siglas}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.siglas}">
                                 <h:outputText value="#{encuestaEstudiate.siglas}"/>
                             </p:column>
-                            <p:column headerText="Grado"
-                                      filterBy="#{encuestaEstudiate.grado}"
-                                      filterMatchMode="contains"
-                                      sortBy="#{encuestaEstudiate.grado}">
+                            <p:column headerText="Grado" filterBy="#{encuestaEstudiate.grado}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.grado}">
                                 <h:outputText value="#{encuestaEstudiate.grado}"/>
                             </p:column>
-                            <p:column headerText="Carrera"
-                                      filterBy="#{encuestaEstudiate.grupo}"
-                                      filterMatchMode="contains"
-                                      sortBy="#{encuestaEstudiate.grupo}">
+                            <p:column headerText="Carrera" filterBy="#{encuestaEstudiate.grupo}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.grupo}">
                                 <h:outputText value="#{encuestaEstudiate.grupo}"/>
                             </p:column>
-                            <p:column headerText="Carrera"
-                                      filterBy="#{encuestaEstudiate.tutor}"
-                                      filterMatchMode="contains"
-                                      sortBy="#{encuestaEstudiate.tutor}">
+                            <p:column headerText="Carrera" filterBy="#{encuestaEstudiate.tutor}" filterMatchMode="contains" sortBy="#{encuestaEstudiate.tutor}">
                                 <h:outputText value="#{encuestaEstudiate.tutor}"/>
                             </p:column>
-                            <f:facet name="footer">
-                                <p:commandButton actionListener="#{administracionEncuesta.alumnosNoAccedieronVistaDirector()}" value="Actualizar información"
-                                                 icon="fa fa-refresh" class="btn btn-primary" update="@this" process="@this"/>
-                            </f:facet>
                         </p:dataTable>           
                     </p:outputPanel>
 
@@ -251,17 +202,17 @@
             </p:tab>
 
             <p:tab title="Estudiantes que no han accedido" titleStyleClass="noaccedio">
-                <h:form>
+                <h:form id="fr3">
                     <p:outputPanel>
-                        <p:dataTable id="tblAlumnosNoAccedieron" lazy="false" value="#{administracionEncuesta.listadoEvaluacionNa}"   var="alumnosNoAccedieron"
+                        <p:dataTable id="tblAlumnosNoAccedieron" lazy="false" value="#{administracionEncuestaIng.listEvaNADir}"   var="alumnosNoAccedieron"
                                      paginator="true" rows="7"
                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                                      rowsPerPageTemplate="10,20,30,40,50" 
-                                     emptyMessage="No se encontraron registros" filteredValue="#{administracionEncuesta.listaSatFiltrado}"    >
+                                     emptyMessage="No se encontraron registros" filteredValue="#{administracionEncuestaIng.listaFiltradoDir}"    >
 
 
                             <f:facet name="header">
-                                <p:commandLink  ajax="false" class="denegado btn">
+                                <p:commandLink  ajax="false">
                                     <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
                                     <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblAlumnosNoAccedieron" 
                                                     fileName="Reporte_alumnos_que_no_accedieron"/>
@@ -304,10 +255,6 @@
                                       sortBy="#{alumnosNoAccedieron.tutor}">
                                 <h:outputText value="#{alumnosNoAccedieron.tutor}"/>
                             </p:column>
-                            <f:facet name="footer">
-                                <p:commandButton actionListener="#{administracionEncuesta.alumnosNoAccedieronVistaDirector()}" value="Actualizar información"
-                                                 icon="fa fa-refresh" class="btn btn-primary" update="@this" process="@this"/>
-                            </f:facet>
                         </p:dataTable>           
                     </p:outputPanel>
 

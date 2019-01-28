@@ -83,15 +83,15 @@
                                 </p:outputPanel>
                             </div>
                         </div>
-                        <p:tabView>
+                        <p:tabView id="tabView">
                             <p:tab title="Lista de resultados de encuesta terminada">
-                                <h:form>
+                                <h:form id="fr1">
                                     <p:outputPanel >
-                                        <p:dataTable id="tblResEncIngTer" value="#{administracionEncuesta.listadoEvaluacionCompletaEstInf}" 
+                                        <p:dataTable id="tblResEncIngTer" value="#{administracionEncuestaIng.listaEvaCompleta}" 
                                                      paginator="true" rows="10" emptyMessage="No se encontraron registros"
                                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                      rowsPerPageTemplate="10,20,30,40,50"
-                                                     var="encuestaRes" filteredValue="#{administracionEncuesta.listaSatFiltrado}">
+                                                     var="encuestaRes" filteredValue="#{administracionEncuestaIng.listaFiltrado}">
 
                                             <f:facet name="header">
                                                 <p:commandLink  ajax="false">
@@ -138,21 +138,21 @@
                                                 <h:outputText value="#{encuestaRes.tutor}" />
                                             </p:column>
                                             <f:facet name="footer">
-                                                <p:commandButton actionListener="#{administracionEncuesta.alumnosNoAccedieronEncuestaEgreVistaEstInf()}" value="Actualizar información"
-                                                                 icon="fa fa-refresh" class="btn btn-primary" update="@this" process="@this"/>
+                                                <p:commandButton actionListener="#{administracionEncuestaIng.seguimientoEncuestaIyE()}" value="Actualizar información" icon="fa fa-refresh"
+                                                                 class="btn btn-primary" update="tabView:fr1:tblResEncIngTer tabView:fr2:tblResEncIngIncom tabView:fr3:tblRegNoAccedio" process="@form"/>
                                             </f:facet>
                                         </p:dataTable>   
                                     </p:outputPanel>
                                 </h:form>
                             </p:tab>
                             <p:tab id="noCompletos" title="Resultado encuestas no terminadas">
-                                <h:form>
+                                <h:form id="fr2">
                                     <p:outputPanel>
-                                        <p:dataTable id="tblResEncIngIncom" value="#{administracionEncuesta.listaEvNA}" 
+                                        <p:dataTable id="tblResEncIngIncom" value="#{administracionEncuestaIng.listaEvaIncompleta}" 
                                                      paginator="true" rows="10" emptyMessage="No se encontraron registros"
                                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                                                      rowsPerPageTemplate="10,20,30,40,50" 
-                                                     var="encuestaRes" filteredValue="#{administracionEncuesta.listaSatFiltrado}">
+                                                     var="encuestaRes" filteredValue="#{administracionEncuestaIng.listaFiltrado}">
 
                                             <f:facet name="header">
                                                 <p:commandLink  ajax="false">
@@ -199,22 +199,18 @@
                                                       filterMatchMode="contains">
                                                 <h:outputText value="#{encuestaRes.tutor}" />
                                             </p:column>
-                                            <f:facet name="footer">
-                                                <p:commandButton actionListener="#{administracionEncuesta.alumnosNoAccedieronEncuestaEgreVistaEstInf()}" value="Actualizar información"
-                                                                 icon="fa fa-refresh" class="btn btn-primary" update="@this" process="@this"/>
-                                            </f:facet>
                                         </p:dataTable>
                                     </p:outputPanel>
                                 </h:form>
                             </p:tab>
 
                             <p:tab title="Estudiantes que no han accedido">
-                                <h:form>
+                                <h:form id="fr3">
                                     <p:outputPanel>
-                                        <p:dataTable id="tblRegNoAccedio" value="#{administracionEncuesta.listadoEvaluacionIncompletaEstInf}" 
+                                        <p:dataTable id="tblRegNoAccedio" value="#{administracionEncuestaIng.listaEvaNA}" 
                                                      paginator="true" rows="10" emptyMessage="No se encontraron registros" rowsPerPageTemplate="10,20,30,40,50" 
-                                                     paginatorTemplate="CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                     var="alumnosNoAccedieron" filteredValue="#{administracionEncuesta.listaSatFiltrado}" >
+                                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                     var="alumnosNoAccedieron" filteredValue="#{administracionEncuestaIng.listaFiltrado}" >
 
 
                                             <f:facet name="header">
@@ -262,10 +258,6 @@
                                                       filterMatchMode="contains">
                                                 <h:outputText value="#{alumnosNoAccedieron.tutor}"/>
                                             </p:column>
-                                            <f:facet name="footer">
-                                                <p:commandButton actionListener="#{administracionEncuesta.alumnosNoAccedieronEncuestaEgreVistaEstInf()}" 
-                                                                 value="Actualizar información" class="btn btn-primary" icon="fa fa-refresh" update="@this" />
-                                            </f:facet>
 
                                         </p:dataTable>           
                                     </p:outputPanel>
@@ -273,33 +265,27 @@
                                 </h:form>
                             </p:tab>
                             <p:tab title="Porcentaje de avance por carrera">
-                                <h:form>
+                                <h:form id="fr4">
                                     <p:outputPanel>
-                                        <p:dataTable id="tblAlumnosNoAccedieron" lazy="false" value="#{administracionEncuesta.listDatosEncEgre}"   var="datosEncEgre" 
+                                        <p:dataTable id="avanceEncIng" lazy="false" value="#{administracionAvanceEncuestaSatIng.avanceEncServ}"   var="datosEncEgre" 
                                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                                                      rowsPerPageTemplate="10,20,30,40,50" 
-                                                     emptyMessage="No se encontraron registros"  filteredValue="#{administracionEncuesta.listaSatFiltrado}" >
-
-
-                                            <!--f:facet name="header">
-                                                <p:commandLink  ajax="false" class="denegado btn">
-                                                    <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
-                                                    <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblAlumnosNoAccedieron" 
-                                                                    fileName="Reporte_alumnos_que_no_accedieron"/>
-                                                </p:commandLink>
-                
-                                            </f:facet-->
+                                                     emptyMessage="No se encontraron registros"  >
+                                            <f:facet name="footer">
+                                                    <p:commandButton id="actualizar" value="Actualizar tabla" icon="fa fa-refresh" class="btn btn-primary"
+                                                                     actionListener="#{administracionAvanceEncuestaSatIng.mostrarAvanceEncSatIng()}" update="@form" process="@form"/>
+                                            </f:facet>
                                             <p:column headerText="Carrera">
                                                 <h:outputText value="#{datosEncEgre.siglas}"/>
                                             </p:column>
                                             <p:column headerText="Total matrícula">
-                                                <h:outputText value="#{datosEncEgre.totalEncuestados}"/>
-                                            </p:column>
-                                            <p:column headerText="Estudiantes con encuesta completa">
                                                 <h:outputText value="#{datosEncEgre.totalPorCarrera}"/>
                                             </p:column>
+                                            <p:column headerText="Estudiantes con encuesta completa">
+                                                <h:outputText value="#{datosEncEgre.totalAlumnoEncTer}"/>
+                                            </p:column>
                                             <p:column headerText="Estudiantes con encuesta incompleta">
-                                                <h:outputText value="#{datosEncEgre.faltantesDeContestar}"/>
+                                                <h:outputText value="#{datosEncEgre.faltantesPorCont}"/>
                                             </p:column>
                                             <p:column headerText="Porcentaje de avance: Meta 100%" exportable="false">
                                                 <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" 
@@ -308,10 +294,7 @@
                                                     #{datosEncEgre.porcentaje} %
                                                 </div>
                                             </p:column>
-                                            <f:facet name="footer">
-                                                <p:commandButton id="actualizar" value="Actualizar tabla" icon="fa fa-refresh" class="btn btn-primary" 
-                                                                 actionListener="#{administracionEncuesta.datosTablaAvance()}" update="@this" process="@this"/>
-                                            </f:facet>
+
                                         </p:dataTable>           
                                     </p:outputPanel>
 

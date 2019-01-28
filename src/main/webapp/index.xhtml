@@ -96,10 +96,10 @@
                                         <div class="icon">
                                             <i class="fa fa-graduation-cap"></i>
                                         </div>
-                                        <p:link outcome="satisfaccionEgresadosIng"  class="small-box-footer">
+                                        <p:link outcome="encuestas/Estudiantes/satisfaccionEgresadosIng"  class="small-box-footer">
                                             Entrar <i class="fa fa-arrow-circle-right"></i>
                                         </p:link>
-                                        <h:form><p:remoteCommand name="satisfaccionEgresadosIng" action="satisfaccionEgresadosIng" /></h:form>
+                                        <h:form><p:remoteCommand name="satisfaccionEgresadosIng" action="encuestas/Estudiantes/satisfaccionEgresadosIng" /></h:form>
                                     </div>
                                 </div>                                
                             </c:if>
@@ -136,10 +136,10 @@
                                         <div class="icon">
                                             <i class="fa fa-tty"></i>
                                         </div>
-                                        <p:link outcome="servicios"  class="small-box-footer">
+                                        <p:link outcome="encuestas/Estudiantes/servicios"  class="small-box-footer">
                                             Entrar <i class="fa fa-arrow-circle-right"></i>
                                         </p:link>
-                                        <h:form><p:remoteCommand name="servicios" action="servicios" /></h:form>
+                                        <h:form><p:remoteCommand name="servicios" action="encuestas/Estudiantes/servicios" /></h:form>
                                     </div>
                                 </div>                                
                             </c:if>
@@ -217,13 +217,13 @@
                                                 </div>
                                                 <a href="capitalHumano/perfilEmpleadoIn.xhtml" class="small-box-footer">Registrar</a>
                                             </div>
-                                        </div>                                       
+                                        </div>       
                                     </div>
                                 </div>
                             </div>
                         </div>     
                     </c:if>
-                </c:if>
+                </c:if>                                
             </c:if>
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividad eq 2 || controladorEmpleado.nuevoOBJListaPersonal.actividad eq 4}"> 
                 <c:if test="#{controladorEmpleado.incidenciases.size() eq 0? false:true}">

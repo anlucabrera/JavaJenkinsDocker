@@ -21,6 +21,7 @@ import mx.edu.utxj.pye.sgi.ejb.EjbEncuestaServicios;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestas;
 
 /**
@@ -42,7 +43,7 @@ public class EncuestaServicios implements Serializable {
     @Getter @Setter Map<String,String> respuestas;
     @Getter private List<SelectItem> respuestasPosibles;
     @Getter private List<Apartado> apartados;
-    @Getter @Setter private AlumnosEncuestas alumno;
+    @Getter @Setter private Alumnos alumno;
     @Getter @Setter private PeriodosEscolares periodoEsc;
     
     @EJB EjbAdministracionEncuesta ejbAdmEncuesta;
@@ -59,12 +60,12 @@ public class EncuestaServicios implements Serializable {
             evaluacion = ejb.getEvaluacionActiva();
             if (evaluacion != null) {
                 evaluador = logonMB.getCurrentUser();
-                System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaServicios.init()" + evaluador);
+                //System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaServicios.init()" + evaluador);
                 alumno = ejb.obtenerAlumnos(evaluador);
                 evaluadorr=Integer.parseInt(evaluador);
-                System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaServicios.init()" + alumno);
+                //System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaServicios.init()" + alumno);
                 periodoEsc=ejb.getPeriodo(evaluacion);
-                System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaServicios.init()"+ periodoEsc);
+                //System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaServicios.init()"+ periodoEsc);
                 if (alumno != null) {
                     resultado = ejb.getResultado(evaluacion, evaluadorr, respuestas);
                     if (resultado != null) {
