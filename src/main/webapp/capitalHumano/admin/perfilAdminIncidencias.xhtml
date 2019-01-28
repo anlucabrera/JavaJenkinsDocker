@@ -117,7 +117,10 @@
                                                         </f:facet>
                                                     </p:cellEditor>
                                                 </p:column>                                                
-                                                <p:column headerText="Estado" style="width: 10%;text-align: center;">
+                                                <p:column headerText="Estado" style="width: 10%;text-align: center;" 
+                                                          sortBy="#{incidencias.estatus}" 
+                                                          filterBy="#{incidencias.estatus}" 
+                                                          filterMatchMode="contains">
                                                     <p:cellEditor>
                                                         <f:facet name="output"><h:outputText value="#{incidencias.estatus}" /></f:facet>
                                                         <f:facet name="input">

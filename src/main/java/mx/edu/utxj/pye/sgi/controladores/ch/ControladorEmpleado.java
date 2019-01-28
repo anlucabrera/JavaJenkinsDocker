@@ -206,6 +206,7 @@ public class ControladorEmpleado implements Serializable {
         }
         nuevoOBJInformacionAdicionalPersonal.setEdad(restaA);
     }
+    
     public void procesoElectoral() {
         try {
             nuevaListaEventos.clear();

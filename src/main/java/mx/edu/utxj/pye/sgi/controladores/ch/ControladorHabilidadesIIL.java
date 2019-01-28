@@ -24,6 +24,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.HabilidadesInformaticas;
 import mx.edu.utxj.pye.sgi.entity.ch.Idiomas;
 import mx.edu.utxj.pye.sgi.entity.ch.Lenguas;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Messages;
 import org.primefaces.model.StreamedContent;
 
@@ -41,8 +42,7 @@ public class ControladorHabilidadesIIL implements Serializable {
     @Getter    @Setter    private Lenguas nuevOBJLenguas, nuevOBJLenguaSelectec;
     @Getter    @Setter    private Idiomas nuevOBJIdiomas, nuevOBJIdiomaSelectec;
     @Getter    @Setter    private HabilidadesInformaticas nuevOBJHabilidadesInformaticas, nuevOBJHabilidadesInformaticaSelectec;
-    @Getter    @Setter    private Integer personal, direccionInt = 0, pestaniaActiva;
-    @Getter    @Setter    private String claveTraba;
+    @Getter    @Setter    private Integer usuario, direccionInt = 0, pestaniaActiva;
     @Getter    @Setter    private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     @Getter    @Setter    private Date fechaC = new Date();
     @Getter    @Setter    private Date fechaO = new Date();
@@ -60,12 +60,12 @@ public class ControladorHabilidadesIIL implements Serializable {
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado datosUsuarioLogeado;
 
     @Inject    ControladorEmpleado controladorEmpleado;
+    @Inject    UtilidadesCH utilidadesCH;
 
     @PostConstruct
     public void init() {
         System.out.println("ControladorHabilidadesIIL Inicio: " + System.currentTimeMillis());
-        personal = controladorEmpleado.getEmpleadoLogeado();
-        claveTraba = controladorEmpleado.getClavePersonalLogeado();
+        usuario = controladorEmpleado.getEmpleadoLogeado();
 
         nuevOBJIdiomas = new Idiomas();
         nuevOBJLenguas = new Lenguas();
@@ -79,28 +79,44 @@ public class ControladorHabilidadesIIL implements Serializable {
         mostrarListas();
         System.out.println(" ControladorHabilidadesIIL Fin: " + System.currentTimeMillis());
     }
-
+public void reiniciarValores(){
+    nuevOBJLenguas = new Lenguas();
+                direccionInt = 0;
+}
 /////////////////////////////////////////////////////////////////////////////Lenguas\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     public void createLengua() {
         try {
+            //Inicialización de las relaciones entre las tablas “ExperienciasLaborales” con “Personal”
             nuevOBJLenguas.setClavePersonal(new Personal());
-            nuevOBJLenguas.getClavePersonal().setClave(personal);
+
+            //Una vez realizada la inicialización se procede a realizar la asignación de los valores correspondientes mediante los métodos Get().Set(Valor_A_Asignar)
+            nuevOBJLenguas.getClavePersonal().setClave(usuario);
+
+            //Posteriormente se procese a realizar la asignación de valores que no se obtienen mediante la interfaz grafica
             nuevOBJLenguas.setEstatus("Aceptado");
 
+            //En este apartado se procede a comprobar si la información a registrar ya existe en la BD, en caso de ya existir se envía la información al método “actualizaLengua” el cual sirve para actualizar la información, posteriormente se cierra el flujo del proceso
             if (nuevOBJLenguas.getLengua() != null) {
                 actualizaLengua();
-            } else {
-                nuevOBJLenguas = habilidades.crearNuevoLenguas(nuevOBJLenguas);
-                nombreTabla = "Lenguas";
-                numeroRegistro = nuevOBJLenguas.getLengua().toString();
-                accion = "Insert";
-                agregaBitacora();
-                Messages.addGlobalInfo("¡Operación exitosa!!");
-                nuevOBJLenguas = new Lenguas();
-                mostrarListas();
-                direccionInt = 0;
-                pestaniaActiva = 2;
+                return;
             }
+
+            //En caso de que sea información nueva se procede a enviar la información al “EJB” el cual la agregara a la BD.
+            nuevOBJLenguas = habilidades.crearNuevoLenguas(nuevOBJLenguas);
+
+            //Después de agregar la información a la BD, se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
+            utilidadesCH.agregaBitacora(usuario, nuevOBJLenguas.getLengua().toString(), "Lenguas", "Insert");
+
+            //Al finalizar los dos registros de información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();”
+            mostrarListas();
+
+            //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
+            reiniciarValores();
+            //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.     
+            pestaniaActiva = 2;
+            
+            //Finalmente se le informa al usuario cual es el resultado obtenido
+            utilidadesCH.mensajes("", "I", "C");            
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorHabilidadesIIL.class.getName()).log(Level.SEVERE, null, ex);
@@ -148,7 +164,7 @@ public class ControladorHabilidadesIIL implements Serializable {
             nuevOBJIdiomas.setFechaEvaluacion(fechaC);
             nuevOBJIdiomas.setFechaVigenciaA(fechaO);
             nuevOBJIdiomas.setFechaVigenciaDe(fechaF);
-            nuevOBJIdiomas.getClavePersonal().setClave(personal);
+            nuevOBJIdiomas.getClavePersonal().setClave(usuario);
             nuevOBJIdiomas.setEstatus("Denegado");
 
             if (nuevOBJIdiomas.getIdioma() != null) {
@@ -209,7 +225,7 @@ public class ControladorHabilidadesIIL implements Serializable {
     public void createrInformaticas() {
         try {
             nuevOBJHabilidadesInformaticas.setClavePersonal(new Personal());
-            nuevOBJHabilidadesInformaticas.getClavePersonal().setClave(personal);
+            nuevOBJHabilidadesInformaticas.getClavePersonal().setClave(usuario);
             nuevOBJHabilidadesInformaticas.setEstatus("Aceptado");
             if (nuevOBJHabilidadesInformaticas.getConocimiento() != null) {
                 actualizaInformaticas();
@@ -269,19 +285,11 @@ public class ControladorHabilidadesIIL implements Serializable {
 ////////////////////////////////////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
     public void subirEvidenciaIdioma() {
-        if (file != null) {
-            ruta = carga.subir(file, new File(claveTraba.concat(File.separator).concat("idiomas").concat(File.separator)));
-            if (!"Error: No se pudo leer el archivo".equals(ruta)) {
-                nuevOBJIdiomas.setEvidenciaDoc(ruta);
-                direccionInt = 1;
-                ruta = null;
-            } else {
-                ruta = null;
-                Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !!");
-            }
-        } else {
-            Messages.addGlobalWarn("Es necesario seleccionar un archivo !!");
-        }
+        //Se invoca el método agregarEvidencias en el cual se envía ciertos parámetros (descritos dentro del método) el cual regresara la ruta del archivo ya almacenado en el servidor.
+        nuevOBJIdiomas.setEvidenciaDoc(utilidadesCH.agregarEvidencias(file, usuario.toString(), "idiomas", ""));
+
+        //Finalmente se actualiza el valor de la variable para permitir guardar la información.
+        direccionInt = 1;
     }
 
     public void mostrarListas() {
@@ -289,9 +297,9 @@ public class ControladorHabilidadesIIL implements Serializable {
             nuevaListaHabilidadesInformaticas.clear();
             nuevaListaIdiomas.clear();
             nuevaListaLenguas.clear();
-            nuevaListaHabilidadesInformaticas = habilidades.mostrarHabilidadesInformaticas(personal);
-            nuevaListaIdiomas = habilidades.mostrarIdiomas(personal);
-            nuevaListaLenguas = habilidades.mostrarLenguas(personal);
+            nuevaListaHabilidadesInformaticas = habilidades.mostrarHabilidadesInformaticas(usuario);
+            nuevaListaIdiomas = habilidades.mostrarIdiomas(usuario);
+            nuevaListaLenguas = habilidades.mostrarLenguas(usuario);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorHabilidadesIIL.class.getName()).log(Level.SEVERE, null, ex);
@@ -421,7 +429,7 @@ public class ControladorHabilidadesIIL implements Serializable {
         try {
             Date fechaActual = new Date();
             nuevaBitacoraacceso = new Bitacoraacceso();
-            nuevaBitacoraacceso.setClavePersonal(personal);
+            nuevaBitacoraacceso.setClavePersonal(usuario);
             nuevaBitacoraacceso.setNumeroRegistro(numeroRegistro);
             nuevaBitacoraacceso.setTabla(nombreTabla);
             nuevaBitacoraacceso.setAccion(accion);

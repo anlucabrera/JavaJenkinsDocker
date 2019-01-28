@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>  
+        <c:if test="#{!controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
+        </c:if> 
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <h:outputScript>
+            PrimeFaces.locales['es'] = {
+            closeText: 'Cerrar',
+            prevText: 'Anterior',
+            nextText: 'Siguiente',
+            monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+            dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+            dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+            dayNamesMin: ['D','L','M','M','J','V','S'],
+            weekHeader: 'Semana',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: '',
+            timeOnlyTitle: 'Sólo hora',
+            timeText: 'Tiempo',
+            hourText: 'Hora',
+            minuteText: 'Minuto',
+            secondText: 'Segundo',
+            currentText: 'Fecha actual',
+            ampm: false,
+            month: 'Mes',
+            week: 'Semana',
+            day: 'Día',
+            allDayText : 'Todo el día'
+            };
+        </h:outputScript>
+        <p:panel id="informacion">
+            <section class="content">
+                <div class="row">
+                    <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                    <div class="col-md-10">
+                        <div class="nav-tabs-custom">
+                            <div class="row">
+                                <div class="col-lg-10 col-xs-10"/>
+                                <div class="col-lg-2 col-xs-2">
+                                    <p:link outcome="perfilEmpleado">
+                                        <i class="fa fa-reply"></i>
+                                        <span>Regresar a mi perfil</span>
+                                    </p:link>
+                                </div>      
+                            </div>                            
+                            <p:tabView activeIndex="#{controladorIncidenciasPersonal.pestaniaActiva}">
+                                <p:tab title="Incapacidades">
+                                    <h:form id="frmInca" enctype="multipart/form-data"> 
+                                        <p:outputPanel >            
+                                            <p:autoUpdate/>
+                                            <p:panel header="Registro de Incapacidades" class="box box-primary">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-sm-3 col-md-3 col-lg-3">  
+                                                                                    <p:outputLabel for="asunto" style="font-size: large" value="Asunto"/>                                
+                                                                                    <p:inputText id="asunto" class="form-control" placeholder="Asunto"  value="Incapacidad" disabled="true"/>
+                                                                                    <p:message for="asunto" display="tooltip" />       
+                                                                                </div>
+                                                                                <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                                    <p:outputLabel for="numOf" style="font-size: large" value="Número de incapacidad"/>                                
+                                                                                    <p:inputText id="numOf" class="form-control" placeholder="Número de incapacidad" required="true" value="#{controladorIncidenciasPersonal.nuevOBJIncapacidad.numeroIncapacidad}"/>
+                                                                                    <p:message for="numOf" display="tooltip" />   
+                                                                                </div>
+                                                                                <div class="col-sm-3 col-md-3 col-lg-3">                                                                              
+                                                                                    <p:outputLabel for="fechaIn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de inicio" />
+                                                                                    <p:calendar locale="es" id="fechaIn" value="#{controladorIncidenciasPersonal.nuevOBJIncapacidad.fechaInicio}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                    <p:message for="fechaIn" display="tooltip" />   
+                                                                                </div>
+                                                                                <div class="col-sm-3 col-md-3 col-lg-3">                                                                              
+                                                                                    <p:outputLabel for="fechaFin" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de fin" />
+                                                                                    <p:calendar locale="es" id="fechaFin" value="#{controladorIncidenciasPersonal.nuevOBJIncapacidad.fechaFin}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                    <p:message for="fechaFin" display="tooltip" />   
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                    <p:outputPanel autoUpdate="true">
+                                                                                        <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia de la incapacidad #{controladorIncidenciasPersonal.nuevOBJIncapacidad.evidencia eq null?'':'(ya cuenta con el archivo cargado)'}" />
+                                                                                    </p:outputPanel>
+                                                                                    <o:inputFile id="file" value="#{controladorIncidenciasPersonal.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                                    <br/>
+                                                                                    <h:message id="messageForFile" for="file" />
+                                                                                    <br/>
+                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{controladorIncidenciasPersonal.agregarEvidenciaIncapacidad()}"/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                    <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="* Este documento es indispensable de entregar en el Departamento de Personal para su verificación y validez" />
+                                                                                </div> 
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr/>
+                                                                        <p:outputPanel autoUpdate="true">
+                                                                            <div class="form-group"> 
+                                                                                <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                    <p:commandButton id="btnBuscarIncapacidades" value="Guardar información" actionListener="#{controladorIncidenciasPersonal.crearIncapacidad()}" 
+                                                                                                     disabled="#{!controladorIncidenciasPersonal.activo}"
+                                                                                                     icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmListaDistinciones')update();"
+                                                                                                     update="@form"  process="@form" />
+                                                                                </div>
+                                                                            </div>
+                                                                        </p:outputPanel>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>                                                   
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p:panel>
+                                        </p:outputPanel>
+                                        <p:outputPanel>
+                                            <p:dataTable id="tblInca"  value="#{controladorIncidenciasPersonal.listaIncapacidades}"  var="incapacidad"
+                                                         paginator="true" rows="10" editable="true" style="margin-bottom:20px"
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="5,10,15,20,25,30" 
+                                                         emptyMessage="No se encontraron Registros." rendered="true">
+
+                                                <p:ajax event="rowEdit" listener="#{controladorIncidenciasPersonal.onRowEditInca}" update="tblInca" />
+                                                <p:ajax event="rowEditCancel" listener="#{controladorIncidenciasPersonal.onRowCancel}" update="tblInca" />
+
+                                                <p:column headerText="Asunto" 
+                                                          sortBy="incapacidad" 
+                                                          filterBy="incapacidad" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="Incapacidad" />
+                                                </p:column>                                               
+                                                <p:column headerText="Fecha Inicio" 
+                                                          sortBy="#{incapacidad.fechaInicio}" 
+                                                          filterBy="#{incapacidad.fechaInicio}" 
+                                                          filterMatchMode="contains">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputLabel value="#{incapacidad.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{incapacidad.fechaInicio}" pattern="dd-MM-yyyy" mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>                                                  
+                                                <p:column headerText="Fecha Fin" 
+                                                          sortBy="#{incapacidad.fechaFin}" 
+                                                          filterBy="#{incapacidad.fechaFin}" 
+                                                          filterMatchMode="contains">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputLabel value="#{incapacidad.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{incapacidad.fechaFin}" pattern="dd-MM-yyyy" mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>    
+                                                <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
+                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(incapacidad.evidencia)}" target="_blank">
+                                                        <i class="fa fa-search"></i>
+                                                        <span>Ver</span>
+                                                    </p:link>
+                                                </p:column>
+                                                <p:column style="width:32px;" class="noprint" >
+                                                    <p:rowEditor/>
+                                                </p:column>
+                                            </p:dataTable>  
+                                        </p:outputPanel>    
+                                    </h:form> 
+                                    <h:form id="frmPlantillaActiva" >
+                                        <p:dialog id="dlgPlantillaActiva" modal="true" header="Plantilla activa" widgetVar="dlgPlantillaActiva" minimizable="true" maximizable="true" position="center">
+
+                                            <p:outputPanel >
+                                                <h:panelGrid columns="1"  class="col-md-12">
+                                                    <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="* Este documento es indispensable de entregar en el departamento de personal para su verificacion y validez" />
+                                                </h:panelGrid>
+                                            </p:outputPanel>
+
+                                        </p:dialog>
+                                    </h:form>
+                                </p:tab>
+                            </p:tabView>
+
+                            <p:dialog header="Agregar Evidencias" widgetVar="dlgComentario" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true"
+                                      visible="#{controladorIncidenciasPersonal.archivoSC}">
+                                <h:form id="frmComentario"  enctype="multipart/form-data"> 
+
+                                    <p:panelGrid id="pnlAgregarComentario" style="text-align:justify;" columns="1">
+                                        <p:outputLabel value="Incidencia #{controladorIncidenciasPersonal.nuevOBJIncidenciasEditada.tipo}" />
+
+                                        <p:outputPanel>            
+                                            <p:autoUpdate/>
+                                            <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large; color: #dd4b39" value="* En caso de contar con algún documento que compruebe su incidencia puede anexarlo" />
+                                            <p:outputPanel autoUpdate="true">
+                                                <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia:#{controladorIncidenciasPersonal.nuevOBJIncidenciasEditada.evidencia eq null?'':'(ya cuenta con el archivo cargado)'}" />
+                                            </p:outputPanel>
+                                            <o:inputFile id="file" value="#{controladorIncidenciasPersonal.file}" accept="image/png||image/jpeg||image/pjpeg||application/pdf" acceptMessage="Solo se permiten archivos PDF e imagenes JPEG, PJPEG y PNG" maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                            <br/>
+                                            <h:message id="messageForFile" for="file" />
+                                            <br/>
+                                            <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{controladorIncidenciasPersonal.agregarEvidenciaIncidenciaDesfasada()}"/>
+                                        </p:outputPanel>
+                                        <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" class="btn-primary btn-block col-md-3" rendered="false"
+                                                         icon="fa fa-pencil-square-o" update="@form" process="@form" oncomplete="PF('frmListaIncidencias').update();"/> 
+
+                                    </p:panelGrid>
+                                    <p:autoUpdate/>
+                                </h:form>
+                            </p:dialog>          
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </p:panel>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+</ui:composition>

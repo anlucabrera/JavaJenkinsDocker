@@ -1,9 +1,7 @@
 package mx.edu.utxj.pye.sgi.controladores.poa;
 
 import java.io.Serializable;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.ManagedBean;
@@ -27,6 +25,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Productos;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAreas;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosPK;
 import mx.edu.utxj.pye.sgi.entity.pye2.RecursosActividad;
+import mx.edu.utxj.pye.sgi.util.POAUtilidades;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.RowEditEvent;
@@ -75,11 +74,12 @@ public class ControladorPOARecurso implements Serializable {
 
     @EJB    EjbPoaSelectec poaSelectec;
     @Inject    ControladorEmpleado controladorEmpleado;
+    @Inject    POAUtilidades pOAUtilidades;
 
     @PostConstruct
     public void init() {
         System.out.println("inicio"+System.currentTimeMillis());
-        ejercicioFiscal =  Short.parseShort(String.valueOf(fechaActual.getYear()-100));
+        ejercicioFiscal =  pOAUtilidades.obtenerejercicioFiscal("Recurso",100);
         numPm1 = null;        numPm2 = null;        numPm3 = null;        numPm4 = null;        numPm5 = null;        numPm6 = null;
         numPm7 = null;        numPm8 = null;        numPm9 = null;        numPm10 = null;        numPm11 = null;        numPm12 = null;
         alineacionSeleccionada = false;

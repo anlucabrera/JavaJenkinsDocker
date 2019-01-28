@@ -33,11 +33,11 @@
     </ui:define>
 
     <ui:define name="title">
-        Plan de Trabajo Anual
+        Programa de Trabajo Anual
     </ui:define>
 
     <ui:define name="description">
-        Descripción y Justificación
+        Evaluación
     </ui:define>
 
     <ui:define name="body">
@@ -116,7 +116,7 @@
                                         <p:column>  
                                             <p:rowExpansion>
                                                 <p:dataTable id="dtbPoaEvaluacion" value="#{estrategiasRegistro.actividadesPoas}" var="poa" emptyMessage="No hay actividades a evaluar en este mes"
-                                                             editable="true" editMode="row" widgetVar="dtbPoaEvaluacion" rowKey="#{poa.actividadesPoa.actividadPoa}" 
+                                                             editable="true" editMode="row" rowStyleClass="#{poa.actividadesPoa.numeroS eq 0?'actividad':''}" widgetVar="dtbPoaEvaluacion" rowKey="#{poa.actividadesPoa.actividadPoa}" 
                                                              sortBy="#{poa.actividadesPoa.cuadroMandoInt.lineaAccion.lineaAccion}" expandableRowGroups="true">
 
                                                     <p:columnGroup type="header">

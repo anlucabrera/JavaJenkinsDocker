@@ -334,7 +334,7 @@
                                             <p:dialog header="Evidencias" widgetVar="evidenciaDialog1" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
                                                 <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
                                                     <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty controladorHabilidadesIIL.nuevOBJIdiomaSelectec}">
-                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorHabilidadesIIL.convertirRuta(controladorHabilidadesIIL.nuevOBJIdiomaSelectec.evidenciaDoc)}"/>       
+                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorHabilidadesIIL.nuevOBJIdiomaSelectec.evidenciaDoc)}"/>       
                                                     </p:panelGrid>
                                                 </p:outputPanel>
                                             </p:dialog>

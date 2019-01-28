@@ -18,6 +18,7 @@ import mx.edu.utxj.pye.sgi.ejb.poa.EjbPoaSelectec;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
+import mx.edu.utxj.pye.sgi.util.POAUtilidades;
 import org.omnifaces.cdi.ViewScoped;
 
 @Named
@@ -43,11 +44,12 @@ public class ControladorPOAJustificacion implements Serializable {
     
     @EJB    EjbPoaSelectec poaSelectec;
     @Inject    ControladorEmpleado controladorEmpleado;
+    @Inject    POAUtilidades pOAUtilidades;
 
     @PostConstruct
     public void init() {
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARegistro.init()");
-        ejercicioFiscal =  Short.parseShort(String.valueOf(fechaActual.getYear()-100));
+        ejercicioFiscal =  pOAUtilidades.obtenerejercicioFiscal("Justificacion",100);
         alineacionActiva = false; 
         consultarListasInit();
     }

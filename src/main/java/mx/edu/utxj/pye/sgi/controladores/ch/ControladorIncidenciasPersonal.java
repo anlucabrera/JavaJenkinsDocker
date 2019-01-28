@@ -3,6 +3,7 @@ package mx.edu.utxj.pye.sgi.controladores.ch;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.omnifaces.util.Messages;
 import org.primefaces.model.StreamedContent;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.Part;
@@ -47,19 +49,19 @@ public class ControladorIncidenciasPersonal implements Serializable {
     @Getter    @Setter    private Incidencias nuevOBJIncidencias=new Incidencias(),nuevOBJIncidenciasEditada=new Incidencias();
     @Getter    @Setter    private Incapacidad nuevOBJIncapacidad=new Incapacidad();
     @Getter    @Setter    private Cuidados nuevOBJCuidados=new Cuidados();
-    @Getter    @Setter    private Date tiempo=new Date();
     @Getter    @Setter    private DateFormat dateFormat = new SimpleDateFormat("HH:mm");
-    @Getter    @Setter    private Date fechaActual = new Date();
     @Getter    @Setter    private Boolean registro = true,activo=false,archivoSC=false;
-    @Getter    @Setter    private Date fechaI = new Date();
-    @Getter    @Setter    private Date fechaF = new Date();
+    @Getter    @Setter    private Date tiempo=new Date();
+    @Getter    @Setter    private Date fechaActual= new Date();
+    @Getter    @Setter    private Date fechaI =new Date();
+    @Getter    @Setter    private Date fechaF =new Date();
 
     @Getter    @Setter    private Part file;
     @Getter    private String ruta;
     @Getter    StreamedContent content;
-    
+
     @EJB    EjbCarga carga;
-//@EJB    
+//@EJB
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
 //@Inject
     @Inject    ControladorEmpleado controladorEmpleado;
@@ -77,8 +79,12 @@ public class ControladorIncidenciasPersonal implements Serializable {
         tiposIncidencias.clear();
         tiposIncidencias.add("No registro entrada");
         tiposIncidencias.add("No registro salida");
-        tiposIncidencias.add("Retardo menor");
-        tiposIncidencias.add("Retardo mayor");
+        if (controladorEmpleado.getNuevoOBJListaPersonal().getActividad()== 3){
+            tiposIncidencias.add("Retardo");
+        } else {
+            tiposIncidencias.add("Retardo menor");
+            tiposIncidencias.add("Retardo mayor");
+        }
         tiposIncidencias.add("Salida anticipada");
         tiposIncidencias.add("Inasistencia");
         
@@ -95,7 +101,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
     public void onRowCancel(RowEditEvent event) {
         Messages.addGlobalInfo("¡Operación cancelada!");
     }
-    
+
     public String convertirRutaVistaEvidencia(String ruta) {
         if (!"".equals(ruta)) {
             File file = new File(ruta);
@@ -156,15 +162,26 @@ public class ControladorIncidenciasPersonal implements Serializable {
             }
 
             List<Incidencias> list1 = new ArrayList<>();
+            List<Incidencias> list2 = new ArrayList<>();
 
             list1 = ejbNotificacionesIncidencias.mostrarIncidenciasArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
 
-            list1.forEach((t) -> {
-                if ((t.getFecha().getYear() - 100) == (fechaActual.getYear() - 100)) {
-                    numeroIN = numeroIN + 1;
-                }
-            });
-            nuevOBJIncidencias.setNumeroOficio(numeroIN + 1);
+            if (!list1.isEmpty()) {
+                list1.forEach((t) -> {
+                    if ((t.getFecha().getYear() - 100) == (fechaActual.getYear() - 100)) {
+                        list2.add(t);
+                    }
+                });
+            }
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.mostrarLista(1)"+numeroIN);
+            if (!list2.isEmpty()) {
+                Collections.sort(list2, (x, y) -> Integer.compare(x.getNumeroOficio(),y.getNumeroOficio()));
+                list2.forEach((t) -> {
+                    numeroIN=t.getNumeroOficio();
+                });
+            }
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.mostrarLista(2)"+numeroIN);
+            nuevOBJIncidencias.setNumeroOficio((numeroIN+1));
 
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause());
@@ -182,10 +199,42 @@ public class ControladorIncidenciasPersonal implements Serializable {
             if ((tiempo.getHours() == 0 && tiempo.getMinutes() == 0) && (nuevOBJIncidencias.getTipo().equals("Retardo menor") || nuevOBJIncidencias.getTipo().equals("Retardo mayor") || nuevOBJIncidencias.getTipo().equals("Salida anticipada"))) {
                 Messages.addGlobalWarn("¡No puede registrar una incidencia con el tiempo 00:00!");
             } else {
+                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearIncidencia()"+nuevOBJIncidencias.getTipo());
+                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearIncidencia()"+tiempo.getHours()+" - "+tiempo.getMinutes());
                 if (nuevOBJIncidencias.getNumeroOficio() != 0) {
-                    if(nuevOBJIncidencias.getTipo().equals("Inasistencia")){
-                    tiempo = new Date(0, 0, 0, 8, 0);
+                    switch (nuevOBJIncidencias.getTipo()) {
+                        case "Inasistencia":
+                            tiempo = new Date(0, 0, 0, 8, 0);
+                            break;
+                        case "Retardo menor":
+                            if (tiempo.getHours() != 0) {
+                                if (tiempo.getMinutes() < 11 || tiempo.getMinutes() > 20) {
+                                    Messages.addGlobalWarn("¡El Retardo menor es desde los 11 minutos hasta los 20 minutos!");
+                                    return;
+                                }
+                            }else{
+                                if (tiempo.getMinutes() < 11 || tiempo.getMinutes() > 20) {
+                                    Messages.addGlobalWarn("¡El Retardo menor es desde los 11 minutos hasta los 20 minutos!");
+                                    return;
+                                }
+                            }
+                            break;
+                        case "Retardo mayor":
+                            if (tiempo.getHours() == 0) {
+                                if (tiempo.getMinutes() < 21) {
+                                    Messages.addGlobalWarn("¡El Retardo mayor es desde los 21 minutos!");
+                                    return;
+                                }
+                            }
+                            break;
+                        case "Retardo":
+                            if (tiempo.getMinutes() < 6) {
+                                Messages.addGlobalWarn("¡El Retardo es desde de los 6 minutos!");
+                                return;
+                            }
+                            break;
                     }
+                    
                     nuevOBJIncidencias.setTiempo(dateFormat.format(tiempo));
                     Integer dias = (int) ((fechaActual.getTime() - nuevOBJIncidencias.getFecha().getTime()) / 86400000);
                     Integer maximo = 0;
@@ -270,6 +319,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
             ejbNotificacionesIncidencias.eliminarIncidencias(incidencias);
             mostrarLista();
             System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.eliminarIncidencia()");
+            Ajax.update("@form");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);

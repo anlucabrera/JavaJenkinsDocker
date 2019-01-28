@@ -89,7 +89,7 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
         ejes = new EjesRegistro(0);
 
         claveArea = 0;
-        ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 100));
+        ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 101));
 
         consultarListas();
 

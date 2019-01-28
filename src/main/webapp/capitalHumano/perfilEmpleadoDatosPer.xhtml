@@ -90,7 +90,7 @@
                                                                     </div>
                                                                     <div class="col-sm-12 col-md-12 col-lg-3">
                                                                         <p:outputLabel for="lugar" style="font-size: large" value="Lugar de procedencia:"/>
-                                                                        <p:inputText id="lugar" class="form-control" disabled="true" value="#{datosPersonales.procedencia}"/>
+                                                                        <p:inputText id="lugar" class="form-control" disabled="true" value="#{datosPersonales.nuevoOBJPersonal.localidad}, #{datosPersonales.nuevoOBJPersonal.municipio}, #{datosPersonales.nuevoOBJPersonal.estado}, #{datosPersonales.nuevoOBJPersonal.pais}."/>
                                                                         <p:message for="lugar" display="tooltip" />
                                                                         <hr/>
                                                                     </div>
@@ -114,7 +114,7 @@
                                                                     </div>
                                                                     <div class="col-sm-12 col-md-6 col-lg-3">
                                                                         <p:outputLabel value="Fecha de nacimiento:" for="fecgaN" style="font-size: large"/>
-                                                                        <p:inputText id="fecgaN" class="form-control" value="#{datosPersonales.fechaN}"/> 
+                                                                        <p:calendar locale="es" id="fecgaN" value="#{datosPersonales.nuevoOBJPersonal.fechaNacimiento}" pattern="dd-MM-yyyy" mask="true"/>
                                                                         <p:message for="fecgaN" display="tooltip" />
                                                                         <hr/>
                                                                     </div>

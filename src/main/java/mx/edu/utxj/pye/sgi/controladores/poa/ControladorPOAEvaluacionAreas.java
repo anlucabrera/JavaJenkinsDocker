@@ -22,6 +22,9 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbPoaSelectec;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
+import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
@@ -30,6 +33,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
+import mx.edu.utxj.pye.sgi.util.POAUtilidades;
 import org.omnifaces.util.Messages;
 import org.omnifaces.util.Servlets;
 import org.primefaces.event.RowEditEvent;
@@ -72,14 +76,20 @@ public class ControladorPOAEvaluacionAreas implements Serializable {
     @Getter    @Setter    private Double porcentajeCuatrimestre=0D,porcentejeAlCorte=0D;
     @Getter    @Setter    private String semaforoC="",semaforoG="";
     
+    @Getter    @Setter    private List<Eventos> nuevaListaEventos = new ArrayList<>();
+    
     @Getter    @Setter    private List<Part> files=new ArrayList<>();
     @Getter    private String ruta;
     @Getter    StreamedContent content;
     
     @EJB    EjbPoaSelectec poaSelectec;
-    @Inject    ControladorEmpleado controladorEmpleado;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
     @EJB    EjbCarga carga;
+    @EJB    EjbAreasLogeo ejbAreasLogeo;
 
+    @Inject    ControladorEmpleado controladorEmpleado;
+    @Inject    POAUtilidades pOAUtilidades;
+    
     @PostConstruct
     public void init() {
         System.out.println("ControladorHabilidadesIIL Inicio: " + System.currentTimeMillis());
@@ -87,39 +97,33 @@ public class ControladorPOAEvaluacionAreas implements Serializable {
         ejesesFiltrado.clear();
         actividadesPoasAreas.clear();
         actividadesPoasAreasEjes.clear();
-                
-        ejes=new EjesRegistro(0);
-                
-        ejercicioFiscal =  Short.parseShort(String.valueOf(fechaActual.getYear()-101));
-        mes=fechaActual.getMonth();
-        
-        claveArea = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
-        siglaArea = "PyE";
-        switch(mes){
-            case 0: mesNombre="Enero"; break;
-            case 1: mesNombre="Febrero"; break;
-            case 2: mesNombre="Marzo"; break;
-            case 3: mesNombre="Abril"; break;
-            case 4: mesNombre="Mayo"; break;
-            case 5: mesNombre="Junio"; break;
-            case 6: mesNombre="Julio"; break;
-            case 7: mesNombre="Agosto"; break;
-            case 8: mesNombre="Septiembre"; break;
-            case 9: mesNombre="Octubre"; break;
-            case 10: mesNombre="Noviembre"; break;
-            case 11: mesNombre="Diciembre"; break;            
-        }
-        
-        
+        ejes = new EjesRegistro(0);
+        ejercicioFiscal = pOAUtilidades.obtenerejercicioFiscal("Evaluacion", 101);
+        mes = pOAUtilidades.obtenerMes("Evaluacion");
+        mesNombre = pOAUtilidades.obtenerMesNombre(mes);
+        datosArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+
         consultarListas();
         System.out.println(" ControladorHabilidadesIIL Fin: " + System.currentTimeMillis());
     }
 
+    public void datosArea(Short clave) {
+        try {
+            claveArea = 0;
+            AreasUniversidad areaPOASeleccionada = new AreasUniversidad();
+            areaPOASeleccionada = ejbAreasLogeo.mostrarAreasUniversidad(clave);
+            claveArea = areaPOASeleccionada.getArea();
+            siglaArea = areaPOASeleccionada.getSiglas();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorRegistroActividadesPOAPyE.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     // ---------------------------------------------------------------- Listas -------------------------------------------------------------
- 
     public void consultarListas() {
         ejesesFiltrado.clear();
-        ejesesFiltrado.add(new EjesRegistro(0, "Seleccione uno","Seleccione uno","",""));
+        ejesesFiltrado.add(new EjesRegistro(0, "Seleccione uno", "Seleccione uno", "", ""));
 
         actividadesPoasAreas = poaSelectec.mostrarActividadesPoasArea(claveArea);
         ejeses = poaSelectec.mostrarEjesRegistros();
@@ -142,15 +146,15 @@ public class ControladorPOAEvaluacionAreas implements Serializable {
             Collections.sort(ejesesFiltrado, (x, y) -> Integer.compare(x.getEje(), y.getEje()));
         }
     }
-    
-    public void tipoVista(){
-        if(general){
+
+    public void tipoVista() {
+        if (general) {
             generaListaActividadesEje();
-        }else{
+        } else {
             generaListaActividades();
         }
     }
-    
+
     public void consultarEje(ValueChangeEvent event) {
         ejesesFiltrado.forEach((t) -> {
             if (t.getEje() == Integer.parseInt(event.getNewValue().toString())) {
@@ -158,11 +162,11 @@ public class ControladorPOAEvaluacionAreas implements Serializable {
             }
         });
         claveEje = ejes.getEje();
-         if(general){
+        if (general) {
             generaListaActividadesEje();
-        }else{
+        } else {
             generaListaActividades();
-         }
+        }
     }
 
     public void generaListaActividades() {
@@ -403,6 +407,7 @@ public class ControladorPOAEvaluacionAreas implements Serializable {
     }
        
     public void onRowEdit(RowEditEvent event) {
+        archivoSC = false;
         ultimaEstrategiaExpandida=new Estrategias();
         mes1 = 0;        mes2 = 0;        mes3 = 0;        mes4 = 0;        mes5 = 0;        mes6 = 0;
         mes7 = 0;        mes8 = 0;        mes9 = 0;        mes10 = 0;        mes11 = 0;        mes12 = 0;
@@ -471,6 +476,7 @@ public class ControladorPOAEvaluacionAreas implements Serializable {
     }
 
     public void onRowCancel(RowEditEvent event) {
+        archivoSC = false;
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowCancel(1)"+event.getObject());
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowCancel(2)" + event.getObject().getClass());
         actividad nuevaactividad = (actividad) event.getObject();
@@ -568,7 +574,7 @@ public class ControladorPOAEvaluacionAreas implements Serializable {
                 for (Part file : files) {
 
                     System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(3)");
-                    ruta = carga.subir(file, new File("2018".concat(File.separator).concat(siglaArea).concat(File.separator).concat(mesNombre).concat(File.separator).concat("EVALUACION_POA").concat(File.separator)));
+                    ruta = carga.subir(file, new File("2019".concat(File.separator).concat(siglaArea).concat(File.separator).concat(mesNombre).concat(File.separator).concat("EVALUACION_POA").concat(File.separator)));
 
                     if (!"Error: No se pudo leer el archivo".equals(ruta)) {
                         String name = Servlets.getSubmittedFileName(file);

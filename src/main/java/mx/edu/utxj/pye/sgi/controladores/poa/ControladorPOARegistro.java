@@ -21,6 +21,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.UnidadMedidas;
+import mx.edu.utxj.pye.sgi.util.POAUtilidades;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
@@ -61,11 +62,12 @@ public class ControladorPOARegistro implements Serializable {
 
     @EJB    EjbPoaSelectec poaSelectec;
     @Inject    ControladorEmpleado controladorEmpleado;
+    @Inject    POAUtilidades pOAUtilidades;
 
     @PostConstruct
     public void init() {
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARegistro.init()");
-        ejercicioFiscal =  Short.parseShort(String.valueOf(fechaActual.getYear()-100));
+        ejercicioFiscal =  pOAUtilidades.obtenerejercicioFiscal("Registro",100);
         unidadDMedida = null;
         numPm1 = null;        numPm2 = null;        numPm3 = null;        numPm4 = null;        numPm5 = null;        numPm6 = null;
         numPm7 = null;        numPm8 = null;        numPm9 = null;        numPm10 = null;        numPm11 = null;        numPm12 = null;

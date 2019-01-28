@@ -429,7 +429,12 @@
                                 <p:link href="/poa/pye/evaluacionActividadesPyE.xhtml"><i class="fa fa-calendar-check-o"></i>
                                     <span>Evaluación</span>
                                 </p:link>
-                            </li> 
+                            </li>
+                            <li>
+                                <p:link href="/poa/pye/reportePOA.xhtml"><i class="fa fa-calendar-check-o"></i>
+                                    <span>Reportes</span>
+                                </p:link>
+                            </li>
                         </c:if>
                     </ul>
                 </li>               
@@ -475,11 +480,33 @@
                 </li>
             </c:if>
 
-            <li>
-                <p:link href="/capitalHumano/perfilEmpleadoIn.xhtml">
-                    <i class="fa fa-clock-o"></i>
-                    <span>Incidencias</span>
-                </p:link>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-file-text-o"></i> <span>Justificación de Asistencia</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu" style="display: none;">
+                    <li>
+                        <p:link href="/capitalHumano/incidencias.xhtml"><i class="fa fa-clock-o"></i>
+                            <span>Incidencias</span>
+                        </p:link>
+                    </li>      
+                    <li>
+                        <p:link href="/capitalHumano/incapacidades.xhtml"><i class="fa fa-ambulance"></i>
+                            <span>Incapacidades</span>
+                        </p:link>
+                    </li>   
+                    <li>
+                        <p:link href="/capitalHumano/cuidados.xhtml"><i class="fa fa-users"></i>
+                            <span>Cuidados</span>
+                            <span class="pull-right-container">
+                            <small class="label pull-right bg-green">Nuevo</small>
+                        </span>
+                        </p:link>
+                    </li>                   
+                </ul>
             </li>
 
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">

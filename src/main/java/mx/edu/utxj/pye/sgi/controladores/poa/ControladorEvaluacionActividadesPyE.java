@@ -25,7 +25,6 @@ import mx.edu.utxj.pye.sgi.ejb.poa.EjbPoaSelectec;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
-import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
@@ -68,6 +67,7 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
     @Getter    @Setter    private Iterator<ActividadesPoa> poaActual;
     @Getter    @Setter    private Integer claveEje=0,mes=0,cuatrimestre=0,mostradaL=0;
     @Getter    @Setter    private Integer mes1=0,mes2=0,mes3=0,mes4=0,mes5=0,mes6=0,mes7=0,mes8=0,mes9=0,mes10=0,mes11=0,mes12=0;
+    @Getter    @Setter    private AreasUniversidad areasUniversidad=new AreasUniversidad();
     
     @Getter    @Setter    private Double totalPCuatrimestre=0D,totalACuatrimestre=0D,totalPCorte=0D,totalACorte=0D;
     @Getter    @Setter    private Double porcentajeCuatrimestre=0D,porcentejeAlCorte=0D;
@@ -96,7 +96,6 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
         mes=fechaActual.getMonth();
         
         claveArea = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
-        siglaArea = "PyE";
         switch(mes){
             case 0: mesNombre="Enero"; break;            case 1: mesNombre="Febrero"; break;
             case 2: mesNombre="Marzo"; break;            case 3: mesNombre="Abril"; break;
@@ -139,6 +138,8 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
             claveArea = 0;
             areaPOASeleccionada=new AreasUniversidad();
             claveArea = Short.parseShort(event.getNewValue().toString());
+            areasUniversidad = ejbAreasLogeo.mostrarAreasUniversidad(Short.parseShort(event.getNewValue().toString()));
+            siglaArea = areasUniversidad.getSiglas();
             areaPOASeleccionada=ejbAreasLogeo.mostrarAreasUniversidad(claveArea);
             consultarListasValidacionFinal();
         } catch (Throwable ex) {
@@ -488,7 +489,7 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
                 for (Part file : files) {
 
                     System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(3)");
-                    ruta = carga.subir(file, new File("2018".concat(File.separator).concat(siglaArea).concat(File.separator).concat(mesNombre).concat(File.separator).concat("EVALUACION_POA").concat(File.separator)));
+                    ruta = carga.subir(file, new File("2019".concat(File.separator).concat(siglaArea).concat(File.separator).concat(mesNombre).concat(File.separator).concat("EVALUACION_POA").concat(File.separator)));
 
                     if (!"Error: No se pudo leer el archivo".equals(ruta)) {
                         String name = Servlets.getSubmittedFileName(file);

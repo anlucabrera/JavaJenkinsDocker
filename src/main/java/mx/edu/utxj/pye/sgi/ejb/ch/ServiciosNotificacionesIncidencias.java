@@ -85,7 +85,7 @@ public class ServiciosNotificacionesIncidencias implements EjbNotificacionesInci
 
     @Override
     public List<Incidencias> mostrarIncidenciasReporte(Date fechaI, Date fechaF) throws Throwable {
-        TypedQuery<Incidencias> q = em.createQuery("SELECT i FROM Incidencias i JOIN i.clavePersonal cp WHERE i.fecha BETWEEN :fechaI AND :frchaF ORDER BY cp.areaOperativa , cp.clave", Incidencias.class);
+        TypedQuery<Incidencias> q = em.createQuery("SELECT i FROM Incidencias i JOIN i.clavePersonal cp WHERE i.fecha BETWEEN :fechaI AND :frchaF ORDER BY cp.areaOperativa , i.numeroOficio", Incidencias.class);
         q.setParameter("fechaI", fechaI);
         q.setParameter("frchaF", fechaF);
         List<Incidencias> pr = q.getResultList();

@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.sgi.ejb;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
@@ -52,7 +53,7 @@ public class ServicioAdministracionEncuestaTsu implements EjbAdministracionEncue
         if(!l.isEmpty()){
             return l;
         }else{
-            return null;
+            return new ArrayList<>();
         }
     }
     
