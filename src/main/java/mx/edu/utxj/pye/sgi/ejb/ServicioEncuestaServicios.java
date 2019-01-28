@@ -9,6 +9,8 @@ import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.faces.model.SelectItem;
 import javax.persistence.TypedQuery;
+import lombok.Getter;
+import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultadosPK;
@@ -19,7 +21,9 @@ import mx.edu.utxj.pye.sgi.enums.EvaluacionesTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEncuestaServicios;
+import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestas;
+import mx.edu.utxj.pye.sgi.saiiut.entity.Periodos;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 
 @Stateful
@@ -27,7 +31,13 @@ public class ServicioEncuestaServicios implements EjbEncuestaServicios {
     private static final long serialVersionUID = 8258275727749911168L;
     @EJB Facade f;
     @EJB Facade2 f2;
-
+    @Getter @Setter private Integer periodo;
+    
+    /**
+     * Metodo que ayuda a encontrar la evaluacion activa, detro de la tabla Evaluaciones
+     * donde especifica el tipo de encuesta a aplicar y la fecha, comparando la fecha actual
+     * con la fecha de apertura y la fecha de cierre, para así encontrar la encuesta. 
+     */
     @Override
     public Evaluaciones getEvaluacionActiva() {
         TypedQuery<Evaluaciones> q = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class);
@@ -41,7 +51,15 @@ public class ServicioEncuestaServicios implements EjbEncuestaServicios {
             return l.get(0);
         }
     }
-
+    
+    /**
+     * Metodo que ayuda a obtener un resultado a partir del evaluador, aplicando una condicion para verificar si este
+     * ya se encuentra definido dentro de la tabla EncuestasServiciosResultados.
+     * @param evaluacion Parametro que se envia de acuerdo a la encuesta activa.
+     * @param evaluador Parametro que se envia de acuerdo al estudiante que realiza la encuesta.
+     * @param respuestas Mapa de parametros de cadena que se envia de acuerdo a las preguntas que se encuetran establecidas
+     * @return Objeto del tipo entidad -> EncuestaServiciosResultados que devuelve de acuerdo a los parametros que recibe.
+     */
     @Override
     public EncuestaServiciosResultados getResultado(Evaluaciones evaluacion, Integer evaluador, Map<String,String> respuestas) {
         try {
@@ -284,6 +302,11 @@ public class ServicioEncuestaServicios implements EjbEncuestaServicios {
         }
     }
 
+    
+    /**
+     * Metodo con dos posibles opciones (falso ó verdadero) que ayuda a realizar la actualizacion 
+     * del objeto EncuestaServiciosResultados de acuerdo al estudiante.
+     */
     @Override
     public boolean actualizarResultado(EncuestaServiciosResultados resultado) {
         if(resultado != null){
@@ -295,6 +318,13 @@ public class ServicioEncuestaServicios implements EjbEncuestaServicios {
         return comparador.isCompleto(resultado);
     }
 
+    /**
+     * 
+     * @param resultado
+     * @param pregunta
+     * @param respuesta
+     * @param respuestas 
+     */
     @Override
     public void actualizarRespuestaPorPregunta(EncuestaServiciosResultados resultado, String pregunta, String respuesta, Map<String,String> respuestas) {
         switch (pregunta.trim()) {
@@ -377,6 +407,10 @@ public class ServicioEncuestaServicios implements EjbEncuestaServicios {
         respuestas.put(pregunta, respuesta);
     }
 
+    /**
+     * Metodo que ayuda a la modulacion del formulario el cual se utiliza para la aplicacion de la encuesta.
+     * @return Devuelve una lista de los apartados del formulario asi como tambien las preguntas aplicables.
+     */
     @Override
     public List<Apartado> getApartados() {
         List<Apartado> l = new ArrayList<>();
@@ -517,6 +551,10 @@ public class ServicioEncuestaServicios implements EjbEncuestaServicios {
         return l;
     }
 
+    /**
+     * Metodo que ayuda a la modulacion del formulario el cual se utiliza para la aplicacion de la encuesta-
+     * @return Devuelve una lista de las respuestas posibles, mismas que son visibles en el formulario: /encuestas/Estudiantes/servicios.xhtml.
+     */
     @Override
     public List<SelectItem> getRespuestasPosibles() {
         List<SelectItem> l = new ArrayList<>();
@@ -530,13 +568,30 @@ public class ServicioEncuestaServicios implements EjbEncuestaServicios {
         return l;
     }
     
+    /**
+     * Metodo que ayuda a obtener información principal del estudiante; este a partir de recibir la informacion de su matricula
+     * @param matricula Parametro que se envia dentro del formulario de Login
+     * @return Devuelve un objeto de Alumnos que se encuetra en la tabla misma.
+     */
     @Override
-    public AlumnosEncuestas obtenerAlumnos(String matricula) {
+    public Alumnos obtenerAlumnos(String matricula) {
+        TypedQuery<Periodos> periodoAct = f2.getEntityManager().createQuery("SELECT p FROM Periodos AS p",Periodos.class);
+        List<Periodos> periodos = periodoAct.getResultList();
+        periodos.stream().forEach(x -> {
+            Boolean activo = true;
+            Boolean acv = x.getActivo().equals(true);
+            if (activo.equals(acv)) {
+                periodo = x.getPeriodosPK().getCvePeriodo();
+                System.out.println("Periodo:"+ periodo);
+            }
+        });
 //        TypedQuery<ViewAlumnos> q = f.getEntityManager().createQuery("SELECT a from Alumno a WHERE a.alumnoPK.periodo= 47 AND a.cuatrimestre=11 AND a.alumnoPK.matricula=:matricula", Alumno.class);
-        TypedQuery<AlumnosEncuestas> q = f2.getEntityManager().createQuery("SELECT a from AlumnosEncuestas a WHERE a.matricula=:matricula", AlumnosEncuestas.class);
+        TypedQuery<Alumnos> q = f2.getEntityManager().createQuery("SELECT a from Alumnos a WHERE a.matricula=:matricula AND a.cveStatus = :estatus AND a.grupos.gruposPK.cvePeriodo = :periodo ", Alumnos.class);
+        q.setParameter("estatus", 1);
+        q.setParameter("periodo", periodo);
         q.setParameter("matricula", matricula);
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEncuestaServicios.obtenerAlumnos() se ejecuto la consulta");
-        List<AlumnosEncuestas> l = q.getResultList();
+        //System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEncuestaServicios.obtenerAlumnos() se ejecuto la consulta");
+        List<Alumnos> l = q.getResultList();
         if(!l.isEmpty()){
             return l.get(0);
         }else{

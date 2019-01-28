@@ -61,20 +61,20 @@
                 </p:link>
             </li>
             <c:if test="#{evaluacionDesempenioAdmin.cargada || evaluacion360Admin1.cargada || evaluacionControlInterno.cargada || climaLaboral.cargada}">
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-list-alt"></i> <span>Evaluaciones</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu" style="display: none;">
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-list-alt"></i> <span>Evaluaciones</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu" style="display: none;">
                         <c:if test="#{evaluacionDesempenioAdmin.cargada}"><li><p:link href="/evaluaciones/evaluacion/desempenio.xhtml"><i class="fa fa-line-chart"></i><span>Desempeño</span></p:link></li></c:if>
-                        <c:if test="#{evaluacion360Admin1.cargada}"><li><p:link href="/evaluaciones/evaluacion/360_1.xhtml"><i class="fa fa-group"></i><span>360 grados</span></p:link></li></c:if>
+                    <c:if test="#{evaluacion360Admin1.cargada}"><li><p:link href="/evaluaciones/evaluacion/360_1.xhtml"><i class="fa fa-group"></i><span>360 grados</span></p:link></li></c:if>
                         <c:if test="#{evaluacionControlInterno.cargada}"><li><p:link href="/evaluaciones/evaluacion/evaControlInterno.xhtml"><i class="fa fa-group"></i><span>Evaluación de control interno</span></p:link></li></c:if>
-                        <c:if test="#{climaLaboral.cargada}"><li><p:link href="/evaluaciones/evaluacion/climaLaboral.xhtml"><i class="fa fa-group"></i><span>Clima laboral</span></p:link></li></c:if>
-                    </ul>
-                </li>
+                    <c:if test="#{climaLaboral.cargada}"><li><p:link href="/evaluaciones/evaluacion/climaLaboral.xhtml"><i class="fa fa-group"></i><span>Clima laboral</span></p:link></li></c:if>
+                </ul>
+            </li>
             </c:if>
 
             <li class="treeview">
@@ -96,7 +96,15 @@
                                 </span>
                             </a>
                             <ul class="treeview-menu" style="display: none;">
-                                <li><p:link href="/encuestas/seguimiento/admEncuestaEgresTsuSecretario.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción TSU</span></p:link></li>
+                                <c:if test="#{administracionAvanceEncSatTsu.aperturado and administracionAvanceEncSatTsu.esSecretario}">
+                                    <li><p:link href="/encuestas/seguimiento/admEncuestaEgresTsuSecretario.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción TSU</span></p:link></li>
+                                </c:if>
+                                <c:if test="#{administracionAvanceEncuestaSatIng.aperturado and administracionAvanceEncuestaSatIng.esSecretario}">
+                                    <li><p:link href="/encuestas/seguimiento/admEncuestaEgresSercretario.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción ING</span></p:link></li>
+                                </c:if>
+                                <c:if test="#{administracionAvanceEncuestaServicio.aperturado and administracionAvanceEncuestaServicio.esSecretario}">
+                                    <li><p:link href="/encuestas/seguimiento/admEncuestaServicioSecretario.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta servicios</span></p:link></li>
+                                </c:if>
                             </ul>
                         </li>
                     </c:if>
@@ -104,8 +112,14 @@
                     <c:if test="#{utilidadesAdministracionEvaluaciones.directorDeCarrera}"><li><p:link href="/evaluaciones/administracion/administracionDirectivos.xhtml" ><i class="fa fa-bookmark"></i><span>Administración de evaluaciones</span></p:link></li></c:if>
                     <c:if test="#{utilidadesAdministracionEvaluaciones.directivo}"><li><p:link href="/evaluaciones/administracion/administracionDirectivos.xhtml" ><i class="fa fa-bookmark"></i><span>Resultados subordinados</span></p:link></li></c:if>
 
-                    <c:if test="#{administracionEncuestaTsu.director and administracionAvanceEncSatTsu.director}">
+                    <c:if test="#{administracionEncuestaTsu.director and administracionAvanceEncSatTsu.director and administracionEncuestaTsu.aperturas and administracionAvanceEncSatTsu.aperturado}">
                         <li><p:link href="/encuestas/seguimiento/admEncuestaEgresTsuDirectores.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción TSU</span></p:link></li>
+                    </c:if>
+                    <c:if test="#{administracionEncuestaIng.director and administracionEncuestaIng.aperturas and administracionAvanceEncuestaSatIng.director and administracionAvanceEncuestaSatIng.aperturado}">
+                        <li><p:link href="/encuestas/seguimiento/admEncuestaEgresDirectores.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción ING</span></p:link></li>
+                    </c:if>
+                    <c:if test="#{administracionEncuestaServicios.director and administracionAvanceEncuestaServicio.director and administracionEncuestaServicios.aperturas and administracionAvanceEncuestaServicio.aperturado}">
+                        <li><p:link href="/encuestas/seguimiento/admEncuestaServicioDirectores.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta servicios</span></p:link></li>
                     </c:if>
 
 
@@ -122,11 +136,22 @@
                     <c:if test="#{logonMB.personal.categoriaOperativa.categoria eq 19}"><li><p:link href="/evaluaciones/administracion/estudioEgresadosAdministrador.xhtml" ><i class="fa fa-clipboard"></i><span>Estudio egresado</span></p:link></li></c:if>
                     <c:if test="#{logonMB.personal.categoriaOperativa.categoria eq 19}"><li><p:link href="/evaluaciones/administracion/estudioEgresadosReportes.xhtml" ><i class="fa fa-clipboard"></i><span>Reporte egresados</span></p:link></li></c:if>
                     <!--Equipo de Informacion y Estadistica-->
-                    <!--c:if test="#{administracionEncuesta.esDeInformacionYEst }"><li><p:link href="/resultadoEcuestaEgresadosIng.xhtml"><i class="fa fa-list-ol"></i><span>Resultados encuesta egresados</span></p:link></li></c:if>
-                    <c:if test="#{administracionEncuesta.esDeInformacionYEst }"><li><p:link href="/admEncuestaServicio.xhtml"><i class="fa fa-list-ol"></i><span>Resultados encuesta por servicio</span></p:link></li></c:if>
-                    -->
-                    <c:if test="#{administracionEncuestaTsu.esDeIyE and administracionAvanceEncSatTsu.esDeInformacionYEst }">
-                        <li><p:link href="/encuestas/seguimiento/admEncuestaEgreTsu.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción TSU</span></p:link></li>
+                    <c:if test="#{administracionEncuestaTsu.esDeIyE and administracionAvanceEncSatTsu.esDeInformacionYEst and administracionEncuestaTsu.aperturas and administracionAvanceEncSatTsu.aperturado}">
+                        <li><p:link href="/encuestas/seguimiento/admEncuestaEgreTsu.xhtml" ><i class="fa fa-list-ol"></i><span>Encuesta satisfacción TSU</span></p:link></li>
+                    </c:if>
+                    <c:if test="#{administracionEncuestaIng.esDeIyE and administracionEncuestaIng.aperturas and administracionAvanceEncuestaSatIng.esDeInformacionYEst and administracionAvanceEncuestaSatIng.aperturado}">
+                        <li>
+                            <p:link href="/encuestas/seguimiento/resultadoEcuestaEgresadosIng.xhtml">
+                                <i class="fa fa-list-ol"></i><span>Encuesta satisfacción ING</span>
+                            </p:link>
+                        </li>
+                    </c:if>
+                    <c:if test="#{administracionEncuestaServicios.esDeIyE and administracionAvanceEncuestaServicio.esDeInformacionYEst and administracionEncuestaServicios.aperturas and administracionAvanceEncuestaServicio.aperturado}">
+                        <li>
+                            <p:link href="/encuestas/seguimiento/admEncuestaServicio.xhtml">
+                                <i class="fa fa-list-ol"></i><span>Encuesta servicios</span>
+                            </p:link>
+                        </li>
                     </c:if>
                     <!--Visible para todos los trabajadores-->
                     <li><p:link href="/capitalHumano/perfilEmpleadoEvaluaciones.xhtml"><i class="fa fa-exclamation"></i><span>Resultados de evaluaciones</span></p:link></li>
@@ -179,7 +204,7 @@
                         </li>
                         <li>
                             <p:link href="/capitalHumano/directivos/perfilSubordinadosIn.xhtml"><i class="fa fa-calendar-check-o"></i>
-                                <span>Incidencias Subordinados</span>                                
+                                <span>Incidencias Subordinados</span>
                             </p:link>
                         </li>
                         <!--li>
@@ -203,35 +228,35 @@
                     </a>
                     <ul class="treeview-menu" style="display: none;">
                         <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 501}">
-                            <li> 
-                                <p:link href="/capitalHumano/personal/perfilPersonal.xhtml"><i class="fa fa-user-circle-o"></i>
-                                    <span>Activo</span>
-                                </p:link>
-                            </li>
-                            <li>
-                                <p:link href="/capitalHumano/personal/perfilPersonalAltaYBajas.xhtml"><i class="fa fa-user-times"></i>
-                                    <span>Altas y bajas</span>
-                                </p:link>
-                            </li>
-                            <li>
+                        <li> 
+                            <p:link href="/capitalHumano/personal/perfilPersonal.xhtml"><i class="fa fa-user-circle-o"></i>
+                                <span>Activo</span>
+                            </p:link>
+                        </li>
+                        <li>
+                            <p:link href="/capitalHumano/personal/perfilPersonalAltaYBajas.xhtml"><i class="fa fa-user-times"></i>
+                                <span>Altas y bajas</span>
+                            </p:link>
+                        </li>
+                        <li>
                                 <p:link href="/capitalHumano/personal/perfilPersonalconfiguracion.xhtml"><i class="fa fa-cogs"></i>
                                     <span>Configuración</span>
-                                </p:link>
-                            </li>
+                            </p:link>
+                        </li>
                         </c:if>
                         <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530}">
-                            <li>
+                        <li>
                                 <p:link href="/capitalHumano/personal/perfilPersonalIn.xhtml">
                                     <i class="fa fa-folder-open"></i>
                                     <span>Incidencias Personal</span>
-                                </p:link>
-                            </li>
-                        </c:if>
-                        <li>
-                            <p:link href="/capitalHumano/personal/perfilPersonalReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
-                                <span>Reporte de Registros</span>
                             </p:link>
                         </li>
+                        </c:if>
+                            <li>
+                            <p:link href="/capitalHumano/personal/perfilPersonalReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
+                                <span>Reporte de Registros</span>
+                                </p:link>
+                            </li>
                     </ul>
                 </li>
             </c:if>
@@ -291,15 +316,15 @@
             </li>
 
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
-                <li class="treeview">
+            <li class="treeview">
                     <a href="#">
                         <i class="fa fa-desktop"></i> <span>Administración Sistema</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                    </a>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
 
-                    <ul class="treeview-menu" style="display: none;">
+                <ul class="treeview-menu" style="display: none;">
                         <li><p:link href="/capitalHumano/admin/perfilAdminIncidencias.xhtml"><i class="fa fa-hourglass-half"></i>
                                 <span>Incidencias</span>
                             </p:link>
@@ -344,7 +369,7 @@
                     </li>
                 </ul>-->
 <!--            </c:if>-->
-            
+
             <c:if test="#{controladorEmpleado.listaDocencias.size() != 0}">
                 <li class="treeview">
 
@@ -457,12 +482,12 @@
                                 <p:link href="/poa/pye/evaluacionActividadesPyE.xhtml"><i class="fa fa-calendar-check-o"></i>
                                     <span>Evaluación</span>
                                 </p:link>
-                            </li>
-                            <li>
+                            </li> 
+                        <li>
                                 <p:link href="/poa/pye/reportePOA.xhtml"><i class="fa fa-calendar-check-o"></i>
                                     <span>Reportes</span>
-                                </p:link>
-                            </li>
+                            </p:link>
+                        </li> 
                         </c:if>
                     </ul>
                 </li>               
@@ -497,10 +522,10 @@
                         </p:link>
                     </li>
                 </ul>
-            </li-->   
+            </li-->            
 
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 12}">
-                <li>
+            <li>
                     <p:link href="/capitalHumano/fda/perfilPersonalDocente.xhtml">
                         <i class="fa fa-users"></i>
                         <span>Plantilla docente</span>
@@ -518,7 +543,7 @@
                 <ul class="treeview-menu" style="display: none;">
                     <li>
                         <p:link href="/capitalHumano/incidencias.xhtml"><i class="fa fa-clock-o"></i>
-                            <span>Incidencias</span>
+                    <span>Incidencias</span>
                         </p:link>
                     </li>      
                     <li>
@@ -529,17 +554,17 @@
                     <li>
                         <p:link href="/capitalHumano/cuidados.xhtml"><i class="fa fa-users"></i>
                             <span>Cuidados</span>
-                            <span class="pull-right-container">
-                            <small class="label pull-right bg-green">Nuevo</small>
-                        </span>
-                        </p:link>
-                    </li>                   
+                    <span class="pull-right-container">
+                        <small class="label pull-right bg-green">Nuevo</small>
+                    </span>
+                </p:link>
+            </li>
                 </ul>
             </li>
 
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
 
-                <li>
+            <li>
                     <p:link href="/siiFaces.xhtml">
                         <i class="fa fa-comments"></i>
                         <span>Mensajería</span>

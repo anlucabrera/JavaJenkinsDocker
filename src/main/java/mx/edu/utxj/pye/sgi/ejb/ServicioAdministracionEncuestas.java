@@ -55,7 +55,7 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
         List<PeriodosEscolares> l = spq.getResultList();
 
         if (l == null || l.isEmpty()) {
-            return null;
+            return new PeriodosEscolares();
         } else {
            //System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioAdministracionEncuestas.getPeriodoActual()" + l.get(0));
             return l.get(0);
@@ -70,7 +70,7 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
         q.setParameter("cvePeriodo", periodo);
         List<Grupos> lg = q.getResultList();
         if (lg.isEmpty()) {
-            return null;
+            return new ArrayList<>();
         } else {
             return q.getResultList();
         }
@@ -83,7 +83,7 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
 //        q.setParameter("periodo", periodo);
         List<Alumnos> la = q.getResultList();
         if (la == null || la.isEmpty()) {
-            return null;
+            return new ArrayList<>();
         } else {
 //            for (int i = la.size()-1; i >= la.size()-1; i--) {
 //               //System.out.println(" alumno " + la);
