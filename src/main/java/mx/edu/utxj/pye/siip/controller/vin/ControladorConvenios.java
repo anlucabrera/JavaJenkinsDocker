@@ -34,8 +34,8 @@ import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasBeneficiadosVinculacionPK;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.vin.DtoConvenios;
-import mx.edu.utxj.pye.siip.dto.vinculacion.DTOConvenio;
-import mx.edu.utxj.pye.siip.dto.vinculacion.DTOProgramasBeneficiadosVinculacion;
+import mx.edu.utxj.pye.siip.dto.vin.DTOConvenio;
+import mx.edu.utxj.pye.siip.dto.vin.DTOProgramasBeneficiadosVinculacion;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
@@ -87,6 +87,7 @@ public class ControladorConvenios implements Serializable {
             Logger.getLogger(ControladorConvenios.class.getName()).log(Level.SEVERE, null, ex);
             if (rutaArchivo != null) {
                 ServicioArchivos.eliminarArchivo(rutaArchivo);
+                dtoConvenios.setRutaArchivo(null);
             }
         }
     }
@@ -147,6 +148,7 @@ public class ControladorConvenios implements Serializable {
         dtoConvenios.getLstConvenios().stream().forEach((c) -> {
             c.setRegistros(ejbModulos.buscaRegistroPorClave(c.getRegistro()));
             c.setEmpresa(ejbOrganismosVinculados.getOrganismosVinculado(c.getEmpresa()));
+            c.getEmpresa().setRegistros(ejbModulos.buscaRegistroPorClave(c.getEmpresa().getRegistro()));
         });
         Ajax.update("formMuestraDatosActivos");
     }
@@ -309,7 +311,7 @@ public class ControladorConvenios implements Serializable {
     public void eliminarAlineacion(){
         Boolean eliminado = ejbModulos.eliminarAlineacion(dtoConvenios.getRegistro().getConvenio().getRegistro());
         if(eliminado){ 
-            Messages.addGlobalInfo("La elineación se eliminó de forma correcta.");
+            Messages.addGlobalInfo("La alineación se eliminó de forma correcta.");
             dtoConvenios.getRegistro().setActividadAlineada(null);
             try {
                 dtoConvenios.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dtoConvenios.getRegistro().getConvenio().getRegistro()));

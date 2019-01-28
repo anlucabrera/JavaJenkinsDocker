@@ -232,7 +232,7 @@ public class ActividadesPoa implements Serializable {
     @Column(name = "validadpPyeFinal")
     private boolean validadpPyeFinal;
     @Column(name = "actividadPadre")
-    private Integer actividadPadre;  
+    private Integer actividadPadre;
     @Size(max = 7)
     @Column(name = "esPIDE")
     private String esPIDE;
@@ -631,7 +631,7 @@ public class ActividadesPoa implements Serializable {
     public void setActividadPasada(boolean actividadPasada) {
         this.actividadPasada = actividadPasada;
     }
-    
+
     @XmlTransient
     public List<Registros> getRegistrosList() {
         return registrosList;

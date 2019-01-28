@@ -34,4 +34,19 @@ public class ControladorPlantillasEB implements Serializable{
         Faces.sendFile(f, true);
     }
     
+    public void descargarPlantillaEficienciaTerminal() throws IOException, Throwable{
+        File f = new File(ejbPlantillasEBExcel.getPlantillaEficienciaTerminal());
+        Faces.sendFile(f, true);
+    }
+    
+    public void descargarPlantillaDistribucionEquipamiento() throws IOException, Throwable{
+        File f = new File(ejbPlantillasEBExcel.getPlantillaDistribucionEquipamiento());
+        Faces.sendFile(f, true);
+    }
+    
+    public void descargarPlantillaDistribucionInstalaciones() throws IOException, Throwable{
+        File f = new File(ejbPlantillasEBExcel.getPlantillaDistribucionInstalaciones());
+        Faces.sendFile(f, true);
+    }
+    
 }

@@ -6,17 +6,19 @@
 package mx.edu.utxj.pye.siip.services.ca;
 
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
-import edu.mx.utxj.pye.seut.util.collection.SerializableArrayList;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EgetsuResultadosGeneraciones;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
@@ -25,7 +27,6 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.dto.escolar.DTOEgetsu;
-import mx.edu.utxj.pye.siip.entity.escolar.list.ListaEgetsuResultados;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbEgetsuResultados;
 import org.apache.poi.ss.usermodel.Row;
@@ -39,18 +40,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 @Stateful
 public class ServicioEgetsuResultados implements EjbEgetsuResultados{
-    @EJB
-    Facade facdepye;
-    @EJB
-    EjbModulos ejbModulos;
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
-
+    @EJB Facade f;
+    @EJB EjbModulos ejbModulos;
+    @EJB EjbFiscalizacion ejbFiscalizacion;
+    @Inject ControladorEmpleado controladorEmpleado;
+   
     @Override
-    public ListaEgetsuResultados getListaEgetsuResultados(String rutaArchivo) throws Throwable {
+    public List<DTOEgetsu> getListaEgetsuResultados(String rutaArchivo) throws Throwable {
        
-        ListaEgetsuResultados listaEgetsuResultados = new ListaEgetsuResultados();
-
         List<DTOEgetsu> listaDtoEgetsu = new ArrayList<>();
         EgetsuResultadosGeneraciones egetsuResultadosGeneraciones;
         DTOEgetsu dTOEgetsu;
@@ -119,8 +116,6 @@ public class ServicioEgetsuResultados implements EjbEgetsuResultados{
                listaDtoEgetsu.add(dTOEgetsu);
             }
             }
-            listaEgetsuResultados.setEgetsus(listaDtoEgetsu);
-
             libroRegistro.close();
             addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
         } else {
@@ -129,27 +124,17 @@ public class ServicioEgetsuResultados implements EjbEgetsuResultados{
             ServicioArchivos.eliminarArchivo(rutaArchivo);
             addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
         }
-        return listaEgetsuResultados;
+        return listaDtoEgetsu;
         
     }
     
    
    @Override
-    public void guardaEgetsuResultados(ListaEgetsuResultados listaEgetsuResultados, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
-
-//            listaEgetsuResultados.getEgetsus().forEach((egetsus) -> {
-//            Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-//
-//            facdepye.setEntityClass(EgetsuResultadosGeneraciones.class);
-//            egetsus.getEgetsuResultadosGeneraciones().setRegistro(registro.getRegistro());
-//            facdepye.create(egetsus.getEgetsuResultadosGeneraciones());
-//            facdepye.flush();
-//        });
-        List<String> validaciones = new SerializableArrayList<>();
+    public void guardaEgetsuResultados(List<DTOEgetsu> lista, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
         List<String> listaCondicional = new ArrayList<>();
-        listaEgetsuResultados.getEgetsus().forEach((egetsus) -> {
+        lista.forEach((egetsus) -> {
             
-                facdepye.setEntityClass(EgetsuResultadosGeneraciones.class);
+                f.setEntityClass(EgetsuResultadosGeneraciones.class);
                 EgetsuResultadosGeneraciones erg = getRegistroEgetsuResultadosGeneraciones(egetsus.getEgetsuResultadosGeneraciones().getGeneracion());
                 Boolean registroAlmacenado = false;
                 if (erg != null) {
@@ -158,22 +143,24 @@ public class ServicioEgetsuResultados implements EjbEgetsuResultados{
                 }
                 if (registroAlmacenado) {
                     egetsus.getEgetsuResultadosGeneraciones().setRegistro(erg.getRegistro());
-                    facdepye.edit(egetsus.getEgetsuResultadosGeneraciones());
+                    f.edit(egetsus.getEgetsuResultadosGeneraciones());
+                    f.flush();
+                    addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
                 } else {
                     Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                     egetsus.getEgetsuResultadosGeneraciones().setRegistro(registro.getRegistro());
-                    facdepye.create(egetsus.getEgetsuResultadosGeneraciones());
+                    f.create(egetsus.getEgetsuResultadosGeneraciones());
+                    f.flush();
+                    addDetailMessage("<b>Se guardaron los registros correctamente </b>");
                 }
-                facdepye.flush();
+                f.flush();
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
-
     }
 
     @Override
     public EgetsuResultadosGeneraciones getRegistroEgetsuResultadosGeneraciones(Short generacion) {
         EgetsuResultadosGeneraciones egetsuResultadosGeneraciones = new EgetsuResultadosGeneraciones();
-        TypedQuery<EgetsuResultadosGeneraciones> query = em.createQuery("SELECT e FROM EgetsuResultadosGeneraciones e WHERE e.generacion = :generacion",EgetsuResultadosGeneraciones.class);
+        TypedQuery<EgetsuResultadosGeneraciones> query = f.getEntityManager().createQuery("SELECT e FROM EgetsuResultadosGeneraciones e WHERE e.generacion = :generacion",EgetsuResultadosGeneraciones.class);
         query.setParameter("generacion", generacion);
         try {
             egetsuResultadosGeneraciones = query.getSingleResult();
@@ -182,5 +169,37 @@ public class ServicioEgetsuResultados implements EjbEgetsuResultados{
             ex.toString();
         }
         return egetsuResultadosGeneraciones;
+    }
+   
+    @Override
+    public List<DTOEgetsu> filtroEgetsu(Short generacion) {
+        if(generacion == null){
+            return null;
+        }
+        
+        //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+        List<DTOEgetsu> l = new ArrayList<>();
+        List<EgetsuResultadosGeneraciones> entities = f.getEntityManager().createQuery("SELECT e FROM EgetsuResultadosGeneraciones e WHERE e.generacion =:generacion",  EgetsuResultadosGeneraciones.class)
+                .setParameter("generacion", generacion)
+                .getResultList();
+      
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            
+            Generaciones g = f.getEntityManager().find(Generaciones.class, e.getGeneracion());
+            String gen = g.getInicio() + " - " + g.getFin();
+            
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            l.add(new DTOEgetsu(
+                    e,
+                    f.getEntityManager().find(Generaciones.class, e.getGeneracion()),
+                    a,
+                    gen));
+        });
+        
+
+
+        return l;
     }
 }

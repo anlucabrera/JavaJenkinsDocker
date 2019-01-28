@@ -39,6 +39,12 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "EjesRegistro.findByLink", query = "SELECT e FROM EjesRegistro e WHERE e.link = :link")})
 public class EjesRegistro implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "eje")
+    private Integer eje;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
@@ -59,13 +65,6 @@ public class EjesRegistro implements Serializable {
     @Size(min = 1, max = 200)
     @Column(name = "link")
     private String link;
-
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "eje")
-    private Integer eje;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "eje")
     private List<Registros> registrosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "eje")
@@ -98,6 +97,37 @@ public class EjesRegistro implements Serializable {
         this.eje = eje;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getObjetivo() {
+        return objetivo;
+    }
+
+    public void setObjetivo(String objetivo) {
+        this.objetivo = objetivo;
+    }
+
+    public String getIcono() {
+        return icono;
+    }
+
+    public void setIcono(String icono) {
+        this.icono = icono;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
 
     @XmlTransient
     public List<Registros> getRegistrosList() {
@@ -158,38 +188,6 @@ public class EjesRegistro implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro[ eje=" + eje + " ]";
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getObjetivo() {
-        return objetivo;
-    }
-
-    public void setObjetivo(String objetivo) {
-        this.objetivo = objetivo;
-    }
-
-    public String getIcono() {
-        return icono;
-    }
-
-    public void setIcono(String icono) {
-        this.icono = icono;
-    }
-
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
     }
     
 }

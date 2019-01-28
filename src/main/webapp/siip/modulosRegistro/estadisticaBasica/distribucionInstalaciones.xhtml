@@ -8,21 +8,25 @@
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
                 xmlns:pe="http://primefaces.org/ui/extensions"
-                xmlns:pr="http://xmlns.jcp.org/jsp/jstl/functions">
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
 
     <ui:define name="head-end">
-        <ui:param name="renderBreadCrumb" value="false"/>
+        <ui:param name="renderBreadCrumb" value="true"/>
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
+        <h:outputScript library="js" name="dialogs.js" />
     </ui:define>
     <ui:define name="title">
-        Estadística Básica
+        Distribución de instalaciones
     </ui:define>
 
     <ui:define name="description">
-        Módulo de registro
+        Estadística Básica
     </ui:define>
 
     <ui:define name="body"> 
+        <adm:breadcrumb title="Estadística Básica - Distribución de instalaciones"/>
         <adm:sidebar collapsed="true"/>
+        <p:importEnum type="mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa" var="etapa" allSuffix="ETAPAS" />
         <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
             <h1>
                 Esta página está disponible solo para pantallas superiores a 1024px.
@@ -37,26 +41,35 @@
                             <p:autoUpdate/>
                             <p:toolbar id="tb"> 
                                 <f:facet name="left">
+                                    <p:spacer width="10" />
+                                    <c:if test="#{controladorArchivoDistribucionInstalaciones.etapa eq etapa.MOSTRAR}">
+                                        <p:outputLabel value="Periodo: " for="periodo" />
+                                        <p:spacer width="3" />
+                                        <p:selectOneMenu id="periodo" converter="entityConverter"
+                                                         value="#{controladorDistribucionInstalaciones.dto.periodo}" valueChangeListener="#{controladorDistribucionInstalaciones.actualizarMeses}"
+                                                         class="form-control" style="padding-top: 0px;">
+                                            <f:selectItems value="#{controladorDistribucionInstalaciones.dto.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" itemDescription="#{caster.periodoToString(periodo)}" />
+                                            <p:ajax process="@this" update="@(form)" />
+                                        </p:selectOneMenu>
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Mes: " for="mes" />
+                                        <p:spacer width="3" />
+                                        <p:selectOneMenu id="mes" value="#{controladorDistribucionInstalaciones.dto.eventoSeleccionado}" converter="entityConverter" class="form-control" style="padding-top: 0px;">
+                                            <f:selectItems value="#{controladorDistribucionInstalaciones.dto.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" itemDescription="#{evento.mes}"  />
+                                            <p:ajax process="@this" listener="#{controladorDistribucionInstalaciones.cargarListaPorEvento()}" update="@(form)" />
+                                        </p:selectOneMenu>
+                                    </c:if>
+                                </f:facet>
+                                <f:facet name="right">
                                     <div class="btn-group">
                                         <p:commandButton value="Cargar Archivo de Excel" icon="fa fa-file-excel-o" onclick="PF('modalCargaArchivo').show()" class="btn btn-primary btn-sm"/>
                                     </div>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <div class="btn-group">
-                                        <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
-                                    </div>
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <div class="btn-group">
-                                        <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
-                                    </div>
-                                </f:facet>
-                                <f:facet name="right">
-                                    <div class="btn-group">
-                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="# {controladorPlantillasEB.descargarPlantillaDistribucionInstalaciones()}" target="_blank" title="Descargar Plantilla Distribución Instalaciones"><i class="fa fa-download" /></p:commandLink>
-                                    </div>
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <div class="btn-group">
-                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="estadisticaBasica" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
-                                    </div>
+                                    <c:if test="#{controladorArchivoDistribucionInstalaciones.etapa eq etapa.CARGAR}">
+                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="distribucionInstalaciones?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
+                                    </c:if>
+                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="#{controladorPlantillasEB.descargarPlantillaDistribucionInstalaciones()}" target="_blank" title="Descargar Plantilla Distribución Instalaciones"><i class="fa fa-download" /></p:commandLink>
+                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
                                 </f:facet>
                             </p:toolbar>
                             <p:sticky target="tb" />
@@ -71,17 +84,872 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12">
                             <h:form id="formMuestraDatosActivos">
-                                <c:if test="#{controladorDistribucionInstalaciones.listaDistribucionInstalaciones.dtoCapacidadInstaladaCiclosEscolares eq null}">
+                                <p:remoteCommand name="actualizar" update="@form:formMuestraDatosActivos" />
+                                <c:if test="#{controladorArchivoDistribucionInstalaciones.etapa eq etapa.MOSTRAR}">
+                                    <center>
+                                        <p:tabView id="tabDistribucionInstalacionesElimCons">
+                                            <p:tab id="tabCapacidadInstaladaElimCons" title="Capacidad Instalada">
+                                                <p:dataTable id="dtbCapacidadInstaladaElimCons"
+                                                             emptyMessage="Sin datos en el periodo seleccionado."
+                                                             value="#{controladorDistribucionInstalaciones.dto.listaCapIns}"
+                                                             var="capacidadInstalada"
+                                                             paginator="true"
+                                                             rows="10" 
+                                                             rowsPerPageTemplate="5,10,20,30,40,50"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                             resizeMode="expand"
+                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                    <p:columnGroup type="header">
+                                                        <p:row>
+                                                            <p:column headerText="Opciones"                                         width="100" />
+                                                            <p:column headerText="Ciclo Escolar"                                    width="100" />
+                                                            <p:column headerText="Descripción del edificio, laboratorio o taller"   width="400" />
+                                                            <p:column headerText="Capacidad del edificio"                           width="200" />
+                                                            <p:column headerText="Número de unidades, laboratorios y talleres"      width="200" />
+                                                            <p:column headerText="Total de espacios de docentes"                    width="200" />
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: center;">
+                                                        <div class="btn-group">
+                                                            <p:commandButton class="btn btn-info btn-sm" 
+                                                                             icon="fa fa-trash" 
+                                                                             actionListener="#{controladorDistribucionInstalaciones.eliminarRegistro(capacidadInstalada)}"
+                                                                             title="Eliminar registro."
+                                                                             rendered="#{controladorDistribucionInstalaciones.dto.periodoEscolarActivo eq controladorDistribucionInstalaciones.dto.periodo}">
+                                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro del ciclo escolar: #{capacidadInstalada.cicloEscolar}" icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                            <c:set var="evidencias" value="#{controladorDistribucionInstalaciones.consultarEvidencias(capacidadInstalada)}" />
+                                                            <p:commandButton actionListener="#{controladorDistribucionInstalaciones.seleccionarRegistro(capacidadInstalada)}"
+                                                                             class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" icon="fa fa-image"
+                                                                             title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                            <p:commandButton actionListener="#{controladorDistribucionInstalaciones.abrirAlineacionPOA(capacidadInstalada)}"
+                                                                             class="btn btn-sm #{!empty capacidadInstalada.actividadAlineada?'btn-info':'btn-warning'}" icon="fa fa-cog"
+                                                                             title="Alineación a POA." />
+                                                        </div>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{capacidadInstalada.cicloEscolar}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{capacidadInstalada.capacidadInstaladaCiclosEscolares.instalacion.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{capacidadInstalada.capacidadInstaladaCiclosEscolares.instalacion.capacidad}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{capacidadInstalada.capacidadInstaladaCiclosEscolares.unidades}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{capacidadInstalada.totalEspaciosDocentes}"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </p:tab>
 
+                                            <p:tab id="tabDistribucionAulasElimCons" title="Distribución de aulas">
+                                                <p:dataTable id="dtbDistribucionAulasElimCons"
+                                                             emptyMessage="Sin datos en el periodo seleccionado."
+                                                             value="#{controladorDistribucionInstalaciones.dto.listaDisAulas}"
+                                                             var="distribucionAula"
+                                                             paginator="true"
+                                                             rows="10" 
+                                                             rowsPerPageTemplate="5,10,20,30,40,50"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                             resizeMode="expand"
+                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                    <p:columnGroup type="header">
+                                                        <p:row>
+                                                            <p:column headerText="Opciones"                 width="100" />
+                                                            <p:column headerText="Ciclo Escolar"            width="100" />
+                                                            <p:column headerText="Periodo Escolar"          width="200" />
+                                                            <p:column headerText="Edificio"                 width="300" />
+                                                            <p:column headerText="Número"                   width="200" />
+                                                            <p:column headerText="Capacidad un solo turno"  width="200" />
+                                                            <p:column headerText="Acondicionadas"           width="200" />
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: center;">
+                                                        <div class="btn-group">
+                                                            <p:commandButton class="btn btn-info btn-sm" 
+                                                                             icon="fa fa-trash" 
+                                                                             actionListener="#{controladorDistribucionInstalaciones.eliminarRegistroDA(distribucionAula)}"
+                                                                             title="Eliminar registro."
+                                                                             rendered="#{controladorDistribucionInstalaciones.dto.periodoEscolarActivo.periodo eq distribucionAula.distribucionAulasCicloPeriodosEscolares.periodoEscolar}">
+                                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro del periodo: #{distribucionAula.periodoEscolar}" icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                            <c:set var="evidencias" value="#{controladorDistribucionInstalaciones.consultarEvidenciasDA(distribucionAula)}" />
+                                                            <p:commandButton actionListener="#{controladorDistribucionInstalaciones.seleccionarRegistroDA(distribucionAula)}"
+                                                                             class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" icon="fa fa-image"
+                                                                             title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                            <p:commandButton actionListener="#{controladorDistribucionInstalaciones.abrirAlineacionPOADA(distribucionAula)}"
+                                                                             class="btn btn-sm #{!empty distribucionAula.actividadAlineada?'btn-info':'btn-warning'}" icon="fa fa-cog"
+                                                                             title="Alineación a POA." />
+                                                        </div>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{distribucionAula.cicloEscolar}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{distribucionAula.periodoEscolar}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{distribucionAula.distribucionAulasCicloPeriodosEscolares.aula.nombre}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{distribucionAula.distribucionAulasCicloPeriodosEscolares.numero}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{distribucionAula.distribucionAulasCicloPeriodosEscolares.aula.capacidadTurno}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{distribucionAula.distribucionAulasCicloPeriodosEscolares.acondicionadas}"/>
+                                                    </p:column>
+                                                    <f:facet name="footer">
+                                                    </f:facet>
+                                                </p:dataTable>
+                                            </p:tab>
+                                            <p:tab id="tabDistribucionLabTallElimCons" title="Distribución de Laboratorios y Talleres">
+                                                <p:dataTable id="dtbDistribucionLabTallElimCons"
+                                                             emptyMessage="Sin datos en el periodo seleccionado."
+                                                             value="#{controladorDistribucionInstalaciones.dto.listaDisLabTall}"
+                                                             var="distribucionLabTall" 
+                                                             paginator="true"
+                                                             rows="10" 
+                                                             rowsPerPageTemplate="5,10,20,30,40,50"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                             resizeMode="expand"
+                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                    <p:columnGroup type="header">
+                                                        <p:row>
+                                                            <p:column headerText="Opciones"                         width="100" />
+                                                            <p:column headerText="Ciclo Escolar"                    width="100" />
+                                                            <p:column headerText="Periodo Escolar"                  width="200" />
+                                                            <p:column headerText="Edificio"                         width="300" />
+                                                            <p:column headerText="Nombre"                           width="300" />
+                                                            <p:column headerText="Capacidad de atención al cliente" width="200" />
+                                                            <p:column headerText="Área Resposable"                  width="600" />
+                                                            <p:column headerText="Fecha de habilitación"            width="150" />
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: center;">
+                                                        <div class="btn-group">
+                                                            <p:commandButton class="btn btn-info btn-sm" 
+                                                                             icon="fa fa-trash" 
+                                                                             actionListener="#{controladorDistribucionInstalaciones.eliminarRegistroDLT(distribucionLabTall)}"
+                                                                             title="Eliminar registro."
+                                                                             rendered="#{controladorDistribucionInstalaciones.dto.periodoEscolarActivo.periodo eq distribucionLabTall.distribucionLabtallCicloPeriodosEscolares.periodoEscolar}">
+                                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro del periodo: #{distribucionLabTall.periodoEscolar}" icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                            <c:set var="evidencias" value="#{controladorDistribucionInstalaciones.consultarEvidenciasDLT(distribucionLabTall)}" />
+                                                            <p:commandButton actionListener="#{controladorDistribucionInstalaciones.seleccionarRegistroDLT(distribucionLabTall)}"
+                                                                             class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" icon="fa fa-image"
+                                                                             title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                            <p:commandButton actionListener="#{controladorDistribucionInstalaciones.abrirAlineacionPOADLT(distribucionLabTall)}"
+                                                                             class="btn btn-sm #{!empty distribucionLabTall.actividadAlineada?'btn-info':'btn-warning'}" icon="fa fa-cog"
+                                                                             title="Alineación a POA." />
+                                                        </div>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{distribucionLabTall.cicloEscolar}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{distribucionLabTall.periodoEscolar}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{distribucionLabTall.distribucionLabtallCicloPeriodosEscolares.aulaTipo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{distribucionLabTall.distribucionLabtallCicloPeriodosEscolares.nombre}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{distribucionLabTall.distribucionLabtallCicloPeriodosEscolares.capacidad}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{distribucionLabTall.areaResponsable.nombre}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{distribucionLabTall.distribucionLabtallCicloPeriodosEscolares.fechaHabilitacion}">
+                                                            <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                        </h:outputText>
+                                                    </p:column>
+                                                </p:dataTable>
+                                                <p:confirmDialog global="true" 
+                                                                 showEffect="fade" 
+                                                                 hideEffect="fade" 
+                                                                 styleClass="panel panel-primary" 
+                                                                 width="500" 
+                                                                 closable="false" 
+                                                                 closeOnEscape="true">
+                                                    <p:commandButton value="Si" 
+                                                                     type="button" 
+                                                                     styleClass="ui-confirmdialog-yes btn btn-primary" 
+                                                                     icon="ui-icon-check" />
+                                                    <p:commandButton value="No" 
+                                                                     type="button" 
+                                                                     styleClass="ui-confirmdialog-no btn btn-primary" 
+                                                                     icon="ui-icon-close" />
+                                                </p:confirmDialog>
+                                            </p:tab>
+                                        </p:tabView>
+                                    </center>
                                 </c:if>
                             </h:form>
                         </div>
                     </div>
+                    
+                    <!-- Carga de Evidencias - Capacidad Instalada -->
+                    <p:dialog id="modalCargaEvidencia" 
+                              widgetVar="modalCargaEvidencia" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{controladorDistribucionInstalaciones.dto.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Carga de evidencias" 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary"
+                              responsive="true"
+                              resizable="false"
+                              maximizable="false">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:toolbar>
+                                    <f:facet name="left">
+                                        <p:spacer width="10" />
+                                        <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px;" />
+                                        <p:spacer width="10" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <o:form id="formularioEvidenciaCA" 
+                                                enctype="multipart/form-data" class="form-inline">
+                                            <o:inputFile id="filesCA" 
+                                                         value="#{controladorDistribucionInstalaciones.dto.archivos}"  
+                                                         multiple="true" 
+                                                         class="form-control"
+                                                         accept="image/png,image/jpg,image/jpeg,application/pdf" 
+                                                         acceptMessage="Solo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         maxsize="#{caster.evidenciasTamanioLimite}" 
+                                                         maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                         required="true" 
+                                                         requiredMessage="Debe elegir al menos un archivo." >
+                                            </o:inputFile>
+                                            <h:commandButton id="btnuploadFilesCA" 
+                                                             value="Subir archivos" 
+                                                             class="btn btn-primary"
+                                                             actionListener="#{controladorDistribucionInstalaciones.subirEvidencias()}" />
+                                        </o:form>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </div>
+                        <h:form id="frmEvidencias" >
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-4"><p:outputLabel value="Ciclo Escolar: " /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalaciones.dto.registroCapacidadInstalada.cicloEscolar}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
+                                    <p:dataTable id="tblEvidencias" 
+                                                 value="#{controladorDistribucionInstalaciones.dto.listaEvidencias}" 
+                                                 var="evidencia"
+                                                 emptyMessage="No se han registrado evidencias de éste registro." 
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 paginator="true" 
+                                                 rows="10" 
+                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
+                                                 paginatorAlwaysVisible="false" 
+                                                 paginatorPosition="bottom"
+                                                 >
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Opciones" width="80"/>
+                                                <p:column headerText="Archivo" />
+                                                <p:column headerText="Tipo"     width="80" />
+                                                <p:column headerText="Tamanio"  width="80" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;">
+                                            <div class="btn-group">
+                                                <p:commandButton class="btn btn-info btn-sm" 
+                                                                 icon="fa fa-trash" 
+                                                                 actionListener="#{controladorDistribucionInstalaciones.eliminarEvidencia(evidencia)}" 
+                                                                 onsuccess="actualizar2();"
+                                                                 title="Eliminar evidencia."
+                                                                 rendered="#{controladorDistribucionInstalaciones.dto.periodoEscolarActivo eq controladorDistribucionInstalaciones.dto.periodo}">
+                                                    <p:confirm header="Eliminar evidencia" 
+                                                               message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" 
+                                                               icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:commandLink class="btn btn-info btn-sm" 
+                                                               ajax="false" 
+                                                               action="#{controladorDistribucionInstalaciones.descargarEvidencia(evidencia)}" 
+                                                               target="_blank" 
+                                                               title="Descargar evidencia.">
+                                                    <i class="fa fa-download" />
+                                                </p:commandLink>
+                                            </div>
+                                        </p:column>
+                                        <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
+                                        <f:facet name="footer">
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorDistribucionInstalaciones.dto.listaEvidencias)}.</span>
+                                        </f:facet>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    
+                    <!-- Carga de Evidencias - Distribución de aulas -->
+                    <p:dialog id="modalCargaEvidenciaDA" 
+                              widgetVar="modalCargaEvidenciaDA" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{controladorDistribucionInstalaciones.dto.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Carga de evidencias" 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary"
+                              responsive="true"
+                              resizable="false"
+                              maximizable="false">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:toolbar>
+                                    <f:facet name="left">
+                                        <p:spacer width="10" />
+                                        <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px;" />
+                                        <p:spacer width="10" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <o:form id="formularioEvidenciaDA" 
+                                                enctype="multipart/form-data" class="form-inline">
+                                            <o:inputFile id="filesDA" 
+                                                         value="#{controladorDistribucionInstalaciones.dto.archivos}"  
+                                                         multiple="true" 
+                                                         class="form-control"
+                                                         accept="image/png,image/jpg,image/jpeg,application/pdf" 
+                                                         acceptMessage="Solo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         maxsize="#{caster.evidenciasTamanioLimite}" 
+                                                         maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                         required="true" 
+                                                         requiredMessage="Debe elegir al menos un archivo." >
+                                            </o:inputFile>
+                                            <h:commandButton id="btnuploadFilesDA" 
+                                                             value="Subir archivos" 
+                                                             class="btn btn-primary"
+                                                             actionListener="#{controladorDistribucionInstalaciones.subirEvidenciasDA()}" />
+                                        </o:form>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </div>
+                        <h:form id="frmEvidenciasDA" >
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-4"><p:outputLabel value="Ciclo Escolar: " /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalaciones.dto.registroDistribucionAulas.cicloEscolar}" /></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4"><p:outputLabel value="Periodo Escolar: " /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalaciones.dto.registroDistribucionAulas.periodoEscolar}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizar3" update="@form:tblEvidenciasDA" />
+                                    <p:dataTable id="tblEvidenciasDA" 
+                                                 value="#{controladorDistribucionInstalaciones.dto.listaEvidencias}" 
+                                                 var="evidencia"
+                                                 emptyMessage="No se han registrado evidencias de éste registro." 
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 paginator="true" 
+                                                 rows="10" 
+                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
+                                                 paginatorAlwaysVisible="false" 
+                                                 paginatorPosition="bottom"
+                                                 >
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Opciones" width="80"/>
+                                                <p:column headerText="Archivo" />
+                                                <p:column headerText="Tipo"     width="80" />
+                                                <p:column headerText="Tamanio"  width="80" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;">
+                                            <div class="btn-group">
+                                                <p:commandButton class="btn btn-info btn-sm" 
+                                                                 icon="fa fa-trash" 
+                                                                 actionListener="#{controladorDistribucionInstalaciones.eliminarEvidenciaDA(evidencia)}" 
+                                                                 onsuccess="actualizar3();"
+                                                                 title="Eliminar evidencia."
+                                                                 rendered="#{controladorDistribucionInstalaciones.dto.periodoEscolarActivo.periodo eq controladorDistribucionInstalaciones.dto.registroDistribucionAulas.distribucionAulasCicloPeriodosEscolares.periodoEscolar}">
+                                                    <p:confirm header="Eliminar evidencia" 
+                                                               message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" 
+                                                               icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:commandLink class="btn btn-info btn-sm" 
+                                                               ajax="false" 
+                                                               action="#{controladorDistribucionInstalaciones.descargarEvidencia(evidencia)}" 
+                                                               target="_blank" 
+                                                               title="Descargar evidencia.">
+                                                    <i class="fa fa-download" />
+                                                </p:commandLink>
+                                            </div>
+                                        </p:column>
+                                        <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
+                                        <f:facet name="footer">
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorDistribucionInstalaciones.dto.listaEvidencias)}.</span>
+                                        </f:facet>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    
+                    <!-- Carga de Evidencias - Distribución de laboratorios y talleres -->
+                    <p:dialog id="modalCargaEvidenciaDLT" 
+                              widgetVar="modalCargaEvidenciaDLT" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{controladorDistribucionInstalaciones.dto.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Carga de evidencias" 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary"
+                              responsive="true"
+                              resizable="false"
+                              maximizable="false">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:toolbar>
+                                    <f:facet name="left">
+                                        <p:spacer width="10" />
+                                        <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px;" />
+                                        <p:spacer width="10" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <o:form id="formularioEvidenciaDLT" 
+                                                enctype="multipart/form-data" class="form-inline">
+                                            <o:inputFile id="filesDA" 
+                                                         value="#{controladorDistribucionInstalaciones.dto.archivos}"  
+                                                         multiple="true" 
+                                                         class="form-control"
+                                                         accept="image/png,image/jpg,image/jpeg,application/pdf" 
+                                                         acceptMessage="Solo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         maxsize="#{caster.evidenciasTamanioLimite}" 
+                                                         maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                         required="true" 
+                                                         requiredMessage="Debe elegir al menos un archivo." >
+                                            </o:inputFile>
+                                            <h:commandButton id="btnuploadFilesDLT" 
+                                                             value="Subir archivos" 
+                                                             class="btn btn-primary"
+                                                             actionListener="#{controladorDistribucionInstalaciones.subirEvidenciasDLT()}" />
+                                        </o:form>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </div>
+                        <h:form id="frmEvidenciasDLT" >
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-4"><p:outputLabel value="Ciclo Escolar: " /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalaciones.dto.registroDistribucionLabTall.cicloEscolar}" /></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4"><p:outputLabel value="Periodo Escolar: " /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalaciones.dto.registroDistribucionLabTall.periodoEscolar}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizar4" update="@form:tblEvidenciasDLT" />
+                                    <p:dataTable id="tblEvidenciasDLT" 
+                                                 value="#{controladorDistribucionInstalaciones.dto.listaEvidencias}" 
+                                                 var="evidencia"
+                                                 emptyMessage="No se han registrado evidencias de éste registro." 
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 paginator="true" 
+                                                 rows="10" 
+                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
+                                                 paginatorAlwaysVisible="false" 
+                                                 paginatorPosition="bottom"
+                                                 >
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Opciones" width="80"/>
+                                                <p:column headerText="Archivo" />
+                                                <p:column headerText="Tipo"     width="80" />
+                                                <p:column headerText="Tamanio"  width="80" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;">
+                                            <div class="btn-group">
+                                                <p:commandButton class="btn btn-info btn-sm" 
+                                                                 icon="fa fa-trash" 
+                                                                 actionListener="#{controladorDistribucionInstalaciones.eliminarEvidenciaDLT(evidencia)}" 
+                                                                 onsuccess="actualizar4();"
+                                                                 title="Eliminar evidencia."
+                                                                 rendered="#{controladorDistribucionInstalaciones.dto.periodoEscolarActivo.periodo eq controladorDistribucionInstalaciones.dto.registroDistribucionLabTall.distribucionLabtallCicloPeriodosEscolares.periodoEscolar}">
+                                                    <p:confirm header="Eliminar evidencia" 
+                                                               message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" 
+                                                               icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:commandLink class="btn btn-info btn-sm" 
+                                                               ajax="false" 
+                                                               action="#{controladorDistribucionInstalaciones.descargarEvidencia(evidencia)}" 
+                                                               target="_blank" 
+                                                               title="Descargar evidencia.">
+                                                    <i class="fa fa-download" />
+                                                </p:commandLink>
+                                            </div>
+                                        </p:column>
+                                        <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
+                                        <f:facet name="footer">
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorDistribucionInstalaciones.dto.listaEvidencias)}.</span>
+                                        </f:facet>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    
+                    <!-- Alineación a POA - Capacidad Instalada -->
+                    <p:dialog id="modalAlineacion" 
+                              widgetVar="modalAlineacion" 
+                              width="900" 
+                              height="auto"  
+                              closeOnEscape="true"
+                              showEffect="fade"
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Alineación a POA." 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmAlineacion">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar rendered="#{controladorDistribucionInstalaciones.dto.periodoEscolarActivo.ciclo.ciclo eq controladorDistribucionInstalaciones.dto.periodo.ciclo.ciclo}">
+                                        <f:facet name="left">
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandButton class="btn btn-primary" 
+                                                             value="Eliminar alineación" 
+                                                             icon="fa fa-trash" 
+                                                             actionListener="#{controladorDistribucionInstalaciones.eliminarAlineacion()}" 
+                                                             rendered="#{!empty controladorDistribucionInstalaciones.dto.registroCapacidadInstalada.actividadAlineada}" >
+                                                <p:confirm header="Eliminar alineación" 
+                                                           message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." 
+                                                           icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                            <p:commandButton class="btn btn-primary" 
+                                                             value="Guardar alineación" 
+                                                             icon="fa fa-save" 
+                                                             actionListener="#{controladorDistribucionInstalaciones.alinearRegistro()}" 
+                                                             oncomplete="PF('modalAlineacion').hide();" />
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>                            
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-4"><p:outputLabel value="Ciclo Escolar " /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalaciones.dto.registroCapacidadInstalada.cicloEscolar}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                            <c:set var="col1" value="#{'col-md-2'}" />
+                            <c:set var="col2" value="#{'col-md-10'}" />
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="eje" value="#{controladorDistribucionInstalaciones.dto.alineacionEje}" valueChangeListener="#{controladorDistribucionInstalaciones.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="eje"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="estrategia" value="#{controladorDistribucionInstalaciones.dto.alineacionEstrategia}" valueChangeListener="#{controladorDistribucionInstalaciones.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <p:ajax process="estrategia" update="lineaAccion,actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="estrategia"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="lineaAccion" value="#{controladorDistribucionInstalaciones.dto.alineacionLinea}" valueChangeListener="#{controladorDistribucionInstalaciones.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <p:ajax process="lineaAccion" update="actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="lineaAccion"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="actividad" value="#{controladorDistribucionInstalaciones.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <p:ajax process="actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="actividad"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    
+                    <!-- Alineación a POA - Distribución Aulas -->
+                    <p:dialog id="modalAlineacionDA" 
+                              widgetVar="modalAlineacionDA" 
+                              width="900" 
+                              height="auto"  
+                              closeOnEscape="true"
+                              showEffect="fade"
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Alineación a POA." 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmAlineacionDA">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar rendered="#{controladorDistribucionInstalaciones.dto.periodoEscolarActivo.periodo eq controladorDistribucionInstalaciones.dto.registroDistribucionAulas.distribucionAulasCicloPeriodosEscolares.periodoEscolar}">
+                                        <f:facet name="left">
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandButton class="btn btn-primary" 
+                                                             value="Eliminar alineación" 
+                                                             icon="fa fa-trash" 
+                                                             actionListener="#{controladorDistribucionInstalaciones.eliminarAlineacionDA()}" 
+                                                             rendered="#{!empty controladorDistribucionInstalaciones.dto.registroDistribucionAulas.actividadAlineada}" >
+                                                <p:confirm header="Eliminar alineación" 
+                                                           message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." 
+                                                           icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                            <p:commandButton class="btn btn-primary" 
+                                                             value="Guardar alineación" 
+                                                             icon="fa fa-save" 
+                                                             actionListener="#{controladorDistribucionInstalaciones.alinearRegistroDA()}" 
+                                                             oncomplete="PF('modalAlineacionDA').hide();" />
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>                            
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-4"><p:outputLabel value="Ciclo Escolar: " /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalaciones.dto.registroDistribucionAulas.cicloEscolar}" /></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4"><p:outputLabel value="Periodo Escolar: " /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalaciones.dto.registroDistribucionAulas.periodoEscolar}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                            <c:set var="col1" value="#{'col-md-2'}" />
+                            <c:set var="col2" value="#{'col-md-10'}" />
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="ejeParticipante" value="Eje: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="ejeParticipante" value="#{controladorDistribucionInstalaciones.dto.alineacionEje}" valueChangeListener="#{controladorDistribucionInstalaciones.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <p:ajax process="ejeParticipante" update="@form:estrategiaParticipante,@form:lineaAccionParticipante,@form:actividadParticipante" />
+                                    </p:selectOneMenu>
+                                    <p:message for="ejeParticipante"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="estrategiaParticipante" value="Estrategia: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="estrategiaParticipante" value="#{controladorDistribucionInstalaciones.dto.alineacionEstrategia}" valueChangeListener="#{controladorDistribucionInstalaciones.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <p:ajax process="estrategiaParticipante" update="lineaAccionParticipante,actividadParticipante" />
+                                    </p:selectOneMenu>
+                                    <p:message for="estrategiaParticipante"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="lineaAccionParticipante" value="Línea de acción: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="lineaAccionParticipante" value="#{controladorDistribucionInstalaciones.dto.alineacionLinea}" valueChangeListener="#{controladorDistribucionInstalaciones.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <p:ajax process="lineaAccionParticipante" update="actividadParticipante" />
+                                    </p:selectOneMenu>
+                                    <p:message for="lineaAccionParticipante"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="actividadParticipante" value="Actividad: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="actividadParticipante" value="#{controladorDistribucionInstalaciones.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <p:ajax process="actividadParticipante" />
+                                    </p:selectOneMenu>
+                                    <p:message for="actividadParticipante"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    
+                    <!-- Alineación a POA - Distribución de Laboratorios y talleres -->
+                    <p:dialog id="modalAlineacionDLT" 
+                              widgetVar="modalAlineacionDLT" 
+                              width="900" 
+                              height="auto"  
+                              closeOnEscape="true"
+                              showEffect="fade"
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Alineación a POA." 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmAlineacionDLT">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar rendered="#{controladorDistribucionInstalaciones.dto.periodoEscolarActivo.periodo eq controladorDistribucionInstalaciones.dto.registroDistribucionLabTall.distribucionLabtallCicloPeriodosEscolares.periodoEscolar}">
+                                        <f:facet name="left">
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandButton class="btn btn-primary" 
+                                                             value="Eliminar alineación" 
+                                                             icon="fa fa-trash" 
+                                                             actionListener="#{controladorDistribucionInstalaciones.eliminarAlineacionDLT()}" 
+                                                             rendered="#{!empty controladorDistribucionInstalaciones.dto.registroDistribucionLabTall.actividadAlineada}" >
+                                                <p:confirm header="Eliminar alineación" 
+                                                           message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." 
+                                                           icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                            <p:commandButton class="btn btn-primary" 
+                                                             value="Guardar alineación" 
+                                                             icon="fa fa-save" 
+                                                             actionListener="#{controladorDistribucionInstalaciones.alinearRegistroDLT()}" 
+                                                             oncomplete="PF('modalAlineacionDLT').hide();" />
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>                            
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-4"><p:outputLabel value="Ciclo Escolar: " /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalaciones.dto.registroDistribucionLabTall.cicloEscolar}" /></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4"><p:outputLabel value="Periodo Escolar: " /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalaciones.dto.registroDistribucionLabTall.periodoEscolar}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                            <c:set var="col1" value="#{'col-md-2'}" />
+                            <c:set var="col2" value="#{'col-md-10'}" />
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="ejeParticipante2" value="Eje: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="ejeParticipante2" value="#{controladorDistribucionInstalaciones.dto.alineacionEje}" valueChangeListener="#{controladorDistribucionInstalaciones.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <p:ajax process="ejeParticipante2" update="@form:estrategiaParticipante2,@form:lineaAccionParticipante2,@form:actividadParticipante2" />
+                                    </p:selectOneMenu>
+                                    <p:message for="ejeParticipante2"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="estrategiaParticipante2" value="Estrategia: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="estrategiaParticipante2" value="#{controladorDistribucionInstalaciones.dto.alineacionEstrategia}" valueChangeListener="#{controladorDistribucionInstalaciones.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <p:ajax process="estrategiaParticipante2" update="lineaAccionParticipante2,actividadParticipante2" />
+                                    </p:selectOneMenu>
+                                    <p:message for="estrategiaParticipante2"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="lineaAccionParticipante2" value="Línea de acción: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="lineaAccionParticipante2" value="#{controladorDistribucionInstalaciones.dto.alineacionLinea}" valueChangeListener="#{controladorDistribucionInstalaciones.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <p:ajax process="lineaAccionParticipante2" update="actividadParticipante2" />
+                                    </p:selectOneMenu>
+                                    <p:message for="lineaAccionParticipante2"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="actividadParticipante2" value="Actividad: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="actividadParticipante2" value="#{controladorDistribucionInstalaciones.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <p:ajax process="actividadParticipante2" />
+                                    </p:selectOneMenu>
+                                    <p:message for="actividadParticipante2"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
                     <!-- Sección de subida -->
                     <div class="row">
                         <div class="col-lg-12 col-md-12">
                             <h:form id="formPrevisualizacionDatos" prependId="false">
-                                <c:if test="#{controladorDistribucionInstalaciones.listaDistribucionInstalaciones.dtoCapacidadInstaladaCiclosEscolares ne null}">
+                                <c:if test="#{controladorArchivoDistribucionInstalaciones.etapa eq etapa.CARGAR}">
                                     <center>
                                         <p:tabView id="tabDistribucionInstalaciones">
                                             <p:tab id="tabCapacidadInstalada" title="Capacidad Instalada">
@@ -89,13 +957,13 @@
                                                              paginator="true"
                                                              rows="10" 
                                                              rowsPerPageTemplate="5,10,20,30,40,50"
-                                                             resizeMode="expand" scrollable="true"
                                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
                                                              id="dtbCapacidadInstalada"
-                                                             var="capacidadInstalada" value="#{controladorDistribucionInstalaciones.listaDistribucionInstalaciones.dtoCapacidadInstaladaCiclosEscolares}"
-                                                             tableStyleClass="table-bordered table-hover table-condensed table-responsive">
+                                                             var="capacidadInstalada" value="#{controladorDistribucionInstalaciones.dto.listaCapIns}"
+                                                             resizeMode="expand"
+                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                                     <f:facet name="header">
-                                                        Capacidad Instalada
+                                                        Previsualización de datos
                                                     </f:facet>
 
                                                     <p:columnGroup type="header">
@@ -132,15 +1000,14 @@
                                                              paginator="true"
                                                              rows="10" 
                                                              rowsPerPageTemplate="5,10,20,30,40,50"
-                                                             resizeMode="expand" scrollable="true"
                                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
                                                              id="dtbDistribucionAulas"
-                                                             var="distribucionAula" value="#{controladorDistribucionInstalaciones.listaDistribucionInstalaciones.dtoDistribucionAulasCPE}"
-                                                             tableStyleClass="table-bordered table-hover table-condensed table-responsive">
+                                                             var="distribucionAula" value="#{controladorDistribucionInstalaciones.dto.listaDisAulas}"
+                                                             resizeMode="expand"
+                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                                     <f:facet name="header">
-                                                        Distribución de aulas
+                                                        Previsualización de datos
                                                     </f:facet>
-
                                                     <p:columnGroup type="header">
                                                         <p:row>
                                                             <p:column headerText="Ciclo Escolar" width="100" />
@@ -169,8 +1036,6 @@
                                                     <p:column>
                                                         <h:outputText value="#{distribucionAula.distribucionAulasCicloPeriodosEscolares.acondicionadas}"/>
                                                     </p:column>
-                                                    <f:facet name="footer">
-                                                    </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
                                             <p:tab id="tabDistribucionLabTall" title="Distribución de Laboratorios y Talleres">
@@ -178,13 +1043,13 @@
                                                              paginator="true"
                                                              rows="10" 
                                                              rowsPerPageTemplate="5,10,20,30,40,50"
-                                                             resizeMode="expand" scrollable="true"
                                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
                                                              id="dtbDistribucionLabTall"
-                                                             var="distribucionLabTall" value="#{controladorDistribucionInstalaciones.listaDistribucionInstalaciones.dtoDistribucionLabTallCPE}"
-                                                             tableStyleClass="table-bordered table-hover table-condensed table-responsive">
+                                                             var="distribucionLabTall" value="#{controladorDistribucionInstalaciones.dto.listaDisLabTall}"
+                                                             resizeMode="expand"
+                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                                     <f:facet name="header">
-                                                        Distribución de laboratorios y talleres
+                                                        Previsualización de datos
                                                     </f:facet>
 
                                                     <p:columnGroup type="header">
@@ -221,14 +1086,12 @@
                                                             <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
                                                         </h:outputText>
                                                     </p:column>
-                                                    <f:facet name="footer">
-                                                    </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
 
                                         </p:tabView>
                                         <p></p>
-                                        <p:commandButton id="btnGuardar" value="Guardar Datos" actionListener="#{controladorDistribucionInstalaciones.guardaDistribucionEquipamiento()}" icon="fa fa-pencil-square-o" class="btn-primary" update="formPrevisualizacionDatos"/>
+                                        <p:commandButton id="btnGuardar" value="Guardar Datos" actionListener="#{controladorDistribucionInstalaciones.guardaDistribucionInstalaciones()}" icon="fa fa-pencil-square-o" class="btn-primary" update="formPrevisualizacionDatos"/>
                                         <p:spacer width="5" />
                                         <p:commandButton id="btnCancelar" value="Cancelar" actionListener="#{controladorDistribucionInstalaciones.cancelarArchivo()}" icon="fa fa-times-circle" class="btn-danger" update=":formPrevisualizacionDatos,:formMuestraDatosActivos"/>
                                     </center>
@@ -239,17 +1102,46 @@
 
                 </div>
 
-                <p:dialog widgetVar="modalCargaArchivo" width="400" height="auto" showEffect="fade" hideEffect="fade" modal="true" header="Carga de Archivo" responsive="true" resizable="false" maximizable="false">
+                <p:dialog widgetVar="modalCargaArchivo" 
+                          width="400" 
+                          height="auto" 
+                          showEffect="fade" 
+                          hideEffect="fade" 
+                          modal="true" 
+                          header="Carga de Archivo" 
+                          styleClass="panel panel-primary" 
+                          responsive="true" 
+                          resizable="false" 
+                          maximizable="false">
                     <center>
                         <h:form id="formularioContenedor" enctype="multipart/form-data">
-                            <o:inputFile id="file" value="#{controladorArchivoDistribucionInstalaciones.file}" acceptMessage="Solo se permiten archivos XLSX." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
-                            <p></p>
-                            <h:message id="messageForFile" for="file" />
-                            <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{controladorArchivoDistribucionInstalaciones.subirExcelDistribucionInstalaciones()}"/>
-                            <p:blockUI block="@form:formularioContenedor" widgetVar="bloqueoCargaFile">
-                                Cargando archivo espere por favor.<br />
-                            </p:blockUI>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <o:inputFile id="file" 
+                                                 value="#{controladorArchivoDistribucionInstalaciones.file}"
+                                                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
+                                                 acceptMessage="Solo se permiten archivos XLSX."
+                                                 maxsize="#{100*1024*1024}" 
+                                                 maxsizeMessage="El tamaño máximo permitido son 100MB."
+                                                 required="true" 
+                                                 requiredMessage="Debe elegir un archivo." >
+                                    </o:inputFile>
+                                    <p:messages for="file" ><p:autoUpdate/></p:messages>
+                                </div>
+                                <p:separator />
+                                <div class="col-md-12">
+                                    <h:commandButton id="btnuploadFile" 
+                                                     value="Subir archivo" 
+                                                     class="btn btn-primary" 
+                                                     action="#{controladorArchivoDistribucionInstalaciones.subirExcelDistribucionInstalaciones()}" />
+                                </div>
+                            </div>
                         </h:form>
+                        <p:blockUI block="formularioContenedor" 
+                                   widgetVar="bloqueoCargaFile" 
+                                   trigger="formularioContenedor:btnuploadFile">
+                            Cargando archivo espere por favor.<br />
+                        </p:blockUI>
                     </center>
                 </p:dialog>
 

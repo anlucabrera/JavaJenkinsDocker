@@ -9,16 +9,16 @@ import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.controlador.Caster;
+import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuestas;
+import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesFormacionIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
@@ -29,7 +29,6 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.dto.pye.DTOParticipantesActFormInt;
-import mx.edu.utxj.pye.siip.entity.pye.list.ListaPartActFormInt;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbActFormacionIntegral;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbPartFormInt;
@@ -45,23 +44,17 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 @Stateful
 public class ServicioPartActFormInt implements EjbPartFormInt{
-    @EJB
-    Facade facdepye;
-    @EJB
-    EjbModulos ejbModulos;
-    @EJB
-    EjbMatriculaPeriodosEscolares ejbMatriculaPeriodosEscolares;
-    @EJB
-    EjbActFormacionIntegral ejbActFormacionIntegral;
-    
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
+    @EJB EjbModulos ejbModulos;
+    @EJB EjbMatriculaPeriodosEscolares ejbMatriculaPeriodosEscolares;
+    @EJB EjbActFormacionIntegral ejbActFormacionIntegral;
+    @EJB Facade f;
+    @EJB EjbFiscalizacion ejbFiscalizacion;
+    @Inject Caster caster; 
+    @Inject ControladorEmpleado controladorEmpleado;
     
     @Override
-    public  ListaPartActFormInt getListaPartActFormInt(String rutaArchivo) throws Throwable {
+    public List<DTOParticipantesActFormInt> getListaPartActFormInt(String rutaArchivo) throws Throwable {
        
-        ListaPartActFormInt listaPartActFormInt = new  ListaPartActFormInt();
-
         List<DTOParticipantesActFormInt> listaDtoParticipantesActFormInt = new ArrayList<>();
         ActividadesFormacionIntegral actividadesFormacionIntegral;
         MatriculaPeriodosEscolares matriculaPeriodosEscolares;
@@ -80,7 +73,7 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
         for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
             fila = (XSSFRow) (Row) primeraHoja.getRow(i);
 
-                if ((!"".equals(fila.getCell(2).getNumericCellValue()))) {
+                if (fila.getCell(4).getNumericCellValue()==1) {
                 actividadesFormacionIntegral = new ActividadesFormacionIntegral();
                 matriculaPeriodosEscolares = new  MatriculaPeriodosEscolares();
                 participantesActividadesFormacionIntegral = new ParticipantesActividadesFormacionIntegral();
@@ -91,18 +84,18 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
                         actividadesFormacionIntegral.setActividadFormacionIntegral(fila.getCell(0).getStringCellValue());
                         participantesActividadesFormacionIntegral.setActividadFormacionIntegral(actividadesFormacionIntegral);
                         break;
-                    default:
-                        break;
-                }
-                switch (fila.getCell(1).getCellTypeEnum()) {
                     case FORMULA: 
-                        dTOParticipantesActFormInt.setPeriodoEscolar(fila.getCell(1).getStringCellValue());
+                        actividadesFormacionIntegral.setActividadFormacionIntegral(fila.getCell(0).getStringCellValue());
+                        participantesActividadesFormacionIntegral.setActividadFormacionIntegral(actividadesFormacionIntegral);
                         break;
                     default:
                         break;
                 }
                 switch (fila.getCell(2).getCellTypeEnum()) {
                     case FORMULA:
+                        matriculaPeriodosEscolares.setPeriodo((int) fila.getCell(2).getNumericCellValue());
+                        break;
+                    case NUMERIC:
                         matriculaPeriodosEscolares.setPeriodo((int) fila.getCell(2).getNumericCellValue());
                         break;
                     default:
@@ -124,84 +117,70 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
                     default:
                         break;
                 }
-                
+               
                     dTOParticipantesActFormInt.setParticipantesActividadesFormacionIntegral(participantesActividadesFormacionIntegral);
                     listaDtoParticipantesActFormInt.add(dTOParticipantesActFormInt);
                 }
             }
-            listaPartActFormInt.setParticipantesActFormInt(listaDtoParticipantesActFormInt);
             libroRegistro.close();
-            addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+            addDetailMessage("<b>Hoja de Participantes de Actividades de Formación Integral Validada favor de verificar sus datos antes de guardar su información</b>");
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
             addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
         }
-        return listaPartActFormInt;
+        return listaDtoParticipantesActFormInt;
     }
 
     @Override
-    public void  guardaPartActFormInt(ListaPartActFormInt listaPartActFormInt, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
+    public void  guardaPartActFormInt(List<DTOParticipantesActFormInt> lista, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
+            
+            lista.forEach((partActFormInt) -> {
+            ActividadesFormacionIntegral actividadesFormacionIntegral = ejbActFormacionIntegral.getRegistroActividadesFormacionIntegral(partActFormInt.getParticipantesActividadesFormacionIntegral().getActividadFormacionIntegral().getActividadFormacionIntegral());
+            if (actividadesFormacionIntegral == null || actividadesFormacionIntegral.getActividadFormacionIntegral().isEmpty()) {
+                addDetailMessage("<b>No existe la Clave de Actividad de Formación Integral</b>");
 
-//            listaPartActFormInt.getParticipantesActFormInt().forEach((participantesActFormInt) -> {
-//            Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-//            
-//            participantesActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().setRegistro(ejbMatriculaPeriodosEscolares.getRegistroMatriculaEspecifico(participantesActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getMatricula(), participantesActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getPeriodo()));
-//            participantesActFormInt.getParticipantesActividadesFormacionIntegral().getActividadFormacionIntegral().setRegistro(ejbActFormacionIntegral.getRegistroActFormacionIntegralEspecifico(participantesActFormInt.getParticipantesActividadesFormacionIntegral().getActividadFormacionIntegral().getActividadFormacionIntegral()));
-//            
-//            facdepye.setEntityClass(ParticipantesActividadesFormacionIntegral.class);
-//            participantesActFormInt.getParticipantesActividadesFormacionIntegral().setRegistro(registro.getRegistro());
-//            facdepye.create(participantesActFormInt.getParticipantesActividadesFormacionIntegral());
-//            facdepye.flush();
-//        });
-
-            List<String> listaCondicional = new ArrayList<>();
-            listaPartActFormInt.getParticipantesActFormInt().forEach((participantesActFormInt) -> {
-            facdepye.setEntityClass(ParticipantesActividadesFormacionIntegral.class);
-            ParticipantesActividadesFormacionIntegral parActFormIntEncontrada = getRegistroParticipantesActividadesFormacionIntegral(participantesActFormInt.getParticipantesActividadesFormacionIntegral());
-            Boolean registroAlmacenado = false;
-
-            if (parActFormIntEncontrada != null) {
-                listaCondicional.add(participantesActFormInt.getParticipantesActividadesFormacionIntegral().getActividadFormacionIntegral().getActividadFormacionIntegral()+ " " + participantesActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getMatricula());
-                registroAlmacenado = true;
-            }
-            if (registroAlmacenado) {
-                participantesActFormInt.getParticipantesActividadesFormacionIntegral().setRegistro(parActFormIntEncontrada.getRegistro());
-                participantesActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().setRegistro(ejbMatriculaPeriodosEscolares.getRegistroMatriculaEspecifico(participantesActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getMatricula(), participantesActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getPeriodo()));
-                participantesActFormInt.getParticipantesActividadesFormacionIntegral().getActividadFormacionIntegral().setRegistro(ejbActFormacionIntegral.getRegistroActFormacionIntegralEspecifico(participantesActFormInt.getParticipantesActividadesFormacionIntegral().getActividadFormacionIntegral().getActividadFormacionIntegral()));
-                facdepye.edit(participantesActFormInt.getParticipantesActividadesFormacionIntegral());
             } else {
-                Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-                participantesActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().setRegistro(ejbMatriculaPeriodosEscolares.getRegistroMatriculaEspecifico(participantesActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getMatricula(), participantesActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getPeriodo()));
-                participantesActFormInt.getParticipantesActividadesFormacionIntegral().getActividadFormacionIntegral().setRegistro(ejbActFormacionIntegral.getRegistroActFormacionIntegralEspecifico(participantesActFormInt.getParticipantesActividadesFormacionIntegral().getActividadFormacionIntegral().getActividadFormacionIntegral()));
-                participantesActFormInt.getParticipantesActividadesFormacionIntegral().setRegistro(registro.getRegistro());
-                facdepye.create(participantesActFormInt.getParticipantesActividadesFormacionIntegral());
+                if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), actividadesFormacionIntegral.getPeriodo())) {
+                    List<String> listaCondicional = new ArrayList<>();
+                    if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), partActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getPeriodo())) {
+                        f.setEntityClass(ParticipantesActividadesFormacionIntegral.class);
+                        ParticipantesActividadesFormacionIntegral partAFIEncontrada = getRegistroParticipantesActividadesFormacionIntegral(partActFormInt.getParticipantesActividadesFormacionIntegral());
+                        Boolean registroAlmacenado = false;
+                        if (partAFIEncontrada != null) {
+                            listaCondicional.add(partAFIEncontrada.getActividadFormacionIntegral().getActividadFormacionIntegral() + " " + partAFIEncontrada.getMatriculaPeriodosEscolares().getMatricula());
+                            registroAlmacenado = true;
+                        }
+                        if (registroAlmacenado) {
+                            partActFormInt.getParticipantesActividadesFormacionIntegral().setRegistro(partAFIEncontrada.getRegistro());
+                            partActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().setRegistro(ejbMatriculaPeriodosEscolares.getRegistroMatriculaEspecifico(partActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getMatricula(), partActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getPeriodo()));
+                            partActFormInt.getParticipantesActividadesFormacionIntegral().getActividadFormacionIntegral().setRegistro(ejbActFormacionIntegral.getRegistroActFormacionIntegralEspecifico(partActFormInt.getParticipantesActividadesFormacionIntegral().getActividadFormacionIntegral().getActividadFormacionIntegral()));
+                            f.edit(partActFormInt.getParticipantesActividadesFormacionIntegral());
+                            addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
+                        } else {
+                            Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
+                            partActFormInt.getParticipantesActividadesFormacionIntegral().setRegistro(registro.getRegistro());
+                            partActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().setRegistro(ejbMatriculaPeriodosEscolares.getRegistroMatriculaEspecifico(partActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getMatricula(), partActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getPeriodo()));
+                            partActFormInt.getParticipantesActividadesFormacionIntegral().getActividadFormacionIntegral().setRegistro(ejbActFormacionIntegral.getRegistroActFormacionIntegralEspecifico(partActFormInt.getParticipantesActividadesFormacionIntegral().getActividadFormacionIntegral().getActividadFormacionIntegral()));
+                            f.create(partActFormInt.getParticipantesActividadesFormacionIntegral());
+                            addDetailMessage("<b>Se guardaron los registros correctamente</b> ");
+                        }
+                        f.flush();
+                    }
+                } else {
+
+                    addDetailMessage("<b>No puede registrar información de periodos anteriores</b>");
+                }
             }
-            facdepye.flush();
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        
     }
     
-//     @Override
-//    public ParticipantesActividadesFormacionIntegral getPartActividadesFormacionIntegral(ParticipantesActividadesFormacionIntegral participantesActividadesFormacionIntegral) {
-//        TypedQuery<ParticipantesActividadesFormacionIntegral> query = em.createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p JOIN p.actividadFormacionIntegral a JOIN p.matriculaPeriodosEscolares m WHERE a.actividadFormacionIntegral = :actividadFormacionIntegral AND m.matricula = :matricula AND m.periodo = :periodoEscolar", ParticipantesActividadesFormacionIntegral.class);
-//        query.setParameter("actividadFormacionIntegral", participantesActividadesFormacionIntegral.getActividadFormacionIntegral().getActividadFormacionIntegral());
-//        query.setParameter("matricula", participantesActividadesFormacionIntegral.getMatriculaPeriodosEscolares().getMatricula());
-//        query.setParameter("periodoEscolar", participantesActividadesFormacionIntegral.getMatriculaPeriodosEscolares().getPeriodo());
-//        try {
-//            participantesActividadesFormacionIntegral = query.getSingleResult();
-//        } catch (NoResultException | NonUniqueResultException ex) {
-//            participantesActividadesFormacionIntegral = null;
-//            ex.toString();
-//        }
-//        return participantesActividadesFormacionIntegral;
-//    }
-
     @Override
     public ParticipantesActividadesFormacionIntegral getRegistroParticipantesActividadesFormacionIntegral(ParticipantesActividadesFormacionIntegral participantesActividadesFormacionIntegral) {
         
-        TypedQuery<ParticipantesActividadesFormacionIntegral> query = em.createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p JOIN p.actividadFormacionIntegral a JOIN p.matriculaPeriodosEscolares m WHERE m.matricula = :matricula AND m.periodo = :periodoEscolar AND a.actividadFormacionIntegral = :actividadFormacionIntegral",  ParticipantesActividadesFormacionIntegral.class);
+        TypedQuery<ParticipantesActividadesFormacionIntegral> query = f.getEntityManager().createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p JOIN p.actividadFormacionIntegral a JOIN p.matriculaPeriodosEscolares m WHERE m.matricula = :matricula AND m.periodo = :periodoEscolar AND a.actividadFormacionIntegral = :actividadFormacionIntegral",  ParticipantesActividadesFormacionIntegral.class);
         query.setParameter("matricula", participantesActividadesFormacionIntegral.getMatriculaPeriodosEscolares().getMatricula());
         query.setParameter("periodoEscolar", participantesActividadesFormacionIntegral.getMatriculaPeriodosEscolares().getPeriodo());
         query.setParameter("actividadFormacionIntegral", participantesActividadesFormacionIntegral.getActividadFormacionIntegral().getActividadFormacionIntegral());
@@ -209,10 +188,8 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
             participantesActividadesFormacionIntegral = query.getSingleResult();
         } catch (NoResultException | NonUniqueResultException ex) {
             participantesActividadesFormacionIntegral = null;
-            System.out.println(ex.toString());
+//            System.out.println(ex.toString());
         }
         return participantesActividadesFormacionIntegral;
     }
-
-   
 }

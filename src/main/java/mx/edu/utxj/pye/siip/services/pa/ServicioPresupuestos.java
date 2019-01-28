@@ -6,17 +6,23 @@
 package mx.edu.utxj.pye.siip.services.pa;
 
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
-import edu.mx.utxj.pye.seut.util.collection.SerializableArrayList;
 import java.io.File;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Presupuestos;
 import mx.edu.utxj.pye.sgi.entity.pye2.CapitulosTipos;
@@ -26,7 +32,6 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.dto.finanzas.DTOPresupuestos;
-import mx.edu.utxj.pye.siip.entity.finanzas.list.ListaPresupuestos;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.pa.EjbPresupuestos;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -42,19 +47,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 @Stateful
 public class ServicioPresupuestos implements EjbPresupuestos{
     
-    @EJB
-    Facade facdepye;
-    @EJB
-    EjbModulos ejbModulos;
-    
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
+    @EJB Facade f;
+    @EJB EjbModulos ejbModulos;
+    @Inject ControladorEmpleado controladorEmpleado;
     
     @Override
-    public ListaPresupuestos getListaPresupuestos(String rutaArchivo) throws Throwable {
-       
-        ListaPresupuestos listaPresupuestos = new ListaPresupuestos();
-
+    public List<DTOPresupuestos> getListaPresupuestos(String rutaArchivo) throws Throwable {
         List<DTOPresupuestos> listaDtoPresupuestos = new ArrayList<>();
         Presupuestos presupuestos;
         CapitulosTipos capitulosTipos;
@@ -92,11 +90,13 @@ public class ServicioPresupuestos implements EjbPresupuestos{
                 switch (fila.getCell(4).getCellTypeEnum()) {
                     case STRING:
                         capitulosTipos.setNombre(fila.getCell(4).getStringCellValue());
+                        dTOPresupuestos.setCapitulo(capitulosTipos.getNombre());
                         break;
                     case NUMERIC:
                         Integer num = (int) fila.getCell(4).getNumericCellValue();
                         String cap = Integer.toString(num);
                         capitulosTipos.setNombre(cap);
+                        dTOPresupuestos.setCapitulo(cap);
                         break;
                     default:
                         break;
@@ -126,13 +126,11 @@ public class ServicioPresupuestos implements EjbPresupuestos{
                     default:
                         break;
                 }
-                   
+              
                     dTOPresupuestos.setPresupuestos(presupuestos);
                     listaDtoPresupuestos.add(dTOPresupuestos);
                 }
             }
-            listaPresupuestos.setPresupuestos(listaDtoPresupuestos);
-
             libroRegistro.close();
             addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
         } else {
@@ -141,26 +139,18 @@ public class ServicioPresupuestos implements EjbPresupuestos{
             ServicioArchivos.eliminarArchivo(rutaArchivo);
             addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
         }
-        return listaPresupuestos;
+        return listaDtoPresupuestos;
         
     }
 
     @Override
-    public void guardaPresupuestos(ListaPresupuestos listaPresupuestos, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
-//
-//            listaPresupuestos.getPresupuestos().forEach((presupuestos) -> {
-//            Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-//            
-//            facdepye.setEntityClass(Presupuestos.class);
-//            presupuestos.getPresupuestos().setRegistro(registro.getRegistro());
-//            facdepye.create(presupuestos.getPresupuestos());
-//            facdepye.flush();
-//        });
-        List<String> validaciones = new SerializableArrayList<>();
+    public void guardaPresupuestos(List<DTOPresupuestos> lista, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
+       
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         List<String> listaCondicional = new ArrayList<>();
-        listaPresupuestos.getPresupuestos().forEach((presupuestos) -> {
+        lista.forEach((presupuestos) -> {
             
-                facdepye.setEntityClass(Presupuestos.class);
+                f.setEntityClass(Presupuestos.class);
                 Presupuestos presEncontrado = getRegistroPresupuestos(presupuestos.getPresupuestos());
                 Boolean registroAlmacenado = false;
                 if (presEncontrado != null) {
@@ -168,21 +158,33 @@ public class ServicioPresupuestos implements EjbPresupuestos{
                     registroAlmacenado = true;
                 }
                 if (registroAlmacenado) {
-                    presupuestos.getPresupuestos().setRegistro(presEncontrado.getRegistro());
-                    facdepye.edit(presupuestos.getPresupuestos());
+                    
+                    Date fA = presEncontrado.getFechaAplicacion();
+                    LocalDate fecApl = fA.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    String fecha = fecApl.format(formatter);
+                    
+                    if (ejbModulos.validaEventoRegistro(ejbModulos.getEventoRegistro(), presEncontrado.getRegistros().getEventoRegistro().getEventoRegistro())) {
+                        presupuestos.getPresupuestos().setRegistro(presEncontrado.getRegistro());
+                        f.edit(presupuestos.getPresupuestos());
+                        f.flush();
+                        addDetailMessage("<b>Se actualizaron los registros con fecha de aplicación: </b> " + fecha);
+                    } else {
+                        addDetailMessage("<b>No se pueden actualizar los registros con fecha de aplicación: </b> " + fecha);
+                    }
                 } else {
                     Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                     presupuestos.getPresupuestos().setRegistro(registro.getRegistro());
-                    facdepye.create(presupuestos.getPresupuestos());
+                    f.create(presupuestos.getPresupuestos());
+                    f.flush();
+                    addDetailMessage("<b>Se guardaron los registros correctamente </b>");
                 }
-                facdepye.flush();
+                f.flush();
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
     public Presupuestos getRegistroPresupuestos(Presupuestos presupuestos) {
-        TypedQuery<Presupuestos> query = em.createQuery("SELECT p FROM Presupuestos p JOIN p.capituloTipo c WHERE p.presupuestoOperacion = :presupuestoOperacion AND p.presupuestoTipo = :presupuestoTipo AND c.capituloTipo = :capituloTipo", Presupuestos.class);
+        TypedQuery<Presupuestos> query = f.getEntityManager().createQuery("SELECT p FROM Presupuestos p JOIN p.capituloTipo c WHERE p.presupuestoOperacion = :presupuestoOperacion AND p.presupuestoTipo = :presupuestoTipo AND c.capituloTipo = :capituloTipo", Presupuestos.class);
         query.setParameter("presupuestoOperacion", presupuestos.getPresupuestoOperacion());
         query.setParameter("presupuestoTipo", presupuestos.getPresupuestoTipo());
         query.setParameter("capituloTipo", presupuestos.getCapituloTipo().getCapituloTipo());
@@ -194,4 +196,53 @@ public class ServicioPresupuestos implements EjbPresupuestos{
         }
         return presupuestos;
     }
+
+    @Override
+    public List<DTOPresupuestos> getRegistroDTOPresupuestos(String mes, Short ejercicio) {
+        List<DTOPresupuestos> ldto = new ArrayList<>();
+        TypedQuery<Presupuestos> q = f.getEntityManager()
+                .createQuery("SELECT p from Presupuestos p WHERE p.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND p.registros.eventoRegistro.mes = :mes AND p.registros.area = :area", Presupuestos.class);
+        q.setParameter("mes", mes);
+        q.setParameter("ejercicio", ejercicio);
+        q.setParameter("area", controladorEmpleado.getNuevaAreasUniversidad().getArea());
+        List<Presupuestos> l = q.getResultList();
+        if (l.isEmpty() || l == null) {
+            return null;
+        } else {
+            TypedQuery<EventosRegistros> query = f.getEntityManager().createQuery("SELECT er FROM EventosRegistros er WHERE :fecha BETWEEN er.fechaInicio AND er.fechaFin", EventosRegistros.class);
+            query.setParameter("fecha", new Date());
+            EventosRegistros eventoRegistro = query.getSingleResult();
+            l.forEach(x -> {
+                Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());
+                EventosRegistros eventos = f.getEntityManager().find(EventosRegistros.class,registro.getEventoRegistro().getEventoRegistro());
+                CapitulosTipos capitulosTipos = f.getEntityManager().find(CapitulosTipos.class, x.getCapituloTipo().getCapituloTipo());
+                AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, registro.getArea());
+                ActividadesPoa a = registro.getActividadesPoaList().isEmpty() ? null :registro.getActividadesPoaList().get(0);
+                DTOPresupuestos dto;
+                if (eventoRegistro.equals(registro.getEventoRegistro())) {
+                    dto = new DTOPresupuestos(x, capitulosTipos, a, eventos, capitulosTipos.getNombre());
+                } else {
+                    dto = new DTOPresupuestos(x, capitulosTipos, a, eventos, capitulosTipos.getNombre());
+                }
+                ldto.add(dto);
+            });
+            return ldto;
+    }
+        
+    }
+
+    @Override
+    public List<CapitulosTipos> getCapitulosTiposAct() {
+        List<CapitulosTipos> genLst = new ArrayList<>();
+        TypedQuery<CapitulosTipos> query = f.getEntityManager().createQuery("SELECT c FROM CapitulosTipos c", CapitulosTipos.class);
+        
+        try {
+            genLst = query.getResultList();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            genLst = null;
+
+        }
+          return genLst;
+    }
+
 }

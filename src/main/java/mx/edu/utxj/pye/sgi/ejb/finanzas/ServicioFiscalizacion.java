@@ -309,13 +309,15 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
                 .getResultList();
     }
 
+    private Integer aniodirecto = 18;
     @Override
     public List<EjesRegistro> getEjes(Short ejercicio, AreasUniversidad areaPOA) {
 //        System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion.getEjes() ejercicio,areas: " + ejercicio + "," + areaPOA);
+        
         return f.getEntityManager()
-                .createQuery("SELECT e FROM EjesRegistro e INNER JOIN e.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.ejercicioFiscal ef WHERE ac.area = :area AND ef.anio=:ejercicio ORDER BY e.nombre", EjesRegistro.class)
+                .createQuery("SELECT e FROM EjesRegistro e INNER JOIN e.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.ejercicioFiscal ef WHERE ac.area = :area AND ef.ejercicioFiscal = :aniodirecto ORDER BY e.nombre", EjesRegistro.class)
                 .setParameter("area", areaPOA.getArea())
-                .setParameter("ejercicio", ejercicio)
+                .setParameter("aniodirecto", aniodirecto)
                 .getResultList()
                 .stream()
                 .distinct()
@@ -325,9 +327,10 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     @Override
     public List<Estrategias> getEstrategiasPorEje(EjesRegistro eje, AreasUniversidad areaPOA) {
         return f.getEntityManager()
-                .createQuery("SELECT es FROM Estrategias es INNER JOIN es.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.eje ej WHERE ac.area = :area AND ej.eje=:eje ORDER BY es.nombre", Estrategias.class)
+                .createQuery("SELECT es FROM Estrategias es INNER JOIN es.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.eje ej WHERE ac.area = :area AND ej.eje=:eje AND cmi.ejercicioFiscal.ejercicioFiscal = :aniodirecto ORDER BY es.nombre", Estrategias.class)
                 .setParameter("area", areaPOA.getArea())
                 .setParameter("eje", eje.getEje())
+                .setParameter("aniodirecto", aniodirecto)
                 .getResultList()
                 .stream()
                 .distinct()
@@ -337,9 +340,10 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     @Override
     public List<LineasAccion> getLineasAccionPorEstrategia(Estrategias estrategia, AreasUniversidad areaPOA) {
         return f.getEntityManager()
-                .createQuery("SELECT la FROM LineasAccion la INNER JOIN la.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.estrategia es WHERE ac.area = :area AND es.estrategia=:estrategia ORDER BY la.nombre", LineasAccion.class)
+                .createQuery("SELECT la FROM LineasAccion la INNER JOIN la.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.estrategia es WHERE ac.area = :area AND es.estrategia=:estrategia AND cmi.ejercicioFiscal.ejercicioFiscal = :aniodirecto ORDER BY la.nombre", LineasAccion.class)
                 .setParameter("area", areaPOA.getArea())
                 .setParameter("estrategia", estrategia.getEstrategia())
+                .setParameter("aniodirecto", aniodirecto)
                 .getResultList()
                 .stream()
                 .distinct()
@@ -349,9 +353,10 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     @Override
     public List<ActividadesPoa> getActividadesPorLineaAccion(LineasAccion lineaaccion, AreasUniversidad areaPOA) {
         return f.getEntityManager()
-                .createQuery("SELECT ac FROM ActividadesPoa ac INNER JOIN ac.cuadroMandoInt cmi INNER JOIN cmi.lineaAccion la WHERE ac.area = :area AND la.lineaAccion=:lineaAccion ORDER BY ac.denominacion", ActividadesPoa.class)
+                .createQuery("SELECT ac FROM ActividadesPoa ac INNER JOIN ac.cuadroMandoInt cmi INNER JOIN cmi.lineaAccion la WHERE ac.area = :area AND la.lineaAccion=:lineaAccion AND cmi.ejercicioFiscal.ejercicioFiscal = :aniodirecto ORDER BY ac.denominacion", ActividadesPoa.class)
                 .setParameter("area", areaPOA.getArea())
                 .setParameter("lineaAccion", lineaaccion.getLineaAccion())
+                .setParameter("aniodirecto", aniodirecto)
                 .getResultList()
                 .stream()
                 .distinct()

@@ -5,13 +5,15 @@
  */
 package mx.edu.utxj.pye.siip.interfaces.ca;
 
+import java.util.List;
 import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAcademicos;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAcademicosPersonal;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
-import mx.edu.utxj.pye.siip.entity.caphum.list.ListaProductosAcademicos;
+import mx.edu.utxj.pye.siip.dto.ca.DTOProductosAcademicos;
+import mx.edu.utxj.pye.siip.dto.ca.DTOProductosAcademicosPersonal;
 
 /**
  *
@@ -30,11 +32,39 @@ public interface EjbProductosAcademicos {
      * @return
      * @throws Throwable 
      */
-    public ListaProductosAcademicos getListaProductosAcademicos(String rutaArchivo) throws Throwable;
-    public ListaProductosAcademicos getListaProductosAcademicosPersonal(String rutaArchivo) throws Throwable;
-    public void guardaProductosAcademicos(ListaProductosAcademicos listaProductosAcademicos, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros);
-    public void guardaProductosAcademicosPersonal(ListaProductosAcademicos listaProductosAcademicos, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros);
+    public List<DTOProductosAcademicos> getListaProductosAcademicos(String rutaArchivo) throws Throwable;
+    public List<DTOProductosAcademicosPersonal> getListaProductosAcademicosPersonal(String rutaArchivo) throws Throwable;
+    public void guardaProductosAcademicos( List<DTOProductosAcademicos> listaProductosAcademicos, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros);
+    public void guardaProductosAcademicosPersonal(List<DTOProductosAcademicosPersonal> listaProductosAcademicos, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros);
     public Integer getRegistroProductoAcademicoEspecifico(String productoAcademico);
     public ProductosAcademicos getProductoAcademico(ProductosAcademicos productoAcademico);
     public ProductosAcademicosPersonal getProductoAcademicoPersonal(ProductosAcademicosPersonal productoAcademicoPersonal);
+    
+    /**
+     * Método que se ocupa para el filtrado de Productos Académicos por Ejercicio, Mes y Área el cual es mostrado para la consulta y eliminación
+     * @param ejercicio Ejercicio actual que deberá venir de la tabla eventos_registro
+     * @param mes   Mes actual que deberá venir de la tabla eventos_registro
+     * @param area  Área superior de cada usuario logueado
+     * @return  Regresa una lista de registros de Productos Académicos que serán ocupado para consulta y eliminación
+     * @throws Throwable 
+     */
+    public List<DTOProductosAcademicos> getFiltroProductosAcademicosEjercicioMesArea(Short ejercicio, String mes, Short area) throws Throwable;
+    
+    /**
+     * Método que se ocupa para el filtrado de Productos Académicos Personal por Ejercicio, Mes y Área el cual es mostrado para la consulta y eliminación
+     * @param ejercicio Ejercicio actual que deberá venir de la tabla eventos_registro
+     * @param mes   Mes actual que deberá venir de la tabla eventos_registro
+     * @param area  Área superior de cada usuario logueado
+     * @return  Regresa una lista de registros de Productos Académicos Personal que serán ocupado para consulta y eliminación
+     * @throws Throwable 
+     */
+    public List<DTOProductosAcademicosPersonal> getFiltroProductosAcademicosPersonalEjercicioMesArea(Short ejercicio, String mes, Short area)throws Throwable;
+    
+    /**
+     * Método que devuelve la lista de registros encontrados en caso de que el registro principal contenga participantes, esta lista será ocupada para eliminar los participantes
+     * @param productoAcademico Entity que permite la búsqueda de los participantes
+     * @return  Devuelve una lista de enteros que contiene las claves de los registros encontrados
+     * @throws Throwable 
+     */
+    public List<Integer> buscaRegistrosPersonalProductosAcademicos(ProductosAcademicos productoAcademico) throws Throwable;
 }

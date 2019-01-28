@@ -7,11 +7,14 @@ package mx.edu.utxj.pye.siip.dto.vinculacion;
 
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistroMovilidadDocente;
 /**
  *
@@ -19,11 +22,12 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistroMovilidadDocente;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(of = "registroMovilidadDocente")
+@EqualsAndHashCode
 public class DTOMovilidadDocente implements Serializable{
 
     private static final long serialVersionUID = 4364199539455547010L;
-    @Getter @Setter private String participanteProyecto;
+    @Getter @Setter @NonNull private RegistroMovilidadDocente registroMovilidadDocente;
     @Getter @Setter private Personal personal;
-    @Getter @Setter private RegistroMovilidadDocente registroMovilidadDocente;
+    @Getter @Setter private ActividadesPoa actividadAlineada;
 }

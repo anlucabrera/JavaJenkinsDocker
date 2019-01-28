@@ -15,10 +15,10 @@ import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
-import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistroUsuario;
+import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
+//import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistroUsuario;
 import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
-import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosTecnologicosAnioMes;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 
 /**
@@ -27,7 +27,11 @@ import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
  */
 @Local
 public interface EjbModulos {
-
+     /**
+     * obtiene el periodo actual 
+     * @return 
+     */
+    public PeriodosEscolares getPeriodoEscolarActual();
     /**
      * Interfaz para mostrar a los usuarios los Ejes Habilitados
      *
@@ -35,7 +39,7 @@ public interface EjbModulos {
      * @return
      * @throws java.lang.Throwable
      */
-    public List<ModulosRegistroUsuario> getEjesRectores(Integer clavepersonal) throws Throwable;
+    public List<ModulosRegistrosUsuarios> getEjesRectores(Integer clavepersonal) throws Throwable;
 
     /**
      * Interfaz para mostrar a los usuario los registros habilitados
@@ -45,7 +49,7 @@ public interface EjbModulos {
      * @return
      * @throws java.lang.Throwable
      */
-    public List<ModulosRegistroUsuario> getModulosRegistroUsuario(Integer eje, Integer clavepersonal) throws  Throwable;
+    public List<ModulosRegistrosUsuarios> getModulosRegistroUsuario(Integer eje, Integer clavepersonal) throws  Throwable;
 
     public Registros getRegistro(RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros);
 
@@ -55,6 +59,13 @@ public interface EjbModulos {
      * @throws EventoRegistroNoExistenteException Se lanza en caso que no exista un evento de registro para la fecha actual
      */
     public EventosRegistros getEventoRegistro() throws EventoRegistroNoExistenteException;
+    
+    /**
+     * Método que verifica el periodo al que pertenezca el registro sea el actual se pueda actualizar
+     * @param periodoEscolar Clave del periodo escolar del registro
+     * @param periodoRegistro Clave del periodo del periodo de registro vigente
+     * @return Devuelve un valor boolean para comprobar si se puede actualizar
+     */
 
     public Boolean validaPeriodoRegistro(PeriodosEscolares periodoEscolar, Integer periodoRegistro);
 
@@ -66,7 +77,7 @@ public interface EjbModulos {
      * @return
      */
     public Boolean eliminarRegistro(Integer registro);
-    
+
     /**
      * Método que devuelve ejercicios fiscales en los cuales exista únicamente
      * información de módulos de registro, puede ser reutilizado para todos los
@@ -199,5 +210,72 @@ public interface EjbModulos {
      */
     public Boolean alinearRegistroActividad(ActividadesPoa actividad, Integer registro);
     
+     /**
+     * Método que elimina en masivo los participantes de un registro principal.
+     * @param registrosEvidencias    Lista que contiene los registros que se eliminarán
+     * @return  Devuelve un valor boolean para comprobar si los registros realmente se han eliminado
+     */
+    public Boolean eliminarRegistroEvidencias(List<Integer> registrosEvidencias);
+    
+    /**
+     * Verificar que el usuario tenga permiso para visualizar el registro seleccionado
+     * @param clavePersonal Clave del Usuario
+     * @param claveRegistro Clave del Registro de la Vista Modulos Registros Usuarios
+     * @return Permiso
+    */
+    public List<ModulosRegistrosUsuarios> getListaPermisoPorRegistro(Integer clavePersonal, Short claveRegistro);
+    
+     /**
+     * Verificar que el usuario tenga permiso para visualizar el registro seleccionado (sólo para registro que se encuentran en dos ejes distintos)
+     * @param clavePersonal Clave del Usuario
+     * @param claveRegistro1 Clave del Registro de la Vista Modulos Registros Usuarios
+     * @param claveRegistro2 Clave del Registro de la Vista Modulos Registros Usuarios
+     * @return Permiso
+    */
+    public List<ModulosRegistrosUsuarios> getListaPermisoPorRegistroEjesDistintos(Integer clavePersonal, Short claveRegistro1, Short claveRegistro2);
+    
+     /**
+     * Elimina el archivo de todas las evidencias de un registro que se va a borrar de la base de datos
+     * al registro especificado la elimina del disco duro
+     *
+     * @param registrosEvidencias Evidencias a desligar o eliminar
+     */
+    public void eliminarArchivoEvidencias(List<Integer> registrosEvidencias);
+    
+     /**
+     * Busca información del registro utilizando la clave
+     * @param registro Clave del Registro
+     * @return entity Registros
+    */
     public Registros buscaRegistroPorClave(Integer registro);
+    
+    /**
+     * Método que verifica el periodo al que pertenezca el registro sea el actual se pueda actualizar
+     * @param eventoRegistro Clave del evento de registro
+     * @param eventosRegistros Evento de Registro vigente
+     * @return Devuelve un valor boolean para comprobar si se puede actualizar
+     */
+
+    public Boolean validaEventoRegistro(EventosRegistros eventosRegistros, Integer eventoRegistro);
+    
+     /**
+     * Método que verifica el periodo al que pertenezca el registro sea el actual se pueda actualizar
+     * @param periodoAnt Clave del periodo escolar con el que se encuentra registrado
+     * @param periodoAct Clave del periodo escolar con el que se desea actualizar el registro
+     * @return Devuelve un valor boolean para comprobar si se puede actualizar
+     */
+
+    public Boolean comparaPeriodoRegistro(Integer periodoAnt, Integer periodoAct);
+    
+    /**
+     * Obtiene la lista de eventos de registros correspondientes a un periodo escolar.
+     * @param periodo Periodo escolar que filtra eventos de registro.
+     * @return Lista de eventos de registro.
+     */
+    public List<EventosRegistros> getEventosPorPeriodo(PeriodosEscolares periodo);
+    
+    public PeriodosEscolares getPeriodoEscolarActivo();
+    
+    public Integer getNumeroMes(String mes);
+    
 }

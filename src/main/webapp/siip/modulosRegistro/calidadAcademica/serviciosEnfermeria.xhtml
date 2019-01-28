@@ -8,21 +8,26 @@
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
                 xmlns:pe="http://primefaces.org/ui/extensions"
-                xmlns:pr="http://xmlns.jcp.org/jsp/jstl/functions">
+                xmlns:pr="http://xmlns.jcp.org/jsp/jstl/functions"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
 
     <ui:define name="head-end">
-        <ui:param name="renderBreadCrumb" value="false"/>
+        <ui:param name="renderBreadCrumb" value="true"/>        
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
+        <h:outputScript library="js" name="dialogs.js" />
     </ui:define>
     <ui:define name="title">
-        Calidad Académica
+        Servicios de Enfermería
     </ui:define>
 
     <ui:define name="description">
-        Módulo de registro
+        Asegurar la Calidad Académica
     </ui:define>
 
-    <ui:define name="body"> 
+    <ui:define name="body">  
+        <adm:breadcrumb title="Asegurar la Calidad Académica - Servicios de Enfermería"/>
         <adm:sidebar collapsed="true"/>
+        <p:importEnum type="mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa" var="etapa" allSuffix="ETAPAS" />
         <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
             <h1>
                 Esta página está disponible solo para pantallas superiores a 1024px.
@@ -35,28 +40,54 @@
                     <h:form prependId="true" id="frmMainButtons" class="form-inline">
                         <p:outputPanel >
                             <p:autoUpdate/>
-                            <p:toolbar id="tb"> 
+                            <p:toolbar id="tb">
                                 <f:facet name="left">
-                                    <div class="btn-group">
-                                        <p:commandButton value="Cargar Archivo de Excel" icon="fa fa-file-excel-o" onclick="PF('modalCargaArchivo').show()" class="btn btn-primary btn-sm"/>
-                                    </div>
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <div class="btn-group">
+                                    <p:spacer width="10" />
+                                    <c:if test="#{controladorArchivoServicioEnfermeriaCP.etapa eq etapa.MOSTRAR}">
                                         <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
-                                    </div>
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <div class="btn-group">
-                                        <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
-                                    </div>
+                                        <p:outputLabel value="Ejercicio: " for="anioConsulta" />
+                                        <p:spacer width="5" />
+                                        <p:selectOneMenu id="anioConsulta"
+                                                         value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.anioConsulta}"
+                                                         valueChangeListener="#{controladorServiciosEnfermeriaCicloPeriodos.actualizarMeses}"
+                                                         class="form-control"
+                                                         style="padding-top: 0px">
+                                            <f:selectItems value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.aniosConsulta}" 
+                                                           var="anio" 
+                                                           itemValue="#{anio}" 
+                                                           itemLabel="#{anio}" />
+                                            <p:ajax process="@this" listener="#{controladorServiciosEnfermeriaCicloPeriodos.buscaServiciosEnfermeria()}" update="@(form)" />
+                                        </p:selectOneMenu>
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Mes: " for="mesConsulta" />
+                                        <p:spacer width="5" />
+                                        <p:selectOneMenu id="mesConsulta"
+                                                         value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.mesConsulta}"
+                                                         class="form-control"
+                                                         style="padding-top:  0px">
+                                            <f:selectItems value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.mesesConsulta}" 
+                                                           var="mes" 
+                                                           itemValue="#{mes}" 
+                                                           itemLabel="#{mes}" />
+                                            <p:ajax process="@this" listener="#{controladorServiciosEnfermeriaCicloPeriodos.buscaServiciosEnfermeria()}" update="@(form)" />
+                                        </p:selectOneMenu>
+                                    </c:if>
                                 </f:facet>
                                 <f:facet name="right">
                                     <div class="btn-group">
-                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="# {controladorPlantillasCA.descargarPlantillaServiciosEnfermeria()}" target="_blank" title="Descargar Plantilla Servicios Enfermería"><i class="fa fa-download" /></p:commandLink>
+                                        <p:commandButton value="Cargar Archivo de Excel" 
+                                                         icon="fa fa-file-excel-o" 
+                                                         onclick="PF('modalCargaArchivo').show()" 
+                                                         class="btn btn-primary btn-sm"/>
                                     </div>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <div class="btn-group">
-                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="calidadAcademica" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
-                                    </div>
+                                    <c:if test="#{controladorArchivoServicioEnfermeriaCP.etapa eq etapa.CARGAR}">
+                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="serviciosEnfermeria?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
+                                        <p:spacer width="3" />
+                                    </c:if>
+                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="#{controladorPlantillasCA.descargarPlantillaServiciosEnfermeria()}" target="_blank" title="Descargar Plantilla Servicios Enfermería"><i class="fa fa-download" /></p:commandLink>
+                                    <p:spacer width="3" />
+                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
                                 </f:facet>
                             </p:toolbar>
                             <p:sticky target="tb" />
@@ -71,39 +102,333 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12">
                             <h:form id="formMuestraDatosActivos">
-                                <c:if test="#{controladorServiciosEnfermeriaCicloPeriodos.listaServiciosEnfermeriaCicloPeriodos.serviciosEnfermeriaCicloPeriodos eq null}">
-
+                                <c:if test="#{controladorArchivoServicioEnfermeriaCP.etapa eq etapa.MOSTRAR}">
+                                    <center>
+                                        <p:remoteCommand name="actualizar" update="@form:formMuestraDatosActivos" />
+                                        <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parametros seleccionados: Ejercicio: #{controladorServiciosEnfermeriaCicloPeriodos.dto.anioConsulta} y Mes: #{controladorServiciosEnfermeriaCicloPeriodos.dto.mesConsulta}"
+                                                     paginator="true"
+                                                     rows="10" 
+                                                     rowsPerPageTemplate="5,10,20,30,40,50"
+                                                     resizeMode="expand"
+                                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                     id="dtbConsultaEliminacionServEnf"
+                                                     var="servicioEnfermeria" value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.lista}"
+                                                     tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                            <p:columnGroup type="header">
+                                                <p:row>
+                                                    <p:column rowspan="2" headerText="Opciones"                 width="100"  />
+                                                    <p:column rowspan="2" headerText="Ciclo Escolar"            width="200" />
+                                                    <p:column rowspan="2" headerText="Periodo Escolar"          width="200" />
+                                                    <p:column rowspan="2" headerText="Tipo de servicio"         width="300" />
+                                                    <p:column colspan="3" headerText="Número de estudiantes"    width="300" />
+                                                    <p:column colspan="3" headerText="Número de personal"       width="200" />
+                                                    <p:column rowspan="2" headerText="Mes"                      width="200" />
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column headerText="Hombres" />
+                                                    <p:column headerText="Mujeres" />
+                                                    <p:column headerText="Total" />
+                                                    <p:column headerText="Hombres" />
+                                                    <p:column headerText="Mujeres" />
+                                                    <p:column headerText="Total" />
+                                                </p:row>
+                                            </p:columnGroup>
+                                            <c:set var="servicioEnfermeriaEliminar" value="#{servicioEnfermeria.serviciosEnfermeriaCicloPeriodos.registro}"/>
+                                            <p:column style="text-align: center;">
+                                                <div class="btn-group">
+                                                    <p:commandButton class="btn btn-info btn-sm" 
+                                                                     icon="fa fa-trash"
+                                                                     actionListener="#{controladorServiciosEnfermeriaCicloPeriodos.eliminarRegistro(servicioEnfermeriaEliminar)}"
+                                                                     onsuccess="actualizar();" 
+                                                                     title="Eliminar registro."
+                                                                     rendered="#{controladorServiciosEnfermeriaCicloPeriodos.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosEnfermeriaCicloPeriodos.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                        <p:confirm header="Eliminar registro"
+                                                                   message="¿Está seguro de eliminar el registro de #{servicioEnfermeria.serviciosEnfermeriaCicloPeriodos.servicio.descripcion}?"
+                                                                   icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                    <p:spacer width="3" />
+                                                    <c:set var="evidencias" value="#{controladorServiciosEnfermeriaCicloPeriodos.consultarEvidencias(servicioEnfermeriaEliminar)}" />
+                                                    <p:commandButton actionListener="#{controladorServiciosEnfermeriaCicloPeriodos.seleccionarRegistro(servicioEnfermeria)}" 
+                                                                     class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                     icon="fa fa-image"
+                                                                     title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                    <p:spacer width="3" />
+                                                    <p:commandButton actionListener="#{controladorServiciosEnfermeriaCicloPeriodos.abrirAlineacionPOA(servicioEnfermeria)}"
+                                                                     class="btn btn-sm #{controladorServiciosEnfermeriaCicloPeriodos.verificaAlineacion(servicioEnfermeriaEliminar)?'btn-info':'btn-warning'}"
+                                                                     icon="fa fa-cog"
+                                                                     title="Alineación a POA."/>
+                                                </div>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{servicioEnfermeria.cicloEscolar}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{servicioEnfermeria.periodoEscolar}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{servicioEnfermeria.serviciosEnfermeriaCicloPeriodos.servicio.descripcion}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{servicioEnfermeria.serviciosEnfermeriaCicloPeriodos.estH}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{servicioEnfermeria.serviciosEnfermeriaCicloPeriodos.estM}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{servicioEnfermeria.serviciosEnfermeriaCicloPeriodos.estH + servicioEnfermeria.serviciosEnfermeriaCicloPeriodos.estM}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{servicioEnfermeria.serviciosEnfermeriaCicloPeriodos.perH}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{servicioEnfermeria.serviciosEnfermeriaCicloPeriodos.perM}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{servicioEnfermeria.serviciosEnfermeriaCicloPeriodos.perH + servicioEnfermeria.serviciosEnfermeriaCicloPeriodos.perM}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{servicioEnfermeria.serviciosEnfermeriaCicloPeriodos.mes}"/>
+                                            </p:column>
+                                        </p:dataTable>
+                                        <p:confirmDialog global="true"
+                                                         showEffect="fade"
+                                                         hideEffect="fade"
+                                                         styleClass="panel panel-primary"
+                                                         width="500"
+                                                         closeOnEscape="true">
+                                            <p:commandButton value="Si"
+                                                             type="button"
+                                                             styleClass="ui-confirmdialog-yes btn btn-primary" 
+                                                             icon="ui-icon-check" />
+                                            <p:commandButton value="No" 
+                                                             type="button" 
+                                                             styleClass="ui-confirmdialog-no btn btn-primary" 
+                                                             icon="ui-icon-close" />
+                                        </p:confirmDialog>
+                                    </center>
                                 </c:if>
                             </h:form>
                         </div>
                     </div>
+
+                    <!-- Sección de evidencias -->
+                    <p:dialog id="modalCargaEvidencia" 
+                              widgetVar="modalCargaEvidencia" 
+                              width="700" 
+                              height="auto"
+                              closeOnEscape="true"
+                              visible="#{controladorServiciosEnfermeriaCicloPeriodos.dto.forzarAperturaDialogo}"
+                              showEffect="fade"
+                              hideEffect="fade"
+                              modal="true"
+                              draggable="true"
+                              header="Carga de evidencias"
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary"
+                              responsive="true"
+                              resizable="false"
+                              maximizable="false" >
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:toolbar>
+                                    <f:facet name="left">
+                                        <p:spacer width="10" />
+                                        <p:outputLabel value="Carga de evidencias: " style="padding-top:  5px"/>
+                                        <p:spacer width="10" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <o:form id="formularioEvidencia" 
+                                                enctype="multipart/form-data"
+                                                class="form-inline">
+                                            <o:inputFile id="files"
+                                                         value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.archivos}"
+                                                         multiple="true"
+                                                         class="form-control"
+                                                         accept="image/png,image/jpg,image/jpeg,application/pdf"     
+                                                         acceptMessage="Solo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         maxsize="#{caster.evidenciasTamanioLimite}"
+                                                         maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                         required="true"
+                                                         requiredMessage="Debe elegir al menos un archivo" 
+                                                         rendered="#{controladorServiciosEnfermeriaCicloPeriodos.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosEnfermeriaCicloPeriodos.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                            </o:inputFile>
+                                            <h:commandButton id="btnuploadFileEvidencia" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorServiciosEnfermeriaCicloPeriodos.subirEvidencias()}"
+                                                             rendered="#{controladorServiciosEnfermeriaCicloPeriodos.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosEnfermeriaCicloPeriodos.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                        </o:form>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </div>
+                        <h:form id="frmEvidencias">
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Servicios Enfermeria #{controladorServiciosEnfermeriaCicloPeriodos.dto.registro.serviciosEnfermeriaCicloPeriodos.servicio.descripcion}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
+                                    <p:dataTable id="tblEvidencias"
+                                                 value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.listaEvidencias}"
+                                                 var="evidencia"
+                                                 emptyMessage="No se han registrado evidencias de éste registro." 
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 paginator="true" 
+                                                 rows="10"
+                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
+                                                 paginatorAlwaysVisible="false" 
+                                                 paginatorPosition="bottom"
+                                                 >
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Opciones" width="80"/>
+                                                <p:column headerText="Archivo" />
+                                                <p:column headerText="Tipo"     width="80" />
+                                                <p:column headerText="Tamanio"  width="80" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;">
+                                            <div class="btn-group">
+                                                <p:commandButton class="btn btn-info btn-sm" 
+                                                                 icon="fa fa-trash" 
+                                                                 actionListener="#{controladorServiciosEnfermeriaCicloPeriodos.eliminarEvidencia(evidencia)}" 
+                                                                 onsuccess="actualizar2();" 
+                                                                 title="Eliminar evidencia."
+                                                                 rendered="#{controladorServiciosEnfermeriaCicloPeriodos.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosEnfermeriaCicloPeriodos.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                    <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:spacer width="5" />
+                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorServiciosEnfermeriaCicloPeriodos.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                            </div>
+                                        </p:column>
+                                        <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
+                                        <f:facet name="footer">
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorServiciosEnfermeriaCicloPeriodos.dto.listaEvidencias)}.</span>
+                                        </f:facet>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- Sección de alineación a POA -->
+                    <p:dialog id="modalAlineacion"
+                              widgetVar="modalAlineacion"
+                              width="900"
+                              height="auto"  
+                              closeOnEscape="true"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Alineación a POA." 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmAlineacion">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar rendered="#{controladorServiciosEnfermeriaCicloPeriodos.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosEnfermeriaCicloPeriodos.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                        <f:facet name="left">
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{controladorServiciosEnfermeriaCicloPeriodos.eliminarAlineacion()}" rendered="#{controladorServiciosEnfermeriaCicloPeriodos.verificaAlineacion(controladorServiciosEnfermeriaCicloPeriodos.dto.registro.serviciosEnfermeriaCicloPeriodos.registro)}" >
+                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{controladorServiciosEnfermeriaCicloPeriodos.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Servicios Enfermeria #{controladorServiciosEnfermeriaCicloPeriodos.dto.registro.serviciosEnfermeriaCicloPeriodos.servicio.descripcion}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                            <c:set var="col1" value="#{'col-md-2'}" />
+                            <c:set var="col2" value="#{'col-md-10'}" />
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="eje" value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.alineacionEje}" valueChangeListener="#{controladorServiciosEnfermeriaCicloPeriodos.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="eje"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="estrategia" value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.alineacionEstrategia}" valueChangeListener="#{controladorServiciosEnfermeriaCicloPeriodos.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <p:ajax process="estrategia" update="lineaAccion,actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="estrategia"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="lineaAccion" value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.alineacionLinea}" valueChangeListener="#{controladorServiciosEnfermeriaCicloPeriodos.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <p:ajax process="lineaAccion" update="actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="lineaAccion"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="actividad" value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <p:ajax process="actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="actividad"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
                     <!-- Sección de subida -->
                     <div class="row">
                         <div class="col-lg-12 col-md-12">
                             <h:form id="formPrevisualizacionDatos" prependId="false">
-                                <c:if test="#{controladorServiciosEnfermeriaCicloPeriodos.listaServiciosEnfermeriaCicloPeriodos.serviciosEnfermeriaCicloPeriodos ne null}">
+                                <c:if test="#{controladorArchivoServicioEnfermeriaCP.etapa eq etapa.CARGAR}">
                                     <center>
                                         <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
                                                      paginator="true"
                                                      rows="10" 
                                                      rowsPerPageTemplate="5,10,20,30,40,50"
-                                                     resizeMode="expand" scrollable="true"
+                                                     resizeMode="expand"
                                                      paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
                                                      id="dtbServiciosEnfermeriaCP"
-                                                     var="serviciosEnfermeria" value="#{controladorServiciosEnfermeriaCicloPeriodos.listaServiciosEnfermeriaCicloPeriodos.serviciosEnfermeriaCicloPeriodos}"
-                                                     tableStyleClass="table-bordered table-hover table-condensed table-responsive">
+                                                     var="serviciosEnfermeria" value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.lista}"
+                                                     tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                             <f:facet name="header">
-                                                Servicios Enfermería
+                                                Previsualización de datos
                                             </f:facet>
-
                                             <p:columnGroup type="header">
                                                 <p:row>
-                                                    <p:column rowspan="2" headerText="Ciclo Escolar" width="200" />
-                                                    <p:column rowspan="2" headerText="Periodo Escolar" width="200" />
-                                                    <p:column rowspan="2" headerText="Tipo de servicio" width="300" />
-                                                    <p:column colspan="3" headerText="Número de estudiantes" width="300" />
-                                                    <p:column colspan="3" headerText="Número de personal" width="200" />
-                                                    <p:column rowspan="2" headerText="Mes" width="200" />
+                                                    <p:column rowspan="2" headerText="Ciclo Escolar"            width="200" />
+                                                    <p:column rowspan="2" headerText="Periodo Escolar"          width="200" />
+                                                    <p:column rowspan="2" headerText="Tipo de servicio"         width="300" />
+                                                    <p:column colspan="3" headerText="Número de estudiantes"    width="300" />
+                                                    <p:column colspan="3" headerText="Número de personal"       width="200" />
+                                                    <p:column rowspan="2" headerText="Mes"                      width="200" />
                                                 </p:row>
                                                 <p:row>
                                                     <p:column headerText="Hombres" />
@@ -144,8 +469,6 @@
                                             <p:column>
                                                 <h:outputText value="#{serviciosEnfermeria.serviciosEnfermeriaCicloPeriodos.mes}"/>
                                             </p:column>
-                                            <f:facet name="footer">
-                                            </f:facet>
                                         </p:dataTable>
                                         <p></p>
                                         <p:commandButton id="btnGuardar" value="Guardar Datos" actionListener="#{controladorServiciosEnfermeriaCicloPeriodos.guardaServiciosEnfermeriaCicloPeriodo()}" icon="fa fa-pencil-square-o" class="btn-primary" update="formPrevisualizacionDatos"/>
@@ -159,17 +482,46 @@
 
                 </div>
 
-                <p:dialog widgetVar="modalCargaArchivo" width="400" height="auto" showEffect="fade" hideEffect="fade" modal="true" header="Carga de Archivo" responsive="true" resizable="false" maximizable="false">
+                <p:dialog widgetVar="modalCargaArchivo" 
+                          width="400" 
+                          height="auto" 
+                          showEffect="fade" 
+                          hideEffect="fade" 
+                          modal="true" 
+                          header="Carga de Archivo" 
+                          styleClass="panel panel-primary" 
+                          responsive="true" 
+                          resizable="false" 
+                          maximizable="false">
                     <center>
                         <h:form id="formularioContenedor" enctype="multipart/form-data">
-                            <o:inputFile id="file" value="#{controladorArchivoServicioEnfermeriaCP.file}" acceptMessage="Solo se permiten archivos XLSX." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
-                            <p></p>
-                            <h:message id="messageForFile" for="file" />
-                            <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{controladorArchivoServicioEnfermeriaCP.subirExcelServiciosEnfermeria()}"/>
-                            <p:blockUI block="@form:formularioContenedor" widgetVar="bloqueoCargaFile">
-                                Cargando archivo espere por favor.<br />
-                            </p:blockUI>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <o:inputFile id="file" 
+                                                 value="#{controladorArchivoServicioEnfermeriaCP.file}" 
+                                                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
+                                                 acceptMessage="Solo se permiten archivos XLSX." 
+                                                 maxsize="#{100*1024*1024}" 
+                                                 maxsizeMessage="El tamaño máximo permitido son 100MB." 
+                                                 required="true" 
+                                                 requiredMessage="Debe elegir un archivo." >
+                                    </o:inputFile>
+                                    <p:messages for="file" ><p:autoUpdate/></p:messages>
+                                </div>
+                                <p:separator />
+                                <div class="col-md-12">
+                                    <h:commandButton id="btnuploadFile"
+                                                     value="Subir archivo" 
+                                                     class="btn btn-primary" 
+                                                     action="#{controladorArchivoServicioEnfermeriaCP.subirExcelServiciosEnfermeria()}" />
+                                </div>
+                            </div>
                         </h:form>
+                        <p:blockUI block="formularioContenedor" 
+                                   widgetVar="bloqueoCargaFile" 
+                                   trigger="formularioContenedor:btnuploadFile">
+                            Cargando archivo espere por favor.<br />
+                        </p:blockUI>
                     </center>
                 </p:dialog>
 

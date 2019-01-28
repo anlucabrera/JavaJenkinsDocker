@@ -22,14 +22,12 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
-import mx.edu.utxj.pye.siip.dto.vinculacion.DTOConvenio;
-import mx.edu.utxj.pye.siip.dto.vinculacion.DTOProgramasBeneficiadosVinculacion;
 
 /**
  *
  * @author Planeacion
  */
-public class DtoConvenios {
+public final class DtoConvenios {
     /****************** Programas Educativos Beneficiados con la vinculación *******************/
     @Getter @Setter AreasUniversidad areaUniversidad;
     @Getter private List<DTOProgramasBeneficiadosVinculacion> listaProgramasEducativosBeneficiadosV = new ArrayList<>();
@@ -114,6 +112,15 @@ public class DtoConvenios {
         estrategias = Collections.EMPTY_LIST;
         nulificarEstrategia();
     }
+    
+    public void nulificarEstrategia(){
+        lineasAccion = Collections.EMPTY_LIST;
+        nulificarLinea();
+    }
+    
+    public void nulificarLinea(){
+         actividades = Collections.EMPTY_LIST;
+    }
 
     public void setAlineacionEstrategia(Estrategias alineacionEstrategia) {
         this.alineacionEstrategia = alineacionEstrategia;
@@ -122,11 +129,6 @@ public class DtoConvenios {
             nulificarEstrategia();
     }
     
-    public void nulificarEstrategia(){
-        lineasAccion = Collections.EMPTY_LIST;
-        nulificarLinea();
-    }
-
     public void setAlineacionLinea(LineasAccion alineacionLinea) {
         this.alineacionLinea = alineacionLinea;
         
@@ -134,20 +136,12 @@ public class DtoConvenios {
             nulificarLinea();
     }
     
-    public void nulificarLinea(){
-         actividades = Collections.EMPTY_LIST;
-     }
-
     public void setAlineacionActividad(ActividadesPoa alineacionActividad) {
         this.alineacionActividad = alineacionActividad;
     }
     
     public void nulificarActividad(){
         setAlineacionActividad(null);
-    }
-    
-    public void setActividades(List<ActividadesPoa> actividades) {
-        this.actividades = actividades;
     }
 
     public void setEjes(List<EjesRegistro> ejes) {
@@ -168,8 +162,11 @@ public class DtoConvenios {
             nulificarLinea();
     }
     
+    public void setActividades(List<ActividadesPoa> actividades) {
+        this.actividades = actividades;
+    }
+    
     public void setListaProgramasEducativosBeneficiadosV(List<DTOProgramasBeneficiadosVinculacion> listaProgramasEducativosBeneficiadosV) {
         this.listaProgramasEducativosBeneficiadosV = listaProgramasEducativosBeneficiadosV;
     }
-    
 }

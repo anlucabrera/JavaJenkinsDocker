@@ -8,16 +8,24 @@ package mx.edu.utxj.pye.siip.services.vin;
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
-import javax.ejb.Stateful;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.servlet.annotation.MultipartConfig;
+import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
@@ -31,11 +39,11 @@ import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosTecnologicosParticipantes;
 import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosTipos;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
-import mx.edu.utxj.pye.siip.dto.vinculacion.DTOServiciosTecnologicosParticipantes;
-import mx.edu.utxj.pye.siip.entity.vinculacion.list.ListaServiciosTecnologicosAnioMes;
+import mx.edu.utxj.pye.siip.dto.vin.DTOServiciosTecnologicosParticipantes;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbOrganismosVinculados;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbServiciosTecnologicosAnioMes;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -47,305 +55,451 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *
  * @author UTXJ
  */
-@Stateful
+@Stateless
+@MultipartConfig
 public class ServicioServiciosTecnologicosAnioMes implements EjbServiciosTecnologicosAnioMes {
 
-    @EJB
-    Facade facadeVinculacion;
-    @EJB
-    EjbModulos ejbModulos;
-    @EJB
-    EjbOrganismosVinculados ejbOrganismosVinculados;
+    @EJB    Facade facadeVinculacion;
+    @EJB    EjbModulos ejbModulos;
+    @EJB    EjbOrganismosVinculados ejbOrganismosVinculados;
+    
+    @Inject Caster caster;
 
     @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
     private EntityManager em;
 
     @Override
-    public ListaServiciosTecnologicosAnioMes getListaServiciosTecnologicosAnioMes(String rutaArchivo) throws Throwable {
-//          Lista General
-        ListaServiciosTecnologicosAnioMes listaServiciosTecnologicosAnioMes = new ListaServiciosTecnologicosAnioMes();
-
+    public List<ServiciosTecnologicosAnioMes> getListaServiciosTecnologicosAnioMes(String rutaArchivo) throws Throwable {
+        if (Files.exists(Paths.get(rutaArchivo))) {
+            List<Boolean> validarCelda = new ArrayList<>();
+            List<String> datosInvalidos = new ArrayList<>();
 //          Listas para muestra del usuario
-        List<ServiciosTecnologicosAnioMes> serviciosTecnologicosAnioMes = new ArrayList<>();
-        ServiciosTecnologicosAnioMes servicioTecnologicoAnioMes;
-        ServiciosTipos servicioTipo;
+            List<ServiciosTecnologicosAnioMes> serviciosTecnologicosAnioMes = new ArrayList<>();
+            ServiciosTecnologicosAnioMes servicioTecnologicoAnioMes;
+            ServiciosTipos servicioTipo;
 
 //        Utilización y apertura del archivo recibido
-        File excel = new File(rutaArchivo);
-        XSSFWorkbook libroRegistro = new XSSFWorkbook();
-        libroRegistro = (XSSFWorkbook) WorkbookFactory.create(excel);
-        XSSFSheet primeraHoja = libroRegistro.getSheetAt(0);
-        XSSFSheet segundaHoja = libroRegistro.getSheetAt(1);
-        XSSFRow fila;
-        if ((primeraHoja.getSheetName().equals("Servicios Tecnológicos")) || (segundaHoja.getSheetName().equals("Participantes Serv. Tec."))) {
+            File excel = new File(rutaArchivo);
+            XSSFWorkbook libroRegistro = new XSSFWorkbook();
+            libroRegistro = (XSSFWorkbook) WorkbookFactory.create(excel);
+            XSSFSheet primeraHoja = libroRegistro.getSheetAt(0);
+            XSSFSheet segundaHoja = libroRegistro.getSheetAt(1);
+            XSSFRow fila;
+            if ((primeraHoja.getSheetName().equals("Servicios Tecnológicos")) || (segundaHoja.getSheetName().equals("Participantes Serv. Tec."))) {
 //            Lectura de la primera hoja
-            for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
-                fila = (XSSFRow) (Row) primeraHoja.getRow(i);
-                if ((!"".equals(fila.getCell(1).getStringCellValue()))) {
-                    servicioTecnologicoAnioMes = new ServiciosTecnologicosAnioMes();
-                    servicioTipo = new ServiciosTipos();
+                for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
+                    fila = (XSSFRow) (Row) primeraHoja.getRow(i);
+                    if ((!"".equals(fila.getCell(1).getStringCellValue()))) {
+                        servicioTecnologicoAnioMes = new ServiciosTecnologicosAnioMes();
+                        servicioTipo = new ServiciosTipos();
 
 //                    Clave Servicio Tecnológico
-                    switch (fila.getCell(2).getCellTypeEnum()) {
-                        case FORMULA:
-                            servicioTecnologicoAnioMes.setServicio(fila.getCell(2).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
+                        if (fila.getCell(2).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(2).getCellTypeEnum()) {
+                                case FORMULA:
+                                    servicioTecnologicoAnioMes.setServicio(fila.getCell(2).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Servicio en la columna: " + (2 + 1) + " y fila: " + (i + 1));
+                        }
+
 //                    ServicioTipo
-                    switch (fila.getCell(4).getCellTypeEnum()) {
-                        case FORMULA:
-                            servicioTipo.setServtipo((short) ((int) fila.getCell(4).getNumericCellValue()));
-                            servicioTipo.setDescripcion(fila.getCell(5).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    servicioTecnologicoAnioMes.setServicioTipo(servicioTipo);
+                        if (fila.getCell(4).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(4).getCellTypeEnum()) {
+                                case FORMULA:
+                                    servicioTipo.setServtipo((short) ((int) fila.getCell(4).getNumericCellValue()));
+                                    servicioTipo.setDescripcion(fila.getCell(5).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Tipo de servicio en la columna: " + (5 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        servicioTecnologicoAnioMes.setServicioTipo(servicioTipo);
 //                    Nombre Servicio Tecnológico
-                    switch (fila.getCell(6).getCellTypeEnum()) {
-                        case STRING:
-                            servicioTecnologicoAnioMes.setNombre(fila.getCell(6).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
+                        if (fila.getCell(6).getCellTypeEnum() == CellType.STRING) {
+                            switch (fila.getCell(6).getCellTypeEnum()) {
+                                case STRING:
+                                    servicioTecnologicoAnioMes.setNombre(fila.getCell(6).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Nombre en la columna: " + (6 + 1) + " y fila: " + (i + 1));
+                        }
+
 //                    Fecha de inicio
-                    switch (fila.getCell(7).getCellTypeEnum()) {
-                        case NUMERIC:
-                            if (DateUtil.isCellDateFormatted(fila.getCell(7))) {
-                                servicioTecnologicoAnioMes.setFechaInicio(fila.getCell(7).getDateCellValue());
+                        if (fila.getCell(7).getCellTypeEnum() == CellType.NUMERIC) {
+                            switch (fila.getCell(7).getCellTypeEnum()) {
+                                case NUMERIC:
+                                    if (DateUtil.isCellDateFormatted(fila.getCell(7))) {
+                                        servicioTecnologicoAnioMes.setFechaInicio(fila.getCell(7).getDateCellValue());
+                                    }
+                                    break;
+                                default:
+                                    break;
                             }
-                            break;
-                        default:
-                            break;
-                    }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Fecha de Inicio en la columna: " + (7 + 1) + " y fila: " + (i + 1));
+                        }
+
 //                    Fecha de termino
-                    switch (fila.getCell(8).getCellTypeEnum()) {
-                        case NUMERIC:
-                            if (DateUtil.isCellDateFormatted(fila.getCell(8))) {
-                                servicioTecnologicoAnioMes.setFechaTermino(fila.getCell(8).getDateCellValue());
+                        if (fila.getCell(8).getCellTypeEnum() == CellType.NUMERIC) {
+                            switch (fila.getCell(8).getCellTypeEnum()) {
+                                case NUMERIC:
+                                    if (DateUtil.isCellDateFormatted(fila.getCell(8))) {
+                                        servicioTecnologicoAnioMes.setFechaTermino(fila.getCell(8).getDateCellValue());
+                                    }
+                                    break;
+                                default:
+                                    break;
                             }
-                            break;
-                        default:
-                            break;
-                    }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Fecha de termino en la columna: " + (8 + 1) + " y fila: " + (i + 1));
+                        }
+
 //                    Duracion Horas
-                    switch (fila.getCell(9).getCellTypeEnum()) {
-                        case NUMERIC:
-                            servicioTecnologicoAnioMes.setDuracion((int) fila.getCell(9).getNumericCellValue());
-                            break;
-                        default:
-                            break;
-                    }
+                        if (fila.getCell(9).getCellTypeEnum() == CellType.NUMERIC) {
+                            switch (fila.getCell(9).getCellTypeEnum()) {
+                                case NUMERIC:
+                                    servicioTecnologicoAnioMes.setDuracion((int) fila.getCell(9).getNumericCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Duración en la columna: " + (9 + 1) + " y fila: " + (i + 1));
+                        }
+
 //                    Monto Ingresado
-                    switch (fila.getCell(11).getCellTypeEnum()) {
-                        case FORMULA:
-                            servicioTecnologicoAnioMes.setMontoIngresado(BigDecimal.valueOf(fila.getCell(11).getNumericCellValue()));
-                            break;
-                        default:
-                            break;
-                    }
+                        if (fila.getCell(11).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(11).getCellTypeEnum()) {
+                                case FORMULA:
+                                    servicioTecnologicoAnioMes.setMontoIngresado(BigDecimal.valueOf(fila.getCell(11).getNumericCellValue()));
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Monto Ingresado en la columna: " + (11 + 1) + " y fila: " + (i + 1));
+                        }
+
 //                    Facilitador
-                    switch (fila.getCell(12).getCellTypeEnum()) {
-                        case STRING:
-                            servicioTecnologicoAnioMes.setFacilitador(fila.getCell(12).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
+                        if (fila.getCell(12).getCellTypeEnum() == CellType.STRING) {
+                            switch (fila.getCell(12).getCellTypeEnum()) {
+                                case STRING:
+                                    servicioTecnologicoAnioMes.setFacilitador(fila.getCell(12).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Facilitador en la columna: " + (12 + 1) + " y fila: " + (i + 1));
+                        }
+
 //                    Servicio Demandado
-                    switch (fila.getCell(14).getCellTypeEnum()) {
-                        case FORMULA:
-                            servicioTecnologicoAnioMes.setServicioDemandado(fila.getCell(14).getStringCellValue());
-                            break;
-                        default:
-                            break;
+                        if (fila.getCell(14).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(14).getCellTypeEnum()) {
+                                case FORMULA:
+                                    servicioTecnologicoAnioMes.setServicioDemandado(fila.getCell(14).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Servicio Demandado en la columna: " + (14 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        serviciosTecnologicosAnioMes.add(servicioTecnologicoAnioMes);
                     }
-
-                    serviciosTecnologicosAnioMes.add(servicioTecnologicoAnioMes);
                 }
-            }
-            listaServiciosTecnologicosAnioMes.setServiciosTecnologicosAnioMes(serviciosTecnologicosAnioMes);
+                libroRegistro.close();
 
-            libroRegistro.close();
-            addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                if (validarCelda.contains(false)) {
+                    addDetailMessage("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                    addDetailMessage(datosInvalidos.toString());
+
+                    excel.delete();
+                    ServicioArchivos.eliminarArchivo(rutaArchivo);
+                    return Collections.EMPTY_LIST;
+                } else {
+                    addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                    return serviciosTecnologicosAnioMes;
+                }
+            } else {
+                libroRegistro.close();
+                excel.delete();
+                ServicioArchivos.eliminarArchivo(rutaArchivo);
+                addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+                return Collections.EMPTY_LIST;
+            }
         } else {
-            libroRegistro.close();
-            excel.delete();
-            ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            addDetailMessage("<b>Ocurrio un error en la lectura del archivo</b>");
+            return Collections.EMPTY_LIST;
         }
-        return listaServiciosTecnologicosAnioMes;
     }
 
     @Override
-    public ListaServiciosTecnologicosAnioMes getListaServiciosTecnologicosParticipantes(String rutaArchivo) throws Throwable {
-        //          Lista General
-        ListaServiciosTecnologicosAnioMes listaServiciosTecnologicosAnioMes = new ListaServiciosTecnologicosAnioMes();
-
+    public List<DTOServiciosTecnologicosParticipantes> getListaServiciosTecnologicosParticipantes(String rutaArchivo) throws Throwable {
+        if (Files.exists(Paths.get(rutaArchivo))) {
+            List<Boolean> validarCelda = new ArrayList<>();
+            List<String> datosInvalidos = new ArrayList<>();
 //          Listas para muestra del usuario
-        List<DTOServiciosTecnologicosParticipantes> dTOServiciosTecnologicosParticipantes = new ArrayList<>();
-        ServiciosTecnologicosParticipantes servicioTecnologicoParticipante;
-        ServiciosTecnologicosAnioMes servicioTecnologico;
-        AreasUniversidad areaUniversidad;
-        Estado estado;
-        Municipio municipio;
-        MunicipioPK municipioPK;
-        OrganismosVinculados organismosVinculados;
-        DTOServiciosTecnologicosParticipantes dtoServicioTecnologicoParticipante;
+            List<DTOServiciosTecnologicosParticipantes> dTOServiciosTecnologicosParticipantes = new ArrayList<>();
+            ServiciosTecnologicosParticipantes servicioTecnologicoParticipante;
+            ServiciosTecnologicosAnioMes servicioTecnologico;
+            AreasUniversidad areaUniversidad;
+            Estado estado;
+            Municipio municipio;
+            MunicipioPK municipioPK;
+            OrganismosVinculados organismosVinculados;
+            DTOServiciosTecnologicosParticipantes dtoServicioTecnologicoParticipante;
 
 //        Utilización y apertura del archivo recibido
-        File excel = new File(rutaArchivo);
-        XSSFWorkbook libroRegistro = new XSSFWorkbook();
-        libroRegistro = (XSSFWorkbook) WorkbookFactory.create(excel);
-        XSSFSheet primeraHoja = libroRegistro.getSheetAt(0);
-        XSSFSheet segundaHoja = libroRegistro.getSheetAt(1);
-        XSSFRow fila;
-        if ((primeraHoja.getSheetName().equals("Servicios Tecnológicos")) || (segundaHoja.getSheetName().equals("Participantes Serv. Tec."))) {
+            File excel = new File(rutaArchivo);
+            XSSFWorkbook libroRegistro = new XSSFWorkbook();
+            libroRegistro = (XSSFWorkbook) WorkbookFactory.create(excel);
+            XSSFSheet primeraHoja = libroRegistro.getSheetAt(0);
+            XSSFSheet segundaHoja = libroRegistro.getSheetAt(1);
+            XSSFRow fila;
+            if ((primeraHoja.getSheetName().equals("Servicios Tecnológicos")) || (segundaHoja.getSheetName().equals("Participantes Serv. Tec."))) {
 //            Lectura de segunda hoja
-            for (int i = 2; i <= segundaHoja.getLastRowNum(); i++) {
-                fila = (XSSFRow) (Row) segundaHoja.getRow(i);
-                if ((!"".equals(fila.getCell(1).getStringCellValue()))) {
-                    servicioTecnologicoParticipante = new ServiciosTecnologicosParticipantes();
-                    servicioTecnologico = new ServiciosTecnologicosAnioMes();
-                    areaUniversidad = new AreasUniversidad();
-                    estado = new Estado();
-                    municipio = new Municipio();
-                    municipioPK = new MunicipioPK();
-                    organismosVinculados = new OrganismosVinculados();
-                    dtoServicioTecnologicoParticipante = new DTOServiciosTecnologicosParticipantes();
+                for (int i = 2; i <= segundaHoja.getLastRowNum(); i++) {
+                    fila = (XSSFRow) (Row) segundaHoja.getRow(i);
+                    if ((!"".equals(fila.getCell(1).getStringCellValue()))) {
+                        servicioTecnologicoParticipante = new ServiciosTecnologicosParticipantes();
+                        servicioTecnologico = new ServiciosTecnologicosAnioMes();
+                        areaUniversidad = new AreasUniversidad();
+                        estado = new Estado();
+                        municipio = new Municipio();
+                        municipioPK = new MunicipioPK();
+                        organismosVinculados = new OrganismosVinculados();
+                        dtoServicioTecnologicoParticipante = new DTOServiciosTecnologicosParticipantes();
 
-                    switch (fila.getCell(1).getCellTypeEnum()) {
-                        case FORMULA:
-                            servicioTecnologico.setServicio(fila.getCell(1).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(2).getCellTypeEnum()) {
-                        case STRING:
-                            servicioTecnologicoParticipante.setNombre(fila.getCell(2).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(4).getCellTypeEnum()) {
-                        case FORMULA:
-                            servicioTecnologicoParticipante.setSexo(fila.getCell(4).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(5).getCellTypeEnum()) {
-                        case NUMERIC:
-                            servicioTecnologicoParticipante.setEdad((short) ((int) fila.getCell(5).getNumericCellValue()));
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(7).getCellTypeEnum()) {
-                        case FORMULA:
-                            estado.setIdestado(((int) fila.getCell(7).getNumericCellValue()));
-                            estado.setNombre(fila.getCell(8).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(14).getCellTypeEnum()) {
-                        case FORMULA:
-                            municipioPK.setClaveEstado(estado.getIdestado());
-                            municipioPK.setClaveMunicipio((int) fila.getCell(14).getNumericCellValue());
-                            municipio.setEstado(estado);
-                            municipio.setMunicipioPK(municipioPK);
-                            municipio.setNombre(fila.getCell(15).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(17).getCellTypeEnum()) {
-                        case FORMULA:
-                            servicioTecnologicoParticipante.setLenguaIndigena(fila.getCell(17).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(19).getCellTypeEnum()) {
-                        case FORMULA:
-                            servicioTecnologicoParticipante.setDiscapacidad(fila.getCell(19).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(21).getCellTypeEnum()) {
-                        case FORMULA:
-                            if (fila.getCell(21).getNumericCellValue() != 0) {
-                                organismosVinculados.setNombre(fila.getCell(20).getStringCellValue());
-                                organismosVinculados.setEmpresa((int) fila.getCell(21).getNumericCellValue());
-                                servicioTecnologicoParticipante.setEmpresa(organismosVinculados);
-                                dtoServicioTecnologicoParticipante.setOrganismoVinculadoString(organismosVinculados.getNombre());
-                            } else {
-                                servicioTecnologicoParticipante.setEmpresa(null);
-                                dtoServicioTecnologicoParticipante.setOrganismoVinculadoString("N/A");
+                        if (fila.getCell(1).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(1).getCellTypeEnum()) {
+                                case FORMULA:
+                                    servicioTecnologico.setServicio(fila.getCell(1).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
                             }
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(23).getCellTypeEnum()) {
-                        case FORMULA:
-                            if (fila.getCell(23).getNumericCellValue() != 0) {
-                                servicioTecnologicoParticipante.setGeneracion((short) ((int) fila.getCell(23).getNumericCellValue()));
-                                dtoServicioTecnologicoParticipante.setGeneracion(fila.getCell(24).getStringCellValue());
-                            } else {
-                                servicioTecnologicoParticipante.setGeneracion(null);
-                                dtoServicioTecnologicoParticipante.setGeneracion(fila.getCell(24).getStringCellValue());
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(26).getCellTypeEnum()) {
-                        case FORMULA:
-                            if (fila.getCell(26).getNumericCellValue() != 0) {
-                                areaUniversidad.setArea((short) ((int) fila.getCell(26).getNumericCellValue()));
-                                areaUniversidad.setNombre(fila.getCell(27).getStringCellValue());
-                                servicioTecnologicoParticipante.setProgramaEducativo(areaUniversidad.getArea());
-                                dtoServicioTecnologicoParticipante.setProgramaEducativo(areaUniversidad);
-                            } else {
-                                servicioTecnologicoParticipante.setProgramaEducativo(null);
-                                areaUniversidad.setNombre(fila.getCell(27).getStringCellValue());
-                                dtoServicioTecnologicoParticipante.setProgramaEducativo(areaUniversidad);
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                    servicioTecnologicoParticipante.setServicioTecnologico(servicioTecnologico);
-                    servicioTecnologicoParticipante.setMunicipio(municipio);
-                    dtoServicioTecnologicoParticipante.setServiciosTecnologicosParticipantes(servicioTecnologicoParticipante);
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Servicio Tecnológico en la columna: " + (1 + 1) + " y fila: " + (i + 1));
+                        }
 
-                    dTOServiciosTecnologicosParticipantes.add(dtoServicioTecnologicoParticipante);
+                        if (fila.getCell(2).getCellTypeEnum() == CellType.STRING) {
+                            switch (fila.getCell(2).getCellTypeEnum()) {
+                                case STRING:
+                                    servicioTecnologicoParticipante.setNombre(fila.getCell(2).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Nombre en la columna: " + (2 + 1) + " y fila: " + (i + 1));
+                        }
+                        
+                        if (fila.getCell(4).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(4).getCellTypeEnum()) {
+                                case FORMULA:
+                                    servicioTecnologicoParticipante.setSexo(fila.getCell(4).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Sexo en la columna: " + (4 + 1) + " y fila: " + (i + 1));
+                        }
+                        
+                        if (fila.getCell(5).getCellTypeEnum() == CellType.NUMERIC) {
+                            switch (fila.getCell(5).getCellTypeEnum()) {
+                                case NUMERIC:
+                                    servicioTecnologicoParticipante.setEdad((short) ((int) fila.getCell(5).getNumericCellValue()));
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Edad en la columna: " + (5 + 1) + " y fila: " + (i + 1));
+                        }
+                        
+                        if (fila.getCell(7).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(7).getCellTypeEnum()) {
+                                case FORMULA:
+                                    estado.setIdestado(((int) fila.getCell(7).getNumericCellValue()));
+                                    estado.setNombre(fila.getCell(8).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Estado en la columna: " + (8 + 1) + " y fila: " + (i + 1));
+                        }
+                        
+                        if (fila.getCell(14).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(14).getCellTypeEnum()) {
+                                case FORMULA:
+                                    municipioPK.setClaveEstado(estado.getIdestado());
+                                    municipioPK.setClaveMunicipio((int) fila.getCell(14).getNumericCellValue());
+                                    municipio.setEstado(estado);
+                                    municipio.setMunicipioPK(municipioPK);
+                                    municipio.setNombre(fila.getCell(15).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Municipio en la columna: " + (15 + 1) + " y fila: " + (i + 1));
+                        }
+                        
+                        if (fila.getCell(17).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(17).getCellTypeEnum()) {
+                                case FORMULA:
+                                    servicioTecnologicoParticipante.setLenguaIndigena(fila.getCell(17).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Lengua Indígena en la columna: " + (17 + 1) + " y fila: " + (i + 1));
+                        }
+                        
+                        if (fila.getCell(19).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(19).getCellTypeEnum()) {
+                                case FORMULA:
+                                    servicioTecnologicoParticipante.setDiscapacidad(fila.getCell(19).getStringCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Discapacidad en la columna: " + (19 + 1) + " y fila: " + (i + 1));
+                        }
+                        
+                        if (fila.getCell(21).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(21).getCellTypeEnum()) {
+                                case FORMULA:
+                                    if (fila.getCell(21).getNumericCellValue() != 0) {
+                                        organismosVinculados.setNombre(fila.getCell(20).getStringCellValue());
+                                        organismosVinculados.setEmpresa((int) fila.getCell(21).getNumericCellValue());
+                                        servicioTecnologicoParticipante.setEmpresa(organismosVinculados);
+                                        dtoServicioTecnologicoParticipante.setOrganismoVinculadoString(organismosVinculados.getNombre());
+                                    } else {
+                                        servicioTecnologicoParticipante.setEmpresa(null);
+                                        dtoServicioTecnologicoParticipante.setOrganismoVinculadoString("N/A");
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Empresa en la columna: " + (20 + 1) + " y fila: " + (i + 1));
+                        }
+                        
+                        if (fila.getCell(23).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(23).getCellTypeEnum()) {
+                                case FORMULA:
+                                    if (fila.getCell(23).getNumericCellValue() != 0) {
+                                        servicioTecnologicoParticipante.setGeneracion((short) ((int) fila.getCell(23).getNumericCellValue()));
+                                        dtoServicioTecnologicoParticipante.setGeneracion(fila.getCell(24).getStringCellValue());
+                                    } else {
+                                        servicioTecnologicoParticipante.setGeneracion(null);
+                                        dtoServicioTecnologicoParticipante.setGeneracion(fila.getCell(24).getStringCellValue());
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Generación en la columna: " + (24 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        if (fila.getCell(26).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(26).getCellTypeEnum()) {
+                                case FORMULA:
+                                    if (fila.getCell(26).getNumericCellValue() != 0) {
+                                        areaUniversidad.setArea((short) ((int) fila.getCell(26).getNumericCellValue()));
+                                        areaUniversidad.setNombre(fila.getCell(27).getStringCellValue());
+                                        servicioTecnologicoParticipante.setProgramaEducativo(areaUniversidad.getArea());
+                                        dtoServicioTecnologicoParticipante.setProgramaEducativo(areaUniversidad);
+                                    } else {
+                                        servicioTecnologicoParticipante.setProgramaEducativo(null);
+                                        areaUniversidad.setNombre(fila.getCell(27).getStringCellValue());
+                                        dtoServicioTecnologicoParticipante.setProgramaEducativo(areaUniversidad);
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Programa Educativo en la columna: " + (27 + 1) + " y fila: " + (i + 1));
+                        }
+
+                        servicioTecnologicoParticipante.setServicioTecnologico(servicioTecnologico);
+                        servicioTecnologicoParticipante.setMunicipio(municipio);
+                        dtoServicioTecnologicoParticipante.setServiciosTecnologicosParticipantes(servicioTecnologicoParticipante);
+
+                        dTOServiciosTecnologicosParticipantes.add(dtoServicioTecnologicoParticipante);
+                    }
                 }
-            }
+                libroRegistro.close();
+                
+                if (validarCelda.contains(false)) {
+                    addDetailMessage("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                    addDetailMessage(datosInvalidos.toString());
 
-            listaServiciosTecnologicosAnioMes.setDtoServiciosTecnologicosParticipantes(dTOServiciosTecnologicosParticipantes);
-            libroRegistro.close();
-            addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                    excel.delete();
+                    ServicioArchivos.eliminarArchivo(rutaArchivo);
+                    return Collections.EMPTY_LIST;
+                } else {
+                    addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                    return dTOServiciosTecnologicosParticipantes;
+                }
+
+            } else {
+                libroRegistro.close();
+                excel.delete();
+                ServicioArchivos.eliminarArchivo(rutaArchivo);
+                addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+                return Collections.EMPTY_LIST;
+            }
         } else {
-            libroRegistro.close();
-            excel.delete();
-            ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            addDetailMessage("<b>Ocurrio un error en la lectura del archivo</b>");
+            return Collections.EMPTY_LIST;
         }
-        return listaServiciosTecnologicosAnioMes;
     }
 
     @Override
-    public void guardaServiciosTecnologicosAnioMes(ListaServiciosTecnologicosAnioMes listaServiciosTecnologicosAnioMes, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) throws Throwable {
+    public void guardaServiciosTecnologicosAnioMes(List<ServiciosTecnologicosAnioMes> listaServiciosTecnologicosAnioMes, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) throws Throwable {
         List<String> listaCondicional = new ArrayList<>();
-        listaServiciosTecnologicosAnioMes.getServiciosTecnologicosAnioMes().forEach((servicioTecnologico) -> {
+        listaServiciosTecnologicosAnioMes.forEach((servicioTecnologico) -> {
             facadeVinculacion.setEntityClass(ServiciosTecnologicosAnioMes.class);
             ServiciosTecnologicosAnioMes servicioEncontrado = getServiciosTecnologicosAnioMes(servicioTecnologico);
             Boolean registroAlmacenado = false;
@@ -354,8 +508,12 @@ public class ServicioServiciosTecnologicosAnioMes implements EjbServiciosTecnolo
                 registroAlmacenado = true;
             }
             if (registroAlmacenado) {
-                servicioTecnologico.setRegistro(servicioEncontrado.getRegistro());
-                facadeVinculacion.edit(servicioTecnologico);
+                if (ejbModulos.getEventoRegistro().equals(servicioEncontrado.getRegistros().getEventoRegistro())) {
+                    servicioTecnologico.setRegistro(servicioEncontrado.getRegistro());
+                    facadeVinculacion.edit(servicioTecnologico);
+                }else{
+                    listaCondicional.remove(servicioTecnologico.getServicio());
+                }
             } else {
                 Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                 servicioTecnologico.setRegistro(registro.getRegistro());
@@ -367,9 +525,9 @@ public class ServicioServiciosTecnologicosAnioMes implements EjbServiciosTecnolo
     }
 
     @Override
-    public void guardaServiciosTecnologicosParticipantes(ListaServiciosTecnologicosAnioMes listaServiciosTecnologicosAnioMes, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) throws Throwable {
+    public void guardaServiciosTecnologicosParticipantes(List<DTOServiciosTecnologicosParticipantes> listaServiciosTecnologicosAnioMes, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) throws Throwable {
         List<String> listaCondicional = new ArrayList<>();
-        listaServiciosTecnologicosAnioMes.getDtoServiciosTecnologicosParticipantes().forEach((servicioTecnologicoParticipante) -> {
+        listaServiciosTecnologicosAnioMes.forEach((servicioTecnologicoParticipante) -> {
             facadeVinculacion.setEntityClass(ServiciosTecnologicosParticipantes.class);
             ServiciosTecnologicosParticipantes servTecParEncontrado = getServiciosTecnologicosParticipantes(servicioTecnologicoParticipante.getServiciosTecnologicosParticipantes());
             Boolean registroAlmacenado = false;
@@ -382,8 +540,13 @@ public class ServicioServiciosTecnologicosAnioMes implements EjbServiciosTecnolo
                 servicioTecnologicoParticipante.getServiciosTecnologicosParticipantes().getEmpresa().setRegistro(ejbOrganismosVinculados.getRegistroOrganismoEspecifico(servicioTecnologicoParticipante.getServiciosTecnologicosParticipantes().getEmpresa().getEmpresa()));
             }
             if (registroAlmacenado) {
-                servicioTecnologicoParticipante.getServiciosTecnologicosParticipantes().setRegistro(servTecParEncontrado.getRegistro());
-                facadeVinculacion.edit(servicioTecnologicoParticipante.getServiciosTecnologicosParticipantes());
+                if(ejbModulos.getEventoRegistro().equals(servTecParEncontrado.getRegistros().getEventoRegistro())){
+                    servicioTecnologicoParticipante.getServiciosTecnologicosParticipantes().setRegistro(servTecParEncontrado.getRegistro());
+                    facadeVinculacion.edit(servicioTecnologicoParticipante.getServiciosTecnologicosParticipantes());
+                }else{
+                    listaCondicional.remove(servicioTecnologicoParticipante.getServiciosTecnologicosParticipantes().getServicioTecnologico().getServicio() + " " + servicioTecnologicoParticipante.getServiciosTecnologicosParticipantes().getNombre());
+                }
+                
             } else {
                 Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                 servicioTecnologicoParticipante.getServiciosTecnologicosParticipantes().setRegistro(registro.getRegistro());
@@ -427,6 +590,82 @@ public class ServicioServiciosTecnologicosAnioMes implements EjbServiciosTecnolo
             ex.toString();
         }
         return serviciosTecnologicosParticipantes;
+    }
+
+    @Override
+    public List<ServiciosTecnologicosAnioMes> getFiltroServiciosTecnologicosEjercicioMesArea(Short ejercicio, String mes, Short area) {
+        try {
+            return em.createQuery("SELECT s FROM ServiciosTecnologicosAnioMes s JOIN s.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes AND r.area = :area", ServiciosTecnologicosAnioMes.class)
+                    .setParameter("anio", ejercicio)
+                    .setParameter("mes", mes)
+                    .setParameter("area", area)
+                    .getResultList();
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
+    
+    @Override
+    public List<DTOServiciosTecnologicosParticipantes> getFiltroServiciosTecnologicosPartEjercicioMesArea(Short ejercicio, String mes, Short area) {
+        try {
+            List<DTOServiciosTecnologicosParticipantes> dtoServTec = new ArrayList<>();
+            List<ServiciosTecnologicosParticipantes> dtoServTecPart = new ArrayList<>();
+            dtoServTecPart = em.createQuery("SELECT s FROM ServiciosTecnologicosParticipantes s JOIN s.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes AND r.area = :area", ServiciosTecnologicosParticipantes.class)
+                    .setParameter("anio", ejercicio)
+                    .setParameter("mes", mes)
+                    .setParameter("area", area)
+                    .getResultList();
+            dtoServTecPart.forEach((t) -> {
+                dtoServTec.add(new DTOServiciosTecnologicosParticipantes(
+                        validaGeneracion(t.getGeneracion()),
+                        validaAreaUniversidad(t.getProgramaEducativo()),
+                        t  
+                ));
+            });
+            return dtoServTec;
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
+    
+    public String validaGeneracion(Short generacion) {
+        String generacionString = "";
+        if (generacion != null) {
+            generacionString = caster.generacionToString(em.find(Generaciones.class, generacion));
+        }
+        return generacionString;
+    }
+
+    public AreasUniversidad validaAreaUniversidad(Short programaEducativo) {
+        AreasUniversidad areaUniversidad = null;
+        if (programaEducativo != null) {
+            areaUniversidad = em.find(AreasUniversidad.class, programaEducativo);
+        }
+        return areaUniversidad;
+    }
+
+    @Override
+    public List<Integer> buscaRegistroParticipantesServiciosTecnologicos(ServiciosTecnologicosAnioMes servicioTecnologico) throws Throwable {
+        List<Integer> registros = new ArrayList<>();
+        try {
+            return registros = em.createQuery("SELECT s FROM ServiciosTecnologicosParticipantes s WHERE s.servicioTecnologico.servicio = :servicioTecnologico", ServiciosTecnologicosParticipantes.class)
+                    .setParameter("servicioTecnologico", servicioTecnologico.getServicio())
+                    .getResultStream()
+                    .map(s -> s.getRegistro())
+                    .collect(Collectors.toList());
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<ServiciosTipos> getListaServiciosTipo() throws Throwable {
+        try {
+            return em.createQuery("SELECT s FROM ServiciosTipos s ORDER BY s.descripcion", ServiciosTipos.class)
+                    .getResultList();
+        } catch (NoResultException ex) {
+            return Collections.EMPTY_LIST;
+        }
     }
 
 }

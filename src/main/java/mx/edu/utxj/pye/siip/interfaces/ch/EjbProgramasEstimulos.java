@@ -12,7 +12,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasEstimulosTipos;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
-import mx.edu.utxj.pye.siip.entity.caphum.list.ListaProgramasEstimulos;
+import mx.edu.utxj.pye.siip.dto.caphum.DTOProgramasEstimulos;
 
 /**
  *
@@ -21,8 +21,42 @@ import mx.edu.utxj.pye.siip.entity.caphum.list.ListaProgramasEstimulos;
 @Local
 public interface EjbProgramasEstimulos {
    
-   public ListaProgramasEstimulos getListaProgramaEstimulos(String rutaArchivo) throws Throwable;
-   public void guardaProgramasEstimulos(ListaProgramasEstimulos listaProgramaEstimulos, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros);
+     /**
+     * Obtiene la lista de registros leídos del archivo de Excel.
+     * @param rutaArchivo ruta en la que se guarda el archivo.
+     * @return Lista de registros que se desean subir.
+     * @throws java.lang.Throwable
+     */
+   public List<DTOProgramasEstimulos> getListaProgramaEstimulos(String rutaArchivo) throws Throwable;
+   
+     /**
+     * Método que guarda registros del archivo de Excel en la tabla de la base de datos.
+     * @param lista lista de registros que se guardaran.
+     * @param registrosTipo tipo de registro.
+     * @param ejesRegistro eje al que pertenece el registro.
+     * @param area area que está registrando.
+     * @param eventosRegistros evento de registro vigente.
+     */
+   public void guardaProgramasEstimulos(List<DTOProgramasEstimulos> lista, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros);
+   
+     /**
+     * Método que verifica si existe otro registro en la tabla de la base de datos con la misma información.
+     * @param programasEstimulos
+     * @return entity.
+     */
    public ProgramasEstimulos getRegistroProgramasEstimulos(ProgramasEstimulos programasEstimulos);
+   
+    /**
+     * Obtiene la lista de tipo de programas de estimulo actuales.
+     * @return lista de la entity.
+     */
    public List<ProgramasEstimulosTipos> getProgramasEstimulosTiposAct();
+   
+    /**
+     * Obtiene la lista de registros filtrado por ejercicio y mes seleccionado.
+     * @param ejercicio Ejercicio fiscal.
+     * @param mes Mes del ejercicio fiscal.
+     * @return Lista de registros.
+     */
+   public List<DTOProgramasEstimulos> getRegistroDTOProgramasEstimulos(String mes, Short ejercicio); 
 }

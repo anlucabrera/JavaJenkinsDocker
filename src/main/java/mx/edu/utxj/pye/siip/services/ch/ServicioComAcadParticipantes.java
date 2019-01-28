@@ -13,12 +13,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.ComisionesAcademicas;
 import mx.edu.utxj.pye.sgi.entity.pye2.ComisionesAcademicasParticipantes;
@@ -28,7 +29,6 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.dto.caphum.DTOComAcadParticipantes;
-import mx.edu.utxj.pye.siip.entity.caphum.list.ListaComAcadParticipantes;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.ch.EjbComisionesAcademicas;
 import mx.edu.utxj.pye.siip.interfaces.ch.EjbComAcadParticipantes;
@@ -44,23 +44,17 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 @Stateful
 public class ServicioComAcadParticipantes implements EjbComAcadParticipantes{
     
-    @EJB
-    Facade facadepye;
-    @EJB
-    EjbModulos ejbModulos;
-    @EJB
-    EjbComisionesAcademicas ejbComisionesAcademicas;
-    
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
+    @EJB Facade f;
+    @EJB EjbModulos ejbModulos;
+    @EJB EjbComisionesAcademicas ejbComisionesAcademicas;
+    @Inject ControladorEmpleado controladorEmpleado;
    
     @Override
-    public ListaComAcadParticipantes getListaComAcadParticipantes(String rutaArchivo) throws Throwable {
-       
-        ListaComAcadParticipantes listaComAcadParticipantes = new ListaComAcadParticipantes();
-
+    public List<DTOComAcadParticipantes> getListaComAcadParticipantes(String rutaArchivo) throws Throwable {
+        
         List<DTOComAcadParticipantes> listaDtoComAcadPart = new ArrayList<>();
         Personal personal;
+        AreasUniversidad areasUniversidad;
         ComisionesAcademicas comisionesAcademicas;
         ComisionesAcademicasParticipantes comisionesAcademicasParticipantes;
         DTOComAcadParticipantes dTOComAcadParticipantes;
@@ -77,6 +71,7 @@ public class ServicioComAcadParticipantes implements EjbComAcadParticipantes{
 
                 if ((!"".equals(fila.getCell(1).getStringCellValue()))) {
                 personal = new Personal();
+                areasUniversidad = new AreasUniversidad();
                 comisionesAcademicas = new ComisionesAcademicas();
                 comisionesAcademicasParticipantes = new ComisionesAcademicasParticipantes();
                 dTOComAcadParticipantes = new DTOComAcadParticipantes();
@@ -89,20 +84,20 @@ public class ServicioComAcadParticipantes implements EjbComAcadParticipantes{
                     default:
                         break;
                 }
-                 switch (fila.getCell(1).getCellTypeEnum()) {
-                    case FORMULA:
-                        dTOComAcadParticipantes.setTipoComision(fila.getCell(1).getStringCellValue());
-                        break;
-                    default:
-                        break;
-                }
-                  switch (fila.getCell(2).getCellTypeEnum()) {
-                    case FORMULA:
-                        dTOComAcadParticipantes.setLugarComision(fila.getCell(2).getStringCellValue());
-                        break;
-                    default:
-                        break;
-                }
+//                 switch (fila.getCell(1).getCellTypeEnum()) {
+//                    case FORMULA:
+//                        dTOComAcadParticipantes.setTipoComision(fila.getCell(1).getStringCellValue());
+//                        break;
+//                    default:
+//                        break;
+//                }
+//                  switch (fila.getCell(2).getCellTypeEnum()) {
+//                    case FORMULA:
+//                        dTOComAcadParticipantes.setLugarComision(fila.getCell(2).getStringCellValue());
+//                        break;
+//                    default:
+//                        break;
+//                }
                 switch (fila.getCell(4).getCellTypeEnum()) {
                     case STRING:
                         personal.setNombre(fila.getCell(4).getStringCellValue());
@@ -120,14 +115,15 @@ public class ServicioComAcadParticipantes implements EjbComAcadParticipantes{
                 }
                 switch (fila.getCell(6).getCellTypeEnum()) {
                     case FORMULA:
-                        dTOComAcadParticipantes.setAreaPart(fila.getCell(6).getStringCellValue());
+                        dTOComAcadParticipantes.setAreaPersonal(fila.getCell(6).getStringCellValue());
                         break;
                     default:
                         break;
                 }
                 switch (fila.getCell(7).getCellTypeEnum()) {
                     case FORMULA: 
-                        comisionesAcademicasParticipantes.setArea((short)fila.getCell(7).getNumericCellValue());
+                        areasUniversidad.setArea((short)fila.getCell(7).getNumericCellValue());
+                        comisionesAcademicasParticipantes.setArea(areasUniversidad.getArea());
                         break;
                     default:
                         break;
@@ -135,68 +131,67 @@ public class ServicioComAcadParticipantes implements EjbComAcadParticipantes{
                     dTOComAcadParticipantes.setPersonal(personal);
                     dTOComAcadParticipantes.setComisionesAcademicasParticipantes(comisionesAcademicasParticipantes);
                     listaDtoComAcadPart.add(dTOComAcadParticipantes);
-                    
-                    System.out.println("mx.edu.utxj.pye.siip.services.ch.ServicioComAcadParticipantes.getListaComAcadParticipantes()" + listaDtoComAcadPart);
-                    
+                  
                 }
             }
-            listaComAcadParticipantes.setParticipantes(listaDtoComAcadPart);
             libroRegistro.close();
-            addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+            addDetailMessage("<b>Hoja de Participantes de Comisiones Validada favor de verificar sus datos antes de guardar su información</b>");
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
             addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
         }
-        return listaComAcadParticipantes;
+        return listaDtoComAcadPart;
     }
 
     @Override
-    public void guardaComAcadParticipantes(ListaComAcadParticipantes listaComAcadParticipantes, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
+    public void guardaComAcadParticipantes(List<DTOComAcadParticipantes> lista, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
+        
+        lista.forEach((participantes) -> {
 
-//            listaComAcadParticipantes.getParticipantes().forEach((participantes) -> {
-//            Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-//            
-//            participantes.getComisionesAcademicasParticipantes().getComisionAcademica().setRegistro(ejbComisionesAcademicas.getRegistroComisionesAcademicasEspecifico(participantes.getComisionesAcademicasParticipantes().getComisionAcademica().getComisionAcademica()));
-//                        
-//            facadepye.setEntityClass(ComisionesAcademicasParticipantes.class);
-//            participantes.getComisionesAcademicasParticipantes().setRegistro(registro.getRegistro());
-//            facadepye.create(participantes.getComisionesAcademicasParticipantes());
-//            facadepye.flush();
-//        });
+            ComisionesAcademicas comisionesAcademicas = ejbComisionesAcademicas.getRegistroComisionesAcademicas(participantes.getComisionesAcademicasParticipantes().getComisionAcademica());
+            if (comisionesAcademicas == null || comisionesAcademicas.getComisionAcademica().isEmpty()) {
+                addDetailMessage("<b>No existe la Clave de Comisión Académica</b>");
 
-            List<String> listaCondicional = new ArrayList<>();
-            listaComAcadParticipantes.getParticipantes().forEach((participantes) -> {
-            try {
-                facadepye.setEntityClass(ComisionesAcademicasParticipantes.class);
-                ComisionesAcademicasParticipantes comAcadPartEncontrado = getRegistroComisionesAcademicasParticipantes(participantes.getComisionesAcademicasParticipantes());
-                Boolean registroAlmacenado = false;
-                if (comAcadPartEncontrado != null) {
-                    listaCondicional.add(participantes.getComisionesAcademicasParticipantes().getComisionAcademica().getComisionAcademica()+ " " + participantes.getPersonal().getNombre());
-                    registroAlmacenado = true;
-                }
-                if (registroAlmacenado) {
-                    participantes.getComisionesAcademicasParticipantes().setRegistro(comAcadPartEncontrado.getRegistro());
-                    participantes.getComisionesAcademicasParticipantes().getComisionAcademica().setRegistro(comAcadPartEncontrado.getComisionAcademica().getRegistro());
-                    facadepye.edit(participantes.getComisionesAcademicasParticipantes());
+            } else {
+                if (ejbModulos.validaEventoRegistro(ejbModulos.getEventoRegistro(), comisionesAcademicas.getRegistros().getEventoRegistro().getEventoRegistro())) {
+                    List<String> listaCondicional = new ArrayList<>();
+                    try {
+                        f.setEntityClass(ComisionesAcademicasParticipantes.class);
+                        ComisionesAcademicasParticipantes comAcadPartEncontrado = getRegistroComisionesAcademicasParticipantes(participantes.getComisionesAcademicasParticipantes());
+                        Boolean registroAlmacenado = false;
+                        if (comAcadPartEncontrado != null) {
+                            listaCondicional.add(participantes.getComisionesAcademicasParticipantes().getComisionAcademica().getComisionAcademica() + " " + participantes.getPersonal().getNombre());
+                            registroAlmacenado = true;
+                        }
+                        if (registroAlmacenado) {
+                            participantes.getComisionesAcademicasParticipantes().setRegistro(comAcadPartEncontrado.getRegistro());
+                            participantes.getComisionesAcademicasParticipantes().getComisionAcademica().setRegistro(comAcadPartEncontrado.getComisionAcademica().getRegistro());
+                            f.edit(participantes.getComisionesAcademicasParticipantes());
+                            addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
+                        } else {
+                            Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
+                            participantes.getComisionesAcademicasParticipantes().getComisionAcademica().setRegistro(ejbComisionesAcademicas.getRegistroComisionesAcademicasEspecifico(participantes.getComisionesAcademicasParticipantes().getComisionAcademica().getComisionAcademica()));
+                            participantes.getComisionesAcademicasParticipantes().setRegistro(registro.getRegistro());
+                            f.create(participantes.getComisionesAcademicasParticipantes());
+                            addDetailMessage("<b>Se guardaron los registros correctamente </b>");
+                        }
+                        f.flush();
+                    } catch (Throwable ex) {
+                        Logger.getLogger(ServicioComisionesAcademicas.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 } else {
-                    Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-                    participantes.getComisionesAcademicasParticipantes().getComisionAcademica().setRegistro(ejbComisionesAcademicas.getRegistroComisionesAcademicasEspecifico(participantes.getComisionesAcademicasParticipantes().getComisionAcademica().getComisionAcademica()));
-                    participantes.getComisionesAcademicasParticipantes().setRegistro(registro.getRegistro());
-                    facadepye.create(participantes.getComisionesAcademicasParticipantes());
+
+                    addDetailMessage("<b>No puede registrar información de periodos anteriores</b>");
                 }
-                facadepye.flush();
-            } catch (Throwable ex) {
-                Logger.getLogger(ServicioComisionesAcademicas.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
     public ComisionesAcademicasParticipantes getRegistroComisionesAcademicasParticipantes(ComisionesAcademicasParticipantes comisionesAcademicasParticipantes) {
-        TypedQuery<ComisionesAcademicasParticipantes> query = em.createQuery("SELECT c FROM ComisionesAcademicasParticipantes c JOIN c.comisionAcademica ca WHERE ca.comisionAcademica = :comisionAcademica AND c.participante = :participante", ComisionesAcademicasParticipantes.class);
+        TypedQuery<ComisionesAcademicasParticipantes> query = f.getEntityManager().createQuery("SELECT c FROM ComisionesAcademicasParticipantes c JOIN c.comisionAcademica ca WHERE ca.comisionAcademica = :comisionAcademica AND c.participante = :participante", ComisionesAcademicasParticipantes.class);
         query.setParameter("comisionAcademica", comisionesAcademicasParticipantes.getComisionAcademica().getComisionAcademica());
         query.setParameter("participante", comisionesAcademicasParticipantes.getParticipante());
         try {
@@ -207,5 +202,4 @@ public class ServicioComAcadParticipantes implements EjbComAcadParticipantes{
         }
         return comisionesAcademicasParticipantes; 
     }
-    
 }

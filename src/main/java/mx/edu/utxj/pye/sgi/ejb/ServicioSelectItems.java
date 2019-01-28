@@ -5,12 +5,19 @@
  */
 package mx.edu.utxj.pye.sgi.ejb;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.faces.model.SelectItem;
+import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluaciones;
@@ -18,10 +25,12 @@ import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMaterias;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360;
 import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 //import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Listaperiodosescolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
+import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
 /**
@@ -33,6 +42,9 @@ public class ServicioSelectItems implements EJBSelectItems {
 
     @EJB
     Facade f;
+    
+    @Inject
+    LogonMB logonMB;
 
     @Override
     public List<SelectItem> itemsEvaluacionesDirectivos() {
@@ -278,6 +290,133 @@ public class ServicioSelectItems implements EJBSelectItems {
             lsp.add( new SelectItem(p.getPeriodo(), p.getMesInicio() + "-" + p.getMesFin(),  p.getMesInicio() + "-" + p.getMesFin()));
         }
         return lsp;
+    }
+    
+     static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
+    public List<Registros> getListaRegistros(Short tipo) {
+        TypedQuery<Registros> qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo", Registros.class);
+        qr.setParameter("tipo", tipo);
+        List<Registros> lr = qr.getResultList();
+        if (lr.isEmpty() || lr == null) {
+            return null;
+        } else {
+            return lr;
+        }
+    }
+
+    public List<Registros> getListaRegistrosAreaTipo(Short tipo) {
+        TypedQuery<AreasUniversidad> qa = f.getEntityManager().createQuery("SELECT a from AreasUniversidad a", AreasUniversidad.class);
+        List<AreasUniversidad> listaAreasConPoa = qa.getResultStream().filter(x -> (x.getTienePoa() && x.getArea().equals(logonMB.getPersonal().getAreaOperativa())
+                || (x.getTienePoa() && x.getArea().equals(logonMB.getPersonal().getAreaSuperior())))).collect(Collectors.toList());
+
+        if (listaAreasConPoa == null || listaAreasConPoa.isEmpty()) {
+            return null;
+        } else {
+
+            listaAreasConPoa.forEach(x -> {
+                //System.err.println("El personal es --->" + x);
+            });
+            Short areaSeleccionada = listaAreasConPoa.get(0).getArea();
+            TypedQuery<Registros> qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.area = :area ORDER BY r.registro DESC", Registros.class);
+            qr.setParameter("tipo", tipo);
+            qr.setParameter("area", areaSeleccionada);
+//            System.err.println("La lista de registros es : " + qr.getResultList() + " y su tamaño es : " + qr.getResultList().size());
+            List<Registros> lr = qr.getResultList();
+            if (lr == null || lr.isEmpty()) {
+                return null;
+            } else {
+                return lr;
+            }
+        }
+    }
+
+    public List<Registros> getListaRegistrosAreaTipoEjercicio(Short tipo, Short ejercicio) {
+        TypedQuery<AreasUniversidad> qa = f.getEntityManager().createQuery("SELECT a from AreasUniversidad a", AreasUniversidad.class);
+        List<AreasUniversidad> listaAreasConPoa = qa.getResultStream().filter(x -> (x.getTienePoa() && x.getArea().equals(logonMB.getPersonal().getAreaOperativa())
+                || (x.getTienePoa() && x.getArea().equals(logonMB.getPersonal().getAreaSuperior())))).collect(Collectors.toList());
+
+        if (listaAreasConPoa == null || listaAreasConPoa.isEmpty()) {
+            return null;
+        } else {
+
+            listaAreasConPoa.forEach(x -> {
+                //System.err.println("El personal es --->" + x);
+            });
+            Short areaSeleccionada = listaAreasConPoa.get(0).getArea();
+            TypedQuery<Registros> qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.area = :area AND r.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio ORDER BY r.registro DESC", Registros.class);
+            qr.setParameter("tipo", tipo);
+            qr.setParameter("area", areaSeleccionada);
+            qr.setParameter("ejercicio", ejercicio);
+            //System.err.println("La lista de registros es : " + qr.getResultList() + " y su tamaño es : " + qr.getResultList().size());
+            List<Registros> lr = qr.getResultList();
+            if (lr == null || lr.isEmpty()) {
+                return null;
+            } else {
+                return lr;
+            }
+        }
+    }
+
+    @Override
+    public List<SelectItem> itemMesesPorRegistro(Short tipo, Short ejercicio) {
+        List<Registros> registrosArea = getListaRegistrosAreaTipoEjercicio(tipo, ejercicio);
+        //System.err.println("lo registros del area son = : "+ registrosArea);
+        List<SelectItem> ls = new ArrayList<>();
+        if (registrosArea == null) {
+//            ls.add(new SelectItem((short)1, "Aun no hay registros ligados a un mes"));
+            return null;
+        } else {
+            for (Registros r : registrosArea) {
+                ls.add(new SelectItem(r.getEventoRegistro().getMes(), r.getEventoRegistro().getMes()));
+//                ls.sort(Comparator.comparing(SelectItem::getLabel));
+            }
+            
+            return ls.stream().filter(distinctByKey(x -> x.getLabel())).collect(Collectors.toList());
+        }
+    }
+
+    @Override
+    public List<SelectItem> itemEjercicioFiscalPorRegistro(Short tipo) {
+        List<Registros> registrosArea = getListaRegistrosAreaTipo(tipo);
+        //System.err.println("lo registros del area son = : "+ registrosArea);
+        List<SelectItem> ls = new ArrayList<>();
+        if (registrosArea == null) {
+//            ls.add(new SelectItem((short)1, "Aun no hay registros ligados a un ejercicio"));
+            return null;
+        } else {
+            for (Registros r : registrosArea) {
+                ls.add(new SelectItem(r.getEventoRegistro().getEjercicioFiscal().getEjercicioFiscal(), r.getEventoRegistro().getEjercicioFiscal().getAnio() + ""));
+                
+            }
+            //System.err.println("se imprimen las areas del registro ");
+            getListaRegistrosAreaTipo(tipo);
+            
+            return ls.stream().filter(distinctByKey(x -> x.getLabel())).collect(Collectors.toList());
+             
+        }
+    }
+    public List<Generaciones> getGeneraciones() {
+        TypedQuery<Generaciones> q = f.getEntityManager().createQuery("SELECT g FROM Generaciones g ORDER BY g.generacion DESC", Generaciones.class);
+        List<Generaciones> le = q.getResultList();
+        if (le.isEmpty() || le == null) {
+            //System.err.println("no existe el ciclo escolar");
+            return null;
+        } else {
+            return le;
+        }
+    }
+
+    @Override
+    public List<SelectItem> itemGeneraciones() {
+        List<SelectItem> lse = new ArrayList<>();
+        for (Generaciones ge : getGeneraciones()) {
+            lse.add(new SelectItem(ge.getGeneracion(), ge.getInicio() + "-" + ge.getFin(), ge.getInicio() + "-" + ge.getFin()));
+        }
+        return lse;
     }
 
 }

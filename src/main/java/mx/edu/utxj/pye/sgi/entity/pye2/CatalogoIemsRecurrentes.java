@@ -38,10 +38,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class CatalogoIemsRecurrentes implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    @Id
     @Basic(optional = false)
     @NotNull
     @Column(name = "iems")
-    @Id
     private int iems;
     @Basic(optional = false)
     @NotNull

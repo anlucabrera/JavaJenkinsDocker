@@ -7,12 +7,15 @@ package mx.edu.utxj.pye.sgi.controlador;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.ApplicationScoped;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.PlaneacionesCuatrimestrales;
+import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
@@ -53,6 +56,26 @@ public class Caster {
                 .append(periodo.getMesInicio().getMes().equals("Septiembre")?sdf.format(periodo.getCiclo().getInicio()):sdf.format(periodo.getCiclo().getFin()))
                 .toString();
         
+    }
+    
+    public String cicloEscolarToString(CiclosEscolares cicloEscolar){
+        Calendar calendario = new GregorianCalendar();
+        Calendar calendario2 = new GregorianCalendar();
+        calendario.setTime(cicloEscolar.getInicio());
+        calendario2.setTime(cicloEscolar.getFin());
+        return (new StringBuilder())
+                .append(calendario.get(Calendar.YEAR))
+                .append(" - ")
+                .append(calendario2.get(Calendar.YEAR))
+                .toString();
+    }
+    
+    public String periodoToStringAnio(PeriodosEscolares periodo){
+        return (new StringBuilder())
+                .append(periodo.getMesInicio().getMes())
+                .append(" ")
+                .append(periodo.getAnio())
+                .toString();
     }
     
     public static short planeacionToTotal(PlaneacionesCuatrimestrales pc){
@@ -106,5 +129,14 @@ public class Caster {
     public static void main(String[] args) {
         Caster caster = new Caster();
         System.out.println("mx.edu.utxj.pye.sgi.controlador.Caster.main(): " + caster.bytesToMegabytes(450l));
+    }
+    
+     public String cicloToString(CiclosEscolares ciclo){
+        return (new StringBuilder())
+                .append(ciclo.getInicio())
+                .append(" - ")
+                .append(ciclo.getFin())
+                .toString();
+        
     }
 }

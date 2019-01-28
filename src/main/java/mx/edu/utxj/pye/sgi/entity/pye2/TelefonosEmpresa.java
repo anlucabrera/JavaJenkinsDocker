@@ -42,7 +42,7 @@ public class TelefonosEmpresa implements Serializable {
     private Integer telefonoEmpresa;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 15)
+    @Size(min = 1, max = 50)
     @Column(name = "telefono_principal")
     private String telefonoPrincipal;
     @JoinColumn(name = "empresa", referencedColumnName = "empresa")

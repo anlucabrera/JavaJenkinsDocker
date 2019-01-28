@@ -7,11 +7,15 @@ package mx.edu.utxj.pye.siip.dto.pye;
 
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesFormacionIntegral;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 
 
 /**
@@ -20,11 +24,13 @@ import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesFormacionIntegral;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(of = "actividadesFormacionIntegral")
+@EqualsAndHashCode
 public class DTOActFormacionIntegral implements Serializable{
 
-    private static final long serialVersionUID = 0L;
-    @Getter @Setter private String periodoEscolar;
-    @Getter @Setter private ActividadesFormacionIntegral actividadesFormacionIntegral;
+    private static final long serialVersionUID = 3423077670913132687L;
+    @Getter @Setter @NonNull private ActividadesFormacionIntegral actividadesFormacionIntegral; //se declara como llave primaria para interacturar con sus evidencias
+    @Getter @Setter private PeriodosEscolares periodosEscolares;
+    @Getter @Setter private ActividadesPoa actividadAlineada;
 
 }

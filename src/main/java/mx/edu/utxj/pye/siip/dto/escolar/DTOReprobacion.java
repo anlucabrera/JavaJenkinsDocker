@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import mx.edu.utxj.pye.sgi.entity.prontuario.Materias;
+import mx.edu.utxj.pye.sgi.entity.pye2.MateriasProgramaEducativo;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.pye2.DesercionReprobacionMaterias;
 
@@ -26,7 +26,7 @@ public class DTOReprobacion implements Serializable{
 
     private static final long serialVersionUID = -5162564017256453585L;
     @Getter @Setter private String matricula;
-    @Getter @Setter private Materias materias;
+    @Getter @Setter private MateriasProgramaEducativo materias;
     @Getter @Setter private Personal personal;
     @Getter @Setter private DesercionReprobacionMaterias desercionReprobacionMaterias;
 }

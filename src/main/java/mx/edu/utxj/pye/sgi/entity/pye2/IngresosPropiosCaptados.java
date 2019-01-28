@@ -65,7 +65,7 @@ public class IngresosPropiosCaptados implements Serializable {
     private double monto;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 255)
+    @Size(min = 1, max = 120)
     @Column(name = "descripcion")
     private String descripcion;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)

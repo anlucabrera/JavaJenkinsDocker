@@ -59,7 +59,7 @@ public class ActividadesFormacionIntegral implements Serializable {
     private Integer registro;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 20)
+    @Size(min = 1, max = 25)
     @Column(name = "actividad_formacion_integral")
     private String actividadFormacionIntegral;
     @Basic(optional = false)

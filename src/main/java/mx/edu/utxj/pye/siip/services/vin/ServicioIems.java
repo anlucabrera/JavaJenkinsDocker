@@ -7,14 +7,14 @@ package mx.edu.utxj.pye.siip.services.vin;
 
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
 import mx.edu.utxj.pye.sgi.entity.pye2.IemsServedu;
@@ -42,21 +42,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 @Stateful
 public class ServicioIems implements EjbIems {
 
-    @EJB
-    Facade f;
-    
-    @EJB
-    EjbModulos ejbModulos;
-    
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
-
+    @EJB Facade f;
+    @EJB EjbModulos ejbModulos;
+   
     @Override
     public List<Iems> getIems() {
-        System.err.println("entra al ejb");
         TypedQuery<Iems> q = f.getEntityManager().createQuery("SELECT i FROM Iems i ORDER BY i.iems DESC", Iems.class);
         q.setMaxResults(10);
-        System.err.println("la lista de iem es : ");
         q.getResultList().forEach(System.err::println);
         return q.getResultList();
     }
@@ -67,24 +59,27 @@ public class ServicioIems implements EjbIems {
     }
 
     @Override
-    public Iems eliminaIems(Integer iem) {
-        System.err.println("Entra a la iem : " + iem);
-        if (iem == null) {
-            System.out.println("mx.edu.utxj.pye.siip.services.vin.ServicioIems.eliminaIems() valor null de la iem");
-            return null;
+    public void cambiarStatusIEMS(Integer iemsID) throws Throwable{
+        Iems iems = f.getEntityManager().find(Iems.class, iemsID);
+        if (iems.getStatus() == 0) {
+
+            TypedQuery<Iems> q = f.getEntityManager().createQuery("UPDATE Iems i SET i.status =1 WHERE i.iems = :iems", Iems.class);
+            q.setParameter("iems", iems.getIems());
+            q.executeUpdate();
+            addDetailMessage("Se activó correctamente el IEMS seleccionado");
+            
         } else {
-            System.out.println("mx.edu.utxj.pye.siip.services.vin.ServicioIems.eliminaIems() la iem que se elimina : " + iem);
-            f.setEntityClass(Iems.class);
-            Iems i = f.getEntityManager().find(Iems.class, iem);
-            System.err.println("encuentra la iem : " + i);
-            f.remove(i);
-            return i;
+
+            TypedQuery<Iems> q = f.getEntityManager().createQuery("UPDATE Iems i SET i.status =0 WHERE i.iems = :iems", Iems.class);
+            q.setParameter("iems", iems.getIems());
+            q.executeUpdate();
+            addDetailMessage("Se desactivó correctamente el IEMS seleccionado");
+
         }
     }
     
     @Override
     public List<Iems> filtroIems(Integer estado, Integer municipio){
-        System.err.println("el estado seleccionado es : " + estado+ " y el municipio es : " + municipio);
         TypedQuery<Iems> q = f.getEntityManager()
                 .createQuery("SELECT i from Iems i WHERE i.localidad.localidadPK.claveEstado = :estado AND i.localidad.municipio.municipioPK.claveMunicipio =:municipio ORDER BY i.iems DESC", Iems.class);
         q.setParameter("estado", estado);
@@ -92,16 +87,16 @@ public class ServicioIems implements EjbIems {
         
         List<Iems> li = q.getResultList();
         if(li.isEmpty() || li == null){
-            System.err.println("no se encontraron registro de este municipio : " + municipio);
             return null;
         }else{
-            System.err.println("El tamaño de la lista es : " + li.size());
             return li;
         }
     }
 
     @Override
     public ListaIemsPrevia getListaIemsPrevia (String rutaArchivo) throws Throwable {
+        List<Boolean> validarCelda = new ArrayList<>();
+        List<String> datosInvalidos = new ArrayList<>();
 
         ListaIemsPrevia listaIemsPrevia = new ListaIemsPrevia();
 
@@ -124,7 +119,14 @@ public class ServicioIems implements EjbIems {
 
         String lada = "";
         String tel = "";
-
+        int iem = 0;
+        int col =0;
+        int call = 0;
+        int app= 0;
+        int apm =0;
+        int nomb = 0;
+        
+        try{
         if (primeraHoja.getSheetName().equals("IEMS")) {
         for (int i = 3; i <= primeraHoja.getLastRowNum(); i++) {
             fila = (XSSFRow) (Row) primeraHoja.getRow(i);
@@ -143,6 +145,10 @@ public class ServicioIems implements EjbIems {
                         case STRING:
                             iems.setNombre(fila.getCell(0).getStringCellValue());
                             break;
+                        case NUMERIC:
+                            String nom = Integer.toString((int) fila.getCell(0).getNumericCellValue());
+                            iems.setNombre(nom);
+                            break;
                         default:
                             break;
                     }
@@ -150,182 +156,244 @@ public class ServicioIems implements EjbIems {
                         case STRING:
                             iems.setClave(fila.getCell(1).getStringCellValue());
                             break;
+                        case NUMERIC:
+                            String cla = Integer.toString((int) fila.getCell(1).getNumericCellValue());
+                            iems.setClave(cla);
+                            break;
+                        default:
+                            break;
+                    }
+                    switch (fila.getCell(2).getCellTypeEnum()) {
+                        case STRING:
+                            iems.setTurno(fila.getCell(2).getStringCellValue());
+                            break;
                         default:
                             break;
                     }
                     switch (fila.getCell(3).getCellTypeEnum()) {
-                        case FORMULA:
-                            iems.setTurno(fila.getCell(3).getStringCellValue());
+                        case STRING:
+                            iems.setTipo(fila.getCell(3).getStringCellValue());
+                            break;
+                        default:
+                            break;
+                    }
+                    switch (fila.getCell(4).getCellTypeEnum()) {
+                        case STRING:
+                            iems.setAmbito(fila.getCell(4).getStringCellValue());
                             break;
                         default:
                             break;
                     }
                     switch (fila.getCell(5).getCellTypeEnum()) {
-                        case FORMULA:
-                            iems.setTipo(fila.getCell(5).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(7).getCellTypeEnum()) {
-                        case FORMULA:
-                            iems.setAmbito(fila.getCell(7).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(8).getCellTypeEnum()) {
                         case STRING:
-                            iemsServedu.setDescripcion(fila.getCell(8).getStringCellValue());
+                            iemsServedu.setDescripcion(fila.getCell(5).getStringCellValue());
                             break;
                         default:
                             break;
                     }
-                    switch (fila.getCell(9).getCellTypeEnum()) {
+                    switch (fila.getCell(6).getCellTypeEnum()) {
                         case FORMULA:
-                            iemsServedu.setServeducativo((int) fila.getCell(9).getNumericCellValue());
+                            iemsServedu.setServeducativo((int) fila.getCell(6).getNumericCellValue());
                             iems.setServedu(iemsServedu);
                             break;
                         default:
                             break;
                     }
-                    switch (fila.getCell(10).getCellTypeEnum()) {
-                        case STRING:
-                            estado.setNombre(fila.getCell(10).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
                     switch (fila.getCell(11).getCellTypeEnum()) {
-                        case FORMULA:
-                            estado.setIdestado((int)fila.getCell(11).getNumericCellValue());
-                            localidadPK.setClaveEstado((int)fila.getCell(11).getNumericCellValue());
+                        case STRING:
+                            estado.setNombre(fila.getCell(11).getStringCellValue());
                             break;
                         default:
                             break;
                     }
-                    switch (fila.getCell(15).getCellTypeEnum()) {
-                        case STRING:
-                            municipio.setNombre(fila.getCell(15).getStringCellValue());
+                    switch (fila.getCell(12).getCellTypeEnum()) {
+                        case FORMULA:
+                            estado.setIdestado((int)fila.getCell(12).getNumericCellValue());
+                            localidadPK.setClaveEstado((int)fila.getCell(12).getNumericCellValue());
                             break;
                         default:
                             break;
                     }
                     switch (fila.getCell(16).getCellTypeEnum()) {
+                        case STRING:
+                            municipio.setNombre(fila.getCell(16).getStringCellValue());
+                            break;
+                        default:
+                            break;
+                    }
+                    switch (fila.getCell(17).getCellTypeEnum()) {
                         case FORMULA:
-                            municipioPK.setClaveMunicipio((int)fila.getCell(16).getNumericCellValue());
+                            municipioPK.setClaveMunicipio((int)fila.getCell(17).getNumericCellValue());
                             municipio.setMunicipioPK(municipioPK);
                             municipio.setEstado(estado);
-                            localidadPK.setClaveMunicipio((int) fila.getCell(16).getNumericCellValue());
+                            localidadPK.setClaveMunicipio((int) fila.getCell(17).getNumericCellValue());
                             break;
                         default:
                             break;
                     }
-                    switch (fila.getCell(20).getCellTypeEnum()) {
+                    switch (fila.getCell(22).getCellTypeEnum()) {
                         case STRING:
-                            localidad.setNombre(fila.getCell(20).getStringCellValue());
+                            localidad.setNombre(fila.getCell(22).getStringCellValue());
                             break;
                         default:
                             break;
                     }
-                    switch (fila.getCell(21).getCellTypeEnum()) {
+                    switch (fila.getCell(23).getCellTypeEnum()) {
                         case FORMULA:
-                            localidadPK.setClaveLocalidad((int) fila.getCell(21).getNumericCellValue());
+                            localidadPK.setClaveLocalidad((int) fila.getCell(23).getNumericCellValue());
                             localidad.setLocalidadPK(localidadPK);
                             localidad.setMunicipio(municipio);
                             break;
                         default:
                             break;
                     }
-                    switch (fila.getCell(26).getCellTypeEnum()) {
+                    switch (fila.getCell(28).getCellTypeEnum()) {
                         case FORMULA:
-                            iems.setDomicilio(fila.getCell(26).getStringCellValue());
+                            iems.setDomicilio(fila.getCell(28).getStringCellValue());
                             break;
                         default:
                             break;
                     }
-                    switch (fila.getCell(27).getCellTypeEnum()) {
+                    switch (fila.getCell(29).getCellTypeEnum()) {
                         case NUMERIC:
-                            int l = (int) fila.getCell(27).getNumericCellValue();
+                            int l = (int) fila.getCell(29).getNumericCellValue();
                             lada = Integer.toString(l);
                             iems.setLada(lada);
                             break;
+                        case STRING:
+                            iems.setLada(fila.getCell(29).getStringCellValue());
+                            break;
                         default:
                             break;
                     }
-                    switch (fila.getCell(28).getCellTypeEnum()) {
+                    switch (fila.getCell(30).getCellTypeEnum()) {
                         case NUMERIC:
-                            int t = (int) fila.getCell(28).getNumericCellValue();
+                            int t = (int) fila.getCell(30).getNumericCellValue();
                             tel = Integer.toString(t);
                             iems.setTelefono(tel);
                             break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(32).getCellTypeEnum()) {
-                        case FORMULA:
-                            iems.setResponsable(fila.getCell(32).getStringCellValue());
-                            break;
-                        default:
-                            break;
-                    }
-                    switch (fila.getCell(33).getCellTypeEnum()) {
                         case STRING:
-                            iems.setCorreo(fila.getCell(33).getStringCellValue());
+                            iems.setTelefono(fila.getCell(30).getStringCellValue());
                             break;
                         default:
                             break;
                     }
+                    switch (fila.getCell(34).getCellTypeEnum()) {
+                        case FORMULA:
+                            iems.setResponsable(fila.getCell(34).getStringCellValue());
+                            break;
+                        default:
+                            break;
+                    }
+                    switch (fila.getCell(35).getCellTypeEnum()) {
+                        case STRING:
+                            iems.setCorreo(fila.getCell(35).getStringCellValue());
+                            break;
+                        default:
+                            break;
+                    }
+                    switch (fila.getCell(42).getCellTypeEnum()) {
+                        case FORMULA:
+                            iem = (int) fila.getCell(42).getNumericCellValue();
+                            break;
+                        default:
+                            break;
+                    }
+                    switch (fila.getCell(43).getCellTypeEnum()) {
+                        case FORMULA:
+                            col = (int) fila.getCell(43).getNumericCellValue();
+                            break;
+                        default:
+                            break;
+                    }
+                    switch (fila.getCell(44).getCellTypeEnum()) {
+                        case FORMULA:
+                            call = (int) fila.getCell(44).getNumericCellValue();
+                            break;
+                        default:
+                            break;
+                    }
+                    switch (fila.getCell(45).getCellTypeEnum()) {
+                        case FORMULA:
+                            app = (int) fila.getCell(45).getNumericCellValue();
+                            break;
+                        default:
+                            break;
+                    }
+                    switch (fila.getCell(46).getCellTypeEnum()) {
+                        case FORMULA:
+                            apm = (int) fila.getCell(46).getNumericCellValue();
+                            break;
+                        default:
+                            break;
+                    }
+                    switch (fila.getCell(47).getCellTypeEnum()) {
+                        case FORMULA:
+                            nomb = (int) fila.getCell(47).getNumericCellValue();
+                            break;
+                        default:
+                            break;
+                    }
+                    
+
+                    if (iem == 1) {
+                        validarCelda.add(false);
+                        datosInvalidos.add("Dato incorrecto: Nombre del IEMS en la columna: " + (0 + 1) + " y fila: " + (i + 1) + " \n ");
+                    }
+                    if (col == 1) {
+                        validarCelda.add(false);
+                        datosInvalidos.add("Dato incorrecto: Colonia - Ubicación en la columna: " + (9 + 1) + " y fila: " + (i + 1) + " \n ");
+                    }
+                    if (call == 1) {
+                        validarCelda.add(false);
+                        datosInvalidos.add("Dato incorrecto: Calle - Ubicación en la columna: " + (10 + 1) + " y fila: " + (i + 1) + " \n ");
+                    }
+                    if (app == 1) {
+                        validarCelda.add(false);
+                        datosInvalidos.add("Dato incorrecto: Apellido Paterno - Responsable del ingreso en la columna: " + (15 + 1) + " y fila: " + (i + 1) + " \n ");
+                    }
+                    if (apm == 1) {
+                        validarCelda.add(false);
+                        datosInvalidos.add("Dato incorrecto: Apellido Materno - Responsable del ingreso en la columna: " + (16 + 1) + " y fila: " + (i + 1) + " \n ");
+                    }
+                    if (nomb == 1) {
+                        validarCelda.add(false);
+                        datosInvalidos.add("Dato incorrecto: Nombre - Responsable en la columna: " + (17 + 1) + " y fila: " + (i + 1) + " \n ");
+                    }
+                    iems.setStatus((short)1);
                     iems.setLocalidad(localidad);
                     dTOIems.setIems(iems);
                     listaDtoIems.add(dTOIems);
                 }
             }
-            listaIemsPrevia.setDTOIems(listaDtoIems);
-            libroRegistro.close();
-            addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+           listaIemsPrevia.setDTOIems(listaDtoIems);
+           libroRegistro.close();
+            if (validarCelda.contains(false)) {
+                    addDetailMessage("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                    addDetailMessage(datosInvalidos.toString());
+                    excel.delete();
+                    ServicioArchivos.eliminarArchivo(rutaArchivo);
+                  
+                    return null;
+                } else {
+                    addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                    return listaIemsPrevia;
+                }
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
             addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            return null;
         }
-        return listaIemsPrevia;
+    } catch (IOException e) {
+            libroRegistro.close();
+            ServicioArchivos.eliminarArchivo(rutaArchivo);
+            addDetailMessage("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
+            return null;
     }
 
-//    @Override
-//    public Iems getIemsPorClave(Integer clave) {
-//        facadeProntuario.setEntityClass(Iems.class);
-//        Iems iem = facadeProntuario.getEntityManager().find(Iems.class, clave);
-//        if (iem == null) {
-//            return null;
-//        } else {
-//            return iem;
-//        }
-//    }
-//
-//    @Override
-//    public Iems editaIEMS(Iems iems, Integer estado, Integer municipio, Integer localidad) {
-//        facadeProntuario.setEntityClass(Iems.class);
-//        Iems i = facadeProntuario.getEntityManager().find(Iems.class, iems.getIems());
-//        i.setTurno(iems.getTurno());
-//        i.setAmbito(iems.getAmbito());
-//        i.setServedu(iems.getServedu());
-//        if (estado == null || municipio == null || localidad == null) {
-//            i.setLocalidad(iems.getLocalidad());
-//        } else {
-//            Localidad l = facadeProntuario.getEntityManager().find(Localidad.class , new Localidad(estado, municipio, localidad));
-//            i.setLocalidad(l);
-//        }
-//        i.setDomicilio(iems.getDomicilio());
-//        i.setLada(iems.getLada());
-//        i.setResponsable(iems.getResponsable());
-//        i.setCorreo(iems.getCorreo());
-//        facadeProntuario.edit(i);
-//        facadeProntuario.getEntityManager().flush();
-//        return i;
-//    }
-
+    }
     @Override
     public void guardaIems(ListaIemsPrevia listaIemsPrevia) throws Throwable {
             List<String> listaCondicional = new ArrayList<>();
@@ -341,18 +409,19 @@ public class ServicioIems implements EjbIems {
             if (registroAlmacenado) {
                 dTOIems.getIems().setIems(iemsEncontrado.getIems());
                 f.edit(dTOIems.getIems());
+                addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
             } else {
-                System.out.println("mx.edu.utxj.pye.siip.services.vin.ServicioIems.guardaIems()" + dTOIems.getIems());
                 f.create(dTOIems.getIems());
+                addDetailMessage("<b>Se guardaron los registros correctamente </b> ");
             }
             f.flush();
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        
     }
 
     @Override
     public Iems getRegistroIems(Iems iems) {
-        TypedQuery<Iems> query = em.createQuery("SELECT i FROM Iems i WHERE i.clave =:clave", Iems.class);
+        TypedQuery<Iems> query = f.getEntityManager().createQuery("SELECT i FROM Iems i WHERE i.clave =:clave", Iems.class);
         query.setParameter("clave", iems.getClave());
         try {
             iems = query.getSingleResult();
@@ -365,15 +434,44 @@ public class ServicioIems implements EjbIems {
 
     @Override
     public List<Iems> getIemsVigentes() {
-        List<Iems> iemsLst = new ArrayList<>();
-        TypedQuery<Iems> query = em.createQuery("SELECT i FROM Iems i", Iems.class);
+ 
+        TypedQuery<Iems> q = f.getEntityManager().createQuery("SELECT i FROM Iems i", Iems.class);
+        q.getResultList().forEach(System.err::println);
+        return q.getResultList();
+      
+    }
+
+    @Override
+    public Integer getRegistroIemsEspecifico(Integer iems) {
+        TypedQuery<Iems> query = f.getEntityManager().createNamedQuery("Iems.findByIems",  Iems.class);
+        query.setParameter("iems", iems);
+        Integer registro = query.getSingleResult().getIems();
+        return registro;
+    }
+
+    @Override
+    public List<IemsServedu> getServEducativosAct() {
+        List<IemsServedu> genLst = new ArrayList<>();
+        TypedQuery<IemsServedu> query = f.getEntityManager().createQuery("SELECT i FROM IemsServedu i", IemsServedu.class);
+        
         try {
-            iemsLst = query.getResultList();
+            genLst = query.getResultList();
         } catch (NoResultException | NonUniqueResultException ex) {
-            iemsLst = null;
-//            System.out.println("mx.edu.utxj.pye.siip.services.vin.ServicioOrganismosVinculados.getOrganismosVinculadoVigentes()" + ex.toString());
+            genLst = null;
+
         }
-        return iemsLst;
+          return genLst;
+    }
+
+    @Override
+    public List<Iems> getListaStatusPorRegistro(Integer iemsID) {
+        if (iemsID == null) {
+            return Collections.EMPTY_LIST;
+        }
+        List<Iems> l = f.getEntityManager().createQuery("SELECT i FROM Iems i WHERE i.status=1 AND i.iems = :iems", Iems.class)
+                .setParameter("iems", iemsID)
+                .getResultList();
+        return l;
     }
 
 }

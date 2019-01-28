@@ -5,16 +5,23 @@
  */
 package mx.edu.utxj.pye.sgi.ejb.prontuario;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.dto.listaDTOCiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.BajasCausa;
+import mx.edu.utxj.pye.sgi.entity.prontuario.BajasTipo;
+import mx.edu.utxj.pye.sgi.entity.prontuario.BecaTipos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.OrganismosEvaluadores;
@@ -35,7 +42,7 @@ public class ServicioCatalogos implements EjbCatalogos{
     @Override
     public List<Generaciones> getGeneracionesAct() {
         List<Generaciones> genLst = new ArrayList<>();
-        TypedQuery<Generaciones> query = em.createQuery("SELECT g FROM Generaciones g", Generaciones.class);
+        TypedQuery<Generaciones> query = em.createQuery("SELECT g FROM Generaciones g ORDER BY g.generacion DESC", Generaciones.class);
         try {
             genLst = query.getResultList();
         } catch (NoResultException | NonUniqueResultException ex) {
@@ -63,14 +70,14 @@ public class ServicioCatalogos implements EjbCatalogos{
     @Override
     public List<CiclosEscolares> getCiclosEscolaresAct() {
         List<CiclosEscolares> genLst = new ArrayList<>();
-        TypedQuery<CiclosEscolares> query = em.createQuery("SELECT c FROM CiclosEscolares c", CiclosEscolares.class);
+        TypedQuery<CiclosEscolares> query = em.createQuery("SELECT c FROM CiclosEscolares c ORDER BY c.ciclo DESC", CiclosEscolares.class);
         try {
             genLst = query.getResultList();
         } catch (NoResultException | NonUniqueResultException ex) {
             genLst = null;
 
         }
-          return genLst;
+        return genLst;
     }
 
     @Override
@@ -147,5 +154,69 @@ public class ServicioCatalogos implements EjbCatalogos{
             return Collections.EMPTY_LIST;
         }
     }
+    
+    @Override
+    public List<BecaTipos> getBecaTiposAct() {
+        List<BecaTipos> genLst = new ArrayList<>();
+        TypedQuery<BecaTipos> query = em.createQuery("SELECT b FROM BecaTipos b ORDER BY b.nombre ASC", BecaTipos.class);
+        try {
+            genLst = query.getResultList();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            genLst = null;
 
+        }
+          return genLst;
+    }
+
+    @Override
+    public List<BajasCausa> getCausasBajaAct() {
+        List<BajasCausa> genLst = new ArrayList<>();
+        TypedQuery<BajasCausa> query = em.createQuery("SELECT b FROM BajasCausa b ORDER BY b.causa ASC", BajasCausa.class);
+        try {
+            genLst = query.getResultList();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            genLst = null;
+
+        }
+          return genLst;
+    }
+
+    @Override
+    public List<BajasTipo> getTipoBajaAct() {
+        List<BajasTipo> genLst = new ArrayList<>();
+        TypedQuery<BajasTipo> query = em.createQuery("SELECT b FROM BajasTipo b ORDER BY b.descripcion ASC", BajasTipo.class);
+        try {
+            genLst = query.getResultList();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            genLst = null;
+
+        }
+          return genLst;
+    }
+    
+    @Override
+    public List<listaDTOCiclosEscolares> getCiclosEscolaresDTO() {
+        List<CiclosEscolares> genLst = new ArrayList<>();
+        TypedQuery<CiclosEscolares> query = em.createQuery("SELECT c FROM CiclosEscolares c", CiclosEscolares.class);
+        try {
+            genLst = query.getResultList();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            genLst = null;
+
+        }
+        
+        List<listaDTOCiclosEscolares> l = new ArrayList<>();
+        List<CiclosEscolares> ciclosEscolares = genLst.stream().sorted(Comparator.comparing(CiclosEscolares::getInicio).reversed()).collect(Collectors.toList());
+        ciclosEscolares.forEach(e -> {
+           
+            String strDateFormat = "yyyy";
+            SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+            String cicloe = sdf.format(e.getInicio()) + " - " + sdf.format(e.getFin());
+            Integer ciclo = e.getCiclo();
+            
+            l.add(new listaDTOCiclosEscolares(ciclo, cicloe));
+        });
+        
+        return l;
+    }
 }
