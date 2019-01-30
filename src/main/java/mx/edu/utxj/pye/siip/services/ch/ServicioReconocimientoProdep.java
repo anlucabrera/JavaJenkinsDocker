@@ -39,6 +39,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -155,12 +156,12 @@ public class ServicioReconocimientoProdep implements EjbReconocimientoProdep{
                 }
             }
             libroRegistro.close();
-            addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+            Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
         }
         return listaDtoRecProdep;
     }
@@ -183,16 +184,16 @@ public class ServicioReconocimientoProdep implements EjbReconocimientoProdep{
                     reconocimientos.getReconocimientoProdepRegistros().setRegistro(recProReEncontrado.getRegistro());
                     reconocimientos.getReconocimientoProdepRegistros().getCuerpAcad().setRegistro(recProReEncontrado.getCuerpAcad().getRegistro());
                     f.edit(reconocimientos.getReconocimientoProdepRegistros());
-                    addDetailMessage("<b>Se actualizaron los registros del o la Docente con Clave: </b> " + recProReEncontrado.getDocente());
+                    Messages.addGlobalInfo("<b>Se actualizaron los registros del o la Docente con Clave: </b> " + recProReEncontrado.getDocente());
                 } else {
-                    addDetailMessage("<b>No se pueden actualizar los registros del o la Docente con Clave: </b> " + recProReEncontrado.getDocente() + "<b> porque pertenece a otro mes</b>");
+                    Messages.addGlobalWarn("<b>No se pueden actualizar los registros del o la Docente con Clave: </b> " + recProReEncontrado.getDocente() + "<b> porque pertenece a otro mes</b>");
                 }
             } else {
                 Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                 reconocimientos.getReconocimientoProdepRegistros().getCuerpAcad().setRegistro(ejbCuerposAcademicos.getRegistroCuerpoAcademicoEspecifico(reconocimientos.getReconocimientoProdepRegistros().getCuerpAcad().getCuerpoAcademico()));
                 reconocimientos.getReconocimientoProdepRegistros().setRegistro(registro.getRegistro());
                 f.create(reconocimientos.getReconocimientoProdepRegistros());
-                addDetailMessage("<b>Se guardaron los registros correctamente </b> ");
+                Messages.addGlobalInfo("<b>Se guardaron los registros correctamente </b> ");
             }
             f.flush();
         });

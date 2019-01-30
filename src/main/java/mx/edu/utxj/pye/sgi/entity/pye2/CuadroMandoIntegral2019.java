@@ -39,10 +39,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class CuadroMandoIntegral2019 implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
     @Basic(optional = false)
     @NotNull
     @Column(name = "cuadro_mando_int")
+    @Id
     private int cuadroMandoInt;
     @Basic(optional = false)
     @NotNull

@@ -39,7 +39,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
 
     private static final long serialVersionUID = -8842055922698338073L;
 
-    @Getter    @Setter    private Integer usuario,pestaniaActiva,numeroIN=0;
+    @Getter    @Setter    private Integer usuario,numeroIN=0;
     @Getter    @Setter    private String tipo;
     @Getter    @Setter    private List<String> tiposIncidencias = new ArrayList<>();
     @Getter    @Setter    private List<String> tiposCuidados = new ArrayList<>();
@@ -386,7 +386,6 @@ public class ControladorIncidenciasPersonal implements Serializable {
             nuevOBJIncapacidad = new Incapacidad();
             Messages.addGlobalInfo("¡Operación exitosa!");
 
-            pestaniaActiva = 1;
             mostrarLista();
 
         } catch (Throwable ex) {
@@ -397,7 +396,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
 
     public void agregarEvidenciaIncapacidad() {
         if (file != null) {
-            ruta = carga.subir(file, new File(usuario.toString().concat(File.separator).concat("premiosDistinciones").concat(File.separator)));
+            ruta = carga.subir(file, new File(usuario.toString().concat(File.separator).concat("incapacidades").concat(File.separator)));
             if (!"Error: No se pudo leer el archivo".equals(ruta)) {
                 nuevOBJIncapacidad.setEvidencia(ruta);
                 activo = true;
@@ -407,7 +406,6 @@ public class ControladorIncidenciasPersonal implements Serializable {
                 Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !");
                 activo = false;
             }
-            pestaniaActiva = 1;
         } else {
             Messages.addGlobalWarn("Es necesario seleccionar un archivo !");
             activo = false;
@@ -433,15 +431,14 @@ public class ControladorIncidenciasPersonal implements Serializable {
             nuevOBJCuidados.setPersonal(new Personal());
             nuevOBJCuidados.getPersonal().setClave(usuario);
             Integer dias = (int) ((nuevOBJCuidados.getFechaFin().getTime() - nuevOBJCuidados.getFechaInicio().getTime()) / 86400000);
-            dias=dias+1;
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearCuidado()"+dias);
+            dias = dias + 1;
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearCuidado()" + dias);
             nuevOBJCuidados.setNumeroDias(dias);
-            
+
             nuevOBJCuidados = ejbNotificacionesIncidencias.agregarCuidados(nuevOBJCuidados);
             nuevOBJCuidados = new Cuidados();
             Messages.addGlobalInfo("¡Operación exitosa!");
 
-            pestaniaActiva = 2;
             mostrarLista();
             System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearCuidado()");
         } catch (Throwable ex) {
@@ -452,7 +449,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
 
     public void agregarEvidenciaCuidado() {
         if (file != null) {
-            ruta = carga.subir(file, new File(usuario.toString().concat(File.separator).concat("premiosDistinciones").concat(File.separator)));
+            ruta = carga.subir(file, new File(usuario.toString().concat(File.separator).concat("cuidados").concat(File.separator)));
             if (!"Error: No se pudo leer el archivo".equals(ruta)) {
                 nuevOBJCuidados.setEvidencia(ruta);
                 activo = true;
@@ -462,7 +459,6 @@ public class ControladorIncidenciasPersonal implements Serializable {
                 Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !");
                 activo = false;
             }
-            pestaniaActiva = 2;
         } else {
             Messages.addGlobalWarn("Es necesario seleccionar un archivo !");
             activo = false;

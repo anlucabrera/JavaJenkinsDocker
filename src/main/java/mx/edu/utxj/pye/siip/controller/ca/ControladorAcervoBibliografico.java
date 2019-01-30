@@ -322,7 +322,7 @@ public class ControladorAcervoBibliografico implements Serializable{
             
         } catch (Throwable ex) {
             Logger.getLogger(ControladorActFormacionIntegral.class.getName()).log(Level.SEVERE, null, ex);
-            addDetailMessage("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
+            Messages.addGlobalError("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
         }
     }
     

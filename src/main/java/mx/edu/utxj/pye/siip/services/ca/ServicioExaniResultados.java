@@ -39,6 +39,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 /**
  *
  * @author UTXJ
@@ -158,12 +159,12 @@ public class ServicioExaniResultados implements EjbExaniResultados{
             }
             }
             libroRegistro.close();
-            addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+            Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
         }
         return listaDtoExani;
         
@@ -186,13 +187,13 @@ public class ServicioExaniResultados implements EjbExaniResultados{
                     exaniRes.getExaniResultadosCiclosEscolares().setRegistro(erce.getRegistro());
                     f.edit(exaniRes.getExaniResultadosCiclosEscolares());
                     f.flush();
-                    addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
+                    Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
                 } else {
                     Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                     exaniRes.getExaniResultadosCiclosEscolares().setRegistro(registro.getRegistro());
                     f.create(exaniRes.getExaniResultadosCiclosEscolares());
                     f.flush();
-                    addDetailMessage("<b>Se guardaron los registros correctamente </b>");
+                    Messages.addGlobalInfo("<b>Se guardaron los registros correctamente </b>");
                 }
                 f.flush();
         });

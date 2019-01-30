@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.servlet.http.Part;
-import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEducacion;
+import mx.edu.utxj.pye.sgi.controladores.ch.CvEducacion;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado;
 import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
@@ -63,7 +63,7 @@ public class UtilidadesCH implements Serializable {
 
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CvEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

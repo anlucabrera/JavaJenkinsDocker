@@ -5,7 +5,6 @@
  */
 package mx.edu.utxj.pye.siip.services.ca;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,6 +36,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -204,15 +204,15 @@ public class ServicioActividadesVarias implements EjbActividadesVarias {
                     workBookActividadVaria.close();
 
                     if (validarCelda.contains(false)) {
-                        addDetailMessage("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                        Messages.addGlobalWarn("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
                         ServicioArchivos.escribeLog(datosInvalidos);
-                        addDetailMessage(datosInvalidos.toString());
+                        Messages.addGlobalWarn(datosInvalidos.toString());
 
                         excelActividadadesVarias.delete();
                         ServicioArchivos.eliminarArchivo(rutaArchivo);
                         return Collections.EMPTY_LIST;
                     } else {
-                        addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                        Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
                         return actividadesVarias;
                     }
 
@@ -220,17 +220,17 @@ public class ServicioActividadesVarias implements EjbActividadesVarias {
                     workBookActividadVaria.close();
                     excelActividadadesVarias.delete();
                     ServicioArchivos.eliminarArchivo(rutaArchivo);
-                    addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+                    Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
                     return Collections.EMPTY_LIST;
                 }
             } catch (IOException e) {
                 workBookActividadVaria.close();
                 ServicioArchivos.eliminarArchivo(rutaArchivo);
-                addDetailMessage("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
+                Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
                 return Collections.EMPTY_LIST;
             }
         } else {
-            addDetailMessage("<b>Ocurrio un error en la lectura del archivo</b>");
+            Messages.addGlobalError("<b>Ocurrio un error en la lectura del archivo</b>");
             return Collections.EMPTY_LIST;
         }
     }
@@ -260,7 +260,7 @@ public class ServicioActividadesVarias implements EjbActividadesVarias {
             }
             f.flush();
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override

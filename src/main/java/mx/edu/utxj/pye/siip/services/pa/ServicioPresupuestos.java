@@ -40,6 +40,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 /**
  *
  * @author UTXJ
@@ -132,12 +133,12 @@ public class ServicioPresupuestos implements EjbPresupuestos{
                 }
             }
             libroRegistro.close();
-            addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+            Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
         }
         return listaDtoPresupuestos;
         
@@ -167,16 +168,16 @@ public class ServicioPresupuestos implements EjbPresupuestos{
                         presupuestos.getPresupuestos().setRegistro(presEncontrado.getRegistro());
                         f.edit(presupuestos.getPresupuestos());
                         f.flush();
-                        addDetailMessage("<b>Se actualizaron los registros con fecha de aplicación: </b> " + fecha);
+                        Messages.addGlobalInfo("<b>Se actualizaron los registros con fecha de aplicación: </b> " + fecha);
                     } else {
-                        addDetailMessage("<b>No se pueden actualizar los registros con fecha de aplicación: </b> " + fecha);
+                        Messages.addGlobalWarn("<b>No se pueden actualizar los registros con fecha de aplicación: </b> " + fecha);
                     }
                 } else {
                     Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                     presupuestos.getPresupuestos().setRegistro(registro.getRegistro());
                     f.create(presupuestos.getPresupuestos());
                     f.flush();
-                    addDetailMessage("<b>Se guardaron los registros correctamente </b>");
+                    Messages.addGlobalInfo("<b>Se guardaron los registros correctamente </b>");
                 }
                 f.flush();
         });

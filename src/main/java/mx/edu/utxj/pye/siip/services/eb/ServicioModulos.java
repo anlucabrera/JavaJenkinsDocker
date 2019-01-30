@@ -5,7 +5,6 @@
  */
 package mx.edu.utxj.pye.siip.services.eb;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,15 +18,12 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
 import javax.servlet.http.Part;
-import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Meses;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -46,6 +42,7 @@ import mx.edu.utxj.pye.sgi.exception.EvidenciaRegistroExtensionNoValidaException
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
+import org.omnifaces.util.Messages;
 
 @Stateful
 /**
@@ -186,7 +183,7 @@ public class ServicioModulos implements EjbModulos {
         try {
             query.executeUpdate();
         } catch (Exception e) {
-            addDetailMessage("<b>¡No se pudieron eliminar los participantes del registro seleccionado!</b>");
+            Messages.addGlobalError("<b>¡No se pudieron eliminar los participantes del registro seleccionado!</b>");
         }
         return f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.registro IN :registrosParticipantes")
                 .setParameter("registrosParticipantes", registrosParticipantes)
@@ -410,7 +407,7 @@ public class ServicioModulos implements EjbModulos {
         try {
             query.executeUpdate();
         } catch (Exception e) {
-            addDetailMessage("<b>¡No se pudieron eliminar los participantes del registro seleccionado!</b>");
+            Messages.addGlobalError("<b>¡No se pudieron eliminar los participantes del registro seleccionado!</b>");
         }
         if (f.getEntityManager().createQuery("SELECT e FROM Evidencias e WHERE e.evidencia IN :registrosEvidencias")
                 .setParameter("registrosEvidencias", registrosEvidencias)

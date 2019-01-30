@@ -42,6 +42,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 /**
  *
  * @author UTXJ
@@ -119,12 +120,12 @@ public class ServicioFeriasParticipantes implements EjbFeriasParticipantes{
             }
             listaFeriasParticipantes.setFeriasParticipantes(listaDtoFeriasParticipantes);
             libroRegistro.close();
-            addDetailMessage("<b>Hoja de Participantes de Ferias Profesiográficas Validada favor de verificar sus datos antes de guardar su información</b>");
+            Messages.addGlobalInfo("<b>Hoja de Participantes de Ferias Profesiográficas Validada favor de verificar sus datos antes de guardar su información</b>");
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
         }
         
         return listaFeriasParticipantes;
@@ -138,7 +139,7 @@ public class ServicioFeriasParticipantes implements EjbFeriasParticipantes{
 
             FeriasProfesiograficas feriasProfesiograficas = ejbFeriasProfesiograficas.getRegistroFeriasProfesiograficas(feriasParticipantes.getFeriasParticipantes().getFeria());
             if (feriasProfesiograficas == null || feriasProfesiograficas.getFeria().isEmpty()) {
-                addDetailMessage("<b>No existe la Clave de Feria Profesiográfica</b>");
+                Messages.addGlobalWarn("<b>No existe la Clave de Feria Profesiográfica</b>");
 
             } else {
                 if (ejbModulos.validaEventoRegistro(ejbModulos.getEventoRegistro(), feriasProfesiograficas.getRegistros().getEventoRegistro().getEventoRegistro())) {
@@ -155,14 +156,14 @@ public class ServicioFeriasParticipantes implements EjbFeriasParticipantes{
                             feriasParticipantes.getFeriasParticipantes().setRegistro(ferPartEncontrado.getRegistro());
                             feriasParticipantes.getFeriasParticipantes().getFeria().setRegistro(ferPartEncontrado.getFeria().getRegistro());
                             f.edit(feriasParticipantes.getFeriasParticipantes());
-                            addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
+                            Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
                         } else {
                             Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                             feriasParticipantes.getFeriasParticipantes().getIems().setIems(ejbIems.getRegistroIemsEspecifico(feriasParticipantes.getFeriasParticipantes().getIems().getIems()));
                             feriasParticipantes.getFeriasParticipantes().getFeria().setRegistro(ejbFeriasProfesiograficas.getRegistroFeriasProfesiograficasEspecifico(feriasParticipantes.getFeriasParticipantes().getFeria().getFeria()));
                             feriasParticipantes.getFeriasParticipantes().setRegistro(registro.getRegistro());
                             f.create(feriasParticipantes.getFeriasParticipantes());
-                            addDetailMessage("<b>Se guardaron los registros correctamente </b> ");
+                            Messages.addGlobalInfo("<b>Se guardaron los registros correctamente </b> ");
                         }
                         f.flush();
                     } catch (Throwable ex) {
@@ -170,7 +171,7 @@ public class ServicioFeriasParticipantes implements EjbFeriasParticipantes{
                     }
                 } else {
 
-                    addDetailMessage("<b>No puede registrar información de periodos anteriores</b>");
+                    Messages.addGlobalWarn("<b>No puede registrar información de periodos anteriores</b>");
                 }
             }
         });

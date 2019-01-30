@@ -104,7 +104,7 @@ public class RegistrosMovilidad implements Serializable {
     private int periodoEscolarCursado;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 2)
+    @Size(min = 1, max = 10)
     @Column(name = "cuatrimestre_cursado")
     private String cuatrimestreCursado;
     @Basic(optional = false)

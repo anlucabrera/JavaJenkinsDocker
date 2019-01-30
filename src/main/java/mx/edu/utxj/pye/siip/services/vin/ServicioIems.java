@@ -34,6 +34,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -369,27 +370,27 @@ public class ServicioIems implements EjbIems {
            listaIemsPrevia.setDTOIems(listaDtoIems);
            libroRegistro.close();
             if (validarCelda.contains(false)) {
-                    addDetailMessage("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
-                    addDetailMessage(datosInvalidos.toString());
+                    Messages.addGlobalError("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                    Messages.addGlobalError(datosInvalidos.toString());
                     excel.delete();
                     ServicioArchivos.eliminarArchivo(rutaArchivo);
                   
                     return null;
                 } else {
-                    addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                    Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
                     return listaIemsPrevia;
                 }
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
             return null;
         }
     } catch (IOException e) {
             libroRegistro.close();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
+            Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
             return null;
     }
 
@@ -409,10 +410,10 @@ public class ServicioIems implements EjbIems {
             if (registroAlmacenado) {
                 dTOIems.getIems().setIems(iemsEncontrado.getIems());
                 f.edit(dTOIems.getIems());
-                addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
+                Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
             } else {
                 f.create(dTOIems.getIems());
-                addDetailMessage("<b>Se guardaron los registros correctamente </b> ");
+                Messages.addGlobalInfo("<b>Se guardaron los registros correctamente </b> ");
             }
             f.flush();
         });

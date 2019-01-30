@@ -42,6 +42,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -180,26 +181,26 @@ public class ServicioProgramasEstimulos implements EjbProgramasEstimulos{
             }
              libroRegistro.close();
             if (validarCelda.contains(false)) {
-                    addDetailMessage("<b>La hoja de registros de Programas de Estimulos contiene datos que no son válidos, verifique los datos de la plantilla</b>");
-                    addDetailMessage(datosInvalidos.toString());
+                    Messages.addGlobalError("<b>La hoja de registros de Programas de Estimulos contiene datos que no son válidos, verifique los datos de la plantilla</b>");
+                    Messages.addGlobalError(datosInvalidos.toString());
                     excel.delete();
                     ServicioArchivos.eliminarArchivo(rutaArchivo);
                     return Collections.EMPTY_LIST;
                 } else {
-                    addDetailMessage("<b>Hoja de Programas de Estimulos Validada favor de verificar sus datos antes de guardar su información</b>");
+                    Messages.addGlobalInfo("<b>Hoja de Programas de Estimulos Validada favor de verificar sus datos antes de guardar su información</b>");
                     return listaDtoProgEst;
                 }
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
             return Collections.EMPTY_LIST;
         }
     } catch (IOException e) {
             libroRegistro.close();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
+            Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
             return Collections.EMPTY_LIST;
     }
 
@@ -228,15 +229,15 @@ public class ServicioProgramasEstimulos implements EjbProgramasEstimulos{
                 if (ejbModulos.validaEventoRegistro(ejbModulos.getEventoRegistro(), progEstEncontrado.getRegistros().getEventoRegistro().getEventoRegistro())) {
                     estimulos.getProgramasEstimulos().setRegistro(progEstEncontrado.getRegistro());
                     f.edit(estimulos.getProgramasEstimulos());
-                    addDetailMessage("<b>Se actualizaron los registros del trabajador con clave </b> " + progEstEncontrado.getTrabajador() + "<b> y fecha: </b>" + fecha);
+                    Messages.addGlobalInfo("<b>Se actualizaron los registros del trabajador con clave </b> " + progEstEncontrado.getTrabajador() + "<b> y fecha: </b>" + fecha);
                     } else {
-                        addDetailMessage("<b>No se pueden actualizar los registros del trabajador con clave </b> " + progEstEncontrado.getTrabajador()+ "<b> y fecha: </b>" + fecha);
+                        Messages.addGlobalWarn("<b>No se pueden actualizar los registros del trabajador con clave </b> " + progEstEncontrado.getTrabajador()+ "<b> y fecha: </b>" + fecha);
                     }
             } else {
                 Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                 estimulos.getProgramasEstimulos().setRegistro(registro.getRegistro());
                 f.create(estimulos.getProgramasEstimulos());
-                addDetailMessage("<b>Se guardaron los registros correctamente </b> ");
+                Messages.addGlobalInfo("<b>Se guardaron los registros correctamente </b> ");
             }
             f.flush();
         });

@@ -37,6 +37,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -128,12 +129,12 @@ public class ServicioMovilidadEstudiante implements EjbMovilidadEstudiante{
                 }
             }
             libroRegistro.close();
-            addDetailMessage("<b>Hoja de Movilidad Estudiantil Validada favor de verificar sus datos antes de guardar su información</b>");
+            Messages.addGlobalInfo("<b>Hoja de Movilidad Estudiantil Validada favor de verificar sus datos antes de guardar su información</b>");
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
         }
         return listaDtoMovilidadEstudiante;
     }
@@ -145,7 +146,7 @@ public class ServicioMovilidadEstudiante implements EjbMovilidadEstudiante{
 
             RegistrosMovilidad registrosMovilidad = ejbRegistroMovilidad.getRegistrosMovilidad(movEst.getRegistroMovilidadEstudiante().getRegistroMovilidad());
             if (registrosMovilidad == null || registrosMovilidad.getRegistroMovilidad().isEmpty()) {
-                addDetailMessage("<b>No existe la Clave del Registro de Movilidad</b>");
+                Messages.addGlobalWarn("<b>No existe la Clave del Registro de Movilidad</b>");
 
             } else {
                 if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), registrosMovilidad.getPeriodoEscolarCursado())) {
@@ -163,19 +164,19 @@ public class ServicioMovilidadEstudiante implements EjbMovilidadEstudiante{
                         movEst.getRegistroMovilidadEstudiante().getMatriculaPeriodosEscolares().setRegistro(ejbMatriculaPeriodosEscolares.getRegistroMatriculaEspecifico(movEst.getRegistroMovilidadEstudiante().getMatriculaPeriodosEscolares().getMatricula(), movEst.getRegistroMovilidadEstudiante().getMatriculaPeriodosEscolares().getPeriodo()));
                         movEst.getRegistroMovilidadEstudiante().getRegistroMovilidad().setRegistro(ejbRegistroMovilidad.getRegistroMovilidadEspecifico(movEst.getRegistroMovilidadEstudiante().getRegistroMovilidad().getRegistroMovilidad()));
                         f.edit(movEst.getRegistroMovilidadEstudiante());
-                        addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
+                        Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
                     } else {
                         Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                         movEst.getRegistroMovilidadEstudiante().setRegistro(registro.getRegistro());
                         movEst.getRegistroMovilidadEstudiante().getMatriculaPeriodosEscolares().setRegistro(ejbMatriculaPeriodosEscolares.getRegistroMatriculaEspecifico(movEst.getRegistroMovilidadEstudiante().getMatriculaPeriodosEscolares().getMatricula(), movEst.getRegistroMovilidadEstudiante().getMatriculaPeriodosEscolares().getPeriodo()));
                         movEst.getRegistroMovilidadEstudiante().getRegistroMovilidad().setRegistro(ejbRegistroMovilidad.getRegistroMovilidadEspecifico(movEst.getRegistroMovilidadEstudiante().getRegistroMovilidad().getRegistroMovilidad()));
                         f.create(movEst.getRegistroMovilidadEstudiante());
-                        addDetailMessage("<b>Se guardaron los registros correctamente </b> ");
+                        Messages.addGlobalInfo("<b>Se guardaron los registros correctamente </b> ");
                     }
                     f.flush();
                 } else {
 
-                    addDetailMessage("<b>No puede registrar información de periodos anteriores</b>");
+                    Messages.addGlobalWarn("<b>No puede registrar información de periodos anteriores</b>");
                 }
             }
         });

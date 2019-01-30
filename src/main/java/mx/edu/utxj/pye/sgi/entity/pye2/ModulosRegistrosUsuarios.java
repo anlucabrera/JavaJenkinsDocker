@@ -44,10 +44,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ModulosRegistrosUsuarios implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
     @Basic(optional = false)
     @NotNull
     @Column(name = "clave")
+    @Id
     private short clave;
     @Basic(optional = false)
     @NotNull

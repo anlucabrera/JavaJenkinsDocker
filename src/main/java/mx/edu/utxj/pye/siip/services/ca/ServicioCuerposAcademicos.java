@@ -5,8 +5,8 @@
  */
 package mx.edu.utxj.pye.siip.services.ca;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -16,7 +16,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
-import javax.ejb.Stateful;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -48,6 +47,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -86,165 +86,172 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
             XSSFSheet tercerHoja = libroRegistro.getSheetAt(2);
             XSSFRow fila;
 
-            if ((primeraHoja.getSheetName().equals("Cuerpos_Académicos")) || (segundaHoja.getSheetName().equals("Miembros_Cuerpos_Académicos")) || (tercerHoja.getSheetName().equals("Lineas_Investigación"))) {
-                for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
-                    fila = (XSSFRow) (Row) primeraHoja.getRow(i);
-                    if ((fila.getCell(0).getNumericCellValue() > 0)) {
-                        cuerpoAcademicoRegistro = new CuerposAcademicosRegistro();
-                        cuerpacadDisciplina = new CuerpacadDisciplinas();
-                        cuerpacadAreasEstudio = new CuerpacadAreasEstudio();
-                        areasUniversidad = new AreasUniversidad();
-                        dtoCuerpoAcademicoR = new DTOCuerposAcademicosR();
+            try {
+                if ((primeraHoja.getSheetName().equals("Cuerpos_Académicos")) || (segundaHoja.getSheetName().equals("Miembros_Cuerpos_Académicos")) || (tercerHoja.getSheetName().equals("Lineas_Investigación"))) {
+                    for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
+                        fila = (XSSFRow) (Row) primeraHoja.getRow(i);
+                        if ((fila.getCell(0).getNumericCellValue() > 0)) {
+                            cuerpoAcademicoRegistro = new CuerposAcademicosRegistro();
+                            cuerpacadDisciplina = new CuerpacadDisciplinas();
+                            cuerpacadAreasEstudio = new CuerpacadAreasEstudio();
+                            areasUniversidad = new AreasUniversidad();
+                            dtoCuerpoAcademicoR = new DTOCuerposAcademicosR();
 
 //                    Cuerpo Académico
-                        if (fila.getCell(1).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(1).getCellTypeEnum()) {
-                                case FORMULA:
-                                    cuerpoAcademicoRegistro.setCuerpoAcademico(fila.getCell(1).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(1).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(1).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        cuerpoAcademicoRegistro.setCuerpoAcademico(fila.getCell(1).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Cuerpo académico en la columna: " + (1 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Cuerpo académico en la columna: " + (1 + 1) + " y fila: " + (i + 1));
-                        }
 
 //                    Fecha de inicio
-                        if (fila.getCell(2).getCellTypeEnum() == CellType.NUMERIC) {
-                            switch (fila.getCell(2).getCellTypeEnum()) {
-                                case NUMERIC:
-                                    if (DateUtil.isCellDateFormatted(fila.getCell(2))) {
-                                        cuerpoAcademicoRegistro.setFechaInicio(fila.getCell(2).getDateCellValue());
-                                    }
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(2).getCellTypeEnum() == CellType.NUMERIC) {
+                                switch (fila.getCell(2).getCellTypeEnum()) {
+                                    case NUMERIC:
+                                        if (DateUtil.isCellDateFormatted(fila.getCell(2))) {
+                                            cuerpoAcademicoRegistro.setFechaInicio(fila.getCell(2).getDateCellValue());
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Fecha Inicio del cuerpo académico en la columna: " + (2 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Fecha Inicio del cuerpo académico en la columna: " + (2 + 1) + " y fila: " + (i + 1));
-                        }
 
 //                    Fecha de termino
-                        if (fila.getCell(3).getCellTypeEnum() == CellType.NUMERIC) {
-                            switch (fila.getCell(3).getCellTypeEnum()) {
-                                case NUMERIC:
-                                    if (DateUtil.isCellDateFormatted(fila.getCell(3))) {
-                                        cuerpoAcademicoRegistro.setFechaTermino(fila.getCell(3).getDateCellValue());
-                                    }
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(3).getCellTypeEnum() == CellType.NUMERIC) {
+                                switch (fila.getCell(3).getCellTypeEnum()) {
+                                    case NUMERIC:
+                                        if (DateUtil.isCellDateFormatted(fila.getCell(3))) {
+                                            cuerpoAcademicoRegistro.setFechaTermino(fila.getCell(3).getDateCellValue());
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Fecha Termino del cuerpo académico en la columna: " + (3 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Fecha Termino del cuerpo académico en la columna: " + (3 + 1) + " y fila: " + (i + 1));
-                        }
 
 //                    Nombre cuerpo académico
-                        if (fila.getCell(4).getCellTypeEnum() == CellType.STRING) {
-                            switch (fila.getCell(4).getCellTypeEnum()) {
-                                case STRING:
-                                    cuerpoAcademicoRegistro.setNombre(fila.getCell(4).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(4).getCellTypeEnum() == CellType.STRING) {
+                                switch (fila.getCell(4).getCellTypeEnum()) {
+                                    case STRING:
+                                        cuerpoAcademicoRegistro.setNombre(fila.getCell(4).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Nombre del cuerpo académico en la columna: " + (4 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Nombre del cuerpo académico en la columna: " + (4 + 1) + " y fila: " + (i + 1));
-                        }
 
 //                    Nivel de reconocimiento
-                        if (fila.getCell(5).getCellTypeEnum() == CellType.STRING) {
-                            switch (fila.getCell(5).getCellTypeEnum()) {
-                                case STRING:
-                                    cuerpoAcademicoRegistro.setNivelProdep(fila.getCell(5).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(5).getCellTypeEnum() == CellType.STRING) {
+                                switch (fila.getCell(5).getCellTypeEnum()) {
+                                    case STRING:
+                                        cuerpoAcademicoRegistro.setNivelProdep(fila.getCell(5).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Nivel Prodep del cuerpo académico en la columna: " + (5 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Nivel Prodep del cuerpo académico en la columna: " + (5 + 1) + " y fila: " + (i + 1));
-                        }
 
 //                    Área académica
-                        if (fila.getCell(7).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(7).getCellTypeEnum()) {
-                                case FORMULA:
-                                    areasUniversidad.setNombre(fila.getCell(6).getStringCellValue());
-                                    areasUniversidad.setArea((short) ((int) fila.getCell(7).getNumericCellValue()));
-                                    cuerpoAcademicoRegistro.setArea(areasUniversidad.getArea());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(7).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(7).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        areasUniversidad.setNombre(fila.getCell(6).getStringCellValue());
+                                        areasUniversidad.setArea((short) ((int) fila.getCell(7).getNumericCellValue()));
+                                        cuerpoAcademicoRegistro.setArea(areasUniversidad.getArea());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Área Académica del cuerpo académico en la columna: " + (6 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Área Académica del cuerpo académico en la columna: " + (6 + 1) + " y fila: " + (i + 1));
-                        }
 
 //                    Área de estudio
-                        if (fila.getCell(9).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(9).getCellTypeEnum()) {
-                                case FORMULA:
-                                    cuerpacadAreasEstudio.setNombre(fila.getCell(8).getStringCellValue());
-                                    cuerpacadAreasEstudio.setAreaEstudio((short) ((int) fila.getCell(9).getNumericCellValue()));
-                                    cuerpoAcademicoRegistro.setAreaEstudio(cuerpacadAreasEstudio);
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(9).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(9).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        cuerpacadAreasEstudio.setNombre(fila.getCell(8).getStringCellValue());
+                                        cuerpacadAreasEstudio.setAreaEstudio((short) ((int) fila.getCell(9).getNumericCellValue()));
+                                        cuerpoAcademicoRegistro.setAreaEstudio(cuerpacadAreasEstudio);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Área de estudio del cuerpo académico en la columna: " + (8 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Área de estudio del cuerpo académico en la columna: " + (8 + 1) + " y fila: " + (i + 1));
-                        }
 
 //                    Disciplina
-                        if (fila.getCell(11).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(11).getCellTypeEnum()) {
-                                case FORMULA:
-                                    cuerpacadDisciplina.setNombre(fila.getCell(10).getStringCellValue());
-                                    cuerpacadDisciplina.setDisciplina((short) ((int) fila.getCell(11).getNumericCellValue()));
-                                    cuerpoAcademicoRegistro.setDisciplina(cuerpacadDisciplina);
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(11).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(11).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        cuerpacadDisciplina.setNombre(fila.getCell(10).getStringCellValue());
+                                        cuerpacadDisciplina.setDisciplina((short) ((int) fila.getCell(11).getNumericCellValue()));
+                                        cuerpoAcademicoRegistro.setDisciplina(cuerpacadDisciplina);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Disciplina del cuerpo académico en la columna: " + (10 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Disciplina del cuerpo académico en la columna: " + (10 + 1) + " y fila: " + (i + 1));
+
+                            dtoCuerpoAcademicoR.setArea(areasUniversidad);
+                            dtoCuerpoAcademicoR.setCuerposAcademicosRegistro(cuerpoAcademicoRegistro);
+                            listaDtoCuerposAcademicosR.add(dtoCuerpoAcademicoR);
                         }
-
-                        dtoCuerpoAcademicoR.setArea(areasUniversidad);
-                        dtoCuerpoAcademicoR.setCuerposAcademicosRegistro(cuerpoAcademicoRegistro);
-                        listaDtoCuerposAcademicosR.add(dtoCuerpoAcademicoR);
                     }
-                }
-                libroRegistro.close();
+                    libroRegistro.close();
 
-                if (validarCelda.contains(false)) {
-                    addDetailMessage("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
-                    addDetailMessage(datosInvalidos.toString());
+                    if (validarCelda.contains(false)) {
+                        Messages.addGlobalWarn("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                        Messages.addGlobalWarn(datosInvalidos.toString());
 
+                        excel.delete();
+                        ServicioArchivos.eliminarArchivo(rutaArchivo);
+                        return Collections.EMPTY_LIST;
+                    } else {
+                        Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                        return listaDtoCuerposAcademicosR;
+                    }
+                } else {
+                    libroRegistro.close();
                     excel.delete();
                     ServicioArchivos.eliminarArchivo(rutaArchivo);
+                    Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
                     return Collections.EMPTY_LIST;
-                } else {
-                    addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
-                    return listaDtoCuerposAcademicosR;
                 }
-            } else {
+            } catch (IOException e) {
                 libroRegistro.close();
-                excel.delete();
                 ServicioArchivos.eliminarArchivo(rutaArchivo);
-                addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+                Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
                 return Collections.EMPTY_LIST;
             }
         } else {
-            addDetailMessage("<b>Ocurrio un error en la lectura del archivo</b>");
+            Messages.addGlobalError("<b>Ocurrio un error en la lectura del archivo</b>");
             return Collections.EMPTY_LIST;
         }
     }
@@ -269,87 +276,94 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
             XSSFSheet tercerHoja = libroRegistro.getSheetAt(2);
             XSSFRow fila;
 
-            if ((primeraHoja.getSheetName().equals("Cuerpos_Académicos")) || (segundaHoja.getSheetName().equals("Miembros_Cuerpos_Académicos")) || (tercerHoja.getSheetName().equals("Lineas_Investigación"))) {
-                for (int i = 2; i <= segundaHoja.getLastRowNum(); i++) {
-                    fila = (XSSFRow) (Row) segundaHoja.getRow(i);
-                    if (fila.getCell(2).getNumericCellValue() > 0) {
-                        cuerpoacadIntegrante = new CuerpacadIntegrantes();
-                        cuerposAcademicosRegistro = new CuerposAcademicosRegistro();
-                        personal = new Personal();
-                        dtoCuerpAcadIntegrante = new DTOCuerpAcadIntegrantes();
+            try {
+                if ((primeraHoja.getSheetName().equals("Cuerpos_Académicos")) || (segundaHoja.getSheetName().equals("Miembros_Cuerpos_Académicos")) || (tercerHoja.getSheetName().equals("Lineas_Investigación"))) {
+                    for (int i = 2; i <= segundaHoja.getLastRowNum(); i++) {
+                        fila = (XSSFRow) (Row) segundaHoja.getRow(i);
+                        if (fila.getCell(2).getNumericCellValue() > 0) {
+                            cuerpoacadIntegrante = new CuerpacadIntegrantes();
+                            cuerposAcademicosRegistro = new CuerposAcademicosRegistro();
+                            personal = new Personal();
+                            dtoCuerpAcadIntegrante = new DTOCuerpAcadIntegrantes();
 
 //                    Cuerpo Académico
-                        if (fila.getCell(0).getCellTypeEnum() == CellType.STRING) {
-                            switch (fila.getCell(0).getCellTypeEnum()) {
-                                case STRING:
-                                    cuerposAcademicosRegistro.setCuerpoAcademico(fila.getCell(0).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(0).getCellTypeEnum() == CellType.STRING) {
+                                switch (fila.getCell(0).getCellTypeEnum()) {
+                                    case STRING:
+                                        cuerposAcademicosRegistro.setCuerpoAcademico(fila.getCell(0).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Cuerpo académico en la columna: " + (0 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Cuerpo académico en la columna: " + (0 + 1) + " y fila: " + (i + 1));
-                        }
 
 //                    Personal
-                        if (fila.getCell(1).getCellTypeEnum() == CellType.STRING) {
-                            switch (fila.getCell(1).getCellTypeEnum()) {
-                                case STRING:
-                                    personal.setNombre(fila.getCell(1).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(1).getCellTypeEnum() == CellType.STRING) {
+                                switch (fila.getCell(1).getCellTypeEnum()) {
+                                    case STRING:
+                                        personal.setNombre(fila.getCell(1).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Personal en la columna: " + (1 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Personal en la columna: " + (1 + 1) + " y fila: " + (i + 1));
-                        }
 
 //                    Clave Personal
-                        if (fila.getCell(2).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(2).getCellTypeEnum()) {
-                                case FORMULA:
-                                    personal.setClave((int) fila.getCell(2).getNumericCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(2).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(2).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        personal.setClave((int) fila.getCell(2).getNumericCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Clave personal en la columna: " + (2 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Clave personal en la columna: " + (2 + 1) + " y fila: " + (i + 1));
+
+                            cuerpoacadIntegrante.setCuerpoAcademico(cuerposAcademicosRegistro);
+                            cuerpoacadIntegrante.setPersonal(personal.getClave());
+                            dtoCuerpAcadIntegrante.setPersonal(personal);
+                            dtoCuerpAcadIntegrante.setCuerpoAcademicoIntegrantes(cuerpoacadIntegrante);
+
+                            listaDTOCuerpAcadIntegrantes.add(dtoCuerpAcadIntegrante);
                         }
-
-                        cuerpoacadIntegrante.setCuerpoAcademico(cuerposAcademicosRegistro);
-                        cuerpoacadIntegrante.setPersonal(personal.getClave());
-                        dtoCuerpAcadIntegrante.setPersonal(personal);
-                        dtoCuerpAcadIntegrante.setCuerpoAcademicoIntegrantes(cuerpoacadIntegrante);
-
-                        listaDTOCuerpAcadIntegrantes.add(dtoCuerpAcadIntegrante);
                     }
-                }
-                libroRegistro.close();
-                if (validarCelda.contains(false)) {
-                    addDetailMessage("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
-                    ServicioArchivos.escribeLog(datosInvalidos);
-                    addDetailMessage(datosInvalidos.toString());
+                    libroRegistro.close();
+                    if (validarCelda.contains(false)) {
+                        Messages.addGlobalWarn("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                        ServicioArchivos.escribeLog(datosInvalidos);
+                        Messages.addGlobalWarn(datosInvalidos.toString());
 
+                        excel.delete();
+                        ServicioArchivos.eliminarArchivo(rutaArchivo);
+                        return Collections.EMPTY_LIST;
+                    } else {
+                        Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                        return listaDTOCuerpAcadIntegrantes;
+                    }
+                } else {
+                    libroRegistro.close();
                     excel.delete();
                     ServicioArchivos.eliminarArchivo(rutaArchivo);
+                    Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
                     return Collections.EMPTY_LIST;
-                } else {
-                    addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
-                    return listaDTOCuerpAcadIntegrantes;
                 }
-            } else {
+            } catch (IOException e) {
                 libroRegistro.close();
-                excel.delete();
                 ServicioArchivos.eliminarArchivo(rutaArchivo);
-                addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+                Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
                 return Collections.EMPTY_LIST;
             }
         } else {
-            addDetailMessage("<b>Ocurrio un error en la lectura del archivo</b>");
+            Messages.addGlobalError("<b>Ocurrio un error en la lectura del archivo</b>");
             return Collections.EMPTY_LIST;
         }
     }
@@ -372,68 +386,75 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
             XSSFSheet tercerHoja = libroRegistro.getSheetAt(2);
             XSSFRow fila;
 
-            if ((primeraHoja.getSheetName().equals("Cuerpos_Académicos")) || (segundaHoja.getSheetName().equals("Miembros_Cuerpos_Académicos")) || (tercerHoja.getSheetName().equals("Lineas_Investigación"))) {
-                for (int i = 2; i <= tercerHoja.getLastRowNum(); i++) {
-                    fila = (XSSFRow) (Row) tercerHoja.getRow(i);
-                    if ((!"".equals(fila.getCell(1).getStringCellValue()))) {
-                        cuerpacadLinea = new CuerpacadLineas();
-                        cuerpoAcademicoRegistro = new CuerposAcademicosRegistro();
+            try {
+                if ((primeraHoja.getSheetName().equals("Cuerpos_Académicos")) || (segundaHoja.getSheetName().equals("Miembros_Cuerpos_Académicos")) || (tercerHoja.getSheetName().equals("Lineas_Investigación"))) {
+                    for (int i = 2; i <= tercerHoja.getLastRowNum(); i++) {
+                        fila = (XSSFRow) (Row) tercerHoja.getRow(i);
+                        if ((!"".equals(fila.getCell(1).getStringCellValue()))) {
+                            cuerpacadLinea = new CuerpacadLineas();
+                            cuerpoAcademicoRegistro = new CuerposAcademicosRegistro();
 
 //                    Cuerpo Académico
-                        if (fila.getCell(0).getCellTypeEnum() == CellType.STRING) {
-                            switch (fila.getCell(0).getCellTypeEnum()) {
-                                case STRING:
-                                    cuerpoAcademicoRegistro.setCuerpoAcademico(fila.getCell(0).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(0).getCellTypeEnum() == CellType.STRING) {
+                                switch (fila.getCell(0).getCellTypeEnum()) {
+                                    case STRING:
+                                        cuerpoAcademicoRegistro.setCuerpoAcademico(fila.getCell(0).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Cuerpo académico en la columna: " + (0 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Cuerpo académico en la columna: " + (0 + 1) + " y fila: " + (i + 1));
-                        }
 
 //                    Líneas de investigación
-                        if (fila.getCell(1).getCellTypeEnum() == CellType.STRING) {
-                            switch (fila.getCell(1).getCellTypeEnum()) {
-                                case STRING:
-                                    cuerpacadLinea.setNombre(fila.getCell(1).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(1).getCellTypeEnum() == CellType.STRING) {
+                                switch (fila.getCell(1).getCellTypeEnum()) {
+                                    case STRING:
+                                        cuerpacadLinea.setNombre(fila.getCell(1).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Linea de investigación en la columna: " + (1 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Linea de investigación en la columna: " + (1 + 1) + " y fila: " + (i + 1));
+                            cuerpacadLinea.setCuerpoAcademico(cuerpoAcademicoRegistro);
+
+                            listaCuerpacadLineas.add(cuerpacadLinea);
                         }
-                        cuerpacadLinea.setCuerpoAcademico(cuerpoAcademicoRegistro);
-
-                        listaCuerpacadLineas.add(cuerpacadLinea);
                     }
-                }
-                libroRegistro.close();
+                    libroRegistro.close();
 
-                if (validarCelda.contains(false)) {
-                    addDetailMessage("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
-                    ServicioArchivos.escribeLog(datosInvalidos);
-                    addDetailMessage(datosInvalidos.toString());
+                    if (validarCelda.contains(false)) {
+                        Messages.addGlobalWarn("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                        ServicioArchivos.escribeLog(datosInvalidos);
+                        Messages.addGlobalWarn(datosInvalidos.toString());
 
+                        excel.delete();
+                        ServicioArchivos.eliminarArchivo(rutaArchivo);
+                        return Collections.EMPTY_LIST;
+                    } else {
+                        Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                        return listaCuerpacadLineas;
+                    }
+                } else {
+                    libroRegistro.close();
                     excel.delete();
                     ServicioArchivos.eliminarArchivo(rutaArchivo);
+                    Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
                     return Collections.EMPTY_LIST;
-                } else {
-                    addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
-                    return listaCuerpacadLineas;
                 }
-            } else {
+            } catch (IOException e) {
                 libroRegistro.close();
-                excel.delete();
                 ServicioArchivos.eliminarArchivo(rutaArchivo);
-                addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+                Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
                 return Collections.EMPTY_LIST;
             }
         } else {
-            addDetailMessage("<b>Ocurrio un error en la lectura del archivo</b>");
+            Messages.addGlobalError("<b>Ocurrio un error en la lectura del archivo</b>");
             return Collections.EMPTY_LIST;
         }
     }
@@ -468,7 +489,7 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
                 facadeCapitalHumano.flush();
             });
         }
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
@@ -507,7 +528,7 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
                 }
             });
         }
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
@@ -546,7 +567,7 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
                 }
             });
         }
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
@@ -624,7 +645,7 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
     @Override
     public List<CuerpacadAreasEstudio> getCuerpacadAreasEstudio() {
         List<CuerpacadAreasEstudio> cuerpacadAreasEstudios = new ArrayList<>();
-        TypedQuery<CuerpacadAreasEstudio> query = em.createQuery("SELECT c FROM CuerpacadAreasEstudio c ORDER BY c.nombre" ,CuerpacadAreasEstudio.class);
+        TypedQuery<CuerpacadAreasEstudio> query = em.createQuery("SELECT c FROM CuerpacadAreasEstudio c ORDER BY c.nombre", CuerpacadAreasEstudio.class);
         try {
             cuerpacadAreasEstudios = query.getResultList();
         } catch (NoResultException | NonUniqueResultException ex) {
@@ -632,19 +653,19 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
         }
         return cuerpacadAreasEstudios;
     }
-    
+
     @Override
     public List<CuerposAcademicosRegistro> getCuerposAcademicosAct() {
         List<CuerposAcademicosRegistro> genLst = new ArrayList<>();
         TypedQuery<CuerposAcademicosRegistro> query = em.createQuery("SELECT c FROM CuerposAcademicosRegistro c", CuerposAcademicosRegistro.class);
-        
+
         try {
             genLst = query.getResultList();
         } catch (NoResultException | NonUniqueResultException ex) {
             genLst = null;
 
         }
-          return genLst;
+        return genLst;
     }
 
     @Override
@@ -701,7 +722,7 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
             cuerpacadLineas.stream().forEach((c) -> {
                 em.refresh(c);
             });
-            
+
             return cuerpacadLineas;
         } catch (NoResultException ex) {
             return null;
@@ -723,7 +744,7 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
     }
 
     @Override
-    public List<Integer> buscaRegistrosCuerpAcadLineasByCuerpAcad(CuerposAcademicosRegistro cuerposAcademicosRegistro) throws Throwable { 
+    public List<Integer> buscaRegistrosCuerpAcadLineasByCuerpAcad(CuerposAcademicosRegistro cuerposAcademicosRegistro) throws Throwable {
         List<Integer> registros = new ArrayList<>();
         try {
             return registros = em.createQuery("SELECT c FROM CuerpacadLineas c WHERE c.cuerpoAcademico = :cuerpoAcademico", CuerpacadLineas.class)
@@ -731,9 +752,9 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
                     .getResultStream()
                     .map(c -> c.getRegistro())
                     .collect(Collectors.toList());
-        }catch (NoResultException ex){
+        } catch (NoResultException ex) {
             return Collections.EMPTY_LIST;
         }
     }
-    
+
 }

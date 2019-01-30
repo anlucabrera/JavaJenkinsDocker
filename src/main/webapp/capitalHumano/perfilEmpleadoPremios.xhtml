@@ -123,7 +123,7 @@
                                                                                 <div class="col-sm-12 col-md-12 col-lg-5">
                                                                                     <p:outputLabel for="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nombre del premio o distinción" />
                                                                                     <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Nombre del premio o distinción"
-                                                                                                 value="#{controladorPremiosyDistinciones.nuevoOBJDistinciones.nombreDistincion}"/>
+                                                                                                 value="#{cvPremios.nuevoOBJDistinciones.nombreDistincion}"/>
                                                                                     <p:message for="nombre" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
@@ -131,31 +131,31 @@
                                                                                 <div class="col-sm-12 col-md-12 col-lg-5">
                                                                                     <p:outputLabel for="lugar" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Institución otorgante" />
                                                                                     <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="lugar" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Institución otorgante"
-                                                                                                 value="#{controladorPremiosyDistinciones.nuevoOBJDistinciones.institucion}"/>
+                                                                                                 value="#{cvPremios.nuevoOBJDistinciones.institucion}"/>
                                                                                     <p:message for="lugar" display="tooltip"/>     
                                                                                     <hr/>
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-12 col-lg-2">
                                                                                     <p:outputLabel for="fecha" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de entrega" />
-                                                                                    <p:calendar navigator="true" locale="es" id="fecha" value="#{controladorPremiosyDistinciones.nuevoOBJDistinciones.fechaRealizacion}" pattern="dd-MM-yyyy" mask="true" required="true" />
+                                                                                    <p:calendar navigator="true" locale="es" id="fecha" value="#{cvPremios.nuevoOBJDistinciones.fechaRealizacion}" pattern="dd-MM-yyyy" mask="true" required="true" />
                                                                                     <p:message for="fecha" display="tooltip" />
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-12 col-lg-12">
                                                                                     <p:outputLabel for="motivo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Motivo" />
                                                                                     <p:inputTextarea required="true" requiredMessage="No puede tener un campo vacío"  id="motivo" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Motivo" 
-                                                                                                     value="#{controladorPremiosyDistinciones.nuevoOBJDistinciones.motivoDescripcion}"/>
+                                                                                                     value="#{cvPremios.nuevoOBJDistinciones.motivoDescripcion}"/>
                                                                                     <p:message for="motivo" display="tooltip"/> 
                                                                                     <hr/>
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-12 col-lg-12">
                                                                                     <p:outputPanel autoUpdate="true">
-                                                                                        <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia del premio otorgado #{controladorPremiosyDistinciones.nuevoOBJDistinciones.evidenciaDistincion eq null?'':'(ya cuenta con el archivo cargado)'}" />
+                                                                                        <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia del premio otorgado #{cvPremios.nuevoOBJDistinciones.evidenciaDistincion eq null?'':'(ya cuenta con el archivo cargado)'}" />
                                                                                     </p:outputPanel>
-                                                                                    <o:inputFile id="file" value="#{controladorPremiosyDistinciones.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                                    <o:inputFile id="file" value="#{cvPremios.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
                                                                                     <br/>
                                                                                     <h:message id="messageForFile" for="file" />
                                                                                     <br/>
-                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{controladorPremiosyDistinciones.agregarEvidenciaDistincion}"/>
+                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{cvPremios.agregarEvidenciaDistincion}"/>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -165,8 +165,8 @@
                                                                                 <div class="form-group"> 
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                        <p:commandButton id="btnGuardarDistinciones" value="Guardar información" actionListener="#{controladorPremiosyDistinciones.createDistincion()}" 
-                                                                                                         disabled="#{controladorPremiosyDistinciones.direccionInt.toString() eq '0' ?true:false}"
+                                                                                        <p:commandButton id="btnGuardarDistinciones" value="Guardar información" actionListener="#{cvPremios.createDistincion()}" 
+                                                                                                         disabled="#{cvPremios.direccionInt.toString() eq '0' ?true:false}"
                                                                                                          icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmListaDistinciones')update();"
                                                                                                          update="@form"  process="@form" />
                                                                                     </div>
@@ -200,11 +200,11 @@
                                     </h:form>
                                     <h:form id="frmListaDistinciones">
                                         <p:outputPanel >
-                                            <p:remoteCommand name="actualizarTabla3" actionListener="#{controladorPremiosyDistinciones.metodoBase()}" update="tblDistinciones" />
-                                            <p:dataTable id="tblDistinciones" value="#{controladorPremiosyDistinciones.nuevaListaDistinciones}"
+                                            <p:remoteCommand name="actualizarTabla3" actionListener="#{cvPremios.metodoBase()}" update="tblDistinciones" />
+                                            <p:dataTable id="tblDistinciones" value="#{cvPremios.nuevaListaDistinciones}"
                                                          paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron registros" rendered="true" rowStyleClass="#{distincion.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                          paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                                         selectionMode="single"  selection="#{controladorPremiosyDistinciones.nuevoOBJDistinciones}" rowKey="#{distincion.distincion}"
+                                                         selectionMode="single"  selection="#{cvPremios.nuevoOBJDistinciones}" rowKey="#{distincion.distincion}"
                                                          var="distincion" lazy="true">
 
                                                 <f:facet name="header">
@@ -214,7 +214,7 @@
                                                 </f:facet>
 
                                                 <p:column style="width: 50px;">
-                                                    <p:commandButton actionListener="#{controladorPremiosyDistinciones.delDistincion(distincion)}" update="tblDistinciones" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                    <p:commandButton actionListener="#{cvPremios.delDistincion(distincion)}" update="tblDistinciones" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
                                                         <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{distincion.nombreDistincion}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
@@ -254,7 +254,7 @@
 
                                                 <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
                                                     <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog1').show()" icon="ui-icon-search" title="View">
-                                                        <f:setPropertyActionListener value="#{distincion}" target="#{controladorPremiosyDistinciones.nuevoOBJDistinciones}"/>
+                                                        <f:setPropertyActionListener value="#{distincion}" target="#{cvPremios.nuevoOBJDistinciones}"/>
                                                     </p:commandButton>
                                                 </p:column>
 
@@ -262,8 +262,8 @@
 
                                             <p:dialog header="Evidencias" widgetVar="evidenciaDialog1" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
                                                 <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
-                                                    <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty controladorPremiosyDistinciones.nuevoOBJDistinciones}">
-                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorPremiosyDistinciones.convertirRuta(controladorPremiosyDistinciones.nuevoOBJDistinciones.evidenciaDistincion)}"/>       
+                                                    <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty cvPremios.nuevoOBJDistinciones}">
+                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(cvPremios.nuevoOBJDistinciones.evidenciaDistincion)}"/>       
                                                     </p:panelGrid>
                                                 </p:outputPanel>
                                             </p:dialog>      
@@ -279,10 +279,10 @@
                                 <!--<p:tab title="Archivos">
                                     <h:form id="frmArhivos">
                                         <p:outputPanel >
-                                            <p:dataTable id="tblDistinciones" value="#{controladorPremiosyDistinciones.nuevaListaDistinciones}"
+                                            <p:dataTable id="tblDistinciones" value="#{cvPremios.nuevaListaDistinciones}"
                                                          paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron registros" rendered="true" rowStyleClass="#{distincion.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                          paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                                         selectionMode="single"  selection="#{controladorPremiosyDistinciones.nuevoOBJDistinciones}" rowKey="#{distincion.distincion}"
+                                                         selectionMode="single"  selection="#{cvPremios.nuevoOBJDistinciones}" rowKey="#{distincion.distincion}"
                                                          var="distincion" lazy="true">
 
                                                 <f:facet name="header">

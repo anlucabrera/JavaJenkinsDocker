@@ -358,7 +358,7 @@
                                         </div>
                                     </div>
                                 </c:if>
-                                <c:if test="#{planeacionCuatrimestral.activa}">
+                                <!--c:if test="#{planeacionCuatrimestral.activa}">
                                     <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-sm-12'}" />
                                     <div class="#{claseResumen}" style="max-height: 154px;">
                                         <div class="small-box bg-blue">
@@ -368,7 +368,7 @@
                                                     </h:outputLabel>
                                                     <sup style="font-size: 20px"></sup>
                                                 </h3>
-                                                <p>Planeación cuatrimestral<br/>Periodo: #{caster.periodoToString(planeacionCuatrimestral.periodo)}</p>
+                                                <p>Planeación cuatrimestral<br/>Periodo: # {caster.periodoToString(planeacionCuatrimestral.periodo)}</p>
                                             </div>                                        
                                             <div class="icon">
                                                 <i class="fa fa-calendar-check-o"></i>
@@ -379,7 +379,7 @@
                                             <h:form><p:remoteCommand name="planeacionCuatrimestral" action="#{planeacionCuatrimestral.abrir()}" /></h:form>
                                         </div>
                                     </div>
-                                </c:if>
+                                </c:if-->
                                 <c:if test="#{climaLaboral.cargada}">
                                     <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-sm-12'}" />
                                     <div class="col-md-4" style="max-height: 154px;">
@@ -435,7 +435,7 @@
                     </div>
                 </div>
             </c:if>
-            <c:if test="#{planeacionCuatrimestral.activa}">
+            <!--c:if test="#{planeacionCuatrimestral.activa}">
                 <div class="box box-primary">
                     <div class="box box-solid">
                         <div class="box-header with-border">
@@ -457,7 +457,7 @@
                                                     </h:outputLabel>
                                                     <sup style="font-size: 20px"></sup>
                                                 </h3>
-                                                <p>Planeación cuatrimestral<br/>Periodo: #{caster.periodoToString(planeacionCuatrimestral.periodo)}</p>
+                                                <p>Planeación cuatrimestral<br/>Periodo: # {caster.periodoToString(planeacionCuatrimestral.periodo)}</p>
                                             </div>                                        
                                             <div class="icon">
                                                 <i class="fa fa-calendar-check-o"></i>
@@ -473,7 +473,7 @@
                         </div>
                     </div>
                 </div>
-            </c:if>
+            </c:if-->
             <!--c:if test="#{premios.aplica}">
                 <div class="box box-primary">
                     <div class="box box-solid">
@@ -495,7 +495,7 @@
                                                 </h:outputLabel>
                                                 <sup style="font-size: 20px"></sup>
                                             </h3>
-                                            <p>Premios <br/>Periodo: #{caster.periodoToString(premios.periodo)}</p>
+                                            <p>Premios <br/>Periodo: # {caster.periodoToString(premios.periodo)}</p>
                                         </div>                                        
                                         <div class="icon">
                                             <i class="fa fa-calendar-check-o"></i>

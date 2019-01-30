@@ -7,9 +7,9 @@ package mx.edu.utxj.pye.siip.services.eb;
 
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import mx.edu.utxj.pye.sgi.util.ServicioCURP;
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import edu.mx.utxj.pye.seut.util.collection.SerializableArrayList;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -57,6 +57,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -104,6 +105,7 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
             XSSFSheet primeraHoja = libroRegistro.getSheetAt(0);
             XSSFRow fila;
 
+            try{
             //        Campos para formato correcto de registros
             Integer matricula = 0;
             String matriculaNueva = "000000";
@@ -170,7 +172,7 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
                                 datosInvalidos.add("Dato incorrecto: Programa Educativo en la columna: " + (8 + 1) + " y fila: " + (i + 1));
                             }
 
-                            if (fila.getCell(9).getCellTypeEnum() == CellType.NUMERIC) {
+                            if (fila.getCell(9).getCellTypeEnum() == CellType.NUMERIC || fila.getCell(9).getCellTypeEnum() == CellType.STRING) {
                                 switch (fila.getCell(9).getCellTypeEnum()) {
                                     case NUMERIC:
                                         matricula = (int) fila.getCell(9).getNumericCellValue();
@@ -178,6 +180,15 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
                                             matriculaNueva = "0" + String.valueOf(matricula);
                                         } else {
                                             matriculaNueva = String.valueOf(matricula);
+                                        }
+                                        matriculaPeriodoEscolar.setMatricula(matriculaNueva);
+                                        break;
+                                    case STRING:
+                                        String maS = (String) fila.getCell(9).getStringCellValue();
+                                        if (Integer.parseInt(maS) > 20000 && Integer.parseInt(maS) < 99999) {
+                                            matriculaNueva = "0" + String.valueOf(maS);
+                                        } else {
+                                            matriculaNueva = String.valueOf(maS);
                                         }
                                         matriculaPeriodoEscolar.setMatricula(matriculaNueva);
                                         break;
@@ -236,14 +247,14 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
                     libroRegistro.close();
 
                     if (validarCelda.contains(false)) {
-                        addDetailMessage("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
-                        addDetailMessage(datosInvalidos.toString());
+                        Messages.addGlobalWarn("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                        Messages.addGlobalWarn(datosInvalidos.toString());
 
                         excel.delete();
                         ServicioArchivos.eliminarArchivo(rutaArchivo);
                         return Collections.EMPTY_LIST;
                     } else {
-                        addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                        Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
                         return dtoMatriculaPeriodosEscolares;
                     }
 
@@ -251,18 +262,24 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
                     libroRegistro.close();
                     excel.delete();
                     ServicioArchivos.eliminarArchivo(rutaArchivo);
-                    addDetailMessage("<b>Al menos una CURP no es valida: </b> " + listaCondicional.toString());
+                    Messages.addGlobalWarn("<b>Al menos una CURP no es valida: </b> " + listaCondicional.toString());
                     return Collections.EMPTY_LIST;
                 }
             } else {
                 libroRegistro.close();
                 excel.delete();
                 ServicioArchivos.eliminarArchivo(rutaArchivo);
-                addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+                Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
+                return Collections.EMPTY_LIST;
+            }
+            } catch (IOException e) {
+                libroRegistro.close();
+                ServicioArchivos.eliminarArchivo(rutaArchivo);
+                Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
                 return Collections.EMPTY_LIST;
             }
         } else {
-            addDetailMessage("<b>Ocurrio un error en la lectura del archivo</b>");
+            Messages.addGlobalError("<b>Ocurrio un error en la lectura del archivo</b>");
             return Collections.EMPTY_LIST;
         }
     }
@@ -296,7 +313,7 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
 
             }
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override

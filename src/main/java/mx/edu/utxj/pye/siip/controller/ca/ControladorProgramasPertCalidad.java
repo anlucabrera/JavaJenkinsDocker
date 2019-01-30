@@ -335,7 +335,7 @@ public class ControladorProgramasPertCalidad implements Serializable{
                Ajax.update("formMuestraDatosActivos");
            } catch (Throwable ex) {
                Logger.getLogger(ControladorProgramasPertCalidad.class.getName()).log(Level.SEVERE, null, ex);
-               addDetailMessage("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
+               Messages.addGlobalError("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
            }
     }
     

@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -152,12 +153,12 @@ public class ServicioProgramasPertCalidad implements EjbProgramasPertCalidad{
                 }
             }
             libroRegistro.close();
-            addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+            Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
         }
         return listaDtoProgPertCal;
     }
@@ -179,15 +180,15 @@ public class ServicioProgramasPertCalidad implements EjbProgramasPertCalidad{
                 if (ejbModulos.validaEventoRegistro(ejbModulos.getEventoRegistro(), progPertCalEncontrado.getRegistros().getEventoRegistro().getEventoRegistro())) {
                     programas.getProgramasPertcal().setRegistro(progPertCalEncontrado.getRegistro());
                     f.edit(programas.getProgramasPertcal());
-                    addDetailMessage("<b>Se actualizaron los registros del Programa Educativo: </b> " + programaEducativo.getSiglas());
+                    Messages.addGlobalInfo("<b>Se actualizaron los registros del Programa Educativo: </b> " + programaEducativo.getSiglas());
                 } else {
-                    addDetailMessage("<b>No se pueden actualizar los registros del Programa Educativo: </b> " + programaEducativo.getSiglas());
+                    Messages.addGlobalWarn("<b>No se pueden actualizar los registros del Programa Educativo: </b> " + programaEducativo.getSiglas());
                 }
             } else {
                 Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                 programas.getProgramasPertcal().setRegistro(registro.getRegistro());
                 f.create(programas.getProgramasPertcal());
-                addDetailMessage("<b>Se guardaron los registros correctamente </b> ");
+                Messages.addGlobalInfo("<b>Se guardaron los registros correctamente </b> ");
             }
             f.flush();
         });

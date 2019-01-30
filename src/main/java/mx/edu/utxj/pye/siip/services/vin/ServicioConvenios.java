@@ -6,8 +6,8 @@
 package mx.edu.utxj.pye.siip.services.vin;
 
 import com.github.adminfaces.starter.infra.security.LogonMB;
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -54,16 +54,12 @@ import org.omnifaces.util.Messages;
 @Stateful
 public class ServicioConvenios implements EjbConvenios {
 
-    @EJB
-    Facade facadeVinculacion;
-    @EJB
-    EjbModulos ejbModulos;
-    @EJB
-    EjbOrganismosVinculados ejbOrganismosVinculados;
-    @EJB EjbFiscalizacion ejbFiscalizacion;        
-    @EJB Facade f;
-    @Inject
-    LogonMB logonMB;
+    @EJB    Facade                  facadeVinculacion;
+    @EJB    EjbModulos              ejbModulos;
+    @EJB    EjbOrganismosVinculados ejbOrganismosVinculados;
+    @EJB    EjbFiscalizacion        ejbFiscalizacion;        
+    @EJB    Facade                  f;
+    @Inject LogonMB                 logonMB;
     @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
     private EntityManager em;
 
@@ -85,6 +81,7 @@ public class ServicioConvenios implements EjbConvenios {
             XSSFSheet primeraHoja = workBookConvenios.getSheetAt(0);
             XSSFRow fila;
 
+            try{
             if (primeraHoja.getSheetName().equals("Convenios")) {
                 for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
                     fila = (XSSFRow) (Row) primeraHoja.getRow(i);
@@ -250,14 +247,14 @@ public class ServicioConvenios implements EjbConvenios {
                 workBookConvenios.close();
 
                 if (validarCelda.contains(false)) {
-                    addDetailMessage("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
-                    addDetailMessage(datosInvalidos.toString());
+                    Messages.addGlobalWarn("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                    Messages.addGlobalWarn(datosInvalidos.toString());
 
                     excelConvenios.delete();
                     ServicioArchivos.eliminarArchivo(rutaArchivo);
                     return Collections.EMPTY_LIST;
                 } else {
-                    addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                    Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
                     return convenios;
                 }
 
@@ -265,11 +262,17 @@ public class ServicioConvenios implements EjbConvenios {
                 workBookConvenios.close();
                 excelConvenios.delete();
                 ServicioArchivos.eliminarArchivo(rutaArchivo);
-                Messages.addGlobalInfo("<b>El archivo cargado no corresponde al registro</b>");
+                Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
+                return Collections.EMPTY_LIST;
+            }
+            } catch (IOException e) {
+                workBookConvenios.close();
+                ServicioArchivos.eliminarArchivo(rutaArchivo);
+                Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
                 return Collections.EMPTY_LIST;
             }
         } else {
-            addDetailMessage("<b>Ocurrio un error en la lectura del archivo</b>");
+            Messages.addGlobalError("<b>Ocurrio un error en la lectura del archivo</b>");
             return Collections.EMPTY_LIST;
         }
     }

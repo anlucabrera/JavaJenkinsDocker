@@ -5,7 +5,6 @@
  */
 package mx.edu.utxj.pye.siip.controller.vin;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -368,7 +367,7 @@ public class ControladorRegistrosMovilidad implements Serializable{
             
         } catch (Throwable ex) {
             Logger.getLogger(ControladorRegistrosMovilidad.class.getName()).log(Level.SEVERE, null, ex);
-            addDetailMessage("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
+            Messages.addGlobalError("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
         }
         
     }
@@ -400,7 +399,7 @@ public class ControladorRegistrosMovilidad implements Serializable{
         } catch (Throwable ex) {
             Logger.getLogger(ControladorMovilidadDocente.class.getName()).log(Level.SEVERE, null, ex);
             Logger.getLogger(ControladorMovilidadEstudiante.class.getName()).log(Level.SEVERE, null, ex);
-            addDetailMessage("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
+            Messages.addGlobalError("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
         }
           
      }

@@ -40,6 +40,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -174,24 +175,24 @@ public class ServicioBolsaEntrevistas implements EjbBolsaEntrevistas{
             }
             libroRegistro.close();
             if (validarCelda.contains(false)) {
-                    addDetailMessage("<b>Hoja de Entrevistas Bolsa de Trabajo contiene datos que no son válidos, verifique los datos de la plantilla</b>");
-                    addDetailMessage(datosInvalidos.toString());
+                    Messages.addGlobalError("<b>Hoja de Entrevistas Bolsa de Trabajo contiene datos que no son válidos, verifique los datos de la plantilla</b>");
+                    Messages.addGlobalError(datosInvalidos.toString());
                     return Collections.EMPTY_LIST;
                 } else {
-                    addDetailMessage("<b>Hoja de Entrevistas Bolsa de Trabajo Validada favor de verificar sus datos antes de guardar su información</b>");
+                    Messages.addGlobalInfo("<b>Hoja de Entrevistas Bolsa de Trabajo Validada favor de verificar sus datos antes de guardar su información</b>");
                     return listaDtoBolsaEntrevistas;
                 }
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
             return Collections.EMPTY_LIST;
         }
     } catch (IOException e) {
             libroRegistro.close();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
+            Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
             return Collections.EMPTY_LIST;
     }
 
@@ -204,7 +205,7 @@ public class ServicioBolsaEntrevistas implements EjbBolsaEntrevistas{
             
             BolsaTrabajo bolsaTrabajo = ejbBolsaTrabajo.getRegistroBolsaTrabajo(bolsaEntrevistas.getBolsaTrabajoEntrevistas().getBolsatrabent());
             if (bolsaTrabajo == null || bolsaTrabajo.getBolsatrab().isEmpty()) {
-                addDetailMessage("<b>No existe la Clave de Bolsa de Trabajo</b>");
+                Messages.addGlobalWarn("<b>No existe la Clave de Bolsa de Trabajo</b>");
 
             } else {
                 
@@ -220,18 +221,18 @@ public class ServicioBolsaEntrevistas implements EjbBolsaEntrevistas{
                         bolsaEntrevistas.getBolsaTrabajoEntrevistas().setRegistro(bolTrabEntEncontrado.getRegistro());
                         bolsaEntrevistas.getBolsaTrabajoEntrevistas().getBolsatrabent().setRegistro(bolTrabEntEncontrado.getBolsatrabent().getRegistro());
                         f.edit(bolsaEntrevistas.getBolsaTrabajoEntrevistas());
-                        addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + bolTrabEntEncontrado.getBolsatrabent().getBolsatrab() + " - " + bolTrabEntEncontrado.getMatricula());
+                        Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + bolTrabEntEncontrado.getBolsatrabent().getBolsatrab() + " - " + bolTrabEntEncontrado.getMatricula());
                     } else {
                         Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                         bolsaEntrevistas.getBolsaTrabajoEntrevistas().getBolsatrabent().setRegistro(ejbBolsaTrabajo.getRegistroBolsaTrabajoEspecifico(bolsaEntrevistas.getBolsaTrabajoEntrevistas().getBolsatrabent().getBolsatrab()));
                         bolsaEntrevistas.getBolsaTrabajoEntrevistas().setRegistro(registro.getRegistro());
                         f.create(bolsaEntrevistas.getBolsaTrabajoEntrevistas());
-                        addDetailMessage("<b>Se guardaron los registros correctamente</b> ");
+                        Messages.addGlobalInfo("<b>Se guardaron los registros correctamente</b> ");
                     }
                     f.flush();
                 } else {
 
-                    addDetailMessage("<b>No puede registrar información de periodos anteriores</b>");
+                    Messages.addGlobalWarn("<b>No puede registrar información de periodos anteriores</b>");
                 }
             }
         });
