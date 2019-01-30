@@ -11,7 +11,7 @@
     <ui:define name="head-end">
         <ui:param name="renderBreadCrumb" value="false"/>
         <f:metadata>
-            <f:viewParam name="activa" value="#{controladorHabilidadesIIL.pestaniaActiva}"/>
+            <f:viewParam name="activa" value="#{cvHabilidades.pestaniaActiva}"/>
         </f:metadata>
         <!-- Inicio estilos par proceso electoral -->
         <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
@@ -102,10 +102,10 @@
                                     </p:link>
                                 </div>      
                             </div>
-                            <p:tabView activeIndex="#{controladorHabilidadesIIL.pestaniaActiva}">
+                            <p:tabView activeIndex="#{cvHabilidades.pestaniaActiva}">
                                 <p:tab title="Idiomas">
                                     <h:form id="frmIdiom" enctype="multipart/form-data"> 
-                                        <p:outputPanel id="registro" autoUpdate="#{controladorHabilidadesIIL.nuevOBJIdiomas.idioma eq null?false:true}">
+                                        <p:outputPanel id="registro" autoUpdate="#{cvHabilidades.nuevOBJIdiomas.idioma eq null?false:true}">
                                             <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                                                 <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                     <div class="col-md-12">
@@ -117,7 +117,7 @@
                                                                             <div class="form-group">
                                                                                 <div class="col-sm-12 col-md-6 col-lg-4"> 
                                                                                     <p:outputLabel for="idioma" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Idioma" />
-                                                                                    <p:selectOneMenu id="idioma" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJIdiomas.idiomaHablado}" >
+                                                                                    <p:selectOneMenu id="idioma" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.nuevOBJIdiomas.idiomaHablado}" >
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                         <f:selectItems value="#{controladorEmpleado.listaIdiomas}" var="idioma" itemValue="#{idioma}" itemLabel="#{idioma}" />
                                                                                     </p:selectOneMenu> 
@@ -126,7 +126,7 @@
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-6 col-lg-4"> 
                                                                                     <p:outputLabel for="gradoD" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Grado de dominio" />
-                                                                                    <p:selectOneMenu id="gradoD" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJIdiomas.gradoDominio}" >
+                                                                                    <p:selectOneMenu id="gradoD" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.nuevOBJIdiomas.gradoDominio}" >
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                         <f:selectItem itemValue="Básico" itemLabel="Básico"/>
                                                                                         <f:selectItem itemValue="Intermedio" itemLabel="Intermedio"/>
@@ -140,7 +140,7 @@
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-6 col-lg-4">  
                                                                                     <p:outputLabel for="nivlConv" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nivel de conversación" />
-                                                                                    <p:selectOneMenu id="nivlConv" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJIdiomas.nivelConversacion}" >
+                                                                                    <p:selectOneMenu id="nivlConv" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.nuevOBJIdiomas.nivelConversacion}" >
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                         <f:selectItem itemValue="Básico" itemLabel="Básico"/>
                                                                                         <f:selectItem itemValue="Intermedio" itemLabel="Intermedio"/>
@@ -154,7 +154,7 @@
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-6 col-lg-4"> 
                                                                                     <p:outputLabel for="nivlEscr" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nivel de escritura" />
-                                                                                    <p:selectOneMenu id="nivlEscr" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJIdiomas.nivelEscritura}" >
+                                                                                    <p:selectOneMenu id="nivlEscr" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.nuevOBJIdiomas.nivelEscritura}" >
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                         <f:selectItem itemValue="Básico" itemLabel="Básico"/>
                                                                                         <f:selectItem itemValue="Intermedio" itemLabel="Intermedio"/>
@@ -168,7 +168,7 @@
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-6 col-lg-4"> 
                                                                                     <p:outputLabel for="nivlLec" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nivel de lectura" />
-                                                                                    <p:selectOneMenu id="nivlLec" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJIdiomas.nivelLectura}" >
+                                                                                    <p:selectOneMenu id="nivlLec" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.nuevOBJIdiomas.nivelLectura}" >
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                         <f:selectItem itemValue="Básico" itemLabel="Básico"/>
                                                                                         <f:selectItem itemValue="Intermedio" itemLabel="Intermedio"/>
@@ -182,7 +182,7 @@
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-6 col-lg-4">                                                                            
                                                                                     <p:outputLabel for="certificacion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Certificación" />
-                                                                                    <p:selectOneMenu id="certificacion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJIdiomas.certificacion}" >
+                                                                                    <p:selectOneMenu id="certificacion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.nuevOBJIdiomas.certificacion}" >
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                         <f:selectItem itemValue="Si" itemLabel="Si"/>
                                                                                         <f:selectItem itemValue="No" itemLabel="No"/>
@@ -192,40 +192,40 @@
                                                                                 </div>
                                                                                 <div class="col-sm-6 col-md-6 col-lg-6">
                                                                                     <p:outputLabel for="institucion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Institución otorgante" />
-                                                                                    <p:inputText id="institucion" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Institución otorgante" value="#{controladorHabilidadesIIL.nuevOBJIdiomas.institucionOtorgante}"/>
+                                                                                    <p:inputText id="institucion" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Institución otorgante" value="#{cvHabilidades.nuevOBJIdiomas.institucionOtorgante}"/>
                                                                                     <p:message for="institucion" display="tooltip"/>                                                                         
                                                                                     <hr/>
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-6 col-lg-2"> 
                                                                                     <p:outputLabel for="fechaotro" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha otorgación" />
-                                                                                    <p:calendar navigator="true" locale="es" id="fechaotro" value="#{controladorHabilidadesIIL.fechaO}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                    <p:calendar navigator="true" locale="es" id="fechaotro" value="#{cvHabilidades.fechaO}" pattern="dd-MM-yyyy" mask="true" />
                                                                                     <p:message for="fechaotro" display="tooltip" />
                                                                                     <br/>
                                                                                     <hr/>   
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-6 col-lg-2"> 
                                                                                     <p:outputLabel for="fechasert" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha certificación" />
-                                                                                    <p:calendar navigator="true" locale="es" id="fechasert" value="#{controladorHabilidadesIIL.fechaC}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                    <p:calendar navigator="true" locale="es" id="fechasert" value="#{cvHabilidades.fechaC}" pattern="dd-MM-yyyy" mask="true" />
                                                                                     <p:message for="fechasert" display="tooltip" />
                                                                                     <br/>
                                                                                     <hr/>
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-6 col-lg-2"> 
                                                                                     <p:outputLabel for="fechavigencia" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha vigencia" />
-                                                                                    <p:calendar navigator="true" locale="es" id="fechavigencia" value="#{controladorHabilidadesIIL.fechaF}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                    <p:calendar navigator="true" locale="es" id="fechavigencia" value="#{cvHabilidades.fechaF}" pattern="dd-MM-yyyy" mask="true" />
                                                                                     <p:message for="fechavigencia" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-12 col-lg-9">  
                                                                                     <p:outputPanel>            
                                                                                         <p:autoUpdate/>
-                                                                                        <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia #{controladorHabilidadesIIL.nuevOBJIdiomas.evidenciaDoc eq null?'':'(ya cuenta con el archivo cargado)'}" />
+                                                                                        <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia #{cvHabilidades.nuevOBJIdiomas.evidenciaDoc eq null?'':'(ya cuenta con el archivo cargado)'}" />
                                                                                     </p:outputPanel>
-                                                                                    <o:inputFile id="file" value="#{controladorHabilidadesIIL.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                                    <o:inputFile id="file" value="#{cvHabilidades.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
                                                                                     <br/>
                                                                                     <h:message id="messageForFile" for="file" />
                                                                                     <br/>
-                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorHabilidadesIIL.subirEvidenciaIdioma}" />
+                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{cvHabilidades.subirEvidenciaIdioma}" />
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -238,7 +238,7 @@
                                                                                     <div class="col-sm-12 col-md-4 col-lg-4"/>
                                                                                     <div class="col-sm-12 col-md-4 col-lg-4">
                                                                                         <p:commandButton id="btnBuscarActiuvidades" 
-                                                                                                         value="Actualizar información" actionListener="#{controladorHabilidadesIIL.createIdioma()}" 
+                                                                                                         value="Actualizar información" actionListener="#{cvHabilidades.createIdioma()}" 
                                                                                                          icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('registro')update();" onsuccess="PF('frmIdiom')update();"
                                                                                                          update="@form" process="@form" />   
                                                                                     </div>
@@ -272,11 +272,11 @@
                                     </h:form>
                                     <h:form id="frmLista1">
                                         <p:outputPanel>
-                                            <p:remoteCommand name="actualizarTabla" actionListener="#{controladorHabilidadesIIL.metodoBase()}" update="tblIdiomas" />                                                    
-                                            <p:dataTable id="tblIdiomas" value="#{controladorHabilidadesIIL.nuevaListaIdiomas}" var="habIdio" rowStyleClass="#{habIdio.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                            <p:remoteCommand name="actualizarTabla" actionListener="#{cvHabilidades.metodoBase()}" update="tblIdiomas" />                                                    
+                                            <p:dataTable id="tblIdiomas" value="#{cvHabilidades.nuevaListaIdiomas}" var="habIdio" rowStyleClass="#{habIdio.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                          paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron Registros."
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                                         
-                                                         selectionMode="single" selection="#{controladorHabilidadesIIL.nuevOBJIdiomaSelectec}" rowKey="#{habIdio.idioma}" lazy="true">
+                                                         selectionMode="single" selection="#{cvHabilidades.nuevOBJIdiomas}" rowKey="#{habIdio.idioma}" lazy="true">
 
                                                 <f:facet name="header">
                                                     <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
@@ -290,7 +290,7 @@
                                                 </c:if>
 
                                                 <p:column style="width: 50px;">
-                                                    <p:commandButton actionListener="#{controladorHabilidadesIIL.eliminaIdioma(habIdio)}" update="tblIdiomas" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                    <p:commandButton actionListener="#{cvHabilidades.eliminaIdioma(habIdio)}" update="tblIdiomas" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
                                                         <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{habIdio.idiomaHablado}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
@@ -319,13 +319,13 @@
                                                 <f:facet name="footer">
                                                     <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                                                         <p:commandButton id="update" value="Actualizar" icon="fa fa-pen" class="btn btn-info" update="@form tblIdiomas"
-                                                                         actionListener="#{controladorHabilidadesIIL.actualizarObjetosIdioma()}" disabled="#{empty controladorHabilidadesIIL.nuevOBJIdiomaSelectec}"/>
+                                                                         actionListener="#{cvHabilidades.metodoBase()}" disabled="#{empty cvHabilidades.nuevOBJIdiomas}"/>
                                                     </c:if>
                                                 </f:facet>
 
                                                 <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
                                                     <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog1').show()" icon="ui-icon-search" title="View">
-                                                        <f:setPropertyActionListener value="#{habIdio}" target="#{controladorHabilidadesIIL.nuevOBJIdiomaSelectec}"/>
+                                                        <f:setPropertyActionListener value="#{habIdio}" target="#{cvHabilidades.nuevOBJIdiomas}"/>
                                                     </p:commandButton>
                                                 </p:column>
 
@@ -333,8 +333,8 @@
 
                                             <p:dialog header="Evidencias" widgetVar="evidenciaDialog1" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
                                                 <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
-                                                    <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty controladorHabilidadesIIL.nuevOBJIdiomaSelectec}">
-                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorHabilidadesIIL.nuevOBJIdiomaSelectec.evidenciaDoc)}"/>       
+                                                    <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty cvHabilidades.nuevOBJIdiomas}">
+                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(cvHabilidades.nuevOBJIdiomas.evidenciaDoc)}"/>       
                                                     </p:panelGrid>
                                                 </p:outputPanel>
                                             </p:dialog>
@@ -349,7 +349,7 @@
                                 </p:tab>
                                 <p:tab title="Habilidades informáticas">
                                     <h:form id="frmHbInf"> 
-                                        <p:outputPanel autoUpdate="#{controladorHabilidadesIIL.nuevOBJHabilidadesInformaticas.conocimiento eq null?false:true}">
+                                        <p:outputPanel id="registroH" autoUpdate="#{cvHabilidades.nuevOBJHabilidadesInformaticas.conocimiento eq null?false:true}">
                                             <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                                                 <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                     <div class="col-md-12">
@@ -363,7 +363,7 @@
                                                                                     <p:outputPanel>            
                                                                                         <p:autoUpdate/>
                                                                                         <p:outputLabel for="conocimiento" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Conocimiento Informáticos" />
-                                                                                        <p:selectOneMenu id="conocimiento" widgetVar="conocimiento" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJHabilidadesInformaticas.tipoConocimiento}">
+                                                                                        <p:selectOneMenu id="conocimiento" widgetVar="conocimiento" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.conocimiento}">
                                                                                             <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                             <f:selectItem itemValue="Ofimática" itemLabel="Ofimática"/>
                                                                                             <f:selectItem itemValue="Base de datos" itemLabel="Bases de datos"/>
@@ -374,21 +374,21 @@
                                                                                             <f:selectItem itemValue="Sistemas Operativos" itemLabel="Sistemas Operativos"/>
                                                                                             <f:selectItem itemValue="Comunicación" itemLabel="Comunicación"/>
                                                                                             <f:selectItem itemValue="Internet" itemLabel="Internet"/>
-                                                                                            <p:ajax listener="#{controladorHabilidadesIIL.filtarConocimientos()}" process="conocimiento" />
+                                                                                            <p:ajax listener="#{cvHabilidades.filtarConocimientos()}" process="conocimiento" />
                                                                                         </p:selectOneMenu> 
                                                                                         <p:message for="conocimiento" display="tooltip" />
                                                                                         <hr/>
                                                                                         <p:outputLabel for="programas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Programas que domina" />
-                                                                                        <p:selectOneMenu id="programas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJHabilidadesInformaticas.programaDominante }">
+                                                                                        <p:selectOneMenu id="programas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.programa }">
                                                                                             <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                                                                            <f:selectItems value="#{controladorHabilidadesIIL.listaConocimiento}" var="cono" itemValue="#{cono}" itemLabel="#{cono}" />
+                                                                                            <f:selectItems value="#{cvHabilidades.listaConocimiento}" var="cono" itemValue="#{cono}" itemLabel="#{cono}" />
                                                                                         </p:selectOneMenu> 
                                                                                         <p:message for="programas" display="tooltip" />
                                                                                     </p:outputPanel>
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-12 col-lg-6">
                                                                                     <p:outputLabel for="nivelCon" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nivel de Conocimiento" /> 
-                                                                                    <p:selectOneRadio id="nivelCon" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJHabilidadesInformaticas.nivelConocimiento}" layout="responsive" columns="2"> 
+                                                                                    <p:selectOneRadio id="nivelCon" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.nivel}" layout="responsive" columns="2"> 
                                                                                         <f:selectItem itemValue="Nivel Usuario" itemLabel="Nivel Usuario"/>
                                                                                         <f:selectItem itemValue="Nivel Usuario Avanzado" itemLabel="Nivel Usuario Avanzado"/>
                                                                                         <f:selectItem itemValue="Nivel Profesional" itemLabel="Nivel Profesional"/>
@@ -403,7 +403,10 @@
                                                                             <div class="form-group">
                                                                                 <div class="col-sm-12 col-md-4 col-lg-4"/>
                                                                                 <div class="col-sm-12 col-md-4 col-lg-4">
-                                                                                    <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{controladorHabilidadesIIL.createrInformaticas()}" icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form tblInformaticas" process="@form" /> 
+                                                                                    <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{cvHabilidades.createrInformaticas()}" 
+                                                                                                     icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3"  oncomplete="PF('registroH')update();" onsuccess="PF('frmHbInf')update();"
+                                                                                                         update="@form" process="@form"/> 
+                                                                               
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -432,13 +435,13 @@
                                             </c:if>
                                         </p:outputPanel>
                                         <p:outputPanel>
-                                            <p:remoteCommand name="actualizarTabla2" actionListener="#{controladorHabilidadesIIL.metodoBase()}" update="tblInformaticas" />
-                                            <p:dataTable id="tblInformaticas" value="#{controladorHabilidadesIIL.nuevaListaHabilidadesInformaticas}" var="habInf"
+                                            <p:remoteCommand name="actualizarTabla2" actionListener="#{cvHabilidades.metodoBase()}" update="tblInformaticas" />
+                                            <p:dataTable id="tblInformaticas" value="#{cvHabilidades.nuevaListaHabilidadesInformaticas}" var="habInf"
                                                          paginator="true" rows="5"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30"
                                                          emptyMessage="No se encontraron Registros." rendered="true" rowStyleClass="#{habInf.estatus eq 'Aceptado'?'aceptado':'denegado'}"
-                                                         selectionMode="single" selection="#{controladorHabilidadesIIL.nuevOBJHabilidadesInformaticaSelectec}" rowKey="#{habInf.conocimiento}">
+                                                         selectionMode="single" selection="#{cvHabilidades.nuevOBJHabilidadesInformaticas}" rowKey="#{habInf.conocimiento}">
 
                                                 <f:facet name="header">
                                                     <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
@@ -452,7 +455,7 @@
                                                 </c:if>
 
                                                 <p:column style="width: 50px;">
-                                                    <p:commandButton actionListener="#{controladorHabilidadesIIL.eliminaInformaticas(habInf)}" update="tblInformaticas" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                    <p:commandButton actionListener="#{cvHabilidades.eliminaInformaticas(habInf)}" update="tblInformaticas" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
                                                         <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{habInf.programaDominante}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
@@ -481,7 +484,7 @@
                                                 <f:facet name="footer">
                                                     <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                                                         <p:commandButton id="update" value="Actualizar" icon="fa fa-pen" class="btn btn-info" update="@form tblInformaticas"
-                                                                         actionListener="#{controladorHabilidadesIIL.actualizarObjetosHabilidadesInformaticas()}" disabled="#{empty controladorHabilidadesIIL.nuevOBJHabilidadesInformaticaSelectec}"/>
+                                                                         actionListener="#{cvHabilidades.metodoBase()}" disabled="#{empty cvHabilidades.nuevOBJHabilidadesInformaticas}"/>
                                                     </c:if>
                                                 </f:facet>
 
@@ -510,7 +513,7 @@
                                                                             <div class="form-group">
                                                                                 <div class="col-sm-6 col-md-6 col-lg-6">
                                                                                     <p:outputLabel for="lengua" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Lengua" />
-                                                                                    <p:selectOneMenu id="lengua" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJLenguas.tipoLengua}">
+                                                                                    <p:selectOneMenu id="lengua" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.lengua}">
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                         <f:selectItem itemValue="NA" itemLabel="No Aplica"/>
                                                                                         <f:selectItems value="#{controladorEmpleado.listaLenguas}" var="idioma" itemValue="#{idioma}" itemLabel="#{idioma}" />
@@ -520,7 +523,7 @@
                                                                                 </div>
                                                                                 <div class="col-sm-6 col-md-6 col-lg-6">  
                                                                                     <p:outputLabel for="gradoD" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Grado de dominio" />
-                                                                                    <p:selectOneMenu id="gradoD" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJLenguas.gradoDominio}" >
+                                                                                    <p:selectOneMenu id="gradoD" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.dominio}" >
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                         <f:selectItem itemValue="Básico" itemLabel="Básico"/>
                                                                                         <f:selectItem itemValue="Intermedio" itemLabel="Intermedio"/>
@@ -534,7 +537,7 @@
                                                                                 </div>
                                                                                 <div class="col-sm-6 col-md-6 col-lg-4"> 
                                                                                     <p:outputLabel for="nivlConv" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nivel de conversación" />
-                                                                                    <p:selectOneMenu id="nivlConv" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJLenguas.nivelConversacion}" >
+                                                                                    <p:selectOneMenu id="nivlConv" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.conversacion}" >
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                         <f:selectItem itemValue="Básico" itemLabel="Básico"/>
                                                                                         <f:selectItem itemValue="Intermedio" itemLabel="Intermedio"/>
@@ -547,7 +550,7 @@
                                                                                 </div>
                                                                                 <div class="col-sm-6 col-md-6 col-lg-4">
                                                                                     <p:outputLabel for="nivlEscr" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nivel de escritura" />
-                                                                                    <p:selectOneMenu id="nivlEscr" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJLenguas.nivelEscritura}" >
+                                                                                    <p:selectOneMenu id="nivlEscr" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.escritura}" >
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                         <f:selectItem itemValue="Básico" itemLabel="Básico"/>
                                                                                         <f:selectItem itemValue="Intermedio" itemLabel="Intermedio"/>
@@ -560,7 +563,7 @@
                                                                                 </div>
                                                                                 <div class="col-sm-6 col-md-6 col-lg-4"> 
                                                                                     <p:outputLabel for="nivlLec" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nivel de lectura" />
-                                                                                    <p:selectOneMenu id="nivlLec" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorHabilidadesIIL.nuevOBJLenguas.nivelLectura}" >
+                                                                                    <p:selectOneMenu id="nivlLec" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.lecctura}" >
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                         <f:selectItem itemValue="Básico" itemLabel="Básico"/>
                                                                                         <f:selectItem itemValue="Intermedio" itemLabel="Intermedio"/>
@@ -578,7 +581,7 @@
                                                                             <div class="form-group">
                                                                                 <div class="col-sm-12 col-md-4 col-lg-4"/>
                                                                                 <div class="col-sm-12 col-md-4 col-lg-4">
-                                                                                    <p:commandButton id="btnBuscarActiuvidades"  value="Guardar información" actionListener="#{controladorHabilidadesIIL.createLengua()}" icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form tblLenguas" process="@form" /> 
+                                                                                    <p:commandButton id="btnBuscarActiuvidades"  value="Guardar información" actionListener="#{cvHabilidades.createLengua()}" icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form tblLenguas" process="@form" /> 
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -607,13 +610,13 @@
                                             </c:if>
                                         </p:outputPanel>
                                         <p:outputPanel>
-                                            <p:remoteCommand name="actualizarTabla3" actionListener="#{controladorHabilidadesIIL.metodoBase()}" update="tblLenguas" />
-                                            <p:dataTable id="tblLenguas" value="#{controladorHabilidadesIIL.nuevaListaLenguas}" var="habLeng"
+                                            <p:remoteCommand name="actualizarTabla3" actionListener="#{cvHabilidades.metodoBase()}" update="tblLenguas" />
+                                            <p:dataTable id="tblLenguas" value="#{cvHabilidades.nuevaListaLenguas}" var="habLeng"
                                                          paginator="true" rows="5"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30"
                                                          emptyMessage="No se encontraron Registros." rendered="true" rowStyleClass="#{habLeng.estatus eq 'Aceptado'?'aceptado':'denegado'}"
-                                                         selectionMode="single" selection="#{controladorHabilidadesIIL.nuevOBJLenguaSelectec}" rowKey="#{habLeng.lengua}">
+                                                         selectionMode="single" selection="#{cvHabilidades.nuevOBJLenguas}" rowKey="#{habLeng.lengua}">
 
                                                 <f:facet name="header">
                                                     <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
@@ -627,7 +630,7 @@
                                                 </c:if>
 
                                                 <p:column style="width: 50px;">
-                                                    <p:commandButton actionListener="#{controladorHabilidadesIIL.eliminaLengua(habLeng)}" update="tblLenguas" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                    <p:commandButton actionListener="#{cvHabilidades.eliminaLengua(habLeng)}" update="tblLenguas" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
                                                         <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{habLeng.tipoLengua}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
@@ -649,7 +652,7 @@
                                                 <f:facet name="footer">
                                                     <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                                                         <p:commandButton id="update" value="Actualizar" icon="fa fa-pen" class="btn btn-info" update="@form tblLenguas"
-                                                                         actionListener="#{controladorHabilidadesIIL.actualizarObjetosLengua()}" disabled="#{empty controladorHabilidadesIIL.nuevOBJLenguaSelectec}"/>
+                                                                         actionListener="#{cvHabilidades.metodoBase()}" disabled="#{empty cvHabilidades.nuevOBJLenguas}"/>
                                                     </c:if>
                                                 </f:facet>
 

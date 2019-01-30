@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -115,12 +116,12 @@ public class ServicioMovilidadDocente implements EjbMovilidadDocente{
                 }
             }
             libroRegistro.close();
-            addDetailMessage("<b>Hoja de Movilidad Docente Validada favor de verificar sus datos antes de guardar su información</b>");
+            Messages.addGlobalInfo("<b>Hoja de Movilidad Docente Validada favor de verificar sus datos antes de guardar su información</b>");
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
         }
         return listaDtoMovilidadDocente;
     }
@@ -132,7 +133,7 @@ public class ServicioMovilidadDocente implements EjbMovilidadDocente{
 
             RegistrosMovilidad registrosMovilidad = ejbRegistroMovilidad.getRegistrosMovilidad(movDoc.getRegistroMovilidadDocente().getRegistroMovilidad());
             if (registrosMovilidad == null || registrosMovilidad.getRegistroMovilidad().isEmpty()) {
-                addDetailMessage("<b>No existe la Clave del Registro de Movilidad</b>");
+                Messages.addGlobalWarn("<b>No existe la Clave del Registro de Movilidad</b>");
 
             } else {
                 if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), registrosMovilidad.getPeriodoEscolarCursado())) {
@@ -150,18 +151,18 @@ public class ServicioMovilidadDocente implements EjbMovilidadDocente{
                         movDoc.getRegistroMovilidadDocente().setRegistro(movDocEncontrada.getRegistro());
                         movDoc.getRegistroMovilidadDocente().getRegistroMovilidad().setRegistro(ejbRegistroMovilidad.getRegistroMovilidadEspecifico(movDoc.getRegistroMovilidadDocente().getRegistroMovilidad().getRegistroMovilidad()));
                         f.edit(movDoc.getRegistroMovilidadDocente());
-                        addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
+                        Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
                     } else {
                         Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                         movDoc.getRegistroMovilidadDocente().setRegistro(registro.getRegistro());
                         movDoc.getRegistroMovilidadDocente().getRegistroMovilidad().setRegistro(ejbRegistroMovilidad.getRegistroMovilidadEspecifico(movDoc.getRegistroMovilidadDocente().getRegistroMovilidad().getRegistroMovilidad()));
                         f.create(movDoc.getRegistroMovilidadDocente());
-                        addDetailMessage("<b>Se guardaron los registros correctamente </b> ");
+                        Messages.addGlobalInfo("<b>Se guardaron los registros correctamente </b> ");
                     }
                     f.flush();
                 } else {
 
-                    addDetailMessage("<b>No puede registrar información de periodos anteriores</b>");
+                    Messages.addGlobalWarn("<b>No puede registrar información de periodos anteriores</b>");
                 }
             }
         });

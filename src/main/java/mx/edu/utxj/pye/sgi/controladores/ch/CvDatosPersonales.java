@@ -2,12 +2,7 @@ package mx.edu.utxj.pye.sgi.controladores.ch;
 
 import java.io.File;
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -29,7 +24,7 @@ import org.primefaces.model.StreamedContent;
 @Named
 @ManagedBean
 @ViewScoped
-public class DatosPersonales implements Serializable {
+public class CvDatosPersonales implements Serializable {
 
     private static final long serialVersionUID = -8842055922698338073L;
 
@@ -62,7 +57,7 @@ public class DatosPersonales implements Serializable {
             nuevoOBJInformacionAdicionalPersonal = ejbDatosUsuarioLogeado.mostrarInformacionAdicionalPersonalLogeado(controladorEmpleado.getEmpleadoLogeado());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
-            Logger.getLogger(DatosPersonales.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CvDatosPersonales.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -82,7 +77,7 @@ public class DatosPersonales implements Serializable {
             Messages.addGlobalInfo("¡Operación exitosa!!");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
-            Logger.getLogger(DatosPersonales.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CvDatosPersonales.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

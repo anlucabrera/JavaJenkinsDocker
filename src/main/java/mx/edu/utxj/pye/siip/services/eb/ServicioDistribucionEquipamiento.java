@@ -5,8 +5,8 @@
  */
 package mx.edu.utxj.pye.siip.services.eb;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -46,6 +46,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -77,6 +78,8 @@ public class ServicioDistribucionEquipamiento implements EjbDistribucionEquipami
             XSSFSheet primeraHoja = libroRegistro.getSheetAt(0);
             XSSFSheet segundaHoja = libroRegistro.getSheetAt(1);
             XSSFRow fila;
+            
+            try{
             if ((primeraHoja.getSheetName().equals("Distribución_Equipo_Computo")) || (segundaHoja.getSheetName().equals("Distribucion_Equipo_Comp_Int"))) {
 //            Lectura de la primera hoja
                 for (int i = 3; i <= primeraHoja.getLastRowNum(); i++) {
@@ -289,25 +292,31 @@ public class ServicioDistribucionEquipamiento implements EjbDistribucionEquipami
                 libroRegistro.close();
 
                 if (validarCelda.contains(false)) {
-                    addDetailMessage("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
-                    addDetailMessage(datosInvalidos.toString());
+                    Messages.addGlobalWarn("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                    Messages.addGlobalWarn(datosInvalidos.toString());
 
                     excel.delete();
                     ServicioArchivos.eliminarArchivo(rutaArchivo);
                     return Collections.EMPTY_LIST;
                 } else {
-                    addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                    Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
                     return dtoEquiposComputoCPE;
                 }
             } else {
                 libroRegistro.close();
                 excel.delete();
                 ServicioArchivos.eliminarArchivo(rutaArchivo);
-                addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+                Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
+                return Collections.EMPTY_LIST;
+            }
+            } catch (IOException e) {
+                libroRegistro.close();
+                ServicioArchivos.eliminarArchivo(rutaArchivo);
+                Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
                 return Collections.EMPTY_LIST;
             }
         } else {
-            addDetailMessage("<b>Ocurrio un error en la lectura del archivo</b>");
+            Messages.addGlobalError("<b>Ocurrio un error en la lectura del archivo</b>");
             return Collections.EMPTY_LIST;
         }
     }
@@ -330,6 +339,8 @@ public class ServicioDistribucionEquipamiento implements EjbDistribucionEquipami
             XSSFSheet primeraHoja = libroRegistro.getSheetAt(0);
             XSSFSheet segundaHoja = libroRegistro.getSheetAt(1);
             XSSFRow fila;
+            
+            try{
             if ((primeraHoja.getSheetName().equals("Distribución_Equipo_Computo")) || (segundaHoja.getSheetName().equals("Distribucion_Equipo_Comp_Int"))) {
 //            Lectura de la segunda hoja
                 for (int i = 3; i <= segundaHoja.getLastRowNum(); i++) {
@@ -542,25 +553,31 @@ public class ServicioDistribucionEquipamiento implements EjbDistribucionEquipami
                 libroRegistro.close();
 
                 if (validarCelda.contains(false)) {
-                    addDetailMessage("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
-                    addDetailMessage(datosInvalidos.toString());
+                    Messages.addGlobalWarn("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                    Messages.addGlobalWarn(datosInvalidos.toString());
 
                     excel.delete();
                     ServicioArchivos.eliminarArchivo(rutaArchivo);
                     return Collections.EMPTY_LIST;
                 } else {
-                    addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                    Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
                     return dtoEquiposComputoInternetCPE;
                 }
             } else {
                 libroRegistro.close();
                 excel.delete();
                 ServicioArchivos.eliminarArchivo(rutaArchivo);
-                addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+                Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
+                return Collections.EMPTY_LIST;
+            }
+            } catch (IOException e) {
+                libroRegistro.close();
+                ServicioArchivos.eliminarArchivo(rutaArchivo);
+                Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
                 return Collections.EMPTY_LIST;
             }
         } else {
-            addDetailMessage("<b>Ocurrio un error en la lectura del archivo</b>");
+            Messages.addGlobalError("<b>Ocurrio un error en la lectura del archivo</b>");
             return Collections.EMPTY_LIST;
         }
     }
@@ -592,7 +609,7 @@ public class ServicioDistribucionEquipamiento implements EjbDistribucionEquipami
                 facadeServGen.flush();
             }
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
@@ -622,7 +639,7 @@ public class ServicioDistribucionEquipamiento implements EjbDistribucionEquipami
                 facadeServGen.flush();
             }
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override

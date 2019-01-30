@@ -5,8 +5,8 @@
  */
 package mx.edu.utxj.pye.siip.services.eb;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -51,6 +51,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -84,113 +85,121 @@ public class ServiciosDistribucionInstalaciones implements EjbDistribucionInstal
             XSSFSheet segundaHoja = libroRegistro.getSheetAt(1);
             XSSFSheet tercerHoja = libroRegistro.getSheetAt(2);
             XSSFRow fila;
-            if ((primeraHoja.getSheetName().equals("Capacidad Instalada")) || (segundaHoja.getSheetName().equals("Distribución de Aulas")) || (tercerHoja.getSheetName().equals("Distribución de Lab. y Tall."))) {
+
+            try {
+                if ((primeraHoja.getSheetName().equals("Capacidad Instalada")) || (segundaHoja.getSheetName().equals("Distribución de Aulas")) || (tercerHoja.getSheetName().equals("Distribución de Lab. y Tall."))) {
 //            Lectura de la primer hoja
 
-                for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
-                    fila = (XSSFRow) (Row) primeraHoja.getRow(i);
-                    if (fila.getCell(1).getNumericCellValue() != 0) {
-                        capacidadInstaladaCE = new CapacidadInstaladaCiclosEscolares();
-                        dtoCapacidadInstaladaCE = new DTOCapacidadInstaladaCiclosEscolares();
-                        capacidadInstaladaTiposInstalaciones = new CapacidadInstaladaTiposInstalaciones();
+                    for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
+                        fila = (XSSFRow) (Row) primeraHoja.getRow(i);
+                        if (fila.getCell(1).getNumericCellValue() != 0) {
+                            capacidadInstaladaCE = new CapacidadInstaladaCiclosEscolares();
+                            dtoCapacidadInstaladaCE = new DTOCapacidadInstaladaCiclosEscolares();
+                            capacidadInstaladaTiposInstalaciones = new CapacidadInstaladaTiposInstalaciones();
 
-                        if (fila.getCell(1).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(1).getCellTypeEnum()) {
-                                case FORMULA:
-                                    dtoCapacidadInstaladaCE.setCicloEscolar(fila.getCell(0).getStringCellValue());
-                                    capacidadInstaladaCE.setCicloEscolar((int) fila.getCell(1).getNumericCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(1).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(1).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        dtoCapacidadInstaladaCE.setCicloEscolar(fila.getCell(0).getStringCellValue());
+                                        capacidadInstaladaCE.setCicloEscolar((int) fila.getCell(1).getNumericCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Ciclo Escolar en la columna: " + (0 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Ciclo Escolar en la columna: " + (0 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(3).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(3).getCellTypeEnum()) {
-                                case FORMULA:
-                                    capacidadInstaladaTiposInstalaciones.setDescripcion(fila.getCell(2).getStringCellValue());
-                                    capacidadInstaladaTiposInstalaciones.setInstalacion((short) ((int) fila.getCell(3).getNumericCellValue()));
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(3).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(3).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        capacidadInstaladaTiposInstalaciones.setDescripcion(fila.getCell(2).getStringCellValue());
+                                        capacidadInstaladaTiposInstalaciones.setInstalacion((short) ((int) fila.getCell(3).getNumericCellValue()));
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Instalación en la columna: " + (2 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Instalación en la columna: " + (2 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        capacidadInstaladaCE.setInstalacion(capacidadInstaladaTiposInstalaciones);
+                            capacidadInstaladaCE.setInstalacion(capacidadInstaladaTiposInstalaciones);
 
-                        if (fila.getCell(4).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(4).getCellTypeEnum()) {
-                                case FORMULA:
-                                    capacidadInstaladaTiposInstalaciones.setCapacidad((int) fila.getCell(4).getNumericCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(4).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(4).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        capacidadInstaladaTiposInstalaciones.setCapacidad((int) fila.getCell(4).getNumericCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Capacidad en la columna: " + (4 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Capacidad en la columna: " + (4 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(5).getCellTypeEnum() == CellType.NUMERIC) {
-                            switch (fila.getCell(5).getCellTypeEnum()) {
-                                case NUMERIC:
-                                    capacidadInstaladaCE.setUnidades((int) fila.getCell(5).getNumericCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(5).getCellTypeEnum() == CellType.NUMERIC) {
+                                switch (fila.getCell(5).getCellTypeEnum()) {
+                                    case NUMERIC:
+                                        capacidadInstaladaCE.setUnidades((int) fila.getCell(5).getNumericCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Unidades en la columna: " + (5 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Unidades en la columna: " + (5 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(6).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(6).getCellTypeEnum()) {
-                                case FORMULA:
-                                    dtoCapacidadInstaladaCE.setTotalEspaciosDocentes((int) (fila.getCell(6).getNumericCellValue()));
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(6).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(6).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        dtoCapacidadInstaladaCE.setTotalEspaciosDocentes((int) (fila.getCell(6).getNumericCellValue()));
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Espacios Docentes en la columna: " + (6 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Espacios Docentes en la columna: " + (6 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        dtoCapacidadInstaladaCE.setCapacidadInstaladaCiclosEscolares(capacidadInstaladaCE);
-                        dtoCapacidadInstaladaCiclosEscolares.add(dtoCapacidadInstaladaCE);
+                            dtoCapacidadInstaladaCE.setCapacidadInstaladaCiclosEscolares(capacidadInstaladaCE);
+                            dtoCapacidadInstaladaCiclosEscolares.add(dtoCapacidadInstaladaCE);
+                        }
                     }
-                }
 
-                libroRegistro.close();
+                    libroRegistro.close();
 
-                if (validarCelda.contains(false)) {
-                    addDetailMessage("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
-                    addDetailMessage(datosInvalidos.toString());
+                    if (validarCelda.contains(false)) {
+                        Messages.addGlobalWarn("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                        Messages.addGlobalWarn(datosInvalidos.toString());
 
+                        excel.delete();
+                        ServicioArchivos.eliminarArchivo(rutaArchivo);
+                        return Collections.EMPTY_LIST;
+                    } else {
+                        Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                        return dtoCapacidadInstaladaCiclosEscolares;
+                    }
+
+                } else {
+                    libroRegistro.close();
                     excel.delete();
                     ServicioArchivos.eliminarArchivo(rutaArchivo);
+                    Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
                     return Collections.EMPTY_LIST;
-                } else {
-                    addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
-                    return dtoCapacidadInstaladaCiclosEscolares;
                 }
-
-            } else {
+            } catch (IOException e) {
                 libroRegistro.close();
-                excel.delete();
                 ServicioArchivos.eliminarArchivo(rutaArchivo);
-                addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+                Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
                 return Collections.EMPTY_LIST;
             }
         } else {
-            addDetailMessage("<b>Ocurrio un error en la lectura del archivo</b>");
+            Messages.addGlobalError("<b>Ocurrio un error en la lectura del archivo</b>");
             return Collections.EMPTY_LIST;
         }
     }
@@ -215,126 +224,134 @@ public class ServiciosDistribucionInstalaciones implements EjbDistribucionInstal
             XSSFSheet segundaHoja = libroRegistro.getSheetAt(1);
             XSSFSheet tercerHoja = libroRegistro.getSheetAt(2);
             XSSFRow fila;
-            if ((primeraHoja.getSheetName().equals("Capacidad Instalada")) || (segundaHoja.getSheetName().equals("Distribución de Aulas")) || (tercerHoja.getSheetName().equals("Distribución de Lab. y Tall."))) {
+
+            try {
+                if ((primeraHoja.getSheetName().equals("Capacidad Instalada")) || (segundaHoja.getSheetName().equals("Distribución de Aulas")) || (tercerHoja.getSheetName().equals("Distribución de Lab. y Tall."))) {
 
 //            Lectura de la segunda hoja
-                for (int i = 2; i <= segundaHoja.getLastRowNum(); i++) {
-                    fila = (XSSFRow) (Row) segundaHoja.getRow(i);
-                    if (fila.getCell(1).getNumericCellValue() != 0) {
-                        distribucionAulaCPE = new DistribucionAulasCicloPeriodosEscolares();
-                        dtoDistribucionAulaCPE = new DTODistribucionAulasCPE();
-                        aulatipo = new AulasTipo();
+                    for (int i = 2; i <= segundaHoja.getLastRowNum(); i++) {
+                        fila = (XSSFRow) (Row) segundaHoja.getRow(i);
+                        if (fila.getCell(1).getNumericCellValue() != 0) {
+                            distribucionAulaCPE = new DistribucionAulasCicloPeriodosEscolares();
+                            dtoDistribucionAulaCPE = new DTODistribucionAulasCPE();
+                            aulatipo = new AulasTipo();
 
-                        if (fila.getCell(1).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(1).getCellTypeEnum()) {
-                                case FORMULA:
-                                    dtoDistribucionAulaCPE.setCicloEscolar(fila.getCell(0).getStringCellValue());
-                                    distribucionAulaCPE.setCicloEscolar((int) fila.getCell(1).getNumericCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(1).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(1).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        dtoDistribucionAulaCPE.setCicloEscolar(fila.getCell(0).getStringCellValue());
+                                        distribucionAulaCPE.setCicloEscolar((int) fila.getCell(1).getNumericCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Ciclo Escolar en la columna: " + (0 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Ciclo Escolar en la columna: " + (0 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(3).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(3).getCellTypeEnum()) {
-                                case FORMULA:
-                                    dtoDistribucionAulaCPE.setPeriodoEscolar(fila.getCell(2).getStringCellValue());
-                                    distribucionAulaCPE.setPeriodoEscolar((int) fila.getCell(3).getNumericCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(3).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(3).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        dtoDistribucionAulaCPE.setPeriodoEscolar(fila.getCell(2).getStringCellValue());
+                                        distribucionAulaCPE.setPeriodoEscolar((int) fila.getCell(3).getNumericCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Periodo Escolar en la columna: " + (2 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Periodo Escolar en la columna: " + (2 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(5).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(5).getCellTypeEnum()) {
-                                case FORMULA:
-                                    aulatipo.setNombre(fila.getCell(4).getStringCellValue());
-                                    aulatipo.setAulatipo((short) ((int) fila.getCell(5).getNumericCellValue()));
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(5).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(5).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        aulatipo.setNombre(fila.getCell(4).getStringCellValue());
+                                        aulatipo.setAulatipo((short) ((int) fila.getCell(5).getNumericCellValue()));
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Tipo de aula en la columna: " + (4 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Tipo de aula en la columna: " + (4 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        distribucionAulaCPE.setAula(aulatipo);
+                            distribucionAulaCPE.setAula(aulatipo);
 
-                        if (fila.getCell(6).getCellTypeEnum() == CellType.NUMERIC) {
-                            switch (fila.getCell(6).getCellTypeEnum()) {
-                                case NUMERIC:
-                                    distribucionAulaCPE.setNumero((int) fila.getCell(6).getNumericCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(6).getCellTypeEnum() == CellType.NUMERIC) {
+                                switch (fila.getCell(6).getCellTypeEnum()) {
+                                    case NUMERIC:
+                                        distribucionAulaCPE.setNumero((int) fila.getCell(6).getNumericCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Numero en la columna: " + (6 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Numero en la columna: " + (6 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(7).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(7).getCellTypeEnum()) {
-                                case FORMULA:
-                                    aulatipo.setCapacidadTurno(fila.getCell(7).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(7).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(7).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        aulatipo.setCapacidadTurno(fila.getCell(7).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Numero en la columna: " + (7 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Numero en la columna: " + (7 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(8).getCellTypeEnum() == CellType.NUMERIC) {
-                            switch (fila.getCell(8).getCellTypeEnum()) {
-                                case NUMERIC:
-                                    distribucionAulaCPE.setAcondicionadas((int) fila.getCell(8).getNumericCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(8).getCellTypeEnum() == CellType.NUMERIC) {
+                                switch (fila.getCell(8).getCellTypeEnum()) {
+                                    case NUMERIC:
+                                        distribucionAulaCPE.setAcondicionadas((int) fila.getCell(8).getNumericCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Aulas Acondicionadas en la columna: " + (8 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Aulas Acondicionadas en la columna: " + (8 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        dtoDistribucionAulaCPE.setDistribucionAulasCicloPeriodosEscolares(distribucionAulaCPE);
-                        dtoDistribucionAulasCPE.add(dtoDistribucionAulaCPE);
+                            dtoDistribucionAulaCPE.setDistribucionAulasCicloPeriodosEscolares(distribucionAulaCPE);
+                            dtoDistribucionAulasCPE.add(dtoDistribucionAulaCPE);
+                        }
                     }
-                }
-                libroRegistro.close();
+                    libroRegistro.close();
 
-                if (validarCelda.contains(false)) {
-                    addDetailMessage("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
-                    addDetailMessage(datosInvalidos.toString());
+                    if (validarCelda.contains(false)) {
+                        Messages.addGlobalWarn("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                        Messages.addGlobalWarn(datosInvalidos.toString());
 
+                        excel.delete();
+                        ServicioArchivos.eliminarArchivo(rutaArchivo);
+                        return Collections.EMPTY_LIST;
+                    } else {
+                        Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                        return dtoDistribucionAulasCPE;
+                    }
+
+                } else {
+                    libroRegistro.close();
                     excel.delete();
                     ServicioArchivos.eliminarArchivo(rutaArchivo);
+                    Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
                     return Collections.EMPTY_LIST;
-                } else {
-                    addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
-                    return dtoDistribucionAulasCPE;
                 }
-
-            } else {
+            } catch (IOException e) {
                 libroRegistro.close();
-                excel.delete();
                 ServicioArchivos.eliminarArchivo(rutaArchivo);
-                addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+                Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
                 return Collections.EMPTY_LIST;
             }
         } else {
-            addDetailMessage("<b>Ocurrio un error en la lectura del archivo</b>");
+            Messages.addGlobalError("<b>Ocurrio un error en la lectura del archivo</b>");
             return Collections.EMPTY_LIST;
         }
     }
@@ -361,146 +378,154 @@ public class ServiciosDistribucionInstalaciones implements EjbDistribucionInstal
             XSSFSheet segundaHoja = libroRegistro.getSheetAt(1);
             XSSFSheet tercerHoja = libroRegistro.getSheetAt(2);
             XSSFRow fila;
-            if ((primeraHoja.getSheetName().equals("Capacidad Instalada")) || (segundaHoja.getSheetName().equals("Distribución de Aulas")) || (tercerHoja.getSheetName().equals("Distribución de Lab. y Tall."))) {
+
+            try {
+                if ((primeraHoja.getSheetName().equals("Capacidad Instalada")) || (segundaHoja.getSheetName().equals("Distribución de Aulas")) || (tercerHoja.getSheetName().equals("Distribución de Lab. y Tall."))) {
 //            Lectura de la tercer hoja
-                for (int i = 2; i <= tercerHoja.getLastRowNum(); i++) {
-                    fila = (XSSFRow) (Row) tercerHoja.getRow(i);
-                    if (fila.getCell(1).getNumericCellValue() != 0) {
-                        distribucionLabTallCPE = new DistribucionLabtallCicloPeriodosEscolares();
-                        aulatipo = new AulasTipo();
-                        areaUniversidad = new AreasUniversidad();
-                        dtoDistribucionLabTallCPE = new DTODistribucionLabTallCPE();
+                    for (int i = 2; i <= tercerHoja.getLastRowNum(); i++) {
+                        fila = (XSSFRow) (Row) tercerHoja.getRow(i);
+                        if (fila.getCell(1).getNumericCellValue() != 0) {
+                            distribucionLabTallCPE = new DistribucionLabtallCicloPeriodosEscolares();
+                            aulatipo = new AulasTipo();
+                            areaUniversidad = new AreasUniversidad();
+                            dtoDistribucionLabTallCPE = new DTODistribucionLabTallCPE();
 
-                        if (fila.getCell(1).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(1).getCellTypeEnum()) {
-                                case FORMULA:
-                                    dtoDistribucionLabTallCPE.setCicloEscolar(fila.getCell(0).getStringCellValue());
-                                    distribucionLabTallCPE.setCicloEscolar((int) fila.getCell(1).getNumericCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(1).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(1).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        dtoDistribucionLabTallCPE.setCicloEscolar(fila.getCell(0).getStringCellValue());
+                                        distribucionLabTallCPE.setCicloEscolar((int) fila.getCell(1).getNumericCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Ciclo Escolar en la columna: " + (0 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Ciclo Escolar en la columna: " + (0 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(3).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(3).getCellTypeEnum()) {
-                                case FORMULA:
-                                    dtoDistribucionLabTallCPE.setPeriodoEscolar(fila.getCell(2).getStringCellValue());
-                                    distribucionLabTallCPE.setPeriodoEscolar((int) fila.getCell(3).getNumericCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(3).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(3).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        dtoDistribucionLabTallCPE.setPeriodoEscolar(fila.getCell(2).getStringCellValue());
+                                        distribucionLabTallCPE.setPeriodoEscolar((int) fila.getCell(3).getNumericCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Periodo Escolar en la columna: " + (2 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Periodo Escolar en la columna: " + (2 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(5).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(5).getCellTypeEnum()) {
-                                case FORMULA:
-                                    aulatipo.setNombre(fila.getCell(4).getStringCellValue());
-                                    aulatipo.setAulatipo((short) ((int) fila.getCell(5).getNumericCellValue()));
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(5).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(5).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        aulatipo.setNombre(fila.getCell(4).getStringCellValue());
+                                        aulatipo.setAulatipo((short) ((int) fila.getCell(5).getNumericCellValue()));
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Tipo de aula en la columna: " + (4 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Tipo de aula en la columna: " + (4 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        distribucionLabTallCPE.setAulaTipo(aulatipo);
+                            distribucionLabTallCPE.setAulaTipo(aulatipo);
 
-                        if (fila.getCell(6).getCellTypeEnum() == CellType.STRING) {
-                            switch (fila.getCell(6).getCellTypeEnum()) {
-                                case STRING:
-                                    distribucionLabTallCPE.setNombre(fila.getCell(6).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(6).getCellTypeEnum() == CellType.STRING) {
+                                switch (fila.getCell(6).getCellTypeEnum()) {
+                                    case STRING:
+                                        distribucionLabTallCPE.setNombre(fila.getCell(6).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Nombre en la columna: " + (6 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Nombre en la columna: " + (6 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(7).getCellTypeEnum() == CellType.STRING) {
-                            switch (fila.getCell(7).getCellTypeEnum()) {
-                                case STRING:
-                                    distribucionLabTallCPE.setCapacidad(fila.getCell(7).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(7).getCellTypeEnum() == CellType.STRING) {
+                                switch (fila.getCell(7).getCellTypeEnum()) {
+                                    case STRING:
+                                        distribucionLabTallCPE.setCapacidad(fila.getCell(7).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Capacidad en la columna: " + (7 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Capacidad en la columna: " + (7 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(9).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(9).getCellTypeEnum()) {
-                                case FORMULA:
-                                    areaUniversidad.setArea((short) ((int) fila.getCell(9).getNumericCellValue()));
-                                    areaUniversidad.setNombre(fila.getCell(8).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(9).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(9).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        areaUniversidad.setArea((short) ((int) fila.getCell(9).getNumericCellValue()));
+                                        areaUniversidad.setNombre(fila.getCell(8).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Área en la columna: " + (8 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Área en la columna: " + (8 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        distribucionLabTallCPE.setAreaResponsable(areaUniversidad.getArea());
+                            distribucionLabTallCPE.setAreaResponsable(areaUniversidad.getArea());
 
-                        if (fila.getCell(10).getCellTypeEnum() == CellType.NUMERIC) {
-                            switch (fila.getCell(10).getCellTypeEnum()) {
-                                case NUMERIC:
-                                    if (DateUtil.isCellDateFormatted(fila.getCell(10))) {
-                                        distribucionLabTallCPE.setFechaHabilitacion(fila.getCell(10).getDateCellValue());
-                                    }
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(10).getCellTypeEnum() == CellType.NUMERIC) {
+                                switch (fila.getCell(10).getCellTypeEnum()) {
+                                    case NUMERIC:
+                                        if (DateUtil.isCellDateFormatted(fila.getCell(10))) {
+                                            distribucionLabTallCPE.setFechaHabilitacion(fila.getCell(10).getDateCellValue());
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Fecha de habilitación en la columna: " + (10 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Fecha de habilitación en la columna: " + (10 + 1) + " y fila: " + (i + 1));
+
+                            dtoDistribucionLabTallCPE.setAreaResponsable(areaUniversidad);
+                            dtoDistribucionLabTallCPE.setDistribucionLabtallCicloPeriodosEscolares(distribucionLabTallCPE);
+
+                            dtoDistribucionLabsTallCPE.add(dtoDistribucionLabTallCPE);
                         }
-
-                        dtoDistribucionLabTallCPE.setAreaResponsable(areaUniversidad);
-                        dtoDistribucionLabTallCPE.setDistribucionLabtallCicloPeriodosEscolares(distribucionLabTallCPE);
-
-                        dtoDistribucionLabsTallCPE.add(dtoDistribucionLabTallCPE);
                     }
-                }
-                libroRegistro.close();
+                    libroRegistro.close();
 
-                if (validarCelda.contains(false)) {
-                    addDetailMessage("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
-                    addDetailMessage(datosInvalidos.toString());
+                    if (validarCelda.contains(false)) {
+                        Messages.addGlobalWarn("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                        Messages.addGlobalWarn(datosInvalidos.toString());
 
+                        excel.delete();
+                        ServicioArchivos.eliminarArchivo(rutaArchivo);
+                        return Collections.EMPTY_LIST;
+                    } else {
+                        Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                        return dtoDistribucionLabsTallCPE;
+                    }
+
+                } else {
+                    libroRegistro.close();
                     excel.delete();
                     ServicioArchivos.eliminarArchivo(rutaArchivo);
+                    Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
                     return Collections.EMPTY_LIST;
-                } else {
-                    addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
-                    return dtoDistribucionLabsTallCPE;
                 }
-
-            } else {
+            } catch (IOException e) {
                 libroRegistro.close();
-                excel.delete();
                 ServicioArchivos.eliminarArchivo(rutaArchivo);
-                addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+                Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
                 return Collections.EMPTY_LIST;
             }
         } else {
-            addDetailMessage("<b>Ocurrio un error en la lectura del archivo</b>");
+            Messages.addGlobalError("<b>Ocurrio un error en la lectura del archivo</b>");
             return Collections.EMPTY_LIST;
         }
     }
@@ -532,7 +557,7 @@ public class ServiciosDistribucionInstalaciones implements EjbDistribucionInstal
                 facadeServGen.flush();
             }
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
     
     @Override
@@ -562,7 +587,7 @@ public class ServiciosDistribucionInstalaciones implements EjbDistribucionInstal
                 facadeServGen.flush();
             }
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
@@ -592,7 +617,7 @@ public class ServiciosDistribucionInstalaciones implements EjbDistribucionInstal
                 facadeServGen.flush();
             }
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override

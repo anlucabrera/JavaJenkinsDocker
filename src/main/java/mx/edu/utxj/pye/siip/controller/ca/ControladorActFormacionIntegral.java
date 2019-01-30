@@ -344,7 +344,7 @@ public class ControladorActFormacionIntegral implements Serializable{
 
            } catch (Throwable ex) {
                Logger.getLogger(ControladorActFormacionIntegral.class.getName()).log(Level.SEVERE, null, ex);
-               addDetailMessage("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
+               Messages.addGlobalError("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
            }
     }
       
@@ -372,7 +372,7 @@ public class ControladorActFormacionIntegral implements Serializable{
             
         } catch (Throwable ex) {
             Logger.getLogger(ControladorPartActFormInt.class.getName()).log(Level.SEVERE, null, ex);
-            addDetailMessage("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
+            Messages.addGlobalError("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
         }
           
      }

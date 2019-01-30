@@ -37,6 +37,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 /**
  *
  * @author UTXJ
@@ -135,12 +136,12 @@ public class ServicioComAcadParticipantes implements EjbComAcadParticipantes{
                 }
             }
             libroRegistro.close();
-            addDetailMessage("<b>Hoja de Participantes de Comisiones Validada favor de verificar sus datos antes de guardar su información</b>");
+            Messages.addGlobalInfo("<b>Hoja de Participantes de Comisiones Validada favor de verificar sus datos antes de guardar su información</b>");
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
         }
         return listaDtoComAcadPart;
     }
@@ -152,7 +153,7 @@ public class ServicioComAcadParticipantes implements EjbComAcadParticipantes{
 
             ComisionesAcademicas comisionesAcademicas = ejbComisionesAcademicas.getRegistroComisionesAcademicas(participantes.getComisionesAcademicasParticipantes().getComisionAcademica());
             if (comisionesAcademicas == null || comisionesAcademicas.getComisionAcademica().isEmpty()) {
-                addDetailMessage("<b>No existe la Clave de Comisión Académica</b>");
+                Messages.addGlobalWarn("<b>No existe la Clave de Comisión Académica</b>");
 
             } else {
                 if (ejbModulos.validaEventoRegistro(ejbModulos.getEventoRegistro(), comisionesAcademicas.getRegistros().getEventoRegistro().getEventoRegistro())) {
@@ -169,13 +170,13 @@ public class ServicioComAcadParticipantes implements EjbComAcadParticipantes{
                             participantes.getComisionesAcademicasParticipantes().setRegistro(comAcadPartEncontrado.getRegistro());
                             participantes.getComisionesAcademicasParticipantes().getComisionAcademica().setRegistro(comAcadPartEncontrado.getComisionAcademica().getRegistro());
                             f.edit(participantes.getComisionesAcademicasParticipantes());
-                            addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
+                            Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
                         } else {
                             Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                             participantes.getComisionesAcademicasParticipantes().getComisionAcademica().setRegistro(ejbComisionesAcademicas.getRegistroComisionesAcademicasEspecifico(participantes.getComisionesAcademicasParticipantes().getComisionAcademica().getComisionAcademica()));
                             participantes.getComisionesAcademicasParticipantes().setRegistro(registro.getRegistro());
                             f.create(participantes.getComisionesAcademicasParticipantes());
-                            addDetailMessage("<b>Se guardaron los registros correctamente </b>");
+                            Messages.addGlobalInfo("<b>Se guardaron los registros correctamente </b>");
                         }
                         f.flush();
                     } catch (Throwable ex) {
@@ -183,7 +184,7 @@ public class ServicioComAcadParticipantes implements EjbComAcadParticipantes{
                     }
                 } else {
 
-                    addDetailMessage("<b>No puede registrar información de periodos anteriores</b>");
+                    Messages.addGlobalWarn("<b>No puede registrar información de periodos anteriores</b>");
                 }
             }
         });

@@ -5,8 +5,8 @@
  */
 package mx.edu.utxj.pye.siip.services.ca;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -39,6 +39,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -70,150 +71,158 @@ public class ServicioServiciosEnfermeriaCicloPeriodos implements EjbServiciosEnf
             libroRegistro = (XSSFWorkbook) WorkbookFactory.create(excel);
             XSSFSheet primeraHoja = libroRegistro.getSheetAt(0);
             XSSFRow fila;
-            if ((primeraHoja.getSheetName().equals("Servicios Enfermería"))) {
-                for (int i = 3; i <= primeraHoja.getLastRowNum(); i++) {
-                    fila = (XSSFRow) (Row) primeraHoja.getRow(i);
-                    if (fila.getCell(1).getNumericCellValue() != 0) {
-                        servicioEnfermeriaCicloPeriodo = new ServiciosEnfermeriaCicloPeriodos();
-                        servicioEnfermeriaTipo = new ServiciosEnfermeriaTipo();
-                        dtoServicioEnfermeriaCicloPeriodo = new DTOServiciosEnfemeriaCicloPeriodos();
 
-                        if (fila.getCell(1).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(1).getCellTypeEnum()) {
-                                case FORMULA:
-                                    servicioEnfermeriaCicloPeriodo.setCicloEscolar((int) fila.getCell(1).getNumericCellValue());
-                                    dtoServicioEnfermeriaCicloPeriodo.setCicloEscolar(fila.getCell(2).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+            try {
+                if ((primeraHoja.getSheetName().equals("Servicios Enfermería"))) {
+                    for (int i = 3; i <= primeraHoja.getLastRowNum(); i++) {
+                        fila = (XSSFRow) (Row) primeraHoja.getRow(i);
+                        if (fila.getCell(1).getNumericCellValue() != 0) {
+                            servicioEnfermeriaCicloPeriodo = new ServiciosEnfermeriaCicloPeriodos();
+                            servicioEnfermeriaTipo = new ServiciosEnfermeriaTipo();
+                            dtoServicioEnfermeriaCicloPeriodo = new DTOServiciosEnfemeriaCicloPeriodos();
+
+                            if (fila.getCell(1).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(1).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        servicioEnfermeriaCicloPeriodo.setCicloEscolar((int) fila.getCell(1).getNumericCellValue());
+                                        dtoServicioEnfermeriaCicloPeriodo.setCicloEscolar(fila.getCell(2).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Ciclo Escolar en la columna: " + (2 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Ciclo Escolar en la columna: " + (2 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(4).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(4).getCellTypeEnum()) {
-                                case FORMULA:
-                                    servicioEnfermeriaCicloPeriodo.setPeriodoEscolar((int) fila.getCell(4).getNumericCellValue());
-                                    dtoServicioEnfermeriaCicloPeriodo.setPeriodoEscolar(fila.getCell(5).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(4).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(4).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        servicioEnfermeriaCicloPeriodo.setPeriodoEscolar((int) fila.getCell(4).getNumericCellValue());
+                                        dtoServicioEnfermeriaCicloPeriodo.setPeriodoEscolar(fila.getCell(5).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Periodo Escolar en la columna: " + (5 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Periodo Escolar en la columna: " + (5 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(7).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(7).getCellTypeEnum()) {
-                                case FORMULA:
-                                    servicioEnfermeriaTipo.setServicio((short) ((int) fila.getCell(7).getNumericCellValue()));
-                                    servicioEnfermeriaTipo.setDescripcion(fila.getCell(8).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(7).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(7).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        servicioEnfermeriaTipo.setServicio((short) ((int) fila.getCell(7).getNumericCellValue()));
+                                        servicioEnfermeriaTipo.setDescripcion(fila.getCell(8).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Servicio en la columna: " + (8 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Servicio en la columna: " + (8 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(9).getCellTypeEnum() == CellType.NUMERIC) {
-                            switch (fila.getCell(9).getCellTypeEnum()) {
-                                case NUMERIC:
-                                    servicioEnfermeriaCicloPeriodo.setEstH((int) fila.getCell(9).getNumericCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(9).getCellTypeEnum() == CellType.NUMERIC) {
+                                switch (fila.getCell(9).getCellTypeEnum()) {
+                                    case NUMERIC:
+                                        servicioEnfermeriaCicloPeriodo.setEstH((int) fila.getCell(9).getNumericCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Estudiantes Hombres en la columna: " + (9 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Estudiantes Hombres en la columna: " + (9 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(10).getCellTypeEnum() == CellType.NUMERIC) {
-                            switch (fila.getCell(10).getCellTypeEnum()) {
-                                case NUMERIC:
-                                    servicioEnfermeriaCicloPeriodo.setEstM((int) fila.getCell(10).getNumericCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(10).getCellTypeEnum() == CellType.NUMERIC) {
+                                switch (fila.getCell(10).getCellTypeEnum()) {
+                                    case NUMERIC:
+                                        servicioEnfermeriaCicloPeriodo.setEstM((int) fila.getCell(10).getNumericCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Estudiantes Mujeres en la columna: " + (10 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Estudiantes Mujeres en la columna: " + (10 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(12).getCellTypeEnum() == CellType.NUMERIC) {
-                            switch (fila.getCell(12).getCellTypeEnum()) {
-                                case NUMERIC:
-                                    servicioEnfermeriaCicloPeriodo.setPerH((int) fila.getCell(12).getNumericCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(12).getCellTypeEnum() == CellType.NUMERIC) {
+                                switch (fila.getCell(12).getCellTypeEnum()) {
+                                    case NUMERIC:
+                                        servicioEnfermeriaCicloPeriodo.setPerH((int) fila.getCell(12).getNumericCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Personal Hombres en la columna: " + (12 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Personal Hombres en la columna: " + (12 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(13).getCellTypeEnum() == CellType.NUMERIC) {
-                            switch (fila.getCell(13).getCellTypeEnum()) {
-                                case NUMERIC:
-                                    servicioEnfermeriaCicloPeriodo.setPerM((int) fila.getCell(13).getNumericCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(13).getCellTypeEnum() == CellType.NUMERIC) {
+                                switch (fila.getCell(13).getCellTypeEnum()) {
+                                    case NUMERIC:
+                                        servicioEnfermeriaCicloPeriodo.setPerM((int) fila.getCell(13).getNumericCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Personal Mujeres en la columna: " + (13 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Personal Mujeres en la columna: " + (13 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(15).getCellTypeEnum() == CellType.STRING) {
-                            switch (fila.getCell(15).getCellTypeEnum()) {
-                                case STRING:
-                                    servicioEnfermeriaCicloPeriodo.setMes(fila.getCell(15).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(15).getCellTypeEnum() == CellType.STRING) {
+                                switch (fila.getCell(15).getCellTypeEnum()) {
+                                    case STRING:
+                                        servicioEnfermeriaCicloPeriodo.setMes(fila.getCell(15).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Mes en la columna: " + (15 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Mes en la columna: " + (15 + 1) + " y fila: " + (i + 1));
+
+                            servicioEnfermeriaCicloPeriodo.setServicio(servicioEnfermeriaTipo);
+                            dtoServicioEnfermeriaCicloPeriodo.setServiciosEnfermeriaCicloPeriodos(servicioEnfermeriaCicloPeriodo);
+
+                            listaDtoServiciosEnfemeriaCicloPeriodos.add(dtoServicioEnfermeriaCicloPeriodo);
                         }
-
-                        servicioEnfermeriaCicloPeriodo.setServicio(servicioEnfermeriaTipo);
-                        dtoServicioEnfermeriaCicloPeriodo.setServiciosEnfermeriaCicloPeriodos(servicioEnfermeriaCicloPeriodo);
-
-                        listaDtoServiciosEnfemeriaCicloPeriodos.add(dtoServicioEnfermeriaCicloPeriodo);
                     }
-                }
-                libroRegistro.close();
+                    libroRegistro.close();
 
-                if (validarCelda.contains(false)) {
-                    addDetailMessage("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
-                    addDetailMessage(datosInvalidos.toString());
+                    if (validarCelda.contains(false)) {
+                        Messages.addGlobalWarn("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                        Messages.addGlobalWarn(datosInvalidos.toString());
 
+                        excel.delete();
+                        ServicioArchivos.eliminarArchivo(rutaArchivo);
+                        return Collections.EMPTY_LIST;
+                    } else {
+                        Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                        return listaDtoServiciosEnfemeriaCicloPeriodos;
+                    }
+
+                } else {
+                    libroRegistro.close();
                     excel.delete();
                     ServicioArchivos.eliminarArchivo(rutaArchivo);
+                    Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
                     return Collections.EMPTY_LIST;
-                } else {
-                    addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
-                    return listaDtoServiciosEnfemeriaCicloPeriodos;
                 }
-
-            } else {
+            } catch (IOException e) {
                 libroRegistro.close();
-                excel.delete();
                 ServicioArchivos.eliminarArchivo(rutaArchivo);
-                addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+                Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
                 return Collections.EMPTY_LIST;
             }
         } else {
-            addDetailMessage("<b>Ocurrio un error en la lectura del archivo</b>");
+            Messages.addGlobalError("<b>Ocurrio un error en la lectura del archivo</b>");
             return Collections.EMPTY_LIST;
         }
     }
@@ -243,7 +252,7 @@ public class ServicioServiciosEnfermeriaCicloPeriodos implements EjbServiciosEnf
             }
             facadeEscolar.flush();
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override

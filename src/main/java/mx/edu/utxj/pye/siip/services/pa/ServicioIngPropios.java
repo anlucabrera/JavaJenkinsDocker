@@ -54,6 +54,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 /**
  *
  * @author UTXJ
@@ -171,8 +172,8 @@ public class ServicioIngPropios implements EjbIngPropios{
             }
             libroRegistro.close();
             if (validarCelda.contains(false)) {
-                    addDetailMessage("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
-                    addDetailMessage(datosInvalidos.toString());
+                    Messages.addGlobalError("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                    Messages.addGlobalError(datosInvalidos.toString());
                     excel.delete();
                     ServicioArchivos.eliminarArchivo(rutaArchivo);
                   
@@ -182,20 +183,20 @@ public class ServicioIngPropios implements EjbIngPropios{
                     
                     return Collections.EMPTY_LIST;
                 } else {
-                    addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                    Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
                     return listaDtoIngPropios;
                 }
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
             return Collections.EMPTY_LIST;
         }
     } catch (IOException e) {
             libroRegistro.close();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
+            Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
             return Collections.EMPTY_LIST;
     }
 
@@ -216,12 +217,12 @@ public class ServicioIngPropios implements EjbIngPropios{
                 if (registroAlmacenado) {
                     ingPropios.getIngresosPropiosCaptados().setRegistro(ingProEncontrado.getRegistro());
                     f.edit(ingPropios.getIngresosPropiosCaptados());
-                    addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
+                    Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
                 } else {
                     Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                     ingPropios.getIngresosPropiosCaptados().setRegistro(registro.getRegistro());
                     f.create(ingPropios.getIngresosPropiosCaptados());
-                    addDetailMessage("<b>Se guardaron los registros correctamente </b>");
+                    Messages.addGlobalInfo("<b>Se guardaron los registros correctamente </b>");
                 }
                 f.flush();
         });

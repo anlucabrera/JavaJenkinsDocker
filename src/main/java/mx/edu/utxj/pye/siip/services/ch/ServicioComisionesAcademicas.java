@@ -46,6 +46,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -195,8 +196,8 @@ public class ServicioComisionesAcademicas implements EjbComisionesAcademicas{
             }
             libroRegistro.close();
             if (validarCelda.contains(false)) {
-                    addDetailMessage("<b>La hoja de registros de Comisiones Académicas contiene datos que no son válidos, verifique los datos de la plantilla</b>");
-                    addDetailMessage(datosInvalidos.toString());
+                    Messages.addGlobalError("<b>La hoja de registros de Comisiones Académicas contiene datos que no son válidos, verifique los datos de la plantilla</b>");
+                    Messages.addGlobalError(datosInvalidos.toString());
                     
                     BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("C:\\archivos\\log\\output.txt"), "utf-8"));
                     out.write(datosInvalidos.toString());
@@ -204,20 +205,20 @@ public class ServicioComisionesAcademicas implements EjbComisionesAcademicas{
                     
                     return Collections.EMPTY_LIST;
                 } else {
-                    addDetailMessage("<b>Hoja de Comisiones Académicas Validada favor de verificar sus datos antes de guardar su información</b>");
+                    Messages.addGlobalInfo("<b>Hoja de Comisiones Académicas Validada favor de verificar sus datos antes de guardar su información</b>");
                     return listaDtoComisionesAcademicas;
                 }
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
             return Collections.EMPTY_LIST;
         }
     } catch (IOException e) {
             libroRegistro.close();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
+            Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
             return Collections.EMPTY_LIST;
     }
 
@@ -242,16 +243,16 @@ public class ServicioComisionesAcademicas implements EjbComisionesAcademicas{
                     comisiones.getComisionesAcademicas().setRegistro(comAcadEncontrado.getRegistro());
                     listaCondicional.add(comAcadEncontrado.getComisionAcademica());
                     f.edit(comisiones.getComisionesAcademicas());
-                    addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + comAcadEncontrado.getComisionAcademica());
+                    Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + comAcadEncontrado.getComisionAcademica());
                 } else{
-                    addDetailMessage("<b>No se pueden actualizar los registros con los siguientes datos: </b> " + comAcadEncontrado.getComisionAcademica());
+                    Messages.addGlobalWarn("<b>No se pueden actualizar los registros con los siguientes datos: </b> " + comAcadEncontrado.getComisionAcademica());
                 }
                 
             } else {
                 Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                 comisiones.getComisionesAcademicas().setRegistro(registro.getRegistro());
                 f.create(comisiones.getComisionesAcademicas());
-                addDetailMessage("<b>Se guardaron los registros correctamente</b>");
+                Messages.addGlobalInfo("<b>Se guardaron los registros correctamente</b>");
             }
             f.flush();
         });

@@ -5,13 +5,12 @@
  */
 package mx.edu.utxj.pye.siip.services.ca;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,6 @@ import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.prontuario.Meses;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.AsesoriasTutoriasCicloPeriodos;
@@ -55,6 +53,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -87,163 +86,183 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
             XSSFSheet primeraHoja = workBookAsesoriaTutoria.getSheetAt(0);
             XSSFRow fila;
 
-            if (primeraHoja.getSheetName().equals("Tutorías_Asesorías")) {
-                for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
-                    fila = (XSSFRow) (Row) primeraHoja.getRow(i);
-                    if ((fila.getCell(1).getNumericCellValue() > 0)) {
-                        dtoAsesoriaTutoriaCicloPeriodo = new DTOAsesoriasTutoriasCicloPeriodos();
-                        asesoriaTutoriaCicloPeriodo = new AsesoriasTutoriasCicloPeriodos();
-                        areaUniversidad = new AreasUniversidad();
+            try {
+                if (primeraHoja.getSheetName().equals("Tutorías_Asesorías")) {
+                    for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
+                        fila = (XSSFRow) (Row) primeraHoja.getRow(i);
+                        if ((fila.getCell(1).getNumericCellValue() > 0)) {
+                            dtoAsesoriaTutoriaCicloPeriodo = new DTOAsesoriasTutoriasCicloPeriodos();
+                            asesoriaTutoriaCicloPeriodo = new AsesoriasTutoriasCicloPeriodos();
+                            areaUniversidad = new AreasUniversidad();
 
-                        if (fila.getCell(6).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(6).getCellTypeEnum()) {
-                                case FORMULA:
-                                    asesoriaTutoriaCicloPeriodo.setPeriodoEscolar((int) fila.getCell(6).getNumericCellValue());
-                                    dtoAsesoriaTutoriaCicloPeriodo.setPeriodoEscolar(fila.getCell(5).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(6).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(6).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        asesoriaTutoriaCicloPeriodo.setPeriodoEscolar((int) fila.getCell(6).getNumericCellValue());
+                                        dtoAsesoriaTutoriaCicloPeriodo.setPeriodoEscolar(fila.getCell(5).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Periodo Escolar en la columna: " + (5 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Periodo Escolar en la columna: " + (5 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(8).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(8).getCellTypeEnum()) {
-                                case FORMULA:
-                                    asesoriaTutoriaCicloPeriodo.setTipoActividad(fila.getCell(8).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(8).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(8).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        asesoriaTutoriaCicloPeriodo.setTipoActividad(fila.getCell(8).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Tipo de actividad en la columna: " + (8 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Tipo de actividad en la columna: " + (8 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(13).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(13).getCellTypeEnum()) {
-                                case FORMULA:
-                                    areaUniversidad.setArea((short) fila.getCell(13).getNumericCellValue());
-                                    asesoriaTutoriaCicloPeriodo.setProgramaEducativo(areaUniversidad.getArea());
-                                    areaUniversidad.setNombre(fila.getCell(10).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(13).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(13).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        areaUniversidad.setArea((short) fila.getCell(13).getNumericCellValue());
+                                        asesoriaTutoriaCicloPeriodo.setProgramaEducativo(areaUniversidad.getArea());
+                                        areaUniversidad.setNombre(fila.getCell(10).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Programa educativo en la columna: " + (10 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Programa educativo en la columna: " + (10 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(15).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(15).getCellTypeEnum()) {
-                                case FORMULA:
-                                    asesoriaTutoriaCicloPeriodo.setCuatrimestre(String.valueOf((int) fila.getCell(15).getNumericCellValue()));
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(15).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(15).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        asesoriaTutoriaCicloPeriodo.setCuatrimestre(String.valueOf((int) fila.getCell(15).getNumericCellValue()));
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Cuatrimestre en la columna: " + (15 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Cuatrimestre en la columna: " + (15 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(17).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(17).getCellTypeEnum()) {
-                                case FORMULA:
-                                    asesoriaTutoriaCicloPeriodo.setGrupo(fila.getCell(17).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(17).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(17).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        asesoriaTutoriaCicloPeriodo.setGrupo(fila.getCell(17).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Grupo en la columna: " + (17 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Grupo en la columna: " + (17 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(18).getCellTypeEnum() == CellType.STRING) {
-                            switch (fila.getCell(18).getCellTypeEnum()) {
-                                case STRING:
-                                    asesoriaTutoriaCicloPeriodo.setAsunto(fila.getCell(18).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(18).getCellTypeEnum() == CellType.STRING) {
+                                switch (fila.getCell(18).getCellTypeEnum()) {
+                                    case STRING:
+                                        asesoriaTutoriaCicloPeriodo.setAsunto(fila.getCell(18).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Asunto en la columna: " + (18 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Asunto en la columna: " + (18 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(20).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(20).getCellTypeEnum()) {
-                                case FORMULA:
-                                    asesoriaTutoriaCicloPeriodo.setTipo(fila.getCell(20).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(20).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(20).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        asesoriaTutoriaCicloPeriodo.setTipo(fila.getCell(20).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Tipo en la columna: " + (20 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Tipo en la columna: " + (20 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(21).getCellTypeEnum() == CellType.NUMERIC) {
-                            switch (fila.getCell(21).getCellTypeEnum()) {
-                                case NUMERIC:
-                                    asesoriaTutoriaCicloPeriodo.setNoTutoriasAsesorias((short) fila.getCell(21).getNumericCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(21).getCellTypeEnum() == CellType.NUMERIC) {
+                                switch (fila.getCell(21).getCellTypeEnum()) {
+                                    case NUMERIC:
+                                        asesoriaTutoriaCicloPeriodo.setNoTutoriasAsesorias((short) fila.getCell(21).getNumericCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Numero de asesorías y tutorías en la columna: " + (21 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Numero de asesorías y tutorías en la columna: " + (21 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(22).getCellTypeEnum() == CellType.NUMERIC) {
-                            switch (fila.getCell(22).getCellTypeEnum()) {
-                                case NUMERIC:
-                                    asesoriaTutoriaCicloPeriodo.setAsistentes((short) fila.getCell(22).getNumericCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(22).getCellTypeEnum() == CellType.NUMERIC) {
+                                switch (fila.getCell(22).getCellTypeEnum()) {
+                                    case NUMERIC:
+                                        asesoriaTutoriaCicloPeriodo.setAsistentesHombres((short) fila.getCell(22).getNumericCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Asistentes en la columna: " + (22 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Asistentes en la columna: " + (22 + 1) + " y fila: " + (i + 1));
+
+                            if (fila.getCell(23).getCellTypeEnum() == CellType.NUMERIC) {
+                                switch (fila.getCell(23).getCellTypeEnum()) {
+                                    case NUMERIC:
+                                        asesoriaTutoriaCicloPeriodo.setAsistentesMujeres((short) fila.getCell(23).getNumericCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Asistentes en la columna: " + (23 + 1) + " y fila: " + (i + 1));
+                            }
+
+                            dtoAsesoriaTutoriaCicloPeriodo.setAsesoriasTutoriasCicloPeriodos(asesoriaTutoriaCicloPeriodo);
+                            dtoAsesoriaTutoriaCicloPeriodo.setAreasUniversidad(areaUniversidad);
+
+                            listaDtoAsesoriasTutoriasCicloPeriodos.add(dtoAsesoriaTutoriaCicloPeriodo);
                         }
-
-                        dtoAsesoriaTutoriaCicloPeriodo.setAsesoriasTutoriasCicloPeriodos(asesoriaTutoriaCicloPeriodo);
-                        dtoAsesoriaTutoriaCicloPeriodo.setAreasUniversidad(areaUniversidad);
-
-                        listaDtoAsesoriasTutoriasCicloPeriodos.add(dtoAsesoriaTutoriaCicloPeriodo);
                     }
-                }
-                workBookAsesoriaTutoria.close();
+                    workBookAsesoriaTutoria.close();
 
-                if (validarCelda.contains(false)) {
-                    addDetailMessage("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
-                    addDetailMessage(datosInvalidos.toString());
+                    if (validarCelda.contains(false)) {
+                        Messages.addGlobalWarn("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                        Messages.addGlobalWarn(datosInvalidos.toString());
 
+                        excelAsesoriaTutoria.delete();
+                        ServicioArchivos.eliminarArchivo(rutaArchivo);
+                        return Collections.EMPTY_LIST;
+                    } else {
+                        Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                        return listaDtoAsesoriasTutoriasCicloPeriodos;
+                    }
+
+                } else {
+                    workBookAsesoriaTutoria.close();
                     excelAsesoriaTutoria.delete();
                     ServicioArchivos.eliminarArchivo(rutaArchivo);
+                    Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
                     return Collections.EMPTY_LIST;
-                } else {
-                    addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
-                    return listaDtoAsesoriasTutoriasCicloPeriodos;
                 }
-
-            } else {
+            } catch (IOException e) {
                 workBookAsesoriaTutoria.close();
-                excelAsesoriaTutoria.delete();
                 ServicioArchivos.eliminarArchivo(rutaArchivo);
-                addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+                Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
                 return Collections.EMPTY_LIST;
             }
         } else {
-            addDetailMessage("<b>Ocurrio un error en la lectura del archivo</b>");
+            Messages.addGlobalError("<b>Ocurrio un error en la lectura del archivo</b>");
             return Collections.EMPTY_LIST;
         }
     }
@@ -275,7 +294,7 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
                 facadeEscolar.flush();
             }
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override

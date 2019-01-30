@@ -5,7 +5,6 @@
  */
 package mx.edu.utxj.pye.siip.controller.ca;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -148,7 +147,7 @@ public class ControladorActividadesVarias implements Serializable {
             filtros();
         } catch (Throwable ex) {
             Logger.getLogger(ControladorActividadesVarias.class.getName()).log(Level.SEVERE, null, ex);
-            addDetailMessage("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
+            Messages.addGlobalError("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
         }
     }
     

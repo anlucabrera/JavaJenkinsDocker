@@ -334,7 +334,7 @@ public class ControladorProgramasEstimulos implements Serializable{
                Ajax.update("formMuestraDatosActivos");
            } catch (Throwable ex) {
                Logger.getLogger(ControladorProgramasEstimulos.class.getName()).log(Level.SEVERE, null, ex);
-               addDetailMessage("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
+               Messages.addGlobalError("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
            }
     }
 }

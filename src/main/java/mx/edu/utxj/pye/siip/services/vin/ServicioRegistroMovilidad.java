@@ -59,6 +59,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 /**
  *
  * @author UTXJ
@@ -216,6 +217,9 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
                         int cuat= (int)fila.getCell(16).getNumericCellValue();
                         String c = Integer.toString(cuat);
                         registrosMovilidad.setCuatrimestreCursado(c);
+                        break;
+                    case STRING:
+                        registrosMovilidad.setCuatrimestreCursado(fila.getCell(16).getStringCellValue());
                         break;
                     default:
                         break;
@@ -378,24 +382,24 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
             }
             libroRegistro.close();
             if (validarCelda.contains(false)) {
-                    addDetailMessage("<b>Hoja de Registros de Movilidad contiene datos que no son válidos, verifique los datos de la plantilla</b>");
-                    addDetailMessage(datosInvalidos.toString());
+                    Messages.addGlobalError("<b>Hoja de Registros de Movilidad contiene datos que no son válidos, verifique los datos de la plantilla</b>");
+                    Messages.addGlobalError(datosInvalidos.toString());
                     return Collections.EMPTY_LIST;
                 } else {
-                    addDetailMessage("<b>Hoja de Registros de Movilidad Validada favor de verificar sus datos antes de guardar su información</b>");
+                    Messages.addGlobalInfo("<b>Hoja de Registros de Movilidad Validada favor de verificar sus datos antes de guardar su información</b>");
                     return listaDtoMovilidad;
                 }
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
             return Collections.EMPTY_LIST;
         }
     } catch (IOException e) {
             libroRegistro.close();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
+            Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
             return Collections.EMPTY_LIST;
     }
 
@@ -420,21 +424,21 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
                         movilidad.getRegistrosMovilidad().getInstitucionOrganizacion().setRegistro(ejbOrganismosVinculados.getRegistroOrganismoEspecifico(movilidad.getRegistrosMovilidad().getInstitucionOrganizacion().getEmpresa()));
                         f.edit(movilidad.getRegistrosMovilidad());
                         f.flush();
-                        addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + regMovEncontrada.getRegistroMovilidad());
+                        Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + regMovEncontrada.getRegistroMovilidad());
                     } else{
-                        addDetailMessage("<b>No se pueden actualizar los registros con los siguientes datos: </b> " + regMovEncontrada.getRegistroMovilidad());
+                        Messages.addGlobalWarn("<b>No se pueden actualizar los registros con los siguientes datos: </b> " + regMovEncontrada.getRegistroMovilidad());
                     }
                 } else {
                     Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                     movilidad.getRegistrosMovilidad().setRegistro(registro.getRegistro());
                     movilidad.getRegistrosMovilidad().getInstitucionOrganizacion().setRegistro(ejbOrganismosVinculados.getRegistroOrganismoEspecifico(movilidad.getRegistrosMovilidad().getInstitucionOrganizacion().getEmpresa()));
                     f.create(movilidad.getRegistrosMovilidad());
-                    addDetailMessage("<b>Se guardaron los registros correctamente </b> ");
+                    Messages.addGlobalInfo("<b>Se guardaron los registros correctamente </b> ");
                 }
                 f.flush();
             } else{
             
-             addDetailMessage("<b>No puede registrar información de periodos anteriores</b>");
+             Messages.addGlobalWarn("<b>No puede registrar información de periodos anteriores</b>");
             }   
         });
 }

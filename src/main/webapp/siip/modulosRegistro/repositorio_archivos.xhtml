@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:pr="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="true"/>
+    </ui:define>
+
+    <ui:define name="title">
+        Menú Principal
+    </ui:define>
+
+    <ui:define name="description">
+        Módulos de registro de Información
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Menú Principal - Modulos de Registro"/>
+        <adm:sidebar collapsed="true"/>
+
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <h:form id="formMenuPrincipal">
+
+                                <c:if test="#{controladorModulosRegistro.listaEjes.size() != 0}">
+                                    <p:tabView rendered="#{not empty controladorModulosRegistro.listaEjes}" value="#{controladorModulosRegistro.listaEjes}" var="list">  
+                                        <p:tab title="#{list.eje}">
+
+                                            <div class="box box-widget widget-user-2">
+                                                <div class="row">
+                                                    <div class="col-sm-12 border-right">
+                                                        <div class="description-block">
+                                                            <div class="row">
+                                                                
+                                                                <ui:repeat rendered="#{list.claveEje eq 3}" value="#{controladorModulosRegistro.listaModulosRegistroCA}" var="lmr">
+                                                                    <div class="col-lg-4 col-xs-6">
+                                                                        <div class="small-box bg-#{lmr.clase}">
+                                                                            <div class="inner">
+                                                                                <p style="font-size: 200%; font-weight: bold; text-align: left">#{lmr.tituloPrincipal}</p>
+                                                                                <p style="text-align: left">#{lmr.tipo}</p>
+                                                                            </div>
+                                                                            <div class="icon">
+                                                                                <i class="#{lmr.icono}"/>
+                                                                            </div>
+                                                                            <a href="#{lmr.link}.xhtml" class="small-box-footer">#{lmr.descripcionLink}</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </ui:repeat>
+                                                                
+                                                                <ui:repeat rendered="#{list.claveEje eq 5}" value="#{controladorModulosRegistro.listaModulosRegistroEB}" var="lmr">
+                                                                    <div class="col-lg-4 col-xs-6">
+                                                                        <div class="small-box bg-#{lmr.clase}">
+                                                                            <div class="inner">
+                                                                                <p style="font-size: 200%; font-weight: bold; text-align: left">#{lmr.tituloPrincipal}</p>
+                                                                                <p style="text-align: left">#{lmr.tipo}</p>
+                                                                            </div>
+                                                                            <div class="icon">
+                                                                                <i class="#{lmr.icono}"/>
+                                                                            </div>
+                                                                            <a href="#{lmr.link}.xhtml" class="small-box-footer">#{lmr.descripcionLink}</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </ui:repeat>
+                                                                
+                                                                <ui:repeat rendered="#{list.claveEje eq 2}" value="#{controladorModulosRegistro.listaModulosRegistroPA}" var="lmr">
+                                                                    <div class="col-lg-4 col-xs-6">
+                                                                        <div class="small-box bg-#{lmr.clase}">
+                                                                            <div class="inner">
+                                                                                <p style="font-size: 200%; font-weight: bold; text-align: left">#{lmr.tituloPrincipal}</p>
+                                                                                <p style="text-align: left">#{lmr.tipo}</p>
+                                                                            </div>
+                                                                            <div class="icon">
+                                                                                <i class="#{lmr.icono}"/>
+                                                                            </div>
+                                                                            <a href="#{lmr.link}.xhtml" class="small-box-footer">#{lmr.descripcionLink}</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </ui:repeat>
+                                                                
+                                                                <ui:repeat rendered="#{list.claveEje eq 1}" value="#{controladorModulosRegistro.listaModulosRegistroCH}" var="lmr">
+                                                                    <div class="col-lg-4 col-xs-6">
+                                                                        <div class="small-box bg-#{lmr.clase}">
+                                                                            <div class="inner">
+                                                                                <p style="font-size: 200%; font-weight: bold; text-align: left">#{lmr.tituloPrincipal}</p>
+                                                                                <p style="text-align: left">#{lmr.tipo}</p>
+                                                                            </div>
+                                                                            <div class="icon">
+                                                                                <i class="#{lmr.icono}"/>
+                                                                            </div>
+                                                                            <a href="#{lmr.link}.xhtml" class="small-box-footer">#{lmr.descripcionLink}</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </ui:repeat>
+                                                                
+                                                                <ui:repeat rendered="#{list.claveEje eq 4}" value="#{controladorModulosRegistro.listaModulosRegistroVIN}" var="lmr">
+                                                                    <div class="col-lg-4 col-xs-6">
+                                                                        <div class="small-box bg-#{lmr.clase}">
+                                                                            <div class="inner">
+                                                                                <p style="font-size: 200%; font-weight: bold; text-align: left">#{lmr.tituloPrincipal}</p>
+                                                                                <p style="text-align: left">#{lmr.tipo}</p>
+                                                                            </div>
+                                                                            <div class="icon">
+                                                                                <i class="#{lmr.icono}"/>
+                                                                            </div>
+                                                                            <a href="#{lmr.link}.xhtml" class="small-box-footer">#{lmr.descripcionLink}</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </ui:repeat>
+                                                                
+                                                                
+                                                                
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </p:tab>
+                                    </p:tabView>
+
+                                </c:if>
+
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

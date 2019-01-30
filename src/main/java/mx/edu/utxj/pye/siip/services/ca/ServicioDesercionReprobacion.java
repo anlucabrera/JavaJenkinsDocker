@@ -41,6 +41,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 
 
 /**
@@ -144,12 +145,12 @@ public class ServicioDesercionReprobacion implements EjbDesercionReprobacion{
             }
             listaDesercionReprobacion.setReprobacion(listaDtoReprobacion);
             libroRegistro.close();
-            addDetailMessage("<b>Hoja de Reprobación por Materia Validada favor de verificar sus datos antes de guardar su información</b>");
+            Messages.addGlobalInfo("<b>Hoja de Reprobación por Materia Validada favor de verificar sus datos antes de guardar su información</b>");
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
         }
         return listaDesercionReprobacion;
     }
@@ -162,7 +163,7 @@ public class ServicioDesercionReprobacion implements EjbDesercionReprobacion{
 
             DesercionPeriodosEscolares desercionPeriodosEscolares = ejbDesercionPeriodos.getRegistroDesercionClave(reprobacion.getDesercionReprobacionMaterias().getDpe());
             if (desercionPeriodosEscolares == null || desercionPeriodosEscolares.getDpe().isEmpty()) {
-                addDetailMessage("<b>No existe la Clave de Deserción Académica</b>");
+               Messages.addGlobalWarn("<b>No existe la Clave de Deserción Académica</b>");
 
             } else {
                 List<String> listaCondicional = new ArrayList<>();
@@ -181,17 +182,17 @@ public class ServicioDesercionReprobacion implements EjbDesercionReprobacion{
                         reprobacion.getDesercionReprobacionMaterias().setRegistro(desRepMatEncontrada.getRegistro());
                         reprobacion.getDesercionReprobacionMaterias().getDpe().setRegistro(ejbDesercionPeriodos.getRegistroDesercionPeriodosEspecifico(reprobacion.getDesercionReprobacionMaterias().getDpe().getDpe()));
                         f.edit(reprobacion.getDesercionReprobacionMaterias());
-                        addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
+                        Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
 
                     } else {
-                        addDetailMessage("<b>No se pueden actualizar los registros con los siguientes datos: </b> " + listaCondicional.toString() + " porque no son del periodo actual");
+                        Messages.addGlobalWarn("<b>No se pueden actualizar los registros con los siguientes datos: </b> " + listaCondicional.toString() + " porque no son del periodo actual");
                     }
                 } else {
                     Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                     reprobacion.getDesercionReprobacionMaterias().getDpe().setRegistro(ejbDesercionPeriodos.getRegistroDesercionPeriodosEspecifico(reprobacion.getDesercionReprobacionMaterias().getDpe().getDpe()));
                     reprobacion.getDesercionReprobacionMaterias().setRegistro(registro.getRegistro());
                     f.create(reprobacion.getDesercionReprobacionMaterias());
-                    addDetailMessage("<b>Se guardaron los registros correctamente </b> ");
+                    Messages.addGlobalInfo("<b>Se guardaron los registros correctamente </b> ");
                 }
                 f.flush();
             }

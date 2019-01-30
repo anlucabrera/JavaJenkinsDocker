@@ -38,6 +38,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 /**
  *
  * @author UTXJ
@@ -123,12 +124,12 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
                 }
             }
             libroRegistro.close();
-            addDetailMessage("<b>Hoja de Participantes de Actividades de Formación Integral Validada favor de verificar sus datos antes de guardar su información</b>");
+            Messages.addGlobalInfo("<b>Hoja de Participantes de Actividades de Formación Integral Validada favor de verificar sus datos antes de guardar su información</b>");
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
-            addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+            Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
         }
         return listaDtoParticipantesActFormInt;
     }
@@ -139,7 +140,7 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
             lista.forEach((partActFormInt) -> {
             ActividadesFormacionIntegral actividadesFormacionIntegral = ejbActFormacionIntegral.getRegistroActividadesFormacionIntegral(partActFormInt.getParticipantesActividadesFormacionIntegral().getActividadFormacionIntegral().getActividadFormacionIntegral());
             if (actividadesFormacionIntegral == null || actividadesFormacionIntegral.getActividadFormacionIntegral().isEmpty()) {
-                addDetailMessage("<b>No existe la Clave de Actividad de Formación Integral</b>");
+                Messages.addGlobalWarn("<b>No existe la Clave de Actividad de Formación Integral</b>");
 
             } else {
                 if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), actividadesFormacionIntegral.getPeriodo())) {
@@ -157,20 +158,20 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
                             partActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().setRegistro(ejbMatriculaPeriodosEscolares.getRegistroMatriculaEspecifico(partActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getMatricula(), partActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getPeriodo()));
                             partActFormInt.getParticipantesActividadesFormacionIntegral().getActividadFormacionIntegral().setRegistro(ejbActFormacionIntegral.getRegistroActFormacionIntegralEspecifico(partActFormInt.getParticipantesActividadesFormacionIntegral().getActividadFormacionIntegral().getActividadFormacionIntegral()));
                             f.edit(partActFormInt.getParticipantesActividadesFormacionIntegral());
-                            addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
+                            Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
                         } else {
                             Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                             partActFormInt.getParticipantesActividadesFormacionIntegral().setRegistro(registro.getRegistro());
                             partActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().setRegistro(ejbMatriculaPeriodosEscolares.getRegistroMatriculaEspecifico(partActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getMatricula(), partActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getPeriodo()));
                             partActFormInt.getParticipantesActividadesFormacionIntegral().getActividadFormacionIntegral().setRegistro(ejbActFormacionIntegral.getRegistroActFormacionIntegralEspecifico(partActFormInt.getParticipantesActividadesFormacionIntegral().getActividadFormacionIntegral().getActividadFormacionIntegral()));
                             f.create(partActFormInt.getParticipantesActividadesFormacionIntegral());
-                            addDetailMessage("<b>Se guardaron los registros correctamente</b> ");
+                            Messages.addGlobalInfo("<b>Se guardaron los registros correctamente</b> ");
                         }
                         f.flush();
                     }
                 } else {
 
-                    addDetailMessage("<b>No puede registrar información de periodos anteriores</b>");
+                    Messages.addGlobalWarn("<b>No puede registrar información de periodos anteriores</b>");
                 }
             }
         });

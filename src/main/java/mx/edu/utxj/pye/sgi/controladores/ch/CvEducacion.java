@@ -1,6 +1,5 @@
 package mx.edu.utxj.pye.sgi.controladores.ch;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,7 +31,7 @@ import org.omnifaces.util.Messages;
 @Named
 @ManagedBean
 @ViewScoped
-public class ControladorEducacion implements Serializable {
+public class CvEducacion implements Serializable {
 
     private static final long serialVersionUID = 2917873066237326818L;
 // variables basicas
@@ -64,8 +63,7 @@ public class ControladorEducacion implements Serializable {
 
     @PostConstruct
     public void init() {
-        System.out.println("ControladorEducacion Inicio: " + System.currentTimeMillis());
-        // se realiza la inicializacion de las variabes, objetos y listas
+                // se realiza la inicializacion de las variabes, objetos y listas
         formaTyC = false;
         nomCarrera = false;
         
@@ -84,14 +82,12 @@ public class ControladorEducacion implements Serializable {
         nuevaListaCapacitacionesExternas.clear();
 
         mostrarListas();
-        System.out.println("ControladorEducacion Fin: " + System.currentTimeMillis());
-    }
+            }
 
     public void reiniciarValores() {
         grado = 0;
         claveR = 0;
         tipoCur = 0;
-        file = null;
         claveREX = 0;
         claveRAP = 0;
         modalida = 0;
@@ -99,9 +95,9 @@ public class ControladorEducacion implements Serializable {
         direccionInt = 0;
         direccionInt3 = 0;
         direccionInt4 = 0;
-        nuevoOBJFormacionAcademica = null;
-        nuevoOBJExpeienciasLaborales = null;
-        nuevoOBJCapacitacionespersonal = null;
+        nuevoOBJFormacionAcademica = new FormacionAcademica();
+        nuevoOBJExpeienciasLaborales = new ExperienciasLaborales();
+        nuevoOBJCapacitacionespersonal = new Capacitacionespersonal();
     }
     ////////////////////////////////////////////Formación Académica\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
    
@@ -140,7 +136,7 @@ public class ControladorEducacion implements Serializable {
             utilidadesCH.mensajes("", "I", "C");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
-            Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CvEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -150,26 +146,26 @@ public class ControladorEducacion implements Serializable {
             if (formacionAcademica.getEvidenciaCedula() != null) {
                 CargaArchivosCH.eliminarArchivo(formacionAcademica.getEvidenciaCedula());
             }
-            
+
             //También se evalúa si su propiedad evidenciaTitulo cuenta con información, de ser así se procede a invocar el método eliminarArchivo del controlador CargaArchivosCH el cual removerá el archivo permanentemente del servidor.
             if (formacionAcademica.getEvidenciaTitulo() != null) {
                 CargaArchivosCH.eliminarArchivo(formacionAcademica.getEvidenciaTitulo());
-            } 
-            
+            }
+
             //Después de comprobar la existencia de archivos relacionados al registro, se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
             utilidadesCH.agregaBitacora(usuario, formacionAcademica.getFormacion().toString(), "Formación Académica", "Delate");
-            
+
             //Posteriormente de realizar el registro en la bitácora se procede a eliminar el registro, esto invocado al “EJB”
             ejbEducacion.eliminarFormacionAcademica(formacionAcademica);
-            
+
             //Al finalizar los dos registros de información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();” 
             mostrarListas();
-            
+
             //Finalmente se le informa al usuario cual es el resultado obtenido
             utilidadesCH.mensajes("", "I", "C");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
-            Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CvEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -177,24 +173,24 @@ public class ControladorEducacion implements Serializable {
         try {
             //Primero se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
             utilidadesCH.agregaBitacora(usuario, nuevoOBJFormacionAcademica.getFormacion().toString(), "Formación Académica", "Update");
-            
+
             //Se realiza la asignación de los valores a actualizar
             nuevoOBJFormacionAcademica.getNivelEscolaridad().setGrado(grado);
-            
+
             //Se procede a invocar el “EJB” el cual mediante la recepción del objeto se encargará de procesar y actualizar la información en la BD. 
             nuevoOBJFormacionAcademica = ejbEducacion.actualizarFormacionAcademica(nuevoOBJFormacionAcademica);
-                        
+
             //Al finalizar la actualización de la información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();”
             mostrarListas();
-            
+
             //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
             reiniciarValores();
-            
+
             //Finalmente se le informa al usuario cual es el resultado obtenido
             utilidadesCH.mensajes("", "I", "C");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CvEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -235,7 +231,7 @@ public class ControladorEducacion implements Serializable {
             utilidadesCH.mensajes("", "I", "C");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
-            Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CvEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -246,24 +242,24 @@ public class ControladorEducacion implements Serializable {
             if (experienciasLaborales.getEvidenciaNombremiento() != null) {
                 CargaArchivosCH.eliminarArchivo(experienciasLaborales.getEvidenciaNombremiento());
             }
-            
+
             //Después de comprobar la existencia de archivos relacionados al registro, se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
             utilidadesCH.agregaBitacora(usuario, experienciasLaborales.getEmpleo().toString(), "Experiencia Laboral", "Delate");
-            
+
             //Posteriormente de realizar el registro en la bitácora se procede a eliminar el registro, esto invocado al “EJB”
             ejbEducacion.eliminarExperienciasLaborales(experienciasLaborales);
-            
+
             //Al finalizar los dos registros de información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();” 
             mostrarListas();
-            
+
             //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
             pestaniaActiva = 1;
-            
+
             //Finalmente se le informa al usuario cual es el resultado obtenido
             utilidadesCH.mensajes("", "I", "C");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
-            Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CvEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -278,11 +274,14 @@ public class ControladorEducacion implements Serializable {
             //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
             pestaniaActiva = 1;
 
+            //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
+            reiniciarValores();
+
             //Finalmente se le informa al usuario cual es el resultado obtenido
             utilidadesCH.mensajes("", "I", "C");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CvEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -303,17 +302,17 @@ public class ControladorEducacion implements Serializable {
             nuevoOBJCapacitacionespersonal.setEstatus("Denegado");
 
             //En este apartado se procede a comprobar si la información a registrar ya existe en la BD, en caso de ya existir se envía la información al método “updateFormacion” el cual sirve para actualizar la información, posteriormente se cierra el flujo del proceso.
-            if (nuevoOBJFormacionAcademica.getFormacion() == null) {
+            if (nuevoOBJFormacionAcademica.getFormacion() != null) {
                 updateCapacitacion();
                 return;
             }
-            
+
             //En caso de que sea información nueva se procede a enviar la información al “EJB” el cual la agregara a la BD.
             nuevoOBJCapacitacionespersonal = ejbEducacion.crearNuevoCapacitacionespersonal(nuevoOBJCapacitacionespersonal);
-            
+
             //Después de agregar la información a la BD, se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
             utilidadesCH.agregaBitacora(usuario, nuevoOBJCapacitacionespersonal.getCursoClave().toString(), "Capacitación Personal", "Insert");
-            
+
             //Al finalizar los dos registros de información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();”
             mostrarListas();
 
@@ -327,7 +326,7 @@ public class ControladorEducacion implements Serializable {
             utilidadesCH.mensajes("", "I", "C");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
-            Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CvEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -354,7 +353,7 @@ public class ControladorEducacion implements Serializable {
             utilidadesCH.mensajes("", "I", "C");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
-            Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CvEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -373,11 +372,14 @@ public class ControladorEducacion implements Serializable {
             //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
             pestaniaActiva = 1;
 
+            //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
+            reiniciarValores();
+
             //Finalmente se le informa al usuario cual es el resultado obtenido
             utilidadesCH.mensajes("", "I", "C");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CvEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -388,17 +390,17 @@ public class ControladorEducacion implements Serializable {
             listaGrados = ejbDatosUsuarioLogeado.mostrarListaGrados();
             listaCursos = ejbDatosUsuarioLogeado.mostrarListaCursosTipo();
             listaModalidades = ejbDatosUsuarioLogeado.mostrarListaCursosModalidad();
-            
+
             //Las listas son llenadas con los registros existentes del usuario logeado en la BD, esto mediante la recepción de su clave.
             nuevaListaFormacionAcademica = ejbEducacion.mostrarFormacionAcademica(usuario);
             nuevaListaExperienciasLaborales = ejbEducacion.mostrarExperienciasLaborales(usuario);
-            
+
             //Las listas son llenadas con los registros existentes del usuario logeado en la BD, esto mediante la recepción de su clave y el tipo de registro.
             nuevaListaCapacitacionesInternas = ejbEducacion.mostrarCapacitacionespersonalTipo(usuario, "Interna");
             nuevaListaCapacitacionesExternas = ejbEducacion.mostrarCapacitacionespersonalTipo(usuario, "Externa");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
-            Logger.getLogger(ControladorEducacion.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CvEducacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -418,32 +420,32 @@ public class ControladorEducacion implements Serializable {
                 utilidadesCH.mensajes(" es necesario el tipo de evidencia a cargar", "W", "C");
                 break;
         }
-        //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
-        pestaniaActiva = 1;
-        //Finalmente se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
-        reiniciarValores();
+        //Antes de culminar se actualiza el valor de la variable para permitir guardar la información.
+        direccionInt = 1;
+        //Finalmente se procede a reiniciar las variables utilizadas en el método
+        file = null;
     }
 
     public void agregarEvidenciaExperienciaLab() {
         //Se invoca el método agregarEvidencias en el cual se envía ciertos parámetros (descritos dentro del método) el cual regresara la ruta del archivo ya almacenado en el servidor.
         nuevoOBJExpeienciasLaborales.setEvidenciaNombremiento(utilidadesCH.agregarEvidencias(file, usuario.toString(), "experienciaLaboral", ""));
-        
         //Antes de culminar se actualiza el valor de la variable para permitir guardar la información.
         direccionInt3 = 1;
-        
         //Finalmente se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
         pestaniaActiva = 1;
+        //Finalmente se procede a reiniciar las variables utilizadas en el método
+        file = null;
     }
 
     public void agregarEvidenciaCapacitacion() {
         //Se invoca el método agregarEvidencias en el cual se envía ciertos parámetros (descritos dentro del método) el cual regresara la ruta del archivo ya almacenado en el servidor.
         nuevoOBJCapacitacionespersonal.setEvidenciaCapacitacion(utilidadesCH.agregarEvidencias(file, usuario.toString(), "capacitacion", ""));
-
         //Antes de culminar se actualiza el valor de la variable para permitir guardar la información.
         direccionInt4 = 1;
-
         //Finalmente se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
         pestaniaActiva = 2;
+        //Finalmente se procede a reiniciar las variables utilizadas en el método
+        file = null;
     }
 
     public void asignaGrado() {
@@ -475,28 +477,82 @@ public class ControladorEducacion implements Serializable {
 
     public void filtrarInfoEducacion() {
         switch (grado) {
-            case 1:                nomCarrera = false;                formaTyC = false;                break;
-            case 2:                nomCarrera = false;                formaTyC = false;                break;
-            case 3:                nomCarrera = false;                formaTyC = false;                break;
-            case 4:                nomCarrera = false;                formaTyC = false;                break;
-            case 5:                nomCarrera = false;                formaTyC = false;                break;
-            case 6:                nomCarrera = false;                formaTyC = false;                break;
-            case 7:                nomCarrera = true;                formaTyC = false;                break;
-            case 8:                nomCarrera = true;                formaTyC = true;                break;
-            case 9:                nomCarrera = true;                formaTyC = false;                break;
-            case 10:                nomCarrera = true;                formaTyC = false;                break;
-            case 11:                nomCarrera = true;                formaTyC = true;                break;
-            case 12:                nomCarrera = true;                formaTyC = false;                break;
-            case 13:                nomCarrera = true;                formaTyC = false;                break;
-            case 14:                nomCarrera = true;                formaTyC = true;                break;
-            case 15:                nomCarrera = true;                formaTyC = true;                break;
-            case 16:                nomCarrera = true;                formaTyC = false;                break;
-            case 17:                nomCarrera = true;                formaTyC = true;                break;
-            default:                nomCarrera = false;                formaTyC = false;                break;
+            case 1:
+                nomCarrera = false;
+                formaTyC = false;
+                break;
+            case 2:
+                nomCarrera = false;
+                formaTyC = false;
+                break;
+            case 3:
+                nomCarrera = false;
+                formaTyC = false;
+                break;
+            case 4:
+                nomCarrera = false;
+                formaTyC = false;
+                break;
+            case 5:
+                nomCarrera = false;
+                formaTyC = false;
+                break;
+            case 6:
+                nomCarrera = false;
+                formaTyC = false;
+                break;
+            case 7:
+                nomCarrera = true;
+                formaTyC = false;
+                break;
+            case 8:
+                nomCarrera = true;
+                formaTyC = true;
+                break;
+            case 9:
+                nomCarrera = true;
+                formaTyC = false;
+                break;
+            case 10:
+                nomCarrera = true;
+                formaTyC = false;
+                break;
+            case 11:
+                nomCarrera = true;
+                formaTyC = true;
+                break;
+            case 12:
+                nomCarrera = true;
+                formaTyC = false;
+                break;
+            case 13:
+                nomCarrera = true;
+                formaTyC = false;
+                break;
+            case 14:
+                nomCarrera = true;
+                formaTyC = true;
+                break;
+            case 15:
+                nomCarrera = true;
+                formaTyC = true;
+                break;
+            case 16:
+                nomCarrera = true;
+                formaTyC = false;
+                break;
+            case 17:
+                nomCarrera = true;
+                formaTyC = true;
+                break;
+            default:
+                nomCarrera = false;
+                formaTyC = false;
+                break;
         }
     }
-    
+
     public void metodoBase() {
-        
+
     }
 }

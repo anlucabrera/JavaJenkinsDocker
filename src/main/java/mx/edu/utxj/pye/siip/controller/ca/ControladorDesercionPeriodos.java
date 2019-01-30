@@ -178,7 +178,7 @@ public class ControladorDesercionPeriodos implements Serializable {
 
            } catch (Throwable ex) {
                Logger.getLogger(ControladorDesercionPeriodos.class.getName()).log(Level.SEVERE, null, ex);
-               addDetailMessage("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
+               Messages.addGlobalError("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
            }
     }
       
@@ -206,7 +206,7 @@ public class ControladorDesercionPeriodos implements Serializable {
             
         } catch (Throwable ex) {
             Logger.getLogger(ControladorDesercionReprobacion.class.getName()).log(Level.SEVERE, null, ex);
-            addDetailMessage("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
+            Messages.addGlobalError("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
         }
           
      }

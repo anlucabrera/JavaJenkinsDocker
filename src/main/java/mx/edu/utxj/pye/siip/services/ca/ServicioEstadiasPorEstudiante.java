@@ -5,13 +5,12 @@
  */
 package mx.edu.utxj.pye.siip.services.ca;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +53,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -91,139 +91,155 @@ public class ServicioEstadiasPorEstudiante implements EjbEstadiasPorEstudiante {
             XSSFSheet primeraHoja = libroRegistro.getSheetAt(0);
             XSSFRow fila;
 
-            Integer matricula = 0;
-            String matriculaNueva = "000000";
-            if ((primeraHoja.getSheetName().equals("Estadías"))) {
-                for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
-                    fila = (XSSFRow) (Row) primeraHoja.getRow(i);
-                    if (fila.getCell(1).getNumericCellValue() != 0) {
-                        areaUniversidad = new AreasUniversidad();
-                        organismoVinculado = new OrganismosVinculados();
-                        matriculaPeriodosEscolar = new MatriculaPeriodosEscolares();
-                        estadiaPorEstudiante = new EstadiasPorEstudiante();
-                        dtoEstadiaPorEstudiante = new DTOEstadiasPorEstudiante();
+            try {
+                Integer matricula = 0;
+                String matriculaNueva = "000000";
+                if ((primeraHoja.getSheetName().equals("Estadías"))) {
+                    for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
+                        fila = (XSSFRow) (Row) primeraHoja.getRow(i);
+                        if (fila.getCell(1).getNumericCellValue() != 0) {
+                            areaUniversidad = new AreasUniversidad();
+                            organismoVinculado = new OrganismosVinculados();
+                            matriculaPeriodosEscolar = new MatriculaPeriodosEscolares();
+                            estadiaPorEstudiante = new EstadiasPorEstudiante();
+                            dtoEstadiaPorEstudiante = new DTOEstadiasPorEstudiante();
 
-                        if (fila.getCell(1).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(1).getCellTypeEnum()) {
-                                case FORMULA:
-                                    estadiaPorEstudiante.setCicloEscolar((int) fila.getCell(1).getNumericCellValue());
-                                    dtoEstadiaPorEstudiante.setCicloEscolar(fila.getCell(2).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(1).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(1).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        estadiaPorEstudiante.setCicloEscolar((int) fila.getCell(1).getNumericCellValue());
+                                        dtoEstadiaPorEstudiante.setCicloEscolar(fila.getCell(2).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Ciclo escolar en la columna: " + (2 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Ciclo escolar en la columna: " + (2 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(4).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(4).getCellTypeEnum()) {
-                                case FORMULA:
-                                    estadiaPorEstudiante.setGeneracion((short) ((int) fila.getCell(4).getNumericCellValue()));
-                                    dtoEstadiaPorEstudiante.setGeneracion(fila.getCell(5).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(4).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(4).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        estadiaPorEstudiante.setGeneracion((short) ((int) fila.getCell(4).getNumericCellValue()));
+                                        dtoEstadiaPorEstudiante.setGeneracion(fila.getCell(5).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Generación en la columna: " + (5 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Generación en la columna: " + (5 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(7).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(7).getCellTypeEnum()) {
-                                case FORMULA:
-                                    matriculaPeriodosEscolar.setPeriodo((int) fila.getCell(7).getNumericCellValue());
-                                    dtoEstadiaPorEstudiante.setPeriodoEscolar(fila.getCell(8).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(7).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(7).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        matriculaPeriodosEscolar.setPeriodo((int) fila.getCell(7).getNumericCellValue());
+                                        dtoEstadiaPorEstudiante.setPeriodoEscolar(fila.getCell(8).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Periodo Escolar en la columna: " + (8 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Periodo Escolar en la columna: " + (8 + 1) + " y fila: " + (i + 1));
-                        }
 
 //                    Matricula
-                        if (fila.getCell(9).getCellTypeEnum() == CellType.NUMERIC) {
-                            switch (fila.getCell(9).getCellTypeEnum()) {
-                                case NUMERIC:
-                                    matricula = (int) fila.getCell(9).getNumericCellValue();
-                                    if (matricula > 20000 && matricula < 99999) {
-                                        matriculaNueva = "0" + String.valueOf(matricula);
-                                    } else {
-                                        matriculaNueva = String.valueOf(matricula);
-                                    }
-                                    matriculaPeriodosEscolar.setMatricula(matriculaNueva);
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(9).getCellTypeEnum() == CellType.NUMERIC || fila.getCell(9).getCellTypeEnum() == CellType.STRING) {
+                                switch (fila.getCell(9).getCellTypeEnum()) {
+                                    case NUMERIC:
+                                        matricula = (int) fila.getCell(9).getNumericCellValue();
+                                        if (matricula > 20000 && matricula < 99999) {
+                                            matriculaNueva = "0" + String.valueOf(matricula);
+                                        } else {
+                                            matriculaNueva = String.valueOf(matricula);
+                                        }
+                                        matriculaPeriodosEscolar.setMatricula(matriculaNueva);
+                                        break;
+                                    case STRING:
+                                        String maS = (String) fila.getCell(9).getStringCellValue();
+                                        if (Integer.parseInt(maS) > 20000 && Integer.parseInt(maS) < 99999) {
+                                            matriculaNueva = "0" + String.valueOf(maS);
+                                        } else {
+                                            matriculaNueva = String.valueOf(maS);
+                                        }
+                                        matriculaPeriodosEscolar.setMatricula(matriculaNueva);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Matricula en la columna: " + (9 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Matricula en la columna: " + (9 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(11).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(11).getCellTypeEnum()) {
-                                case FORMULA:
-                                    areaUniversidad.setArea((short) ((int) fila.getCell(11).getNumericCellValue()));
-                                    areaUniversidad.setNombre(fila.getCell(12).getStringCellValue());
-                                    estadiaPorEstudiante.setProgramaEducativo(areaUniversidad.getArea());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(11).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(11).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        areaUniversidad.setArea((short) ((int) fila.getCell(11).getNumericCellValue()));
+                                        areaUniversidad.setNombre(fila.getCell(12).getStringCellValue());
+                                        estadiaPorEstudiante.setProgramaEducativo(areaUniversidad.getArea());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Programa Educativo en la columna: " + (12 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Programa Educativo en la columna: " + (12 + 1) + " y fila: " + (i + 1));
-                        }
 
-                        if (fila.getCell(14).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(14).getCellTypeEnum()) {
-                                case FORMULA:
-                                    organismoVinculado.setEmpresa((int) fila.getCell(14).getNumericCellValue());
-                                    organismoVinculado.setNombre(fila.getCell(15).getStringCellValue());
-                                    break;
-                                default:
-                                    break;
+                            if (fila.getCell(14).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(14).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        organismoVinculado.setEmpresa((int) fila.getCell(14).getNumericCellValue());
+                                        organismoVinculado.setNombre(fila.getCell(15).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Empresa en la columna: " + (15 + 1) + " y fila: " + (i + 1));
                             }
-                        } else {
-                            validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Empresa en la columna: " + (15 + 1) + " y fila: " + (i + 1));
+
+                            estadiaPorEstudiante.setMatriculaPeriodosEscolares(matriculaPeriodosEscolar);
+                            estadiaPorEstudiante.setEmpresa(organismoVinculado);
+                            dtoEstadiaPorEstudiante.setAreasUniversidad(areaUniversidad);
+                            dtoEstadiaPorEstudiante.setEstadiasPorEstudiante(estadiaPorEstudiante);
+
+                            listaDtoEstadiasPorEstudiante.add(dtoEstadiaPorEstudiante);
                         }
-
-                        estadiaPorEstudiante.setMatriculaPeriodosEscolares(matriculaPeriodosEscolar);
-                        estadiaPorEstudiante.setEmpresa(organismoVinculado);
-                        dtoEstadiaPorEstudiante.setAreasUniversidad(areaUniversidad);
-                        dtoEstadiaPorEstudiante.setEstadiasPorEstudiante(estadiaPorEstudiante);
-
-                        listaDtoEstadiasPorEstudiante.add(dtoEstadiaPorEstudiante);
                     }
-                }
-                libroRegistro.close();
+                    libroRegistro.close();
 
-                if (validarCelda.contains(false)) {
-                    addDetailMessage("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
-                    addDetailMessage(datosInvalidos.toString());
+                    if (validarCelda.contains(false)) {
+                        Messages.addGlobalWarn("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                        Messages.addGlobalWarn(datosInvalidos.toString());
 
+                        excel.delete();
+                        ServicioArchivos.eliminarArchivo(rutaArchivo);
+                        return Collections.EMPTY_LIST;
+                    } else {
+                        Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                        return listaDtoEstadiasPorEstudiante;
+                    }
+                } else {
+                    libroRegistro.close();
                     excel.delete();
                     ServicioArchivos.eliminarArchivo(rutaArchivo);
+                    Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
                     return Collections.EMPTY_LIST;
-                } else {
-                    addDetailMessage("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
-                    return listaDtoEstadiasPorEstudiante;
                 }
-            } else {
+            } catch (IOException e) {
                 libroRegistro.close();
-                excel.delete();
                 ServicioArchivos.eliminarArchivo(rutaArchivo);
-                addDetailMessage("<b>El archivo cargado no corresponde al registro</b>");
+                Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
                 return Collections.EMPTY_LIST;
             }
         } else {
-            addDetailMessage("<b>Ocurrio un error en la lectura del archivo</b>");
+            Messages.addGlobalError("<b>Ocurrio un error en la lectura del archivo</b>");
             return Collections.EMPTY_LIST;
         }
     }
@@ -258,7 +274,7 @@ public class ServicioEstadiasPorEstudiante implements EjbEstadiasPorEstudiante {
             }
             facadeCA.flush();
         });
-        addDetailMessage("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
