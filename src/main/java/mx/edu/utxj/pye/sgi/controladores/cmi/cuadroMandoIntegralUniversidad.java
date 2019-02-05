@@ -77,7 +77,7 @@ public class cuadroMandoIntegralUniversidad implements Serializable {
             ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 101));
         } else {
             numeroMes=numeroMes-1;
-            ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 101));
+            ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 100));
         }
         switch (numeroMes) {
             case 0:                mes = "Avance al mes de: Enero";                break;
@@ -256,11 +256,12 @@ public class cuadroMandoIntegralUniversidad implements Serializable {
             actividadesPoas.forEach((t) -> {
                 CuadroMandoIntegral cmi = new CuadroMandoIntegral();
                 cmi = t.getCuadroMandoInt();
-                if (cmi.getProyecto() != null) {
+//                if (cmi.getProyecto() != null) {
                     actividadesPoasRegistradas.add(t);
-                }
+//                }
             });
         }
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralUniversidad.actividadesFiltradas()"+actividadesPoasRegistradas.size());
         return actividadesPoasRegistradas;
     }
 

@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.sgi.ejb;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,9 +9,11 @@ import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.faces.model.SelectItem;
+import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.controlador.EncuestaServicios;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultadosPK;
@@ -32,6 +35,7 @@ public class ServicioEncuestaServicios implements EjbEncuestaServicios {
     @EJB Facade f;
     @EJB Facade2 f2;
     @Getter @Setter private Integer periodo;
+    @Inject LogonMB logonMB;
     
     /**
      * Metodo que ayuda a encontrar la evaluacion activa, detro de la tabla Evaluaciones
@@ -293,7 +297,13 @@ public class ServicioEncuestaServicios implements EjbEncuestaServicios {
                 respuestas.put("p73", r.getR73().toString());
             }
             if (r.getR74() != null) {
-                respuestas.put("p74", r.getR74());
+                respuestas.put("p74", r.getR74().toString());
+            }
+            if (r.getR75() != null) {
+                respuestas.put("p75", r.getR75().toString());
+            }
+            if (r.getR76() != null) {
+                respuestas.put("p76", r.getR76());
             }
 
             return r;
@@ -401,7 +411,9 @@ public class ServicioEncuestaServicios implements EjbEncuestaServicios {
             case "p71": resultado.setR71(Short.parseShort(respuesta)); break;
             case "p72": resultado.setR72(Short.parseShort(respuesta)); break;
             case "p73": resultado.setR73(Short.parseShort(respuesta)); break;
-            case "p74": resultado.setR74(respuesta); break;
+            case "p74": resultado.setR74(Short.parseShort(respuesta)); break;
+            case "p75": resultado.setR75(Short.parseShort(respuesta)); break;
+            case "p76": resultado.setR76(respuesta); break;
         }
         
         respuestas.put(pregunta, respuesta);
@@ -567,7 +579,25 @@ public class ServicioEncuestaServicios implements EjbEncuestaServicios {
 
         return l;
     }
-    
+
+    @Override
+    public List<SelectItem> getSioNO() {
+        List<SelectItem> l = new ArrayList<>();
+        l.add(new SelectItem("1", "Si", "Si"));
+        l.add(new SelectItem("0", "No", "No"));
+        return l;
+    }
+
+    @Override
+    public List<SelectItem> getRangoDesision() {
+        List<SelectItem> l = new ArrayList<>();
+        l.add(new SelectItem("0", "N", "Nada"));
+        l.add(new SelectItem("1", "P", "Poco"));
+        l.add(new SelectItem("2", "M", "Mucho"));
+        l.add(new SelectItem("3", "T", "Totalmente"));
+        return l;
+    }
+
     /**
      * Metodo que ayuda a obtener información principal del estudiante; este a partir de recibir la informacion de su matricula
      * @param matricula Parametro que se envia dentro del formulario de Login

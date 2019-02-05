@@ -44,14 +44,15 @@ public class ControladorEmpleado implements Serializable {
     @Getter    @Setter    private List<Eventos> nuevaListaEventos = new ArrayList<>();
     
     @Getter    @Setter    private Integer empleadoLogeado;
-    @Getter    @Setter    private String clavePersonalLogeado,mandos="",fechaCVBencimiento,fechaFuncionesBencimiento,fechaLimiteCurriculumVitae="",fechaLimiteRegistroFunciones="";
+    @Getter    @Setter    private String clavePersonalLogeado,mandos="",fechaCVBencimiento,fechaFuncionesBencimiento,fechaLimiteCurriculumVitae="",fechaLimiteRegistroFunciones="",
+            mensajeIndex1="",mensajeIndex2="";
 
     @Getter    @Setter    private InformacionAdicionalPersonal nuevoOBJInformacionAdicionalPersonal;
     @Getter    @Setter    private ListaPersonal nuevoOBJListaPersonal;    
     
     @Getter    @Setter    private Integer diaH,mesH,anioH,diaN,mesN,anioN,restaA,usuario;
      
-    @Getter    @Setter    private Boolean fechaLimiteCV,fechaLimiteFunciones,procesoElectoralActivo,tienePOA=false;
+    @Getter    @Setter    private Boolean fechaLimiteCV,fechaLimiteFunciones,procesoElectoralActivo,tienePOA=false,estiloInfo=false,mensajeGeneral=false;
     @Getter    @Setter    private Boolean poaA=false, poaJ=false, poaR=false,poaE=false,poaVJ=false, poaVR=false, poaVF=false,poaVEPye=false;   
     @Getter    @Setter    private List<Modulosregistro> nuevaListaModulosregistro = new ArrayList<>();
     
@@ -275,6 +276,7 @@ public class ControladorEmpleado implements Serializable {
 
     public void eventosRegistro() {
         try {
+            fechaActual = new Date();
             poaA = false;            poaJ = false;            poaR = false;            poaE = false;
             poaVJ = false;            poaVR = false;            poaVF = false;            poaVEPye = false;
             nuevaListaEventos.clear();
@@ -282,6 +284,9 @@ public class ControladorEmpleado implements Serializable {
             if (!nuevaListaEventos.isEmpty()) {
                 nuevaListaEventos.forEach((t) -> {
                     if (t.getTipo().equals("POA")) {
+                        t.getFechaFin().setHours(23);
+                        t.getFechaFin().setMinutes(59);
+                        t.getFechaFin().setSeconds(59);
                         switch (t.getNombre()) {
                             case "Registro":
                                 if ((fechaActual.before(t.getFechaFin()) || (fechaActual.getDate() == t.getFechaFin().getDate() && fechaActual.getMonth() == t.getFechaFin().getMonth() && fechaActual.getYear() == t.getFechaFin().getYear())) && (fechaActual.after(t.getFechaInicio()) || fechaActual.equals(t.getFechaInicio()))) {
@@ -319,6 +324,23 @@ public class ControladorEmpleado implements Serializable {
                             case "Evaluacion":
                                 if ((fechaActual.before(t.getFechaFin()) || (fechaActual.getDate() == t.getFechaFin().getDate() && fechaActual.getMonth() == t.getFechaFin().getMonth() && fechaActual.getYear() == t.getFechaFin().getYear())) && (fechaActual.after(t.getFechaInicio()) || fechaActual.equals(t.getFechaInicio()))) {
                                     poaE = true;
+                                    mensajeGeneral=false;
+                                    estiloInfo=false;
+                                    Integer diasR = (int) ((t.getFechaFin().getTime() - fechaActual.getTime()) / 86400000);
+                                    Integer diasI = (int) ((fechaActual.getTime() - t.getFechaInicio().getTime()) / 86400000);
+                                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.eventosRegistro(diasI)"+diasI);
+                                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.eventosRegistro(diasR)"+diasR);
+                                    if (diasI <= 2) {
+                                        mensajeIndex1 = "Inicio del periodo para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + mesNombre(t.getFechaInicio().getMonth());
+                                        estiloInfo=true;
+                                        mensajeGeneral=true;
+                                    } 
+                                    if(diasR <= 5){
+                                        mensajeIndex1 = "La fecha límite para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + mesNombre(t.getFechaFin().getMonth()) + " ¡Está por vencer!";
+                                        mensajeIndex2 = "Restan "+diasR+" días";
+                                        estiloInfo=false;
+                                        mensajeGeneral=true;
+                                    }
                                 } else {
                                     nuevaEventosAreas = new EventosAreas();
                                     nuevaEventosAreas = ejbDatosUsuarioLogeado.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
@@ -381,6 +403,48 @@ public class ControladorEmpleado implements Serializable {
         }
     }
 
+    public String mesNombre(Integer noMes) {
+        String mesnN="";
+        switch (noMes) {
+            case 0:
+                 mesnN= "Enero";
+                break;
+            case 1:
+                 mesnN= "Febrero";
+                break;
+            case 2:
+                 mesnN= "Marzo";
+                break;
+            case 3:
+                 mesnN= "Abril";
+                break;
+            case 4:
+                 mesnN= "Mayo";
+                break;
+            case 5:
+                 mesnN= "Junio";
+                break;
+            case 6:
+                 mesnN= "Julio";
+                break;
+            case 7:
+                 mesnN= "Agosto";
+                break;
+            case 8:
+                 mesnN= "Septiembre";
+                break;
+            case 9:
+                 mesnN= "Octubre";
+                break;
+            case 10:
+                 mesnN= "Noviembre";
+                break;
+            case 11:
+                 mesnN= "Diciembre";
+                break;
+        }
+        return mesnN;
+    }
     public void llenaListaPaises() {
         listaPaises.clear();
         listaPaises.add("México");

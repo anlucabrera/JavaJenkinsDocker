@@ -268,7 +268,7 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
     }
 
     @Override
-    public void guardaAsesoriasTutorias(List<DTOAsesoriasTutoriasCicloPeriodos> lista, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) throws Throwable {
+    public void guardaAsesoriasTutorias(List<DTOAsesoriasTutoriasCicloPeriodos> lista, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros, Integer claveTutor) throws Throwable {
         List<String> listaCondicional = new ArrayList<>();
         lista.forEach((asesTut) -> {
             if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActivo(), asesTut.getAsesoriasTutoriasCicloPeriodos().getPeriodoEscolar())) {
@@ -289,6 +289,7 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
                 } else {
                     Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                     asesTut.getAsesoriasTutoriasCicloPeriodos().setRegistro(registro.getRegistro());
+                    asesTut.getAsesoriasTutoriasCicloPeriodos().setTutor(claveTutor);
                     facadeEscolar.create(asesTut.getAsesoriasTutoriasCicloPeriodos());
                 }
                 facadeEscolar.flush();
@@ -339,7 +340,7 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
     }
 
     @Override
-    public List<DTOAsesoriasTutoriasCicloPeriodos> getListaRegistrosPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo, RegistrosTipo registrosTipo) {
+    public List<DTOAsesoriasTutoriasCicloPeriodos> getListaRegistrosPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo, RegistrosTipo registrosTipo, Short actividad, Integer claveTutor) {
 //        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaRegistrosPorEventoAreaPeriodo(inicio)");
         //verificar que los parametros no sean nulos
         if(evento == null || claveArea == null || periodo == null){
@@ -368,16 +369,27 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
                     .collect(Collectors.toList());
 //            System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaRegistrosPorEventoArea(3a) areas: " + areas);
         }
-        //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+        
         List<DTOAsesoriasTutoriasCicloPeriodos> l = new ArrayList<>();
-        List<AsesoriasTutoriasCicloPeriodos> entities = facadeEscolar.getEntityManager().createQuery("SELECT atc FROM AsesoriasTutoriasCicloPeriodos atc INNER JOIN atc.registros r INNER JOIN r.tipo t INNER JOIN r.eventoRegistro er WHERE er.eventoRegistro=:evento AND atc.programaEducativo in :areas AND atc.periodoEscolar=:periodo AND t.registroTipo=:tipo ORDER BY atc.programaEducativo, atc.cuatrimestre, atc.grupo, atc.tipoActividad, atc.tipo", AsesoriasTutoriasCicloPeriodos.class)
+        List<AsesoriasTutoriasCicloPeriodos> entities = new ArrayList<>();
+        if(actividad == 2){ 
+            entities = facadeEscolar.getEntityManager().createQuery("SELECT atc FROM AsesoriasTutoriasCicloPeriodos atc INNER JOIN atc.registros r INNER JOIN r.tipo t INNER JOIN r.eventoRegistro er WHERE er.eventoRegistro=:evento AND atc.programaEducativo in :areas AND atc.periodoEscolar=:periodo AND t.registroTipo=:tipo ORDER BY atc.programaEducativo, atc.cuatrimestre, atc.grupo, atc.tipoActividad, atc.tipo", AsesoriasTutoriasCicloPeriodos.class)
                 .setParameter("areas", areas)
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
                 .setParameter("tipo", registrosTipo.getRegistroTipo())
                 .getResultList();
+        }else{
+            entities = facadeEscolar.getEntityManager().createQuery("SELECT atc FROM AsesoriasTutoriasCicloPeriodos atc INNER JOIN atc.registros r INNER JOIN r.tipo t INNER JOIN r.eventoRegistro er WHERE er.eventoRegistro=:evento AND atc.programaEducativo in :areas AND atc.periodoEscolar=:periodo AND t.registroTipo=:tipo AND atc.tutor = :claveTutor ORDER BY atc.programaEducativo, atc.cuatrimestre, atc.grupo, atc.tipoActividad, atc.tipo", AsesoriasTutoriasCicloPeriodos.class)
+                .setParameter("areas", areas)
+                .setParameter("evento", evento.getEventoRegistro())
+                .setParameter("periodo", periodo.getPeriodo())
+                .setParameter("tipo", registrosTipo.getRegistroTipo())
+                .setParameter("claveTutor", claveTutor)
+                .getResultList();
+        }
+        
 
-//        entities.forEach(atc -> System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaRegistrosPorEventoArea(4) registro: " + atc));
 
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {

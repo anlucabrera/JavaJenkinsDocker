@@ -303,9 +303,16 @@
                                                 <h:outputText value="#{datosEncEgre.faltantesPorCont}"/>
                                             </p:column>
                                             <p:column headerText="Porcentaje de avance: Meta 100%" exportable="false">
-                                                <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="#{datosEncEgre.porcentaje}" 
-                                                     aria-valuemin="0" aria-valuemax="100" style="background-color: #337ab7; width:#{datosEncEgre.porcentaje}%">
-                                                    #{datosEncEgre.porcentaje} %
+                                                <div class="progress">
+                                                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                                                         aria-valuenow="#{datosEncEgre.porcentaje}" aria-valuemin="0" aria-valuemax="100"
+                                                         style="background-color: #337ab7; width:#{datosEncEgre.porcentaje}%">
+                                                    </div>
+                                                    <span class="progress-completed">
+                                                        <h:outputText value="#{datosEncEgre.porcentaje}">
+                                                            <f:convertNumber type="number" pattern="0.00"/>
+                                                        </h:outputText>
+                                                    </span>
                                                 </div>
                                             </p:column>
                                             <f:facet name="footer">

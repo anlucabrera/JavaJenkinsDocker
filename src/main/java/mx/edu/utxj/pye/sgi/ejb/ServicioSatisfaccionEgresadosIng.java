@@ -16,14 +16,19 @@ import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import lombok.Getter;
+import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaSatisfaccionEgresadosIng;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaSatisfaccionEgresadosIngPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.EvaluacionesTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEncuestaSatisfaccionEgresadosIng;
+import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
+import mx.edu.utxj.pye.sgi.saiiut.entity.Periodos;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 
 /**
@@ -35,6 +40,7 @@ public class ServicioSatisfaccionEgresadosIng implements EjbSatisfaccionEgresado
     
     @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
     private EntityManager em;
+    @Getter @Setter Integer periodo;
     @EJB Facade f;
     @EJB Facade2 f2;
     
@@ -164,13 +170,46 @@ public class ServicioSatisfaccionEgresadosIng implements EjbSatisfaccionEgresado
 
         return l;
     }
+    
     @Override
     public List<EncuestaSatisfaccionEgresadosIng> resultadosEncuesta(){
         TypedQuery<EncuestaSatisfaccionEgresadosIng> q = em.createQuery("select e from EncuestaSatisfaccionEgresadosIng e ", EncuestaSatisfaccionEgresadosIng.class);
         List<EncuestaSatisfaccionEgresadosIng> pr = q.getResultList();
         return pr;
     }
-
     
+    @Override
+    public Alumnos obtenerAlumnos(String matricula) {
+        TypedQuery<Periodos> periodoAct = f2.getEntityManager().createQuery("SELECT p FROM Periodos AS p",Periodos.class);
+        List<Periodos> periodos = periodoAct.getResultList();
+        periodos.stream().forEach(x -> {
+            Boolean activo = true;
+            Boolean acv = x.getActivo().equals(true);
+            if (activo.equals(acv)) {
+                periodo = x.getPeriodosPK().getCvePeriodo();
+                System.out.println("Periodo:"+ periodo);
+            }
+        });
+
+        TypedQuery<Alumnos> q = f2.getEntityManager()
+                .createQuery("SELECT a from Alumnos a WHERE a.matricula=:matricula AND a.cveStatus = :estatus AND a.grupos.gruposPK.cvePeriodo = :periodo AND a.gradoActual =:grado", Alumnos.class);
+        q.setParameter("estatus", 1);
+        q.setParameter("periodo", periodo);
+        q.setParameter("matricula", matricula);
+        q.setParameter("grado", 11);
+        
+        List<Alumnos> l = q.getResultList();
+        if(!l.isEmpty()){
+            return l.get(0);
+        }else{
+            return null;
+        }
+    }
+    
+    @Override
+    public PeriodosEscolares getPeriodo(Evaluaciones evaluacion){
+        f.setEntityClass(PeriodosEscolares.class);
+        return (PeriodosEscolares)f.find(evaluacion.getPeriodo());
+    }
     
 }

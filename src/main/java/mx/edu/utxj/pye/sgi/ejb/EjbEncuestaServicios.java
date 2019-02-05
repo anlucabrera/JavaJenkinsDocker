@@ -29,7 +29,11 @@ public interface EjbEncuestaServicios extends Serializable {
     public List<Apartado> getApartados();
     
     public List<SelectItem> getRespuestasPosibles();
-    
+
+    public List<SelectItem> getSioNO();
+
+    public List<SelectItem> getRangoDesision();
+
     public Alumnos obtenerAlumnos(String matricula);
     
     public PeriodosEscolares getPeriodo(Evaluaciones evaluacion);

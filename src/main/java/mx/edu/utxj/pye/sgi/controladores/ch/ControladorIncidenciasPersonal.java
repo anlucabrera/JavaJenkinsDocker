@@ -39,7 +39,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
 
     private static final long serialVersionUID = -8842055922698338073L;
 
-    @Getter    @Setter    private Integer usuario,numeroIN=0;
+    @Getter    @Setter    private Integer usuario,numeroIN=0,numeroCU=0;
     @Getter    @Setter    private String tipo;
     @Getter    @Setter    private List<String> tiposIncidencias = new ArrayList<>();
     @Getter    @Setter    private List<String> tiposCuidados = new ArrayList<>();
@@ -164,6 +164,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
             List<Incidencias> list1 = new ArrayList<>();
             List<Incidencias> list2 = new ArrayList<>();
 
+            numeroCU = ejbNotificacionesIncidencias.mostrarCuidadosTotales().size()+1;
             list1 = ejbNotificacionesIncidencias.mostrarIncidenciasArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
 
             if (!list1.isEmpty()) {
@@ -430,6 +431,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
             System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearCuidado()");
             nuevOBJCuidados.setPersonal(new Personal());
             nuevOBJCuidados.getPersonal().setClave(usuario);
+            nuevOBJCuidados.setNumero(numeroCU);
             Integer dias = (int) ((nuevOBJCuidados.getFechaFin().getTime() - nuevOBJCuidados.getFechaInicio().getTime()) / 86400000);
             dias = dias + 1;
             System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearCuidado()" + dias);

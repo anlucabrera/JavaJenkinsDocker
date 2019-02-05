@@ -436,7 +436,12 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
     
     public String convertirRutaMP(String ruta) {
         File file = new File(ruta);
-        return "EVALUACION_POA".concat(file.toURI().toString().split("EVALUACION_POA")[1]);
+        if (ruta.contains("EVALUACION_POA")) {
+            return "EVALUACION_POA".concat(file.toURI().toString().split("EVALUACION_POA")[1]);
+        } else {
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOAEvaluacionAreas.convertirRutaMP()" + file.toURI());
+            return "".concat(file.toURI().toString().split("2019")[1]);
+        }
     }
 
     public String convertirRutaVistaEvidencia(String ruta) {
@@ -459,6 +464,8 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
         evidenciases = poaSelectec.mostrarEvidenciases(actividadesPoaEvidencias,actividadesPoaEvidencias.getRegistrosList());
         if (!evidenciases.isEmpty()) {
             evidenciases.forEach((t) -> {
+                evidenciasesDe = new ArrayList<>();
+                evidenciasesDe.clear();
                 evidenciasesDe = poaSelectec.mostrarEvidenciases(t);
                 if (!evidenciasesDe.isEmpty()) {
                     evidenciasesDe.forEach((e) -> {

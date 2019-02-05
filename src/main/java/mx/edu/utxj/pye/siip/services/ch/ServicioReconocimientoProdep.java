@@ -232,9 +232,10 @@ public class ServicioReconocimientoProdep implements EjbReconocimientoProdep{
         List<DTOReconocimientoProdep> ldto = new ArrayList<>();
         TypedQuery<ReconocimientoProdepRegistros> q = f.getEntityManager()
                 .createQuery("SELECT r from ReconocimientoProdepRegistros r WHERE r.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND r.registros.eventoRegistro.mes = :mes AND r.registros.area = :area", ReconocimientoProdepRegistros.class);
+//         AND r.registros.area = :area
         q.setParameter("mes", mes);
         q.setParameter("ejercicio", ejercicio);
-        q.setParameter("area", controladorEmpleado.getNuevaAreasUniversidad().getArea());
+        q.setParameter("area", controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
         List<ReconocimientoProdepRegistros> l = q.getResultList();
         if (l.isEmpty() || l == null) {
             return null;
@@ -260,6 +261,7 @@ public class ServicioReconocimientoProdep implements EjbReconocimientoProdep{
                 }
                 ldto.add(dto);
             });
+            System.err.println("ldto " + ldto.toString());
             return ldto;
     }
     }

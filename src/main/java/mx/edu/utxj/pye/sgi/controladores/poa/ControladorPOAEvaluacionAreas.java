@@ -510,7 +510,8 @@ public class ControladorPOAEvaluacionAreas implements Serializable {
                 case 10: mn="noviembre"; break;
                 case 11: mn="diciembre"; break;
             }
-            return "Registro_Mensual".concat(file.toURI().toString().split(mn)[1]);
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOAEvaluacionAreas.convertirRutaMP()"+file.toURI());
+            return "".concat(file.toURI().toString().split("2019")[1]);
         }
     }
 
