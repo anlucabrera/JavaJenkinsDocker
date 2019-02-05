@@ -445,16 +445,27 @@ public class ServicioPersonalCapacitado implements EjbPersonalCapacitado{
                     .map(au -> au.getArea())
                     .collect(Collectors.toList());
 
-        }else{//si no es area academica solo filtrar los datos del area operativa del trabajador
-            areas.add(claveArea);
+        }else{//si no es Área Académica
 
+            //Obtener las claves de todas las Áreas que dependan del Área del Usuario Logueado
+            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
+                    .setParameter("areaSuperior", area.getArea())
+                    .getResultStream()
+                    .map(au -> au.getArea())
+                    .collect(Collectors.toList());
+            areas.add(claveArea);
+            //Si no tiene Áreas inferiores es decir la lista es vacía, únicamente se muestran los datos de registro del Área del Usuario Logueado
+            if (areas.isEmpty()) {
+                areas.add(claveArea);
+            }
         }
         
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         List<DTOPersonalCapacitado> l = new ArrayList<>();
-        List<PersonalCapacitado> entities = f.getEntityManager().createQuery("SELECT p FROM PersonalCapacitado p INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND p.periodo =:periodo",  PersonalCapacitado.class)
+        List<PersonalCapacitado> entities = f.getEntityManager().createQuery("SELECT p FROM PersonalCapacitado p INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND p.periodo =:periodo AND reg.area IN :areas",  PersonalCapacitado.class)
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
+                .setParameter("areas", areas)
                 .getResultList();
         
        
@@ -496,16 +507,27 @@ public class ServicioPersonalCapacitado implements EjbPersonalCapacitado{
                     .map(au -> au.getArea())
                     .collect(Collectors.toList());
 
-        }else{//si no es area academica solo filtrar los datos del area operativa del trabajador
-            areas.add(claveArea);
+        }else{//si no es Área Académica
 
+            //Obtener las claves de todas las Áreas que dependan del Área del Usuario Logueado
+            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
+                    .setParameter("areaSuperior", area.getArea())
+                    .getResultStream()
+                    .map(au -> au.getArea())
+                    .collect(Collectors.toList());
+            areas.add(claveArea);
+            //Si no tiene Áreas inferiores es decir la lista es vacía, únicamente se muestran los datos de registro del Área del Usuario Logueado
+            if (areas.isEmpty()) {
+                areas.add(claveArea);
+            }
         }
         
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         List<DTOPerCapParticipantes> l = new ArrayList<>();
-        List<ParticipantesPersonalCapacitado> entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesPersonalCapacitado p INNER JOIN p.percap a INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND a.periodo=:periodo", ParticipantesPersonalCapacitado.class)
+        List<ParticipantesPersonalCapacitado> entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesPersonalCapacitado p INNER JOIN p.percap a INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND a.periodo=:periodo AND reg.area IN :areas", ParticipantesPersonalCapacitado.class)
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
+                .setParameter("areas", areas)
                 .getResultList();
      
 

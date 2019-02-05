@@ -322,16 +322,28 @@ public class ServicioBolsaTrabajo implements EjbBolsaTrabajo{
                     .map(au -> au.getArea())
                     .collect(Collectors.toList());
 
-        }else{//si no es area academica solo filtrar los datos del area operativa del trabajador
+        }else{//si no es Área Académica
+
+            //Obtener las claves de todas las Áreas que dependan del Área del Usuario Logueado
+            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
+                    .setParameter("areaSuperior", area.getArea())
+                    .getResultStream()
+                    .map(au -> au.getArea())
+                    .collect(Collectors.toList());
             areas.add(claveArea);
+            //Si no tiene Áreas inferiores es decir la lista es vacía, únicamente se muestran los datos de registro del Área del Usuario Logueado
+            if (areas.isEmpty()) {
+                areas.add(claveArea);
+            }
 
         }
         
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         List<DTOBolsa> l = new ArrayList<>();
-        List<BolsaTrabajo> entities = f.getEntityManager().createQuery("SELECT b FROM BolsaTrabajo b INNER JOIN b.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND b.periodo =:periodo", BolsaTrabajo.class)
+        List<BolsaTrabajo> entities = f.getEntityManager().createQuery("SELECT b FROM BolsaTrabajo b INNER JOIN b.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND b.periodo =:periodo AND reg.area IN :areas", BolsaTrabajo.class)
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
+                .setParameter("areas", areas)
                 .getResultList();
       
         //construir la lista de dto's para mostrar en tabla
@@ -374,16 +386,28 @@ public class ServicioBolsaTrabajo implements EjbBolsaTrabajo{
                     .map(au -> au.getArea())
                     .collect(Collectors.toList());
 
-        }else{//si no es area academica solo filtrar los datos del area operativa del trabajador
-            areas.add(claveArea);
+        }else{//si no es Área Académica
+
+            //Obtener las claves de todas las Áreas que dependan del Área del Usuario Logueado
+             areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
+                    .setParameter("areaSuperior", area.getArea())
+                    .getResultStream()
+                    .map(au -> au.getArea())
+                    .collect(Collectors.toList());
+             areas.add(claveArea);
+            //Si no tiene Áreas inferiores es decir la lista es vacía, únicamente se muestran los datos de registro del Área del Usuario Logueado
+            if (areas.isEmpty()) {
+                areas.add(claveArea);
+            }
 
         }
         
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         List<DTOBolsaEntrevistas> l = new ArrayList<>();
-        List<BolsaTrabajoEntrevistas> entities = f.getEntityManager().createQuery("SELECT e FROM BolsaTrabajoEntrevistas e INNER JOIN e.bolsatrabent b INNER JOIN e.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND b.periodo=:periodo", BolsaTrabajoEntrevistas.class)
+        List<BolsaTrabajoEntrevistas> entities = f.getEntityManager().createQuery("SELECT e FROM BolsaTrabajoEntrevistas e INNER JOIN e.bolsatrabent b INNER JOIN e.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND b.periodo=:periodo AND reg.area IN :areas", BolsaTrabajoEntrevistas.class)
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
+                .setParameter("areas", areas)
                 .getResultList();
      
 

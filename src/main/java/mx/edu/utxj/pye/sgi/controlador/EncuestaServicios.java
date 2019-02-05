@@ -34,14 +34,14 @@ public class EncuestaServicios implements Serializable {
     private static final long serialVersionUID = -615669920932201958L;
 
     @Getter private Boolean cargada,finalizado;
-    
+    @Getter @Setter Short grado = 2;
     @Getter private Evaluaciones evaluacion;
     @Getter private String evaluador;
     @Getter private Integer evaluadorr;
     @Getter @Setter private EncuestaServiciosResultados resultado;
     
     @Getter @Setter Map<String,String> respuestas;
-    @Getter private List<SelectItem> respuestasPosibles;
+    @Getter private List<SelectItem> respuestasPosibles, respuestaSioNo, rangoDesision;
     @Getter private List<Apartado> apartados;
     @Getter @Setter private Alumnos alumno;
     @Getter @Setter private PeriodosEscolares periodoEsc;
@@ -52,20 +52,18 @@ public class EncuestaServicios implements Serializable {
     
     @PostConstruct
     public void init(){
-//        alumnosNoAccedieron();
         try {
             finalizado = false;
             respuestas = new HashMap<>();
             respuestasPosibles = ejb.getRespuestasPosibles();
+            respuestaSioNo = ejb.getSioNO();
+            rangoDesision = ejb.getRangoDesision();
             evaluacion = ejb.getEvaluacionActiva();
             if (evaluacion != null) {
                 evaluador = logonMB.getCurrentUser();
-                //System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaServicios.init()" + evaluador);
                 alumno = ejb.obtenerAlumnos(evaluador);
                 evaluadorr=Integer.parseInt(evaluador);
-                //System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaServicios.init()" + alumno);
                 periodoEsc=ejb.getPeriodo(evaluacion);
-                //System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaServicios.init()"+ periodoEsc);
                 if (alumno != null) {
                     resultado = ejb.getResultado(evaluacion, evaluadorr, respuestas);
                     if (resultado != null) {

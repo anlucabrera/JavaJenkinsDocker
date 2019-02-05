@@ -540,23 +540,26 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
                     .map(au -> au.getArea())
                     .collect(Collectors.toList());
 
-        }else{//si no es area academica solo filtrar los datos del area operativa del trabajador
-            areas.add(claveArea);
+        }else{//si no es Área Académica
 
-        }
-        
-//        //obtener la lista de registros mensuales filtrando por evento y por claves de areas
-//        List<DTORegistroMovilidad> l = new ArrayList<>();
-//        List<RegistrosMovilidad> entities = f.getEntityManager().createQuery("SELECT r FROM RegistrosMovilidad r INNER JOIN r.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.programaEducativo in :areas AND r.periodoEscolarCursado=:periodo", RegistrosMovilidad.class)
-//                .setParameter("areas", areas)
-//                .setParameter("evento", evento.getEventoRegistro())
-//                .setParameter("periodo", periodo.getPeriodo())
-//                .getResultList();
+            //Obtener las claves de todas las Áreas que dependan del Área del Usuario Logueado
+            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
+                    .setParameter("areaSuperior", area.getArea())
+                    .getResultStream()
+                    .map(au -> au.getArea())
+                    .collect(Collectors.toList());
+            areas.add(claveArea);
+            //Si no tiene Áreas inferiores es decir la lista es vacía, únicamente se muestran los datos de registro del Área del Usuario Logueado
+            if (areas.isEmpty()) {
+                areas.add(claveArea);
+            }
+        }    
 
         List<DTORegistroMovilidad> l = new ArrayList<>();
-        List<RegistrosMovilidad> entities = f.getEntityManager().createQuery("SELECT r FROM RegistrosMovilidad r INNER JOIN r.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.periodoEscolarCursado=:periodo", RegistrosMovilidad.class)
+        List<RegistrosMovilidad> entities = f.getEntityManager().createQuery("SELECT r FROM RegistrosMovilidad r INNER JOIN r.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.periodoEscolarCursado=:periodo AND reg.area IN :areas", RegistrosMovilidad.class)
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
+                .setParameter("areas", areas)
                 .getResultList();
      
 
@@ -628,24 +631,28 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
                     .map(au -> au.getArea())
                     .collect(Collectors.toList());
 
-        }else{//si no es area academica solo filtrar los datos del area operativa del trabajador
-            areas.add(claveArea);
+        }else{//si no es Área Académica
 
+            //Obtener las claves de todas las Áreas que dependan del Área del Usuario Logueado
+            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
+                    .setParameter("areaSuperior", area.getArea())
+                    .getResultStream()
+                    .map(au -> au.getArea())
+                    .collect(Collectors.toList());
+            areas.add(claveArea);
+            //Si no tiene Áreas inferiores es decir la lista es vacía, únicamente se muestran los datos de registro del Área del Usuario Logueado
+            if (areas.isEmpty()) {
+                areas.add(claveArea);
+            }
         }
-        
-//        //obtener la lista de registros mensuales filtrando por evento y por claves de areas
-//        List<DTOMovilidadDocente> l = new ArrayList<>();
-//        List<RegistroMovilidadDocente> entities = f.getEntityManager().createQuery("SELECT d FROM RegistroMovilidadDocente d INNER JOIN d.registroMovilidad r INNER JOIN d.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.programaEducativo in :areas AND r.periodoEscolarCursado=:periodo", RegistroMovilidadDocente.class)
-//                .setParameter("areas", areas)
-//                .setParameter("evento", evento.getEventoRegistro())
-//                .setParameter("periodo", periodo.getPeriodo())
-//                .getResultList();
+          
         
          //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         List<DTOMovilidadDocente> l = new ArrayList<>();
-        List<RegistroMovilidadDocente> entities = f.getEntityManager().createQuery("SELECT d FROM RegistroMovilidadDocente d INNER JOIN d.registroMovilidad r INNER JOIN d.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.periodoEscolarCursado=:periodo", RegistroMovilidadDocente.class)
+        List<RegistroMovilidadDocente> entities = f.getEntityManager().createQuery("SELECT d FROM RegistroMovilidadDocente d INNER JOIN d.registroMovilidad r INNER JOIN d.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.periodoEscolarCursado=:periodo AND reg.area IN :areas", RegistroMovilidadDocente.class)
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
+                .setParameter("areas", areas)
                 .getResultList();
      
 
@@ -687,24 +694,27 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
                     .map(au -> au.getArea())
                     .collect(Collectors.toList());
 
-        }else{//si no es area academica solo filtrar los datos del area operativa del trabajador
-            areas.add(claveArea);
+        }else{//si no es Área Académica
 
+            //Obtener las claves de todas las Áreas que dependan del Área del Usuario Logueado
+            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
+                    .setParameter("areaSuperior", area.getArea())
+                    .getResultStream()
+                    .map(au -> au.getArea())
+                    .collect(Collectors.toList());
+            areas.add(claveArea);
+            //Si no tiene Áreas inferiores es decir la lista es vacía, únicamente se muestran los datos de registro del Área del Usuario Logueado
+            if (areas.isEmpty()) {
+                areas.add(claveArea);
+            }
         }
-        
-//        //obtener la lista de registros mensuales filtrando por evento y por claves de areas
-//        List<DTOMovilidadEstudiante> l = new ArrayList<>();
-//        List<RegistroMovilidadEstudiante> entities = f.getEntityManager().createQuery("SELECT e FROM RegistroMovilidadEstudiante e INNER JOIN e.registroMovilidad r INNER JOIN e.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.programaEducativo in :areas AND r.periodoEscolarCursado=:periodo", RegistroMovilidadEstudiante.class)
-//                .setParameter("areas", areas)
-//                .setParameter("evento", evento.getEventoRegistro())
-//                .setParameter("periodo", periodo.getPeriodo())
-//                .getResultList();
-        
+  
          //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         List<DTOMovilidadEstudiante> l = new ArrayList<>();
-        List<RegistroMovilidadEstudiante> entities = f.getEntityManager().createQuery("SELECT e FROM RegistroMovilidadEstudiante e INNER JOIN e.registroMovilidad r INNER JOIN e.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.periodoEscolarCursado=:periodo", RegistroMovilidadEstudiante.class)
+        List<RegistroMovilidadEstudiante> entities = f.getEntityManager().createQuery("SELECT e FROM RegistroMovilidadEstudiante e INNER JOIN e.registroMovilidad r INNER JOIN e.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.periodoEscolarCursado=:periodo AND reg.area IN :areas", RegistroMovilidadEstudiante.class)
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
+                .setParameter("areas", areas)
                 .getResultList();
      
 

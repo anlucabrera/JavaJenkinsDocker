@@ -225,6 +225,40 @@
                     </c:if>
                 </c:if>                                
             </c:if>
+            <c:if test="#{controladorEmpleado.tienePOA}">
+                <c:if test="#{controladorEmpleado.mensajeGeneral}"> 
+                    <div class="box box-primary">
+                        <div class="box box-solid">
+                            <div class="box-header with-border">
+                                <h2 class="box-title">Notificaciones</h2>
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>       
+                            <div class="box-body">  
+                                <div class="row">                                
+                                    <div class="col-lg-6 col-md-6 col-xs-12">
+                                        <div class="small-box #{controladorEmpleado.estiloInfo?'bg-blue':'bg-yellow'}">
+                                            <div class="inner">
+                                                <h3>¡Atento Aviso!</h3>
+                                                <p>#{controladorEmpleado.mensajeIndex1}</p>
+                                                <p style="font-weight: bolder;text-align: center;font-size: 25px;">#{controladorEmpleado.mensajeIndex2}</p>
+                                            </div>
+                                            <div class="icon">
+                                                <i class="fa fa-calendar"/>
+                                            </div>
+                                            <a href="poa/areas/evaluacion.xhtml" class="small-box-footer">Evaluar <i class="fa fa-chevron-circle-right"/></a>
+                                            <a href="siip/modulosRegistro/menu_general.xhtml" class="small-box-footer">Registrar <i class="fa fa-chevron-circle-right"/></a>
+                                            <a href="calendarioActividades.xhtml" class="small-box-footer">Consultar calendario <i class="fa fa-chevron-circle-right"/></a>
+                                        </div>
+                                    </div>                        
+                                </div>
+                            </div>
+                        </div>
+                    </div>    
+                </c:if>
+            </c:if>
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividad eq 2 || controladorEmpleado.nuevoOBJListaPersonal.actividad eq 4}"> 
                 <c:if test="#{controladorEmpleado.incidenciases.size() eq 0? false:true}">
                     <div class="box box-primary">

@@ -69,15 +69,16 @@ public class cuadroMandoIntegralArea implements Serializable {
     @PostConstruct
     public void init() {
         System.out.println("cuadroMandoIntegralArea Inicio: " + System.currentTimeMillis());
-        numeroMes=fechaActual.getMonth();
+        numeroMes = fechaActual.getMonth();
 //        numeroMes=0;
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralArea.init()" + numeroMes);
         if (numeroMes == 0) {
             System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralArea.init()");
-            numeroMes=11;
+            numeroMes = 11;
             ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 101));
         } else {
-            numeroMes=numeroMes-1;
-            ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 101));
+            numeroMes = numeroMes - 1;
+            ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 100));
         }
         switch (numeroMes) {
             case 0:                mes = "Avance al mes de: Enero";                break;
@@ -256,11 +257,12 @@ public class cuadroMandoIntegralArea implements Serializable {
             actividadesPoas.forEach((t) -> {
                 CuadroMandoIntegral cmi = new CuadroMandoIntegral();
                 cmi = t.getCuadroMandoInt();
-                if (cmi.getProyecto() != null) {
+//                if (cmi.getProyecto() != null) {
                     actividadesPoasRegistradas.add(t);
-                }
+//                }
             });
         }
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralArea.actividadesFiltradas()"+actividadesPoasRegistradas.size());
         return actividadesPoasRegistradas;
     }  
     

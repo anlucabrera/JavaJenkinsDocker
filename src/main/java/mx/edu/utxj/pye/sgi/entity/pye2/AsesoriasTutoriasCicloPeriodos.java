@@ -38,7 +38,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "AsesoriasTutoriasCicloPeriodos.findByAsunto", query = "SELECT a FROM AsesoriasTutoriasCicloPeriodos a WHERE a.asunto = :asunto")
     , @NamedQuery(name = "AsesoriasTutoriasCicloPeriodos.findByNoTutoriasAsesorias", query = "SELECT a FROM AsesoriasTutoriasCicloPeriodos a WHERE a.noTutoriasAsesorias = :noTutoriasAsesorias")
     , @NamedQuery(name = "AsesoriasTutoriasCicloPeriodos.findByAsistentesHombres", query = "SELECT a FROM AsesoriasTutoriasCicloPeriodos a WHERE a.asistentesHombres = :asistentesHombres")
-    , @NamedQuery(name = "AsesoriasTutoriasCicloPeriodos.findByAsistentesMujeres", query = "SELECT a FROM AsesoriasTutoriasCicloPeriodos a WHERE a.asistentesMujeres = :asistentesMujeres")})
+    , @NamedQuery(name = "AsesoriasTutoriasCicloPeriodos.findByAsistentesMujeres", query = "SELECT a FROM AsesoriasTutoriasCicloPeriodos a WHERE a.asistentesMujeres = :asistentesMujeres")
+    , @NamedQuery(name = "AsesoriasTutoriasCicloPeriodos.findByTutor", query = "SELECT a FROM AsesoriasTutoriasCicloPeriodos a WHERE a.tutor = :tutor")})
 public class AsesoriasTutoriasCicloPeriodos implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -92,6 +93,10 @@ public class AsesoriasTutoriasCicloPeriodos implements Serializable {
     @NotNull
     @Column(name = "asistentes_mujeres")
     private short asistentesMujeres;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "tutor")
+    private int tutor;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Registros registros;
@@ -103,7 +108,7 @@ public class AsesoriasTutoriasCicloPeriodos implements Serializable {
         this.registro = registro;
     }
 
-    public AsesoriasTutoriasCicloPeriodos(Integer registro, int periodoEscolar, short programaEducativo, String cuatrimestre, String grupo, String tipoActividad, String tipo, String asunto, short noTutoriasAsesorias, short asistentesHombres, short asistentesMujeres) {
+    public AsesoriasTutoriasCicloPeriodos(Integer registro, int periodoEscolar, short programaEducativo, String cuatrimestre, String grupo, String tipoActividad, String tipo, String asunto, short noTutoriasAsesorias, short asistentesHombres, short asistentesMujeres, int tutor) {
         this.registro = registro;
         this.periodoEscolar = periodoEscolar;
         this.programaEducativo = programaEducativo;
@@ -115,6 +120,7 @@ public class AsesoriasTutoriasCicloPeriodos implements Serializable {
         this.noTutoriasAsesorias = noTutoriasAsesorias;
         this.asistentesHombres = asistentesHombres;
         this.asistentesMujeres = asistentesMujeres;
+        this.tutor = tutor;
     }
 
     public Integer getRegistro() {
@@ -203,6 +209,14 @@ public class AsesoriasTutoriasCicloPeriodos implements Serializable {
 
     public void setAsistentesMujeres(short asistentesMujeres) {
         this.asistentesMujeres = asistentesMujeres;
+    }
+
+    public int getTutor() {
+        return tutor;
+    }
+
+    public void setTutor(int tutor) {
+        this.tutor = tutor;
     }
 
     public Registros getRegistros() {

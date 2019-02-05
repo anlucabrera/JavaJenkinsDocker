@@ -7,6 +7,8 @@ import javax.faces.model.SelectItem;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaSatisfaccionEgresadosIng;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 
 /**
  *
@@ -30,5 +32,9 @@ public interface EjbSatisfaccionEgresadosIng {
     /////////////////////////////////////////////////////////////Administracion resultados de la encuesta\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     
     public List<EncuestaSatisfaccionEgresadosIng> resultadosEncuesta();
+    
+    public Alumnos obtenerAlumnos(String matricula);
+    
+    public PeriodosEscolares getPeriodo(Evaluaciones evaluacion) ;
 
 }

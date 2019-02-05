@@ -309,9 +309,9 @@ public class ServicioSelectItems implements EJBSelectItems {
     }
 
     public List<Registros> getListaRegistrosAreaTipo(Short tipo) {
-        TypedQuery<AreasUniversidad> qa = f.getEntityManager().createQuery("SELECT a from AreasUniversidad a", AreasUniversidad.class);
+       TypedQuery<AreasUniversidad> qa = f.getEntityManager().createQuery("SELECT a from AreasUniversidad a", AreasUniversidad.class);
         List<AreasUniversidad> listaAreasConPoa = qa.getResultStream().filter(x -> (x.getTienePoa() && x.getArea().equals(logonMB.getPersonal().getAreaOperativa())
-                || (x.getTienePoa() && x.getArea().equals(logonMB.getPersonal().getAreaSuperior())))).collect(Collectors.toList());
+                || (x.getTienePoa() && x.getArea().equals(logonMB.getPersonal().getAreaOperativa())))).collect(Collectors.toList());
 
         if (listaAreasConPoa == null || listaAreasConPoa.isEmpty()) {
             return null;
@@ -337,7 +337,7 @@ public class ServicioSelectItems implements EJBSelectItems {
     public List<Registros> getListaRegistrosAreaTipoEjercicio(Short tipo, Short ejercicio) {
         TypedQuery<AreasUniversidad> qa = f.getEntityManager().createQuery("SELECT a from AreasUniversidad a", AreasUniversidad.class);
         List<AreasUniversidad> listaAreasConPoa = qa.getResultStream().filter(x -> (x.getTienePoa() && x.getArea().equals(logonMB.getPersonal().getAreaOperativa())
-                || (x.getTienePoa() && x.getArea().equals(logonMB.getPersonal().getAreaSuperior())))).collect(Collectors.toList());
+                || (x.getTienePoa() && x.getArea().equals(logonMB.getPersonal().getAreaOperativa())))).collect(Collectors.toList());
 
         if (listaAreasConPoa == null || listaAreasConPoa.isEmpty()) {
             return null;
@@ -382,7 +382,7 @@ public class ServicioSelectItems implements EJBSelectItems {
     @Override
     public List<SelectItem> itemEjercicioFiscalPorRegistro(Short tipo) {
         List<Registros> registrosArea = getListaRegistrosAreaTipo(tipo);
-        //System.err.println("lo registros del area son = : "+ registrosArea);
+//        System.err.println("lo registros del area son = : "+ registrosArea);
         List<SelectItem> ls = new ArrayList<>();
         if (registrosArea == null) {
 //            ls.add(new SelectItem((short)1, "Aun no hay registros ligados a un ejercicio"));

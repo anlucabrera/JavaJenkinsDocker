@@ -456,7 +456,6 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
         
         //obtener la referencia al area operativa del trabajador
         AreasUniversidad area = f.getEntityManager().find(AreasUniversidad.class, claveArea);
-      
         //comprobar si el area operativa es un programa educativo referenciar a su area superior para obtener la referencia al area academica
         Short programaCategoria = (short)ep.leerPropiedadEntera("modulosRegistroProgramaEducativoCategoria").orElse(9);
         
@@ -470,8 +469,19 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
                     .map(au -> au.getArea())
                     .collect(Collectors.toList());
 
-        }else{//si no es area academica solo filtrar los datos del area operativa del trabajador
+        }else{//si no es Área Académica
+
+            //Obtener las claves de todas las Áreas que dependan del Área del Usuario Logueado
+            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
+                    .setParameter("areaSuperior", area.getArea())
+                    .getResultStream()
+                    .map(au -> au.getArea())
+                    .collect(Collectors.toList());
             areas.add(claveArea);
+            //Si no tiene Áreas inferiores es decir la lista es vacía, únicamente se muestran los datos de registro del Área del Usuario Logueado
+            if (areas.isEmpty()) {
+                areas.add(claveArea);
+            }
         }
         
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
@@ -486,7 +496,7 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
         entities.forEach(e -> {
             
             Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
-//            ActividadesPoa a = e.getRegistros().getActividadesPoaList().isEmpty()?null:e.getRegistros().getActividadesPoaList().get(0);
+            //ActividadesPoa a = e.getRegistros().getActividadesPoaList().isEmpty()?null:e.getRegistros().getActividadesPoaList().get(0);
             ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
             l.add(new DTOActFormacionIntegral(
                     e,
@@ -497,6 +507,7 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
 
 
         return l;
+
     }
 
     @Override
@@ -522,8 +533,19 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
                     .map(au -> au.getArea())
                     .collect(Collectors.toList());
 
-        }else{//si no es area academica solo filtrar los datos del area operativa del trabajador
+        }else{//si no es Área Académica
+
+            //Obtener las claves de todas las Áreas que dependan del Área del Usuario Logueado
+            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
+                    .setParameter("areaSuperior", area.getArea())
+                    .getResultStream()
+                    .map(au -> au.getArea())
+                    .collect(Collectors.toList());
             areas.add(claveArea);
+            //Si no tiene Áreas inferiores es decir la lista es vacía, únicamente se muestran los datos de registro del Área del Usuario Logueado
+            if (areas.isEmpty()) {
+                areas.add(claveArea);
+            }
         }
         
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas

@@ -91,7 +91,7 @@ public class ControladorBolsaTrabajo implements Serializable{
         initFiltros();
         
         clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
-        claveRegistro = 1;
+        claveRegistro = 23;
         consultarPermiso();
 
     }

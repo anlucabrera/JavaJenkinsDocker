@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -75,7 +76,7 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
     }
     
     public void cargarListaPorEvento(){
-        dto.setLista(ejb.getListaRegistrosPorEventoAreaPeriodo(dto.getEventoSeleccionado(), dto.getAreaPOA().getArea(), dto.getPeriodo(), dto.getRegistroTipo()));
+        dto.setLista(ejb.getListaRegistrosPorEventoAreaPeriodo(dto.getEventoSeleccionado(), dto.getAreaPOA().getArea(), dto.getPeriodo(), dto.getRegistroTipo(), controladorEmpleado.getNuevoOBJListaPersonal().getActividad(),controladorEmpleado.getNuevoOBJListaPersonal().getClave()));
         dto.getLista().stream().forEach((atce) -> {
             atce.getAsesoriasTutoriasCicloPeriodos().setRegistros(ejbModulos.buscaRegistroPorClave(atce.getAsesoriasTutoriasCicloPeriodos().getRegistro()));
         });
@@ -127,7 +128,7 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
     public void guardaAsesoriasTutorias(){
         if (dto.getLista() != null) {
             try {
-                ejb.guardaAsesoriasTutorias(dto.getLista(), dto.getRegistroTipo(), dto.getEje(), dto.getAreaPOA().getArea(), controladorModulosRegistro.getEventosRegistros());
+                ejb.guardaAsesoriasTutorias(dto.getLista(), dto.getRegistroTipo(), dto.getEje(), dto.getAreaPOA().getArea(), controladorModulosRegistro.getEventosRegistros(),controladorEmpleado.getNuevoOBJListaPersonal().getClave());
             } catch (Throwable ex) {
                 Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause()!=null?ex.getCause().getMessage():ex.getMessage());
                 Logger.getLogger(ControladorAsesoriasTutoriasCicloEscolar.class.getName()).log(Level.SEVERE, null, ex);

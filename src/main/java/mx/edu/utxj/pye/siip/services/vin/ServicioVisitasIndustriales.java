@@ -320,6 +320,7 @@ public class ServicioVisitasIndustriales implements EjbVisitasIndustriales{
         q.setParameter("mes", mes);
         q.setParameter("ejercicio", ejercicio);
         q.setParameter("area", controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        System.err.println("getVisitasIndustrialesRegistrosPorEjercicioMesArea " + q.getResultList());
         List<VisitasIndustriales> l = q.getResultList();
         if (l.isEmpty() || l == null) {
             return null;
@@ -338,6 +339,7 @@ public class ServicioVisitasIndustriales implements EjbVisitasIndustriales{
         q.setParameter("mes", mes);
         q.setParameter("ejercicio", ejercicio);
         q.setParameter("area", controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        System.err.println("getListaVisitasIndutrialesDTO " + q.getResultList());
         List<VisitasIndustriales> l = q.getResultList();
         if (l.isEmpty() || l == null) {
             return null;
