@@ -109,6 +109,11 @@ public class RegistrosMovilidad implements Serializable {
     private String cuatrimestreCursado;
     @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 150)
+    @Column(name = "institucion_organizacion")
+    private String institucionOrganizacion;
+    @Basic(optional = false)
+    @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "proyecto")
     private String proyecto;
@@ -148,9 +153,6 @@ public class RegistrosMovilidad implements Serializable {
         , @JoinColumn(name = "pais", referencedColumnName = "idestado")})
     @ManyToOne(optional = false)
     private Estado estado;
-    @JoinColumn(name = "institucion_organizacion", referencedColumnName = "empresa")
-    @ManyToOne(optional = false)
-    private OrganismosVinculados institucionOrganizacion;
     @JoinColumn(name = "programa_movilidad", referencedColumnName = "programa")
     @ManyToOne(optional = false)
     private ProgramasMovilidad programaMovilidad;
@@ -342,14 +344,14 @@ public class RegistrosMovilidad implements Serializable {
         this.estado = estado;
     }
 
-    public OrganismosVinculados getInstitucionOrganizacion() {
+    public String getInstitucionOrganizacion() {
         return institucionOrganizacion;
     }
 
-    public void setInstitucionOrganizacion(OrganismosVinculados institucionOrganizacion) {
+    public void setInstitucionOrganizacion(String institucionOrganizacion) {
         this.institucionOrganizacion = institucionOrganizacion;
     }
-
+    
     public ProgramasMovilidad getProgramaMovilidad() {
         return programaMovilidad;
     }

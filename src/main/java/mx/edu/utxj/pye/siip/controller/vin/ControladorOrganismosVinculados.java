@@ -36,12 +36,15 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.MunicipioPK;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
 import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
+import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasBeneficiadosVinculacion;
+import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasBeneficiadosVinculacionPK;
 import mx.edu.utxj.pye.sgi.entity.pye2.TelefonosEmpresa;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.vin.DtoOrganismosVinculados;
 import mx.edu.utxj.pye.siip.dto.vin.DTOActividadesVinculacion;
 import mx.edu.utxj.pye.siip.dto.vin.DTOOrganismoVinculado;
+import mx.edu.utxj.pye.siip.dto.vin.DTOProgramasBeneficiadosVinculacion;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbConvenios;
 import org.omnifaces.cdi.ViewScoped;
@@ -77,6 +80,11 @@ public class ControladorOrganismosVinculados implements Serializable {
         dtoOrganismosVinculado.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
         inicializarUbicacion();
         filtros();
+        try {
+            dtoOrganismosVinculado.setListaProgramasEducativosBeneficiadosV(ejbOrganismosVinculados.getProgramasBeneficiadosVinculacion());
+        } catch (Throwable ex) {
+            Logger.getLogger(ControladorOrganismosVinculados.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void inicializarUbicacion(){
@@ -646,6 +654,43 @@ public class ControladorOrganismosVinculados implements Serializable {
             abrirUbicacion(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
             Messages.addGlobalInfo("La ubicación se eliminó de manera correcta.");
         }else Messages.addGlobalError("La ubicación no se pudo eliminar.");
+    }
+    
+    public void abrirProgramasBeneficiadosVinculacion(OrganismosVinculados orgVin){
+        DTOOrganismoVinculado dtov = new DTOOrganismoVinculado();
+        dtov.setOrganismoVinculado(orgVin);
+        dtoOrganismosVinculado.setRegistro(dtov);
+        consultaProgramaBeneficiadoVinculacion();
+        Ajax.update("frmProgramasBeneficiadosVinculacion");
+        Ajax.oncomplete("skin();");
+        dtoOrganismosVinculado.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaProgramasEducativosBeneficiados();
+    }
+    
+    public void consultaProgramaBeneficiadoVinculacion(){
+        dtoOrganismosVinculado.getListaProgramasEducativosBeneficiadosV().stream().forEach((t) -> {
+            t.setExiste(ejbOrganismosVinculados.verificaProgramaBeneficiadoVinculacion(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado().getEmpresa(), t.getAreaUniversidad()));
+        });
+    }
+    
+    public void forzarAperturaProgramasEducativosBeneficiados(){
+        if(dtoOrganismosVinculado.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalProgramasBeneficiadosVinculacion').show();");
+            dtoOrganismosVinculado.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void guardaProgramaBeneficiadoVinculacion(DTOProgramasBeneficiadosVinculacion dtoOrgVinpbv){
+        ProgramasBeneficiadosVinculacionPK pbvpk = new ProgramasBeneficiadosVinculacionPK();
+        pbvpk.setEmpresa(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado().getEmpresa());
+        pbvpk.setProgramaEducativo(dtoOrgVinpbv.getAreaUniversidad().getArea());
+        ProgramasBeneficiadosVinculacion programaBeneficiadoVinculacion = new ProgramasBeneficiadosVinculacion();
+        programaBeneficiadoVinculacion.setProgramasBeneficiadosVinculacionPK(pbvpk);
+        programaBeneficiadoVinculacion.setOrganismosVinculados(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
+        Boolean guardado = ejbOrganismosVinculados.guardarProgramaBeneficiadoVinculacion(programaBeneficiadoVinculacion);
+        if(guardado){
+            abrirProgramasBeneficiadosVinculacion(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
+        }else  Messages.addGlobalError("El programa educativo no pudo asignarse.");
     }
     
 }

@@ -19,6 +19,8 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
+import lombok.Getter;
+import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
@@ -57,6 +59,8 @@ public class ServicioFeriasProfesiograficas implements EjbFeriasProfesiograficas
     @EJB Facade f;
     @EJB EjbModulos ejbModulos;
     @Inject ControladorEmpleado controladorEmpleado;
+    
+    @Getter @Setter private List<Short> areas;
    
     @Override
     public ListaFeriasProfesiograficas getListaFeriasProfesiograficas(String rutaArchivo) throws Throwable {
@@ -269,12 +273,18 @@ public class ServicioFeriasProfesiograficas implements EjbFeriasProfesiograficas
 
     @Override
     public List<ListaFeriasDTO> getRegistroFeriaProf(String mes, Short ejercicio) {
+        //verificar que los parametros no sean nulos
+        if(mes == null || ejercicio == null){
+            return null;
+        }
+        areas = ejbModulos.getAreasDependientes(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        
         List<ListaFeriasDTO> ldto = new ArrayList<>();
         TypedQuery<FeriasProfesiograficas> q = f.getEntityManager()
-                .createQuery("SELECT a from FeriasProfesiograficas a WHERE a.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND a.registros.eventoRegistro.mes = :mes AND a.registros.area = :area", FeriasProfesiograficas.class);
+                .createQuery("SELECT a from FeriasProfesiograficas a WHERE a.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND a.registros.eventoRegistro.mes = :mes AND a.registros.area IN :areas", FeriasProfesiograficas.class);
         q.setParameter("mes", mes);
         q.setParameter("ejercicio", ejercicio);
-        q.setParameter("area", controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        q.setParameter("areas", areas);
         List<FeriasProfesiograficas> l = q.getResultList();
         if (l.isEmpty() || l == null) {
             return null;

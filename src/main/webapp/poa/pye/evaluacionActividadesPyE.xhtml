@@ -116,6 +116,9 @@
                                             </p:headerRow>       
 
                                             <p:column>  
+                                                <p:rowToggler />
+                                            </p:column>
+
                                                 <p:rowExpansion>
                                                     <p:dataTable id="dtbPoaEvaluacion" value="#{estrategiasRegistro.actividadesPoas}" var="poa" emptyMessage="No hay actividades a evaluar en este mes"
                                                                  editable="true" editMode="row" widgetVar="dtbPoaEvaluacion" rowKey="#{poa.actividadesPoa.actividadPoa}" 
@@ -415,7 +418,6 @@
                                                         </p:rowExpansion>
                                                     </p:dataTable>
                                                 </p:rowExpansion>  
-                                            </p:column>
                                         </p:dataTable>
                                     </p:dataList>
                                 </div>

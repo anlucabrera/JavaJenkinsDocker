@@ -60,6 +60,7 @@ public class ControladorPOAEvaluacionAreas implements Serializable {
     
     @Getter    @Setter    private ActividadesPoa actividadesPoaEditando = new ActividadesPoa(),actividadMadre=new ActividadesPoa();
     @Getter    @Setter    private EjesRegistro ejes;
+    @Getter    @Setter    private Estrategias estrategias;
     @Getter    @Setter    private Evidencias evidencias;
     @Getter    @Setter    private EvidenciasDetalle evidenciasDetalle;
     @Getter    @Setter    private Estrategias ultimaEstrategiaExpandida;
@@ -147,6 +148,51 @@ public class ControladorPOAEvaluacionAreas implements Serializable {
         }
     }
 
+    public void asignarParametrosRegistro(ValueChangeEvent event) {
+        archivoSC = false;
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARegistro.asignarParametrosRegistro()" + Short.parseShort(event.getNewValue().toString()));
+        if (Short.parseShort(event.getNewValue().toString()) != Short.parseShort("0")) {
+            switch (event.getComponent().getId()) {
+                case "eje":
+                    ejes = new EjesRegistro();
+                    estrategias = new Estrategias();
+                    ejes = poaSelectec.mostrarEjeRegistro(Integer.parseInt(event.getNewValue().toString()));
+                    if (ejes != null) {
+                        estrategiases.clear();
+                        estrategiases.add(new Estrategias(Short.parseShort("0"), Short.parseShort("0"), "Selecciones Uno"));
+                        poaSelectec.getEstarategiasPorEje(ejes,ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).forEach((t) -> {
+                            estrategiases.add(t);
+                        });
+                    }
+                    resetearValores();
+                    break;
+                case "estrategia":
+                    estrategias = new Estrategias();
+                    estrategias = poaSelectec.mostrarEstrategia(Short.parseShort(event.getNewValue().toString()));
+                    resetearValores();
+                    if (ejes != null) {
+                        if (general) {
+                            generaListaActividadesEje();
+                        } else {
+                            generaListaActividades();
+                        }
+                    }                    
+                    break;
+            }
+        } else {
+            ejes = new EjesRegistro();
+            estrategias = new Estrategias();
+            estrategiases.clear();
+            consultarListas();
+        }
+    }
+    
+    public void resetearValores() {
+        actividadesPoaEditando = new ActividadesPoa();
+        actividadMadre = new ActividadesPoa();
+        listaEstrategiaActividadesesEje.clear();
+    }
+    
     public void tipoVista() {
         if (general) {
             generaListaActividadesEje();
@@ -174,8 +220,8 @@ public class ControladorPOAEvaluacionAreas implements Serializable {
         listaListaEjeEstrategia.clear();
         listaEstrategiaActividadesesEje.clear();
         
-        listaListaEjeEstrategia.add(new listaEjeEstrategia(ejes, poaSelectec.getEstarategiasPorEje(ejes, ejercicioFiscal, claveArea)));    
-            
+        listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(estrategias, aconsultarTotales(poaSelectec.getActividadesPoasporEstarategias(estrategias,ejes, ejercicioFiscal, claveArea))));
+              
         if (mes <= 3) {
             cuatrimestre = 1;
         } else {
@@ -186,12 +232,6 @@ public class ControladorPOAEvaluacionAreas implements Serializable {
             }
         }
         
-        listaListaEjeEstrategia.forEach((e) -> {
-            e.getListaEstrategiases1().forEach((t) -> {
-                listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(t, aconsultarTotales(poaSelectec.getActividadesPoasporEstarategias(t, e.getEjess(), ejercicioFiscal, claveArea))));
-            });
-        });
-
         listaEstrategiaActividadesesEje.forEach((t) -> {
             poaActual = t.getActividadesPoas().iterator();
             while (poaActual.hasNext()) {
@@ -221,8 +261,8 @@ public class ControladorPOAEvaluacionAreas implements Serializable {
         listaListaEjeEstrategia.clear();
         listaEstrategiaActividadesesEje.clear();
 
-        listaListaEjeEstrategia.add(new listaEjeEstrategia(ejes, poaSelectec.getEstarategiasPorEje(ejes, ejercicioFiscal, claveArea)));
-        
+        listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(estrategias, aconsultarTotales(poaSelectec.getActividadesPoasporEstarategias(estrategias, ejes, ejercicioFiscal, claveArea))));
+            
         if (mes <= 3) {
             cuatrimestre = 1;
         } else {
@@ -232,12 +272,7 @@ public class ControladorPOAEvaluacionAreas implements Serializable {
                 cuatrimestre = 3;
             }
         }
-        
-        listaListaEjeEstrategia.forEach((e) -> {
-            e.getListaEstrategiases1().forEach((t) -> {
-                listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(t, aconsultarTotales(poaSelectec.getActividadesPoasporEstarategias(t, e.getEjess(), ejercicioFiscal, claveArea))));
-            });
-        });
+                
         mostradaL = 1;
     }
 
@@ -560,6 +595,7 @@ public class ControladorPOAEvaluacionAreas implements Serializable {
             System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(1)");
             ultimaEstrategiaExpandida = new Estrategias();
             ultimaEstrategiaExpandida = actividadesPoaEditando.getCuadroMandoInt().getEstrategia();
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOAEvaluacionAreas.subirEvidenciaPOA()"+ultimaEstrategiaExpandida);
             archivoSC = true;
             evidencias = new Evidencias();
 

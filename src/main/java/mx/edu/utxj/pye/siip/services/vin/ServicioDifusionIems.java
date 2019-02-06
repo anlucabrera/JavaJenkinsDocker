@@ -16,6 +16,8 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
+import lombok.Getter;
+import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
@@ -52,6 +54,8 @@ public class ServicioDifusionIems implements EjbDifusionIems{
     @EJB EjbModulos ejbModulos;
     @EJB Facade f;
     @Inject ControladorEmpleado controladorEmpleado;
+    
+    @Getter @Setter private List<Short> areas;
    
     @Override
     public ListaDifusionIems getListaDifusionIems(String rutaArchivo) throws Throwable {
@@ -204,12 +208,18 @@ public class ServicioDifusionIems implements EjbDifusionIems{
     
     @Override
     public List<ListaDifusionIemsDTO> getRegistroDifusionIemsDTO(String mes, Short ejercicio) {
+        //verificar que los parametros no sean nulos
+        if(mes == null || ejercicio == null){
+            return null;
+        }
+        areas = ejbModulos.getAreasDependientes(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        
         List<ListaDifusionIemsDTO> ldto = new ArrayList<>();
         TypedQuery<DifusionIems> q = f.getEntityManager()
-                .createQuery("SELECT a from DifusionIems a WHERE a.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND a.registros.eventoRegistro.mes = :mes AND a.registros.area = :area", DifusionIems.class);
+                .createQuery("SELECT a from DifusionIems a WHERE a.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND a.registros.eventoRegistro.mes = :mes AND a.registros.area IN :areas", DifusionIems.class);
         q.setParameter("mes", mes);
         q.setParameter("ejercicio", ejercicio);
-        q.setParameter("area", controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        q.setParameter("areas", areas);
         List<DifusionIems> l = q.getResultList();
         if (l.isEmpty() || l == null) {
             return null;

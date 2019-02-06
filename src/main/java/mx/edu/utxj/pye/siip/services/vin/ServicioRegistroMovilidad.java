@@ -33,7 +33,6 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.Meses;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
-import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasMovilidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosMovilidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistroMovilidadDocente;
@@ -52,7 +51,6 @@ import mx.edu.utxj.pye.siip.dto.vinculacion.DTOMovilidadEstudiante;
 import mx.edu.utxj.pye.siip.dto.vinculacion.DTORegistroMovilidad;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbRegistroMovilidad;
-import mx.edu.utxj.pye.siip.interfaces.vin.EjbOrganismosVinculados;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -68,7 +66,6 @@ import org.omnifaces.util.Messages;
 public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
     @EJB Facade f;
     @EJB EjbModulos ejbModulos;
-    @EJB EjbOrganismosVinculados ejbOrganismosVinculados;
     @EJB EjbPropiedades ep;
     @Inject Caster caster;
     @Inject ControladorEmpleado controladorEmpleado;
@@ -81,7 +78,6 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
         List<DTORegistroMovilidad> listaDtoMovilidad = new ArrayList<>();
         Pais pais;
         Estado estado;
-        OrganismosVinculados organismosVinculados;
         AreasUniversidad areasUniversidad;
         PeriodosEscolares periodosEscolares;
         ProgramasMovilidad programasMovilidad;
@@ -98,6 +94,7 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
         int pro =0;
         int des =0;
         int ie=0;
+        int io=0;
         
         try{
         if (primeraHoja.getSheetName().equals("Registro Movilidad")) {
@@ -107,7 +104,6 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
                 if ((!"".equals(fila.getCell(0).getStringCellValue()))) {
                 pais = new Pais();
                 estado = new Estado();
-                organismosVinculados = new OrganismosVinculados();
                 areasUniversidad =  new AreasUniversidad();
                 periodosEscolares = new PeriodosEscolares();
                 programasMovilidad = new ProgramasMovilidad();
@@ -226,135 +222,134 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
                 }
                 switch (fila.getCell(17).getCellTypeEnum()) {
                     case STRING:
-                        organismosVinculados.setNombre(fila.getCell(17).getStringCellValue());
+                        registrosMovilidad.setInstitucionOrganizacion(fila.getCell(17).getStringCellValue());
                         break;
                     default:
                         break;
                 }
                 switch (fila.getCell(18).getCellTypeEnum()) {
-                    case FORMULA:
-                        organismosVinculados.setEmpresa((int)fila.getCell(18).getNumericCellValue());
-                        registrosMovilidad.setInstitucionOrganizacion(organismosVinculados);
+                    case STRING:
+                        pais.setNombre(fila.getCell(18).getStringCellValue());
                         break;
                     default:
                         break;
                 }
                 switch (fila.getCell(19).getCellTypeEnum()) {
-                    case STRING:
-                        pais.setNombre(fila.getCell(19).getStringCellValue());
-                        break;
-                    default:
-                        break;
-                }
-                switch (fila.getCell(20).getCellTypeEnum()) {
                     case FORMULA:
-                        pais.setIdpais((int)fila.getCell(20).getNumericCellValue());
+                        pais.setIdpais((int)fila.getCell(19).getNumericCellValue());
                         break;
                     default:
                         break;
                 }
-                 switch (fila.getCell(23).getCellTypeEnum()) {
+                 switch (fila.getCell(22).getCellTypeEnum()) {
                     case STRING:
-                        estado.setNombre(fila.getCell(23).getStringCellValue());
+                        estado.setNombre(fila.getCell(22).getStringCellValue());
                         break;
                     default:
                         break;
                 }
-                switch (fila.getCell(24).getCellTypeEnum()) {
+                switch (fila.getCell(23).getCellTypeEnum()) {
                     case FORMULA:
-                        estado.setIdestado((int)fila.getCell(24).getNumericCellValue());
+                        estado.setIdestado((int)fila.getCell(23).getNumericCellValue());
                         estado.setIdpais(pais);
                         registrosMovilidad.setEstado(estado);
                         break;
                     default:
                         break;
                 }
+                switch (fila.getCell(24).getCellTypeEnum()) {
+                    case STRING:
+                        registrosMovilidad.setProyecto(fila.getCell(24).getStringCellValue());
+                        break;
+                    default:
+                        break;
+                }
                 switch (fila.getCell(25).getCellTypeEnum()) {
                     case STRING:
-                        registrosMovilidad.setProyecto(fila.getCell(25).getStringCellValue());
+                        registrosMovilidad.setDescripcion(fila.getCell(25).getStringCellValue());
                         break;
                     default:
                         break;
                 }
-                switch (fila.getCell(26).getCellTypeEnum()) {
-                    case STRING:
-                        registrosMovilidad.setDescripcion(fila.getCell(26).getStringCellValue());
-                        break;
-                    default:
-                        break;
-                }
-                switch (fila.getCell(28).getCellTypeEnum()) {
+                switch (fila.getCell(27).getCellTypeEnum()) {
                     case FORMULA:
-                        BigDecimal est= new BigDecimal((int)fila.getCell(28).getNumericCellValue());
+                        BigDecimal est= new BigDecimal((int)fila.getCell(27).getNumericCellValue());
                         registrosMovilidad.setPresEst(est);
                         break;
                     default:
                         break;
                 }
-                switch (fila.getCell(30).getCellTypeEnum()) {
+                switch (fila.getCell(29).getCellTypeEnum()) {
                     case FORMULA:
-                        BigDecimal fed= new BigDecimal((int)fila.getCell(30).getNumericCellValue());
+                        BigDecimal fed= new BigDecimal((int)fila.getCell(29).getNumericCellValue());
                         registrosMovilidad.setPresFed(fed);
                         break;
                     default:
                         break;
                 }
-                switch (fila.getCell(32).getCellTypeEnum()) {
+                switch (fila.getCell(31).getCellTypeEnum()) {
                     case FORMULA:
-                        BigDecimal cap= new BigDecimal((int)fila.getCell(32).getNumericCellValue());
+                        BigDecimal cap= new BigDecimal((int)fila.getCell(31).getNumericCellValue());
                         registrosMovilidad.setCapDer(cap);
                         break;
                     default:
                         break;
                 }
-                switch (fila.getCell(34).getCellTypeEnum()) {
+                switch (fila.getCell(33).getCellTypeEnum()) {
                     case FORMULA:
-                        BigDecimal ing= new BigDecimal((int)fila.getCell(34).getNumericCellValue());
+                        BigDecimal ing= new BigDecimal((int)fila.getCell(33).getNumericCellValue());
                         registrosMovilidad.setIngPropios(ing);
                         break;
                     default:
                         break;
                 }
-                switch (fila.getCell(36).getCellTypeEnum()) {
+                switch (fila.getCell(35).getCellTypeEnum()) {
                     case FORMULA:
-                        BigDecimal ext= new BigDecimal((int)fila.getCell(36).getNumericCellValue());
+                        BigDecimal ext= new BigDecimal((int)fila.getCell(35).getNumericCellValue());
                         registrosMovilidad.setIngExtra(ext);
                         break;
                     default:
                         break;
                 }
                 
-                switch (fila.getCell(37).getCellTypeEnum()) {
+                switch (fila.getCell(36).getCellTypeEnum()) {
                     case STRING:
-                        registrosMovilidad.setDescripcionIngExt(fila.getCell(37).getStringCellValue());
+                        registrosMovilidad.setDescripcionIngExt(fila.getCell(36).getStringCellValue());
+                        break;
+                    default:
+                        break;
+                }
+                switch (fila.getCell(42).getCellTypeEnum()) {
+                    case FORMULA:
+                        par= (int) fila.getCell(42).getNumericCellValue();
                         break;
                     default:
                         break;
                 }
                 switch (fila.getCell(43).getCellTypeEnum()) {
-                    case FORMULA:
-                        par= (int) fila.getCell(43).getNumericCellValue();
+                   case FORMULA:
+                        pro= (int) fila.getCell(43).getNumericCellValue();
                         break;
                     default:
                         break;
                 }
                 switch (fila.getCell(44).getCellTypeEnum()) {
-                   case FORMULA:
-                        pro= (int) fila.getCell(44).getNumericCellValue();
+                    case FORMULA:
+                        des= (int) fila.getCell(44).getNumericCellValue();
                         break;
                     default:
                         break;
                 }
                 switch (fila.getCell(45).getCellTypeEnum()) {
-                    case FORMULA:
-                        des= (int) fila.getCell(45).getNumericCellValue();
+                   case FORMULA:
+                        ie= (int) fila.getCell(45).getNumericCellValue();
                         break;
                     default:
                         break;
                 }
-                switch (fila.getCell(46).getCellTypeEnum()) {
+                switch (fila.getCell(47).getCellTypeEnum()) {
                    case FORMULA:
-                        ie= (int) fila.getCell(46).getNumericCellValue();
+                        io= (int) fila.getCell(47).getNumericCellValue();
                         break;
                     default:
                         break;
@@ -374,6 +369,10 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
                     if (ie == 1) {
                         validarCelda.add(false);
                         datosInvalidos.add("Dato incorrecto: Descripción de Ing. Extraordinarios en la columna: <b>" + (22 + 1) + " y fila: " + (i + 1) + "</b> \n");
+                    }
+                    if (io == 1) {
+                        validarCelda.add(false);
+                        datosInvalidos.add("Dato incorrecto: Nombre de la Institución u Organización en la columna: <b>" + (12 + 1) + " y fila: " + (i + 1) + "</b> \n");
                     }
                     dTORegistroMovilidad.setAreasUniversidad(areasUniversidad);
                     dTORegistroMovilidad.setRegistrosMovilidad(registrosMovilidad);
@@ -421,7 +420,6 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
                 if (registroAlmacenado) {
                     if(ejbModulos.comparaPeriodoRegistro(regMovEncontrada.getPeriodoEscolarCursado(), movilidad.getRegistrosMovilidad().getPeriodoEscolarCursado())){
                         movilidad.getRegistrosMovilidad().setRegistro(regMovEncontrada.getRegistro());
-                        movilidad.getRegistrosMovilidad().getInstitucionOrganizacion().setRegistro(ejbOrganismosVinculados.getRegistroOrganismoEspecifico(movilidad.getRegistrosMovilidad().getInstitucionOrganizacion().getEmpresa()));
                         f.edit(movilidad.getRegistrosMovilidad());
                         f.flush();
                         Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + regMovEncontrada.getRegistroMovilidad());
@@ -431,7 +429,6 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
                 } else {
                     Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                     movilidad.getRegistrosMovilidad().setRegistro(registro.getRegistro());
-                    movilidad.getRegistrosMovilidad().getInstitucionOrganizacion().setRegistro(ejbOrganismosVinculados.getRegistroOrganismoEspecifico(movilidad.getRegistrosMovilidad().getInstitucionOrganizacion().getEmpresa()));
                     f.create(movilidad.getRegistrosMovilidad());
                     Messages.addGlobalInfo("<b>Se guardaron los registros correctamente </b> ");
                 }

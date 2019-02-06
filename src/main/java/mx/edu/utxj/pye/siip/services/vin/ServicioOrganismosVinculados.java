@@ -19,13 +19,12 @@ import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.servlet.annotation.MultipartConfig;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesVinculacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ContactosEmpresa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CorreosEmpresa;
@@ -40,6 +39,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
 import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
+import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasBeneficiadosVinculacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.SectoresTipo;
@@ -48,6 +48,7 @@ import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.sgi.util.StringUtils;
 import mx.edu.utxj.pye.siip.dto.vin.DTOActividadesVinculacion;
+import mx.edu.utxj.pye.siip.dto.vin.DTOProgramasBeneficiadosVinculacion;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -76,9 +77,6 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     
     @EJB
     EjbFiscalizacion ejbFiscalizacion;
-    
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
     
     public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -388,7 +386,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
 
     @Override
     public Integer getRegistroOrganismoEspecifico(Integer empresa) {
-        TypedQuery<OrganismosVinculados> query = em.createNamedQuery("OrganismosVinculados.findByEmpresa", OrganismosVinculados.class);
+        TypedQuery<OrganismosVinculados> query = facadeProntuario.getEntityManager().createNamedQuery("OrganismosVinculados.findByEmpresa", OrganismosVinculados.class);
         query.setParameter("empresa", empresa);
         Integer registro = query.getSingleResult().getRegistro();
         return registro;
@@ -397,7 +395,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     @Override
     public OrganismosVinculados getOrganismoVinculadoPorEmpresa(Integer empresa) {
         try {
-            return em.createNamedQuery("OrganismosVinculados.findByEmpresa", OrganismosVinculados.class)
+            return facadeProntuario.getEntityManager().createNamedQuery("OrganismosVinculados.findByEmpresa", OrganismosVinculados.class)
                     .setParameter("empresa", empresa)
                     .getSingleResult();
         } catch (NonUniqueResultException e) {
@@ -409,7 +407,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     public OrganismosVinculados getOrganismosVinculado(OrganismosVinculados organismoVinculado) {
         OrganismosVinculados organismoEncontrado = new OrganismosVinculados();
         try {
-            return organismoEncontrado = em.createQuery("SELECT o FROM OrganismosVinculados o WHERE o.nombre = :nombre", OrganismosVinculados.class)
+            return organismoEncontrado = facadeProntuario.getEntityManager().createQuery("SELECT o FROM OrganismosVinculados o WHERE o.nombre = :nombre", OrganismosVinculados.class)
                     .setParameter("nombre", organismoVinculado.getNombre())
                     .getSingleResult();
         } catch (NoResultException | NonUniqueResultException ex) {
@@ -421,7 +419,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     public List<OrganismosVinculados> getOrganismosVinculadoVigentes() {
         List<OrganismosVinculados> organismosVinculadosLst = new ArrayList<>();
         try {
-            return organismosVinculadosLst = em.createQuery("SELECT o FROM OrganismosVinculados o WHERE o.estatus = :estatus ORDER BY o.nombre", OrganismosVinculados.class)
+            return organismosVinculadosLst = facadeProntuario.getEntityManager().createQuery("SELECT o FROM OrganismosVinculados o WHERE o.estatus = :estatus ORDER BY o.nombre", OrganismosVinculados.class)
                     .setParameter("estatus", true)
                     .getResultList();
         } catch (NoResultException ex) {
@@ -432,7 +430,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     @Override
     public List<OrganismosTipo> getOrganismosTipo() throws Throwable {
         try {
-            return em.createQuery("SELECT o FROM OrganismosTipo o ORDER BY o.descripcion ASC", OrganismosTipo.class)
+            return facadeProntuario.getEntityManager().createQuery("SELECT o FROM OrganismosTipo o ORDER BY o.descripcion ASC", OrganismosTipo.class)
                     .getResultList();
         } catch (NoResultException ex) {
             return Collections.EMPTY_LIST;
@@ -442,7 +440,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     @Override
     public List<EmpresasTipo> getEmpresasTipos() throws Throwable {
         try {
-            return em.createQuery("SELECT e FROM EmpresasTipo e ORDER BY e.descripcion ASC", EmpresasTipo.class)
+            return facadeProntuario.getEntityManager().createQuery("SELECT e FROM EmpresasTipo e ORDER BY e.descripcion ASC", EmpresasTipo.class)
                     .getResultList();
         } catch (NoResultException ex) {
             return Collections.EMPTY_LIST;
@@ -452,7 +450,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     @Override
     public List<GirosTipo> getGirosTipo() throws Throwable {
         try {
-            return em.createQuery("SELECT g FROM GirosTipo g ORDER BY g.descripcion ASC", GirosTipo.class)
+            return facadeProntuario.getEntityManager().createQuery("SELECT g FROM GirosTipo g ORDER BY g.descripcion ASC", GirosTipo.class)
                     .getResultList();
         } catch (NoResultException ex) {
             return Collections.EMPTY_LIST;
@@ -462,7 +460,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     @Override
     public List<SectoresTipo> getSectoresTipo() throws Throwable {
         try {
-            return em.createQuery("SELECT s FROM SectoresTipo s ORDER BY s.descripcion ASC", SectoresTipo.class)
+            return facadeProntuario.getEntityManager().createQuery("SELECT s FROM SectoresTipo s ORDER BY s.descripcion ASC", SectoresTipo.class)
                     .getResultList();
         } catch (NoResultException ex) {
             return Collections.EMPTY_LIST;
@@ -472,7 +470,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     @Override
     public List<OrganismosVinculados> getFiltroOrganismoVinculadoEjercicioMesArea(Short ejercicio, String mes, Short area){
         try {
-            return em.createQuery("SELECT o FROM OrganismosVinculados o JOIN o.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND r.area = :area AND o.estatus = :estatus", OrganismosVinculados.class)
+            return facadeProntuario.getEntityManager().createQuery("SELECT o FROM OrganismosVinculados o JOIN o.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND r.area = :area AND o.estatus = :estatus", OrganismosVinculados.class)
                     .setParameter("anio", ejercicio)
                     .setParameter("area", area)
                     .setParameter("estatus", true)
@@ -488,10 +486,10 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     public List<DTOActividadesVinculacion> getActividadesVinculacion() throws Throwable {
         try {
             List<DTOActividadesVinculacion> dtoActividadesVinculacion = new ArrayList<>();
-            List<ActividadesVinculacion> listaActividadesVinculacion = em.createQuery("SELECT a FROM ActividadesVinculacion a ORDER BY a.nombre", ActividadesVinculacion.class)
+            List<ActividadesVinculacion> listaActividadesVinculacion = facadeProntuario.getEntityManager().createQuery("SELECT a FROM ActividadesVinculacion a ORDER BY a.nombre", ActividadesVinculacion.class)
                     .getResultList();
             listaActividadesVinculacion.forEach((d) -> {
-                em.refresh(d);
+                facadeProntuario.getEntityManager().refresh(d);
                 dtoActividadesVinculacion.add(new DTOActividadesVinculacion(
                         d
                 ));
@@ -505,15 +503,15 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     @Override
     public Boolean verificaActividadVinculacion(OrganismosVinculados empresa, ActividadesVinculacion actividadVinculacion) {
         try {
-            OrganismosVinculados ov = em.find(OrganismosVinculados.class, empresa.getRegistro());
-            em.refresh(ov);
+            OrganismosVinculados ov = facadeProntuario.getEntityManager().find(OrganismosVinculados.class, empresa.getRegistro());
+            facadeProntuario.getEntityManager().refresh(ov);
             
-            ActividadesVinculacion actVin = em.createQuery("SELECT a FROM ActividadesVinculacion a INNER JOIN a.organismosVinculadosList o WHERE o.empresa = :empresa AND a.actividadVinculacion = :actividadVinculacion", ActividadesVinculacion.class)
+            ActividadesVinculacion actVin = facadeProntuario.getEntityManager().createQuery("SELECT a FROM ActividadesVinculacion a INNER JOIN a.organismosVinculadosList o WHERE o.empresa = :empresa AND a.actividadVinculacion = :actividadVinculacion", ActividadesVinculacion.class)
                     .setParameter("empresa", ov.getEmpresa())
                     .setParameter("actividadVinculacion", actividadVinculacion.getActividadVinculacion())
                     .getSingleResult();
             
-            em.refresh(actVin);
+            facadeProntuario.getEntityManager().refresh(actVin);
             
             if (!actVin.getOrganismosVinculadosList().isEmpty()) {
                 return true;
@@ -529,27 +527,27 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     public Boolean guardarActividadVinculacionEmpresa(OrganismosVinculados empresa, DTOActividadesVinculacion actividadVinculacion) {
 //        TODO: Corregir cuando el registro es nuevo
         try {
-            OrganismosVinculados ov = em.find(OrganismosVinculados.class, empresa.getRegistro());
+            OrganismosVinculados ov = facadeProntuario.getEntityManager().find(OrganismosVinculados.class, empresa.getRegistro());
 //            OrganismosVinculados ov = em.createQuery("SELECT o FROM OrganismosVinculados o JOIN o.actividadesVinculacionList av JOIN av.organismosVinculadosList aov WHERE o.registro = :registro", OrganismosVinculados.class)
 //                    .setParameter("registro", empresa.getRegistro())
 //                    .getSingleResult();
-            ActividadesVinculacion av = em.find(ActividadesVinculacion.class, actividadVinculacion.getActividadVinculacion().getActividadVinculacion());
+            ActividadesVinculacion av = facadeProntuario.getEntityManager().find(ActividadesVinculacion.class, actividadVinculacion.getActividadVinculacion().getActividadVinculacion());
 //            ActividadesVinculacion av = em.createQuery("SELECT a FROM ActividadesVinculacion a JOIN a.organismosVinculadosList ov JOIN ov.actividadesVinculacionList oav  WHERE a.actividadVinculacion = :actividad", ActividadesVinculacion.class)
 //                    .setParameter("actividad", actividadVinculacion.getActividadVinculacion().getActividadVinculacion())
 //                    .getSingleResult();
 
-            em.refresh(ov);
-            em.refresh(av);
+            facadeProntuario.getEntityManager().refresh(ov);
+            facadeProntuario.getEntityManager().refresh(av);
             
             if (verificaActividadVinculacion(ov, av)) {
                 eliminarActividadVinculacionEmpresa(empresa, actividadVinculacion);
             } else {
                 ov.getActividadesVinculacionList().add(av);
                 av.getOrganismosVinculadosList().add(ov);
-                em.flush();
+                facadeProntuario.getEntityManager().flush();
             }
             
-            em.flush();
+            facadeProntuario.getEntityManager().flush();
             return true;
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "No se pudo asignar la actividad con la empresa.", e);
@@ -560,14 +558,14 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     @Override
     public Boolean eliminarActividadVinculacionEmpresa(OrganismosVinculados empresa, DTOActividadesVinculacion actividadVinculacion) {
         try {
-            OrganismosVinculados ov = em.find(OrganismosVinculados.class, empresa.getRegistro());
-            ActividadesVinculacion av = em.find(ActividadesVinculacion.class, actividadVinculacion.getActividadVinculacion().getActividadVinculacion());
-            em.refresh(ov);
-            em.refresh(av);
+            OrganismosVinculados ov = facadeProntuario.getEntityManager().find(OrganismosVinculados.class, empresa.getRegistro());
+            ActividadesVinculacion av = facadeProntuario.getEntityManager().find(ActividadesVinculacion.class, actividadVinculacion.getActividadVinculacion().getActividadVinculacion());
+            facadeProntuario.getEntityManager().refresh(ov);
+            facadeProntuario.getEntityManager().refresh(av);
             if (verificaActividadVinculacion(ov, av)) {
                 ov.getActividadesVinculacionList().remove(av);
                 av.getOrganismosVinculadosList().remove(ov);
-                em.flush();
+                facadeProntuario.getEntityManager().flush();
             }
             return true;
         } catch (Exception e) {
@@ -579,7 +577,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     @Override
     public void bajaOrganismoVinculado(OrganismosVinculados organismoVinculado) {
         try {
-            Integer comprueba = em.createQuery("UPDATE OrganismosVinculados o SET o.estatus = false WHERE o.registro = :registro")
+            Integer comprueba = facadeProntuario.getEntityManager().createQuery("UPDATE OrganismosVinculados o SET o.estatus = false WHERE o.registro = :registro")
                     .setParameter("registro", organismoVinculado.getRegistro())
                     .executeUpdate();
             if(comprueba != 0){
@@ -599,7 +597,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     @Override
     public List<ContactosEmpresa> consultaContactosEmpresa(OrganismosVinculados organismoVinculado) {
         try {
-            return em.createQuery("SELECT c FROM ContactosEmpresa c WHERE c.empresa.empresa = :empresa", ContactosEmpresa.class)
+            return facadeProntuario.getEntityManager().createQuery("SELECT c FROM ContactosEmpresa c WHERE c.empresa.empresa = :empresa", ContactosEmpresa.class)
                     .setParameter("empresa", organismoVinculado.getEmpresa())
                     .getResultList();
         } catch (NoResultException e) {
@@ -613,7 +611,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
             facadeProntuario.setEntityClass(ContactosEmpresa.class);
             facadeProntuario.create(contactoEmpresa);
             facadeProntuario.flush();
-            Integer verifica = em.find(ContactosEmpresa.class, contactoEmpresa.getContactoEmpresa()).getContactoEmpresa();
+            Integer verifica = facadeProntuario.getEntityManager().find(ContactosEmpresa.class, contactoEmpresa.getContactoEmpresa()).getContactoEmpresa();
             if(verifica != 0){
                 return true;
             }else{
@@ -631,7 +629,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
             facadeProntuario.remove(contactosEmpresa);
             facadeProntuario.getEntityManager().detach(contactosEmpresa);
             facadeProntuario.flush();
-            contactosEmpresa = em.find(ContactosEmpresa.class, contactosEmpresa.getContactoEmpresa());
+            contactosEmpresa = facadeProntuario.getEntityManager().find(ContactosEmpresa.class, contactosEmpresa.getContactoEmpresa());
             if (contactosEmpresa == null) {
                 return true;
             }else{
@@ -657,7 +655,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     @Override
     public List<CorreosEmpresa> consultaCorreosEmpresa(OrganismosVinculados organismoVinculado) {
         try {
-            return em.createQuery("SELECT c FROM CorreosEmpresa c WHERE c.empresa.empresa = :empresa", CorreosEmpresa.class)
+            return facadeProntuario.getEntityManager().createQuery("SELECT c FROM CorreosEmpresa c WHERE c.empresa.empresa = :empresa", CorreosEmpresa.class)
                     .setParameter("empresa", organismoVinculado.getEmpresa())
                     .getResultList();
         } catch (NoResultException e) {
@@ -671,7 +669,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
             facadeProntuario.setEntityClass(CorreosEmpresa.class);
             facadeProntuario.create(correoEmpresa);
             facadeProntuario.flush();
-            Integer verifica = em.find(CorreosEmpresa.class, correoEmpresa.getCorreoEmpresa()).getCorreoEmpresa();
+            Integer verifica = facadeProntuario.getEntityManager().find(CorreosEmpresa.class, correoEmpresa.getCorreoEmpresa()).getCorreoEmpresa();
             if(verifica != 0){
                 return true;
             }else{
@@ -689,7 +687,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
             facadeProntuario.remove(correoEmpresa);
             facadeProntuario.getEntityManager().detach(correoEmpresa);
             facadeProntuario.flush();
-            correoEmpresa = em.find(CorreosEmpresa.class, correoEmpresa.getCorreoEmpresa());
+            correoEmpresa = facadeProntuario.getEntityManager().find(CorreosEmpresa.class, correoEmpresa.getCorreoEmpresa());
             if (correoEmpresa == null) {
                 return true;
             }else{
@@ -715,7 +713,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     @Override
     public List<TelefonosEmpresa> consultaTelefonosEmpresa(OrganismosVinculados organismoVinculado) {
         try {
-            return em.createQuery("SELECT c FROM TelefonosEmpresa c WHERE c.empresa.empresa = :empresa", TelefonosEmpresa.class)
+            return facadeProntuario.getEntityManager().createQuery("SELECT c FROM TelefonosEmpresa c WHERE c.empresa.empresa = :empresa", TelefonosEmpresa.class)
                     .setParameter("empresa", organismoVinculado.getEmpresa())
                     .getResultList();
         } catch (NoResultException e) {
@@ -729,7 +727,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
             facadeProntuario.setEntityClass(TelefonosEmpresa.class);
             facadeProntuario.create(telefonoEmpresa);
             facadeProntuario.flush();
-            Integer verifica = em.find(TelefonosEmpresa.class, telefonoEmpresa.getTelefonoEmpresa()).getTelefonoEmpresa();
+            Integer verifica = facadeProntuario.getEntityManager().find(TelefonosEmpresa.class, telefonoEmpresa.getTelefonoEmpresa()).getTelefonoEmpresa();
             if(verifica != 0){
                 return true;
             }else{
@@ -747,7 +745,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
             facadeProntuario.remove(telefonoEmpresa);
             facadeProntuario.getEntityManager().detach(telefonoEmpresa);
             facadeProntuario.flush();
-            telefonoEmpresa = em.find(TelefonosEmpresa.class, telefonoEmpresa.getTelefonoEmpresa());
+            telefonoEmpresa = facadeProntuario.getEntityManager().find(TelefonosEmpresa.class, telefonoEmpresa.getTelefonoEmpresa());
             if (telefonoEmpresa == null) {
                 return true;
             }else{
@@ -775,7 +773,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
         try {
             if(organismoVinculado == null)
                 return null;
-            return em.createQuery("SELECT l FROM OrganismosVinculados o JOIN o.localidad l WHERE o.registro = :registro",Localidad.class)
+            return facadeProntuario.getEntityManager().createQuery("SELECT l FROM OrganismosVinculados o JOIN o.localidad l WHERE o.registro = :registro",Localidad.class)
                     .setParameter("registro", organismoVinculado.getRegistro())
                     .getSingleResult();
         } catch (NoResultException e) {
@@ -788,7 +786,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
         try {
             if(organismoVinculado == null)
                 return null;
-            return em.createQuery("SELECT p FROM OrganismosVinculados o JOIN o.pais p WHERE o.registro = :registro",Pais.class)
+            return facadeProntuario.getEntityManager().createQuery("SELECT p FROM OrganismosVinculados o JOIN o.pais p WHERE o.registro = :registro",Pais.class)
                 .setParameter("registro", organismoVinculado.getRegistro())
                 .getSingleResult();
         } catch (NoResultException e) {
@@ -803,7 +801,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
 //            System.out.println("Pais: " + pais.getIdpais() + " " + pais.getNombre());
 //            System.out.println("Localidad: " + localidad.getLocalidadPK().getClaveEstado() + " " + localidad.getLocalidadPK().getClaveMunicipio() + " " + localidad.getLocalidadPK().getClaveLocalidad() + " " + localidad.getNombre());
             OrganismosVinculados orgVin = new OrganismosVinculados();
-            orgVin = em.find(OrganismosVinculados.class, organismoVinculado.getRegistro());
+            orgVin = facadeProntuario.getEntityManager().find(OrganismosVinculados.class, organismoVinculado.getRegistro());
             orgVin.setPais(pais);
             localidad.getLocalidadPK().setClaveEstado(estado.getIdestado());
             localidad.getLocalidadPK().setClaveMunicipio(municipio.getMunicipioPK().getClaveMunicipio());
@@ -823,7 +821,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
         try {
         facadeProntuario.setEntityClass(OrganismosVinculados.class);
         OrganismosVinculados orgVin = new OrganismosVinculados();
-        orgVin = em.find(OrganismosVinculados.class, organismosVinculados.getRegistro());
+        orgVin = facadeProntuario.getEntityManager().find(OrganismosVinculados.class, organismosVinculados.getRegistro());
         orgVin.setPais(new Pais());
         orgVin.setLocalidad(new Localidad());
         facadeProntuario.edit(orgVin);
@@ -831,6 +829,72 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
         return true;
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "No se pudo eliminar la ubicación en el organismo vinculado.", e);
+            return false;
+        }
+    }
+    
+    @Override
+    public List<DTOProgramasBeneficiadosVinculacion> getProgramasBeneficiadosVinculacion() throws Throwable {
+        try {
+            List<DTOProgramasBeneficiadosVinculacion> dtoProgBenVin = new ArrayList<>();
+            List<AreasUniversidad> areasUniversidad = facadeProntuario.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a JOIN a.categoria c WHERE c.categoria = :categoria AND a.vigente = :vigente ORDER BY a.nombre ASC", AreasUniversidad.class)
+                    .setParameter("categoria", 9)
+                    .setParameter("vigente", "1")
+                    .getResultList();
+            areasUniversidad.stream().forEach((a) -> {
+                dtoProgBenVin.add(new DTOProgramasBeneficiadosVinculacion(
+                        a
+                ));
+            });
+            return dtoProgBenVin;
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public Boolean verificaProgramaBeneficiadoVinculacion(Integer empresa, AreasUniversidad areaUniversidad) {
+        try {
+            ProgramasBeneficiadosVinculacion pbv = facadeProntuario.getEntityManager().createQuery("SELECT p FROM ProgramasBeneficiadosVinculacion p INNER JOIN p.organismosVinculados c WHERE c.empresa = :empresa AND p.programasBeneficiadosVinculacionPK.programaEducativo = :programaEducativo",ProgramasBeneficiadosVinculacion.class)
+                    .setParameter("empresa",empresa)
+                    .setParameter("programaEducativo",areaUniversidad.getArea())
+                    .getSingleResult();
+            if(pbv != null) return true;
+            else return false;
+        } catch (NoResultException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean guardarProgramaBeneficiadoVinculacion(ProgramasBeneficiadosVinculacion programaBeneficiadosVinculacion) {
+//        TODO: Verificar que guarde cuando existe un registro nuevo
+        try {
+            if (verificaProgramaBeneficiadoVinculacion(programaBeneficiadosVinculacion.getProgramasBeneficiadosVinculacionPK().getEmpresa(), facadeProntuario.getEntityManager().find(AreasUniversidad.class, programaBeneficiadosVinculacion.getProgramasBeneficiadosVinculacionPK().getProgramaEducativo()))) {
+                eliminarProgramaBeneficiadoVinculacion(programaBeneficiadosVinculacion);
+            } else {
+                facadeProntuario.setEntityClass(ProgramasBeneficiadosVinculacion.class);
+                facadeProntuario.create(programaBeneficiadosVinculacion);
+                facadeProntuario.flush();
+            }
+            return true;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo asginar el programa al convenio.", e);
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean eliminarProgramaBeneficiadoVinculacion(ProgramasBeneficiadosVinculacion programaBeneficiadosVinculacion) {
+        try {
+            if (verificaProgramaBeneficiadoVinculacion(programaBeneficiadosVinculacion.getProgramasBeneficiadosVinculacionPK().getEmpresa(), facadeProntuario.getEntityManager().find(AreasUniversidad.class, programaBeneficiadosVinculacion.getProgramasBeneficiadosVinculacionPK().getProgramaEducativo()))) {
+                facadeProntuario.setEntityClass(ProgramasBeneficiadosVinculacion.class);
+                facadeProntuario.remove(programaBeneficiadosVinculacion);
+                facadeProntuario.flush();
+            }
+            return true;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo eliminar el programa del convenio.", e);
             return false;
         }
     }

@@ -15,12 +15,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
+import lombok.Getter;
+import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
@@ -60,8 +64,9 @@ public class ServicioVisitasIndustriales implements EjbVisitasIndustriales{
     @EJB EjbModulos ejbModulos;
     @EJB EjbOrganismosVinculados ejbOrganismosVinculados;
     @EJB Facade f;
-    @EJB EjbPropiedades ep;
     @Inject ControladorEmpleado controladorEmpleado;
+    
+    @Getter @Setter private List<Short> areas;
    
     @Override
     public ListaVisitasIndustriales getListaVisitasIndustriales(String rutaArchivo) throws Throwable {
@@ -315,11 +320,17 @@ public class ServicioVisitasIndustriales implements EjbVisitasIndustriales{
     
     @Override
     public List<VisitasIndustriales> getVisitasIndustrialesRegistrosPorEjercicioMesArea(String mes, Short ejercicio) {
+        //verificar que los parametros no sean nulos
+        if(mes == null || ejercicio == null){
+            return null;
+        }
+        areas = ejbModulos.getAreasDependientes(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        
         TypedQuery<VisitasIndustriales> q = f.getEntityManager()
-                .createQuery("SELECT v FROM VisitasIndustriales v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes AND v.registros.area = :area", VisitasIndustriales.class);
+                .createQuery("SELECT v FROM VisitasIndustriales v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes AND v.registros.area IN :areas", VisitasIndustriales.class);
         q.setParameter("mes", mes);
         q.setParameter("ejercicio", ejercicio);
-        q.setParameter("area", controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        q.setParameter("areas", areas);
         System.err.println("getVisitasIndustrialesRegistrosPorEjercicioMesArea " + q.getResultList());
         List<VisitasIndustriales> l = q.getResultList();
         if (l.isEmpty() || l == null) {
@@ -332,14 +343,17 @@ public class ServicioVisitasIndustriales implements EjbVisitasIndustriales{
 
     @Override
     public List<ListaDtoVisitasIndustriales> getListaVisitasIndutrialesDTO(String mes, Short ejercicio) {
-       
-
+        //verificar que los parametros no sean nulos
+        if(mes == null || ejercicio == null){
+            return null;
+        }
+        areas = ejbModulos.getAreasDependientes(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        
         TypedQuery<VisitasIndustriales> q = f.getEntityManager()
-                .createQuery("SELECT v FROM VisitasIndustriales v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes AND v.registros.area = :area", VisitasIndustriales.class);
+                .createQuery("SELECT v FROM VisitasIndustriales v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes AND v.registros.area IN :areas", VisitasIndustriales.class);
         q.setParameter("mes", mes);
         q.setParameter("ejercicio", ejercicio);
-        q.setParameter("area", controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
-        System.err.println("getListaVisitasIndutrialesDTO " + q.getResultList());
+        q.setParameter("areas", areas);
         List<VisitasIndustriales> l = q.getResultList();
         if (l.isEmpty() || l == null) {
             return null;

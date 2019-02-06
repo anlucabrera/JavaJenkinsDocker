@@ -69,11 +69,6 @@ public class ControladorConvenios implements Serializable {
         dtoConvenios = new DtoConvenios();
         dtoConvenios.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
         filtros();
-        try {
-            dtoConvenios.setListaProgramasEducativosBeneficiadosV(ejbConvenios.getProgramasBeneficiadosVinculacion());
-        } catch (Throwable ex) {
-            Logger.getLogger(ControladorConvenios.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
      public void listaConveniosPrevia(String rutaArchivo) {
         try {
@@ -321,43 +316,6 @@ public class ControladorConvenios implements Serializable {
             cargarAlineacionXActividad();
             Ajax.update("frmAlineacion");
         }else Messages.addGlobalError("La alineación no pudo eliminarse.");
-    }
-    
-    public void abrirProgramasBeneficiadosVinculacion(Convenios convenio){
-        DTOConvenio dtoc = new DTOConvenio();
-        dtoc.setConvenio(convenio);
-        dtoConvenios.setRegistro(dtoc);
-        consultaProgramaBeneficiadoVinculacion();
-        Ajax.update("frmProgramasBeneficiadosVinculacion");
-        Ajax.oncomplete("skin();");
-        dtoConvenios.setForzarAperturaDialogo(Boolean.TRUE);
-        forzarAperturaProgramasEducativosBeneficiados();
-    }
-    
-    public void consultaProgramaBeneficiadoVinculacion(){
-        dtoConvenios.getListaProgramasEducativosBeneficiadosV().stream().forEach((t) -> {
-            t.setExiste(ejbConvenios.verificaProgramaBeneficiadoVinculacion(dtoConvenios.getRegistro().getConvenio().getEmpresa().getEmpresa(), t.getAreaUniversidad()));
-        });
-    }
-    
-    public void forzarAperturaProgramasEducativosBeneficiados(){
-        if(dtoConvenios.getForzarAperturaDialogo()){
-            Ajax.oncomplete("PF('modalProgramasBeneficiadosVinculacion').show();");
-            dtoConvenios.setForzarAperturaDialogo(Boolean.FALSE);
-        }
-    }
-    
-    public void guardaProgramaBeneficiadoVinculacion(DTOProgramasBeneficiadosVinculacion dtoConveniospbv){
-        ProgramasBeneficiadosVinculacionPK pbvpk = new ProgramasBeneficiadosVinculacionPK();
-        pbvpk.setEmpresa(dtoConvenios.getRegistro().getConvenio().getEmpresa().getEmpresa());
-        pbvpk.setProgramaEducativo(dtoConveniospbv.getAreaUniversidad().getArea());
-        ProgramasBeneficiadosVinculacion programaBeneficiadoVinculacion = new ProgramasBeneficiadosVinculacion();
-        programaBeneficiadoVinculacion.setProgramasBeneficiadosVinculacionPK(pbvpk);
-        programaBeneficiadoVinculacion.setConvenios(dtoConvenios.getRegistro().getConvenio());
-        Boolean guardado = ejbConvenios.guardarProgramaBeneficiadoVinculacion(programaBeneficiadoVinculacion);
-        if(guardado){
-            abrirProgramasBeneficiadosVinculacion(dtoConvenios.getRegistro().getConvenio());
-        }else  Messages.addGlobalError("El programa educativo no pudo asignarse.");
     }
     
 }

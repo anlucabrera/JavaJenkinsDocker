@@ -28,6 +28,7 @@ import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.ch.Cuidados;
+import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Ajax;
 import org.primefaces.event.RowEditEvent;
 
@@ -65,6 +66,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
 //@Inject
     @Inject    ControladorEmpleado controladorEmpleado;
+    @Inject    UtilidadesCH utilidadesCH;
 
     @PostConstruct
     public void init() {
@@ -261,6 +263,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
                     }
                     if (dias <= maximo) {
                         nuevOBJIncidencias = ejbNotificacionesIncidencias.agregarIncidencias(nuevOBJIncidencias);
+                        utilidadesCH.agregaBitacora(usuario, nuevOBJIncidencias.getIncidenciaID().toString(), "Incidencias", "Insert");
                         nuevOBJIncidencias = new Incidencias();
                         Messages.addGlobalInfo("¡Operación exitosa!");
                     } else {
@@ -317,6 +320,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
             if (incidencias.getEvidencia() != null) {
                 CargaArchivosCH.eliminarArchivo(incidencias.getEvidencia());
             }
+            utilidadesCH.agregaBitacora(usuario, incidencias.getIncidenciaID().toString(), "Incidencias", "Delate");
             ejbNotificacionesIncidencias.eliminarIncidencias(incidencias);
             mostrarLista();
             System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.eliminarIncidencia()");
@@ -384,6 +388,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
             nuevOBJIncapacidad.setClavePersonal(new Personal());
             nuevOBJIncapacidad.getClavePersonal().setClave(usuario);
             nuevOBJIncapacidad = ejbNotificacionesIncidencias.agregarIncapacidad(nuevOBJIncapacidad);
+                        utilidadesCH.agregaBitacora(usuario, nuevOBJIncapacidad.getIncapacidad().toString(), "Incapacidad", "Insert");
             nuevOBJIncapacidad = new Incapacidad();
             Messages.addGlobalInfo("¡Operación exitosa!");
 
@@ -438,6 +443,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
             nuevOBJCuidados.setNumeroDias(dias);
 
             nuevOBJCuidados = ejbNotificacionesIncidencias.agregarCuidados(nuevOBJCuidados);
+                        utilidadesCH.agregaBitacora(usuario, nuevOBJCuidados.getCuidados().toString(), "Cuidados", "Insert");
             nuevOBJCuidados = new Cuidados();
             Messages.addGlobalInfo("¡Operación exitosa!");
 

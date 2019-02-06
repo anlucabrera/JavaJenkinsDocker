@@ -75,11 +75,12 @@ public class cuadroMandoIntegralArea implements Serializable {
         if (numeroMes == 0) {
             System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralArea.init()");
             numeroMes = 11;
-            ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 101));
+            ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 102));
         } else {
             numeroMes = numeroMes - 1;
-            ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 100));
+            ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 101));
         }
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralArea.init()"+ejercicioFiscal);
         switch (numeroMes) {
             case 0:                mes = "Avance al mes de: Enero";                break;
             case 1:                mes = "Avance al mes de: Febrero";                break;
@@ -306,6 +307,7 @@ public class cuadroMandoIntegralArea implements Serializable {
         actividadesPoas.clear();
         graf.clear();
         actividadesPoas = poaSelectec.mostrarActividadesPoasReporteArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralArea.cmiPorArea()"+actividadesPoas.size());
         cMIArea = new resultadosCMI(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativaNombre(), 0, 0, 0.0, graf, new MeterGaugeChartModel());
         if (!actividadesPoas.isEmpty()) {
             List<ActividadesPoa> actividadesPoasFiltradas = new ArrayList<>();

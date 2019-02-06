@@ -24,6 +24,7 @@ import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
 import javax.servlet.http.Part;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Meses;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -52,6 +53,7 @@ public class ServicioModulos implements EjbModulos {
 
     @EJB
     Facade f;
+    @EJB EjbPropiedades ep;
 //
 //    /*Administrador de entidades*/
 //    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
@@ -550,5 +552,46 @@ public class ServicioModulos implements EjbModulos {
             }
         }
         return mesNumero;
+    }
+    
+     @Override
+    public List<Short> getAreasDependientes(Short areaOperativa) {
+        //verificar que el parametro no sea nulo
+        if(areaOperativa == null){
+            return null;
+        }
+        
+        List<Short> areas = new ArrayList<>();
+        
+        //obtener la referencia al area operativa del trabajador
+        AreasUniversidad area = f.getEntityManager().find(AreasUniversidad.class, areaOperativa);
+        //comprobar si el area operativa es un programa educativo referenciar a su area superior para obtener la referencia al area academica
+        Short programaCategoria = (short)ep.leerPropiedadEntera("modulosRegistroProgramaEducativoCategoria").orElse(9);
+        if (Objects.equals(area.getCategoria().getCategoria(), programaCategoria)) {            
+            area = f.getEntityManager().find(AreasUniversidad.class, area.getAreaSuperior());
+
+            //Obtener las claves de todas las areas que dependan de área academicoa
+            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
+                    .setParameter("areaSuperior", area.getArea())
+                    .getResultStream()
+                    .map(au -> au.getArea())
+                    .collect(Collectors.toList());
+
+        }else{//si no es Área Académica
+
+            //Obtener las claves de todas las Áreas que dependan del Área del Usuario Logueado
+            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
+                    .setParameter("areaSuperior", area.getArea())
+                    .getResultStream()
+                    .map(au -> au.getArea())
+                    .collect(Collectors.toList());
+            areas.add(areaOperativa);
+            //Si no tiene Áreas inferiores es decir la lista es vacía, únicamente se muestran los datos de registro del Área del Usuario Logueado
+            if (areas.isEmpty()) {
+                areas.add(areaOperativa);
+            }
+        }
+        
+        return areas;
     }
 }

@@ -33,7 +33,7 @@ public class ProgramasBeneficiadosVinculacion implements Serializable {
     protected ProgramasBeneficiadosVinculacionPK programasBeneficiadosVinculacionPK;
     @JoinColumn(name = "empresa", referencedColumnName = "empresa", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    private Convenios convenios;
+    private OrganismosVinculados organismosVinculados;
 
     public ProgramasBeneficiadosVinculacion() {
     }
@@ -54,12 +54,12 @@ public class ProgramasBeneficiadosVinculacion implements Serializable {
         this.programasBeneficiadosVinculacionPK = programasBeneficiadosVinculacionPK;
     }
 
-    public Convenios getConvenios() {
-        return convenios;
+    public OrganismosVinculados getOrganismosVinculados() {
+        return organismosVinculados;
     }
 
-    public void setConvenios(Convenios convenios) {
-        this.convenios = convenios;
+    public void setOrganismosVinculados(OrganismosVinculados organismosVinculados) {
+        this.organismosVinculados = organismosVinculados;
     }
 
     @Override
