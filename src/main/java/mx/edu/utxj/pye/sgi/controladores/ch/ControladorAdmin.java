@@ -23,6 +23,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.RowEditEvent;
@@ -51,6 +52,7 @@ public class ControladorAdmin implements Serializable {
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
 
     @Inject    ControladorEmpleado controladorEmpleado;
+    @Inject    UtilidadesCH utilidadesCH;
 
     @PostConstruct
     public void init() {
@@ -144,6 +146,7 @@ public class ControladorAdmin implements Serializable {
     public void onRowEdit(RowEditEvent event) {
         try {
             Incidencias incidencias = (Incidencias) event.getObject();
+            utilidadesCH.agregaBitacora(controladorEmpleado.getNuevoOBJListaPersonal().getClave(), incidencias.getIncidenciaID().toString(), "Incidencia", "Actualización Admin");
             ejbNotificacionesIncidencias.actualizarIncidencias(incidencias);
             Messages.addGlobalInfo("¡Operación exitosa!");
             mostrarIncidencias();

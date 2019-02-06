@@ -53,12 +53,20 @@
                             <div class="col-sm-12 col-md-3 col-lg-3">            
                                 <p:autoUpdate/>
                                 <p:outputLabel value="Eje rector:" />
-
-                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" value="#{controladorPOAEvaluacionAreas.ejes.eje}" valueChangeListener="#{controladorPOAEvaluacionAreas.consultarEje}">
+                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" value="#{controladorPOAEvaluacionAreas.ejes.eje}" valueChangeListener="#{controladorPOAEvaluacionAreas.asignarParametrosRegistro}">
                                     <f:selectItems value="#{controladorPOAEvaluacionAreas.ejesesFiltrado}" var="eje" itemValue="#{eje.eje}" itemLabel="#{eje.eje} -- #{eje.nombre}" />
-                                    <p:ajax update=":frm" listener="#{controladorPOAEvaluacionAreas.imprimirValores()}"/>
+                                    <p:ajax update="estra" listener="#{controladorPOAEvaluacionAreas.imprimirValores()}"/>
                                 </p:selectOneMenu> 
-                                <p:message for="eje" display="tooltip" />
+                            </div>
+                            <div class="col-sm-12 col-md-9 col-lg-9">
+                                <p:outputPanel id="estra">
+                                    <p:autoUpdate/>
+                                    <p:outputLabel value="Estrategia:" /> 
+                                    <p:selectOneMenu filter="true" filterMatchMode="contains" id="estrategia" value="#{controladorPOAEvaluacionAreas.estrategias.numero}" valueChangeListener="#{controladorPOAEvaluacionAreas.asignarParametrosRegistro}">
+                                        <f:selectItems value="#{controladorPOAEvaluacionAreas.estrategiases}" var="estrategia" itemValue="#{estrategia.estrategia}" itemLabel="#{estrategia.numero} -- #{estrategia.nombre}" />
+                                        <p:ajax update=":frm" listener="#{controladorPOAEvaluacionAreas.imprimirValores()}"/>
+                                    </p:selectOneMenu>
+                                </p:outputPanel>
                             </div>
                         </div>
                     </p:panel>
@@ -127,8 +135,8 @@
                                                             <p:column rowspan="2" headerText="Unidad de medida" style="width: 150px;"/>
                                                             <p:column rowspan="2" headerText="Meta" style="width: 100px;"/>
                                                             <p:column colspan="4" headerText="Calendarización de Metas: #{controladorPOAEvaluacionAreas.cuatrimestre eq 1?'Enero - Abril':(controladorPOAEvaluacionAreas.cuatrimestre eq 2?'Mayo - Agosto':'Septiembre - Diciembre')}" style="width: 400px;"/> 
-                                                            <p:column colspan="3" headerText="Avance cuatrimestral" style="width: 250px;"/> 
                                                             <p:column colspan="3" headerText="Avance general al mes de #{controladorPOAEvaluacionAreas.mesNombre}" style="width: 250px;"/>
+                                                            <p:column colspan="3" headerText="Avance cuatrimestral" style="width: 250px;"/> 
                                                             <p:column rowspan="2" headerText="Evaluar" style="width:80px; "/>
                                                             <p:column rowspan="2" headerText="Evidencia" style="width:80px; "/>
                                                             <p:column rowspan="2" headerText="Justificacion" style="width:80px;" rendered="#{controladorPOAEvaluacionAreas.mes eq 3?true:
@@ -354,17 +362,6 @@
                                                         </p:cellEditor>
                                                     </p:column>
                                                     <p:column>
-                                                        <h:outputText value="#{poa.totalPCuatrimestre}"/>
-                                                        <hr/>
-                                                        <h:outputText value="#{poa.totalACuatrimestre}"/>
-                                                    </p:column>   
-                                                    <p:column>
-                                                        <h:outputText value="#{poa.porcentajeCuatrimestre} %" />
-                                                    </p:column>
-                                                    <p:column>
-                                                        <img src="../../resources/img/#{poa.semaforoC}.png" alt="#{poa.semaforoC}"/>
-                                                    </p:column>
-                                                    <p:column>
                                                         <h:outputText value="#{poa.totalPCorte}" />
                                                         <hr/>
                                                         <h:outputText value="#{poa.totalACorte}" />
@@ -374,6 +371,18 @@
                                                     </p:column>
                                                     <p:column>
                                                         <img src="../../resources/img/#{poa.semaforoG}.png" alt="#{poa.semaforoG}"/>
+                                                    </p:column>
+                                                    
+                                                    <p:column>
+                                                        <h:outputText value="#{poa.totalPCuatrimestre}"/>
+                                                        <hr/>
+                                                        <h:outputText value="#{poa.totalACuatrimestre}"/>
+                                                    </p:column>   
+                                                    <p:column>
+                                                        <h:outputText value="#{poa.porcentajeCuatrimestre} %" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <img src="../../resources/img/#{poa.semaforoC}.png" alt="#{poa.semaforoC}"/>
                                                     </p:column>
 
                                                     <p:column rendered="#{poa.actividadesPoa.bandera eq 'x' ?true:false}"/>

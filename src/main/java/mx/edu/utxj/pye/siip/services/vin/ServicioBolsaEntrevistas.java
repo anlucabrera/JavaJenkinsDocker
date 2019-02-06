@@ -19,6 +19,8 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
+import lombok.Getter;
+import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -54,7 +56,7 @@ public class ServicioBolsaEntrevistas implements EjbBolsaEntrevistas{
     @EJB EjbBolsaTrabajo ejbBolsaTrabajo;
     @Inject Caster caster; 
     @Inject ControladorEmpleado controladorEmpleado;
-   
+    
     @Override
     public List<DTOBolsaEntrevistas> getListaBolsaEntrevistas(String rutaArchivo) throws Throwable {
         List<Boolean> validarCelda = new ArrayList<>();

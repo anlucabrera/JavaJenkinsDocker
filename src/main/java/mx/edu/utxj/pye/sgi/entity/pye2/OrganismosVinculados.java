@@ -130,8 +130,6 @@ public class OrganismosVinculados implements Serializable {
     private List<TelefonosEmpresa> telefonosEmpresaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
     private List<ContactosEmpresa> contactosEmpresaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "institucionOrganizacion")
-    private List<RegistrosMovilidad> registrosMovilidadList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
     private List<BolsaTrabajo> bolsaTrabajoList;
     @JoinColumn(name = "emp_tip", referencedColumnName = "emptipo")
@@ -158,6 +156,8 @@ public class OrganismosVinculados implements Serializable {
     @JoinColumn(name = "sector", referencedColumnName = "sector")
     @ManyToOne(optional = false)
     private SectoresTipo sector;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "organismosVinculados")
+    private List<ProgramasBeneficiadosVinculacion> programasBeneficiadosVinculacionList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
     private List<EstadiasPorEstudiante> estadiasPorEstudianteList;
 
@@ -352,15 +352,6 @@ public class OrganismosVinculados implements Serializable {
     }
 
     @XmlTransient
-    public List<RegistrosMovilidad> getRegistrosMovilidadList() {
-        return registrosMovilidadList;
-    }
-
-    public void setRegistrosMovilidadList(List<RegistrosMovilidad> registrosMovilidadList) {
-        this.registrosMovilidadList = registrosMovilidadList;
-    }
-
-    @XmlTransient
     public List<BolsaTrabajo> getBolsaTrabajoList() {
         return bolsaTrabajoList;
     }
@@ -423,6 +414,15 @@ public class OrganismosVinculados implements Serializable {
 
     public void setSector(SectoresTipo sector) {
         this.sector = sector;
+    }
+
+    @XmlTransient
+    public List<ProgramasBeneficiadosVinculacion> getProgramasBeneficiadosVinculacionList() {
+        return programasBeneficiadosVinculacionList;
+    }
+
+    public void setProgramasBeneficiadosVinculacionList(List<ProgramasBeneficiadosVinculacion> programasBeneficiadosVinculacionList) {
+        this.programasBeneficiadosVinculacionList = programasBeneficiadosVinculacionList;
     }
 
     @XmlTransient

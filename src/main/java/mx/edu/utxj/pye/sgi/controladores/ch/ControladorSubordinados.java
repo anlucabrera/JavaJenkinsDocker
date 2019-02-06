@@ -43,6 +43,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Lenguas;
 import mx.edu.utxj.pye.sgi.entity.ch.LibrosPub;
 import mx.edu.utxj.pye.sgi.entity.ch.Memoriaspub;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
+import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.RowEditEvent;
@@ -102,6 +103,7 @@ public class ControladorSubordinados implements Serializable {
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbProduccionProfecional ejbProduccionProfecional;
 
     @Inject    ControladorEmpleado controladorEmpleado;
+    @Inject    UtilidadesCH utilidadesCH;
 
     @PostConstruct
     public void init() {
@@ -449,6 +451,7 @@ public class ControladorSubordinados implements Serializable {
             }
             
             if (dias <= maximo) {
+                utilidadesCH.agregaBitacora(empleadoLogeado, incidencias.getIncidenciaID().toString(), "Incidencia", "Justificación "+incidencias.getEstatus());
                 ejbNotificacionesIncidencias.actualizarIncidencias(incidencias);
                 Messages.addGlobalInfo("¡Operación exitosa!");
             } else {

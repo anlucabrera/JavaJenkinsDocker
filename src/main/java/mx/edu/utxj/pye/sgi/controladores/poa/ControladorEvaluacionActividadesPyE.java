@@ -371,6 +371,7 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
     }
 
     public void onRowEdit(RowEditEvent event) {
+        archivoSC = false;
         ultimaEstrategiaExpandida = new Estrategias();
         mes1 = 0;        mes2 = 0;        mes3 = 0;        mes4 = 0;        mes5 = 0;        mes6 = 0;
         mes7 = 0;        mes8 = 0;        mes9 = 0;        mes10 = 0;        mes11 = 0;        mes12 = 0;
@@ -436,6 +437,7 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
     
     public String convertirRutaMP(String ruta) {
         File file = new File(ruta);
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPyE.convertirRutaMP()"+ruta);
         if (ruta.contains("EVALUACION_POA")) {
             return "EVALUACION_POA".concat(file.toURI().toString().split("EVALUACION_POA")[1]);
         } else {
@@ -481,6 +483,7 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
             System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(1)");
             ultimaEstrategiaExpandida = new Estrategias();
             ultimaEstrategiaExpandida = actividadesPoaEditando.getCuadroMandoInt().getEstrategia();
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPyE.subirEvidenciaPOA()"+ultimaEstrategiaExpandida);
             archivoSC = true;
             evidencias = new Evidencias();
 
@@ -499,6 +502,7 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
                     ruta = carga.subir(file, new File("2019".concat(File.separator).concat(siglaArea).concat(File.separator).concat(mesNombre).concat(File.separator).concat("EVALUACION_POA").concat(File.separator)));
 
                     if (!"Error: No se pudo leer el archivo".equals(ruta)) {
+                        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(4.2)");
                         String name = Servlets.getSubmittedFileName(file);
                         String type = file.getContentType();
                         long size = file.getSize();
@@ -509,18 +513,20 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
                         evidenciasDetalle.setTamanioBytes(size);
                         evidenciasDetalle.setMes(mesNombre);
                         poaSelectec.agregarEvidenciasesEvidenciasDetalle(evidenciasDetalle);
+                        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(4.2a)");
                     } else {
                         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(4.1)");
                     }
                 }
                 consultarEvidencias(actividadesPoaEditando);
+                consultarListasValidacionFinal();
             } else {
                 Messages.addGlobalWarn("Es necesario seleccionar un archivo !!");
             }
             files = new ArrayList<>();
             files.clear();
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEvaluacionActividadesPyE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -544,6 +550,7 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
         }
 
         consultarEvidencias(actividadesPoaEditando);
+        consultarListasValidacionFinal();
         System.out.println("eliminiacion" + System.currentTimeMillis());
     }
 

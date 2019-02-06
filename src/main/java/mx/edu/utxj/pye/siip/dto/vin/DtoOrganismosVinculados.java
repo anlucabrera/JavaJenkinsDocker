@@ -34,6 +34,10 @@ import mx.edu.utxj.pye.sgi.entity.pye2.TelefonosEmpresa;
  * @author Planeacion
  */
 public final class DtoOrganismosVinculados {
+    /****************** Programas Educativos Beneficiados con la vinculación *******************/
+    @Getter @Setter AreasUniversidad areaUniversidad;
+    @Getter private List<DTOProgramasBeneficiadosVinculacion> listaProgramasEducativosBeneficiadosV = new ArrayList<>();
+    
     /************************** Ubicación *************************************/
     @Getter private Pais pais;
     @Getter private Estado estado;
@@ -257,4 +261,7 @@ public final class DtoOrganismosVinculados {
         this.localidades = localidades;
     }
     
+     public void setListaProgramasEducativosBeneficiadosV(List<DTOProgramasBeneficiadosVinculacion> listaProgramasEducativosBeneficiadosV) {
+        this.listaProgramasEducativosBeneficiadosV = listaProgramasEducativosBeneficiadosV;
+    }
 }

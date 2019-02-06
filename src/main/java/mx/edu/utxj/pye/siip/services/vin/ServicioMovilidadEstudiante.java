@@ -109,7 +109,6 @@ public class ServicioMovilidadEstudiante implements EjbMovilidadEstudiante{
                             matriculaPeriodosEscolares.setMatricula(matriculaNueva);
                         break;
                     case STRING:
-                        
                         matriculaPeriodosEscolares.setMatricula(fila.getCell(4).getStringCellValue());
                         break;
                     default:

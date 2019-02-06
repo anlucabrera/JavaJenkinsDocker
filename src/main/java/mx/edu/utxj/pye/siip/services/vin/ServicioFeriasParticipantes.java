@@ -18,6 +18,8 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
+import lombok.Getter;
+import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
@@ -55,6 +57,8 @@ public class ServicioFeriasParticipantes implements EjbFeriasParticipantes{
     @EJB EjbFeriasProfesiograficas ejbFeriasProfesiograficas;
     @EJB EjbIems ejbIems;
     @Inject ControladorEmpleado controladorEmpleado;
+    
+    @Getter @Setter private List<Short> areas;
     
     @Override
     public  ListaFeriasParticipantes getListaFeriasParticipantes(String rutaArchivo) throws Throwable {
@@ -193,12 +197,18 @@ public class ServicioFeriasParticipantes implements EjbFeriasParticipantes{
 
     @Override
     public List<ListaFeriasParticipantesDTO> getRegistrosFParticipantes(String mes, Short ejercicio) {
+        //verificar que los parametros no sean nulos
+        if(mes == null || ejercicio == null){
+            return null;
+        }
+        areas = ejbModulos.getAreasDependientes(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        
         List<ListaFeriasParticipantesDTO> ldto = new ArrayList<>();
         TypedQuery<FeriasParticipantes> q = f.getEntityManager()
-                .createQuery("SELECT p from FeriasParticipantes p WHERE p.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND p.registros.eventoRegistro.mes = :mes AND p.registros.area = :area", FeriasParticipantes.class);
+                .createQuery("SELECT p from FeriasParticipantes p WHERE p.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND p.registros.eventoRegistro.mes = :mes AND p.registros.area IN :areas", FeriasParticipantes.class);
         q.setParameter("mes", mes);
         q.setParameter("ejercicio", ejercicio);
-        q.setParameter("area", controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        q.setParameter("areas", areas);
         List<FeriasParticipantes> l = q.getResultList();
         if (l.isEmpty() || l == null) {
             return null;

@@ -8,9 +8,7 @@ package mx.edu.utxj.pye.siip.dto.vin;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import javax.faces.model.SelectItem;
 import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,10 +26,6 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
  * @author Planeacion
  */
 public final class DtoConvenios {
-    /****************** Programas Educativos Beneficiados con la vinculación *******************/
-    @Getter @Setter AreasUniversidad areaUniversidad;
-    @Getter private List<DTOProgramasBeneficiadosVinculacion> listaProgramasEducativosBeneficiadosV = new ArrayList<>();
-
     /************************** Evidencias *************************************/
     @Getter private DTOConvenio registro;
     
@@ -166,7 +160,4 @@ public final class DtoConvenios {
         this.actividades = actividades;
     }
     
-    public void setListaProgramasEducativosBeneficiadosV(List<DTOProgramasBeneficiadosVinculacion> listaProgramasEducativosBeneficiadosV) {
-        this.listaProgramasEducativosBeneficiadosV = listaProgramasEducativosBeneficiadosV;
-    }
 }

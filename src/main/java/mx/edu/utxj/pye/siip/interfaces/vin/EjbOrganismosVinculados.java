@@ -9,6 +9,7 @@ package mx.edu.utxj.pye.siip.interfaces.vin;
 
 import java.util.List;
 import javax.ejb.Local;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesVinculacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ContactosEmpresa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CorreosEmpresa;
@@ -22,10 +23,12 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
 import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
+import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasBeneficiadosVinculacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.SectoresTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.TelefonosEmpresa;
 import mx.edu.utxj.pye.siip.dto.vin.DTOActividadesVinculacion;
+import mx.edu.utxj.pye.siip.dto.vin.DTOProgramasBeneficiadosVinculacion;
 
 /**
  *
@@ -217,5 +220,34 @@ public interface EjbOrganismosVinculados {
     public Boolean guardaUbicacion(OrganismosVinculados organismoVinculado, Pais pais, Estado estado, Municipio municipio, Localidad localidad);
     
     public Boolean eliminaUbicacion(OrganismosVinculados organismosVinculados);
+    
+    /**
+     * Devuelve una lista completa de DTOProgramasBeneficiadosVinculacion para asignar si aplica o no el beneficio en el programaEducativo
+     * @return  Lista de DTO de ProgramasBeneficiadosVinculacion
+     * @throws Throwable 
+     */
+    public List<DTOProgramasBeneficiadosVinculacion> getProgramasBeneficiadosVinculacion() throws Throwable;
+    
+    /**
+     * Verifica que el ProgramasBeneficiadosVinculacion este ligado con la empresa o si existente dicha relación
+     * @param empresa   Empresa o convenio seleccionado
+     * @param areaUniversidad   Programa educativo consultado
+     * @return  Devuelve True si existe o False si no hay dicha vinculación
+     */
+    public Boolean verificaProgramaBeneficiadoVinculacion(Integer empresa, AreasUniversidad areaUniversidad);
+    
+    /**
+     * Guarda la asignación del programa educativo con el convenio
+     * @param programaBeneficiadosVinculacion   Entidad para guardar en base de datos
+     * @return 
+     */
+    public Boolean guardarProgramaBeneficiadoVinculacion(ProgramasBeneficiadosVinculacion programaBeneficiadosVinculacion);
+    
+    /**
+     * Guarda la asignación del programa educativo con el convenio
+     * @param programaBeneficiadosVinculacion   Entidad para guardar en base de datos
+     * @return 
+     */
+    public Boolean eliminarProgramaBeneficiadoVinculacion(ProgramasBeneficiadosVinculacion programaBeneficiadosVinculacion);
     
 }

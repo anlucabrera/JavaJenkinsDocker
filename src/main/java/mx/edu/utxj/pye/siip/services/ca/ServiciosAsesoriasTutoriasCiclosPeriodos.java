@@ -282,6 +282,7 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
                 if (registroAlmacenado) {
                     if (ejbModulos.getEventoRegistro().equals(asesTutEncontrada.getRegistros().getEventoRegistro())) {
                         asesTut.getAsesoriasTutoriasCicloPeriodos().setRegistro(asesTutEncontrada.getRegistro());
+                        asesTut.getAsesoriasTutoriasCicloPeriodos().setTutor(asesTutEncontrada.getTutor());
                         facadeEscolar.edit(asesTut.getAsesoriasTutoriasCicloPeriodos());
                     } else {
                         listaCondicional.remove(asesTutEncontrada.getAsunto() + " " + asesTutEncontrada.getCuatrimestre() + " " + asesTutEncontrada.getGrupo());

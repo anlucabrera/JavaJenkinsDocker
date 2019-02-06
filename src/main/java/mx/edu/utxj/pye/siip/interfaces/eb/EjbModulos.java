@@ -278,4 +278,11 @@ public interface EjbModulos {
     
     public Integer getNumeroMes(String mes);
     
+     /**
+     * Obtiene la lista de áreas inferiores dependiendo del área del usuario logueado.
+     * @param area Clave área usuario logueado.
+     * @return Lista de claves de área.
+     */
+    public List<Short> getAreasDependientes (Short area);
+    
 }

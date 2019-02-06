@@ -116,8 +116,8 @@
                                                  value="#{conveniosC.dtoConvenios.lstConvenios}"
                                                  tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                         <p:columnGroup type="header">
-                                            <p:column headerText="Opciones" width="125" />
-                                            <p:column headerText="Empresa" width="400"/>
+                                            <p:column headerText="Opciones" width="120" />
+                                            <p:column headerText="Empresa" width="500"/>
                                             <p:column headerText="Fecha de firma" width="100"/>
                                             <p:column headerText="Vigencia" width="100"/>
                                             <p:column headerText="Objetivo" width="400"/>
@@ -151,10 +151,6 @@
                                                                  class="btn btn-sm #{conveniosC.verificaAlineacion(convenio.registro)?'btn-info':'btn-warning'}"
                                                                  icon="fa fa-cog"
                                                                  title="Alineación a POA." />
-                                                <p:commandButton actionListener="#{conveniosC.abrirProgramasBeneficiadosVinculacion(convenio)}"
-                                                                 class="btn btn-sm btn-info"
-                                                                 icon="fa fa-check-circle"
-                                                                 title="Programas Educativos Beneficiados"/>
                                             </div>
                                         </p:column>    
 
@@ -426,54 +422,6 @@
                                         <p:ajax process="actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="actividad"><p:autoUpdate /></p:message>
-                                </div>
-                            </div>
-                        </h:form>
-                    </p:dialog>
-
-                    <!-- Modal de programas educativos beneficiados con la vinculación o convenios-->
-                    <p:dialog id="modalProgramasBeneficiadosVinculacion" 
-                              widgetVar="modalProgramasBeneficiadosVinculacion" 
-                              width="800" 
-                              height="600"  
-                              closeOnEscape="true"
-                              visible="#{conveniosC.dtoConvenios.forzarAperturaDialogo}"
-                              showEffect="fade" 
-                              hideEffect="fade" 
-                              modal="true" 
-                              draggable="true" 
-                              header="Programas Educativos Beneficiados con el Convenio"
-                              styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
-                        <h:form id="frmProgramasBeneficiadosVinculacion" >
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <p:remoteCommand name="actualizarProgramasBeneficiadosVinculacion" 
-                                                     update="@form:tblProgramasBeneficiadosVinculacion" />
-                                    <p:dataTable id="tblProgramasBeneficiadosVinculacion" 
-                                                 value="#{conveniosC.dtoConvenios.listaProgramasEducativosBeneficiadosV}" 
-                                                 var="programasBeneficiados"
-                                                 emptyMessage="No se encuentran programas educativos en el catalogo." 
-                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
-                                        <p:columnGroup type="header">
-                                            <p:row>
-                                                <p:column headerText="Seleccione la opción que corresponda" />
-                                            </p:row>
-                                        </p:columnGroup>
-                                        <p:column style="text-align: center;" width="700">
-                                            <div class="btn-group">
-                                                <p:selectBooleanButton id="switchav#{programasBeneficiados.areaUniversidad.area}"
-                                                                       value="#{programasBeneficiados.existe}"
-                                                                       onLabel="#{programasBeneficiados.areaUniversidad.nombre}"
-                                                                       offLabel="#{programasBeneficiados.areaUniversidad.nombre}"
-                                                                       onIcon="ui-icon-check"
-                                                                       offIcon="ui-icon-close"
-                                                                       class="btn-sm"
-                                                                       style="width: 700px; text-align: left">
-                                                    <p:ajax listener="#{conveniosC.guardaProgramaBeneficiadoVinculacion(programasBeneficiados)}" />
-                                                </p:selectBooleanButton>
-                                            </div>
-                                        </p:column>
-                                    </p:dataTable>
                                 </div>
                             </div>
                         </h:form>

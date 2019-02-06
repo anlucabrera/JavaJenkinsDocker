@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.sgi.ejb.ch;
 
+import com.itextpdf.text.log.SysoLogger;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -45,6 +46,7 @@ public class ServicioCarga implements EjbCarga {
 
     @Override
     public String subir(Part file, File rutaRelativa) {
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServicioCarga.subir(): " + rutaRelativa);
         try {
             byte[] content = Utils.toByteArray(file.getInputStream());
             File carpeta = new File("C:/archivos/evidenciasCapitalHumano/".concat(rutaRelativa.toString()));
@@ -74,7 +76,8 @@ public class ServicioCarga implements EjbCarga {
 //                System.out.println("mx.edu.utxj.pye.sgi.ch.servicio.ServicioCarga.subir() name: " + name);
                 FileOutputStream fos = new FileOutputStream(name);
                 FileCopyUtils.copy(content, fos);
-                aleatorio = "";
+                aleatorio = ""; 
+                System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServicioCarga.subir(fin)");
                 return name;
         } catch (IOException ex) {
             Logger.getLogger(ServicioCarga.class.getName()).log(Level.SEVERE, null, ex);

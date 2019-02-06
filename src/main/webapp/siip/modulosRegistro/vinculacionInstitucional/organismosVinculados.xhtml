@@ -116,7 +116,7 @@
                                                  tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                         <p:columnGroup type="header">
                                             <p:row>
-                                                <p:column headerText="Opciones" width="130"/>
+                                                <p:column headerText="Opciones" width="160"/>
                                                 <p:column headerText="Fecha" width="100"/>
                                                 <p:column headerText="Nombre" width="300"/>
                                                 <p:column headerText="Tipo de Organización" width="100"/>
@@ -162,6 +162,10 @@
                                                                  class="btn btn-sm btn-info" 
                                                                  icon="fa fa-globe"
                                                                  title="Actividad de Vinculación" />
+                                                <p:commandButton actionListener="#{organismosVinculadosC.abrirProgramasBeneficiadosVinculacion(organismoVinculado)}"
+                                                                 class="btn btn-sm btn-info"
+                                                                 icon="fa fa-check-circle"
+                                                                 title="Programas Educativos Beneficiados"/>
                                             </div>
                                         </p:column>         
                                         <p:column>
@@ -874,6 +878,54 @@
                                 </div>
                             </div>
                             
+                        </h:form>
+                    </p:dialog>
+                    
+                    <!-- Modal de programas educativos beneficiados con la vinculación o convenios-->
+                    <p:dialog id="modalProgramasBeneficiadosVinculacion" 
+                              widgetVar="modalProgramasBeneficiadosVinculacion" 
+                              width="800" 
+                              height="600"  
+                              closeOnEscape="true"
+                              visible="#{organismosVinculadosC.dtoOrganismosVinculado.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Programas Educativos Beneficiados con el Organismo Vinculado"
+                              styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
+                        <h:form id="frmProgramasBeneficiadosVinculacion" >
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizarProgramasBeneficiadosVinculacion" 
+                                                     update="@form:tblProgramasBeneficiadosVinculacion" />
+                                    <p:dataTable id="tblProgramasBeneficiadosVinculacion" 
+                                                 value="#{organismosVinculadosC.dtoOrganismosVinculado.listaProgramasEducativosBeneficiadosV}" 
+                                                 var="programasBeneficiados"
+                                                 emptyMessage="No se encuentran programas educativos en el catalogo." 
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Seleccione la opción que corresponda" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;" width="700">
+                                            <div class="btn-group">
+                                                <p:selectBooleanButton id="switchav#{programasBeneficiados.areaUniversidad.area}"
+                                                                       value="#{programasBeneficiados.existe}"
+                                                                       onLabel="#{programasBeneficiados.areaUniversidad.nombre}"
+                                                                       offLabel="#{programasBeneficiados.areaUniversidad.nombre}"
+                                                                       onIcon="ui-icon-check"
+                                                                       offIcon="ui-icon-close"
+                                                                       class="btn-sm"
+                                                                       style="width: 700px; text-align: left">
+                                                    <p:ajax listener="#{organismosVinculadosC.guardaProgramaBeneficiadoVinculacion(programasBeneficiados)}" />
+                                                </p:selectBooleanButton>
+                                            </div>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </div>
                         </h:form>
                     </p:dialog>
 

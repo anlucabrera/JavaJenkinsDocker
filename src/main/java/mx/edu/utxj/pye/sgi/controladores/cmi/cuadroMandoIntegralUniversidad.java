@@ -74,10 +74,10 @@ public class cuadroMandoIntegralUniversidad implements Serializable {
         if (numeroMes == 0) {
             System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralArea.init()");
             numeroMes=11;
-            ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 101));
+            ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 102));
         } else {
             numeroMes=numeroMes-1;
-            ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 100));
+            ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 101));
         }
         switch (numeroMes) {
             case 0:                mes = "Avance al mes de: Enero";                break;

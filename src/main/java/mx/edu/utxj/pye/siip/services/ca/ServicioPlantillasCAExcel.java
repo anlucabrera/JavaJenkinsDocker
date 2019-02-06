@@ -260,7 +260,6 @@ public class ServicioPlantillasCAExcel implements EjbPlantillasCAExcel {
         beans.put("ciclosEscolares", ejbCatalogos.getCiclosEscolaresAct());
         beans.put("periodosEscolares", ejbCatalogos.getPeriodosEscolaresAct());
         beans.put("programasEducativos", ejbCatalogos.getProgramasEducativos());
-        beans.put("organismosVinculados", ejbOrganismosVinculados.getOrganismosVinculadoVigentes());
         beans.put("listaPersonal", ejbSelectec.mostrarListaDeEmpleados());
         beans.put("matriculaPeriodosEscolares", ejbMatriculaPeriodosEscolares.getMatriculasVigentes());
         XLSTransformer transformer = new XLSTransformer();

@@ -13,28 +13,22 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.Convenios;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
-import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasBeneficiadosVinculacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
-import mx.edu.utxj.pye.siip.dto.vin.DTOProgramasBeneficiadosVinculacion;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -60,8 +54,6 @@ public class ServicioConvenios implements EjbConvenios {
     @EJB    EjbFiscalizacion        ejbFiscalizacion;        
     @EJB    Facade                  f;
     @Inject LogonMB                 logonMB;
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
 
     private static final Logger LOG = Logger.getLogger(ServicioConvenios.class.getName());
     
@@ -309,7 +301,7 @@ public class ServicioConvenios implements EjbConvenios {
 
     @Override
     public Convenios getConvenio(Convenios convenio) {
-        TypedQuery<Convenios> query = em.createQuery("SELECT c FROM Convenios c JOIN c.empresa e WHERE e.empresa = :empresa AND c.fechaFirma = :fechaFirma", Convenios.class);
+        TypedQuery<Convenios> query = facadeVinculacion.getEntityManager().createQuery("SELECT c FROM Convenios c JOIN c.empresa e WHERE e.empresa = :empresa AND c.fechaFirma = :fechaFirma", Convenios.class);
         query.setParameter("empresa", convenio.getEmpresa().getEmpresa());
         query.setParameter("fechaFirma", convenio.getFechaFirma());
         try {
@@ -324,7 +316,7 @@ public class ServicioConvenios implements EjbConvenios {
     @Override
     public List<Convenios> getFiltroConveniosEjercicioMesArea(Short ejercicio, String mes, Short area) {
         try {
-            List<Convenios> convenios = em.createQuery("SELECT s FROM Convenios s JOIN s.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes AND r.area = :area AND s.empresa.estatus = :estatus", Convenios.class)
+            List<Convenios> convenios = facadeVinculacion.getEntityManager().createQuery("SELECT s FROM Convenios s JOIN s.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes AND r.area = :area AND s.empresa.estatus = :estatus", Convenios.class)
                     .setParameter("anio", ejercicio)
                     .setParameter("mes", mes)
                     .setParameter("area", area)
@@ -332,8 +324,8 @@ public class ServicioConvenios implements EjbConvenios {
                     .getResultList();
             
             convenios.forEach((c) -> {
-                em.refresh(c);
-                em.refresh(c.getEmpresa());
+                facadeVinculacion.getEntityManager().refresh(c);
+                facadeVinculacion.getEntityManager().refresh(c.getEmpresa());
             });
             
             return convenios;
@@ -343,75 +335,9 @@ public class ServicioConvenios implements EjbConvenios {
     }
     
     @Override
-    public List<DTOProgramasBeneficiadosVinculacion> getProgramasBeneficiadosVinculacion() throws Throwable {
-        try {
-            List<DTOProgramasBeneficiadosVinculacion> dtoProgBenVin = new ArrayList<>();
-            List<AreasUniversidad> areasUniversidad = em.createQuery("SELECT a FROM AreasUniversidad a JOIN a.categoria c WHERE c.categoria = :categoria AND a.vigente = :vigente ORDER BY a.nombre ASC", AreasUniversidad.class)
-                    .setParameter("categoria", 9)
-                    .setParameter("vigente", "1")
-                    .getResultList();
-            areasUniversidad.stream().forEach((a) -> {
-                dtoProgBenVin.add(new DTOProgramasBeneficiadosVinculacion(
-                        a
-                ));
-            });
-            return dtoProgBenVin;
-        } catch (NoResultException e) {
-            return Collections.EMPTY_LIST;
-        }
-    }
-
-    @Override
-    public Boolean verificaProgramaBeneficiadoVinculacion(Integer empresa, AreasUniversidad areaUniversidad) {
-        try {
-            ProgramasBeneficiadosVinculacion pbv = em.createQuery("SELECT p FROM ProgramasBeneficiadosVinculacion p INNER JOIN p.convenios c WHERE c.empresa.empresa = :empresa AND p.programasBeneficiadosVinculacionPK.programaEducativo = :programaEducativo",ProgramasBeneficiadosVinculacion.class)
-                    .setParameter("empresa",empresa)
-                    .setParameter("programaEducativo",areaUniversidad.getArea())
-                    .getSingleResult();
-            if(pbv != null) return true;
-            else return false;
-        } catch (NoResultException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public Boolean guardarProgramaBeneficiadoVinculacion(ProgramasBeneficiadosVinculacion programaBeneficiadosVinculacion) {
-//        TODO: Verificar que guarde cuando existe un registro nuevo
-        try {
-            if (verificaProgramaBeneficiadoVinculacion(programaBeneficiadosVinculacion.getProgramasBeneficiadosVinculacionPK().getEmpresa(), em.find(AreasUniversidad.class, programaBeneficiadosVinculacion.getProgramasBeneficiadosVinculacionPK().getProgramaEducativo()))) {
-                eliminarProgramaBeneficiadoVinculacion(programaBeneficiadosVinculacion);
-            } else {
-                facadeVinculacion.setEntityClass(ProgramasBeneficiadosVinculacion.class);
-                facadeVinculacion.create(programaBeneficiadosVinculacion);
-                facadeVinculacion.flush();
-            }
-            return true;
-        } catch (Exception e) {
-            LOG.log(Level.SEVERE, "No se pudo asginar el programa al convenio.", e);
-            return false;
-        }
-    }
-
-    @Override
-    public Boolean eliminarProgramaBeneficiadoVinculacion(ProgramasBeneficiadosVinculacion programaBeneficiadosVinculacion) {
-        try {
-            if (verificaProgramaBeneficiadoVinculacion(programaBeneficiadosVinculacion.getProgramasBeneficiadosVinculacionPK().getEmpresa(), em.find(AreasUniversidad.class, programaBeneficiadosVinculacion.getProgramasBeneficiadosVinculacionPK().getProgramaEducativo()))) {
-                facadeVinculacion.setEntityClass(ProgramasBeneficiadosVinculacion.class);
-                facadeVinculacion.remove(programaBeneficiadosVinculacion);
-                facadeVinculacion.flush();
-            }
-            return true;
-        } catch (Exception e) {
-            LOG.log(Level.SEVERE, "No se pudo eliminar el programa del convenio.", e);
-            return false;
-        }
-    }
-
-    @Override
     public Boolean verificaConvenio(Integer empresa) {
         try {
-            List<Convenios> convenios = em.createQuery("SELECT c FROM Convenios c INNER JOIN c.empresa e WHERE e.empresa = :empresa", Convenios.class)
+            List<Convenios> convenios = facadeVinculacion.getEntityManager().createQuery("SELECT c FROM Convenios c INNER JOIN c.empresa e WHERE e.empresa = :empresa", Convenios.class)
                     .setParameter("empresa", empresa)
                     .getResultList();
             if(convenios.isEmpty()){
