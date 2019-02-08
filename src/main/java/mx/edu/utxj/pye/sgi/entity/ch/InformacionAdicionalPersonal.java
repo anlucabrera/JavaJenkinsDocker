@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author PLANEACION
  */
 @Entity
 @Table(name = "informacion_adicional_personal", catalog = "capital_humano", schema = "")
@@ -42,7 +42,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "InformacionAdicionalPersonal.findByNumTelMovil", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.numTelMovil = :numTelMovil")
     , @NamedQuery(name = "InformacionAdicionalPersonal.findByNumTelFijo", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.numTelFijo = :numTelFijo")
     , @NamedQuery(name = "InformacionAdicionalPersonal.findByEstadoCivil", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.estadoCivil = :estadoCivil")
-    , @NamedQuery(name = "InformacionAdicionalPersonal.findByEstatus", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.estatus = :estatus")})
+    , @NamedQuery(name = "InformacionAdicionalPersonal.findByTipoSangre", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.tipoSangre = :tipoSangre")
+    , @NamedQuery(name = "InformacionAdicionalPersonal.findByAutorizacion", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.autorizacion = :autorizacion")})
 public class InformacionAdicionalPersonal implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -89,11 +90,13 @@ public class InformacionAdicionalPersonal implements Serializable {
     @Size(max = 14)
     @Column(name = "estado_civil")
     private String estadoCivil;
+    @Size(max = 10)
+    @Column(name = "tipo_sangre")
+    private String tipoSangre;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "estatus")
-    private String estatus;
+    @Column(name = "autorizacion")
+    private boolean autorizacion;
     @JoinColumn(name = "clave", referencedColumnName = "clave", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Personal personal;
@@ -105,9 +108,9 @@ public class InformacionAdicionalPersonal implements Serializable {
         this.clave = clave;
     }
 
-    public InformacionAdicionalPersonal(Integer clave, String estatus) {
+    public InformacionAdicionalPersonal(Integer clave, boolean autorizacion) {
         this.clave = clave;
-        this.estatus = estatus;
+        this.autorizacion = autorizacion;
     }
 
     public Integer getClave() {
@@ -222,12 +225,20 @@ public class InformacionAdicionalPersonal implements Serializable {
         this.estadoCivil = estadoCivil;
     }
 
-    public String getEstatus() {
-        return estatus;
+    public String getTipoSangre() {
+        return tipoSangre;
     }
 
-    public void setEstatus(String estatus) {
-        this.estatus = estatus;
+    public void setTipoSangre(String tipoSangre) {
+        this.tipoSangre = tipoSangre;
+    }
+
+    public boolean getAutorizacion() {
+        return autorizacion;
+    }
+
+    public void setAutorizacion(boolean autorizacion) {
+        this.autorizacion = autorizacion;
     }
 
     public Personal getPersonal() {

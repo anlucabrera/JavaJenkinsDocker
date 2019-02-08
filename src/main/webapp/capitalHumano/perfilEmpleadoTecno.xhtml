@@ -165,7 +165,7 @@
                                                                                     <h:message id="messageForFile" for="file" />
                                                                                     <br/>
                                                                                     <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{cvTecnologia.agregarEvidenciaDesTec}" />
-                                                                                                                                                                   </div>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
                                                                         <hr/>
@@ -210,61 +210,107 @@
                                     <h:form id="frmListaDesarrolloTecnologicos">
                                         <p:outputPanel>
                                             <p:remoteCommand name="actualizarTabla" actionListener="#{cvTecnologia.metodoBase()}" update="tbldesarrollosTec" />
-                                            <p:dataTable id="tbldesarrollosTec" value="#{cvTecnologia.nuevaListaDesarrolloTecnologico}"
-                                                         paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron registros." rendered="true" rowStyleClass="#{desTec.estatus eq 'Aceptado'?'aceptado':'denegado'}"
-                                                         selectionMode="single" selection="#{cvTecnologia.nuevoOBJDesarrolloTecnologico}" rowKey="#{desTec.desarrollo}"
-                                                         var="desTec" >
+                                            <p:dataTable id="tbldesarrollosTec" value="#{cvTecnologia.nuevaListaDesarrolloTecnologico}" var="desaTec" 
+                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="5,10,15,20,25,30"
+                                                         editable="true" editMode="row">
 
-                                                <f:facet name="header">
-                                                    <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
-                                                    <p:spacer width="15px"/>
-                                                    <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
-                                                </f:facet>
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
+                                                        <p:column rowspan="2" headerText="Tipo desarrollo" style="width: 200px;" />
+                                                        <p:column rowspan="2" headerText="apoyo por parte de la institución" style="width: 100px;"/>
+                                                        <p:column rowspan="2" headerText="Objetivo" style="width: 400px;"/>
+                                                        <p:column rowspan="2" headerText="Resumen" style="width: 400px;"/> 
+                                                        <p:column rowspan="2" headerText="Evidencia" style="width:50px; "/>
+                                                    </p:row>
+                                                </p:columnGroup>
 
-                                                <p:column style="width: 50px;">
-                                                    <p:commandButton actionListener="#{cvTecnologia.eliminarDesTec(desTec)}" update="tbldesarrollosTec" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{desTec.tipoDesarrollo}?" icon="ui-icon-alert" />
+                                                <p:ajax event="rowEdit" listener="#{cvTecnologia.updateDesarrolloTecnologico}" update="@this" oncomplete="actualizarTabla()"/>
+                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla()"/>
+
+                                                <p:column >
+                                                    <p:commandButton actionListener="#{cvTecnologia.eliminarDesTec(desaTec)}" update="tbldesarrollosTec" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación el desarrollo #{desaTec.tipoDesarrollo}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
 
-                                                <p:column headerText="Tipo desarrollo"
-                                                          sortBy="#{desTec.tipoDesarrollo}" 
-                                                          filterBy="#{desTec.tipoDesarrollo}" 
-                                                          filterMatchMode="contains"
-                                                          width="15%">
-                                                    <h:outputText  value="#{desTec.tipoDesarrollo}" />
-                                                </p:column>  
-
-                                                <p:column headerText="Objetivo"
-                                                          sortBy="#{desTec.objetivoDesarrollo}" 
-                                                          filterBy="#{desTec.objetivoDesarrollo}" 
-                                                          filterMatchMode="contains">
-                                                    <h:outputText  value="#{desTec.objetivoDesarrollo}" />
-                                                </p:column>  
-
-                                                <p:column headerText="Resumen"
-                                                          sortBy="#{desTec.resumenDesarrollo}" 
-                                                          filterBy="#{desTec.resumenDesarrollo}" 
-                                                          filterMatchMode="contains">
-                                                    <h:outputText  value="#{desTec.resumenDesarrollo}" />
-                                                </p:column>     
-
-
-                                                <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
-                                                    <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog1').show()" icon="ui-icon-search" title="View">
-                                                        <f:setPropertyActionListener value="#{desTec}" target="#{cvTecnologia.nuevoOBJDesarrolloTecnologico}"/>
-                                                    </p:commandButton>
+                                                <p:column >
+                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                        <a href="#" class="ui-row-editor-pencil">
+                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                        </a>
+                                                        <a href="#" class="ui-row-editor-check">
+                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                        </a>
+                                                        <p:spacer width="20px"/>
+                                                        <a href="#" class="ui-row-editor-close">
+                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                        </a>
+                                                    </div>
                                                 </p:column>
 
-                                            </p:dataTable>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{desaTec.tipoDesarrollo}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{desaTec.tipoDesarrollo}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'Mejora de Proceso'}" itemLabel="#{'Mejora de proceso'}"/>
+                                                                <f:selectItem itemValue="#{'Mejora de Producto'}" itemLabel="#{'Mejora de producto'}"/>
+                                                                <f:selectItem itemValue="#{'Mejora de Servicio'}" itemLabel="#{'Mejora de servicio'}"/>
+                                                                <f:selectItem itemValue="#{'Nuevo Proceso'}" itemLabel="#{'Nuevo proceso'}"/>
+                                                                <f:selectItem itemValue="#{'Nuevo Producto'}" itemLabel="#{'Nuevo producto'}"/>
+                                                                <f:selectItem itemValue="#{'Nuevo Servicio'}" itemLabel="#{'Nuevo servicio'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>    
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{desaTec.apoyoRecibido}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{desaTec.apoyoRecibido}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                <f:selectItem itemValue="#{'Si'}" itemLabel="#{'Si'}"/>
+                                                                <f:selectItem itemValue="#{'No'}" itemLabel="#{'No'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{desaTec.objetivoDesarrollo}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputTextarea value="#{desaTec.objetivoDesarrollo}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{desaTec.resumenDesarrollo}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputTextarea value="#{desaTec.resumenDesarrollo}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(desaTec.documentoRespaldo)}" target="_blank">
+                                                        <i class="fa fa-search"></i>
+                                                        <span>Ver</span>
+                                                    </p:link>
+                                                </p:column>   
+                                            </p:dataTable>                                            
 
-                                            <p:dialog header="Evidencias" widgetVar="evidenciaDialog1" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
-                                                <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
-                                                    <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty cvTecnologia.nuevoOBJDesarrolloTecnologico}">
-                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(cvTecnologia.nuevoOBJDesarrolloTecnologico.documentoRespaldo)}"/>      
-                                                    </p:panelGrid>
-                                                </p:outputPanel>
-                                            </p:dialog>
                                         </p:outputPanel>
 
                                         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
@@ -387,47 +433,125 @@
                                     <h:form id="frmlistaInnocaciones">
                                         <p:outputPanel>
                                             <p:remoteCommand name="actualizarTabla2" actionListener="#{cvTecnologia.metodoBase()}" update="tblInnovacion" />
-                                            <p:dataTable id="tblInnovacion" value="#{cvTecnologia.nuevaListaInnovaciones}"
-                                                         paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron registros." rendered="true" 
-                                                         rowStyleClass="#{innovacion.estatus eq 'Aceptado'?'aceptado':'denegado'}"
-                                                         selectionMode="single" selection="#{cvTecnologia.nuevoOBJInnovaciones}" 
-                                                         rowKey="#{innovacion.innovacion}"
-                                                         var="innovacion" >
+                                            <p:dataTable id="tblInnovacion" value="#{cvTecnologia.nuevaListaInnovaciones}" var="InnovacionesRegistro" 
+                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="5,10,15,20,25,30"
+                                                         editable="true" editMode="row">
 
-                                                <f:facet name="header">
-                                                    <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
-                                                    <p:spacer width="15px"/>
-                                                    <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
-                                                </f:facet>
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
+                                                        <p:column rowspan="2" headerText="Tipo innovación" style="width: 100px;" />
+                                                        <p:column rowspan="2" headerText="Cobertura" style="width: 100px;"/>
+                                                        <p:column rowspan="2" headerText="Aplicación" style="width: 100px;"/>
+                                                        <p:column rowspan="2" headerText="poyo por parte de la institución" style="width: 100px;"/> 
+                                                        <p:column rowspan="2" headerText="Protección" style="width:100px; "/>
+                                                    </p:row>
+                                                </p:columnGroup>
 
-                                                <p:column style="width: 50px;">
-                                                    <p:commandButton actionListener="#{cvTecnologia.eliminarInnovacion(innovacion)}" update="tblInnovacion" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{innovacion.tipoInnovacion}?" icon="ui-icon-alert" />
+                                                <p:ajax event="rowEdit" listener="#{cvTecnologia.updateInnovaciones}" update="@this" oncomplete="actualizarTabla2()"/>
+                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla2()"/>
+
+                                                <p:column >
+                                                    <p:commandButton actionListener="#{cvTecnologia.eliminarInnovacion(InnovacionesRegistro)}" update="tblInnovacion" oncomplete="actualizarTabla2()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la innovacion #{InnovacionesRegistro.tipoInnovacion}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
 
-                                                <p:column headerText="Tipo innovación"
-                                                          sortBy="#{innovacion.tipoInnovacion}" 
-                                                          filterBy="#{innovacion.tipoInnovacion}" 
-                                                          filterMatchMode="contains">
-                                                    <h:outputText value="#{innovacion.tipoInnovacion}" />
+                                                <p:column >
+                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                        <a href="#" class="ui-row-editor-pencil">
+                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                        </a>
+                                                        <a href="#" class="ui-row-editor-check">
+                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                        </a>
+                                                        <p:spacer width="20px"/>
+                                                        <a href="#" class="ui-row-editor-close">
+                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                        </a>
+                                                    </div>
                                                 </p:column>
 
-                                                <p:column headerText="Cobertura"
-                                                          sortBy="#{innovacion.potencialCobertura}" 
-                                                          filterBy="#{innovacion.potencialCobertura}" 
-                                                          filterMatchMode="contains">
-                                                    <h:outputText value="#{innovacion.potencialCobertura}" />
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{InnovacionesRegistro.tipoInnovacion}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{InnovacionesRegistro.tipoInnovacion}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'Disruptiva'}" itemLabel="#{'Disruptiva'}"/>
+                                                                <f:selectItem itemValue="#{'Incremental'}" itemLabel="#{'Incremental'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
                                                 </p:column>  
-
-                                                <p:column headerText="Aplicación"
-                                                          sortBy="#{innovacion.aplicacionInnovacion}" 
-                                                          filterBy="#{innovacion.aplicacionInnovacion}" 
-                                                          filterMatchMode="contains">
-                                                    <h:outputText value="#{innovacion.aplicacionInnovacion}" />
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{InnovacionesRegistro.potencialCobertura}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{InnovacionesRegistro.tipoInnovacion}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'Internacional'}" itemLabel="#{'Internacional'}"/>
+                                                                <f:selectItem itemValue="#{'Nacional'}" itemLabel="#{'Nacional'}"/>
+                                                                <f:selectItem itemValue="#{'Local'}" itemLabel="#{'Local'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
                                                 </p:column>
-
-
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{InnovacionesRegistro.aplicacionInnovacion}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{InnovacionesRegistro.aplicacionInnovacion}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'Proceso'}" itemLabel="#{'Proceso'}"/>
+                                                                <f:selectItem itemValue="#{'Producto'}" itemLabel="#{'Producto'}"/>
+                                                                <f:selectItem itemValue="#{'Servicio'}" itemLabel="#{'Servicio'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{InnovacionesRegistro.apoyoRecibidoo}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{InnovacionesRegistro.apoyoRecibidoo}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                <f:selectItem itemValue="#{'Si'}" itemLabel="#{'Si'}"/>
+                                                                <f:selectItem itemValue="#{'No'}" itemLabel="#{'No'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{InnovacionesRegistro.mecanismoProteccion}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{InnovacionesRegistro.mecanismoProteccion}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'Patentes'}" itemLabel="#{'Patentes'}"/>
+                                                                <f:selectItem itemValue="#{'Diseño Industrial'}" itemLabel="#{'Diseño industrial'}"/>
+                                                                <f:selectItem itemValue="#{'Marcas Comerciales'}" itemLabel="#{'Marcas comerciales'}"/>
+                                                                <f:selectItem itemValue="#{'Derechos de Autor'}" itemLabel="#{'Derechos de autor'}"/>
+                                                                <f:selectItem itemValue="#{'Acuerdos de Confidencialidad'}" itemLabel="#{'Acuerdos de confidencialidad'}"/>
+                                                                <f:selectItem itemValue="#{'Secreto Industrial'}" itemLabel="#{'Secreto Industrial'}"/>
+                                                                <f:selectItem itemValue="#{'Complejidad del Diseño'}" itemLabel="#{'Complejidad del diseño'}"/>
+                                                                <f:selectItem itemValue="#{'Adelanto en el Mercado del Innovador'}" itemLabel="#{'Adelanto en el mercado del innovador'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
                                             </p:dataTable>
                                         </p:outputPanel>
 
@@ -535,7 +659,7 @@
                                                                                     <p:inputTextarea id="logros" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
                                                                                                      placeholder="Logros" value="#{cvTecnologia.nuevoOBJDesarrolloSoftware.logros}"/>
                                                                                     <p:message for="logros" display="tooltip" />
-                                                                                                                                                                    </div>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
                                                                         <hr/>
@@ -577,70 +701,171 @@
                                     <h:form id="frmListaDesarrolloSoft"> 
                                         <p:outputPanel>
                                             <p:remoteCommand name="actualizarTabla3" actionListener="#{cvTecnologia.metodoBase()}" update="tbldesarrollosSoft" />
-                                            <p:dataTable id="tbldesarrollosSoft" value="#{cvTecnologia.nuevaListaDesarrolloSoftware}"
-                                                         paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron registros." rendered="true" rowStyleClass="#{desSoft.estatus eq 'Aceptado'?'aceptado':'denegado'}"
-                                                         selectionMode="single" selection="#{cvTecnologia.nuevoOBJDesarrolloSoftware}" rowKey="#{desSoft.desarrollo }"
-                                                         var="desSoft" >
+                                            <p:dataTable id="tbldesarrollosSoft" value="#{cvTecnologia.nuevaListaDesarrolloSoftware}" var="desaSof" 
+                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="5,10,15,20,25,30"
+                                                         editable="true" editMode="row">
 
-                                                <f:facet name="header">
-                                                    <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
-                                                    <p:spacer width="15px"/>
-                                                    <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
-                                                </f:facet>
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
+                                                        <p:column rowspan="2" headerText="Tipo" style="width: 250px;" />
+                                                        <p:column rowspan="2" headerText="apoyo por parte de la institución" style="width: 100px;"/>
+                                                        <p:column rowspan="2" headerText="Derechos de autor" style="width: 100px;"/>
+                                                        <p:column rowspan="2" headerText="Lugar de dasarrollo" style="width: 250px;"/> 
+                                                        <p:column rowspan="2" headerText="Nombre del beneficiario" style="width:250px; "/>
+                                                        <p:column rowspan="2" headerText="Horas persona" style="width:50px; "/>
+                                                        <p:column rowspan="2" headerText="Costo" style="width:50px; "/>
+                                                        <p:column rowspan="2" headerText="Fecha inicio" style="width:100px; "/>
+                                                        <p:column rowspan="2" headerText="Fecha fin" style="width:100px; "/>
+                                                        <p:column rowspan="2" headerText="Logros" style="width:300px; "/>
+                                                    </p:row>
+                                                </p:columnGroup>
 
-                                                <p:column style="width: 50px;">
-                                                    <p:commandButton actionListener="#{cvTecnologia.eliminarDesSoft(desSoft)}" update="tbldesarrollosSoft" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{desSoft.tipoDesarrollo}?" icon="ui-icon-alert" />
+                                                <p:ajax event="rowEdit" listener="#{cvTecnologia.updateDesarrolloSoftware}" update="@this" oncomplete="actualizarTabla3()"/>
+                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla3()"/>
+
+                                                <p:column >
+                                                    <p:commandButton actionListener="#{cvTecnologia.eliminarDesSoft(desaSof)}" update="tbldesarrollosSoft" oncomplete="actualizarTabla3()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación del Premio #{desaSof.tipoDesarrollo}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
 
-                                                <p:column headerText="Tipo software" 
-                                                          filterBy="#{desSoft.tipoDesarrollo}"
-                                                          sortBy="#{desSoft.tipoDesarrollo}" 
-                                                          filterMatchMode="contains"
-                                                          style="width: 15%"> 
-                                                    <h:outputText value="#{desSoft.tipoDesarrollo}" />
+                                                <p:column >
+                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                        <a href="#" class="ui-row-editor-pencil">
+                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                        </a>
+                                                        <a href="#" class="ui-row-editor-check">
+                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                        </a>
+                                                        <p:spacer width="20px"/>
+                                                        <a href="#" class="ui-row-editor-close">
+                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                        </a>
+                                                    </div>
                                                 </p:column>
 
-                                                <p:column headerText="Lugar desarrollo" 
-                                                          filterBy="#{desSoft.lugar}"
-                                                          sortBy="#{desSoft.lugar}" 
-                                                          filterMatchMode="contains"
-                                                          style="width: 15%"> 
-                                                    <h:outputText value="#{desSoft.lugar}" />
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{desaSof.tipoDesarrollo}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{desaSof.tipoDesarrollo}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'Software basado en Web'}" itemLabel="#{'Software basado en Web'}"/>
+                                                                <f:selectItem itemValue="#{'Software de computadoras personales'}" itemLabel="#{'Software de computadoras personales'}"/>
+                                                                <f:selectItem itemValue="#{'Software de gestión'}" itemLabel="#{'Software de gestión'}"/>
+                                                                <f:selectItem itemValue="#{'Software de ingeniería y científico'}" itemLabel="#{'Software de ingeniería y científico'}"/>
+                                                                <f:selectItem itemValue="#{'Software de inteligencia artificial'}" itemLabel="#{'Software de inteligencia artificial'}"/>
+                                                                <f:selectItem itemValue="#{'Software de sistemas'}" itemLabel="#{'Software de sistemas'}"/>
+                                                                <f:selectItem itemValue="#{'Software de tiempo real'}" itemLabel="#{'Software de tiempo real'}"/>
+                                                                <f:selectItem itemValue="#{'Software de videojuegos'}" itemLabel="#{'Software de videojuegos'}"/>
+                                                                <f:selectItem itemValue="#{'Software empotrado'}" itemLabel="#{'Software empotrado'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>       
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{desaSof.apoyoRecibido}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{desaSof.apoyoRecibido}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'Si'}" itemLabel="#{'Si'}"/>
+                                                                <f:selectItem itemValue="#{'No'}" itemLabel="#{'No'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>        
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{desaSof.derechosAutor}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{desaSof.derechosAutor}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'Si'}" itemLabel="#{'Si'}"/>
+                                                                <f:selectItem itemValue="#{'No'}" itemLabel="#{'No'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
                                                 </p:column> 
-
-                                                <p:column headerText="Fechas" 
-                                                          filterBy="#{desSoft.fechaInicio}"
-                                                          sortBy="#{desSoft.fechaInicio}" 
-                                                          filterMatchMode="contains"
-                                                          style="width: 11%"> 
-                                                    <h:outputLabel value="del"/>
-                                                    <p:spacer width="10px"/>
-                                                    <h:outputLabel value="#{desSoft.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>                                                                                
-                                                    <p:spacer width="10px"/>
-                                                    <h:outputLabel value="al"/>
-                                                    <p:spacer width="10px"/>
-                                                    <h:outputLabel value="#{desSoft.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{desaSof.lugar}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputText value="#{desaSof.lugar}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
                                                 </p:column>
-
-
-                                                <p:column headerText="Logros" 
-                                                          filterBy="#{desSoft.logros}"
-                                                          sortBy="#{desSoft.logros}" 
-                                                          filterMatchMode="contains">
-                                                    <h:outputText value="#{desSoft.logros}" />
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{desaSof.nombreBeneficiario}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputText value="#{desaSof.nombreBeneficiario}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>    
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{desaSof.horasHombre}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputText value="#{desaSof.horasHombre}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
                                                 </p:column>
-
-                                                <p:column headerText="Nombre beneficiario" 
-                                                          filterBy="#{desSoft.nombreBeneficiario}"
-                                                          sortBy="#{desSoft.nombreBeneficiario}" 
-                                                          filterMatchMode="contains"
-                                                          style="width: 15%"> 
-                                                    <h:outputText value="#{desSoft.nombreBeneficiario}" />
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="$ #{desaSof.costo}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputText value="#{desaSof.costo}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>   
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{desaSof.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{desaSof.fechaInicio}" pattern="dd-MM-yyyy" mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
                                                 </p:column>
-
-
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{desaSof.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{desaSof.fechaFin}" pattern="dd-MM-yyyy" mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{desaSof.logros}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputTextarea value="#{desaSof.logros}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
                                             </p:dataTable>
                                         </p:outputPanel>
 

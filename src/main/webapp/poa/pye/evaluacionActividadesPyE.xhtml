@@ -132,8 +132,8 @@
                                                                 <p:column rowspan="2" headerText="Unidad de medida" style="width: 150px;"/>
                                                                 <p:column rowspan="2" headerText="Meta" style="width: 100px;"/>
                                                                 <p:column colspan="4" headerText="Calendarización de Metas: #{controladorEvaluacionActividadesPyE.cuatrimestre eq 1?'Enero - Abril':(controladorEvaluacionActividadesPyE.cuatrimestre eq 2?'Mayo - Agosto':'Septiembre - Diciembre')}" style="width: 300px;"/> 
-                                                                <p:column colspan="3" headerText="Avance cuatrimestral" style="width: 250px;"/> 
                                                                 <p:column colspan="3" headerText="Avance general al mes de #{controladorEvaluacionActividadesPyE.mesNombre}" style="width: 250px;"/>
+                                                                <p:column colspan="3" headerText="Avance cuatrimestral" style="width: 250px;"/> 
                                                                 <p:column rowspan="2" headerText="Evaluar" style="width:80px; "/>
                                                                 <p:column rowspan="2" headerText="Evidencia" style="width:80px; "/>
                                                                 <p:column rowspan="2" headerText="Justificacion" style="width:80px;" rendered="#{controladorEvaluacionActividadesPyE.mes eq 3?true:
@@ -311,17 +311,6 @@
                                                             </p:cellEditor>
                                                         </p:column>
                                                         <p:column>
-                                                            <h:outputText value="#{poa.totalPCuatrimestre}"/>
-                                                            <hr/>
-                                                            <h:outputText value="#{poa.totalACuatrimestre}"/>
-                                                        </p:column>   
-                                                        <p:column>
-                                                            <h:outputText value="#{poa.porcentajeCuatrimestre} %" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <img src="../../resources/img/#{poa.semaforoC}.png" alt="#{poa.semaforoC}"/>
-                                                        </p:column>
-                                                        <p:column>
                                                             <h:outputText value="#{poa.totalPCorte}" />
                                                             <hr/>
                                                             <h:outputText value="#{poa.totalACorte}" />
@@ -331,6 +320,17 @@
                                                         </p:column>
                                                         <p:column>
                                                             <img src="../../resources/img/#{poa.semaforoG}.png" alt="#{poa.semaforoG}"/>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{poa.totalPCuatrimestre}"/>
+                                                            <hr/>
+                                                            <h:outputText value="#{poa.totalACuatrimestre}"/>
+                                                        </p:column>   
+                                                        <p:column>
+                                                            <h:outputText value="#{poa.porcentajeCuatrimestre} %" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <img src="../../resources/img/#{poa.semaforoC}.png" alt="#{poa.semaforoC}"/>
                                                         </p:column>
 
                                                         <p:column rendered="#{poa.actividadesPoa.bandera eq 'x' ?true:false}"/>

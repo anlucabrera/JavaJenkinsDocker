@@ -2,6 +2,7 @@ package mx.edu.utxj.pye.sgi.ejb.ch;
 
 import java.util.List;
 import javax.ejb.Local;
+import mx.edu.utxj.pye.sgi.entity.ch.ContactoEmergencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Actividades;
 import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
 import mx.edu.utxj.pye.sgi.entity.ch.CursosModalidad;
@@ -38,6 +39,15 @@ public interface EjbDatosUsuarioLogeado {
     public InformacionAdicionalPersonal crearNuevoInformacionAdicionalPersonal(InformacionAdicionalPersonal nuevoInformacionAdicionalPersonal) throws Throwable;
 
     public InformacionAdicionalPersonal actualizarInformacionAdicionalPersonal(InformacionAdicionalPersonal nuevoInformacionAdicionalPersonal) throws Throwable;
+
+    public List<ContactoEmergencias> mostrarContactosEmergencias(Integer claveTrabajador) throws Throwable;
+
+    public ContactoEmergencias crearContactosEmergencias(ContactoEmergencias ce) throws Throwable;
+
+    public ContactoEmergencias actualizarContactosEmergencias(ContactoEmergencias ce) throws Throwable;
+
+    public ContactoEmergencias eliminarContactosEmergencias(ContactoEmergencias ce) throws Throwable;
+
 
 ////////////////////////////////////////////////////////////////////////////////Elementos Generales Personal
     public List<Grados> mostrarListaGrados() throws Throwable;

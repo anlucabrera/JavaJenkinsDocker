@@ -25,6 +25,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.Investigaciones;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Messages;
+import org.primefaces.event.RowEditEvent;
 
 @Named
 @ManagedBean
@@ -86,7 +87,7 @@ public class CvProduccion implements Serializable {
     }
 
     public void reiniciarValores() {
-         file = null;
+        file = null;
         anioEdi = "";
         anioPub = "";
         nuevOBJLibrosPub = new LibrosPub();
@@ -96,6 +97,7 @@ public class CvProduccion implements Serializable {
         nuevOBJInvestigaciones = new Investigaciones();
     }
 /////////////////////////////////////////////////////////////////////////////Libros\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
     public void createLibros() {
         try {
             //Inicialización de las relaciones entre las tablas “Capacitacionespersonal” con “Personal”, "CursosModalidad" y con "CursosTipo"
@@ -144,7 +146,26 @@ public class CvProduccion implements Serializable {
         }
     }
 
+    public void actualizaLibros(RowEditEvent event) {
+        try {
+            LibrosPub actualizarLib = (LibrosPub) event.getObject();
+            //Primero se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
+            utilidadesCH.agregaBitacora(usuario, actualizarLib.getLibrosp().toString(), "Libros Publicados", "Update");
+            //Se procede a invocar el “EJB” el cual mediante la recepción del objeto se encargará de procesar y actualizar la información en la BD. 
+            actualizarLib = ejbProduccionProfecional.actualizarLibrosPub(actualizarLib);
+            //Al finalizar la actualización de la información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();”
+            mostrarListas();
+            //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
+            reiniciarValores();
+            //Finalmente se le informa al usuario cual es el resultado obtenido
+            utilidadesCH.mensajes("", "I", "C");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(CvHabilidades.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 /////////////////////////////////////////////////////////////////////////////Articulos\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\    
+
     public void createArticulos() {
         try {
             //Inicialización de las relaciones entre las tablas “Capacitacionespersonal” con “Personal”, "CursosModalidad" y con "CursosTipo"
@@ -196,7 +217,28 @@ public class CvProduccion implements Serializable {
         }
     }
 
+    public void actualizaArticulos(RowEditEvent event) {
+        try {
+            Articulosp actualizarArte = (Articulosp) event.getObject();
+            //Primero se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
+            utilidadesCH.agregaBitacora(usuario, actualizarArte.getArticuloId().toString(), "Artículos Publicados", "Update");
+            //Se procede a invocar el “EJB” el cual mediante la recepción del objeto se encargará de procesar y actualizar la información en la BD. 
+            actualizarArte = ejbProduccionProfecional.actualizarArticulosp(actualizarArte);
+            //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
+            pestaniaActiva = 1;
+            //Al finalizar la actualización de la información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();”
+            mostrarListas();
+            //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
+            reiniciarValores();
+            //Finalmente se le informa al usuario cual es el resultado obtenido
+            utilidadesCH.mensajes("", "I", "C");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(CvHabilidades.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 //////////////////////////////////////////////////////////////////////////Memorias\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
     public void createrMemorias() {
         try {
             //Inicialización de las relaciones entre las tablas “Capacitacionespersonal” con “Personal”, "CursosModalidad" y con "CursosTipo"
@@ -243,6 +285,27 @@ public class CvProduccion implements Serializable {
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(CvProduccion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void actualizaMemorias(RowEditEvent event) {
+        try {
+            Memoriaspub actualizarMemo = (Memoriaspub) event.getObject();
+            //Primero se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
+            utilidadesCH.agregaBitacora(usuario, actualizarMemo.getMemoriaID().toString(), "Memorias Publicadas", "Update");
+            //Se procede a invocar el “EJB” el cual mediante la recepción del objeto se encargará de procesar y actualizar la información en la BD. 
+            actualizarMemo = ejbProduccionProfecional.actualizarMemoriaspub(actualizarMemo);
+            //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
+            pestaniaActiva = 2;
+            //Al finalizar la actualización de la información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();”
+            mostrarListas();
+            //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
+            reiniciarValores();
+            //Finalmente se le informa al usuario cual es el resultado obtenido
+            utilidadesCH.mensajes("", "I", "C");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(CvHabilidades.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -293,7 +356,28 @@ public class CvProduccion implements Serializable {
         }
     }
 
+    public void actualizaInvestigacion(RowEditEvent event) {
+        try {
+            Investigaciones actualizarInves = (Investigaciones) event.getObject();
+            //Primero se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
+            utilidadesCH.agregaBitacora(usuario, actualizarInves.getInvestigacion().toString(), "Investigaciones", "Update");
+            //Se procede a invocar el “EJB” el cual mediante la recepción del objeto se encargará de procesar y actualizar la información en la BD. 
+            actualizarInves = ejbProduccionProfecional.actualizarInvestigacion(actualizarInves);
+            //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
+            pestaniaActiva = 3;
+            //Al finalizar la actualización de la información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();”
+            mostrarListas();
+            //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
+            reiniciarValores();
+            //Finalmente se le informa al usuario cual es el resultado obtenido
+            utilidadesCH.mensajes("", "I", "C");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(CvHabilidades.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 ////////////////////////////////////////////////////////////////////////////Congreso\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
     public void createrCongreso() {
         try {
             //Inicialización de las relaciones entre las tablas “ExperienciasLaborales” con “Personal”
@@ -336,6 +420,27 @@ public class CvProduccion implements Serializable {
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(CvProduccion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void actualizaCongreso(RowEditEvent event) {
+        try {
+            Congresos actualizaCongre = (Congresos) event.getObject();
+            //Primero se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
+            utilidadesCH.agregaBitacora(usuario, actualizaCongre.getCongreso().toString(), "Congresos", "Update");
+            //Se procede a invocar el “EJB” el cual mediante la recepción del objeto se encargará de procesar y actualizar la información en la BD. 
+            actualizaCongre = ejbProduccionProfecional.actualizarCongresos(actualizaCongre);
+            //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
+            pestaniaActiva = 4;
+            //Al finalizar la actualización de la información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();”
+            mostrarListas();
+            //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
+            reiniciarValores();
+            //Finalmente se le informa al usuario cual es el resultado obtenido
+            utilidadesCH.mensajes("", "I", "C");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(CvHabilidades.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 ///////////////////////////////////////////////////////////////////////////evidencias\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\

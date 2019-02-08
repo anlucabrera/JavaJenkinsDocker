@@ -1,14 +1,10 @@
 package mx.edu.utxj.pye.sgi.controladores.ch;
 
-import java.io.File;
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -20,9 +16,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
-import mx.edu.utxj.pye.sgi.entity.ch.Actividades;
 import mx.edu.utxj.pye.sgi.entity.ch.Articulosp;
-import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
 import mx.edu.utxj.pye.sgi.entity.ch.ExperienciasLaborales;
 import mx.edu.utxj.pye.sgi.entity.ch.Capacitacionespersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Congresos;
@@ -30,11 +24,8 @@ import mx.edu.utxj.pye.sgi.entity.ch.DesarrolloSoftware;
 import mx.edu.utxj.pye.sgi.entity.ch.DesarrollosTecnologicos;
 import mx.edu.utxj.pye.sgi.entity.ch.Distinciones;
 import mx.edu.utxj.pye.sgi.entity.ch.FormacionAcademica;
-import mx.edu.utxj.pye.sgi.entity.ch.Funciones;
-import mx.edu.utxj.pye.sgi.entity.ch.Grados;
 import mx.edu.utxj.pye.sgi.entity.ch.HabilidadesInformaticas;
 import mx.edu.utxj.pye.sgi.entity.ch.Idiomas;
-import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
 import mx.edu.utxj.pye.sgi.entity.ch.InformacionAdicionalPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Innovaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Lenguas;
@@ -42,12 +33,8 @@ import mx.edu.utxj.pye.sgi.entity.ch.LibrosPub;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Memoriaspub;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.ch.Investigaciones;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
-import org.primefaces.event.RowEditEvent;
 
 @Named
 @ManagedBean
@@ -133,7 +120,7 @@ public class ControladorDocentesActivos implements Serializable {
 
             if(informacionAdicionalPersonal == null){
             informacionAdicionalPersonal = new InformacionAdicionalPersonal();
-            informacionAdicionalPersonal.setEstatus("Aceptado");
+            informacionAdicionalPersonal.setAutorizacion(false);
                 informacionAdicionalPersonal=ejbDatosUsuarioLogeado.crearNuevoInformacionAdicionalPersonal(informacionAdicionalPersonal);
             }            
             informacionCV();

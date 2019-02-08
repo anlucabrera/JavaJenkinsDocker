@@ -106,13 +106,19 @@
                                                                         <p:message for="clave" display="tooltip" />
                                                                         <hr/>
                                                                     </div>
-                                                                    <div class="col-sm-12 col-md-4 col-lg-3">
+                                                                    <div class="col-sm-12 col-md-4 col-lg-2">
                                                                         <p:outputLabel for="edad" style="font-size: large" value="Edad"/>
                                                                         <p:inputText id="edad" class="form-control" placeholder="Edad" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.edad}"/> 
                                                                         <p:message for="edad" display="tooltip" />
                                                                         <hr/>
                                                                     </div>
-                                                                    <div class="col-sm-12 col-md-6 col-lg-3">
+                                                                    <div class="col-sm-12 col-md-4 col-lg-2">
+                                                                        <p:outputLabel for="tipoS" style="font-size: large" value="Tipo Sangre"/>
+                                                                        <p:inputText id="tipoS" class="form-control" placeholder="Tipo de sangre" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.tipoSangre}"/> 
+                                                                        <p:message for="tipoS" display="tooltip" />
+                                                                        <hr/>
+                                                                    </div>
+                                                                    <div class="col-sm-12 col-md-6 col-lg-2">
                                                                         <p:outputLabel value="Fecha de nacimiento:" for="fecgaN" style="font-size: large"/>
                                                                         <p:calendar locale="es" id="fecgaN" value="#{cvDatosPersonales.nuevoOBJPersonal.fechaNacimiento}" pattern="dd-MM-yyyy" mask="true"/>
                                                                         <p:message for="fecgaN" display="tooltip" />
@@ -174,6 +180,12 @@
                                                                         <p:outputLabel for="direccion2" style="font-size: large" value="Dirección actual" />
                                                                         <p:inputText id="direccion2" class="form-control" placeholder="Dirección actual" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.direccion}"/> 
                                                                         <p:message for="direccion2" display="tooltip" />
+                                                                        <hr/>
+                                                                    </div>                                                                    
+                                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                        <p:outputLabel for="autorizacion" style="font-size: large" value="Autorizo el registro de mi tipo y grupo sanguineo, solo para refeencia medica, sin aplicar el consentimiento para transfusiones sanguíneas " />
+                                                                        <p:inputSwitch id="autorizacion" class="form-control" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.autorizacion}"/> 
+                                                                        <p:message for="autorizacion" display="tooltip" />
                                                                         <hr/>
                                                                     </div>
                                                                     <div class="col-sm-12 col-md-12 col-lg-12">

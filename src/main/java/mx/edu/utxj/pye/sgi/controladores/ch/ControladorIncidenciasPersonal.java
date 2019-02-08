@@ -151,7 +151,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
             }
             if (!listaIncidencias.isEmpty()) {
                 listaIncidencias.forEach((i) -> {
-                    if (i.getFecha().after(fechaI) && i.getFecha().before(fechaF)) {
+                    if ((i.getFecha().after(fechaI) || i.getFecha().equals(fechaI))&& (i.getFecha().before(fechaF)|| i.getFecha().equals(fechaF))) {
                         incidenciases.add(i);
                     }
                 });
