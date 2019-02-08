@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author jonny
  */
 @Entity
 @Table(name = "eventos", catalog = "capital_humano", schema = "")
@@ -76,7 +76,7 @@ public class Eventos implements Serializable {
     @Column(name = "fecha_fin")
     @Temporal(TemporalType.DATE)
     private Date fechaFin;
-    @JoinTable(name = "capital_humano.eventos_personal", joinColumns = {
+    @JoinTable(name = "eventos_personal", joinColumns = {
         @JoinColumn(name = "evento", referencedColumnName = "evento")}, inverseJoinColumns = {
         @JoinColumn(name = "clave", referencedColumnName = "clave")})
     @ManyToMany

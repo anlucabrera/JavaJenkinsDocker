@@ -7,9 +7,7 @@ package mx.edu.utxj.pye.sgi.entity.ch;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,17 +15,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author jonny
  */
 @Entity
 @Table(name = "evaluacion_docentes_materias", catalog = "capital_humano", schema = "")
@@ -60,8 +56,6 @@ public class EvaluacionDocentesMaterias implements Serializable {
     @Column(name = "fecha_fin")
     @Temporal(TemporalType.DATE)
     private Date fechaFin;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluacionDocentesMaterias")
-    private List<EvaluacionDocentesMateriaResultados> evaluacionDocentesMateriaResultadosList;
 
     public EvaluacionDocentesMaterias() {
     }
@@ -107,15 +101,6 @@ public class EvaluacionDocentesMaterias implements Serializable {
 
     public void setFechaFin(Date fechaFin) {
         this.fechaFin = fechaFin;
-    }
-
-    @XmlTransient
-    public List<EvaluacionDocentesMateriaResultados> getEvaluacionDocentesMateriaResultadosList() {
-        return evaluacionDocentesMateriaResultadosList;
-    }
-
-    public void setEvaluacionDocentesMateriaResultadosList(List<EvaluacionDocentesMateriaResultados> evaluacionDocentesMateriaResultadosList) {
-        this.evaluacionDocentesMateriaResultadosList = evaluacionDocentesMateriaResultadosList;
     }
 
     @Override

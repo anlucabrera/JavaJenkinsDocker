@@ -91,14 +91,15 @@ public class DatosPersonales implements Serializable {
     }
 
     public void actualizarInformacionAdicional() {
+        //TODO: revisar existencia de la propiedad
         try {
-            nuevoOBJInformacionAdicionalPersonal.setEstatus("Aceptado");
+            //nuevoOBJInformacionAdicionalPersonal.set("Aceptado");
             if (nuevoOBJInformacionAdicionalPersonal.getClave() == null) {
                 nuevoOBJInformacionAdicionalPersonal.setClave(usuario);
-                nuevoOBJInformacionAdicionalPersonal.setEstatus("Aceptado");
+                //nuevoOBJInformacionAdicionalPersonal.setEstatus("Aceptado");
                 nuevoOBJInformacionAdicionalPersonal = ejbDatosUsuarioLogeado.crearNuevoInformacionAdicionalPersonal(nuevoOBJInformacionAdicionalPersonal);
             } else {
-                nuevoOBJInformacionAdicionalPersonal.setEstatus("Aceptado");
+                //nuevoOBJInformacionAdicionalPersonal.setEstatus("Aceptado");
                 nuevoOBJInformacionAdicionalPersonal = ejbDatosUsuarioLogeado.actualizarInformacionAdicionalPersonal(nuevoOBJInformacionAdicionalPersonal);
             }
             Messages.addGlobalInfo("¡Operación exitosa!!");

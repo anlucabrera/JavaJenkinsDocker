@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author jonny
  */
 @Entity
 @Table(name = "evaluaciones", catalog = "capital_humano", schema = "")
@@ -64,15 +64,21 @@ public class Evaluaciones implements Serializable {
     private Date fechaFin;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 15)
+    @Size(min = 1, max = 39)
     @Column(name = "tipo")
     private String tipo;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    private List<EncuestaSatisfaccionEgresadosIng> encuestaSatisfaccionEgresadosIngList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
     private List<EvaluacionesClimaLaboralResultados> evaluacionesClimaLaboralResultadosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    private List<EvaluacionDocentesMateriaResultados> evaluacionDocentesMateriaResultadosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
     private List<EvaluacionesControlInternoResultados> evaluacionesControlInternoResultadosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
     private List<EncuestaServiciosResultados> encuestaServiciosResultadosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    private List<EvaluacionesPremiosResultados> evaluacionesPremiosResultadosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
     private List<EvaluacionesTutoresResultados> evaluacionesTutoresResultadosList;
 
@@ -132,12 +138,30 @@ public class Evaluaciones implements Serializable {
     }
 
     @XmlTransient
+    public List<EncuestaSatisfaccionEgresadosIng> getEncuestaSatisfaccionEgresadosIngList() {
+        return encuestaSatisfaccionEgresadosIngList;
+    }
+
+    public void setEncuestaSatisfaccionEgresadosIngList(List<EncuestaSatisfaccionEgresadosIng> encuestaSatisfaccionEgresadosIngList) {
+        this.encuestaSatisfaccionEgresadosIngList = encuestaSatisfaccionEgresadosIngList;
+    }
+
+    @XmlTransient
     public List<EvaluacionesClimaLaboralResultados> getEvaluacionesClimaLaboralResultadosList() {
         return evaluacionesClimaLaboralResultadosList;
     }
 
     public void setEvaluacionesClimaLaboralResultadosList(List<EvaluacionesClimaLaboralResultados> evaluacionesClimaLaboralResultadosList) {
         this.evaluacionesClimaLaboralResultadosList = evaluacionesClimaLaboralResultadosList;
+    }
+
+    @XmlTransient
+    public List<EvaluacionDocentesMateriaResultados> getEvaluacionDocentesMateriaResultadosList() {
+        return evaluacionDocentesMateriaResultadosList;
+    }
+
+    public void setEvaluacionDocentesMateriaResultadosList(List<EvaluacionDocentesMateriaResultados> evaluacionDocentesMateriaResultadosList) {
+        this.evaluacionDocentesMateriaResultadosList = evaluacionDocentesMateriaResultadosList;
     }
 
     @XmlTransient
@@ -156,6 +180,15 @@ public class Evaluaciones implements Serializable {
 
     public void setEncuestaServiciosResultadosList(List<EncuestaServiciosResultados> encuestaServiciosResultadosList) {
         this.encuestaServiciosResultadosList = encuestaServiciosResultadosList;
+    }
+
+    @XmlTransient
+    public List<EvaluacionesPremiosResultados> getEvaluacionesPremiosResultadosList() {
+        return evaluacionesPremiosResultadosList;
+    }
+
+    public void setEvaluacionesPremiosResultadosList(List<EvaluacionesPremiosResultados> evaluacionesPremiosResultadosList) {
+        this.evaluacionesPremiosResultadosList = evaluacionesPremiosResultadosList;
     }
 
     @XmlTransient
@@ -187,15 +220,9 @@ public class Evaluaciones implements Serializable {
         return true;
     }
 
-//    @Override
-//    public String toString() {
-//        return "mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones[ evaluacion=" + evaluacion + " ]";
-//    }
-
     @Override
     public String toString() {
-        return "Evaluaciones{" + "evaluacion=" + evaluacion + ", periodo=" + periodo + ", fechaInicio=" + fechaInicio + ", fechaFin=" + fechaFin + ", tipo=" + tipo + ", evaluacionesClimaLaboralResultadosList=" + evaluacionesClimaLaboralResultadosList + ", evaluacionesControlInternoResultadosList=" + evaluacionesControlInternoResultadosList + ", encuestaServiciosResultadosList=" + encuestaServiciosResultadosList + ", evaluacionesTutoresResultadosList=" + evaluacionesTutoresResultadosList + '}';
+        return "mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones[ evaluacion=" + evaluacion + " ]";
     }
-    
     
 }

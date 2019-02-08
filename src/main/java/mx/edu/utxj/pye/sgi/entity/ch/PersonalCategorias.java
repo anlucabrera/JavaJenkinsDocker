@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author jonny
  */
 @Entity
 @Table(name = "personal_categorias", catalog = "capital_humano", schema = "")
@@ -56,20 +56,28 @@ public class PersonalCategorias implements Serializable {
     @Size(min = 1, max = 19)
     @Column(name = "tipo")
     private String tipo;
-    @JoinTable(name = "capital_humano.categorias_habilidades", joinColumns = {
+    @JoinTable(name = "categorias_habilidades", joinColumns = {
         @JoinColumn(name = "categoria", referencedColumnName = "categoria")}, inverseJoinColumns = {
         @JoinColumn(name = "habilidad", referencedColumnName = "habilidad")})
     @ManyToMany
     private List<Habilidades> habilidadesList;
-    @JoinTable(name = "capital_humano.eventos_categorias", joinColumns = {
+    @JoinTable(name = "eventos_categorias", joinColumns = {
         @JoinColumn(name = "categoria_operativa", referencedColumnName = "categoria")}, inverseJoinColumns = {
         @JoinColumn(name = "evento", referencedColumnName = "evento")})
     @ManyToMany
     private List<Eventos> eventosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoriaOperativa")
+    @OneToMany(mappedBy = "categoria360")
     private List<Personal> personalList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoriaOficial")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoriaOperativa")
     private List<Personal> personalList1;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoriaOficial")
+    private List<Personal> personalList2;
+    @OneToMany(mappedBy = "categoria360")
+    private List<PersonalBitacora> personalBitacoraList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoriaOperativa")
+    private List<PersonalBitacora> personalBitacoraList1;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoriaOficial")
+    private List<PersonalBitacora> personalBitacoraList2;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoria")
     private List<Evaluaciones360Resultados> evaluaciones360ResultadosList;
     @OneToMany(mappedBy = "categoria")
@@ -148,6 +156,42 @@ public class PersonalCategorias implements Serializable {
 
     public void setPersonalList1(List<Personal> personalList1) {
         this.personalList1 = personalList1;
+    }
+
+    @XmlTransient
+    public List<Personal> getPersonalList2() {
+        return personalList2;
+    }
+
+    public void setPersonalList2(List<Personal> personalList2) {
+        this.personalList2 = personalList2;
+    }
+
+    @XmlTransient
+    public List<PersonalBitacora> getPersonalBitacoraList() {
+        return personalBitacoraList;
+    }
+
+    public void setPersonalBitacoraList(List<PersonalBitacora> personalBitacoraList) {
+        this.personalBitacoraList = personalBitacoraList;
+    }
+
+    @XmlTransient
+    public List<PersonalBitacora> getPersonalBitacoraList1() {
+        return personalBitacoraList1;
+    }
+
+    public void setPersonalBitacoraList1(List<PersonalBitacora> personalBitacoraList1) {
+        this.personalBitacoraList1 = personalBitacoraList1;
+    }
+
+    @XmlTransient
+    public List<PersonalBitacora> getPersonalBitacoraList2() {
+        return personalBitacoraList2;
+    }
+
+    public void setPersonalBitacoraList2(List<PersonalBitacora> personalBitacoraList2) {
+        this.personalBitacoraList2 = personalBitacoraList2;
     }
 
     @XmlTransient

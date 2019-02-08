@@ -275,7 +275,7 @@ public class ServicioEncuestaServicios implements EjbEncuestaServicios {
                 respuestas.put("p73", r.getR73().toString());
             }
             if (r.getR74() != null) {
-                respuestas.put("p74", r.getR74());
+                respuestas.put("p74", r.getR74().toString());
             }
 
             return r;
@@ -371,7 +371,7 @@ public class ServicioEncuestaServicios implements EjbEncuestaServicios {
             case "p71": resultado.setR71(Short.parseShort(respuesta)); break;
             case "p72": resultado.setR72(Short.parseShort(respuesta)); break;
             case "p73": resultado.setR73(Short.parseShort(respuesta)); break;
-            case "p74": resultado.setR74(respuesta); break;
+            case "p74": resultado.setR74(Short.parseShort(respuesta)); break;
         }
         
         respuestas.put(pregunta, respuesta);

@@ -16,10 +16,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Planeacion
+ * @author jonny
  */
 @Entity
-@Table(name = "resultados_encuesta_satisfaccion_tsu")
+@Table(name = "resultados_encuesta_satisfaccion_tsu", catalog = "capital_humano", schema = "")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "ResultadosEncuestaSatisfaccionTsu.findAll", query = "SELECT r FROM ResultadosEncuestaSatisfaccionTsu r")

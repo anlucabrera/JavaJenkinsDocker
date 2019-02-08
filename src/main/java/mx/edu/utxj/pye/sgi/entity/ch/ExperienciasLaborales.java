@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author jonny
  */
 @Entity
 @Table(name = "experiencias_laborales", catalog = "capital_humano", schema = "")
@@ -59,7 +59,6 @@ public class ExperienciasLaborales implements Serializable {
     @Column(name = "fecha_inicio")
     @Temporal(TemporalType.DATE)
     private Date fechaInicio;
-    @Basic(optional = false)
     @Column(name = "fecha_fin")
     @Temporal(TemporalType.DATE)
     private Date fechaFin;
@@ -92,11 +91,10 @@ public class ExperienciasLaborales implements Serializable {
         this.empleo = empleo;
     }
 
-    public ExperienciasLaborales(Integer empleo, String institucionEmpresa, Date fechaInicio, Date fechaFin, String puestoDesepenado, String funcionesDesempenio, String estatus) {
+    public ExperienciasLaborales(Integer empleo, String institucionEmpresa, Date fechaInicio, String puestoDesepenado, String funcionesDesempenio, String estatus) {
         this.empleo = empleo;
         this.institucionEmpresa = institucionEmpresa;
         this.fechaInicio = fechaInicio;
-        this.fechaFin = fechaFin;
         this.puestoDesepenado = puestoDesepenado;
         this.funcionesDesempenio = funcionesDesempenio;
         this.estatus = estatus;

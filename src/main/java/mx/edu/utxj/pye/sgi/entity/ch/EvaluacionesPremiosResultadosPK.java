@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
  * @author jonny
  */
 @Embeddable
-public class EvaluacionesTutoresResultadosPK implements Serializable {
+public class EvaluacionesPremiosResultadosPK implements Serializable {
 
     @Basic(optional = false)
     @NotNull
@@ -31,10 +31,10 @@ public class EvaluacionesTutoresResultadosPK implements Serializable {
     @Column(name = "evaluado")
     private int evaluado;
 
-    public EvaluacionesTutoresResultadosPK() {
+    public EvaluacionesPremiosResultadosPK() {
     }
 
-    public EvaluacionesTutoresResultadosPK(int evaluacion, int evaluador, int evaluado) {
+    public EvaluacionesPremiosResultadosPK(int evaluacion, int evaluador, int evaluado) {
         this.evaluacion = evaluacion;
         this.evaluador = evaluador;
         this.evaluado = evaluado;
@@ -76,10 +76,10 @@ public class EvaluacionesTutoresResultadosPK implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof EvaluacionesTutoresResultadosPK)) {
+        if (!(object instanceof EvaluacionesPremiosResultadosPK)) {
             return false;
         }
-        EvaluacionesTutoresResultadosPK other = (EvaluacionesTutoresResultadosPK) object;
+        EvaluacionesPremiosResultadosPK other = (EvaluacionesPremiosResultadosPK) object;
         if (this.evaluacion != other.evaluacion) {
             return false;
         }
@@ -94,7 +94,7 @@ public class EvaluacionesTutoresResultadosPK implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesTutoresResultadosPK[ evaluacion=" + evaluacion + ", evaluador=" + evaluador + ", evaluado=" + evaluado + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesPremiosResultadosPK[ evaluacion=" + evaluacion + ", evaluador=" + evaluador + ", evaluado=" + evaluado + " ]";
     }
     
 }

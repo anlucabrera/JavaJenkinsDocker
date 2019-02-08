@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author jonny
  */
 @Entity
 @Table(name = "atividadesvariasplaneacionescuatrimestrales", catalog = "capital_humano", schema = "")

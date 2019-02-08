@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author jonny
  */
 @Entity
 @Table(name = "eventos_areas", catalog = "capital_humano", schema = "")
@@ -42,7 +42,7 @@ public class EventosAreas implements Serializable {
         this.eventosAreasPK = eventosAreasPK;
     }
 
-    public EventosAreas(int evento, int areaOperativa) {
+    public EventosAreas(int evento, short areaOperativa) {
         this.eventosAreasPK = new EventosAreasPK(evento, areaOperativa);
     }
 

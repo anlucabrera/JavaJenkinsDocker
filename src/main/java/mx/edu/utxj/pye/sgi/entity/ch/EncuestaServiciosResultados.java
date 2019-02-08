@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author jonny
  */
 @Entity
 @Table(name = "encuesta_servicios_resultados", catalog = "capital_humano", schema = "")
@@ -101,7 +101,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "EncuestaServiciosResultados.findByR71", query = "SELECT e FROM EncuestaServiciosResultados e WHERE e.r71 = :r71")
     , @NamedQuery(name = "EncuestaServiciosResultados.findByR72", query = "SELECT e FROM EncuestaServiciosResultados e WHERE e.r72 = :r72")
     , @NamedQuery(name = "EncuestaServiciosResultados.findByR73", query = "SELECT e FROM EncuestaServiciosResultados e WHERE e.r73 = :r73")
-    , @NamedQuery(name = "EncuestaServiciosResultados.findByR74", query = "SELECT e FROM EncuestaServiciosResultados e WHERE e.r74 = :r74")})
+    , @NamedQuery(name = "EncuestaServiciosResultados.findByR74", query = "SELECT e FROM EncuestaServiciosResultados e WHERE e.r74 = :r74")
+    , @NamedQuery(name = "EncuestaServiciosResultados.findByR75", query = "SELECT e FROM EncuestaServiciosResultados e WHERE e.r75 = :r75")
+    , @NamedQuery(name = "EncuestaServiciosResultados.findByR76", query = "SELECT e FROM EncuestaServiciosResultados e WHERE e.r76 = :r76")})
 public class EncuestaServiciosResultados implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -253,9 +255,13 @@ public class EncuestaServiciosResultados implements Serializable {
     private Short r72;
     @Column(name = "r73")
     private Short r73;
-    @Size(max = 1500)
     @Column(name = "r74")
-    private String r74;
+    private Short r74;
+    @Column(name = "r75")
+    private Short r75;
+    @Size(max = 1500)
+    @Column(name = "r76")
+    private String r76;
     @JoinColumn(name = "evaluacion", referencedColumnName = "evaluacion", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Evaluaciones evaluaciones;
@@ -863,12 +869,28 @@ public class EncuestaServiciosResultados implements Serializable {
         this.r73 = r73;
     }
 
-    public String getR74() {
+    public Short getR74() {
         return r74;
     }
 
-    public void setR74(String r74) {
+    public void setR74(Short r74) {
         this.r74 = r74;
+    }
+
+    public Short getR75() {
+        return r75;
+    }
+
+    public void setR75(Short r75) {
+        this.r75 = r75;
+    }
+
+    public String getR76() {
+        return r76;
+    }
+
+    public void setR76(String r76) {
+        this.r76 = r76;
     }
 
     public Evaluaciones getEvaluaciones() {

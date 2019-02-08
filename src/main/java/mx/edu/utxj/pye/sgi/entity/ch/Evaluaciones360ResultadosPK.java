@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  *
- * @author UTXJ
+ * @author jonny
  */
 @Embeddable
 public class Evaluaciones360ResultadosPK implements Serializable {

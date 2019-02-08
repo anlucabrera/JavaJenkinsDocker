@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package mx.edu.utxj.pye.sgi.entity.ch;
 
 import java.io.Serializable;
@@ -27,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author jonny
  */
 @Entity
 @Table(name = "articulosp", catalog = "capital_humano", schema = "")
@@ -289,5 +288,5 @@ public class Articulosp implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Articulosp[ articuloId=" + articuloId + " ]";
     }
-
+    
 }

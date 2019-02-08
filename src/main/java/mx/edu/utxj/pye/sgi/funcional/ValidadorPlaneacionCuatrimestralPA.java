@@ -112,7 +112,7 @@ public class ValidadorPlaneacionCuatrimestralPA implements Validador<Planeacione
     @Override
     public Boolean call() throws Exception {
         this.t.setValidacionSistema(esCorrecta(t));
-        return this.t.isValidacionSistema();
+        return this.t.getValidacionSistema();
     }
     
 }

@@ -137,7 +137,7 @@ public class ValidadorPlaneacionCuatrimestralPTC implements Validador<Planeacion
     @Override
     public Boolean call() throws Exception {
         this.planeacionesCuatrimestrales.setValidacionSistema(esCorrecta(planeacionesCuatrimestrales));
-        return this.planeacionesCuatrimestrales.isValidacionSistema();
+        return this.planeacionesCuatrimestrales.getValidacionSistema();
     }
 
 }

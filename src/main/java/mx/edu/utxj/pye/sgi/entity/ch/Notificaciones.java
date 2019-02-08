@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author jonny
  */
 @Entity
 @Table(name = "notificaciones", catalog = "capital_humano", schema = "")
@@ -36,7 +36,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Notificaciones.findByNotificacion", query = "SELECT n FROM Notificaciones n WHERE n.notificacion = :notificacion")
     , @NamedQuery(name = "Notificaciones.findByMensaje", query = "SELECT n FROM Notificaciones n WHERE n.mensaje = :mensaje")
     , @NamedQuery(name = "Notificaciones.findByFecha", query = "SELECT n FROM Notificaciones n WHERE n.fecha = :fecha")
-    , @NamedQuery(name = "Notificaciones.findByStatus", query = "SELECT n FROM Notificaciones n WHERE n.status = :status")})
+    , @NamedQuery(name = "Notificaciones.findByStatus", query = "SELECT n FROM Notificaciones n WHERE n.status = :status")
+    , @NamedQuery(name = "Notificaciones.findByTipo", query = "SELECT n FROM Notificaciones n WHERE n.tipo = :tipo")})
 public class Notificaciones implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -57,6 +58,10 @@ public class Notificaciones implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "tipo")
+    private int tipo;
     @JoinColumn(name = "claveTRemitente", referencedColumnName = "clave")
     @ManyToOne(optional = false)
     private Personal claveTRemitente;
@@ -71,10 +76,11 @@ public class Notificaciones implements Serializable {
         this.notificacion = notificacion;
     }
 
-    public Notificaciones(Integer notificacion, Date fecha, int status) {
+    public Notificaciones(Integer notificacion, Date fecha, int status, int tipo) {
         this.notificacion = notificacion;
         this.fecha = fecha;
         this.status = status;
+        this.tipo = tipo;
     }
 
     public Integer getNotificacion() {
@@ -107,6 +113,14 @@ public class Notificaciones implements Serializable {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public int getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(int tipo) {
+        this.tipo = tipo;
     }
 
     public Personal getClaveTRemitente() {

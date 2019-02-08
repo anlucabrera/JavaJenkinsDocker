@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Finanzas1
+ * @author jonny
  */
 @Entity
 @Table(name = "formacion_academica", catalog = "capital_humano", schema = "")
@@ -69,7 +69,7 @@ public class FormacionAcademica implements Serializable {
     private String evidenciaCedula;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 250)
+    @Size(min = 1, max = 50)
     @Column(name = "institucion")
     private String institucion;
     @Basic(optional = false)

@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author jonny
  */
 @Entity
 @Table(name = "grados", catalog = "capital_humano", schema = "")
@@ -51,6 +51,8 @@ public class Grados implements Serializable {
     private List<FormacionAcademica> formacionAcademicaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "grado")
     private List<Personal> personalList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grado")
+    private List<PersonalBitacora> personalBitacoraList;
 
     public Grados() {
     }
@@ -96,6 +98,15 @@ public class Grados implements Serializable {
 
     public void setPersonalList(List<Personal> personalList) {
         this.personalList = personalList;
+    }
+
+    @XmlTransient
+    public List<PersonalBitacora> getPersonalBitacoraList() {
+        return personalBitacoraList;
+    }
+
+    public void setPersonalBitacoraList(List<PersonalBitacora> personalBitacoraList) {
+        this.personalBitacoraList = personalBitacoraList;
     }
 
     @Override

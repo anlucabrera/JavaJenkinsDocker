@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package mx.edu.utxj.pye.sgi.entity.ch;
 
 import java.io.Serializable;
@@ -11,7 +16,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -26,7 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author jonny
  */
 @Entity
 @Table(name = "planeaciones_cuatrimestrales", catalog = "capital_humano", schema = "")
@@ -35,26 +39,30 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "PlaneacionesCuatrimestrales.findAll", query = "SELECT p FROM PlaneacionesCuatrimestrales p")
     , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByPlaneacion", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.planeacion = :planeacion")
     , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByPeriodo", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.periodo = :periodo")
+    , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByHorasClaseTsu", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.horasClaseTsu = :horasClaseTsu")
+    , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByHorasClaseIng", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.horasClaseIng = :horasClaseIng")
+    , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByEstadias", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.estadias = :estadias")
+    , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByEstudiantesEstadia", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.estudiantesEstadia = :estudiantesEstadia")
+    , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByProyectosEstadia", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.proyectosEstadia = :proyectosEstadia")
     , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByProyectoInvestigacion", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.proyectoInvestigacion = :proyectoInvestigacion")
     , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByAsesoriaClase", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.asesoriaClase = :asesoriaClase")
+    , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByTutoriaIndividual", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.tutoriaIndividual = :tutoriaIndividual")
+    , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByTutoriaGrupal", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.tutoriaGrupal = :tutoriaGrupal")
     , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByReunionAcademia", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.reunionAcademia = :reunionAcademia")
     , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByActividadesVarias", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.actividadesVarias = :actividadesVarias")
+    , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByValidacionDirector", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.validacionDirector = :validacionDirector")
+    , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByFechaValidacionDirector", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.fechaValidacionDirector = :fechaValidacionDirector")
     , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByValidacionSecretarioAdemico", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.validacionSecretarioAdemico = :validacionSecretarioAdemico")
     , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByFechaValidacionSecretarioAdemico", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.fechaValidacionSecretarioAdemico = :fechaValidacionSecretarioAdemico")
     , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByValidacionJefePersonal", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.validacionJefePersonal = :validacionJefePersonal")
     , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByFechaValidacionJefePersonal", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.fechaValidacionJefePersonal = :fechaValidacionJefePersonal")
     , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByComentariosDirector", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.comentariosDirector = :comentariosDirector")
     , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByComentariosSecretarioAcademico", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.comentariosSecretarioAcademico = :comentariosSecretarioAcademico")
-    , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByComentariosJefePersonal", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.comentariosJefePersonal = :comentariosJefePersonal")})
+    , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByComentariosJefePersonal", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.comentariosJefePersonal = :comentariosJefePersonal")
+    , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByComentariosSistema", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.comentariosSistema = :comentariosSistema")
+    , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByValidacionSistema", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.validacionSistema = :validacionSistema")
+    , @NamedQuery(name = "PlaneacionesCuatrimestrales.findByTotal", query = "SELECT p FROM PlaneacionesCuatrimestrales p WHERE p.total = :total")})
 public class PlaneacionesCuatrimestrales implements Serializable {
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planeacionesCuatrimestrales")
-    private List<Atividadesvariasplaneacionescuatrimestrales> atividadesvariasplaneacionescuatrimestralesList;
-
-    @ManyToMany(mappedBy = "planeacionesCuatrimestralesList")
-    private List<Actividadesvarias> actividadesvariasList;
-
-    
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -159,6 +167,8 @@ public class PlaneacionesCuatrimestrales implements Serializable {
     @NotNull
     @Column(name = "total")
     private short total;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planeacionesCuatrimestrales")
+    private List<Atividadesvariasplaneacionescuatrimestrales> atividadesvariasplaneacionescuatrimestralesList;
     @JoinColumn(name = "director", referencedColumnName = "clave")
     @ManyToOne(optional = false)
     private Personal director;
@@ -171,6 +181,31 @@ public class PlaneacionesCuatrimestrales implements Serializable {
 
     public PlaneacionesCuatrimestrales(Integer planeacion) {
         this.planeacion = planeacion;
+    }
+
+    public PlaneacionesCuatrimestrales(Integer planeacion, int periodo, short horasClaseTsu, short horasClaseIng, short estadias, short estudiantesEstadia, short proyectosEstadia, short proyectoInvestigacion, short asesoriaClase, short tutoriaIndividual, short tutoriaGrupal, short reunionAcademia, short actividadesVarias, boolean validacionDirector, boolean validacionSecretarioAdemico, boolean validacionJefePersonal, String comentariosDirector, String comentariosSecretarioAcademico, String comentariosJefePersonal, String comentariosSistema, boolean validacionSistema, short total) {
+        this.planeacion = planeacion;
+        this.periodo = periodo;
+        this.horasClaseTsu = horasClaseTsu;
+        this.horasClaseIng = horasClaseIng;
+        this.estadias = estadias;
+        this.estudiantesEstadia = estudiantesEstadia;
+        this.proyectosEstadia = proyectosEstadia;
+        this.proyectoInvestigacion = proyectoInvestigacion;
+        this.asesoriaClase = asesoriaClase;
+        this.tutoriaIndividual = tutoriaIndividual;
+        this.tutoriaGrupal = tutoriaGrupal;
+        this.reunionAcademia = reunionAcademia;
+        this.actividadesVarias = actividadesVarias;
+        this.validacionDirector = validacionDirector;
+        this.validacionSecretarioAdemico = validacionSecretarioAdemico;
+        this.validacionJefePersonal = validacionJefePersonal;
+        this.comentariosDirector = comentariosDirector;
+        this.comentariosSecretarioAcademico = comentariosSecretarioAcademico;
+        this.comentariosJefePersonal = comentariosJefePersonal;
+        this.comentariosSistema = comentariosSistema;
+        this.validacionSistema = validacionSistema;
+        this.total = total;
     }
 
     public Integer getPlaneacion() {
@@ -277,7 +312,7 @@ public class PlaneacionesCuatrimestrales implements Serializable {
         this.actividadesVarias = actividadesVarias;
     }
 
-    public boolean isValidacionDirector() {
+    public boolean getValidacionDirector() {
         return validacionDirector;
     }
 
@@ -293,7 +328,7 @@ public class PlaneacionesCuatrimestrales implements Serializable {
         this.fechaValidacionDirector = fechaValidacionDirector;
     }
 
-    public boolean isValidacionSecretarioAdemico() {
+    public boolean getValidacionSecretarioAdemico() {
         return validacionSecretarioAdemico;
     }
 
@@ -309,7 +344,7 @@ public class PlaneacionesCuatrimestrales implements Serializable {
         this.fechaValidacionSecretarioAdemico = fechaValidacionSecretarioAdemico;
     }
 
-    public boolean isValidacionJefePersonal() {
+    public boolean getValidacionJefePersonal() {
         return validacionJefePersonal;
     }
 
@@ -357,7 +392,7 @@ public class PlaneacionesCuatrimestrales implements Serializable {
         this.comentariosSistema = comentariosSistema;
     }
 
-    public boolean isValidacionSistema() {
+    public boolean getValidacionSistema() {
         return validacionSistema;
     }
 
@@ -371,6 +406,15 @@ public class PlaneacionesCuatrimestrales implements Serializable {
 
     public void setTotal(short total) {
         this.total = total;
+    }
+
+    @XmlTransient
+    public List<Atividadesvariasplaneacionescuatrimestrales> getAtividadesvariasplaneacionescuatrimestralesList() {
+        return atividadesvariasplaneacionescuatrimestralesList;
+    }
+
+    public void setAtividadesvariasplaneacionescuatrimestralesList(List<Atividadesvariasplaneacionescuatrimestrales> atividadesvariasplaneacionescuatrimestralesList) {
+        this.atividadesvariasplaneacionescuatrimestralesList = atividadesvariasplaneacionescuatrimestralesList;
     }
 
     public Personal getDirector() {
@@ -388,7 +432,6 @@ public class PlaneacionesCuatrimestrales implements Serializable {
     public void setDocente(Personal docente) {
         this.docente = docente;
     }
-
 
     @Override
     public int hashCode() {
@@ -412,24 +455,7 @@ public class PlaneacionesCuatrimestrales implements Serializable {
 
     @Override
     public String toString() {
-        return "PlaneacionesCuatrimestrales{" + "planeacion=" + planeacion + ", periodo=" + periodo + ", horasClaseTsu=" + horasClaseTsu + ", horasClaseIng=" + horasClaseIng + ", proyectoInvestigacion=" + proyectoInvestigacion + ", asesoriaClase=" + asesoriaClase + ", tutoria=" + tutoriaIndividual + ", reunionAcademia=" + reunionAcademia + ", actividadesVarias=" + actividadesVarias + ", validacionSecretarioAdemico=" + validacionSecretarioAdemico + ", fechaValidacionSecretarioAdemico=" + fechaValidacionSecretarioAdemico + ", validacionJefePersonal=" + validacionJefePersonal + ", fechaValidacionJefePersonal=" + fechaValidacionJefePersonal + ", comentariosDirector=" + comentariosDirector + ", comentariosSecretarioAcademico=" + comentariosSecretarioAcademico + ", comentariosJefePersonal=" + comentariosJefePersonal + ", comentariosSistema=" + comentariosSistema + ", validacionSistema=" + validacionSistema + ", total=" + total + ", director=" + director + ", docente=" + docente + '}';
+        return "mx.edu.utxj.pye.sgi.entity.ch.PlaneacionesCuatrimestrales[ planeacion=" + planeacion + " ]";
     }
     
-    @XmlTransient
-    public List<Actividadesvarias> getActividadesvariasList() {
-        return actividadesvariasList;
-}
-
-    public void setActividadesvariasList(List<Actividadesvarias> actividadesvariasList) {
-        this.actividadesvariasList = actividadesvariasList;
-    }
-
-    @XmlTransient
-    public List<Atividadesvariasplaneacionescuatrimestrales> getAtividadesvariasplaneacionescuatrimestralesList() {
-        return atividadesvariasplaneacionescuatrimestralesList;
-    }
-
-    public void setAtividadesvariasplaneacionescuatrimestralesList(List<Atividadesvariasplaneacionescuatrimestrales> atividadesvariasplaneacionescuatrimestralesList) {
-        this.atividadesvariasplaneacionescuatrimestralesList = atividadesvariasplaneacionescuatrimestralesList;
-    }
 }

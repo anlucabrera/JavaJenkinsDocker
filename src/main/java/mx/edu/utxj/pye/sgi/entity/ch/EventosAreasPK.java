@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  *
- * @author UTXJ
+ * @author jonny
  */
 @Embeddable
 public class EventosAreasPK implements Serializable {
@@ -25,12 +25,12 @@ public class EventosAreasPK implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "area_operativa")
-    private int areaOperativa;
+    private short areaOperativa;
 
     public EventosAreasPK() {
     }
 
-    public EventosAreasPK(int evento, int areaOperativa) {
+    public EventosAreasPK(int evento, short areaOperativa) {
         this.evento = evento;
         this.areaOperativa = areaOperativa;
     }
@@ -43,11 +43,11 @@ public class EventosAreasPK implements Serializable {
         this.evento = evento;
     }
 
-    public int getAreaOperativa() {
+    public short getAreaOperativa() {
         return areaOperativa;
     }
 
-    public void setAreaOperativa(int areaOperativa) {
+    public void setAreaOperativa(short areaOperativa) {
         this.areaOperativa = areaOperativa;
     }
 

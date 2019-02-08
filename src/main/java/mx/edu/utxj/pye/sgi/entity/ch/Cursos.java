@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author jonny
  */
 @Entity
 @Table(name = "cursos", catalog = "capital_humano", schema = "")
@@ -117,7 +117,7 @@ public class Cursos implements Serializable {
     @Size(min = 1, max = 20)
     @Column(name = "mes")
     private String mes;
-    @JoinTable(name = "capital_humano.cursos_cursosevidencia", joinColumns = {
+    @JoinTable(name = "cursos_cursosevidencia", joinColumns = {
         @JoinColumn(name = "curso", referencedColumnName = "curso")}, inverseJoinColumns = {
         @JoinColumn(name = "evidencia", referencedColumnName = "evidencia")})
     @ManyToMany

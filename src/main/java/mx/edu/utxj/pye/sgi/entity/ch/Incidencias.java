@@ -20,12 +20,13 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author jonny
  */
 @Entity
 @Table(name = "incidencias", catalog = "capital_humano", schema = "")
@@ -38,7 +39,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Incidencias.findByFecha", query = "SELECT i FROM Incidencias i WHERE i.fecha = :fecha")
     , @NamedQuery(name = "Incidencias.findByTiempo", query = "SELECT i FROM Incidencias i WHERE i.tiempo = :tiempo")
     , @NamedQuery(name = "Incidencias.findByJustificacion", query = "SELECT i FROM Incidencias i WHERE i.justificacion = :justificacion")
-    , @NamedQuery(name = "Incidencias.findByEstatus", query = "SELECT i FROM Incidencias i WHERE i.estatus = :estatus")})
+    , @NamedQuery(name = "Incidencias.findByEstatus", query = "SELECT i FROM Incidencias i WHERE i.estatus = :estatus")
+    , @NamedQuery(name = "Incidencias.findByEvidencia", query = "SELECT i FROM Incidencias i WHERE i.evidencia = :evidencia")})
 public class Incidencias implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -47,23 +49,38 @@ public class Incidencias implements Serializable {
     @Basic(optional = false)
     @Column(name = "incidencia_ID")
     private Integer incidenciaID;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "numeroOficio")
-    private Integer numeroOficio;
-    @Size(max = 255)
+    private int numeroOficio;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
     @Column(name = "tipo")
     private String tipo;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "fecha")
     @Temporal(TemporalType.DATE)
     private Date fecha;
-    @Size(max = 255)
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
     @Column(name = "tiempo")
     private String tiempo;
-    @Size(max = 300)
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 300)
     @Column(name = "justificacion")
     private String justificacion;
-    @Size(max = 255)
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
     @Column(name = "estatus")
     private String estatus;
+    @Size(max = 500)
+    @Column(name = "evidencia")
+    private String evidencia;
     @JoinColumn(name = "clave_personal", referencedColumnName = "clave")
     @ManyToOne(optional = false)
     private Personal clavePersonal;
@@ -75,6 +92,16 @@ public class Incidencias implements Serializable {
         this.incidenciaID = incidenciaID;
     }
 
+    public Incidencias(Integer incidenciaID, int numeroOficio, String tipo, Date fecha, String tiempo, String justificacion, String estatus) {
+        this.incidenciaID = incidenciaID;
+        this.numeroOficio = numeroOficio;
+        this.tipo = tipo;
+        this.fecha = fecha;
+        this.tiempo = tiempo;
+        this.justificacion = justificacion;
+        this.estatus = estatus;
+    }
+
     public Integer getIncidenciaID() {
         return incidenciaID;
     }
@@ -83,11 +110,11 @@ public class Incidencias implements Serializable {
         this.incidenciaID = incidenciaID;
     }
 
-    public Integer getNumeroOficio() {
+    public int getNumeroOficio() {
         return numeroOficio;
     }
 
-    public void setNumeroOficio(Integer numeroOficio) {
+    public void setNumeroOficio(int numeroOficio) {
         this.numeroOficio = numeroOficio;
     }
 
@@ -129,6 +156,14 @@ public class Incidencias implements Serializable {
 
     public void setEstatus(String estatus) {
         this.estatus = estatus;
+    }
+
+    public String getEvidencia() {
+        return evidencia;
+    }
+
+    public void setEvidencia(String evidencia) {
+        this.evidencia = evidencia;
     }
 
     public Personal getClavePersonal() {

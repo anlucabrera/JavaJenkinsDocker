@@ -49,7 +49,7 @@ public class ServicioEvaluacion360Combinaciones implements EjbEvaluacion360Combi
             Integer claveIgual = getIgual(directivosOperativos.containsKey(evaluado), evaluado, evaluadoresAnteriores, directivosOperativos.keySet(), plantilla);
             Evaluaciones360Resultados igual = new Evaluaciones360Resultados(evaluacion.getEvaluacion(), claveIgual, evaluado.getClave());
 
-            if (superior.getPk().getEvaluador() != 0) {
+            if (superior.getEvaluaciones360ResultadosPK().getEvaluador() != 0) {
                 superior.setTipo("Superior");
                 f.setEntityClass(PersonalCategorias.class);
                 PersonalCategorias categoria = f.getEntityManager().find(PersonalCategorias.class, evaluado.getCategoria360().getCategoria());
@@ -58,8 +58,8 @@ public class ServicioEvaluacion360Combinaciones implements EjbEvaluacion360Combi
                 l.add(superior);
             }
 
-            if (subordinado.getPk().getEvaluador() != 0) {
-                if (subordinado.getPk().getEvaluado() == subordinado.getPk().getEvaluador()) {
+            if (subordinado.getEvaluaciones360ResultadosPK().getEvaluador() != 0) {
+                if (subordinado.getEvaluaciones360ResultadosPK().getEvaluado() == subordinado.getEvaluaciones360ResultadosPK().getEvaluador()) {
                     subordinado.setTipo("Autoevaluación");
                 } else {
                     subordinado.setTipo("Subordinado");
@@ -70,18 +70,13 @@ public class ServicioEvaluacion360Combinaciones implements EjbEvaluacion360Combi
                 l.add(subordinado);
             }
 
-            if (igual.getPk().getEvaluador() != 0) {
+            if (igual.getEvaluaciones360ResultadosPK().getEvaluador() != 0) {
                 igual.setTipo("Igual");
                 f.setEntityClass(PersonalCategorias.class);
                 PersonalCategorias categoria = f.getEntityManager().find(PersonalCategorias.class, evaluado.getCategoria360().getCategoria());
                 igual.setCategoria(categoria);//igual.setCategoria((short)50);
                 l.add(igual);
             }
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.generar() evaluadores de: " + evaluado.getClave());
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.generar() evaluador superior: " + superior.getPk().getEvaluador());
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.generar() evaluador subordinado: " + subordinado.getPk().getEvaluador());
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion360Combinaciones.generar() evaluador igual: " + igual.getPk().getEvaluador());
-            System.out.println();
         });
 
         return l;

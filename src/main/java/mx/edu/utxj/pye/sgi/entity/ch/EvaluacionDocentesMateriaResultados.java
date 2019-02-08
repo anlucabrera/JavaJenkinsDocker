@@ -21,17 +21,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author jonny
  */
 @Entity
 @Table(name = "evaluacion_docentes_materia_resultados", catalog = "capital_humano", schema = "")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "EvaluacionDocentesMateriaResultados.findAll", query = "SELECT e FROM EvaluacionDocentesMateriaResultados e")
-    , @NamedQuery(name = "EvaluacionDocentesMateriaResultados.findByEvaluacion", query = "SELECT e FROM EvaluacionDocentesMateriaResultados e WHERE e.pk.evaluacion = :evaluacion")
-    , @NamedQuery(name = "EvaluacionDocentesMateriaResultados.findByEvaluador", query = "SELECT e FROM EvaluacionDocentesMateriaResultados e WHERE e.pk.evaluador = :evaluador")
-    , @NamedQuery(name = "EvaluacionDocentesMateriaResultados.findByCveMateria", query = "SELECT e FROM EvaluacionDocentesMateriaResultados e WHERE e.pk.cveMateria = :cveMateria")
-    , @NamedQuery(name = "EvaluacionDocentesMateriaResultados.findByEvaluado", query = "SELECT e FROM EvaluacionDocentesMateriaResultados e WHERE e.pk.evaluado = :evaluado")
+    , @NamedQuery(name = "EvaluacionDocentesMateriaResultados.findByEvaluacion", query = "SELECT e FROM EvaluacionDocentesMateriaResultados e WHERE e.evaluacionDocentesMateriaResultadosPK.evaluacion = :evaluacion")
+    , @NamedQuery(name = "EvaluacionDocentesMateriaResultados.findByEvaluador", query = "SELECT e FROM EvaluacionDocentesMateriaResultados e WHERE e.evaluacionDocentesMateriaResultadosPK.evaluador = :evaluador")
+    , @NamedQuery(name = "EvaluacionDocentesMateriaResultados.findByCveMateria", query = "SELECT e FROM EvaluacionDocentesMateriaResultados e WHERE e.evaluacionDocentesMateriaResultadosPK.cveMateria = :cveMateria")
+    , @NamedQuery(name = "EvaluacionDocentesMateriaResultados.findByEvaluado", query = "SELECT e FROM EvaluacionDocentesMateriaResultados e WHERE e.evaluacionDocentesMateriaResultadosPK.evaluado = :evaluado")
     , @NamedQuery(name = "EvaluacionDocentesMateriaResultados.findByR1", query = "SELECT e FROM EvaluacionDocentesMateriaResultados e WHERE e.r1 = :r1")
     , @NamedQuery(name = "EvaluacionDocentesMateriaResultados.findByR2", query = "SELECT e FROM EvaluacionDocentesMateriaResultados e WHERE e.r2 = :r2")
     , @NamedQuery(name = "EvaluacionDocentesMateriaResultados.findByR3", query = "SELECT e FROM EvaluacionDocentesMateriaResultados e WHERE e.r3 = :r3")
@@ -71,7 +71,7 @@ public class EvaluacionDocentesMateriaResultados implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
-    protected EvaluacionDocentesMateriaResultadosPK pk;
+    protected EvaluacionDocentesMateriaResultadosPK evaluacionDocentesMateriaResultadosPK;
     @Column(name = "r1")
     private Short r1;
     @Column(name = "r2")
@@ -151,7 +151,7 @@ public class EvaluacionDocentesMateriaResultados implements Serializable {
     private double promedio;
     @JoinColumn(name = "evaluacion", referencedColumnName = "evaluacion", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    private EvaluacionDocentesMaterias evaluacionDocentesMaterias;
+    private Evaluaciones evaluaciones;
     @JoinColumn(name = "evaluado", referencedColumnName = "clave", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Personal personal;
@@ -160,26 +160,26 @@ public class EvaluacionDocentesMateriaResultados implements Serializable {
     }
 
     public EvaluacionDocentesMateriaResultados(EvaluacionDocentesMateriaResultadosPK evaluacionDocentesMateriaResultadosPK) {
-        this.pk = evaluacionDocentesMateriaResultadosPK;
+        this.evaluacionDocentesMateriaResultadosPK = evaluacionDocentesMateriaResultadosPK;
     }
 
     public EvaluacionDocentesMateriaResultados(EvaluacionDocentesMateriaResultadosPK evaluacionDocentesMateriaResultadosPK, boolean completo, boolean incompleto, double promedio) {
-        this.pk = evaluacionDocentesMateriaResultadosPK;
+        this.evaluacionDocentesMateriaResultadosPK = evaluacionDocentesMateriaResultadosPK;
         this.completo = completo;
         this.incompleto = incompleto;
         this.promedio = promedio;
     }
 
     public EvaluacionDocentesMateriaResultados(int evaluacion, int evaluador, String cveMateria, int evaluado) {
-        this.pk = new EvaluacionDocentesMateriaResultadosPK(evaluacion, evaluador, cveMateria, evaluado);
+        this.evaluacionDocentesMateriaResultadosPK = new EvaluacionDocentesMateriaResultadosPK(evaluacion, evaluador, cveMateria, evaluado);
     }
 
-    public EvaluacionDocentesMateriaResultadosPK getPk() {
-        return pk;
+    public EvaluacionDocentesMateriaResultadosPK getEvaluacionDocentesMateriaResultadosPK() {
+        return evaluacionDocentesMateriaResultadosPK;
     }
 
-    public void setPk(EvaluacionDocentesMateriaResultadosPK pk) {
-        this.pk = pk;
+    public void setEvaluacionDocentesMateriaResultadosPK(EvaluacionDocentesMateriaResultadosPK evaluacionDocentesMateriaResultadosPK) {
+        this.evaluacionDocentesMateriaResultadosPK = evaluacionDocentesMateriaResultadosPK;
     }
 
     public Short getR1() {
@@ -462,12 +462,12 @@ public class EvaluacionDocentesMateriaResultados implements Serializable {
         this.promedio = promedio;
     }
 
-    public EvaluacionDocentesMaterias getEvaluacionDocentesMaterias() {
-        return evaluacionDocentesMaterias;
+    public Evaluaciones getEvaluaciones() {
+        return evaluaciones;
     }
 
-    public void setEvaluacionDocentesMaterias(EvaluacionDocentesMaterias evaluacionDocentesMaterias) {
-        this.evaluacionDocentesMaterias = evaluacionDocentesMaterias;
+    public void setEvaluaciones(Evaluaciones evaluaciones) {
+        this.evaluaciones = evaluaciones;
     }
 
     public Personal getPersonal() {
@@ -481,7 +481,7 @@ public class EvaluacionDocentesMateriaResultados implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (pk != null ? pk.hashCode() : 0);
+        hash += (evaluacionDocentesMateriaResultadosPK != null ? evaluacionDocentesMateriaResultadosPK.hashCode() : 0);
         return hash;
     }
 
@@ -492,7 +492,7 @@ public class EvaluacionDocentesMateriaResultados implements Serializable {
             return false;
         }
         EvaluacionDocentesMateriaResultados other = (EvaluacionDocentesMateriaResultados) object;
-        if ((this.pk == null && other.pk != null) || (this.pk != null && !this.pk.equals(other.pk))) {
+        if ((this.evaluacionDocentesMateriaResultadosPK == null && other.evaluacionDocentesMateriaResultadosPK != null) || (this.evaluacionDocentesMateriaResultadosPK != null && !this.evaluacionDocentesMateriaResultadosPK.equals(other.evaluacionDocentesMateriaResultadosPK))) {
             return false;
         }
         return true;
@@ -500,7 +500,7 @@ public class EvaluacionDocentesMateriaResultados implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados[ evaluacionDocentesMateriaResultadosPK=" + pk + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados[ evaluacionDocentesMateriaResultadosPK=" + evaluacionDocentesMateriaResultadosPK + " ]";
     }
     
 }
