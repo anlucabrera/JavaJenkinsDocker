@@ -42,7 +42,7 @@ public class CuerpacadLineas implements Serializable {
     private Integer registro;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 200)
+    @Size(min = 1, max = 250)
     @Column(name = "nombre")
     private String nombre;
     @Basic(optional = false)

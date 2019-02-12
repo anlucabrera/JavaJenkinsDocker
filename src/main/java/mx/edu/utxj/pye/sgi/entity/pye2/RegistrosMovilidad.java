@@ -48,6 +48,7 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "RegistrosMovilidad.findByProgramaEducativo", query = "SELECT r FROM RegistrosMovilidad r WHERE r.programaEducativo = :programaEducativo")
     , @NamedQuery(name = "RegistrosMovilidad.findByPeriodoEscolarCursado", query = "SELECT r FROM RegistrosMovilidad r WHERE r.periodoEscolarCursado = :periodoEscolarCursado")
     , @NamedQuery(name = "RegistrosMovilidad.findByCuatrimestreCursado", query = "SELECT r FROM RegistrosMovilidad r WHERE r.cuatrimestreCursado = :cuatrimestreCursado")
+    , @NamedQuery(name = "RegistrosMovilidad.findByInstitucionOrganizacion", query = "SELECT r FROM RegistrosMovilidad r WHERE r.institucionOrganizacion = :institucionOrganizacion")
     , @NamedQuery(name = "RegistrosMovilidad.findByProyecto", query = "SELECT r FROM RegistrosMovilidad r WHERE r.proyecto = :proyecto")
     , @NamedQuery(name = "RegistrosMovilidad.findByDescripcion", query = "SELECT r FROM RegistrosMovilidad r WHERE r.descripcion = :descripcion")
     , @NamedQuery(name = "RegistrosMovilidad.findByPresEst", query = "SELECT r FROM RegistrosMovilidad r WHERE r.presEst = :presEst")
@@ -104,7 +105,7 @@ public class RegistrosMovilidad implements Serializable {
     private int periodoEscolarCursado;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 10)
+    @Size(min = 1, max = 9)
     @Column(name = "cuatrimestre_cursado")
     private String cuatrimestreCursado;
     @Basic(optional = false)
@@ -171,7 +172,7 @@ public class RegistrosMovilidad implements Serializable {
         this.registro = registro;
     }
 
-    public RegistrosMovilidad(Integer registro, String registroMovilidad, String tipoParticipante, String tipoMovilidad, Date fechaInicio, Date fechaFin, String participante, short programaEducativo, int periodoEscolarCursado, String cuatrimestreCursado, String proyecto, String descripcion, BigDecimal presEst, BigDecimal presFed, BigDecimal capDer, BigDecimal ingPropios, BigDecimal ingExtra, String descripcionIngExt) {
+    public RegistrosMovilidad(Integer registro, String registroMovilidad, String tipoParticipante, String tipoMovilidad, Date fechaInicio, Date fechaFin, String participante, short programaEducativo, int periodoEscolarCursado, String cuatrimestreCursado, String institucionOrganizacion, String proyecto, String descripcion, BigDecimal presEst, BigDecimal presFed, BigDecimal capDer, BigDecimal ingPropios, BigDecimal ingExtra, String descripcionIngExt) {
         this.registro = registro;
         this.registroMovilidad = registroMovilidad;
         this.tipoParticipante = tipoParticipante;
@@ -182,6 +183,7 @@ public class RegistrosMovilidad implements Serializable {
         this.programaEducativo = programaEducativo;
         this.periodoEscolarCursado = periodoEscolarCursado;
         this.cuatrimestreCursado = cuatrimestreCursado;
+        this.institucionOrganizacion = institucionOrganizacion;
         this.proyecto = proyecto;
         this.descripcion = descripcion;
         this.presEst = presEst;
@@ -272,6 +274,14 @@ public class RegistrosMovilidad implements Serializable {
         this.cuatrimestreCursado = cuatrimestreCursado;
     }
 
+    public String getInstitucionOrganizacion() {
+        return institucionOrganizacion;
+    }
+
+    public void setInstitucionOrganizacion(String institucionOrganizacion) {
+        this.institucionOrganizacion = institucionOrganizacion;
+    }
+
     public String getProyecto() {
         return proyecto;
     }
@@ -344,14 +354,6 @@ public class RegistrosMovilidad implements Serializable {
         this.estado = estado;
     }
 
-    public String getInstitucionOrganizacion() {
-        return institucionOrganizacion;
-    }
-
-    public void setInstitucionOrganizacion(String institucionOrganizacion) {
-        this.institucionOrganizacion = institucionOrganizacion;
-    }
-    
     public ProgramasMovilidad getProgramaMovilidad() {
         return programaMovilidad;
     }

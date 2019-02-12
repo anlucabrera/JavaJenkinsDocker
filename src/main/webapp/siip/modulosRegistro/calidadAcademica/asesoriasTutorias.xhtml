@@ -100,7 +100,8 @@
                                         <p:columnGroup type="header">
                                             <p:row>
                                                 <p:column headerText="Opciones"             width="100" />
-                                                <p:column headerText="Periodo Escolar"      width="150" rendered="false"/>
+                                                <p:column headerText="Periodo Escolar"      width="50" rendered="false"/>
+                                                <p:column headerText="Mes"                  width="80"/>
                                                 <p:column headerText="Programa Educativo"   width="450"/>
                                                 <p:column headerText="Cuat."                width="40"/>
                                                 <p:column headerText="Grupo"                width="60"/>
@@ -131,6 +132,7 @@
                                             </div>
                                         </p:column>
                                         <p:column rendered="false"><h:outputText value="#{asesoriaTutoria.periodoEscolar}"/></p:column>
+                                        <p:column><h:outputText value="#{asesoriaTutoria.asesoriasTutoriasCicloPeriodos.mes}"/></p:column>
                                         <p:column><h:outputText value="#{asesoriaTutoria.areasUniversidad.nombre}"/></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{asesoriaTutoria.asesoriasTutoriasCicloPeriodos.cuatrimestre}"/></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{asesoriaTutoria.asesoriasTutoriasCicloPeriodos.grupo}"/></p:column>
@@ -393,6 +395,7 @@
                                             <p:columnGroup type="header">
                                                 <p:row>
                                                     <p:column headerText="Periodo Escolar"      width="150" rendered="true"/>
+                                                    <p:column headerText="Mes"                  width="50"/>
                                                     <p:column headerText="Programa Educativo"   width="450"/>
                                                     <p:column headerText="Cuat."                width="40"/>
                                                     <p:column headerText="Grupo"                width="60"/>
@@ -405,6 +408,7 @@
                                                 </p:row>    
                                             </p:columnGroup>
                                             <p:column><h:outputText value="#{asesoriaTutoria.periodoEscolar}"/></p:column>
+                                            <p:column><h:outputText value="#{asesoriaTutoria.asesoriasTutoriasCicloPeriodos.mes}"/></p:column>
                                             <p:column><h:outputText value="#{asesoriaTutoria.areasUniversidad.nombre}"/></p:column>
                                             <p:column style="text-align: center;"><h:outputText value="#{asesoriaTutoria.asesoriasTutoriasCicloPeriodos.cuatrimestre}"/></p:column>
                                             <p:column style="text-align: center;"><h:outputText value="#{asesoriaTutoria.asesoriasTutoriasCicloPeriodos.grupo}"/></p:column>

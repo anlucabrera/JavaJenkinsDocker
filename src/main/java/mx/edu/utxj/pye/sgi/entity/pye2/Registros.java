@@ -86,6 +86,8 @@ public class Registros implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private ProgramasEstimulos programasEstimulos;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private AsesoriasTutoriasMensualPeriodosEscolares asesoriasTutoriasMensualPeriodosEscolares;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private ProductosAcademicosPersonal productosAcademicosPersonal;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private CuerpacadIntegrantes cuerpacadIntegrantes;
@@ -302,6 +304,14 @@ public class Registros implements Serializable {
 
     public void setProgramasEstimulos(ProgramasEstimulos programasEstimulos) {
         this.programasEstimulos = programasEstimulos;
+    }
+
+    public AsesoriasTutoriasMensualPeriodosEscolares getAsesoriasTutoriasMensualPeriodosEscolares() {
+        return asesoriasTutoriasMensualPeriodosEscolares;
+    }
+
+    public void setAsesoriasTutoriasMensualPeriodosEscolares(AsesoriasTutoriasMensualPeriodosEscolares asesoriasTutoriasMensualPeriodosEscolares) {
+        this.asesoriasTutoriasMensualPeriodosEscolares = asesoriasTutoriasMensualPeriodosEscolares;
     }
 
     public ProductosAcademicosPersonal getProductosAcademicosPersonal() {

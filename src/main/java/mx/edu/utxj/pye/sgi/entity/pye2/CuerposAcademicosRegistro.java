@@ -42,7 +42,6 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "CuerposAcademicosRegistro.findByFechaTermino", query = "SELECT c FROM CuerposAcademicosRegistro c WHERE c.fechaTermino = :fechaTermino")
     , @NamedQuery(name = "CuerposAcademicosRegistro.findByNombre", query = "SELECT c FROM CuerposAcademicosRegistro c WHERE c.nombre = :nombre")
     , @NamedQuery(name = "CuerposAcademicosRegistro.findByNivelProdep", query = "SELECT c FROM CuerposAcademicosRegistro c WHERE c.nivelProdep = :nivelProdep")
-    , @NamedQuery(name = "CuerposAcademicosRegistro.findByArea", query = "SELECT c FROM CuerposAcademicosRegistro c WHERE c.area = :area")
     , @NamedQuery(name = "CuerposAcademicosRegistro.findByEstatus", query = "SELECT c FROM CuerposAcademicosRegistro c WHERE c.estatus = :estatus")})
 public class CuerposAcademicosRegistro implements Serializable {
 
@@ -69,7 +68,7 @@ public class CuerposAcademicosRegistro implements Serializable {
     private Date fechaTermino;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 200)
+    @Size(min = 1, max = 500)
     @Column(name = "nombre")
     private String nombre;
     @Basic(optional = false)
@@ -77,10 +76,6 @@ public class CuerposAcademicosRegistro implements Serializable {
     @Size(min = 1, max = 18)
     @Column(name = "nivel_prodep")
     private String nivelProdep;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "area")
-    private short area;
     @Basic(optional = false)
     @NotNull
     @Column(name = "estatus")
@@ -95,6 +90,8 @@ public class CuerposAcademicosRegistro implements Serializable {
     private List<CuerpacadLineasBitacora> cuerpacadLineasBitacoraList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpoAcademico")
     private List<CuerpacadLineas> cuerpacadLineasList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerposAcademicosRegistro")
+    private List<CuerpoAreasAcademicas> cuerpoAreasAcademicasList;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Registros registros;
@@ -112,14 +109,13 @@ public class CuerposAcademicosRegistro implements Serializable {
         this.registro = registro;
     }
 
-    public CuerposAcademicosRegistro(Integer registro, String cuerpoAcademico, Date fechaInicio, Date fechaTermino, String nombre, String nivelProdep, short area, boolean estatus) {
+    public CuerposAcademicosRegistro(Integer registro, String cuerpoAcademico, Date fechaInicio, Date fechaTermino, String nombre, String nivelProdep, boolean estatus) {
         this.registro = registro;
         this.cuerpoAcademico = cuerpoAcademico;
         this.fechaInicio = fechaInicio;
         this.fechaTermino = fechaTermino;
         this.nombre = nombre;
         this.nivelProdep = nivelProdep;
-        this.area = area;
         this.estatus = estatus;
     }
 
@@ -169,14 +165,6 @@ public class CuerposAcademicosRegistro implements Serializable {
 
     public void setNivelProdep(String nivelProdep) {
         this.nivelProdep = nivelProdep;
-    }
-
-    public short getArea() {
-        return area;
-    }
-
-    public void setArea(short area) {
-        this.area = area;
     }
 
     public boolean getEstatus() {
@@ -230,6 +218,15 @@ public class CuerposAcademicosRegistro implements Serializable {
 
     public void setCuerpacadLineasList(List<CuerpacadLineas> cuerpacadLineasList) {
         this.cuerpacadLineasList = cuerpacadLineasList;
+    }
+
+    @XmlTransient
+    public List<CuerpoAreasAcademicas> getCuerpoAreasAcademicasList() {
+        return cuerpoAreasAcademicasList;
+    }
+
+    public void setCuerpoAreasAcademicasList(List<CuerpoAreasAcademicas> cuerpoAreasAcademicasList) {
+        this.cuerpoAreasAcademicasList = cuerpoAreasAcademicasList;
     }
 
     public Registros getRegistros() {

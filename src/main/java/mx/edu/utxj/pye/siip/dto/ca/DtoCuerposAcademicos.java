@@ -26,6 +26,9 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
  * @author UTXJ
  */
 public final class DtoCuerposAcademicos {
+    /****************** Programas Educativos Beneficiados con la vinculación *******************/
+    @Getter @Setter AreasUniversidad areaUniversidad;
+    @Getter private List<DTOCuerpoAreasAcademicas> listaCuerpoAreasAcademicas = new ArrayList<>();
     
     /************************** Evidencias *************************************/
     @Getter private DTOCuerposAcademicosR registroCuerposAcademicosR;
@@ -178,5 +181,9 @@ public final class DtoCuerposAcademicos {
         this.lineasAccion = lineasAccion;
         if(lineasAccion.isEmpty())
             nulificarLinea();
+    }
+
+    public void setListaCuerpoAreasAcademicas(List<DTOCuerpoAreasAcademicas> listaCuerpoAreasAcademicas) {
+        this.listaCuerpoAreasAcademicas = listaCuerpoAreasAcademicas;
     }
 }

@@ -140,10 +140,17 @@ public class ServicioModulos implements EjbModulos {
     public List<Short> getEjercicioRegistros(List<Short> registroTipo, AreasUniversidad area) {
         List<Short> ejerciciosRegistros = new ArrayList<>();
         try {
-            return ejerciciosRegistros = f.getEntityManager().createQuery("SELECT DISTINCT er.ejercicioFiscal.anio FROM Registros r JOIN r.eventoRegistro er WHERE r.tipo.registroTipo IN :registroTipo AND r.area = :area ORDER BY er.fechaInicio")
+            if(area.getArea() == 6){
+                return ejerciciosRegistros = f.getEntityManager().createQuery("SELECT DISTINCT er.ejercicioFiscal.anio FROM Registros r JOIN r.eventoRegistro er WHERE r.tipo.registroTipo IN :registroTipo ORDER BY er.fechaInicio")
+                    .setParameter("registroTipo", registroTipo)
+                    .getResultList();
+            }else{
+                return ejerciciosRegistros = f.getEntityManager().createQuery("SELECT DISTINCT er.ejercicioFiscal.anio FROM Registros r JOIN r.eventoRegistro er WHERE r.tipo.registroTipo IN :registroTipo AND r.area = :area ORDER BY er.fechaInicio")
                     .setParameter("registroTipo", registroTipo)
                     .setParameter("area", area.getArea())
                     .getResultList();
+            }
+            
         } catch (NoResultException ex) {
             return ejerciciosRegistros = null;
         }
@@ -153,11 +160,19 @@ public class ServicioModulos implements EjbModulos {
     public List<String> getMesesRegistros(Short ejercicio, List<Short> registroTipo, AreasUniversidad area) {
         List<String> mesesRegistros = new ArrayList<>();
         try {
-            return mesesRegistros = f.getEntityManager().createQuery("SELECT DISTINCT er.mes FROM Registros r JOIN r.eventoRegistro er WHERE er.ejercicioFiscal.anio = :anio AND r.tipo.registroTipo IN :registroTipo AND r.area = :area ORDER BY er.fechaInicio")
+            if(area.getArea() == 6){
+                return mesesRegistros = f.getEntityManager().createQuery("SELECT DISTINCT er.mes FROM Registros r JOIN r.eventoRegistro er WHERE er.ejercicioFiscal.anio = :anio AND r.tipo.registroTipo IN :registroTipo ORDER BY er.fechaInicio")
+                    .setParameter("anio", ejercicio)
+                    .setParameter("registroTipo", registroTipo)
+                    .getResultList();
+            }else{
+                return mesesRegistros = f.getEntityManager().createQuery("SELECT DISTINCT er.mes FROM Registros r JOIN r.eventoRegistro er WHERE er.ejercicioFiscal.anio = :anio AND r.tipo.registroTipo IN :registroTipo AND r.area = :area ORDER BY er.fechaInicio")
                     .setParameter("anio", ejercicio)
                     .setParameter("registroTipo", registroTipo)
                     .setParameter("area", area.getArea())
                     .getResultList();
+            }
+            
         } catch (NoResultException e) {
             return mesesRegistros = null;
         }

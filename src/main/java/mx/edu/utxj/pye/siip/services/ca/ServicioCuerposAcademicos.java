@@ -29,6 +29,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadAreasEstudio;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadDisciplinas;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadIntegrantes;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadLineas;
+import mx.edu.utxj.pye.sgi.entity.pye2.CuerpoAreasAcademicas;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerposAcademicosRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
@@ -37,6 +38,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.dto.ca.DTOCuerpAcadIntegrantes;
+import mx.edu.utxj.pye.siip.dto.ca.DTOCuerpoAreasAcademicas;
 import mx.edu.utxj.pye.siip.dto.ca.DTOCuerposAcademicosR;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbCuerposAcademicos;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
@@ -75,7 +77,6 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
             CuerposAcademicosRegistro cuerpoAcademicoRegistro;
             CuerpacadDisciplinas cuerpacadDisciplina;
             CuerpacadAreasEstudio cuerpacadAreasEstudio;
-            AreasUniversidad areasUniversidad;
             DTOCuerposAcademicosR dtoCuerpoAcademicoR;
 
             File excel = new File(rutaArchivo);
@@ -94,7 +95,6 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
                             cuerpoAcademicoRegistro = new CuerposAcademicosRegistro();
                             cuerpacadDisciplina = new CuerpacadDisciplinas();
                             cuerpacadAreasEstudio = new CuerpacadAreasEstudio();
-                            areasUniversidad = new AreasUniversidad();
                             dtoCuerpoAcademicoR = new DTOCuerposAcademicosR();
 
 //                    Cuerpo Académico
@@ -171,22 +171,6 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
                                 datosInvalidos.add("Dato incorrecto: Nivel Prodep del cuerpo académico en la columna: " + (5 + 1) + " y fila: " + (i + 1));
                             }
 
-//                    Área académica
-                            if (fila.getCell(7).getCellTypeEnum() == CellType.FORMULA) {
-                                switch (fila.getCell(7).getCellTypeEnum()) {
-                                    case FORMULA:
-                                        areasUniversidad.setNombre(fila.getCell(6).getStringCellValue());
-                                        areasUniversidad.setArea((short) ((int) fila.getCell(7).getNumericCellValue()));
-                                        cuerpoAcademicoRegistro.setArea(areasUniversidad.getArea());
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            } else {
-                                validarCelda.add(false);
-                                datosInvalidos.add("Dato incorrecto: Área Académica del cuerpo académico en la columna: " + (6 + 1) + " y fila: " + (i + 1));
-                            }
-
 //                    Área de estudio
                             if (fila.getCell(9).getCellTypeEnum() == CellType.FORMULA) {
                                 switch (fila.getCell(9).getCellTypeEnum()) {
@@ -219,7 +203,6 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
                                 datosInvalidos.add("Dato incorrecto: Disciplina del cuerpo académico en la columna: " + (10 + 1) + " y fila: " + (i + 1));
                             }
 
-                            dtoCuerpoAcademicoR.setArea(areasUniversidad);
                             dtoCuerpoAcademicoR.setCuerposAcademicosRegistro(cuerpoAcademicoRegistro);
                             listaDtoCuerposAcademicosR.add(dtoCuerpoAcademicoR);
                         }
@@ -489,7 +472,7 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
                 facadeCapitalHumano.flush();
             });
         }
-        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
@@ -528,7 +511,7 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
                 }
             });
         }
-        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
@@ -567,7 +550,7 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
                 }
             });
         }
-        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
@@ -680,8 +663,7 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
             cuerposAcademicosRegistros.forEach((c) -> {
                 em.refresh(c);
                 listaDtoCar.add(new DTOCuerposAcademicosR(
-                        c,
-                        em.find(AreasUniversidad.class, c.getArea())
+                        c
                 ));
             });
             return listaDtoCar;
@@ -755,6 +737,26 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
         } catch (NoResultException ex) {
             return Collections.EMPTY_LIST;
         }
+    }
+
+    @Override
+    public List<DTOCuerpoAreasAcademicas> getCuerpoAreasAcademicas() throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Boolean verificaCuerpoAreaAcademica(String cuerpoAcademico, AreasUniversidad areaUniversidad) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Boolean guardarProgramaBeneficiadoVinculacion(CuerpoAreasAcademicas cuerpoAreasAcademica) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Boolean eliminarProgramaBeneficiadoVinculacion(CuerpoAreasAcademicas cuerpoAreasAcademica) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

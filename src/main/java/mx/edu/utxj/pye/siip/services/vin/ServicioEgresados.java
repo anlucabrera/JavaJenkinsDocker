@@ -794,7 +794,7 @@ public class ServicioEgresados implements EjbEgresados {
                 facadeVinculacion.flush();
             }
         });
-        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
@@ -825,7 +825,7 @@ public class ServicioEgresados implements EjbEgresados {
                 facadeVinculacion.flush();
             }
         });
-        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
@@ -857,7 +857,7 @@ public class ServicioEgresados implements EjbEgresados {
             }
 
         });
-        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
@@ -888,7 +888,7 @@ public class ServicioEgresados implements EjbEgresados {
                 facadeVinculacion.flush();
             }
         });
-        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override

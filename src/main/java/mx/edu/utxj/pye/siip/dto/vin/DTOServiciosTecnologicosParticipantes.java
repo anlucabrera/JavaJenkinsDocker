@@ -6,8 +6,6 @@
 package mx.edu.utxj.pye.siip.dto.vin;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

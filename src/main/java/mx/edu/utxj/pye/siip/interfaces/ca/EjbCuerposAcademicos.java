@@ -7,15 +7,18 @@ package mx.edu.utxj.pye.siip.interfaces.ca;
 
 import java.util.List;
 import javax.ejb.Local;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadAreasEstudio;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadDisciplinas;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadIntegrantes;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadLineas;
+import mx.edu.utxj.pye.sgi.entity.pye2.CuerpoAreasAcademicas;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerposAcademicosRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.siip.dto.ca.DTOCuerpAcadIntegrantes;
+import mx.edu.utxj.pye.siip.dto.ca.DTOCuerpoAreasAcademicas;
 import mx.edu.utxj.pye.siip.dto.ca.DTOCuerposAcademicosR;
 
 /**
@@ -128,4 +131,33 @@ public interface EjbCuerposAcademicos {
      * @throws Throwable 
      */
     public List<Integer> buscaRegistrosCuerpAcadLineasByCuerpAcad(CuerposAcademicosRegistro cuerposAcademicosRegistro) throws Throwable;
+    
+    /**
+     * Devuelve una lista completa de DTOCuerpoAreasAcademicas para asignar si aplica o no el cuerpo académico en el área académica
+     * @return  Lista de DTO de CuerpoAreasAcademicas
+     * @throws Throwable 
+     */
+    public List<DTOCuerpoAreasAcademicas> getCuerpoAreasAcademicas() throws Throwable;
+    
+    /**
+     * Verifica que el Área Académica este ligada con el cuerpo académico o si existente dicha relación
+     * @param cuerpoAcademico Cuerpo Académico seleccionado
+     * @param areaUniversidad   Programa educativo consultado
+     * @return  Devuelve True si existe o False si no hay dicha vinculación
+     */
+    public Boolean verificaCuerpoAreaAcademica(String cuerpoAcademico, AreasUniversidad areaUniversidad);
+    
+    /**
+     * Guarda la asignación del área académica con el cuerpo académico
+     * @param cuerpoAreasAcademica  Entidad para guardar en base de datos
+     * @return 
+     */
+    public Boolean guardarProgramaBeneficiadoVinculacion(CuerpoAreasAcademicas cuerpoAreasAcademica);
+    
+    /**
+     * Guarda la asignación del área académica con el cuerpo académico
+     * @param cuerpoAreasAcademica  Entidad para guardar en base de datos  
+     * @return 
+     */
+    public Boolean eliminarProgramaBeneficiadoVinculacion(CuerpoAreasAcademicas cuerpoAreasAcademica);
 }

@@ -252,7 +252,7 @@ public class ServicioServiciosEnfermeriaCicloPeriodos implements EjbServiciosEnf
             }
             facadeEscolar.flush();
         });
-        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
@@ -287,11 +287,19 @@ public class ServicioServiciosEnfermeriaCicloPeriodos implements EjbServiciosEnf
         List<DTOServiciosEnfemeriaCicloPeriodos> listaDtoServEnf = new ArrayList<>();
         List<ServiciosEnfermeriaCicloPeriodos> serviciosEnfermeria = new ArrayList<>();
         try {
-            serviciosEnfermeria = facadeEscolar.getEntityManager().createQuery("SELECT secp FROM ServiciosEnfermeriaCicloPeriodos secp JOIN secp.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes AND r.area = :area", ServiciosEnfermeriaCicloPeriodos.class)
+            if(area == 6){
+                serviciosEnfermeria = facadeEscolar.getEntityManager().createQuery("SELECT secp FROM ServiciosEnfermeriaCicloPeriodos secp JOIN secp.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes", ServiciosEnfermeriaCicloPeriodos.class)
+                    .setParameter("anio", ejercicio)
+                    .setParameter("mes", mes)
+                    .getResultList();
+            }else{
+                serviciosEnfermeria = facadeEscolar.getEntityManager().createQuery("SELECT secp FROM ServiciosEnfermeriaCicloPeriodos secp JOIN secp.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes AND r.area = :area", ServiciosEnfermeriaCicloPeriodos.class)
                     .setParameter("anio", ejercicio)
                     .setParameter("mes", mes)
                     .setParameter("area", area)
                     .getResultList();
+            }
+            
             serviciosEnfermeria.forEach((senf) -> {
                 facadeEscolar.getEntityManager().refresh(senf);
                 listaDtoServEnf.add(new DTOServiciosEnfemeriaCicloPeriodos(

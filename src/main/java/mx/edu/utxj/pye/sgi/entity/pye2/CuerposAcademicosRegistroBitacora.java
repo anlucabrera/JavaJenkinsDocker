@@ -41,7 +41,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "CuerposAcademicosRegistroBitacora.findByFechaTermino", query = "SELECT c FROM CuerposAcademicosRegistroBitacora c WHERE c.fechaTermino = :fechaTermino")
     , @NamedQuery(name = "CuerposAcademicosRegistroBitacora.findByNombre", query = "SELECT c FROM CuerposAcademicosRegistroBitacora c WHERE c.nombre = :nombre")
     , @NamedQuery(name = "CuerposAcademicosRegistroBitacora.findByNivelProdep", query = "SELECT c FROM CuerposAcademicosRegistroBitacora c WHERE c.nivelProdep = :nivelProdep")
-    , @NamedQuery(name = "CuerposAcademicosRegistroBitacora.findByArea", query = "SELECT c FROM CuerposAcademicosRegistroBitacora c WHERE c.area = :area")
     , @NamedQuery(name = "CuerposAcademicosRegistroBitacora.findByEstatus", query = "SELECT c FROM CuerposAcademicosRegistroBitacora c WHERE c.estatus = :estatus")})
 public class CuerposAcademicosRegistroBitacora implements Serializable {
 
@@ -77,7 +76,7 @@ public class CuerposAcademicosRegistroBitacora implements Serializable {
     private Date fechaTermino;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 200)
+    @Size(min = 1, max = 500)
     @Column(name = "nombre")
     private String nombre;
     @Basic(optional = false)
@@ -85,10 +84,6 @@ public class CuerposAcademicosRegistroBitacora implements Serializable {
     @Size(min = 1, max = 18)
     @Column(name = "nivel_prodep")
     private String nivelProdep;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "area")
-    private short area;
     @Basic(optional = false)
     @NotNull
     @Column(name = "estatus")
@@ -107,7 +102,7 @@ public class CuerposAcademicosRegistroBitacora implements Serializable {
         this.bitacora = bitacora;
     }
 
-    public CuerposAcademicosRegistroBitacora(Integer bitacora, Date fechaCambio, int registro, String cuerpoAcademico, Date fechaInicio, Date fechaTermino, String nombre, String nivelProdep, short area, boolean estatus) {
+    public CuerposAcademicosRegistroBitacora(Integer bitacora, Date fechaCambio, int registro, String cuerpoAcademico, Date fechaInicio, Date fechaTermino, String nombre, String nivelProdep, boolean estatus) {
         this.bitacora = bitacora;
         this.fechaCambio = fechaCambio;
         this.registro = registro;
@@ -116,7 +111,6 @@ public class CuerposAcademicosRegistroBitacora implements Serializable {
         this.fechaTermino = fechaTermino;
         this.nombre = nombre;
         this.nivelProdep = nivelProdep;
-        this.area = area;
         this.estatus = estatus;
     }
 
@@ -182,14 +176,6 @@ public class CuerposAcademicosRegistroBitacora implements Serializable {
 
     public void setNivelProdep(String nivelProdep) {
         this.nivelProdep = nivelProdep;
-    }
-
-    public short getArea() {
-        return area;
-    }
-
-    public void setArea(short area) {
-        this.area = area;
     }
 
     public boolean getEstatus() {

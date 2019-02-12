@@ -33,7 +33,7 @@ import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
-import mx.edu.utxj.pye.sgi.entity.pye2.AsesoriasTutoriasCicloPeriodos;
+import mx.edu.utxj.pye.sgi.entity.pye2.AsesoriasTutoriasMensualPeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
@@ -77,7 +77,7 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
 
             List<DTOAsesoriasTutoriasCicloPeriodos> listaDtoAsesoriasTutoriasCicloPeriodos = new ArrayList<>();
             DTOAsesoriasTutoriasCicloPeriodos dtoAsesoriaTutoriaCicloPeriodo;
-            AsesoriasTutoriasCicloPeriodos asesoriaTutoriaCicloPeriodo;
+            AsesoriasTutoriasMensualPeriodosEscolares asesoriaTutoriaCicloPeriodo;
             AreasUniversidad areaUniversidad;
 
             File excelAsesoriaTutoria = new File(rutaArchivo);
@@ -92,9 +92,10 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
                         fila = (XSSFRow) (Row) primeraHoja.getRow(i);
                         if ((fila.getCell(1).getNumericCellValue() > 0)) {
                             dtoAsesoriaTutoriaCicloPeriodo = new DTOAsesoriasTutoriasCicloPeriodos();
-                            asesoriaTutoriaCicloPeriodo = new AsesoriasTutoriasCicloPeriodos();
+                            asesoriaTutoriaCicloPeriodo = new AsesoriasTutoriasMensualPeriodosEscolares();
                             areaUniversidad = new AreasUniversidad();
 
+//                            Periodo Escolar
                             if (fila.getCell(6).getCellTypeEnum() == CellType.FORMULA) {
                                 switch (fila.getCell(6).getCellTypeEnum()) {
                                     case FORMULA:
@@ -106,12 +107,27 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
                                 }
                             } else {
                                 validarCelda.add(false);
-                                datosInvalidos.add("Dato incorrecto: Periodo Escolar en la columna: " + (5 + 1) + " y fila: " + (i + 1));
+                                datosInvalidos.add("Dato incorrecto: Periodo Escolar en la columna: " + (3 + 1) + " y fila: " + (i + 1));
                             }
 
-                            if (fila.getCell(8).getCellTypeEnum() == CellType.FORMULA) {
+//                            Mes 
+                            if (fila.getCell(7).getCellTypeEnum() == CellType.STRING) {
+                                switch (fila.getCell(7).getCellTypeEnum()) {
+                                    case STRING:
+                                        asesoriaTutoriaCicloPeriodo.setMes(fila.getCell(7).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Mes en la columna: " + (7 + 1) + " y fila: " + (i + 1));
+                            }
+
+//                            Tipo de servicio
+                            if (fila.getCell(8).getCellTypeEnum() == CellType.STRING) {
                                 switch (fila.getCell(8).getCellTypeEnum()) {
-                                    case FORMULA:
+                                    case STRING:
                                         asesoriaTutoriaCicloPeriodo.setTipoActividad(fila.getCell(8).getStringCellValue());
                                         break;
                                     default:
@@ -119,9 +135,10 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
                                 }
                             } else {
                                 validarCelda.add(false);
-                                datosInvalidos.add("Dato incorrecto: Tipo de actividad en la columna: " + (8 + 1) + " y fila: " + (i + 1));
+                                datosInvalidos.add("Dato incorrecto: Tipo de servicio en la columna: " + (8 + 1) + " y fila: " + (i + 1));
                             }
 
+//                            Programa Educativo
                             if (fila.getCell(13).getCellTypeEnum() == CellType.FORMULA) {
                                 switch (fila.getCell(13).getCellTypeEnum()) {
                                     case FORMULA:
@@ -134,9 +151,10 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
                                 }
                             } else {
                                 validarCelda.add(false);
-                                datosInvalidos.add("Dato incorrecto: Programa educativo en la columna: " + (10 + 1) + " y fila: " + (i + 1));
+                                datosInvalidos.add("Dato incorrecto: Programa educativo en la columna: " + (9 + 1) + " y fila: " + (i + 1));
                             }
 
+//                            Cuatrimestre
                             if (fila.getCell(15).getCellTypeEnum() == CellType.FORMULA) {
                                 switch (fila.getCell(15).getCellTypeEnum()) {
                                     case FORMULA:
@@ -147,9 +165,10 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
                                 }
                             } else {
                                 validarCelda.add(false);
-                                datosInvalidos.add("Dato incorrecto: Cuatrimestre en la columna: " + (15 + 1) + " y fila: " + (i + 1));
+                                datosInvalidos.add("Dato incorrecto: Cuatrimestre en la columna: " + (14 + 1) + " y fila: " + (i + 1));
                             }
 
+//                            Grupo
                             if (fila.getCell(17).getCellTypeEnum() == CellType.FORMULA) {
                                 switch (fila.getCell(17).getCellTypeEnum()) {
                                     case FORMULA:
@@ -160,78 +179,71 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
                                 }
                             } else {
                                 validarCelda.add(false);
-                                datosInvalidos.add("Dato incorrecto: Grupo en la columna: " + (17 + 1) + " y fila: " + (i + 1));
+                                datosInvalidos.add("Dato incorrecto: Grupo en la columna: " + (16 + 1) + " y fila: " + (i + 1));
                             }
 
-                            if (fila.getCell(18).getCellTypeEnum() == CellType.STRING) {
-                                switch (fila.getCell(18).getCellTypeEnum()) {
-                                    case STRING:
-                                        asesoriaTutoriaCicloPeriodo.setAsunto(fila.getCell(18).getStringCellValue());
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            } else {
-                                validarCelda.add(false);
-                                datosInvalidos.add("Dato incorrecto: Asunto en la columna: " + (18 + 1) + " y fila: " + (i + 1));
-                            }
-
-                            if (fila.getCell(20).getCellTypeEnum() == CellType.FORMULA) {
-                                switch (fila.getCell(20).getCellTypeEnum()) {
+//                            Tipo de asesoría o tutoría
+                            if (fila.getCell(19).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(19).getCellTypeEnum()) {
                                     case FORMULA:
-                                        asesoriaTutoriaCicloPeriodo.setTipo(fila.getCell(20).getStringCellValue());
+                                        asesoriaTutoriaCicloPeriodo.setTipo(fila.getCell(19).getStringCellValue());
                                         break;
                                     default:
                                         break;
                                 }
                             } else {
                                 validarCelda.add(false);
-                                datosInvalidos.add("Dato incorrecto: Tipo en la columna: " + (20 + 1) + " y fila: " + (i + 1));
+                                datosInvalidos.add("Dato incorrecto: Tipo en la columna: " + (18 + 1) + " y fila: " + (i + 1));
                             }
 
+//                            Número de asesorías y tutorías
+                            if (fila.getCell(20).getCellTypeEnum() == CellType.NUMERIC) {
+                                switch (fila.getCell(20).getCellTypeEnum()) {
+                                    case NUMERIC:
+                                        asesoriaTutoriaCicloPeriodo.setNoTutoriasAsesorias((short) fila.getCell(20).getNumericCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Número de asesorías y tutorías en la columna: " + (20 + 1) + " y fila: " + (i + 1));
+                            }
+
+//                            Número de asistentes hombres
                             if (fila.getCell(21).getCellTypeEnum() == CellType.NUMERIC) {
                                 switch (fila.getCell(21).getCellTypeEnum()) {
                                     case NUMERIC:
-                                        asesoriaTutoriaCicloPeriodo.setNoTutoriasAsesorias((short) fila.getCell(21).getNumericCellValue());
+                                        asesoriaTutoriaCicloPeriodo.setAsistentesHombres((short) fila.getCell(21).getNumericCellValue());
                                         break;
                                     default:
                                         break;
                                 }
                             } else {
                                 validarCelda.add(false);
-                                datosInvalidos.add("Dato incorrecto: Numero de asesorías y tutorías en la columna: " + (21 + 1) + " y fila: " + (i + 1));
+                                datosInvalidos.add("Dato incorrecto: Número de Asistentes hombres en la columna: " + (21 + 1) + " y fila: " + (i + 1));
                             }
 
+//                            Número de asistentes mujeres
                             if (fila.getCell(22).getCellTypeEnum() == CellType.NUMERIC) {
                                 switch (fila.getCell(22).getCellTypeEnum()) {
                                     case NUMERIC:
-                                        asesoriaTutoriaCicloPeriodo.setAsistentesHombres((short) fila.getCell(22).getNumericCellValue());
+                                        asesoriaTutoriaCicloPeriodo.setAsistentesMujeres((short) fila.getCell(22).getNumericCellValue());
                                         break;
                                     default:
                                         break;
                                 }
                             } else {
                                 validarCelda.add(false);
-                                datosInvalidos.add("Dato incorrecto: Asistentes en la columna: " + (22 + 1) + " y fila: " + (i + 1));
-                            }
-
-                            if (fila.getCell(23).getCellTypeEnum() == CellType.NUMERIC) {
-                                switch (fila.getCell(23).getCellTypeEnum()) {
-                                    case NUMERIC:
-                                        asesoriaTutoriaCicloPeriodo.setAsistentesMujeres((short) fila.getCell(23).getNumericCellValue());
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            } else {
-                                validarCelda.add(false);
-                                datosInvalidos.add("Dato incorrecto: Asistentes en la columna: " + (23 + 1) + " y fila: " + (i + 1));
+                                datosInvalidos.add("Dato incorrecto: Número de Asistentes mujeres en la columna: " + (22 + 1) + " y fila: " + (i + 1));
                             }
 
                             dtoAsesoriaTutoriaCicloPeriodo.setAsesoriasTutoriasCicloPeriodos(asesoriaTutoriaCicloPeriodo);
                             dtoAsesoriaTutoriaCicloPeriodo.setAreasUniversidad(areaUniversidad);
 
-                            listaDtoAsesoriasTutoriasCicloPeriodos.add(dtoAsesoriaTutoriaCicloPeriodo);
+                            if(ejbModulos.getEventoRegistro().getMes().equals(asesoriaTutoriaCicloPeriodo.getMes())){
+                                listaDtoAsesoriasTutoriasCicloPeriodos.add(dtoAsesoriaTutoriaCicloPeriodo);
+                            }
                         }
                     }
                     workBookAsesoriaTutoria.close();
@@ -272,43 +284,48 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
         List<String> listaCondicional = new ArrayList<>();
         lista.forEach((asesTut) -> {
             if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActivo(), asesTut.getAsesoriasTutoriasCicloPeriodos().getPeriodoEscolar())) {
-                facadeEscolar.setEntityClass(AsesoriasTutoriasCicloPeriodos.class);
-                AsesoriasTutoriasCicloPeriodos asesTutEncontrada = getRegistroAsesoriaTutoriaCicloPeriodo(asesTut.getAsesoriasTutoriasCicloPeriodos());
-                Boolean registroAlmacenado = false;
-                if (asesTutEncontrada != null) {
-                    listaCondicional.add(asesTutEncontrada.getAsunto() + " " + asesTutEncontrada.getCuatrimestre() + " " + asesTutEncontrada.getGrupo());
-                    registroAlmacenado = true;
-                }
-                if (registroAlmacenado) {
-                    if (ejbModulos.getEventoRegistro().equals(asesTutEncontrada.getRegistros().getEventoRegistro())) {
-                        asesTut.getAsesoriasTutoriasCicloPeriodos().setRegistro(asesTutEncontrada.getRegistro());
-                        asesTut.getAsesoriasTutoriasCicloPeriodos().setTutor(asesTutEncontrada.getTutor());
-                        facadeEscolar.edit(asesTut.getAsesoriasTutoriasCicloPeriodos());
-                    } else {
-                        listaCondicional.remove(asesTutEncontrada.getAsunto() + " " + asesTutEncontrada.getCuatrimestre() + " " + asesTutEncontrada.getGrupo());
-                    }
-                } else {
-                    Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-                    asesTut.getAsesoriasTutoriasCicloPeriodos().setRegistro(registro.getRegistro());
+                if (ejbModulos.getEventoRegistro().getMes().equals(asesTut.getAsesoriasTutoriasCicloPeriodos().getMes())) {
+                    facadeEscolar.setEntityClass(AsesoriasTutoriasMensualPeriodosEscolares.class);
                     asesTut.getAsesoriasTutoriasCicloPeriodos().setTutor(claveTutor);
-                    facadeEscolar.create(asesTut.getAsesoriasTutoriasCicloPeriodos());
+                    AsesoriasTutoriasMensualPeriodosEscolares asesTutEncontrada = getRegistroAsesoriaTutoriaCicloPeriodo(asesTut.getAsesoriasTutoriasCicloPeriodos());
+                    Boolean registroAlmacenado = false;
+                    if (asesTutEncontrada != null) {
+                        listaCondicional.add(asesTutEncontrada.getProgramaEducativo() + " " + asesTutEncontrada.getCuatrimestre() + " " + asesTutEncontrada.getGrupo());
+                        registroAlmacenado = true;
+                    }
+                    if (registroAlmacenado) {
+                        if (ejbModulos.getEventoRegistro().equals(asesTutEncontrada.getRegistros().getEventoRegistro())) {
+                            asesTut.getAsesoriasTutoriasCicloPeriodos().setRegistro(asesTutEncontrada.getRegistro());
+                            asesTut.getAsesoriasTutoriasCicloPeriodos().setTutor(asesTutEncontrada.getTutor());
+                            facadeEscolar.edit(asesTut.getAsesoriasTutoriasCicloPeriodos());
+                        } else {
+                            listaCondicional.remove(asesTutEncontrada.getProgramaEducativo() + " " + asesTutEncontrada.getCuatrimestre() + " " + asesTutEncontrada.getGrupo());
+                        }
+                    } else {
+                        Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
+                        asesTut.getAsesoriasTutoriasCicloPeriodos().setRegistro(registro.getRegistro());
+                        asesTut.getAsesoriasTutoriasCicloPeriodos().setTutor(claveTutor);
+                        facadeEscolar.create(asesTut.getAsesoriasTutoriasCicloPeriodos());
+                    }
+                    facadeEscolar.flush();
                 }
-                facadeEscolar.flush();
             }
         });
-        Messages.addGlobalInfo("<b>Se actualizarón los registros con los siguientes datos: </b> " + listaCondicional.toString());
+        Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
 
     @Override
-    public AsesoriasTutoriasCicloPeriodos getRegistroAsesoriaTutoriaCicloPeriodo(AsesoriasTutoriasCicloPeriodos asesoriaTutoriaCicloPeriodo) {
-        AsesoriasTutoriasCicloPeriodos asesTutCPEnviada = new AsesoriasTutoriasCicloPeriodos();
-        TypedQuery<AsesoriasTutoriasCicloPeriodos> query = facadeEscolar.getEntityManager().createQuery("SELECT a FROM AsesoriasTutoriasCicloPeriodos AS a WHERE a.periodoEscolar = :periodoEscolar AND a.programaEducativo = :programaEducativo AND a.cuatrimestre = :cuatrimestre AND a.grupo = :grupo AND a.tipoActividad = :tipoActividad AND a.tipo = :tipo", AsesoriasTutoriasCicloPeriodos.class);
+    public AsesoriasTutoriasMensualPeriodosEscolares getRegistroAsesoriaTutoriaCicloPeriodo(AsesoriasTutoriasMensualPeriodosEscolares asesoriaTutoriaCicloPeriodo) {
+        AsesoriasTutoriasMensualPeriodosEscolares asesTutCPEnviada = new AsesoriasTutoriasMensualPeriodosEscolares();
+        TypedQuery<AsesoriasTutoriasMensualPeriodosEscolares> query = facadeEscolar.getEntityManager().createQuery("SELECT a FROM AsesoriasTutoriasMensualPeriodosEscolares AS a WHERE a.periodoEscolar = :periodoEscolar AND a.mes = :mes AND a.programaEducativo = :programaEducativo AND a.cuatrimestre = :cuatrimestre AND a.grupo = :grupo AND a.tipoActividad = :tipoActividad AND a.tipo = :tipo AND a.tutor = :tutor", AsesoriasTutoriasMensualPeriodosEscolares.class);
         query.setParameter("periodoEscolar", asesoriaTutoriaCicloPeriodo.getPeriodoEscolar());
+        query.setParameter("mes", asesoriaTutoriaCicloPeriodo.getMes());
         query.setParameter("programaEducativo", asesoriaTutoriaCicloPeriodo.getProgramaEducativo());
         query.setParameter("cuatrimestre", asesoriaTutoriaCicloPeriodo.getCuatrimestre());
         query.setParameter("grupo", asesoriaTutoriaCicloPeriodo.getGrupo());
         query.setParameter("tipoActividad", asesoriaTutoriaCicloPeriodo.getTipoActividad());
         query.setParameter("tipo", asesoriaTutoriaCicloPeriodo.getTipo());
+        query.setParameter("tutor", asesoriaTutoriaCicloPeriodo.getTutor());
         try {
             asesTutCPEnviada = query.getSingleResult();
             asesTutCPEnviada.setRegistros(ejbModulos.buscaRegistroPorClave(asesTutCPEnviada.getRegistro()));
@@ -321,7 +338,7 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
 
     @Override
     public List<PeriodosEscolares> getPeriodosConregistro(RegistrosTipo registrosTipo, EventosRegistros eventoRegistro) {
-        List<Integer> claves = facadeEscolar.getEntityManager().createQuery("SELECT atp.periodoEscolar FROM AsesoriasTutoriasCicloPeriodos atp INNER JOIN atp.registros r WHERE r.tipo.registroTipo=:tipo", Integer.class)
+        List<Integer> claves = facadeEscolar.getEntityManager().createQuery("SELECT atp.periodoEscolar FROM AsesoriasTutoriasMensualPeriodosEscolares atp INNER JOIN atp.registros r WHERE r.tipo.registroTipo=:tipo", Integer.class)
                 .setParameter("tipo", registrosTipo.getRegistroTipo())
                 .getResultList();
         
@@ -372,16 +389,16 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
         }
         
         List<DTOAsesoriasTutoriasCicloPeriodos> l = new ArrayList<>();
-        List<AsesoriasTutoriasCicloPeriodos> entities = new ArrayList<>();
+        List<AsesoriasTutoriasMensualPeriodosEscolares> entities = new ArrayList<>();
         if(actividad == 2){ 
-            entities = facadeEscolar.getEntityManager().createQuery("SELECT atc FROM AsesoriasTutoriasCicloPeriodos atc INNER JOIN atc.registros r INNER JOIN r.tipo t INNER JOIN r.eventoRegistro er WHERE er.eventoRegistro=:evento AND atc.programaEducativo in :areas AND atc.periodoEscolar=:periodo AND t.registroTipo=:tipo ORDER BY atc.programaEducativo, atc.cuatrimestre, atc.grupo, atc.tipoActividad, atc.tipo", AsesoriasTutoriasCicloPeriodos.class)
+            entities = facadeEscolar.getEntityManager().createQuery("SELECT atc FROM AsesoriasTutoriasMensualPeriodosEscolares atc INNER JOIN atc.registros r INNER JOIN r.tipo t INNER JOIN r.eventoRegistro er WHERE er.eventoRegistro=:evento AND atc.programaEducativo in :areas AND atc.periodoEscolar=:periodo AND t.registroTipo=:tipo ORDER BY atc.programaEducativo, atc.cuatrimestre, atc.grupo, atc.tipoActividad, atc.tipo", AsesoriasTutoriasMensualPeriodosEscolares.class)
                 .setParameter("areas", areas)
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
                 .setParameter("tipo", registrosTipo.getRegistroTipo())
                 .getResultList();
         }else{
-            entities = facadeEscolar.getEntityManager().createQuery("SELECT atc FROM AsesoriasTutoriasCicloPeriodos atc INNER JOIN atc.registros r INNER JOIN r.tipo t INNER JOIN r.eventoRegistro er WHERE er.eventoRegistro=:evento AND atc.programaEducativo in :areas AND atc.periodoEscolar=:periodo AND t.registroTipo=:tipo AND atc.tutor = :claveTutor ORDER BY atc.programaEducativo, atc.cuatrimestre, atc.grupo, atc.tipoActividad, atc.tipo", AsesoriasTutoriasCicloPeriodos.class)
+            entities = facadeEscolar.getEntityManager().createQuery("SELECT atc FROM AsesoriasTutoriasMensualPeriodosEscolares atc INNER JOIN atc.registros r INNER JOIN r.tipo t INNER JOIN r.eventoRegistro er WHERE er.eventoRegistro=:evento AND atc.programaEducativo in :areas AND atc.periodoEscolar=:periodo AND t.registroTipo=:tipo AND atc.tutor = :claveTutor ORDER BY atc.programaEducativo, atc.cuatrimestre, atc.grupo, atc.tipoActividad, atc.tipo", AsesoriasTutoriasMensualPeriodosEscolares.class)
                 .setParameter("areas", areas)
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
@@ -461,7 +478,7 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
         facadeEscolar.flush();
 
 //        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.eliminarRegistro(2)");
-        return facadeEscolar.getEntityManager().find(AsesoriasTutoriasCicloPeriodos.class, clave) == null;
+        return facadeEscolar.getEntityManager().find(AsesoriasTutoriasMensualPeriodosEscolares.class, clave) == null;
     }
 
     @Override
