@@ -176,6 +176,7 @@
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>sii2</finalName>
     </build>
     <profiles>
         <profile>

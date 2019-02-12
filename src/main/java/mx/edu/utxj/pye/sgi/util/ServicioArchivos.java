@@ -23,6 +23,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.Part;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.exception.EvidenciaRegistroExtensionNoValidaException;
+import javax.servlet.http.Part;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
@@ -48,7 +51,7 @@ public class ServicioArchivos implements Serializable{
     public static final String[] EJES = {/*0*/"estadistica_basica", 
                                          /*1*/"calidad_academica", 
                                          /*2*/"vinculacion", 
-                                         /*3*/"gestion_institucional", 
+                                         /*3*/"gestion_institucional",
                                          /*4*/"talento_humano"};
     
     static{
@@ -135,15 +138,15 @@ public class ServicioArchivos implements Serializable{
     
     /**
      * Genera una ruta relativa por año, para subida de datos atraves de técnica servlet y alojar en una carpeta denominada archivos ubicada sobre la carpeta raíz     * 
-     * @param categoria Categoría de la subida
-     * @return 
+     * @param categoria Categoría de la subida, para subida de datos atraves de técnica servlet y alojar en una carpeta denominada archivos ubicada sobre la carpeta raíz
+     * @return Ruta resultante
      */
     public static String genRutaRelativa(String categoria){
         return categoria.concat(File.separator).concat(Year.now().toString()).concat(File.separator);
     }
     
     /**
-     * Genera una ruta relativa por area, mes y nombre de registro, 
+     * Genera una ruta relativa por area, mes y nombre de registro,
      * @param ejercicioFiscal Ejercicio fiscal del evento del registro
      * @param area Siglas del area que registra en minúscula
      * @param mes Nombre del mes completo en minúscula en el que se registra
@@ -157,7 +160,7 @@ public class ServicioArchivos implements Serializable{
                 .concat(mes.toLowerCase().trim()).concat(File.separator)
                 .concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(registro.toLowerCase()))).concat(File.separator);
     }
-    
+
     /**
      * Genera una copia del archivo, si la ubicación de la copia ya existe, lo sobre escribe.
      * @param original Ruta del archivo original
@@ -178,8 +181,8 @@ public class ServicioArchivos implements Serializable{
             
         return null;
     }
-    
-    public static String almacenarEvidenciaRegistroGeneral(AreasUniversidad area, Registros registro, Part archivo) throws IOException, EvidenciaRegistroExtensionNoValidaException{ 
+
+    public static String almacenarEvidenciaRegistroGeneral(AreasUniversidad area, Registros registro, Part archivo) throws IOException, EvidenciaRegistroExtensionNoValidaException{
         if(!extensiones.contains(FilenameUtils.getExtension(archivo.getSubmittedFileName()).toLowerCase())){
             throw new EvidenciaRegistroExtensionNoValidaException(archivo.getSubmittedFileName());
         }
@@ -188,11 +191,11 @@ public class ServicioArchivos implements Serializable{
                 area.getSiglas(),
                 registro.getEventoRegistro().getMes(),
                 registro.getTipo().getNombre());
-        
+
         String nombreArchivo = sdf.format(new Date()).concat("_").concat(archivo.getSubmittedFileName());
         String rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(StringUtils.prettyURL(nombreArchivo.toLowerCase()))));
         String rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-        
+
         Integer cont = 1;
         while (Files.exists(Paths.get(rutaAbsoluta))) {
             nombreArchivo = sdf.format(new Date()).concat("_").concat(cont.toString()).concat("_").concat(archivo.getSubmittedFileName());
@@ -204,7 +207,7 @@ public class ServicioArchivos implements Serializable{
         archivo.write(rutaArchivo);
         return rutaAbsoluta;
     }
- 
+
     /**
      * Almacena la evidencia de los Registros de SII
      * @param area
@@ -214,23 +217,23 @@ public class ServicioArchivos implements Serializable{
      * @param tipo
      * @return
      * @throws IOException
-     * @throws EvidenciaRegistroExtensionNoValidaException 
+     * @throws EvidenciaRegistroExtensionNoValidaException
      */
-    public static String almacenarEvidenciaRegistroSII(AreasUniversidad area, Integer registro, Part archivo, EventosRegistros eventosRegistros, RegistrosTipo tipo) throws IOException, EvidenciaRegistroExtensionNoValidaException{        
+    public static String almacenarEvidenciaRegistroSII(AreasUniversidad area, Integer registro, Part archivo, EventosRegistros eventosRegistros, RegistrosTipo tipo) throws IOException, EvidenciaRegistroExtensionNoValidaException{
         if(!extensiones.contains(FilenameUtils.getExtension(archivo.getSubmittedFileName()).toLowerCase())){
             throw new EvidenciaRegistroExtensionNoValidaException(archivo.getSubmittedFileName());
         }
-        
+
         String ruta = ServicioArchivos.genRutaRelativa(
                 String.valueOf(eventosRegistros.getEjercicioFiscal().getAnio()), //ejercicio fiscal
                 area.getSiglas(),
                 eventosRegistros.getMes(),
                 tipo.getNombre());
-        
+
         String nombreArchivo = sdf.format(new Date()).concat("_").concat(archivo.getSubmittedFileName());
         String rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(StringUtils.prettyURL(nombreArchivo.toLowerCase()))));
         String rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-        
+
         //si el archivo se agrega un contador extra
         Integer cont = 1;
         while(Files.exists(Paths.get(rutaAbsoluta))){
@@ -240,13 +243,13 @@ public class ServicioArchivos implements Serializable{
             rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
             cont++;
         }
-        
+
         ServicioArchivos.addCarpetaRelativa(ServicioArchivos.carpetaRaiz.concat(ruta));
-                
+
         archivo.write(rutaArchivo);
         return rutaAbsoluta;
     }
-    
+
     public static void escribeLog(List<String> datosInvalidos) {
         FileWriter fichero = null;
         try {

@@ -9,6 +9,12 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.*;
+
+import javax.annotation.PostConstruct;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Representa el resultado de un proceso EJB especificando:<br/>

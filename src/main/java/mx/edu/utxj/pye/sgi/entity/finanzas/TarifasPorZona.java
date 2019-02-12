@@ -241,7 +241,19 @@ public class TarifasPorZona implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.finanzas.TarifasPorZona[ tarifa=" + tarifa + " ]";
+        return "TarifasPorZona{" +
+                "tarifa=" + tarifa +
+                ", zona1SinPernoctar=" + zona1SinPernoctar +
+                ", zona2SinPernoctar=" + zona2SinPernoctar +
+                ", zona3SinPernoctar=" + zona3SinPernoctar +
+                ", zona4SinPernoctar=" + zona4SinPernoctar +
+                ", localSinPernoctar=" + localSinPernoctar +
+                ", zona1Pernoctando=" + zona1Pernoctando +
+                ", zona2Pernoctando=" + zona2Pernoctando +
+                ", zona3Pernoctando=" + zona3Pernoctando +
+                ", zona4Pernoctando=" + zona4Pernoctando +
+                ", localPernoctando=" + localPernoctando +
+                ", nivel=" + nivel +
+                '}';
     }
-    
 }

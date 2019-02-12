@@ -76,7 +76,7 @@ public class ComisionOficios implements Serializable {
     private int comisionado;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 300)
+    @Size(min = 1, max = 1000)
     @Column(name = "actividades")
     private String actividades;
     @Basic(optional = false)
@@ -107,7 +107,6 @@ public class ComisionOficios implements Serializable {
     @Column(name = "fecha_generacion")
     @Temporal(TemporalType.DATE)
     private Date fechaGeneracion;
-    @Basic(optional = false)
     @Column(name = "visto_bueno")
     private Integer vistoBueno;
     @Basic(optional = false)
@@ -120,17 +119,17 @@ public class ComisionOficios implements Serializable {
     private int generador;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 27)
+    @Size(min = 1, max = 41)
     @Column(name = "estatus")
     private String estatus;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 0, max = 500)
+    @Size(min = 1, max = 500)
     @Column(name = "observaciones")
     private String observaciones;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 0, max = 1000)
+    @Size(min = 1, max = 1000)
     @Column(name = "ruta")
     private String ruta;
     @Basic(optional = false)
@@ -162,7 +161,7 @@ public class ComisionOficios implements Serializable {
         this.tramite = tramite;
     }
 
-    public ComisionOficios(Integer tramite, String oficio, short area, int comisionado, String actividades, String dependencia, int estado, int municipio, Date fechaComisionInicio, Date fechaComisionFin, Date fechaGeneracion, int vistoBueno, int superior, Integer generador, String estatus, String observaciones, String ruta, boolean sabadosSolicitados, boolean sabadosAutorizados, boolean domingosSolicitados, boolean domingosAutorizados) {
+    public ComisionOficios(Integer tramite, String oficio, short area, int comisionado, String actividades, String dependencia, int estado, int municipio, Date fechaComisionInicio, Date fechaComisionFin, Date fechaGeneracion, int superior, int generador, String estatus, String observaciones, String ruta, boolean sabadosSolicitados, boolean sabadosAutorizados, boolean domingosSolicitados, boolean domingosAutorizados) {
         this.tramite = tramite;
         this.oficio = oficio;
         this.area = area;
@@ -174,7 +173,6 @@ public class ComisionOficios implements Serializable {
         this.fechaComisionInicio = fechaComisionInicio;
         this.fechaComisionFin = fechaComisionFin;
         this.fechaGeneracion = fechaGeneracion;
-        this.vistoBueno = vistoBueno;
         this.superior = superior;
         this.generador = generador;
         this.estatus = estatus;

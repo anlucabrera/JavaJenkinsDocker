@@ -1,6 +1,9 @@
 package mx.edu.utxj.pye.sgi.ejb.finanzas;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import com.google.zxing.NotFoundException;
+
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.ParseException;
@@ -8,10 +11,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,18 +20,24 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.xml.parsers.ParserConfigurationException;
+
+import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.finanzas.TramitesDto;
+import mx.edu.utxj.pye.sgi.dto.finanzas.TramitesRolSupervisor;
+import mx.edu.utxj.pye.sgi.ejb.EjbFileWritterBean;
+import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.entity.finanzas.ComisionOficios;
-import mx.edu.utxj.pye.sgi.entity.finanzas.Facturas;
-import mx.edu.utxj.pye.sgi.entity.finanzas.Tramites;
-import mx.edu.utxj.pye.sgi.enums.TramiteEstatus;
+import mx.edu.utxj.pye.sgi.entity.finanzas.*;
+import mx.edu.utxj.pye.sgi.enums.*;
+import mx.edu.utxj.pye.sgi.enums.converter.ComisionOficioEstatusConverter;
+import mx.edu.utxj.pye.sgi.enums.converter.GastoTipoConverter;
+import mx.edu.utxj.pye.sgi.enums.converter.TramiteTipoConverter;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import org.xml.sax.SAXException;
 
 import static java.time.temporal.ChronoUnit.DAYS;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -39,29 +45,23 @@ import java.util.stream.Stream;
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
+import javax.persistence.TypedQuery;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.Part;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.dto.Comision;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Actividades;
-import mx.edu.utxj.pye.sgi.entity.finanzas.AlineacionTramites;
-import mx.edu.utxj.pye.sgi.entity.finanzas.ComisionAvisos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
-import mx.edu.utxj.pye.sgi.entity.pye2.Localidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.MunicipioPK;
-import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAreas;
 import mx.edu.utxj.pye.sgi.entity.pye2.UsuariosRegistros;
-import mx.edu.utxj.pye.sgi.enums.ComisionOficioEstatus;
-import mx.edu.utxj.pye.sgi.enums.GastoTipo;
-import mx.edu.utxj.pye.sgi.enums.TramiteTipo;
 import mx.edu.utxj.pye.sgi.funcional.Validador;
 import mx.edu.utxj.pye.sgi.funcional.ValidadorFactura;
 import mx.edu.utxj.pye.sgi.funcional.ValidadorFacturaPDF;
@@ -82,18 +82,40 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     @EJB Facade f;
     @EJB EjbPropiedades ep;
     @EJB EjbDocumentosInternos ejbDocumentosInternos;
+    @EJB EjbFileWritterBean ejbFileWritter;
     @Inject Caster caster;
+    @Inject LogonMB logonMB;
     @Resource ManagedExecutorService exe;
+    @EJB EjbPersonalBean ejbPersonalBean;
 
     @Override
-    public List<Tramites> getTramitesAcargo(Personal personal) {
+    public List<TramitesDto> getTramitesAcargo(Personal personal) {
         return f.getEntityManager().createQuery("SELECT t FROM Tramites t LEFT JOIN t.comisionOficios oc where t.clave=:clave OR oc.comisionado = :clave ORDER BY oc.oficio DESC", Tramites.class)
                 .setParameter("clave", personal.getClave())
-                .getResultList();
+                .getResultStream()
+                .map(tramites -> packTramite(tramites))
+                .collect(Collectors.toList());
     }
+    
+    /*@Override
+    public List<TramitesDto> getTramitesAcargoDto(Personal personal) {
+//        System.err.println("La persona de quien se obtiene el listado es : " + personal);
+        List<TramitesDto> ldto;
+        TypedQuery<Tramites> qt = f.getEntityManager().createQuery("SELECT t FROM Tramites t LEFT JOIN t.comisionOficios oc where t.clave=:clave OR oc.comisionado = :clave ORDER BY oc.oficio DESC", Tramites.class);
+        qt.setParameter("clave", personal.getClave());
+        List<Tramites> lt = qt.getResultList();
+        if (lt.isEmpty() || lt == null) {
+//            System.err.println("no encuentra tramites regresa null");
+            return null;
+        } else {
+            ldto = lt.stream().map(tramites -> caster.tramiteToListaTramitesDto(tramites)).collect(Collectors.toList());
+        }
+        return ldto;
+    }*/
 
     @Override
-    public List<Tramites> getTramitesArea(Short area) {
+    public List<TramitesDto> getTramitesAreaDto(Short area) {
+        List<TramitesDto> ldto;
         List<Integer> claves = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE p.areaOperativa=:area", Personal.class)
                 .setParameter("area", area)
                 .getResultList()
@@ -101,12 +123,36 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
                 .map(p -> p.getClave())
                 .collect(Collectors.toList());
 
-        return f.getEntityManager().createQuery("SELECT t FROM Tramites t LEFT JOIN t.comisionOficios oc where t.clave IN :claves OR oc.comisionado in :claves ORDER BY oc.oficio DESC", Tramites.class)
-                .setParameter("claves", claves)
-                .getResultList();
+        TypedQuery<Tramites> qt = f.getEntityManager().createQuery("SELECT t FROM Tramites t LEFT JOIN t.comisionOficios oc where t.clave IN :claves OR oc.comisionado in :claves ORDER BY oc.oficio DESC", Tramites.class);
+        qt.setParameter("claves", claves);
+        List<Tramites> lt = qt.getResultList();
+        if (lt.isEmpty() || lt == null) {
+            return null;
+        } else {
+            ldto = lt.stream().map(tramites -> caster.tramiteToListaTramitesDto(tramites)).collect(Collectors.toList());
+        }
+        return ldto;
     }
 
+    @Override
+    public List<TramitesDto> getTramitesArea(Short area) {
+        List<Integer> claves = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE p.areaOperativa=:area", Personal.class)
+                .setParameter("area", area)
+                .getResultStream()
+                .map(p -> p.getClave())
+                .collect(Collectors.toList());
 
+        return f.getEntityManager().createQuery("SELECT t FROM Tramites t LEFT JOIN t.comisionOficios oc where t.clave IN :claves OR oc.comisionado in :claves ORDER BY oc.oficio DESC", Tramites.class)
+                .setParameter("claves", claves)
+                .getResultStream()
+                .map(tramites -> {
+                    PersonalActivo seguidor = ejbPersonalBean.pack(f.getEntityManager().find(Personal.class, tramites.getClave()));
+                    PersonalActivo comisionado = ejbPersonalBean.pack(f.getEntityManager().find(Personal.class, tramites.getComisionOficios().getComisionado()));
+                    return new TramitesDto(seguidor, comisionado, tramites);
+                })
+                .sorted(Comparator.comparing(t -> t.getTramite().getComisionOficios().getOficio(), Comparator.reverseOrder()))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public Comision inicializarComision(Personal generador) {
@@ -131,12 +177,18 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
         
         comision.setAlineacionArea(f.getEntityManager().find(AreasUniversidad.class, (short)generador.getAreaOperativa()));
         comision.setAreas(getAreasConPOA(Short.valueOf(caster.getEjercicioFiscal())));
+        comision.setAreaPOA(getAreaConPOA(generador.getAreaOperativa()));
         comision.setEjes(getEjes(Short.valueOf(caster.getEjercicioFiscal()), comision.getAreaPOA()));
         comision.setEstados(getEstados());
         comision.setComisionado(generador);
         comision.setPosiblesComisionados(getPosiblesComisionados((short)generador.getAreaOperativa(), (short)comision.getComisionado().getAreaOperativa()));
         comision.getTramite().getComisionOficios().setGenerador(generador.getClave());
         comision.getTramite().getComisionOficios().setOficio("");
+        /*System.out.println("comision = " + comision.getTramite());
+        System.out.println("oficio = " + comision.getTramite().getComisionOficios());
+        System.out.println("superior = " + comision.getTramite().getComisionOficios().getSuperior());
+        System.out.println("generador = " + generador);
+        System.out.println("getSuperior() = " + getSuperior(generador));*/
         comision.getTramite().getComisionOficios().setSuperior(getSuperior(generador).getClave());
         comision.getTramite().getComisionOficios().setVistoBueno(null);
         comision.getTramite().setClave(generador.getClave()); //clave de la persona que da el seguimiento, puede o no ser la misma que el comisionado
@@ -153,6 +205,51 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
         return comision;
     }
 
+    @Override
+    public Comision inicializarComision(Personal logueado, Integer tramiteid) {
+        if(tramiteid == null) return null;
+
+        Tramites tramite = f.getEntityManager().find(Tramites.class, tramiteid);
+
+        if(tramite != null){
+            PersonalActivo comisionadoA = ejbPersonalBean.pack(tramite.getComisionOficios().getComisionado());
+            AreasUniversidad areaPOA = comisionadoA.getAreaPOA();
+            AreasUniversidad alineacionArea = f.getEntityManager().find(AreasUniversidad.class, tramite.getAlineacionTramites().getArea());
+            EjesRegistro alineacionEje = f.getEntityManager().find(EjesRegistro.class, tramite.getAlineacionTramites().getEje());
+            Estrategias alineacionEstrategia = f.getEntityManager().find(Estrategias.class, tramite.getAlineacionTramites().getEstrategia());
+            LineasAccion alineacionLinea = f.getEntityManager().find(LineasAccion.class, tramite.getAlineacionTramites().getLineaAccion());
+            ActividadesPoa alineacionActividad = f.getEntityManager().find(ActividadesPoa.class, tramite.getAlineacionTramites().getActividad());
+            Estado estado = f.getEntityManager().find(Estado.class, tramite.getComisionOficios().getEstado());
+            Municipio municipio = f.getEntityManager().find(Municipio.class, new MunicipioPK(tramite.getComisionOficios().getEstado(), tramite.getComisionOficios().getMunicipio()));
+            Personal comisionado = comisionadoA.getPersonal();
+            Date inicio = tramite.getComisionOficios().getFechaComisionInicio();
+            Date fin = tramite.getComisionOficios().getFechaComisionFin();
+            Short pernoctando = tramite.getComisionOficios().getComisionAvisos().getPernoctando();
+            Short sinPernoctar = tramite.getComisionOficios().getComisionAvisos().getSinPernoctar();
+            GastoTipo gastoTipo = GastoTipoConverter.of(tramite.getGastoTipo());
+            TramiteTipo tipo = TramiteTipoConverter.of(tramite.getTipo());
+            List<ActividadesPoa> actividades = getActividadesPorLineaAccion(alineacionLinea, areaPOA);
+            List<AreasUniversidad> areas = tramite.getAlineacionTramites()!=null?getAreasConPOA(Short.valueOf(caster.getEjercicioFiscal())):Collections.EMPTY_LIST;
+            List<EjesRegistro> ejes = getEjes(Short.valueOf(caster.getEjercicioFiscal()), areaPOA);
+            List<Estrategias> estrategias = getEstrategiasPorEje(alineacionEje, areaPOA);
+            List<LineasAccion> lineasAccion = getLineasAccionPorEstrategia(alineacionEstrategia, areaPOA);
+            List<Estado> estados = getEstados();
+            List<Municipio> municipios = getMunicipiosPorEstado(estado);
+            List<Short> clavesAreasSubordinadas = getAreasSubordinadasSinPOA(comisionadoA.getAreaPOA())
+                    .stream()
+                    .map(a -> a.getArea())
+                    .collect(Collectors.toList());//claves de areas subordinas que no tienes poa
+            List<Personal> posiblesComisionados = getPosiblesComisionados(logueado.getAreaOperativa(), alineacionArea.getArea());
+
+            Comision comision = new Comision(tramite, areaPOA, alineacionArea, alineacionEje, alineacionEstrategia, alineacionLinea, alineacionActividad,
+                    estado, municipio, comisionado, inicio, fin, pernoctando, sinPernoctar, gastoTipo, tipo,
+                    actividades, areas, ejes, estrategias, lineasAccion, estados, municipios,
+                    clavesAreasSubordinadas, posiblesComisionados);
+
+            return comision;
+        }
+        return null;
+    }
 
     @Override
     public void guardarTramite(Tramites tramite, Double distancia) {
@@ -206,6 +303,8 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
                 tramite.setAlineacionTramites(null);
                 tramite.setComisionOficios(null);
                 oficio.setComisionAvisos(null);
+                oficio.setObservaciones("Ninguna");
+                oficio.setRuta(ValorVacio.PENDIENTE.getLabel());
 
                 f.create(tramite);
                 f.refresh(tramite);
@@ -230,6 +329,20 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
             f.edit(tramite);
         }
     }
+
+    @Override
+    public ResultadoEJB<Boolean> editarTramite(Tramites tramite) {
+        try {
+            f.edit(tramite.getComisionOficios().getComisionAvisos());
+            f.edit(tramite.getComisionOficios());
+            f.edit(tramite.getAlineacionTramites());
+            f.edit(tramite);
+            return ResultadoEJB.crearCorrecto(Boolean.TRUE, "El trámite se editó correctamente.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Ocurrió un error al intentar editar el trámite.", e, Boolean.class);
+        }
+    }
+
     private static final Logger LOG = Logger.getLogger(ServicioFiscalizacion.class.getName());
 
     @Override
@@ -276,7 +389,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 
     @Override
     public Tramites buscarPorOficio(String oficio) {
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion.buscarPorAnioFolio() oficio: " + oficio);
+//        System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion.buscarPorAnioFolio() oficio: " + oficio);
         if(oficio.trim().isEmpty())
             return null;
         
@@ -289,11 +402,6 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
         }
     }
 
-    public static void main(String[] args) {
-        String estado = "Solicitado";
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion.main() solicitado: " + (estado.equals(TramiteEstatus.SOLICITADO.getLabel())));
-    }
-
     @Override
     public List<AreasUniversidad> getAreasConPOA(Short ejercicio) {
         List<Short> clavesAreas = f.getEntityManager().createQuery("SELECT ap FROM ActividadesPoa ap INNER JOIN ap.cuadroMandoInt cm WHERE cm.ejercicioFiscal.anio=:ejercicio", ActividadesPoa.class)
@@ -303,21 +411,20 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());
+//        System.out.println("clavesAreas = " + clavesAreas);
 
         return  f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au INNER JOIN FETCH au.categoria WHERE au.area in :claves order by au.categoria.descripcion, au.nombre", AreasUniversidad.class)
                 .setParameter("claves", clavesAreas)
                 .getResultList();
     }
 
-    private Integer aniodirecto = 18;
     @Override
     public List<EjesRegistro> getEjes(Short ejercicio, AreasUniversidad areaPOA) {
 //        System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion.getEjes() ejercicio,areas: " + ejercicio + "," + areaPOA);
-        
         return f.getEntityManager()
-                .createQuery("SELECT e FROM EjesRegistro e INNER JOIN e.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.ejercicioFiscal ef WHERE ac.area = :area AND ef.ejercicioFiscal = :aniodirecto ORDER BY e.nombre", EjesRegistro.class)
+                .createQuery("SELECT e FROM EjesRegistro e INNER JOIN e.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.ejercicioFiscal ef WHERE ac.area = :area AND ef.anio=:ejercicio ORDER BY e.nombre", EjesRegistro.class)
                 .setParameter("area", areaPOA.getArea())
-                .setParameter("aniodirecto", aniodirecto)
+                .setParameter("ejercicio", ejercicio)
                 .getResultList()
                 .stream()
                 .distinct()
@@ -327,10 +434,9 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     @Override
     public List<Estrategias> getEstrategiasPorEje(EjesRegistro eje, AreasUniversidad areaPOA) {
         return f.getEntityManager()
-                .createQuery("SELECT es FROM Estrategias es INNER JOIN es.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.eje ej WHERE ac.area = :area AND ej.eje=:eje AND cmi.ejercicioFiscal.ejercicioFiscal = :aniodirecto ORDER BY es.nombre", Estrategias.class)
+                .createQuery("SELECT es FROM Estrategias es INNER JOIN es.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.eje ej WHERE ac.area = :area AND ej.eje=:eje ORDER BY es.nombre", Estrategias.class)
                 .setParameter("area", areaPOA.getArea())
                 .setParameter("eje", eje.getEje())
-                .setParameter("aniodirecto", aniodirecto)
                 .getResultList()
                 .stream()
                 .distinct()
@@ -340,10 +446,9 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     @Override
     public List<LineasAccion> getLineasAccionPorEstrategia(Estrategias estrategia, AreasUniversidad areaPOA) {
         return f.getEntityManager()
-                .createQuery("SELECT la FROM LineasAccion la INNER JOIN la.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.estrategia es WHERE ac.area = :area AND es.estrategia=:estrategia AND cmi.ejercicioFiscal.ejercicioFiscal = :aniodirecto ORDER BY la.nombre", LineasAccion.class)
+                .createQuery("SELECT la FROM LineasAccion la INNER JOIN la.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.estrategia es WHERE ac.area = :area AND es.estrategia=:estrategia ORDER BY la.nombre", LineasAccion.class)
                 .setParameter("area", areaPOA.getArea())
                 .setParameter("estrategia", estrategia.getEstrategia())
-                .setParameter("aniodirecto", aniodirecto)
                 .getResultList()
                 .stream()
                 .distinct()
@@ -352,20 +457,23 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 
     @Override
     public List<ActividadesPoa> getActividadesPorLineaAccion(LineasAccion lineaaccion, AreasUniversidad areaPOA) {
-        return f.getEntityManager()
-                .createQuery("SELECT ac FROM ActividadesPoa ac INNER JOIN ac.cuadroMandoInt cmi INNER JOIN cmi.lineaAccion la WHERE ac.area = :area AND la.lineaAccion=:lineaAccion AND cmi.ejercicioFiscal.ejercicioFiscal = :aniodirecto ORDER BY ac.denominacion", ActividadesPoa.class)
-                .setParameter("area", areaPOA.getArea())
-                .setParameter("lineaAccion", lineaaccion.getLineaAccion())
-                .setParameter("aniodirecto", aniodirecto)
-                .getResultList()
-                .stream()
-                .distinct()
-                .collect(Collectors.toList());
+        try {
+            return f.getEntityManager()
+                    .createQuery("SELECT ac FROM ActividadesPoa ac INNER JOIN ac.cuadroMandoInt cmi INNER JOIN cmi.lineaAccion la WHERE ac.area = :area AND la.lineaAccion=:lineaAccion ORDER BY ac.denominacion", ActividadesPoa.class)
+                    .setParameter("area", areaPOA.getArea())
+                    .setParameter("lineaAccion", lineaaccion.getLineaAccion())
+                    .getResultList()
+                    .stream()
+                    .distinct()
+                    .collect(Collectors.toList());
+        }catch (NullPointerException e){
+            return Collections.EMPTY_LIST;
+        }
     }
 
     @Override
     public UsuariosRegistros getUsuarioSIIP(Integer claveArea) {
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion.getUsuarioSIIP(): " + claveArea);
+//        System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion.getUsuarioSIIP(): " + claveArea);
         try {
             return f.getEntityManager().
                     createQuery("SELECT u FROM UsuariosRegistros u WHERE u.area=:area", UsuariosRegistros.class)
@@ -464,13 +572,6 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 
             validacion = validarFactura(tramite, factura, reader);
         } else {
-//            Comparable<Facturas> comparable = new ComparadorFechas(factura.getFechaAplicacion());
-//            int res = comparable.compareTo(factura);
-//            if(res != 0){ //si la fecha de inicio es posterior a la de fin o si la fecha de aplicación no está entre la fecha de inicio y fin
-//                factura.setFechaCoberturaInicio(factura.getFechaAplicacion());
-//                factura.setFechaCoberturaFin(factura.getFechaAplicacion());
-//            }
-
             validacion = validarFactura(tramite, factura, reader);
 //            System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion.guardarFactura(" + validacion + ") validación sistema: " + factura.getValidacionSistema());
             validarMontoAceptado(factura);
@@ -482,7 +583,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
             factura.getTramitesList().add(tramite);
         }
         f.edit(tramite);
-        f.flush();
+//        f.flush();
 
         return validacion;
     }
@@ -524,7 +625,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 
     @Override
     public Map.Entry<Boolean, String> validarFactura(Tramites tramite, Facturas factura, XMLReader reader) {
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion.validarFactura()");
+//        System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion.validarFactura()");
         Map<Boolean, String> map = new HashMap<>();
 
         final String facturasVersion = ep.leerPropiedadCadena("facturasVersion").orElse("");
@@ -704,7 +805,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
                     }
 
                     boolean esCorrecto = res.get();
-                    System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion.almacenarCFDI(" + esCorrecto + ") mensajes pdf: " + factura.getComentariosPdf());
+//                    System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion.almacenarCFDI(" + esCorrecto + ") mensajes pdf: " + factura.getComentariosPdf());
                     factura.setValidacionPdf(esCorrecto);
                     f.edit(factura);
                 } catch (InterruptedException | ExecutionException ex) {
@@ -714,7 +815,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
                 factura.setComentariosPdf("No se pudo leer el código QR de la factura, intente convirtiendo el documento a escala de grises para impedir que otras franjas de colores impidan la lectura del código QR.");
             }
             f.edit(factura);
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion.almacenarCFDI() mensajes pdf 2: " + factura.getComentariosPdf());
+//            System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion.almacenarCFDI() mensajes pdf 2: " + factura.getComentariosPdf());
         } catch (IOException ex) {
             Logger.getLogger(ServicioFiscalizacion.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -744,24 +845,28 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     }
 
     @Override
+    public ResultadoEJB<File> almacenarTramiteEvidencia(Part file, Tramites tramite) {
+//        System.err.println("Ela archivo es : " + file.getName() + " y el tramite es : " + tramite);
+        try {
+            ResultadoEJB<File> resFile = ejbFileWritter.almacenarArchivo("comision_evidencia", caster.numeroOficioToPath(tramite.getComisionOficios()), file);
+//            System.err.println("ServicioFiscalizacion.almacenarTramiteEvidencia resFile: " + resFile.getCorrecto());
+            if (resFile.getCorrecto()) {
+                tramite.getComisionOficios().setRuta(resFile.getValor().toString());
+                f.edit(tramite.getComisionOficios());
+                return resFile;
+            }else{
+                return  ResultadoEJB.crearErroneo(1,"No se pudo sincronizar la información de la evidencia de la comisión con la base de datos.",File.class);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ServicioFiscalizacion.class.getName()).log(Level.SEVERE, null, ex);
+            return ResultadoEJB.crearErroneo(2, "El archivo no pudo almacenarse.", ex, File.class);//new ResultadoEJB("El archivo no puedo almecenarse: " + ex.getMessage(),ex, 1);
+        }
+    }
+
+    @Override
     public List<Estado> getEstados() {
         return f.getEntityManager().createQuery("SELECT e FROM Estado e WHERE e.idpais.idpais=:pais ORDER BY e.nombre", Estado.class)
                 .setParameter("pais", 42)
-                .getResultList();
-    }
-    
-    @Override
-    public List<Pais> getPaises() {
-        return f.getEntityManager().createQuery("SELECT p FROM Pais p ORDER BY p.nombre", Pais.class)
-                .getResultList();
-    }
-    
-    @Override
-    public List<Estado> getEstadosPorPais(Pais pais) {
-        if(pais == null)
-            return Collections.EMPTY_LIST;
-        return f.getEntityManager().createQuery("SELECT e FROM Estado e WHERE e.idpais.idpais=:pais ORDER BY e.nombre", Estado.class)
-                .setParameter("pais", pais.getIdpais())
                 .getResultList();
     }
 
@@ -774,21 +879,19 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
                 .setParameter("estado", estado.getIdestado())
                 .getResultList();
     }
-    
-    @Override
-    public List<Localidad> getLocalidadesPorMunicipio(Municipio municipio) {
-        if(municipio == null)
-            return Collections.EMPTY_LIST;
-        return f.getEntityManager().createQuery("SELECT l FROM Localidad l WHERE l.municipio.municipioPK.claveEstado =:estado AND l.municipio.municipioPK.claveMunicipio = :municipio ORDER BY l.nombre", Localidad.class)
-                .setParameter("estado", municipio.getMunicipioPK().getClaveEstado())
-                .setParameter("municipio", municipio.getMunicipioPK().getClaveMunicipio())
-                .getResultList();   
-    }
 
     @Override
     public Personal getSuperior(Personal subordinado) {
+        AreasUniversidad areaPOA = getAreaConPOA(subordinado.getAreaOperativa());
+
+        if(areaPOA == null){
+            return null;
+        }
+
+        /*System.out.println("subordinado.getAreaOperativa() = " + subordinado.getAreaOperativa());
+//        System.out.println("areaPOA = " + areaPOA);*/
         List<Personal> l = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE p.areaOperativa=:area AND p.actividad.actividad IN :actividades", Personal.class)
-                .setParameter("area", subordinado.getAreaOperativa())
+                .setParameter("area", areaPOA.getArea())
                 .setParameter("actividades", Stream.of(2,4).collect(Collectors.toList()))
                 .getResultList();
 
@@ -820,14 +923,331 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
         return area;
     }
 
+    /**
+     * Obtiene la lista de areas con POA para filtrar los trámites por área
+     *
+     * @return Lista de áreas con POA
+     */
     @Override
-    public List<Short> getAreasSubordinadasSinPOA(AreasUniversidad areaPOA) {
+    public List<AreasUniversidad> getAreasConPOA() {
+//        System.out.println("ServicioFiscalizacion.getAreasConPOA");
+        return f.getEntityManager().createQuery("select a from AreasUniversidad a where (a.areaSuperior is not null or a.area = 1) and a.tienePoa = true order by a.categoria.categoria, a.nombre", AreasUniversidad.class)
+                .getResultList();
+    }
+
+    @Override
+    public List<AreasUniversidad> getAreasSubordinadasSinPOA(AreasUniversidad areaPOA) {
         return f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1' AND au.tienePoa=:tienePoa", AreasUniversidad.class)
                 .setParameter("areaSuperior", areaPOA.getArea())
                 .setParameter("tienePoa", false)
-                .getResultStream()
-                .map(au -> au.getArea())
+                .getResultList()
+                .stream()
                 .collect(Collectors.toList());
+//                .map(au -> au.getArea())
+//                .collect(Collectors.toList());
+    }
+    
+    @Override
+    public Tramites seguirTramiteDeArea(Tramites tramite) {
+        Tramites t = f.getEntityManager().find(Tramites.class, tramite.getTramite());
+        t.setClave(logonMB.getPersonal().getClave());
+        f.edit(t);
+        f.flush();
+        return t;
     }
 
+    /**
+     * Permite que el comisionado o la persona que da seguimiento al trámite pueda liberarlo para que el superior o supervisor revisen
+     *
+     * @param tramite  Tramite a liberar
+     * @param logueado Usuario logueado para verificar si se tiene permiso
+     * @return Resultado del proceso
+     */
+    @Override
+    public ResultadoEJB<TramitesDto> liberarTramitePorComisionado(TramitesDto tramite, Personal logueado) {
+        try{
+            if(Arrays.asList(tramite.getComisionado().getPersonal(), tramite.getPersonalSiguiendoTramite().getPersonal()).contains(logueado)) {
+                f.edit(tramite.getTramite().getComisionOficios());
+                f.edit(tramite.getTramite());
+                tramite.setTramite(f.getEntityManager().find(Tramites.class, tramite.getTramite().getTramite()));
+                return  ResultadoEJB.crearCorrecto(tramite, "El trámite se liberó correctamente");
+            }else{
+                return ResultadoEJB.crearErroneo(1, "Usted no tiene permitido liberar el trámite.", TramitesDto.class);
+            }
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(2, "Ocurrió un error al intentar liberar el trámite.", e, TramitesDto.class);
+        }
+
+
+    }
+
+    @Override
+    public ResultadoEJB<Tramites> aprobarTramitePorSuperior(TramitesDto tramite) {
+        try{
+//            System.out.println("ServicioFiscalizacion.aprobarTramitePorSuperior");
+            if(tramite.getComisionOficioEstatus().getLabel().equals(ComisionOficioEstatus.REGRESADO_PARA_REVISION_POR_SUPERIOR.getLabel()) && !hasObservaciones(tramite.getTramite().getComisionOficios())){
+                ResultadoEJB<Tramites> res = ResultadoEJB.crearErroneo(2, "No puede rechazar la comisión sin indicar al comisionado la causa mediante las observaciones. La comisión será marcada como Solicitado por el comisionado para que usted repita la validación.", Tramites.class);
+                res.setValor(tramite.getTramite());
+                res.getValor().getComisionOficios().setEstatus(ComisionOficioEstatus.SOLICITADO_POR_COMISIONADO.getLabel());
+                tramite.setTramite(res.getValor());
+                f.edit(res.getValor());
+//                System.out.println("res = " + res);
+                return res;
+            }
+
+            Tramites t = tramite.getTramite();
+            f.edit(t.getComisionOficios());
+            t = f.getEntityManager().find(Tramites.class, t.getTramite());
+            ComisionOficioEstatus estatus = ComisionOficioEstatusConverter.of(t.getComisionOficios().getEstatus());
+            String mensaje;
+            switch (estatus){
+                case APROBADO_POR_SUPERIOR: mensaje = "El trámite de aprobó correctamente."; break;
+                case CAMBIOS_REALIZADOS_PARA_SUPERIOR: mensaje = "El trámite se marcó como si el comisionado hubiera solicitado revisión por usted."; break;
+                case REGRESADO_PARA_REVISION_POR_SUPERIOR: mensaje = "El trámite se regresó al comisionado para que realicé los cambios solicitados en las observaciones."; break;
+                default: mensaje = String.format("Se detectó el estado %s el cual no se esperaba en éste momento.", estatus.getLabel()); break;
+            }
+//            System.out.println("t.getComisionOficios().getEstatus() = " + t.getComisionOficios().getEstatus());
+            return ResultadoEJB.crearCorrecto(t, mensaje);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "Ocurrió un error al intentar aprobar el trámite.", e, Tramites.class);
+        }
+    }
+
+    /**
+     * Consulta los tramites aprobados por los superiores y que el área supervisora pueda trabajar
+     *
+     * @param area Área con POA que sirve como filtro
+     * @return Lista de trámites ordenados por fecha
+     */
+    @Override
+    public List<TramitesDto> getTramites(AreasUniversidad area, TramitesSupervisorFiltro filtro) {
+        List<TramitesDto> l = f.getEntityManager().createQuery("select t from Tramites t inner join t.comisionOficios co inner join co.comisionAvisos ca left join t.alineacionTramites at where co.estatus in :estatus order by co.oficio desc ", Tramites.class)
+                .setParameter("estatus", getEstadosParaSupervisor())
+                .getResultStream()
+                .map(tramites -> packTramite(tramites)).collect(Collectors.toList());
+//        System.out.println("l = " + l);
+
+        Predicate<TramitesDto> predicadoFiltro = t -> true;
+        Predicate<TramitesDto> predicadoArea = t -> true;
+        if(filtro != null){
+            switch (filtro){
+                case SIN_VALIDAR_COMISION: predicadoFiltro = t -> t.getComisionOficioEstatus().getId() < ComisionOficioEstatus.VALIDADO_POR_FISCALIZACION.getId(); break;
+                case SIN_ASIGNAR_TARIFA: predicadoFiltro = t -> t.getTarifaViaje() == null || t.getTarifaViatico() == null; break;
+                case SIN_VALIDAR_FACTURAS: predicadoFiltro = t -> t.getFacturas().stream().filter(f -> !f.getValidacionFiscalizacion()).count() > 0l; break;
+                case SIN_FORMATOS_AUTORIZADOS: predicadoFiltro = t -> !t.getTramite().getComisionOficios().getComisionAvisos().getFormatosAutorizados(); break;
+                case SIN_LIQUIDAR: predicadoFiltro = t -> t.getTramite().getComisionOficios().getComisionAvisos().getLiquidacionFecha() == null; break;
+            }
+        }
+
+        if(area!=null){
+            predicadoArea = t -> t.getTramite().getAlineacionTramites().getArea() == area.getArea();
+        }
+
+        return l.stream().filter(predicadoArea).filter(predicadoFiltro).collect(Collectors.toList());
+    }
+
+    private TramitesDto packTramite(Tramites tramites){
+        PersonalActivo seguidor = ejbPersonalBean.pack(f.getEntityManager().find(Personal.class, tramites.getClave()));
+        PersonalActivo comisionado = ejbPersonalBean.pack(f.getEntityManager().find(Personal.class, tramites.getComisionOficios().getComisionado()));
+        TramitesDto t = new TramitesDto(seguidor, comisionado, tramites);
+        t.setAlineacionArea(f.getEntityManager().find(AreasUniversidad.class, tramites.getAlineacionTramites().getArea()));
+        t.setAlineacionEje(f.getEntityManager().find(EjesRegistro.class, tramites.getAlineacionTramites().getEje()));
+        t.setAlineacionEstrategia(f.getEntityManager().find(Estrategias.class, tramites.getAlineacionTramites().getEstrategia()));
+        t.setAlineacionLinea(f.getEntityManager().find(LineasAccion.class, tramites.getAlineacionTramites().getLineaAccion()));
+        t.setAlineacionActividad(f.getEntityManager().find(ActividadesPoa.class, tramites.getAlineacionTramites().getActividad()));
+        return t;
+    }
+
+    private List<String> getEstadosParaSupervisor(){
+        List<String> res = Stream
+                .of(Arrays.asList(ComisionOficioEstatus.values()))
+                .flatMap(l -> l.stream())
+                .filter(e -> e.getId() >= ComisionOficioEstatus.APROBADO_POR_SUPERIOR.getId())
+                .map(e -> e.getLabel())
+                .collect(Collectors.toList());
+//        System.out.println("ServicioFiscalizacion.getEstadosParaSupervisor");
+//        System.out.println("res = " + res);
+        return res;
+    }
+
+    /**
+     * Valida la comisión de un trámite por el supervisor
+     * @param rol Rol con Trámite a validar
+     * @return Resultado del proceso
+     */
+    @Override
+    public ResultadoEJB<Tramites> validarTramitePorSupervisor(TramitesRolSupervisor rol) {
+        TramitesDto tramite = rol.getTramite();
+        if(tramite.getComisionOficioEstatus().getLabel().equals(ComisionOficioEstatus.REGRESADO_PARA_REVISION_POR_FIZCALIZACION.getLabel()) && !hasObservaciones(tramite.getTramite().getComisionOficios())){
+            ResultadoEJB<Tramites> res = ResultadoEJB.crearErroneo(2, "No puede rechazar la comisión sin indicar al comisionado la causa mediante las observaciones. La comisión será marcada como Aprobado por superior para que usted repita la validación.", Tramites.class);
+            res.setValor(tramite.getTramite());
+            res.getValor().getComisionOficios().setEstatus(ComisionOficioEstatus.APROBADO_POR_SUPERIOR.getLabel());
+            tramite.setTramite(res.getValor());
+            aprobarTramitePorSuperior(tramite);
+            return res;
+        }
+        System.out.println("tramite.getTarifaViaje() = " + tramite.getTarifaViaje());
+        System.out.println("tramite.getTarifaViatico() = " + tramite.getTarifaViatico());
+        System.out.println("tramite.getTramite().getComisionOficios().getComisionAvisos().getTarifaViaje() = " + tramite.getTramite().getComisionOficios().getComisionAvisos().getTarifaViaje());
+        tramite.setTarifaViatico(tramite.getTarifaViatico());
+        tramite.setTarifaViaje(tramite.getTarifaViaje());
+        if(tramite.getTramite().getComisionOficios().getComisionAvisos().getTarifaViaje().getTarifa() == null){
+            System.out.println("rol.getOrigen() = " + rol.getOrigen());
+            System.out.println("rol.getDestino() = " + rol.getDestino());
+            Tarifas tarifa = tramite.getTramite().getComisionOficios().getComisionAvisos().getTarifaViaje();
+            Tarifas tarifaBD = f.getEntityManager().createQuery("select t from Tarifas t inner join t.tarifasViajes tv where tv.origen=:origen and tv.destino=:destino and t.fechaCancelacion is null", Tarifas.class)
+                    .setParameter("origen", rol.getOrigen())
+                    .setParameter("destino", rol.getDestino())
+                    .getResultStream()
+                    .findAny().orElse(null);
+            System.out.println("tarifaBD = " + tarifaBD);
+            if(tarifaBD == null){
+                tarifa.setTipo(TarifaTipo.VIAJE.getLabel());
+                tarifa.setFechaAplicacion(new Date());
+                tarifa.setFechaCancelacion(null);
+                tarifa.getTarifasViajes().setCostoCasetasViajeRedondo(0);
+                tarifa.getTarifasViajes().setDestino(rol.getDestino());
+                tarifa.getTarifasViajes().setLineasRecomendadas(null);
+                tarifa.getTarifasViajes().setOrigen(rol.getDestino());
+                TarifasViajes tarifasViajes = tarifa.getTarifasViajes();
+                tarifa.setTarifasViajes(null);
+                f.create(tarifa);
+                tarifasViajes.setTarifa(tarifa.getTarifa());
+                tarifa.setTarifasViajes(tarifasViajes);
+                f.create(tarifasViajes);
+                f.edit(tarifa);
+            }else{
+                rol.getTramite().setTarifaViaje(tarifaBD);
+                f.edit(rol.getTramite().getTramite().getComisionOficios().getComisionAvisos());
+            }
+
+        }
+        ResultadoEJB<Tramites> res = aprobarTramitePorSuperior(tramite);
+        ComisionOficioEstatus estatus = ComisionOficioEstatusConverter.of(res.getValor().getComisionOficios().getEstatus());
+        if(res.getCorrecto()){
+            switch (estatus){
+                case APROBADO_POR_SUPERIOR: res.setMensaje("Se marcó la validación de la comisión al estado que el superior del comisionado aprobó."); break;
+                case REGRESADO_PARA_REVISION_POR_FIZCALIZACION: res.setMensaje("Se notificará al comisionado que realice los ajustes señalados en las observaciones."); break;
+                case VALIDADO_POR_FISCALIZACION: res.setMensaje("La comisión se validó correctamente, ahora el comisionado podrá imprimir su oficio y pliego de comisión."); break;
+            }
+        }else{
+            res.setMensaje("Ocurrió un error al intentar validar la comisión.");
+        }
+
+        return res;
+    }
+
+    private Boolean hasObservaciones(ComisionOficios oficio){
+        if(oficio == null) return false;
+        if(oficio.getObservaciones() == null) return false;
+        if(oficio.getObservaciones().replaceAll("Ninguna", "").trim().isEmpty()) return false;
+
+        return true;
+    }
+
+    /**
+     * Permite sugerir la tarifa del viático en base a la distancia y al municipio que se comisionó
+     *
+     * @param rol DTO del rol del superior con los datos de entrada.
+     * @return Resultado de tarifa sugerida.
+     */
+    @Override
+    public ResultadoEJB<Tarifas> getTarifaViaticoSugerida(TramitesRolSupervisor rol) {
+        Double distancia = rol.getDistancia();
+//        System.out.println("distancia = " + distancia);
+        MunicipioPK municipioPK = new MunicipioPK(rol.getTramite().getTramite().getComisionOficios().getEstado(), rol.getTramite().getTramite().getComisionOficios().getMunicipio());
+//        System.out.println("municipioPK = " + municipioPK);
+        Municipio municipio = f.getEntityManager().find(Municipio.class, municipioPK);
+        Double tramitesTabuladorKilometrosMaximo = ep.leerPropiedadDecimal("tramitesTabuladorKilometrosMaximo").orElse(397);
+
+//        System.out.println("municipio = " + municipio);
+//        System.out.println("tramitesTabuladorKilometrosMaximo = " + tramitesTabuladorKilometrosMaximo);
+//        System.out.println("(municipio == null) = " + (municipio == null));
+        if(municipio == null) {
+            System.out.println("Error de municipio nulo");
+            return ResultadoEJB.crearErroneo(1, String.format("No se reconoce el municipio: %s", municipioPK.toString()), Tarifas.class);
+        }
+
+        //verificar si el estado es puebla sugerir por kilometro o si la distancia no sobrepasa el limite de kilometros sugerir por kilometro
+//        System.out.println("municipioPK.getClaveEstado() == 21 || distancia <= tramitesTabuladorKilometrosMaximo = " + (municipioPK.getClaveEstado() == 21 || distancia <= tramitesTabuladorKilometrosMaximo));
+        if(municipioPK.getClaveEstado() == 21 || distancia <= tramitesTabuladorKilometrosMaximo){
+            TarifasPorKilometro porKilometro = f.getEntityManager().createQuery("select t from TarifasPorKilometro t where :distancia between t.minimo and t.maximo", TarifasPorKilometro.class)
+                    .setParameter("distancia", distancia.shortValue())
+                    .getResultStream().findAny().orElse(null);
+//            System.out.println("porKilometro = " + porKilometro);
+
+//            System.out.println("(porKilometro == null) = " + (porKilometro == null));
+            if(porKilometro == null) {
+//                System.out.println("Error tarifa por kilometro nulo.");
+                return ResultadoEJB.crearErroneo(2, String.format("No hay una tarifa por kilómetro para la distancia %s.", distancia.toString()), Tarifas.class);
+            }
+            else {
+//                System.out.println("Tarifa por kilometro encontrada:  " + porKilometro.getTarifas());
+                return ResultadoEJB.crearCorrecto(porKilometro.getTarifas(), "Se localizó la tarifa por kilómetro adecuada.");
+            }
+        }
+
+        //en caso de que la distancia sea mayor al limite de kilometros y no del estado de puebla determinar si el estado tiene aplicación total, sugerir la zonificación del estado
+        rol.setZonificacionesEstado(f.getEntityManager().find(ZonificacionesEstado.class, municipioPK.getClaveEstado()));
+//        System.out.println("zonificacionesEstado = " + rol.getZonificacionesEstado());
+        ZonificacionesMunicipioPK zonificacionesMunicipioPK = new ZonificacionesMunicipioPK(municipioPK.getClaveEstado(), municipioPK.getClaveMunicipio());
+//        System.out.println("zonificacionesMunicipioPK = " + zonificacionesMunicipioPK);
+        rol.setZonificacionesMunicipio(f.getEntityManager().find(ZonificacionesMunicipio.class, zonificacionesMunicipioPK));
+//        System.out.println("zonificacionesMunicipio = " + rol.getZonificacionesMunicipio());
+
+        if(rol.getZonificacionesEstado() == null) {
+//            System.out.println("Error por zonificacion de estado nula");
+            return ResultadoEJB.crearErroneo(3, String.format("La zonificación del estado %s no ha sido localizada.", String.valueOf(municipioPK.getClaveEstado())), Tarifas.class);
+        }
+
+        rol.setNivelServidor(ejbPersonalBean.getNivelPersonal(rol.getTramite().getComisionado()));
+//        System.out.println("nivelServidor = " + rol.getNivelServidor());
+        TarifasPorZona porZona = f.getEntityManager().createQuery("select t from TarifasPorZona t where  t.nivel.nivel=:nivel", TarifasPorZona.class)
+                .setParameter("nivel", rol.getNivelServidor().getNivel())
+                .getResultStream().findAny().orElse(null);
+//        System.out.println("porZona = " + porZona);
+
+
+        f.getEntityManager().getEntityManagerFactory().getCache().evictAll();
+
+//        System.out.println("(zonificacionesEstado.getAplicable().equals(ZonificacionEstadoAplicable.TOTAL) || zonificacionesMunicipio == null) = " + (rol.getZonificacionesEstado().getAplicable().equals(ZonificacionEstadoAplicable.TOTAL) || rol.getZonificacionesMunicipio() == null));
+        if(rol.getZonificacionesEstado().getAplicable().equals(ZonificacionEstadoAplicable.TOTAL) || rol.getZonificacionesMunicipio() == null){
+//            System.out.println("(porZona == null) = " + (porZona == null));
+            if(porZona == null) {
+//                System.out.println("Error por zona nula");
+                return ResultadoEJB.crearErroneo(4, String.format("No se reconoce la tarifa para la zona: %s y nivel: %s.", String.valueOf(rol.getZonificacionesEstado().getZona()), rol.getNivelServidor().getNivel().toString()), Tarifas.class);
+            }
+            else {
+                ResultadoEJB<Tarifas> res = ResultadoEJB.crearCorrecto(porZona.getTarifas(), "Se localizó la tarifa por estado y nivel.");
+                res.setResultado((int)rol.getZonificacionesEstado().getZona());
+//                System.out.println("res = " + res);
+//                System.out.println("zonificacionesEstado.getZona() = " + rol.getZonificacionesEstado().getZona());
+                rol.setZona(rol.getZonificacionesEstado().getZona());
+                return res;
+            }
+        }else{//en caso que el estado sea aplicable de forma parcial, sugerir tarifa por municipio y estado
+            if(rol.getZonificacionesMunicipio() == null) {
+//                System.out.println("Error por zonificacion municipio nula");
+                return ResultadoEJB.crearErroneo(5, String.format("No se reconoce la zonificación para el municipio %s.", zonificacionesMunicipioPK.toString()), Tarifas.class);
+            }
+            else{
+                ResultadoEJB<Tarifas> res = ResultadoEJB.crearCorrecto(porZona.getTarifas(), "Se localizó la tarifa por municipio y nivel.");
+                res.setResultado((int)rol.getZonificacionesMunicipio().getZona());
+//                System.out.println("res = " + res);
+//                System.out.println("zonificacionesMunicipio.getZona() = " + rol.getZonificacionesMunicipio().getZona());
+                rol.setZona(rol.getZonificacionesMunicipio().getZona());
+                return res;
+            }
+        }
+    }
+
+    @Override
+    public ResultadoEJB<TramitesDto> asignarTarifas(TramitesRolSupervisor rol) {
+        //asignar y o modificar tarifa de viatico ya sea por zona o por kilometro
+
+
+        //asignar tarifa de viaje
+        return null;
+    }
 }

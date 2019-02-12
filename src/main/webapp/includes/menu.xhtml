@@ -159,7 +159,7 @@
             </li>
 
 
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Directivo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Coordinador'}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Directivo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Coordinador' || controladorEmpleado.nuevoOBJListaPersonal.clave eq 563}">
 
                 <li class="treeview">
                     <a href="#">
@@ -214,7 +214,7 @@
                                     <small class="label pull-right bg-green">Nuevo</small>
                                 </span>
                             </p:link>
-                        </li-->  
+                        </li-->
                     </ul>
                 </li>  
             </c:if>
@@ -228,7 +228,7 @@
                     </a>
                     <ul class="treeview-menu" style="display: none;">
                         <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 501}">
-                            <li> 
+                            <li>
                                 <p:link href="/capitalHumano/personal/perfilPersonal.xhtml"><i class="fa fa-user-circle-o"></i>
                                     <span>Activo</span>
                                 </p:link>
@@ -434,17 +434,17 @@
                             <p:link href="/poa/areas/consulta.xhtml"><i class="fa fa-search"></i>
                                 <span>Consulta</span>
                             </p:link>
-                        </li> 
+                        </li>
                         <li>
                             <p:link href="/poa/areas/areaCMI.xhtml"><i class="fa fa-bar-chart"></i>
                                 <span>CMI Área</span>
                             </p:link>
-                        </li> 
+                        </li>
                         <li>
                             <p:link href="/poa/pye/universidadCMI.xhtml"><i class="fa fa-line-chart"></i>
                                 <span>CMI Institucional</span>
                             </p:link>
-                        </li> 
+                        </li>
                     </ul>
                 </li>
             </c:if>
@@ -482,15 +482,15 @@
                                 <p:link href="/poa/pye/evaluacionActividadesPyE.xhtml"><i class="fa fa-calendar-check-o"></i>
                                     <span>Evaluación</span>
                                 </p:link>
-                            </li> 
+                            </li>
                             <li>
                                 <p:link href="/poa/pye/reportePOA.xhtml"><i class="fa fa-calendar-check-o"></i>
                                     <span>Reportes</span>
                                 </p:link>
-                            </li> 
+                            </li>
                         </c:if>
                     </ul>
-                </li>               
+                </li>
 
             </c:if>
             <!--li class="treeview">
@@ -522,7 +522,7 @@
                         </p:link>
                     </li>
                 </ul>
-            </li-->            
+            </li-->
 
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 12}">
                 <li>
@@ -545,12 +545,12 @@
                         <p:link href="/capitalHumano/incidencias.xhtml"><i class="fa fa-clock-o"></i>
                             <span>Incidencias</span>
                         </p:link>
-                    </li>      
+                    </li>
                     <li>
                         <p:link href="/capitalHumano/incapacidades.xhtml"><i class="fa fa-ambulance"></i>
                             <span>Incapacidades</span>
                         </p:link>
-                    </li>   
+                    </li>
                     <li>
                         <p:link href="/capitalHumano/cuidados.xhtml"><i class="fa fa-users"></i>
                             <span>Cuidados</span>
@@ -599,9 +599,30 @@
                 <a href="#"><i class="fa fa-money"></i><span>Finanzas</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
                 <ul class="treeview-menu">
                     <li><p:link href="/finanzas/tramites.xhtml"><i class="fa fa-shopping-bag"></i> <span>Seguimiento a trámites</span></p:link></li>
+            <!--Menu original jonny-->
+            <!--            <li class="treeview">
+                            <a href="#"><i class="fa fa-money"></i><span>Finanzas</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
+                            <ul class="treeview-menu">
+                                <li><p:link href="/finanzas/tramites.xhtml"><i class="fa fa-shopping-bag"></i> <span>Seguimiento a trámites</span></p:link></li>
+                                <li><p:link href="/finanzas/tramites_comisionar.xhtml"><i class="fa fa-shopping-bag"></i> <span>Comisionar personal</span></p:link></li>
+                            </ul>
+                        </li>-->
+
+            <li class="treeview">
+                <a href="#"><i class="fa fa-money"></i><span>Finanzas</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
+                <ul class="treeview-menu">
+                    <c:if test="#{tramitesSupervisor.tieneAcceso}" >
+                        <li><p:link href="/finanzas/tramites_supervisor.xhtml" ><i class="fa fa-shopping-bag"></i>Administración de trámites</p:link></li>
+                        <li><p:link href="/finanzas/tramites_supervisor_tarifas_viajes.xhtml" ><i class="fa fa-shopping-bag"></i>Tarifas de viajes</p:link></li>
+                    </c:if>
+                    <c:if test="#{tramitesSuperior.tieneAcceso}" >
+                        <li><p:link href="/finanzas/tramites_superior.xhtml" ><i class="fa fa-shopping-bag"></i>Revisión de trámites</p:link></li>
+                    </c:if>
+                    <li><p:link href="/finanzas/tramites_operativo.xhtml"><i class="fa fa-shopping-bag"></i> <span>Seguimiento a trámites</span></p:link></li>
                     <li><p:link href="/finanzas/tramites_comisionar.xhtml"><i class="fa fa-shopping-bag"></i> <span>Comisionar personal</span></p:link></li>
                 </ul>
-            </li-->
+            </li>
+
         </c:if>
     </ul>
 </ui:composition>
