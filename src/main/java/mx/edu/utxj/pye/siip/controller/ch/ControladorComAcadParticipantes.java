@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
@@ -76,7 +77,7 @@ public class ControladorComAcadParticipantes implements Serializable{
         dto.getEje().setEje(2);
         dto.setArea((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
         dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
-        dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()));
+        dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
         
         controladorComisionesAcademicas.init();
         try {

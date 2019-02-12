@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -86,7 +87,7 @@ public class ControladorBecasPeriodo implements Serializable{
         dto.setArea((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
         dto.setSelectItemEjercicioFiscal(ejbItems.itemEjercicioFiscalPorRegistro((short) 9));        
         dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
-        dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()));
+        dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
         if (dto.getSelectItemEjercicioFiscal() == null) {
             Messages.addGlobalInfo("No existen registros");
         } else {

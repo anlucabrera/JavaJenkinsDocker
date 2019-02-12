@@ -145,6 +145,42 @@ public class Caster {
         }
     }
 
+    public String numeroOficioToPath(ComisionOficios oficio){
+        char[] chars = oficio.getOficio().toCharArray();
+        chars[9] = '_';
+        chars[14] = '_';
+        return String.valueOf(chars);
+    }
+
+    public TramitesDto tramiteToListaTramitesDto(Tramites tramite){
+        PersonalActivo seguidor = ejbPersonalBean.pack(f.getEntityManager().find(Personal.class, tramite.getClave()));
+        PersonalActivo comisionado = ejbPersonalBean.pack(f.getEntityManager().find(Personal.class, tramite.getComisionOficios().getComisionado()));
+        return new TramitesDto(seguidor,comisionado,tramite);
+    }
+
+    public Boolean tramiteEditablePorOperativo(Tramites tramite, Personal logueado){
+        if(tramite == null) return false;
+        ComisionOficioEstatus estatus = ComisionOficioEstatusConverter.of(tramite.getComisionOficios().getEstatus());
+        if(estatus == null) return false;
+        return (estatus.getId() < ComisionOficioEstatus.APROBADO_POR_SUPERIOR.getId() || estatus == ComisionOficioEstatus.REGRESADO_PARA_REVISION_POR_FIZCALIZACION)
+                && (logueado.getClave() == tramite.getComisionOficios().getComisionado() || logueado.getClave() == tramite.getClave());
+    }
+
+    public String tramiteToDestino(Tramites tramite){
+        if(tramite == null) return "";
+        Municipio municipio = f.getEntityManager().find(Municipio.class, new MunicipioPK(tramite.getComisionOficios().getEstado(), tramite.getComisionOficios().getMunicipio()));
+        Estado estado = f.getEntityManager().find(Estado.class, tramite.getComisionOficios().getEstado());
+        return tramite.getComisionOficios().getDependencia().concat(", ").concat(municipio.getNombre()).concat(", ").concat(estado.getNombre());
+    }
+
+    public String comisionOficioEstatusToLabel(ComisionOficioEstatus estatus){
+        return estatus.getLabel().replaceAll("_", " ");
+    }
+
+    public String enumLabelToString(String label){
+        return label.replaceAll("_", " ");
+    }
+
     public static void main(String[] args) {
         Caster caster = new Caster();
         System.out.println("mx.edu.utxj.pye.sgi.controlador.Caster.main(): " + caster.bytesToMegabytes(450l));

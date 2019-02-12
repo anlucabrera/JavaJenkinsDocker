@@ -30,29 +30,29 @@
                 <c:if test="#{encuestaServicios.cargada}"><li><p:link href="/servicios.xhtml"><i class="fa fa-tty"></i><span>Servicios</span></p:link></li></c:if>
             </li>
         </c:if>
-<!--        <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
-            <c:forEach items="#{logonMB.listaModulos}" var="catModulo" >
-                <c:if test="#{catModulo.activo}">
-                    <li class="treeview menu-open">
-                        <a href="#">
-                            <i class="#{catModulo.icono}"></i> <span>#{catModulo.nombre}</span>
-                            <span class="pull-right-container">
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </span>
-                        </a>
-                        <ul class="treeview-menu" style="display: none;">
-                            <c:forEach items="#{logonMB.listaPermisos}" var="permiso">
-                                <c:if test="#{catModulo.modulo eq permiso.modulo.modulo}">
-                                    <c:if test="#{permiso.activo}">
-                                        <li><p:link href="#{permiso.ruta}"><i class="#{permiso.iconoPermiso}"></i><span>#{permiso.etiqueta}</span></p:link></li>                                        
-                                    </c:if>
-                                </c:if>
-                            </c:forEach>
-                        </ul>
-                    </li>                    
-                </c:if>
-            </c:forEach>
-        </c:if>-->
+        <!--        <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
+                    <c:forEach items="#{logonMB.listaModulos}" var="catModulo" >
+                        <c:if test="#{catModulo.activo}">
+                            <li class="treeview menu-open">
+                                <a href="#">
+                                    <i class="#{catModulo.icono}"></i> <span>#{catModulo.nombre}</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu" style="display: none;">
+                                    <c:forEach items="#{logonMB.listaPermisos}" var="permiso">
+                                        <c:if test="#{catModulo.modulo eq permiso.modulo.modulo}">
+                                            <c:if test="#{permiso.activo}">
+                                                <li><p:link href="#{permiso.ruta}"><i class="#{permiso.iconoPermiso}"></i><span>#{permiso.etiqueta}</span></p:link></li>
+                                            </c:if>
+                                        </c:if>
+                                    </c:forEach>
+                                </ul>
+                            </li>
+                        </c:if>
+                    </c:forEach>
+                </c:if>-->
         <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
             <li>
                 <p:link href="/capitalHumano/perfilEmpleado.xhtml">
@@ -159,7 +159,7 @@
             </li>
 
 
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Directivo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Coordinador' || controladorEmpleado.nuevoOBJListaPersonal.clave eq 563}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Directivo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Coordinador'}">
 
                 <li class="treeview">
                     <a href="#">
@@ -171,8 +171,8 @@
 
                     <ul class="treeview-menu" style="display: none;">
                         <li><p:link href="/capitalHumano/directivos/perfilEmpleadoFun.xhtml"><i class="fa fa-list-alt"></i>
-                                <span>funciones</span>
-                            </p:link>
+                            <span>funciones</span>
+                        </p:link>
                         </li>
                         <!--li>
                                 <p:link href="/capitalHumano/organigramaPrototipo.xhtml">
@@ -196,7 +196,7 @@
                             <p:link href="/capitalHumano/directivos/perfilEmpleadoSubordinados.xhtml"><i class="fa fa-users"></i>
                                 <span>Perfil de subordinados(as)</span>
                             </p:link>
-                        </li>   
+                        </li>
                         <li>
                             <p:link href="/capitalHumano/directivos/perfilEmpleadoReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
                                 <span>Reporte de Registros</span>
@@ -216,7 +216,7 @@
                             </p:link>
                         </li-->
                     </ul>
-                </li>  
+                </li>
             </c:if>
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13}">
                 <li class="treeview">
@@ -270,12 +270,12 @@
                     </a>
                     <ul class="treeview-menu" style="display: none;">
                         <li><p:link href="/capitalHumano/estadistica/perfilEstadisticaPersonal.xhtml"><i class="fa fa-book"></i>
-                                <span>Plantilla Personal</span>
-                            </p:link>
+                            <span>Plantilla Personal</span>
+                        </p:link>
                         </li>
                         <li><p:link href="/capitalHumano/estadistica/perfilEstadisticaHistoricos.xhtml"><i class="fa fa-book"></i>
-                                <span>Histórico Plantilla Personal</span>
-                            </p:link>
+                            <span>Histórico Plantilla Personal</span>
+                        </p:link>
                         </li>
                     </ul>
                 </li>
@@ -289,28 +289,28 @@
                 </a>
                 <ul class="treeview-menu" style="display: none;">
                     <li><p:link href="/capitalHumano/perfilEmpleadoDatosPer.xhtml"><i class="fa fa-id-card-o"></i>
-                            <span>Datos personales</span>
-                        </p:link>
-                    </li>        
+                        <span>Datos personales</span>
+                    </p:link>
+                    </li>
                     <li><p:link href="/capitalHumano/perfilEmpleadoEdu.xhtml"><i class="fa fa-graduation-cap"></i>
-                            <span>Educación</span>
-                        </p:link>
+                        <span>Educación</span>
+                    </p:link>
                     </li>
                     <li><p:link href="/capitalHumano/perfilEmpleadoHab.xhtml"><i class="fa fa-list-ol"></i>
-                            <span>Habilidades</span>
-                        </p:link>
+                        <span>Habilidades</span>
+                    </p:link>
                     </li>
                     <li><p:link href="/capitalHumano/perfilEmpleadoTecno.xhtml"><i class="fa fa-usb"></i>
-                            <span>Tecnología</span>
-                        </p:link>
+                        <span>Tecnología</span>
+                    </p:link>
                     </li>
                     <li><p:link href="/capitalHumano/perfilEmpleadoPremios.xhtml"><i class="fa fa-trophy"></i>
-                            <span>Premios</span>
-                        </p:link>
+                        <span>Premios</span>
+                    </p:link>
                     </li>
                     <li><p:link href="/capitalHumano/perfilEmpleadoProduccion.xhtml"><i class="fa fa-newspaper-o"></i>
-                            <span>Producción profesional</span>
-                        </p:link>
+                        <span>Producción profesional</span>
+                    </p:link>
                     </li>
                 </ul>
             </li>
@@ -326,13 +326,13 @@
 
                     <ul class="treeview-menu" style="display: none;">
                         <li><p:link href="/capitalHumano/admin/perfilAdminIncidencias.xhtml"><i class="fa fa-hourglass-half"></i>
-                                <span>Incidencias</span>
-                            </p:link>
+                            <span>Incidencias</span>
+                        </p:link>
                         </li>
                         <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
                             <li><p:link href="/capitalHumano/admin/perfilAdminPOA.xhtml"><i class="fa fa-calendar"></i>
-                                    <span>Programa Anual de Trabajo</span>
-                                </p:link>
+                                <span>Programa Anual de Trabajo</span>
+                            </p:link>
                             </li>
                         </c:if>
                     </ul>
@@ -341,7 +341,7 @@
 
 
             <!-- Se agregó la siguiente sección de código para el listado de Módulos de Registro por usuario - Menú de registros -->
-<!--            <c:if test="#{controladorModulosRegistro.listaEjes.size() != 0}">-->
+            <!--            <c:if test="#{controladorModulosRegistro.listaEjes.size() != 0}">-->
             <li>
                 <p:link href="/siip/modulosRegistro/menu_general.xhtml">
                     <i class="fa fa-archive"></i>
@@ -381,8 +381,8 @@
                     </a>
                     <ul class="treeview-menu" style="display: none;">
                         <li><p:link href="/capitalHumano/perfilEmpleadoExDoc.xhtml"><i class="fa fa-book"></i>
-                                <span>Experiencia docente UTXJ</span>
-                            </p:link>
+                            <span>Experiencia docente UTXJ</span>
+                        </p:link>
                         </li>
                     </ul>
                 </li>
@@ -594,21 +594,7 @@
                     </p:link>
                 </li>
             </c:if>
-
-            <!--li class="treeview">
-                <a href="#"><i class="fa fa-money"></i><span>Finanzas</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
-                <ul class="treeview-menu">
-                    <li><p:link href="/finanzas/tramites.xhtml"><i class="fa fa-shopping-bag"></i> <span>Seguimiento a trámites</span></p:link></li>
-            <!--Menu original jonny-->
-            <!--            <li class="treeview">
-                            <a href="#"><i class="fa fa-money"></i><span>Finanzas</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
-                            <ul class="treeview-menu">
-                                <li><p:link href="/finanzas/tramites.xhtml"><i class="fa fa-shopping-bag"></i> <span>Seguimiento a trámites</span></p:link></li>
-                                <li><p:link href="/finanzas/tramites_comisionar.xhtml"><i class="fa fa-shopping-bag"></i> <span>Comisionar personal</span></p:link></li>
-                            </ul>
-                        </li>-->
-
-            <li class="treeview">
+            <!--<li class="treeview">
                 <a href="#"><i class="fa fa-money"></i><span>Finanzas</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
                 <ul class="treeview-menu">
                     <c:if test="#{tramitesSupervisor.tieneAcceso}" >
@@ -621,8 +607,7 @@
                     <li><p:link href="/finanzas/tramites_operativo.xhtml"><i class="fa fa-shopping-bag"></i> <span>Seguimiento a trámites</span></p:link></li>
                     <li><p:link href="/finanzas/tramites_comisionar.xhtml"><i class="fa fa-shopping-bag"></i> <span>Comisionar personal</span></p:link></li>
                 </ul>
-            </li>
-
+            </li>-->
         </c:if>
     </ul>
 </ui:composition>
