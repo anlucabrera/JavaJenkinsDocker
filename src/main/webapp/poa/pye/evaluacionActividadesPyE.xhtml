@@ -332,6 +332,17 @@
                                                         <p:column>
                                                             <img src="../../resources/img/#{poa.semaforoC}.png" alt="#{poa.semaforoC}"/>
                                                         </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{poa.totalPCuatrimestre}"/>
+                                                            <hr/>
+                                                            <h:outputText value="#{poa.totalACuatrimestre}"/>
+                                                        </p:column>   
+                                                        <p:column>
+                                                            <h:outputText value="#{poa.porcentajeCuatrimestre} %" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <img src="../../resources/img/#{poa.semaforoC}.png" alt="#{poa.semaforoC}"/>
+                                                        </p:column>
 
                                                         <p:column rendered="#{poa.actividadesPoa.bandera eq 'x' ?true:false}"/>
                                                         <p:column rendered="#{poa.actividadesPoa.bandera eq 'x' ?true:false}"/>

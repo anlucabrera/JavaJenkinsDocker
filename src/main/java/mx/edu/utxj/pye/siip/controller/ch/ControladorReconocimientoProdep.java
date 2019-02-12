@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
@@ -84,7 +85,7 @@ public class ControladorReconocimientoProdep implements Serializable{
         dto.setArea((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
         dto.setSelectItemEjercicioFiscal(ejbItems.itemEjercicioFiscalPorRegistro((short) 50));
         dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
-        dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()));
+        dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
        
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());

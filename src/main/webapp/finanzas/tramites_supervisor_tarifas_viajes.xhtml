@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="comisionMapa.css"/>
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Administración de tarifas de viajes
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Tarifas de viajes"/>
+        <div class="contenedor">
+            <c:if test="#{tramitesSupervisor.tieneAcceso}">
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 text-info text-center">
+                                            <p:remoteCommand name="actualizarTS" update="tblSCC"/>
+                                            <p:dataTable value="#{tramitesSupervisor.rol.tramites}" var="tramite"
+                                                         emptyMessage="Sin registros."
+                                                         rowStyleClass="#{tramite.comisionOficioEstatus.id eq 3.2?'warning':''}"
+                                                         id="tblSCC" rowIndexVar="rowIndex"
+                                                         paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50"
+                                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                         tableStyle="vertical-align: middle;">
+                                                <p:columnGroup type="header">
+                                                    <p:row>
+                                                        <p:column headerText="Oficio de comisión"
+                                                                  style="width: 130px;"/>
+                                                        <p:column headerText="Folio" style="width: 80px;"/>
+                                                        <p:column headerText="Área"/>
+                                                        <p:column headerText="Comisionado"/>
+                                                        <p:column headerText="Lugar" style="width: 200px;"/>
+                                                        <p:column headerText="Inicio" style="width: 90px;"/>
+                                                        <p:column headerText="Fin" style="width: 90px;"/>
+                                                        <p:column headerText="Estatus"/>
+                                                        <p:column headerText="Evidencia" style="width: 150px;"/>
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <p:column><h:outputText
+                                                        value="#{tramite.tramite.comisionOficios.oficio}"/></p:column>
+                                                <p:column><h:outputText value="#{tramite.tramite.folio}"/></p:column>
+                                                <p:column><h:outputText
+                                                        value="#{tramite.comisionado.areaOperativa.nombre}"/></p:column>
+                                                <p:column><h:outputText value="#{tramite.comisionado.personal.nombre}"/></p:column>
+                                                <p:column><h:outputText
+                                                        value="#{caster.tramiteToDestino(tramite.tramite)}"/></p:column>
+                                                <p:column><h:outputText
+                                                        value="#{tramite.tramite.comisionOficios.fechaComisionInicio}"><f:convertDateTime
+                                                        pattern="yyyy-MM-dd"/></h:outputText></p:column>
+                                                <p:column><h:outputText
+                                                        value="#{tramite.tramite.comisionOficios.fechaComisionFin}"><f:convertDateTime
+                                                        pattern="yyyy-MM-dd"/></h:outputText></p:column>
+                                                <p:column><h:outputText
+                                                        value="#{caster.comisionOficioEstatusToLabel(tramite.comisionOficioEstatus)}"/></p:column>
+                                                <p:column>
+                                                </p:column>
+                                            </p:dataTable>
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+                                                             styleClass="panel panel-primary" width="500"
+                                                             closable="false" closeOnEscape="true">
+                                                <p:commandButton value="Si" type="button"
+                                                                 styleClass="ui-confirmdialog-yes btn btn-primary"
+                                                                 icon="ui-icon-check"/>
+                                                <p:commandButton value="No" type="button"
+                                                                 styleClass="ui-confirmdialog-no btn btn-primary"
+                                                                 icon="ui-icon-close"/>
+                                            </p:confirmDialog>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+            </c:if>
+            <c:if test="#{!tramitesSupervisor.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <p:graphicImage name="demo/images/godfather1.jpg"/>
+                        <h:outputText
+                                value="El acceso solo está autorizado a personal del área fiscalizadora."/>
+                    </h:panelGrid>
+                    <f:facet name="footer">
+
+                    </f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar();
+        </script>
+    </ui:define>
+</ui:composition>

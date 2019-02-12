@@ -53,7 +53,6 @@ public class TarifasViajes implements Serializable {
     @Column(name = "destino")
     private String destino;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 500)
     @Column(name = "lineas_recomendadas")
     private String lineasRecomendadas;
@@ -62,7 +61,6 @@ public class TarifasViajes implements Serializable {
     @Column(name = "costo_pasajes_viaje_redondo")
     private double costoPasajesViajeRedondo;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "costo_casetas_viaje_redondo")
     private double costoCasetasViajeRedondo;
     @JoinColumn(name = "tarifa", referencedColumnName = "tarifa", insertable = false, updatable = false)
@@ -163,7 +161,13 @@ public class TarifasViajes implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.finanzas.TarifasViajes[ tarifa=" + tarifa + " ]";
+        return "TarifasViajes{" +
+                "tarifa=" + tarifa +
+                ", origen='" + origen + '\'' +
+                ", destino='" + destino + '\'' +
+                ", lineasRecomendadas='" + lineasRecomendadas + '\'' +
+                ", costoPasajesViajeRedondo=" + costoPasajesViajeRedondo +
+                ", costoCasetasViajeRedondo=" + costoCasetasViajeRedondo +
+                '}';
     }
-    
 }

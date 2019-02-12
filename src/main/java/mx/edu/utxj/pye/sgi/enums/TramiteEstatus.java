@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public enum TramiteEstatus {
-    COMISIONANDO("Comisionando"),
+//    COMISIONANDO("Comisionando"),
     SOLICITADO("Solicitado"), 
     PROCESO("Proceso"), 
     COMPLETADO("Completado"),

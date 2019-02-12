@@ -19,7 +19,7 @@ public class StringUtils {
         if(cadena == null) return "";
         return cadena.replace(' ', '_').trim();
     }
-    
+
     public static String prettyURL(String string) {
         if (string == null) {
             return null;
@@ -42,7 +42,7 @@ public class StringUtils {
                 .replaceAll("[\\D]+", "")
                 .replaceAll(" ", "");
     }
-    
+
     public static void main(String[] args) {
         String original = "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝßàáâãäåæçèéêëìíî ïðñòóôõöøùúûü ýÿ";
         String cadenaNormalize = Normalizer.normalize(original, Normalizer.Form.NFD);
