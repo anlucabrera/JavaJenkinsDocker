@@ -82,7 +82,7 @@
             <p:sticky target="tb" />
         </div>
         <p:tabView id="tabView">
-            <p:tab title="Porcentaje de avance por carrera">
+            <p:tab title="Porcentaje de avance por Programa Educativo">
                 <h:form>
                     <p:outputPanel >
                         <p:dataTable id="tblAvance" lazy="false" value="#{administracionAvanceEncuestaSatIng.avanceEncServ}"   var="datosEncEgre"
@@ -160,7 +160,7 @@
                             </p:column>
                             <f:facet name="footer">
                                 <p:commandButton actionListener="#{administracionEncuestaIng.seguimientoEncuestaDirectores}" value="Actualizar información" icon="fa fa-refresh" class="btn btn-primary"
-                                                 update="tabView:fr1:tblEvaluacionesCompletas tabView:fr2:tblEvaluacionesIncompletas tabView:fr3:tblAlumnosNoAccedieron" process="@form"/>
+                                                 update="tabView:fr1:tblEvaluacionesCompletas tabView:fr2:tblEvaluacionesIncompletas " process="@form"/>
                             </f:facet>
                         </p:dataTable>           
                     </p:outputPanel>
@@ -208,7 +208,7 @@
                 </h:form>
             </p:tab>
 
-            <p:tab title="Estudiantes que no han accedido" titleStyleClass="noaccedio">
+            <!--p:tab title="Estudiantes que no han accedido" titleStyleClass="noaccedio">
                 <h:form id="fr3">
                     <p:outputPanel>
                         <p:dataTable id="tblAlumnosNoAccedieron" lazy="false" value="#{administracionEncuestaIng.listEvaNADir}"   var="alumnosNoAccedieron"
@@ -266,7 +266,7 @@
                     </p:outputPanel>
 
                 </h:form>
-            </p:tab>
+            </p:tab-->
 
 
         </p:tabView>

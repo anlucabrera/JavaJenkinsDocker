@@ -21,6 +21,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.ch.Actividades;
 import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
 import mx.edu.utxj.pye.sgi.entity.ch.Categoriasespecificasfunciones;
+import mx.edu.utxj.pye.sgi.entity.ch.ContactoEmergencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 import mx.edu.utxj.pye.sgi.entity.ch.Grados;
 import mx.edu.utxj.pye.sgi.entity.ch.InformacionAdicionalPersonal;
@@ -47,6 +48,7 @@ public class ControladorPersonalAltasYBajas implements Serializable {
     @Getter    @Setter    private List<Personal> listaPersonalBajas = new ArrayList<>();
     @Getter    @Setter    private List<Character> estatus = new ArrayList<>();    
     @Getter    @Setter    private List<Personal> listaPersonalTotal = new ArrayList<>();  
+    @Getter    @Setter    private List<ContactoEmergencias> listaContactoEmergencias = new ArrayList<>();  
     @Getter    @Setter    private List<Short> listaClaveAS = new ArrayList<>();
     
     @Getter    @Setter    private DateFormat formatoF = new SimpleDateFormat("dd/MM/yyyy");
@@ -91,6 +93,7 @@ public class ControladorPersonalAltasYBajas implements Serializable {
             listareasSuperiores.clear();
             listaAreasUniversidads.clear();
             listaPersonalCategorias.clear();
+            listaContactoEmergencias.clear();
             listaPersonalCategorias360.clear();
 
             listaAreasUniversidads = ejbAreasLogeo.mostrarAreasUniversidad();
@@ -107,6 +110,7 @@ public class ControladorPersonalAltasYBajas implements Serializable {
             listaPersonalTotal = ejbSelectec.mostrarListaDeEmpleadosTotal();
             listaPersonalBajas = ejbSelectec.mostrarListaDeEmpleadosBajas();
             listaPersonalCategorias = ejbDatosUsuarioLogeado.mostrarListaPersonalCategorias();
+            listaContactoEmergencias=ejbDatosUsuarioLogeado.mostrarAllContactosEmergencias();
             
             listaPersonalCategorias.forEach((t) -> {
                 if (t.getTipo().equals("Específica")) {                    
@@ -189,7 +193,7 @@ public class ControladorPersonalAltasYBajas implements Serializable {
             nuevoOBJInformacionAdicionalPersonal = new InformacionAdicionalPersonal();
             nuevoOBJInformacionAdicionalPersonal.setClave(nuevOBJPersonalSubordinado.getClave());
             obtenerEdad();
-            nuevoOBJInformacionAdicionalPersonal.setEstatus("Aceptado");
+            nuevoOBJInformacionAdicionalPersonal.setAutorizacion(false);
             nuevoOBJInformacionAdicionalPersonal = ejbDatosUsuarioLogeado.crearNuevoInformacionAdicionalPersonal(nuevoOBJInformacionAdicionalPersonal);
             nombreTabla = "Información Adicional";
             numeroRegistro = nuevoOBJInformacionAdicionalPersonal.getClave().toString();

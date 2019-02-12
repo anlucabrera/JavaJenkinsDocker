@@ -25,9 +25,9 @@
                 <c:if test="#{evaluacionDoncenteMateriaControler.cargada}"><li><p:link href="/evaluaciones/evaluacion/docentesMateria.xhtml"><i class="fa fa-group"></i><span>Docente</span></p:link></li></c:if>
                 <c:if test="#{evaluacionTutor2.cargada}"><li><p:link href="/evaluaciones/evaluacion/tutores2.xhtml"><i class="fa fa-legal"></i><span>Tutor</span></p:link></li></c:if>
                 <c:if test="#{estudioEgresados.cargada}"><li><p:link href="/evaluaciones/evaluacion/estudioEgresados.xhtml"><i class="fa fa-graduation-cap"></i><span>Estudio egresado</span></p:link></li></c:if>
-                <c:if test="#{encuestaSatisfaccionEgresadosIng.cargada}"><li><p:link href="/satisfaccionEgresadosIng.xhtml"><i class="fa fa-graduation-cap"></i><span>Satisfacción ING.</span></p:link></li></c:if>
-                <c:if test="#{encuestaSatisfaccionEgresadosIng.cargada}"><li><p:link href="/satisfaccionEgresadosIng.xhtml"><i class="fa fa-graduation-cap"></i><span>Satisfacción T.S.U.</span></p:link></li></c:if>
-                <c:if test="#{encuestaServicios.cargada}"><li><p:link href="/servicios.xhtml"><i class="fa fa-tty"></i><span>Servicios</span></p:link></li></c:if>
+                <c:if test="#{encuestaSatisfaccionEgresadosIng.cargada}"><li><p:link href="/encuestas/Estudiantes/satisfaccionEgresadosIng.xhtml"><i class="fa fa-graduation-cap"></i><span>Satisfacción ING.</span></p:link></li></c:if>
+                <c:if test="#{encuestaSatisfaccionEgresadosTsu.cargada}"><li><p:link href="/encuestas/Estudiantes/satisfaccionEgresadosTsu.xhtml"><i class="fa fa-graduation-cap"></i><span>Satisfacción T.S.U.</span></p:link></li></c:if>
+                <c:if test="#{encuestaServicios.cargada}"><li><p:link href="/encuestas/Estudiantes/servicios.xhtml"><i class="fa fa-tty"></i><span>Servicios</span></p:link></li></c:if>
             </li>
         </c:if>
 <!--        <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
@@ -174,13 +174,12 @@
                                 <span>funciones</span>
                             </p:link>
                         </li>
-                        <!--li>
-                                <p:link href="/capitalHumano/organigramaPrototipo.xhtml">
-                                    <i class="fa fa-sitemap"></i>
-                                    <span>Organigrama Operativo</span>
-                                </p:link>
-                            </li>
-                        </c:if-->
+                        <li>
+                            <p:link href="/capitalHumano/organigramaPrototipo.xhtml">
+                                <i class="fa fa-sitemap"></i>
+                                <span>Organigrama Operativo</span>
+                            </p:link>
+                        </li>
                     </ul>
                 </li>
                 <li class="treeview">
@@ -252,6 +251,12 @@
                                 </p:link>
                             </li>
                         </c:if>
+                        <li>
+                            <p:link href="/capitalHumano/personal/perfilContactosE.xhtml">
+                                <i class="fa fa-list-alt"></i>
+                                <span>Contactos de emergencia</span>
+                            </p:link>
+                        </li>
                         <li>
                             <p:link href="/capitalHumano/personal/perfilPersonalReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
                                 <span>Reporte de Registros</span>
@@ -554,9 +559,6 @@
                     <li>
                         <p:link href="/capitalHumano/cuidados.xhtml"><i class="fa fa-users"></i>
                             <span>Cuidados</span>
-                            <span class="pull-right-container">
-                                <small class="label pull-right bg-green">Nuevo</small>
-                            </span>
                         </p:link>
                     </li>
                 </ul>

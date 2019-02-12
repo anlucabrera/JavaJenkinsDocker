@@ -145,7 +145,7 @@ public class ControladorEmpleado implements Serializable {
             if (nuevoOBJInformacionAdicionalPersonal == null) {
                 nuevoOBJInformacionAdicionalPersonal=new InformacionAdicionalPersonal();
                 nuevoOBJInformacionAdicionalPersonal.setClave(empleadoLogeado);
-                nuevoOBJInformacionAdicionalPersonal.setEstatus("Aceptado");
+                nuevoOBJInformacionAdicionalPersonal.setAutorizacion(false);
                 obtenerEdad();
                 ejbDatosUsuarioLogeado.crearNuevoInformacionAdicionalPersonal(nuevoOBJInformacionAdicionalPersonal);
             }

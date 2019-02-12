@@ -20,6 +20,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Distinciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;  
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Messages;
+import org.primefaces.event.RowEditEvent;
 
 @Named
 @ManagedBean
@@ -116,14 +117,15 @@ public class CvPremios implements Serializable{
         }
     }
 
-    public void updateDistinciones() {
+    public void updateDistinciones(RowEditEvent event) {
         try {
+            Distinciones actualizarD = (Distinciones) event.getObject();
             //Primero se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
-            utilidadesCH.agregaBitacora(usuario, nuevoOBJDistinciones.getDistincion().toString(), "Distinciones", "Update");
+            utilidadesCH.agregaBitacora(usuario, actualizarD.getDistincion().toString(), "Distinciones", "Update");
             //Se procede a invocar el “EJB” el cual mediante la recepción del objeto se encargará de procesar y actualizar la información en la BD. 
-            nuevoOBJDistinciones = ejbPremios.actualizarDistinciones(nuevoOBJDistinciones);
+            ejbPremios.actualizarDistinciones(actualizarD);
             //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método
-            nuevoOBJDistinciones = new Distinciones();
+            actualizarD = new Distinciones();
             direccionInt = 0;
             //Finalmente se le informa al usuario cual es el resultado obtenido
             utilidadesCH.mensajes("", "I", "C");
@@ -133,6 +135,10 @@ public class CvPremios implements Serializable{
         }
     }
 
+    public void onRowCancel(RowEditEvent event) {
+        Messages.addGlobalInfo("¡Operación cancelada!");
+    }
+    
     public void metodoBase() {
 
     }

@@ -172,6 +172,7 @@ public class ExelPlantillaPersonal implements Serializable {
 
             LOGGER.log(Level.INFO, "Archivo creado exitosamente en {0}", archivo.getAbsolutePath());
             direccionDescarga = convertirRuta(archivo);
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ExelPlantillaPersonal.generarPlantillaPersoanl()"+direccionDescarga);
         } catch (FileNotFoundException ex) {
             LOGGER.log(Level.SEVERE, "Archivo no localizable en sistema de archivos");
         } catch (IOException ex) {

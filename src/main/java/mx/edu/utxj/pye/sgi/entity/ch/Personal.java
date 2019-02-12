@@ -14,7 +14,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -30,7 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author PLANEACION
  */
 @Entity
 @Table(name = "personal", catalog = "capital_humano", schema = "")
@@ -142,26 +141,8 @@ public class Personal implements Serializable {
     @Size(max = 200)
     @Column(name = "correo_electronico2")
     private String correoElectronico2;
-    @ManyToMany(mappedBy = "personalList")
-    private List<Eventos> eventosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
-    private List<Docencias> docenciasList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
-    private List<DesempenioEvaluacionResultados> desempenioEvaluacionResultadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal1")
-    private List<DesempenioEvaluacionResultados> desempenioEvaluacionResultadosList1;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
-    private List<Innovaciones> innovacionesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
-    private List<Lenguas> lenguasList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPersonal")
-    private List<Comentariosfunciones> comentariosfuncionesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
-    private List<ExperienciasLaborales> experienciasLaboralesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
-    private List<FormacionAcademica> formacionAcademicaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
-    private List<EvaluacionesClimaLaboralResultados> evaluacionesClimaLaboralResultadosList;
+    private List<ContactoEmergencias> contactoEmergenciasList;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "personal")
     private InformacionAdicionalPersonal informacionAdicionalPersonal;
     @JoinColumn(name = "categoria_360", referencedColumnName = "categoria")
@@ -185,66 +166,6 @@ public class Personal implements Serializable {
     @JoinColumn(name = "categoria_especifica", referencedColumnName = "categoriaEspecifica")
     @ManyToOne
     private Categoriasespecificasfunciones categoriaEspecifica;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
-    private List<Articulosp> articulospList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
-    private List<EvaluacionDocentesMateriaResultados> evaluacionDocentesMateriaResultadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
-    private List<Idiomas> idiomasList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
-    private List<Horarios> horariosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "claveTRemitente")
-    private List<Notificaciones> notificacionesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "claveTDestino")
-    private List<Notificaciones> notificacionesList1;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
-    private List<Congresos> congresosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
-    private List<EvaluacionesControlInternoResultados> evaluacionesControlInternoResultadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
-    private List<Incidencias> incidenciasList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
-    private List<HabilidadesInformaticas> habilidadesInformaticasList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
-    private List<EvaluacionesPremiosResultados> evaluacionesPremiosResultadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal1")
-    private List<EvaluacionesPremiosResultados> evaluacionesPremiosResultadosList1;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
-    private List<Divulgaciones> divulgacionesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "director")
-    private List<PlaneacionesCuatrimestrales> planeacionesCuatrimestralesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "docente")
-    private List<PlaneacionesCuatrimestrales> planeacionesCuatrimestralesList1;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
-    private List<PlaneacionesDetalles> planeacionesDetallesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "claveEmpleado")
-    private List<Distinciones> distincionesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
-    private List<DesarrollosTecnologicos> desarrollosTecnologicosList;
-    @OneToMany(mappedBy = "clavePersonal")
-    private List<LibrosPub> librosPubList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
-    private List<Capacitacionespersonal> capacitacionespersonalList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
-    private List<EvaluacionesTutoresResultados> evaluacionesTutoresResultadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
-    private List<Incapacidad> incapacidadList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
-    private List<Memoriaspub> memoriaspubList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
-    private List<Evaluaciones360Resultados> evaluaciones360ResultadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal1")
-    private List<Evaluaciones360Resultados> evaluaciones360ResultadosList1;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
-    private List<PlaneacionesLiberaciones> planeacionesLiberacionesList;
-    @OneToMany(mappedBy = "clave")
-    private List<Permisos> permisosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
-    private List<DesarrolloSoftware> desarrolloSoftwareList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clave")
-    private List<CursosPersonal> cursosPersonalList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
-    private List<Cuidados> cuidadosList;
 
     public Personal() {
     }
@@ -426,93 +347,12 @@ public class Personal implements Serializable {
     }
 
     @XmlTransient
-    public List<Eventos> getEventosList() {
-        return eventosList;
+    public List<ContactoEmergencias> getContactoEmergenciasList() {
+        return contactoEmergenciasList;
     }
 
-    public void setEventosList(List<Eventos> eventosList) {
-        this.eventosList = eventosList;
-    }
-
-    @XmlTransient
-    public List<Docencias> getDocenciasList() {
-        return docenciasList;
-    }
-
-    public void setDocenciasList(List<Docencias> docenciasList) {
-        this.docenciasList = docenciasList;
-    }
-
-    @XmlTransient
-    public List<DesempenioEvaluacionResultados> getDesempenioEvaluacionResultadosList() {
-        return desempenioEvaluacionResultadosList;
-    }
-
-    public void setDesempenioEvaluacionResultadosList(List<DesempenioEvaluacionResultados> desempenioEvaluacionResultadosList) {
-        this.desempenioEvaluacionResultadosList = desempenioEvaluacionResultadosList;
-    }
-
-    @XmlTransient
-    public List<DesempenioEvaluacionResultados> getDesempenioEvaluacionResultadosList1() {
-        return desempenioEvaluacionResultadosList1;
-    }
-
-    public void setDesempenioEvaluacionResultadosList1(List<DesempenioEvaluacionResultados> desempenioEvaluacionResultadosList1) {
-        this.desempenioEvaluacionResultadosList1 = desempenioEvaluacionResultadosList1;
-    }
-
-    @XmlTransient
-    public List<Innovaciones> getInnovacionesList() {
-        return innovacionesList;
-    }
-
-    public void setInnovacionesList(List<Innovaciones> innovacionesList) {
-        this.innovacionesList = innovacionesList;
-    }
-
-    @XmlTransient
-    public List<Lenguas> getLenguasList() {
-        return lenguasList;
-    }
-
-    public void setLenguasList(List<Lenguas> lenguasList) {
-        this.lenguasList = lenguasList;
-    }
-
-    @XmlTransient
-    public List<Comentariosfunciones> getComentariosfuncionesList() {
-        return comentariosfuncionesList;
-    }
-
-    public void setComentariosfuncionesList(List<Comentariosfunciones> comentariosfuncionesList) {
-        this.comentariosfuncionesList = comentariosfuncionesList;
-    }
-
-    @XmlTransient
-    public List<ExperienciasLaborales> getExperienciasLaboralesList() {
-        return experienciasLaboralesList;
-    }
-
-    public void setExperienciasLaboralesList(List<ExperienciasLaborales> experienciasLaboralesList) {
-        this.experienciasLaboralesList = experienciasLaboralesList;
-    }
-
-    @XmlTransient
-    public List<FormacionAcademica> getFormacionAcademicaList() {
-        return formacionAcademicaList;
-    }
-
-    public void setFormacionAcademicaList(List<FormacionAcademica> formacionAcademicaList) {
-        this.formacionAcademicaList = formacionAcademicaList;
-    }
-
-    @XmlTransient
-    public List<EvaluacionesClimaLaboralResultados> getEvaluacionesClimaLaboralResultadosList() {
-        return evaluacionesClimaLaboralResultadosList;
-    }
-
-    public void setEvaluacionesClimaLaboralResultadosList(List<EvaluacionesClimaLaboralResultados> evaluacionesClimaLaboralResultadosList) {
-        this.evaluacionesClimaLaboralResultadosList = evaluacionesClimaLaboralResultadosList;
+    public void setContactoEmergenciasList(List<ContactoEmergencias> contactoEmergenciasList) {
+        this.contactoEmergenciasList = contactoEmergenciasList;
     }
 
     public InformacionAdicionalPersonal getInformacionAdicionalPersonal() {
@@ -577,276 +417,6 @@ public class Personal implements Serializable {
 
     public void setCategoriaEspecifica(Categoriasespecificasfunciones categoriaEspecifica) {
         this.categoriaEspecifica = categoriaEspecifica;
-    }
-
-    @XmlTransient
-    public List<Articulosp> getArticulospList() {
-        return articulospList;
-    }
-
-    public void setArticulospList(List<Articulosp> articulospList) {
-        this.articulospList = articulospList;
-    }
-
-    @XmlTransient
-    public List<EvaluacionDocentesMateriaResultados> getEvaluacionDocentesMateriaResultadosList() {
-        return evaluacionDocentesMateriaResultadosList;
-    }
-
-    public void setEvaluacionDocentesMateriaResultadosList(List<EvaluacionDocentesMateriaResultados> evaluacionDocentesMateriaResultadosList) {
-        this.evaluacionDocentesMateriaResultadosList = evaluacionDocentesMateriaResultadosList;
-    }
-
-    @XmlTransient
-    public List<Idiomas> getIdiomasList() {
-        return idiomasList;
-    }
-
-    public void setIdiomasList(List<Idiomas> idiomasList) {
-        this.idiomasList = idiomasList;
-    }
-
-    @XmlTransient
-    public List<Horarios> getHorariosList() {
-        return horariosList;
-    }
-
-    public void setHorariosList(List<Horarios> horariosList) {
-        this.horariosList = horariosList;
-    }
-
-    @XmlTransient
-    public List<Notificaciones> getNotificacionesList() {
-        return notificacionesList;
-    }
-
-    public void setNotificacionesList(List<Notificaciones> notificacionesList) {
-        this.notificacionesList = notificacionesList;
-    }
-
-    @XmlTransient
-    public List<Notificaciones> getNotificacionesList1() {
-        return notificacionesList1;
-    }
-
-    public void setNotificacionesList1(List<Notificaciones> notificacionesList1) {
-        this.notificacionesList1 = notificacionesList1;
-    }
-
-    @XmlTransient
-    public List<Congresos> getCongresosList() {
-        return congresosList;
-    }
-
-    public void setCongresosList(List<Congresos> congresosList) {
-        this.congresosList = congresosList;
-    }
-
-    @XmlTransient
-    public List<EvaluacionesControlInternoResultados> getEvaluacionesControlInternoResultadosList() {
-        return evaluacionesControlInternoResultadosList;
-    }
-
-    public void setEvaluacionesControlInternoResultadosList(List<EvaluacionesControlInternoResultados> evaluacionesControlInternoResultadosList) {
-        this.evaluacionesControlInternoResultadosList = evaluacionesControlInternoResultadosList;
-    }
-
-    @XmlTransient
-    public List<Incidencias> getIncidenciasList() {
-        return incidenciasList;
-    }
-
-    public void setIncidenciasList(List<Incidencias> incidenciasList) {
-        this.incidenciasList = incidenciasList;
-    }
-
-    @XmlTransient
-    public List<HabilidadesInformaticas> getHabilidadesInformaticasList() {
-        return habilidadesInformaticasList;
-    }
-
-    public void setHabilidadesInformaticasList(List<HabilidadesInformaticas> habilidadesInformaticasList) {
-        this.habilidadesInformaticasList = habilidadesInformaticasList;
-    }
-
-    @XmlTransient
-    public List<EvaluacionesPremiosResultados> getEvaluacionesPremiosResultadosList() {
-        return evaluacionesPremiosResultadosList;
-    }
-
-    public void setEvaluacionesPremiosResultadosList(List<EvaluacionesPremiosResultados> evaluacionesPremiosResultadosList) {
-        this.evaluacionesPremiosResultadosList = evaluacionesPremiosResultadosList;
-    }
-
-    @XmlTransient
-    public List<EvaluacionesPremiosResultados> getEvaluacionesPremiosResultadosList1() {
-        return evaluacionesPremiosResultadosList1;
-    }
-
-    public void setEvaluacionesPremiosResultadosList1(List<EvaluacionesPremiosResultados> evaluacionesPremiosResultadosList1) {
-        this.evaluacionesPremiosResultadosList1 = evaluacionesPremiosResultadosList1;
-    }
-
-    @XmlTransient
-    public List<Divulgaciones> getDivulgacionesList() {
-        return divulgacionesList;
-    }
-
-    public void setDivulgacionesList(List<Divulgaciones> divulgacionesList) {
-        this.divulgacionesList = divulgacionesList;
-    }
-
-    @XmlTransient
-    public List<PlaneacionesCuatrimestrales> getPlaneacionesCuatrimestralesList() {
-        return planeacionesCuatrimestralesList;
-    }
-
-    public void setPlaneacionesCuatrimestralesList(List<PlaneacionesCuatrimestrales> planeacionesCuatrimestralesList) {
-        this.planeacionesCuatrimestralesList = planeacionesCuatrimestralesList;
-    }
-
-    @XmlTransient
-    public List<PlaneacionesCuatrimestrales> getPlaneacionesCuatrimestralesList1() {
-        return planeacionesCuatrimestralesList1;
-    }
-
-    public void setPlaneacionesCuatrimestralesList1(List<PlaneacionesCuatrimestrales> planeacionesCuatrimestralesList1) {
-        this.planeacionesCuatrimestralesList1 = planeacionesCuatrimestralesList1;
-    }
-
-    @XmlTransient
-    public List<PlaneacionesDetalles> getPlaneacionesDetallesList() {
-        return planeacionesDetallesList;
-    }
-
-    public void setPlaneacionesDetallesList(List<PlaneacionesDetalles> planeacionesDetallesList) {
-        this.planeacionesDetallesList = planeacionesDetallesList;
-    }
-
-    @XmlTransient
-    public List<Distinciones> getDistincionesList() {
-        return distincionesList;
-    }
-
-    public void setDistincionesList(List<Distinciones> distincionesList) {
-        this.distincionesList = distincionesList;
-    }
-
-    @XmlTransient
-    public List<DesarrollosTecnologicos> getDesarrollosTecnologicosList() {
-        return desarrollosTecnologicosList;
-    }
-
-    public void setDesarrollosTecnologicosList(List<DesarrollosTecnologicos> desarrollosTecnologicosList) {
-        this.desarrollosTecnologicosList = desarrollosTecnologicosList;
-    }
-
-    @XmlTransient
-    public List<LibrosPub> getLibrosPubList() {
-        return librosPubList;
-    }
-
-    public void setLibrosPubList(List<LibrosPub> librosPubList) {
-        this.librosPubList = librosPubList;
-    }
-
-    @XmlTransient
-    public List<Capacitacionespersonal> getCapacitacionespersonalList() {
-        return capacitacionespersonalList;
-    }
-
-    public void setCapacitacionespersonalList(List<Capacitacionespersonal> capacitacionespersonalList) {
-        this.capacitacionespersonalList = capacitacionespersonalList;
-    }
-
-    @XmlTransient
-    public List<EvaluacionesTutoresResultados> getEvaluacionesTutoresResultadosList() {
-        return evaluacionesTutoresResultadosList;
-    }
-
-    public void setEvaluacionesTutoresResultadosList(List<EvaluacionesTutoresResultados> evaluacionesTutoresResultadosList) {
-        this.evaluacionesTutoresResultadosList = evaluacionesTutoresResultadosList;
-    }
-
-    @XmlTransient
-    public List<Incapacidad> getIncapacidadList() {
-        return incapacidadList;
-    }
-
-    public void setIncapacidadList(List<Incapacidad> incapacidadList) {
-        this.incapacidadList = incapacidadList;
-    }
-
-    @XmlTransient
-    public List<Memoriaspub> getMemoriaspubList() {
-        return memoriaspubList;
-    }
-
-    public void setMemoriaspubList(List<Memoriaspub> memoriaspubList) {
-        this.memoriaspubList = memoriaspubList;
-    }
-
-    @XmlTransient
-    public List<Evaluaciones360Resultados> getEvaluaciones360ResultadosList() {
-        return evaluaciones360ResultadosList;
-    }
-
-    public void setEvaluaciones360ResultadosList(List<Evaluaciones360Resultados> evaluaciones360ResultadosList) {
-        this.evaluaciones360ResultadosList = evaluaciones360ResultadosList;
-    }
-
-    @XmlTransient
-    public List<Evaluaciones360Resultados> getEvaluaciones360ResultadosList1() {
-        return evaluaciones360ResultadosList1;
-    }
-
-    public void setEvaluaciones360ResultadosList1(List<Evaluaciones360Resultados> evaluaciones360ResultadosList1) {
-        this.evaluaciones360ResultadosList1 = evaluaciones360ResultadosList1;
-    }
-
-    @XmlTransient
-    public List<PlaneacionesLiberaciones> getPlaneacionesLiberacionesList() {
-        return planeacionesLiberacionesList;
-    }
-
-    public void setPlaneacionesLiberacionesList(List<PlaneacionesLiberaciones> planeacionesLiberacionesList) {
-        this.planeacionesLiberacionesList = planeacionesLiberacionesList;
-    }
-
-    @XmlTransient
-    public List<Permisos> getPermisosList() {
-        return permisosList;
-    }
-
-    public void setPermisosList(List<Permisos> permisosList) {
-        this.permisosList = permisosList;
-    }
-
-    @XmlTransient
-    public List<DesarrolloSoftware> getDesarrolloSoftwareList() {
-        return desarrolloSoftwareList;
-    }
-
-    public void setDesarrolloSoftwareList(List<DesarrolloSoftware> desarrolloSoftwareList) {
-        this.desarrolloSoftwareList = desarrolloSoftwareList;
-    }
-
-    @XmlTransient
-    public List<CursosPersonal> getCursosPersonalList() {
-        return cursosPersonalList;
-    }
-
-    public void setCursosPersonalList(List<CursosPersonal> cursosPersonalList) {
-        this.cursosPersonalList = cursosPersonalList;
-    }
-
-    @XmlTransient
-    public List<Cuidados> getCuidadosList() {
-        return cuidadosList;
-    }
-
-    public void setCuidadosList(List<Cuidados> cuidadosList) {
-        this.cuidadosList = cuidadosList;
     }
 
     @Override

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+
+        <style>
+            .description-block{
+                text-align: justify;
+            }
+            .description-header{
+                text-align: center;
+            }
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            button, input, optgroup, select, textarea{
+                color: black;
+            }
+            .ui-tabs .ui-tabs-navscroller-btn-right{
+                right: .1em;
+                background: white;
+                block-size: 2.6em;
+            }
+            .ui-tabs .ui-tabs-navscroller-btn-left{
+                left: .1em;
+                background: white;
+                block-size: 2.6em;
+            }
+        </style>
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13}">
+                <section class="content">
+                    <div class="row">
+                        <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                        <div class="col-md-10">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div>      
+                                </div>
+                                <p:tabView>                   
+                                    <p:tab title="Contactos">
+                                        <h:form id="frmBajas">
+                                            <p:dataTable id="dtbBajas" var="ByR" paginator="true" rows="15"
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="5,10,15,20,25,30" sortBy="#{ByR.clavePersonal.clave}"
+                                                         value="#{controladorPersonalAltasYBajas.listaContactoEmergencias}" style="margin-bottom:20px">
+                                                <f:facet name="header">
+                                                    Contactos Registrados = #{controladorPersonalAltasYBajas.listaContactoEmergencias.size()} 
+                                                </f:facet>   
+                                                
+                                                <p:column headerText="Trabajador" groupRow="true" 
+                                                          sortBy="#{ByR.clavePersonal.nombre}" 
+                                                          filterBy="#{ByR.clavePersonal.nombre}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{ByR.clavePersonal.nombre}" />
+                                                </p:column>
+                                                
+                                                <p:column headerText="Nombre"
+                                                          sortBy="#{ByR.nombre}" 
+                                                          filterBy="#{ByR.nombre}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{ByR.nombre}" />
+                                                </p:column>
+                                                <p:column headerText="Parentesco"
+                                                          sortBy="#{ByR.parentesco}" 
+                                                          filterBy="#{ByR.parentesco}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{ByR.parentesco}" />
+                                                </p:column>
+                                                <p:column headerText="Celular"
+                                                          sortBy="#{ByR.movil}" 
+                                                          filterBy="#{ByR.movil}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{ByR.movil}" />
+                                                </p:column>
+                                                <p:column headerText="Telefono fijo"
+                                                          sortBy="#{ByR.telefonoFijo}" 
+                                                          filterBy="#{ByR.telefonoFijo}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{ByR.telefonoFijo}" />
+                                                </p:column>
+
+                                            </p:dataTable>
+                                        </h:form>
+                                    </p:tab>
+                                </p:tabView>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </c:if>
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa != 13}">
+                <h1>
+                    Esta página está disponible solo para personal adscrito al área de personal
+                </h1>
+            </c:if>
+        </p:panel>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

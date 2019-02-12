@@ -132,8 +132,8 @@
                                                                 <p:column rowspan="2" headerText="Unidad de medida" style="width: 150px;"/>
                                                                 <p:column rowspan="2" headerText="Meta" style="width: 100px;"/>
                                                                 <p:column colspan="4" headerText="Calendarización de Metas: #{controladorEvaluacionActividadesPyE.cuatrimestre eq 1?'Enero - Abril':(controladorEvaluacionActividadesPyE.cuatrimestre eq 2?'Mayo - Agosto':'Septiembre - Diciembre')}" style="width: 300px;"/> 
-                                                                <p:column colspan="3" headerText="Avance cuatrimestral" style="width: 250px;"/> 
                                                                 <p:column colspan="3" headerText="Avance general al mes de #{controladorEvaluacionActividadesPyE.mesNombre}" style="width: 250px;"/>
+                                                                <p:column colspan="3" headerText="Avance cuatrimestral" style="width: 250px;"/> 
                                                                 <p:column rowspan="2" headerText="Evaluar" style="width:80px; "/>
                                                                 <p:column rowspan="2" headerText="Evidencia" style="width:80px; "/>
                                                                 <p:column rowspan="2" headerText="Justificacion" style="width:80px;" rendered="#{controladorEvaluacionActividadesPyE.mes eq 3?true:
@@ -311,17 +311,6 @@
                                                             </p:cellEditor>
                                                         </p:column>
                                                         <p:column>
-                                                            <h:outputText value="#{poa.totalPCuatrimestre}"/>
-                                                            <hr/>
-                                                            <h:outputText value="#{poa.totalACuatrimestre}"/>
-                                                        </p:column>   
-                                                        <p:column>
-                                                            <h:outputText value="#{poa.porcentajeCuatrimestre} %" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <img src="../../resources/img/#{poa.semaforoC}.png" alt="#{poa.semaforoC}"/>
-                                                        </p:column>
-                                                        <p:column>
                                                             <h:outputText value="#{poa.totalPCorte}" />
                                                             <hr/>
                                                             <h:outputText value="#{poa.totalACorte}" />
@@ -331,6 +320,17 @@
                                                         </p:column>
                                                         <p:column>
                                                             <img src="../../resources/img/#{poa.semaforoG}.png" alt="#{poa.semaforoG}"/>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{poa.totalPCuatrimestre}"/>
+                                                            <hr/>
+                                                            <h:outputText value="#{poa.totalACuatrimestre}"/>
+                                                        </p:column>   
+                                                        <p:column>
+                                                            <h:outputText value="#{poa.porcentajeCuatrimestre} %" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <img src="../../resources/img/#{poa.semaforoC}.png" alt="#{poa.semaforoC}"/>
                                                         </p:column>
 
                                                         <p:column rendered="#{poa.actividadesPoa.bandera eq 'x' ?true:false}"/>
@@ -428,7 +428,7 @@
             </div>
         </h:form>
 
-        <h:form id="frmComentario"  enctype="multipart/form-data"> 
+        <o:form id="frmComentario"  enctype="multipart/form-data"> 
             <p:dialog header="Agregar descripción" widgetVar="dlgComentario" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true"
                       visible="#{controladorEvaluacionActividadesPyE.archivoSC}">
                 <p:panelGrid id="pnlAgregarComentario" style="text-align:justify;" columns="1">
@@ -451,12 +451,12 @@
                     <p:outputPanel>
                         <p:dataTable value="#{controladorEvaluacionActividadesPyE.evidenciasesDetalles}" var="detalle" 
                                      sortBy="#{detalle.mes}" expandableRowGroups="true"
-                                     scrollable="true" scrollHeight="300">
+                                     scrollable="true" scrollHeight="300" scrollWidth="600">
                             <f:facet name="header">
                                 #{controladorEvaluacionActividadesPyE.evidenciasesDetalles.size()} Evidencias cargadas
                             </f:facet>
                             <p:headerRow>
-                                <p:column colspan="3">
+                                <p:column colspan="6">
                                     <h:outputText value="#{detalle.mes}" />
                                 </p:column>
                             </p:headerRow>
@@ -468,13 +468,19 @@
                             <p:column headerText="Tipo" style="width: 100px">
                                 <h:outputText value="#{detalle.mime}" />
                             </p:column>
-                            <p:column headerText="Ruta">
+                            <p:column headerText="Ruta" style="width: 500px">
                                 <h:outputText value="#{controladorEvaluacionActividadesPyE.convertirRutaMP(detalle.ruta)}" />
                             </p:column>
                             <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
                                 <p:link href="http://siip.utxj.edu.mx/archivos/#{controladorEvaluacionActividadesPyE.convertirRutaVistaEvidencia(detalle.ruta)}" target="_blank">
                                     <i class="fa fa-search"></i>
                                     <span>Ver</span>
+                                </p:link>
+                            </p:column>
+                            <p:column headerText="Descargar" style="width:85px;text-align: center">
+                                <p:link href="http://siip.utxj.edu.mx/archivos/#{controladorEvaluacionActividadesPyE.convertirRutaVistaEvidencia(detalle.ruta)}" target="_blank">
+                                    <i class="fa fa-download"></i>
+                                    <span>Descargar</span>
                                 </p:link>
                             </p:column>
                         </p:dataTable>
@@ -486,7 +492,7 @@
                 <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
                 <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
             </p:confirmDialog>
-        </h:form>
+        </o:form>
 
         <h:form id="frmJuM">
             <p:dialog header="Agregar descripción" widgetVar="dlgJusMes" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">

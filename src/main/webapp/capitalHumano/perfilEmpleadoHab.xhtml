@@ -104,7 +104,7 @@
                             </div>
                             <p:tabView activeIndex="#{cvHabilidades.pestaniaActiva}">
                                 <p:tab title="Idiomas">
-                                    <h:form id="frmIdiom" enctype="multipart/form-data"> 
+                                    <o:form id="frmIdiom" enctype="multipart/form-data"> 
                                         <p:outputPanel id="registro" autoUpdate="#{cvHabilidades.nuevOBJIdiomas.idioma eq null?false:true}">
                                             <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                                                 <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
@@ -269,75 +269,207 @@
                                                 </div>
                                             </c:if>
                                         </p:outputPanel>
-                                    </h:form>
+                                    </o:form>
                                     <h:form id="frmLista1">
                                         <p:outputPanel>
                                             <p:remoteCommand name="actualizarTabla" actionListener="#{cvHabilidades.metodoBase()}" update="tblIdiomas" />                                                    
-                                            <p:dataTable id="tblIdiomas" value="#{cvHabilidades.nuevaListaIdiomas}" var="habIdio" rowStyleClass="#{habIdio.estatus eq 'Aceptado'?'aceptado':'denegado'}"
-                                                         paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron Registros."
-                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                                         
-                                                         selectionMode="single" selection="#{cvHabilidades.nuevOBJIdiomas}" rowKey="#{habIdio.idioma}" lazy="true">
+                                            <p:dataTable id="tblIdiomas" value="#{cvHabilidades.nuevaListaIdiomas}" var="idiomas" 
+                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{idiomas.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                         editable="true" editMode="row">
 
-                                                <f:facet name="header">
-                                                    <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
-                                                    <p:spacer width="15px"/>
-                                                    <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
-                                                </f:facet>
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
+                                                        <p:column rowspan="2" headerText="Idioma" style="width: 100px;" />
+                                                        <p:column rowspan="2" headerText="Grado de dominio" style="width: 100px;"/>
+                                                        <p:column colspan="3" headerText="Nivel" style="width: 375px;"/>
+                                                        <p:column rowspan="2" headerText="certificación" style="width: 100px;"/> 
+                                                        <p:column rowspan="2" headerText="Institución otorgante" style="width:250px; "/>
+                                                        <p:column colspan="3" headerText="Fecha" style="width:300px; "/>
+                                                        <p:column rowspan="2" headerText="Evidencia" style="width:50px; "/>
+                                                    </p:row>
+                                                    <p:row class="success">
+                                                        <p:column headerText="Conversación" />
+                                                        <p:column headerText="Escritura" />
+                                                        <p:column headerText="Lectura" />
+                                                        <p:column headerText="Otorgación" />
+                                                        <p:column headerText="Certificación" />
+                                                        <p:column headerText="Vigencia" />
+                                                    </p:row>
+                                                </p:columnGroup>
 
-                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                    <p:ajax event="rowSelect"   update="update"/>
-                                                    <p:ajax event="rowUnselect" update="update"/>
-                                                </c:if>
+                                                <p:ajax event="rowEdit" listener="#{cvHabilidades.actualizaIdioma}" update="@this" oncomplete="actualizarTabla()"/>
+                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla()"/>
 
-                                                <p:column style="width: 50px;">
-                                                    <p:commandButton actionListener="#{cvHabilidades.eliminaIdioma(habIdio)}" update="tblIdiomas" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{habIdio.idiomaHablado}?" icon="ui-icon-alert" />
+                                                <p:column >
+                                                    <p:commandButton actionListener="#{cvHabilidades.eliminaIdioma(idiomas)}" update="tblIdiomas" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación del idioma: #{idiomas.idiomaHablado}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
 
-                                                <p:column headerText="Idioma" 
-                                                          sortBy="#{habIdio.idiomaHablado}" 
-                                                          filterBy="#{habIdio.idiomaHablado}" 
-                                                          filterMatchMode="contains">
-                                                    <h:outputText value="#{habIdio.idiomaHablado}" />
+                                                <p:column >
+                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                        <a href="#" class="ui-row-editor-pencil">
+                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                        </a>
+                                                        <a href="#" class="ui-row-editor-check">
+                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                        </a>
+                                                        <p:spacer width="20px"/>
+                                                        <a href="#" class="ui-row-editor-close">
+                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                        </a>
+                                                    </div>
+                                                </p:column> 
+
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{idiomas.idiomaHablado}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{idiomas.idiomaHablado}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItems value="#{controladorEmpleado.listaIdiomas}" var="idioma" itemValue="#{idioma}" itemLabel="#{idioma}" />                                                                                    
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
                                                 </p:column>
-
-                                                <p:column headerText="Grado de dominio" 
-                                                          sortBy="#{habIdio.gradoDominio}" 
-                                                          filterBy="#{habIdio.gradoDominio}" 
-                                                          filterMatchMode="contains">
-                                                    <h:outputText value="#{habIdio.gradoDominio}" />
-                                                </p:column>                                    
-
-                                                <p:column headerText="Instituto otorgante" 
-                                                          sortBy="#{habIdio.institucionOtorgante}" 
-                                                          filterBy="#{habIdio.institucionOtorgante}" 
-                                                          filterMatchMode="contains">
-                                                    <h:outputText value="#{habIdio.institucionOtorgante}" />
-                                                </p:column>  
-
-                                                <f:facet name="footer">
-                                                    <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                        <p:commandButton id="update" value="Actualizar" icon="fa fa-pen" class="btn btn-info" update="@form tblIdiomas"
-                                                                         actionListener="#{cvHabilidades.metodoBase()}" disabled="#{empty cvHabilidades.nuevOBJIdiomas}"/>
-                                                    </c:if>
-                                                </f:facet>
-
-                                                <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
-                                                    <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog1').show()" icon="ui-icon-search" title="View">
-                                                        <f:setPropertyActionListener value="#{habIdio}" target="#{cvHabilidades.nuevOBJIdiomas}"/>
-                                                    </p:commandButton>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{idiomas.gradoDominio}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{idiomas.gradoDominio}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'Básico'}" itemLabel="#{'Básico'}"/>
+                                                                <f:selectItem itemValue="#{'Intermedio'}" itemLabel="#{'Intermedio'}"/>
+                                                                <f:selectItem itemValue="#{'Avanzado'}" itemLabel="#{'Avanzado'}"/>
+                                                                <f:selectItem itemValue="#{'Nivel Universitario'}" itemLabel="#{'Nivel Universitario'}"/>
+                                                                <f:selectItem itemValue="#{'Nivel de Negocios'}" itemLabel="#{'Nivel de Negocios'}"/>
+                                                                <f:selectItem itemValue="#{'Lengua Materna'}" itemLabel="#{'Lengua Materna'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
                                                 </p:column>
-
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{idiomas.nivelConversacion}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{idiomas.nivelConversacion}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'Básico'}" itemLabel="#{'Básico'}"/>
+                                                                <f:selectItem itemValue="#{'Intermedio'}" itemLabel="#{'Intermedio'}"/>
+                                                                <f:selectItem itemValue="#{'Avanzado'}" itemLabel="#{'Avanzado'}"/>
+                                                                <f:selectItem itemValue="#{'Nivel Universitario'}" itemLabel="#{'Nivel Universitario'}"/>
+                                                                <f:selectItem itemValue="#{'Nivel de Negocios'}" itemLabel="#{'Nivel de Negocios'}"/>
+                                                                <f:selectItem itemValue="#{'Lengua Materna'}" itemLabel="#{'Lengua Materna'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>   
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{idiomas.nivelEscritura}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{idiomas.nivelEscritura}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'Básico'}" itemLabel="#{'Básico'}"/>
+                                                                <f:selectItem itemValue="#{'Intermedio'}" itemLabel="#{'Intermedio'}"/>
+                                                                <f:selectItem itemValue="#{'Avanzado'}" itemLabel="#{'Avanzado'}"/>
+                                                                <f:selectItem itemValue="#{'Nivel Universitario'}" itemLabel="#{'Nivel Universitario'}"/>
+                                                                <f:selectItem itemValue="#{'Nivel de Negocios'}" itemLabel="#{'Nivel de Negocios'}"/>
+                                                                <f:selectItem itemValue="#{'Lengua Materna'}" itemLabel="#{'Lengua Materna'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>   
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{idiomas.nivelLectura}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{idiomas.nivelLectura}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'Básico'}" itemLabel="#{'Básico'}"/>
+                                                                <f:selectItem itemValue="#{'Intermedio'}" itemLabel="#{'Intermedio'}"/>
+                                                                <f:selectItem itemValue="#{'Avanzado'}" itemLabel="#{'Avanzado'}"/>
+                                                                <f:selectItem itemValue="#{'Nivel Universitario'}" itemLabel="#{'Nivel Universitario'}"/>
+                                                                <f:selectItem itemValue="#{'Nivel de Negocios'}" itemLabel="#{'Nivel de Negocios'}"/>
+                                                                <f:selectItem itemValue="#{'Lengua Materna'}" itemLabel="#{'Lengua Materna'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{idiomas.certificacion}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{idiomas.certificacion}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'Si'}" itemLabel="#{'Si'}"/>
+                                                                <f:selectItem itemValue="#{'No'}" itemLabel="#{'No'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column> 
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{idiomas.institucionOtorgante}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputText value="#{idiomas.institucionOtorgante}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{idiomas.fechaEvaluacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{idiomas.fechaEvaluacion}" pattern="dd-MM-yyyy" mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{idiomas.fechaVigenciaA}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{idiomas.fechaVigenciaA}" pattern="dd-MM-yyyy" mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{idiomas.fechaVigenciaDe}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{idiomas.fechaVigenciaDe}" pattern="dd-MM-yyyy" mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(idiomas.evidenciaDoc)}" target="_blank" style="color: #000000">
+                                                        <i class="fa fa-search"></i>
+                                                        <span>Ver</span>
+                                                    </p:link>
+                                                </p:column>                                                   
                                             </p:dataTable>
-
-                                            <p:dialog header="Evidencias" widgetVar="evidenciaDialog1" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
-                                                <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
-                                                    <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty cvHabilidades.nuevOBJIdiomas}">
-                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(cvHabilidades.nuevOBJIdiomas.evidenciaDoc)}"/>       
-                                                    </p:panelGrid>
-                                                </p:outputPanel>
-                                            </p:dialog>
 
                                         </p:outputPanel>
 
@@ -349,7 +481,7 @@
                                 </p:tab>
                                 <p:tab title="Habilidades informáticas">
                                     <h:form id="frmHbInf"> 
-                                        <p:outputPanel id="registroH" autoUpdate="#{cvHabilidades.nuevOBJHabilidadesInformaticas.conocimiento eq null?false:true}">
+                                        <p:outputPanel id="registroH">
                                             <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                                                 <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                     <div class="col-md-12">
@@ -363,7 +495,7 @@
                                                                                     <p:outputPanel>            
                                                                                         <p:autoUpdate/>
                                                                                         <p:outputLabel for="conocimiento" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Conocimiento Informáticos" />
-                                                                                        <p:selectOneMenu id="conocimiento" widgetVar="conocimiento" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.conocimiento}">
+                                                                                        <p:selectOneMenu id="conocimiento" widgetVar="conocimiento" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.nuevOBJHabilidadesInformaticas.tipoConocimiento}">
                                                                                             <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                             <f:selectItem itemValue="Ofimática" itemLabel="Ofimática"/>
                                                                                             <f:selectItem itemValue="Base de datos" itemLabel="Bases de datos"/>
@@ -379,7 +511,7 @@
                                                                                         <p:message for="conocimiento" display="tooltip" />
                                                                                         <hr/>
                                                                                         <p:outputLabel for="programas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Programas que domina" />
-                                                                                        <p:selectOneMenu id="programas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.programa }">
+                                                                                        <p:selectOneMenu id="programas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.nuevOBJHabilidadesInformaticas.programaDominante }">
                                                                                             <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                             <f:selectItems value="#{cvHabilidades.listaConocimiento}" var="cono" itemValue="#{cono}" itemLabel="#{cono}" />
                                                                                         </p:selectOneMenu> 
@@ -388,7 +520,7 @@
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-12 col-lg-6">
                                                                                     <p:outputLabel for="nivelCon" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nivel de Conocimiento" /> 
-                                                                                    <p:selectOneRadio id="nivelCon" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.nivel}" layout="responsive" columns="2"> 
+                                                                                    <p:selectOneRadio id="nivelCon" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.nuevOBJHabilidadesInformaticas.nivelConocimiento}" layout="responsive" columns="2"> 
                                                                                         <f:selectItem itemValue="Nivel Usuario" itemLabel="Nivel Usuario"/>
                                                                                         <f:selectItem itemValue="Nivel Usuario Avanzado" itemLabel="Nivel Usuario Avanzado"/>
                                                                                         <f:selectItem itemValue="Nivel Profesional" itemLabel="Nivel Profesional"/>
@@ -403,10 +535,10 @@
                                                                             <div class="form-group">
                                                                                 <div class="col-sm-12 col-md-4 col-lg-4"/>
                                                                                 <div class="col-sm-12 col-md-4 col-lg-4">
-                                                                                    <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{cvHabilidades.createrInformaticas()}" 
-                                                                                                     icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3"  oncomplete="PF('registroH')update();" onsuccess="PF('frmHbInf')update();"
-                                                                                                         update="@form" process="@form"/> 
-                                                                               
+                                                                                    <p:commandButton id="btnBuscarActiuvidades" oncomplete="PF('frmListaHInf')update();" value="Guardar información" 
+                                                                                                     actionListener="#{cvHabilidades.createrInformaticas()}" icon="fa fa-pencil-square-o" 
+                                                                                                     class="btn-primary btn-block col-md-3" update="@form" process="@form" /> 
+
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -434,61 +566,72 @@
                                                 </div>
                                             </c:if>
                                         </p:outputPanel>
+                                    </h:form>
+                                    <h:form id="frmListaHInf">  
                                         <p:outputPanel>
                                             <p:remoteCommand name="actualizarTabla2" actionListener="#{cvHabilidades.metodoBase()}" update="tblInformaticas" />
-                                            <p:dataTable id="tblInformaticas" value="#{cvHabilidades.nuevaListaHabilidadesInformaticas}" var="habInf"
-                                                         paginator="true" rows="5"
+                                            <p:dataTable id="tblInformaticas" value="#{cvHabilidades.nuevaListaHabilidadesInformaticas}" var="habilidadInfo" 
+                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                         rowsPerPageTemplate="5,10,15,20,25,30"
-                                                         emptyMessage="No se encontraron Registros." rendered="true" rowStyleClass="#{habInf.estatus eq 'Aceptado'?'aceptado':'denegado'}"
-                                                         selectionMode="single" selection="#{cvHabilidades.nuevOBJHabilidadesInformaticas}" rowKey="#{habInf.conocimiento}">
+                                                         rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{habilidadInfo.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                         editable="true" editMode="row">
 
-                                                <f:facet name="header">
-                                                    <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
-                                                    <p:spacer width="15px"/>
-                                                    <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
-                                                </f:facet>
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
+                                                        <p:column rowspan="2" headerText="Conocimiento" style="width: 250px;" />
+                                                        <p:column rowspan="2" headerText="Programa" style="width: 250px;"/>
+                                                        <p:column rowspan="3" headerText="Nivel" style="width: 250px;"/>
+                                                    </p:row>
+                                                </p:columnGroup>
 
-                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                    <p:ajax event="rowSelect"   update="update"/>
-                                                    <p:ajax event="rowUnselect" update="update"/>
-                                                </c:if>
+                                                <p:ajax event="rowEdit" listener="#{cvHabilidades.actualizaInformaticas}" update="@this" oncomplete="actualizarTabla2()"/>
+                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla2()"/>
 
-                                                <p:column style="width: 50px;">
-                                                    <p:commandButton actionListener="#{cvHabilidades.eliminaInformaticas(habInf)}" update="tblInformaticas" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{habInf.programaDominante}?" icon="ui-icon-alert" />
+                                                <p:column >
+                                                    <p:commandButton actionListener="#{cvHabilidades.eliminaInformaticas(habilidadInfo)}" update="tblInformaticas" oncomplete="actualizarTabla2()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación del conocimiento en: #{habilidadInfo.tipoConocimiento}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
 
-                                                <p:column headerText="Tipo de conocimiento" 
-                                                          sortBy="#{habInf.tipoConocimiento}" 
-                                                          filterBy="#{habInf.tipoConocimiento}" 
-                                                          filterMatchMode="contains">
-                                                    <h:outputText value="#{habInf.tipoConocimiento}" />
-                                                </p:column>
-
-                                                <p:column headerText="Programa dominado" 
-                                                          sortBy="#{habInf.programaDominante}" 
-                                                          filterBy="#{habInf.programaDominante}" 
-                                                          filterMatchMode="contains">
-                                                    <h:outputText value="#{habInf.programaDominante}" />
-                                                </p:column>                                                
-
-                                                <p:column headerText="Nivel de dominio" 
-                                                          sortBy="#{habInf.nivelConocimiento}" 
-                                                          filterBy="#{habInf.nivelConocimiento}" 
-                                                          filterMatchMode="contains">
-                                                    <h:outputText value="#{habInf.nivelConocimiento}" />
+                                                <p:column >
+                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                        <a href="#" class="ui-row-editor-pencil">
+                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                        </a>
+                                                        <a href="#" class="ui-row-editor-check">
+                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                        </a>
+                                                        <p:spacer width="20px"/>
+                                                        <a href="#" class="ui-row-editor-close">
+                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                        </a>
+                                                    </div>
                                                 </p:column> 
 
-                                                <f:facet name="footer">
-                                                    <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                        <p:commandButton id="update" value="Actualizar" icon="fa fa-pen" class="btn btn-info" update="@form tblInformaticas"
-                                                                         actionListener="#{cvHabilidades.metodoBase()}" disabled="#{empty cvHabilidades.nuevOBJHabilidadesInformaticas}"/>
-                                                    </c:if>
-                                                </f:facet>
-
-                                            </p:dataTable>  
+                                                <p:column >
+                                                    <h:outputText value="#{habilidadInfo.tipoConocimiento}" />
+                                                </p:column>
+                                                <p:column >
+                                                    <h:outputText value="#{habilidadInfo.programaDominante}" />                                                        
+                                                </p:column>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{habilidadInfo.nivelConocimiento}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{habilidadInfo.nivelConocimiento}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'Nivel Usuario'}" itemLabel="#{'Nivel Usuario'}"/>
+                                                                <f:selectItem itemValue="#{'Nivel Usuario Avanzado'}" itemLabel="#{'Nivel Usuario Avanzado'}"/>
+                                                                <f:selectItem itemValue="#{'Nivel Profesional'}" itemLabel="#{'Nivel Profesional'}"/>
+                                                                <f:selectItem itemValue="#{'Nivel Experto'}" itemLabel="#{'Nivel Experto'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>                                                                                                
+                                            </p:dataTable>
 
                                         </p:outputPanel>
 
@@ -513,9 +656,9 @@
                                                                             <div class="form-group">
                                                                                 <div class="col-sm-6 col-md-6 col-lg-6">
                                                                                     <p:outputLabel for="lengua" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Lengua" />
-                                                                                    <p:selectOneMenu id="lengua" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.lengua}">
+                                                                                    <p:selectOneMenu id="lengua" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.nuevOBJLenguas.tipoLengua}">
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                                                                        <f:selectItem itemValue="NA" itemLabel="No Aplica"/>
+                                                                                        <f:selectItem itemValue="#{'NA'}" itemLabel="No Aplica"/>
                                                                                         <f:selectItems value="#{controladorEmpleado.listaLenguas}" var="idioma" itemValue="#{idioma}" itemLabel="#{idioma}" />
                                                                                     </p:selectOneMenu> 
                                                                                     <p:message for="lengua" display="tooltip" />
@@ -523,7 +666,7 @@
                                                                                 </div>
                                                                                 <div class="col-sm-6 col-md-6 col-lg-6">  
                                                                                     <p:outputLabel for="gradoD" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Grado de dominio" />
-                                                                                    <p:selectOneMenu id="gradoD" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.dominio}" >
+                                                                                    <p:selectOneMenu id="gradoD" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.nuevOBJLenguas.gradoDominio}" >
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                         <f:selectItem itemValue="Básico" itemLabel="Básico"/>
                                                                                         <f:selectItem itemValue="Intermedio" itemLabel="Intermedio"/>
@@ -537,7 +680,7 @@
                                                                                 </div>
                                                                                 <div class="col-sm-6 col-md-6 col-lg-4"> 
                                                                                     <p:outputLabel for="nivlConv" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nivel de conversación" />
-                                                                                    <p:selectOneMenu id="nivlConv" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.conversacion}" >
+                                                                                    <p:selectOneMenu id="nivlConv" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.nuevOBJLenguas.nivelConversacion}" >
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                         <f:selectItem itemValue="Básico" itemLabel="Básico"/>
                                                                                         <f:selectItem itemValue="Intermedio" itemLabel="Intermedio"/>
@@ -550,7 +693,7 @@
                                                                                 </div>
                                                                                 <div class="col-sm-6 col-md-6 col-lg-4">
                                                                                     <p:outputLabel for="nivlEscr" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nivel de escritura" />
-                                                                                    <p:selectOneMenu id="nivlEscr" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.escritura}" >
+                                                                                    <p:selectOneMenu id="nivlEscr" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.nuevOBJLenguas.nivelEscritura}" >
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                         <f:selectItem itemValue="Básico" itemLabel="Básico"/>
                                                                                         <f:selectItem itemValue="Intermedio" itemLabel="Intermedio"/>
@@ -563,7 +706,7 @@
                                                                                 </div>
                                                                                 <div class="col-sm-6 col-md-6 col-lg-4"> 
                                                                                     <p:outputLabel for="nivlLec" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nivel de lectura" />
-                                                                                    <p:selectOneMenu id="nivlLec" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.lecctura}" >
+                                                                                    <p:selectOneMenu id="nivlLec" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.nuevOBJLenguas.nivelLectura}" >
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                         <f:selectItem itemValue="Básico" itemLabel="Básico"/>
                                                                                         <f:selectItem itemValue="Intermedio" itemLabel="Intermedio"/>
@@ -581,7 +724,9 @@
                                                                             <div class="form-group">
                                                                                 <div class="col-sm-12 col-md-4 col-lg-4"/>
                                                                                 <div class="col-sm-12 col-md-4 col-lg-4">
-                                                                                    <p:commandButton id="btnBuscarActiuvidades"  value="Guardar información" actionListener="#{cvHabilidades.createLengua()}" icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form tblLenguas" process="@form" /> 
+                                                                                    <p:commandButton id="btnBuscarActiuvidades" oncomplete="PF('frmListaLenguas')update();" value="Guardar información" 
+                                                                                                     actionListener="#{cvHabilidades.createLengua()}" icon="fa fa-pencil-square-o" 
+                                                                                                     class="btn-primary btn-block col-md-3" update="@form" process="@form" /> 
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -609,54 +754,140 @@
                                                 </div>
                                             </c:if>
                                         </p:outputPanel>
+                                    </h:form>
+                                    <h:form id="frmListaLenguas"> 
                                         <p:outputPanel>
                                             <p:remoteCommand name="actualizarTabla3" actionListener="#{cvHabilidades.metodoBase()}" update="tblLenguas" />
-                                            <p:dataTable id="tblLenguas" value="#{cvHabilidades.nuevaListaLenguas}" var="habLeng"
-                                                         paginator="true" rows="5"
+                                            <p:dataTable id="tblLenguas" value="#{cvHabilidades.nuevaListaLenguas}" var="lenguas" 
+                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                         rowsPerPageTemplate="5,10,15,20,25,30"
-                                                         emptyMessage="No se encontraron Registros." rendered="true" rowStyleClass="#{habLeng.estatus eq 'Aceptado'?'aceptado':'denegado'}"
-                                                         selectionMode="single" selection="#{cvHabilidades.nuevOBJLenguas}" rowKey="#{habLeng.lengua}">
+                                                         rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{lenguas.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                         editable="true" editMode="row">
 
-                                                <f:facet name="header">
-                                                    <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
-                                                    <p:spacer width="15px"/>
-                                                    <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
-                                                </f:facet>
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
+                                                        <p:column rowspan="2" headerText="Lengua" style="width: 250px;" />
+                                                        <p:column rowspan="2" headerText="Grado de dominio" style="width: 100px;"/>
+                                                        <p:column colspan="3" headerText="Nivel" style="width: 375px;"/>
+                                                    </p:row>
+                                                    <p:row class="success">
+                                                        <p:column headerText="Conversación" />
+                                                        <p:column headerText="Escritura" />
+                                                        <p:column headerText="Lectura" />
+                                                    </p:row>
+                                                </p:columnGroup>
 
-                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                    <p:ajax event="rowSelect"   update="update"/>
-                                                    <p:ajax event="rowUnselect" update="update"/>
-                                                </c:if>
+                                                <p:ajax event="rowEdit" listener="#{cvHabilidades.actualizaLengua}" update="@this" oncomplete="actualizarTabla3()"/>
+                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla3()"/>
 
-                                                <p:column style="width: 50px;">
-                                                    <p:commandButton actionListener="#{cvHabilidades.eliminaLengua(habLeng)}" update="tblLenguas" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{habLeng.tipoLengua}?" icon="ui-icon-alert" />
+                                                <p:column >
+                                                    <p:commandButton actionListener="#{cvHabilidades.eliminaLengua(lenguas)}" update="tblLenguas" oncomplete="actualizarTabla3()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la lengua: #{lenguas.tipoLengua}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
 
-                                                <p:column headerText="Lengua" 
-                                                          sortBy="#{habLeng.tipoLengua}" 
-                                                          filterBy="#{habLeng.tipoLengua}" 
-                                                          filterMatchMode="contains">
-                                                    <h:outputText value="#{habLeng.tipoLengua}" />
+                                                <p:column >
+                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                        <a href="#" class="ui-row-editor-pencil">
+                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                        </a>
+                                                        <a href="#" class="ui-row-editor-check">
+                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                        </a>
+                                                        <p:spacer width="20px"/>
+                                                        <a href="#" class="ui-row-editor-close">
+                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                        </a>
+                                                    </div>
+                                                </p:column> 
+
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{lenguas.tipoLengua}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{lenguas.tipoLengua}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItems value="#{controladorEmpleado.listaLenguas}" var="lengua" itemValue="#{lengua}" itemLabel="#{lengua}" />                                                                                    
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
                                                 </p:column>
-
-                                                <p:column headerText="Grado de dominio" 
-                                                          sortBy="#{habLeng.gradoDominio}" 
-                                                          filterBy="#{habLeng.gradoDominio}" 
-                                                          filterMatchMode="contains">
-                                                    <h:outputText value="#{habLeng.gradoDominio}" />
-                                                </p:column>                                               
-
-                                                <f:facet name="footer">
-                                                    <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                        <p:commandButton id="update" value="Actualizar" icon="fa fa-pen" class="btn btn-info" update="@form tblLenguas"
-                                                                         actionListener="#{cvHabilidades.metodoBase()}" disabled="#{empty cvHabilidades.nuevOBJLenguas}"/>
-                                                    </c:if>
-                                                </f:facet>
-
-                                            </p:dataTable>  
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{lenguas.gradoDominio}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{lenguas.gradoDominio}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'Básico'}" itemLabel="#{'Básico'}"/>
+                                                                <f:selectItem itemValue="#{'Intermedio'}" itemLabel="#{'Intermedio'}"/>
+                                                                <f:selectItem itemValue="#{'Avanzado'}" itemLabel="#{'Avanzado'}"/>
+                                                                <f:selectItem itemValue="#{'Nivel Universitario'}" itemLabel="#{'Nivel Universitario'}"/>
+                                                                <f:selectItem itemValue="#{'Nivel de Negocios'}" itemLabel="#{'Nivel de Negocios'}"/>
+                                                                <f:selectItem itemValue="#{'Lengua Materna'}" itemLabel="#{'Lengua Materna'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{lenguas.nivelConversacion}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{lenguas.nivelConversacion}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'Básico'}" itemLabel="#{'Básico'}"/>
+                                                                <f:selectItem itemValue="#{'Intermedio'}" itemLabel="#{'Intermedio'}"/>
+                                                                <f:selectItem itemValue="#{'Avanzado'}" itemLabel="#{'Avanzado'}"/>
+                                                                <f:selectItem itemValue="#{'Nivel Universitario'}" itemLabel="#{'Nivel Universitario'}"/>
+                                                                <f:selectItem itemValue="#{'Nivel de Negocios'}" itemLabel="#{'Nivel de Negocios'}"/>
+                                                                <f:selectItem itemValue="#{'Lengua Materna'}" itemLabel="#{'Lengua Materna'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>   
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{lenguas.nivelEscritura}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{lenguas.nivelEscritura}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'Básico'}" itemLabel="#{'Básico'}"/>
+                                                                <f:selectItem itemValue="#{'Intermedio'}" itemLabel="#{'Intermedio'}"/>
+                                                                <f:selectItem itemValue="#{'Avanzado'}" itemLabel="#{'Avanzado'}"/>
+                                                                <f:selectItem itemValue="#{'Nivel Universitario'}" itemLabel="#{'Nivel Universitario'}"/>
+                                                                <f:selectItem itemValue="#{'Nivel de Negocios'}" itemLabel="#{'Nivel de Negocios'}"/>
+                                                                <f:selectItem itemValue="#{'Lengua Materna'}" itemLabel="#{'Lengua Materna'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>   
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{lenguas.nivelLectura}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{lenguas.nivelLectura}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'Básico'}" itemLabel="#{'Básico'}"/>
+                                                                <f:selectItem itemValue="#{'Intermedio'}" itemLabel="#{'Intermedio'}"/>
+                                                                <f:selectItem itemValue="#{'Avanzado'}" itemLabel="#{'Avanzado'}"/>
+                                                                <f:selectItem itemValue="#{'Nivel Universitario'}" itemLabel="#{'Nivel Universitario'}"/>
+                                                                <f:selectItem itemValue="#{'Nivel de Negocios'}" itemLabel="#{'Nivel de Negocios'}"/>
+                                                                <f:selectItem itemValue="#{'Lengua Materna'}" itemLabel="#{'Lengua Materna'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>                                         
+                                            </p:dataTable>
 
                                         </p:outputPanel>
 

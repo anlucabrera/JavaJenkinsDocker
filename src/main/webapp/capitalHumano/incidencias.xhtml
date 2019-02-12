@@ -258,7 +258,7 @@
 
                             <p:dialog header="Agregar Evidencias" widgetVar="dlgComentario" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true"
                                       visible="#{controladorIncidenciasPersonal.archivoSC}">
-                                <h:form id="frmComentario"  enctype="multipart/form-data"> 
+                                <o:form id="frmComentario"  enctype="multipart/form-data"> 
 
                                     <p:panelGrid id="pnlAgregarComentario" style="text-align:justify;" columns="1">
                                         <p:outputLabel value="Incidencia #{controladorIncidenciasPersonal.nuevOBJIncidenciasEditada.tipo}" />
@@ -280,7 +280,7 @@
 
                                     </p:panelGrid>
                                     <p:autoUpdate/>
-                                </h:form>
+                                </o:form>
                             </p:dialog>          
                         </div>
                     </div>

@@ -22,6 +22,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Innovaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Messages;
+import org.primefaces.event.RowEditEvent;
 
 @Named
 @ManagedBean
@@ -119,12 +120,13 @@ public class CvTecnologia implements Serializable{
         }
     }
 
-    public void updateDesarrolloTecnologico() {
+    public void updateDesarrolloTecnologico(RowEditEvent event) {
         try {
+            DesarrollosTecnologicos actualizarDesTec = (DesarrollosTecnologicos) event.getObject();
             //Primero se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
-            utilidadesCH.agregaBitacora(usuario, nuevoOBJDesarrolloTecnologico.getDesarrollo().toString(), "Desarrollo Tecnológico", "Update");
+            utilidadesCH.agregaBitacora(usuario, actualizarDesTec.getDesarrollo().toString(), "Desarrollo Tecnológico", "Update");
             //Se procede a invocar el “EJB” el cual mediante la recepción del objeto se encargará de procesar y actualizar la información en la BD. 
-            nuevoOBJDesarrolloTecnologico = ejbTecnologia.actualizarDesarrollosTecnologicos(nuevoOBJDesarrolloTecnologico);
+            actualizarDesTec = ejbTecnologia.actualizarDesarrollosTecnologicos(actualizarDesTec);
             //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
             reiniciarValores();
             //Finalmente se le informa al usuario cual es el resultado obtenido
@@ -180,12 +182,13 @@ public class CvTecnologia implements Serializable{
         }
     }
 
-    public void updateInnovaciones() {
+    public void updateInnovaciones(RowEditEvent event) {
         try {
+            Innovaciones actualizarInno = (Innovaciones) event.getObject();
             //Primero se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
-            utilidadesCH.agregaBitacora(usuario, nuevoOBJInnovaciones.getInnovacion().toString(), "Innovaciones", "Update");
+            utilidadesCH.agregaBitacora(usuario, actualizarInno.getInnovacion().toString(), "Innovaciones", "Update");
             //Se procede a invocar el “EJB” el cual mediante la recepción del objeto se encargará de procesar y actualizar la información en la BD. 
-            nuevoOBJInnovaciones = ejbTecnologia.actualizarInnovaciones(nuevoOBJInnovaciones);
+            actualizarInno = ejbTecnologia.actualizarInnovaciones(actualizarInno);
             //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
             pestaniaActiva = 1;
             //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
@@ -243,12 +246,13 @@ public class CvTecnologia implements Serializable{
         }
     }
 
-    public void updateDesarrolloSoftware() {
+    public void updateDesarrolloSoftware(RowEditEvent event) {
         try {
+            DesarrolloSoftware actualizarDesSof = (DesarrolloSoftware) event.getObject();
             //Primero se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
-            utilidadesCH.agregaBitacora(usuario, nuevoOBJDesarrolloSoftware.getDesarrollo().toString(), "Desarrollo de Software", "Update");
+            utilidadesCH.agregaBitacora(usuario, actualizarDesSof.getDesarrollo().toString(), "Desarrollo de Software", "Update");
             //Se procede a invocar el “EJB” el cual mediante la recepción del objeto se encargará de procesar y actualizar la información en la BD. 
-            nuevoOBJDesarrolloSoftware = ejbTecnologia.actualizarDesarrolloSoftware(nuevoOBJDesarrolloSoftware);
+            actualizarDesSof = ejbTecnologia.actualizarDesarrolloSoftware(actualizarDesSof);
             //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
             pestaniaActiva = 2;
             //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”

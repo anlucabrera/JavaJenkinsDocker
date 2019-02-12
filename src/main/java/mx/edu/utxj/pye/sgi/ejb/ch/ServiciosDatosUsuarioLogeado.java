@@ -8,6 +8,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.ch.Actividades;
 import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
+import mx.edu.utxj.pye.sgi.entity.ch.ContactoEmergencias;
 import mx.edu.utxj.pye.sgi.entity.ch.CursosModalidad;
 import mx.edu.utxj.pye.sgi.entity.ch.CursosTipo;
 import mx.edu.utxj.pye.sgi.entity.ch.Docencias;
@@ -100,6 +101,50 @@ public class ServiciosDatosUsuarioLogeado implements EjbDatosUsuarioLogeado {
         facade.flush();
         return nuevoInformacionAdicionalPersonal;
     }
+
+    @Override
+    public List<ContactoEmergencias> mostrarContactosEmergencias(Integer claveTrabajador) throws Throwable {
+        TypedQuery<ContactoEmergencias> q = em.createQuery("SELECT c FROM ContactoEmergencias c INNER JOIN c.clavePersonal p WHERE p.clave=:clave ", ContactoEmergencias.class);
+        q.setParameter("clave", claveTrabajador);
+        List<ContactoEmergencias> pr = q.getResultList();
+        return pr;
+    }
+
+    @Override
+    public  List<ContactoEmergencias> mostrarAllContactosEmergencias() throws Throwable {
+        facade.setEntityClass(ContactoEmergencias.class);
+        return facade.findAll();
+
+    }
+
+    @Override
+    public ContactoEmergencias crearContactosEmergencias(ContactoEmergencias ce) throws Throwable {
+        facade.setEntityClass(ContactoEmergencias.class);
+        facade.create(ce);
+        facade.flush();
+        return ce;
+
+    }
+
+    @Override
+    public ContactoEmergencias actualizarContactosEmergencias(ContactoEmergencias ce) throws Throwable {
+        facade.setEntityClass(ContactoEmergencias.class);
+        facade.edit(ce);
+        facade.flush();
+        return ce;
+
+    }
+
+    @Override
+    public ContactoEmergencias eliminarContactosEmergencias(ContactoEmergencias ce) throws Throwable {
+        facade.setEntityClass(ContactoEmergencias.class);
+        facade.remove(ce);
+        facade.flush();
+        return ce;
+
+    }
+
+    
 ////////////////////////////////////////////////////////////////////////////////Vista Lista Personal
 
     @Override

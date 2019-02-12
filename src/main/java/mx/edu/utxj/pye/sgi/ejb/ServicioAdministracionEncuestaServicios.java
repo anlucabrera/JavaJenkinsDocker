@@ -94,9 +94,9 @@ public class ServicioAdministracionEncuestaServicios implements EjbAdministracio
         List<AlumnosEncuestas> ae = f2.getEntityManager().createQuery("select a from AlumnosEncuestas as a where a.cveDirector = :cveDirector",AlumnosEncuestas.class)
                 .setParameter("cveDirector", cveDirector).getResultStream().collect(Collectors.toList());
         if(ae.isEmpty()){
-            return ae;
-        }else{
             return new ArrayList<>();
+        }else{
+            return ae;
         }
     }
 

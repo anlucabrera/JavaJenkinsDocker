@@ -73,273 +73,162 @@
                             </div>
                             <p:tabView>
                                 <p:tab title="Datos personales">
-
-                                    <h:form id="frmNotif" enctype="multipart/form-data"> 
+                                    <o:form id="frmNotif" enctype="multipart/form-data"> 
                                         <p:outputPanel>
-                                            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                    <div class="col-md-12">
-                                                        <div class="box box-widget widget-user-2">
-                                                            <div class="row">
-                                                                <div class="form-group">
-                                                                    <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                        <p:outputLabel for="nombre" style="font-size: large" value="Nombre completo"/>                                
-                                                                        <p:inputText id="nombre" class="form-control" disabled="true" value="#{cvDatosPersonales.nuevoOBJPersonal.nombre}"/>
-                                                                        <p:message for="nombre" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                        <p:outputLabel for="lugar" style="font-size: large" value="Lugar de procedencia:"/>
-                                                                        <p:inputText id="lugar" class="form-control" disabled="true" value="#{cvDatosPersonales.nuevoOBJPersonal.localidad}, #{cvDatosPersonales.nuevoOBJPersonal.municipio}, #{cvDatosPersonales.nuevoOBJPersonal.estado}, #{cvDatosPersonales.nuevoOBJPersonal.pais}."/>
-                                                                        <p:message for="lugar" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-4 col-lg-3">
-                                                                        <p:outputLabel value="Sexo " for="genero" style="font-size: large" />
-                                                                        <p:inputText id="genero" disabled="true" class="form-control" value="#{cvDatosPersonales.nuevoOBJPersonal.genero.nombre}"/>
-                                                                        <p:message for="genero" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-4 col-lg-3">
-                                                                        <p:outputLabel for="clave" style="font-size: large" value="Nomina" />
-                                                                        <p:inputText id="clave" class="form-control" disabled="true" value="#{cvDatosPersonales.nuevoOBJPersonal.clave}"/> 
-                                                                        <p:message for="clave" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-4 col-lg-3">
-                                                                        <p:outputLabel for="edad" style="font-size: large" value="Edad"/>
-                                                                        <p:inputText id="edad" class="form-control" placeholder="Edad" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.edad}"/> 
-                                                                        <p:message for="edad" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-6 col-lg-3">
-                                                                        <p:outputLabel value="Fecha de nacimiento:" for="fecgaN" style="font-size: large"/>
-                                                                        <p:calendar locale="es" id="fecgaN" value="#{cvDatosPersonales.nuevoOBJPersonal.fechaNacimiento}" pattern="dd-MM-yyyy" mask="true"/>
-                                                                        <p:message for="fecgaN" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-6 col-lg-3">
-                                                                        <p:outputLabel value="Estado civil: " for="estado" style="font-size: large" />
-                                                                        <p:selectOneMenu id="estado" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.estadoCivil}" >
-                                                                            <f:selectItem itemValue="Soltero (a)" itemLabel="Soltero (a)"/>
-                                                                            <f:selectItem itemValue="Unión Libre" itemLabel="Unión Libre"/>
-                                                                            <f:selectItem itemValue="Casado (a)" itemLabel="Casado (a)"/>
-                                                                            <f:selectItem itemValue="Separado (a)" itemLabel="Separado (a)"/>
-                                                                            <f:selectItem itemValue="Divorciado (a)" itemLabel="Divorciado (a)"/>
-                                                                            <f:selectItem itemValue="Viudo (a)" itemLabel="Viudo (a)"/>
-                                                                        </p:selectOneMenu> 
-                                                                        <p:message for="estado" display="tooltip"/>
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-6 col-lg-3">
-                                                                        <p:outputLabel for="curp" style="font-size: large" value="CURP " />
-                                                                        <p:inputText id="curp" class="form-control" placeholder="CURP" maxlength="18" 
-                                                                                     requiredMessage="Debe contener 18 caracteres" style="text-transform: uppercase" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.curp}"/> 
-                                                                        <p:message for="curp" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-6 col-lg-3">
-                                                                        <p:outputLabel for="rfc" style="font-size: large" value="RFC."/>
-                                                                        <p:inputText class="form-control" id="rfc" placeholder="RFC" maxlength="13" style="text-transform: uppercase" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.rfc}"/> 
-                                                                        <p:message for="rfc" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                        <p:outputLabel for="email" value="Correo electrónico:" style="font-size: large"/>
-                                                                        <p:inputText id="email" class="form-control" disabled="true" value="#{cvDatosPersonales.nuevoOBJPersonal.correoElectronico}"/>
-                                                                        <p:message for="email" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-6 col-lg-3">
-                                                                        <p:outputLabel for="numTelefono" value="Teléfono móvil:" style="font-size: large"/>
-                                                                        <p:inputMask id="numTelefono" class="form-control" size="45" mask="(999) 999-9999" 
-                                                                                     placeholder="(000) 000-0000" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.numTelMovil}"/>
-                                                                        <p:message for="numTelefono" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-6 col-lg-3">
-                                                                        <p:outputLabel for="celular" value="Teléfono fijo: " style="font-size: large"/> 
-                                                                        <p:inputMask id="celular" class="form-control" size="45" mask="(999) 999-9999" 
-                                                                                     placeholder="(000 000-0000)" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.numTelFijo}"/><hr/>
-                                                                        <p:message for="celular" display="tooltip" />
-                                                                    </div>    
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-md-12">
+                                                    <div class="box box-widget widget-user-2">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <p:outputLabel for="nombre" style="font-size: large" value="Nombre completo"/>                                
+                                                                    <p:inputText id="nombre" class="form-control" disabled="true" value="#{cvDatosPersonales.nuevoOBJPersonal.nombre}"/>
+                                                                    <p:message for="nombre" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <p:outputLabel for="lugar" style="font-size: large" value="Lugar de procedencia:"/>
+                                                                    <p:inputText id="lugar" class="form-control" disabled="true" value="#{cvDatosPersonales.nuevoOBJPersonal.localidad}, #{cvDatosPersonales.nuevoOBJPersonal.municipio}, #{cvDatosPersonales.nuevoOBJPersonal.estado}, #{cvDatosPersonales.nuevoOBJPersonal.pais}."/>
+                                                                    <p:message for="lugar" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-4 col-lg-3">
+                                                                    <p:outputLabel value="Sexo " for="genero" style="font-size: large" />
+                                                                    <p:inputText id="genero" disabled="true" class="form-control" value="#{cvDatosPersonales.nuevoOBJPersonal.genero.nombre}"/>
+                                                                    <p:message for="genero" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-4 col-lg-3">
+                                                                    <p:outputLabel for="clave" style="font-size: large" value="Nomina" />
+                                                                    <p:inputText id="clave" class="form-control" disabled="true" value="#{cvDatosPersonales.nuevoOBJPersonal.clave}"/> 
+                                                                    <p:message for="clave" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-4 col-lg-2">
+                                                                    <p:outputLabel for="edad" style="font-size: large" value="Edad"/>
+                                                                    <p:inputText id="edad" class="form-control" placeholder="Edad" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.edad}"/> 
+                                                                    <p:message for="edad" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-4 col-lg-2">
+                                                                    <p:outputLabel for="tipoS" style="font-size: large;color: red" value="Tipo Sangre"/>
+                                                                    <p:inputText id="tipoS" class="form-control" placeholder="Tipo de sangre" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.tipoSangre}"/> 
+                                                                    <p:message for="tipoS" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-6 col-lg-2">
+                                                                    <p:outputLabel value="Fecha de nacimiento:" for="fecgaN" style="font-size: large"/>
+                                                                    <p:calendar locale="es" id="fecgaN" value="#{cvDatosPersonales.nuevoOBJPersonal.fechaNacimiento}" pattern="dd-MM-yyyy" mask="true"/>
+                                                                    <p:message for="fecgaN" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-6 col-lg-3">
+                                                                    <p:outputLabel value="Estado civil: " for="estado" style="font-size: large" />
+                                                                    <p:selectOneMenu id="estado" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.estadoCivil}" >
+                                                                        <f:selectItem itemValue="Soltero (a)" itemLabel="Soltero (a)"/>
+                                                                        <f:selectItem itemValue="Unión Libre" itemLabel="Unión Libre"/>
+                                                                        <f:selectItem itemValue="Casado (a)" itemLabel="Casado (a)"/>
+                                                                        <f:selectItem itemValue="Separado (a)" itemLabel="Separado (a)"/>
+                                                                        <f:selectItem itemValue="Divorciado (a)" itemLabel="Divorciado (a)"/>
+                                                                        <f:selectItem itemValue="Viudo (a)" itemLabel="Viudo (a)"/>
+                                                                    </p:selectOneMenu> 
+                                                                    <p:message for="estado" display="tooltip"/>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-6 col-lg-3">
+                                                                    <p:outputLabel for="curp" style="font-size: large" value="CURP " />
+                                                                    <p:inputText id="curp" class="form-control" placeholder="CURP" maxlength="18" 
+                                                                                 requiredMessage="Debe contener 18 caracteres" style="text-transform: uppercase" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.curp}"/> 
+                                                                    <p:message for="curp" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-6 col-lg-3">
+                                                                    <p:outputLabel for="rfc" style="font-size: large" value="RFC."/>
+                                                                    <p:inputText class="form-control" id="rfc" placeholder="RFC" maxlength="13" style="text-transform: uppercase" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.rfc}"/> 
+                                                                    <p:message for="rfc" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <p:outputLabel for="email" value="Correo electrónico:" style="font-size: large"/>
+                                                                    <p:inputText id="email" class="form-control" disabled="true" value="#{cvDatosPersonales.nuevoOBJPersonal.correoElectronico}"/>
+                                                                    <p:message for="email" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-6 col-lg-3">
+                                                                    <p:outputLabel for="numTelefono" value="Teléfono móvil:" style="font-size: large"/>
+                                                                    <p:inputMask id="numTelefono" class="form-control" size="45" mask="(999) 999-9999" 
+                                                                                 placeholder="(000) 000-0000" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.numTelMovil}"/>
+                                                                    <p:message for="numTelefono" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-6 col-lg-3">
+                                                                    <p:outputLabel for="celular" value="Teléfono fijo: " style="font-size: large"/> 
+                                                                    <p:inputMask id="celular" class="form-control" size="45" mask="(999) 999-9999" 
+                                                                                 placeholder="(000 000-0000)" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.numTelFijo}"/><hr/>
+                                                                    <p:message for="celular" display="tooltip" />
+                                                                </div>    
 
-                                                                    <div class="col-sm-12 col-md-12 col-lg-6">
-                                                                        <p:outputLabel for="direccion" style="font-size: large" value="Lugar de nacimiento" />
-                                                                        <p:inputText id="direccion" class="form-control" placeholder="Lugar de nacimiento" size="45" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.lugarProcedencia}"/> 
-                                                                        <p:message for="direccion" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-12 col-lg-6">
-                                                                        <p:outputLabel for="direccion2" style="font-size: large" value="Dirección actual" />
-                                                                        <p:inputText id="direccion2" class="form-control" placeholder="Dirección actual" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.direccion}"/> 
-                                                                        <p:message for="direccion2" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                        <p:outputLabel for="messages" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo de evidencia a subir" />
-                                                                        <br/>
-                                                                        <p:outputPanel>            
-                                                                            <p:autoUpdate/>
-                                                                            <p:selectOneRadio id="rutas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvDatosPersonales.evidencia}" layout="responsive" columns="2"> 
-                                                                                <f:selectItem itemValue = "ComprobanteDomicilio" itemLabel = "Comprobante de domicilio #{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.evidenciaDomicilio eq null?'':'(ya cuenta con el archivo cargado)'}" /> 
-                                                                                <f:selectItem itemValue = "CURP" itemLabel = "CURP #{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.evidenciaCurp eq null?'':'(ya cuenta con el archivo cargado)'}" />
-                                                                                <f:selectItem itemValue = "INE" itemLabel = "INE #{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.evidenciaIne eq null?'':'(ya cuenta con el archivo cargado)'}" /> 
-                                                                                <f:selectItem itemValue = "ActaDeNacimiento" itemLabel = "Acta de nacimiento #{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.evidenciaActa eq null?'':'(ya cuenta con el archivo cargado)'}" />
-                                                                                <f:selectItem itemValue = "RFC" itemLabel = "RFC #{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.evidenciaRfc eq null?'':'(ya cuenta con el archivo cargado)'}" /> 
-                                                                            </p:selectOneRadio> 
-                                                                        </p:outputPanel>
-                                                                        <o:inputFile id="file" value="#{cvDatosPersonales.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
-                                                                        <br/>
-                                                                        <h:message id="messageForFile" for="file" />
-                                                                        <br/>
-                                                                        <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{cvDatosPersonales.agregarEvidencias()}"/>
-                                                                    </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                    <p:outputLabel for="direccion" style="font-size: large" value="Lugar de nacimiento" />
+                                                                    <p:inputText id="direccion" class="form-control" placeholder="Lugar de nacimiento" size="45" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.lugarProcedencia}"/> 
+                                                                    <p:message for="direccion" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                    <p:outputLabel for="direccion2" style="font-size: large" value="Dirección actual" />
+                                                                    <p:inputText id="direccion2" class="form-control" placeholder="Dirección actual" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.direccion}"/> 
+                                                                    <p:message for="direccion2" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>                                                                    
+                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                    <p:outputLabel for="direccion2" style="font-size: x-large;color: red" value="Importante" />
+                                                                    <br/>
+                                                                    <p:outputLabel for="autorizacion" style="font-size: large" value="Autorizo el registro de mi tipo y grupo sanguíneo, sólo para referencia médica, sin aplicar el consentimiento para transfusiones sanguíneas" />
+                                                                    <p:inputSwitch id="autorizacion" class="form-control" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.autorizacion}" /> 
+                                                                    <p:message for="autorizacion" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                    <p:outputLabel for="messages" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo de evidencia a subir" />
+                                                                    <br/>
+                                                                    <p:outputPanel>            
+                                                                        <p:autoUpdate/>
+                                                                        <p:selectOneRadio id="rutas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvDatosPersonales.evidencia}" layout="responsive" columns="2"> 
+                                                                            <f:selectItem itemValue = "ComprobanteDomicilio" itemLabel = "Comprobante de domicilio #{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.evidenciaDomicilio eq null?'':'(ya cuenta con el archivo cargado)'}" /> 
+                                                                            <f:selectItem itemValue = "CURP" itemLabel = "CURP #{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.evidenciaCurp eq null?'':'(ya cuenta con el archivo cargado)'}" />
+                                                                            <f:selectItem itemValue = "INE" itemLabel = "INE #{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.evidenciaIne eq null?'':'(ya cuenta con el archivo cargado)'}" /> 
+                                                                            <f:selectItem itemValue = "ActaDeNacimiento" itemLabel = "Acta de nacimiento #{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.evidenciaActa eq null?'':'(ya cuenta con el archivo cargado)'}" />
+                                                                            <f:selectItem itemValue = "RFC" itemLabel = "RFC #{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.evidenciaRfc eq null?'':'(ya cuenta con el archivo cargado)'}" /> 
+                                                                        </p:selectOneRadio> 
+                                                                    </p:outputPanel>
+                                                                    <o:inputFile id="file" value="#{cvDatosPersonales.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                    <br/>
+                                                                    <h:message id="messageForFile" for="file" />
+                                                                    <br/>
+                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{cvDatosPersonales.agregarEvidencias()}"/>
                                                                 </div>
                                                             </div>
-                                                            <hr/>
+                                                        </div>
+                                                        <hr/>
 
-                                                            <div class="row">
-                                                                <div class="form-group">
-                                                                    <div class="col-sm-12 col-md-4 col-lg-4"/>
-                                                                    <div class="col-sm-12 col-md-4 col-lg-4">
-                                                                        <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{cvDatosPersonales.actualizarInformacionAdicional()}" 
-                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmNotif')update();"
-                                                                                         update="@form"  process="@form" />
-                                                                    </div>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-sm-12 col-md-4 col-lg-4"/>
+                                                                <div class="col-sm-12 col-md-4 col-lg-4">
+                                                                    <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{cvDatosPersonales.actualizarInformacionAdicional()}" 
+                                                                                     icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmNotif')update();"
+                                                                                     update="@form"  process="@form" />
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </c:if>
-                                            <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
-                                                <div class="box-body">  
-                                                    <div class="row">
-                                                        <div class="col-md-12 col-sm-12 col-xs-12">
-                                                            <div class="info-box">
-                                                                <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
-
-                                                                <div class="info-box-content">
-                                                                    <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>                
-                                                </div>
-                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                    <div class="col-md-12">
-                                                        <div class="box box-widget widget-user-2">
-                                                            <div class="row">
-                                                                <div class="form-group">
-                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                        <p:outputLabel for="nombre" style="font-size: large" value="Nombre completo"/>                                
-                                                                        <p:outputLabel id="nombre" class="form-control" value="#{cvDatosPersonales.nuevoOBJPersonal.nombre}"/>
-                                                                        <p:message for="nombre" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                        <p:outputLabel for="lugar" style="font-size: large" value="Lugar de procedencia:"/>
-                                                                        <p:outputLabel id="lugar" class="form-control" value="#{cvDatosPersonales.procedencia}"/>
-                                                                        <p:message for="lugar" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-4 col-lg-4">
-                                                                        <p:outputLabel value="Sexo " for="genero" style="font-size: large" />
-                                                                        <p:outputLabel id="genero" class="form-control" value="#{cvDatosPersonales.nuevoOBJPersonal.genero.nombre}"/>
-                                                                        <p:message for="genero" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-4 col-lg-4">
-                                                                        <p:outputLabel for="clave" style="font-size: large" value="Nomina" />
-                                                                        <p:outputLabel id="clave" class="form-control" value="#{cvDatosPersonales.nuevoOBJPersonal.clave}"/> 
-                                                                        <p:message for="clave" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-4 col-lg-4">
-                                                                        <p:outputLabel for="edad" style="font-size: large" value="Edad"/>
-                                                                        <p:outputLabel id="edad" class="form-control" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.edad}"/> 
-                                                                        <p:message for="edad" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-6 col-lg-4">
-                                                                        <p:outputLabel value="Fecha de nacimiento:" for="fecgaN" style="font-size: large"/>
-                                                                        <p:outputLabel id="fecgaN" class="form-control" value="#{cvDatosPersonales.fechaN}"/> 
-                                                                        <p:message for="fecgaN" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-6 col-lg-4">
-                                                                        <p:outputLabel value="Estado civil: " for="estado" style="font-size: large" />
-                                                                        <p:outputLabel id="estado" class="form-control" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.estadoCivil}"/> 
-                                                                        <p:message for="estado" display="tooltip"/>
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-6 col-lg-4">
-                                                                        <p:outputLabel for="curp" style="font-size: large" value="CURP " />
-                                                                        <p:outputLabel id="curp" class="form-control" style="text-transform: uppercase" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.curp}"/> 
-                                                                        <p:message for="curp" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-6 col-lg-4">
-                                                                        <p:outputLabel for="rfc" style="font-size: large" value="RFC."/>
-                                                                        <p:outputLabel class="form-control" id="rfc" style="text-transform: uppercase" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.rfc}"/> 
-                                                                        <p:message for="rfc" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                        <p:outputLabel for="email" value="Correo electrónico:" style="font-size: large"/>
-                                                                        <p:outputLabel id="email" class="form-control" value="#{cvDatosPersonales.nuevoOBJPersonal.correoElectronico}"/>
-                                                                        <p:message for="email" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-6 col-lg-4">
-                                                                        <p:outputLabel for="numTelefono" value="Teléfono móvil:" style="font-size: large"/>
-                                                                        <p:outputLabel id="numTelefono" class="form-control" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.numTelMovil}"/>
-                                                                        <p:message for="numTelefono" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-6 col-lg-4">
-                                                                        <p:outputLabel for="celular" value="Teléfono fijo: " style="font-size: large"/> 
-                                                                        <p:outputLabel id="celular" class="form-control" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.numTelFijo}"/><hr/>
-                                                                        <p:message for="celular" display="tooltip" />
-                                                                    </div>    
-
-                                                                    <div class="col-sm-12 col-md-12 col-lg-6">
-                                                                        <p:outputLabel for="direccion" style="font-size: large" value="Lugar de nacimiento" />
-                                                                        <p:outputLabel id="direccion" class="form-control" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.lugarProcedencia}"/> 
-                                                                        <p:message for="direccion" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-12 col-lg-6">
-                                                                        <p:outputLabel for="direccion2" style="font-size: large" value="Dirección actual" />
-                                                                        <p:outputLabel id="direccion2" class="form-control" value="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.direccion}"/> 
-                                                                        <p:message for="direccion2" display="tooltip" />
-                                                                        <hr/>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                        <p:outputLabel for="messages" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencias almacenadas" />
-                                                                        <br/>
-                                                                        <c:if test="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.evidenciaDomicilio eq null?false:true}"> <p:outputLabel id="doc1" class="form-control" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Comprobante de domicilio"/> </c:if>
-                                                                        <c:if test="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.evidenciaCurp eq null?false:true}"> <p:outputLabel id="doc2" class="form-control" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="CURP"/> </c:if>
-                                                                        <c:if test="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.evidenciaIne eq null?false:true}"> <p:outputLabel id="doc3" class="form-control" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="INE"/> </c:if>
-                                                                        <c:if test="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.evidenciaActa eq null?false:true}"> <p:outputLabel id="doc4" class="form-control" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Acta de nacimiento"/> </c:if>
-                                                                        <c:if test="#{cvDatosPersonales.nuevoOBJInformacionAdicionalPersonal.evidenciaRfc eq null?false:true}"> <p:outputLabel id="doc5" class="form-control" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="RFC"/> </c:if>
-
-                                                                        <hr/>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <hr/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </c:if>
+                                            </div>
                                         </p:outputPanel>
                                         <p:blockUI block="informacion" widgetVar="bloqueoCargaFile">
                                             Cargando archivo espere por favor.<br />
                                         </p:blockUI>
-                                    </h:form>
+                                    </o:form>
                                 </p:tab>
                             </p:tabView>
                         </div>

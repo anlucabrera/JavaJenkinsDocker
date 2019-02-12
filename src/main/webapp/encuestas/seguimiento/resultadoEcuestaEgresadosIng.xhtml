@@ -139,7 +139,7 @@
                                             </p:column>
                                             <f:facet name="footer">
                                                 <p:commandButton actionListener="#{administracionEncuestaIng.seguimientoEncuestaIyE()}" value="Actualizar información" icon="fa fa-refresh"
-                                                                 class="btn btn-primary" update="tabView:fr1:tblResEncIngTer tabView:fr2:tblResEncIngIncom tabView:fr3:tblRegNoAccedio" process="@form"/>
+                                                                 class="btn btn-primary" update="tabView:fr1:tblResEncIngTer tabView:fr2:tblResEncIngIncom" process="@form"/>
                                             </f:facet>
                                         </p:dataTable>   
                                     </p:outputPanel>
@@ -148,7 +148,7 @@
                             <p:tab id="noCompletos" title="Resultado encuestas no terminadas">
                                 <h:form id="fr2">
                                     <p:outputPanel>
-                                        <p:dataTable id="tblResEncIngIncom" value="#{administracionEncuestaIng.listaEvaIncompleta}" 
+                                        <p:dataTable id="tblResEncIngIncom" value="#{administracionEncuestaIng.listaEvaIncompleta}"
                                                      paginator="true" rows="10" emptyMessage="No se encontraron registros"
                                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                                                      rowsPerPageTemplate="10,20,30,40,50" 
@@ -204,10 +204,10 @@
                                 </h:form>
                             </p:tab>
 
-                            <p:tab title="Estudiantes que no han accedido">
+                            <!--p:tab title="Estudiantes que no han accedido">
                                 <h:form id="fr3">
                                     <p:outputPanel>
-                                        <p:dataTable id="tblRegNoAccedio" value="#{administracionEncuestaIng.listaEvaNA}" 
+                                        <p:dataTable id="tblRegNoAccedio" value="#{administracionEncuestaIng.listaEvaNA}"
                                                      paginator="true" rows="10" emptyMessage="No se encontraron registros" rowsPerPageTemplate="10,20,30,40,50" 
                                                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                      var="alumnosNoAccedieron" filteredValue="#{administracionEncuestaIng.listaFiltrado}" >
@@ -263,8 +263,8 @@
                                     </p:outputPanel>
 
                                 </h:form>
-                            </p:tab>
-                            <p:tab title="Porcentaje de avance por carrera">
+                            </p:tab-->
+                            <p:tab title="Porcentaje de avance por Programa Educativo">
                                 <h:form id="fr4">
                                     <p:outputPanel>
                                         <p:dataTable id="avanceEncIng" lazy="false" value="#{administracionAvanceEncuestaSatIng.avanceEncServ}"   var="datosEncEgre" 

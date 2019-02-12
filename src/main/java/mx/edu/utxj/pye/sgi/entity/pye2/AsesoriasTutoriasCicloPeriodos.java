@@ -78,7 +78,7 @@ public class AsesoriasTutoriasCicloPeriodos implements Serializable {
     private String tipo;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 500)
     @Column(name = "asunto")
     private String asunto;
     @Basic(optional = false)

@@ -103,21 +103,33 @@ public class AdministracionEncuestaServicios implements Serializable{
             alumnosEncuesta.forEach(x -> {
                 try {
                     EncuestaServiciosResultados listaCompletaRes = ejbAdminAES.obtenerResultadosEncServXMatricula(Integer.parseInt(x.getMatricula()));
-                    nombreCompletoTutor = x.getNombreTutor()+" "+x.getApPatTutor()+" "+x.getApMatTutor();
+                    
                     if (listaCompletaRes != null) {
                         if (comparador.isCompleto(listaCompletaRes)) {
+                            String tutorAsignado = "No hay tutor asignado";
+                            if(x.getNombreTutor() != null){
+                                tutorAsignado = x.getNombreTutor()+" "+x.getApPatTutor()+" "+x.getApMatTutor();
+                            }
                             ListadoEvaluacionEgresados encuestasCompletas = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()),
-                                    x.getNombre() + " " + x.getApellidoPat() + " " + x.getApellidoMat(), x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), nombreCompletoTutor);
+                                    x.getNombre() + " " + x.getApellidoPat() + " " + x.getApellidoMat(), x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), tutorAsignado);
                             listaEvaCompleta.add(encuestasCompletas);
                         }
                         if (!comparador.isCompleto(listaCompletaRes)) {
+                            String tutorAsignado = "No hay tutor asignado";
+                            if(x.getNombreTutor() != null){
+                                tutorAsignado = x.getNombreTutor()+" "+x.getApPatTutor()+" "+x.getApMatTutor();
+                            }
                             ListadoEvaluacionEgresados encuestasIncompletas = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()),
-                                    x.getNombre() + " " + x.getApellidoPat() + " " + x.getApellidoMat(), x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), nombreCompletoTutor);
+                                    x.getNombre() + " " + x.getApellidoPat() + " " + x.getApellidoMat(), x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), tutorAsignado);
                             listaEvaIncompleta.add(encuestasIncompletas);
                         }
                     } else {
+                        String tutorAsignado = "No hay tutor asignado";
+                            if(x.getNombreTutor() != null){
+                                tutorAsignado = x.getNombreTutor()+" "+x.getApPatTutor()+" "+x.getApMatTutor();
+                            }
                         ListadoEvaluacionEgresados sinIngresar = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()),
-                                x.getNombre() + " " + x.getApellidoPat() + " " + x.getApellidoMat(), x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), nombreCompletoTutor);
+                                x.getNombre() + " " + x.getApellidoPat() + " " + x.getApellidoMat(), x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), tutorAsignado);
                         listaEvaNA.add(sinIngresar);
                     }
                 } catch (Throwable e) {
@@ -145,22 +157,31 @@ public class AdministracionEncuestaServicios implements Serializable{
                     try {
                         EncuestaServiciosResultados encuestasCompletas = ejbAdminAES.obtenerResultadosEncServXMatricula(Integer.parseInt(x.getMatricula()));
                         if (encuestasCompletas != null) {
-                            nombreCompletoTutor = x.getNombreTutor()+" "+x.getApPatTutor()+" "+x.getApMatTutor();
                             if (comparador.isCompleto(encuestasCompletas)) {
-                                ListadoEvaluacionEgresados encuestaCOmpleta = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()), 
-                                        x.getNombre() + " " + x.getApellidoPat() + " " + x.getApellidoMat(), x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), nombreCompletoTutor);
+                                String tutorAsignado = "No hay tutor asignado";
+                                if (x.getNombreTutor() != null) {
+                                    tutorAsignado = x.getNombreTutor() + " " + x.getApPatTutor() + " " + x.getApMatTutor();
+                                }
+                                ListadoEvaluacionEgresados encuestaCOmpleta = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()),
+                                        x.getNombre() + " " + x.getApellidoPat() + " " + x.getApellidoMat(), x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), tutorAsignado);
                                 listEvaCompletaDir.add(encuestaCOmpleta);
                             }
-                            nombreCompletoTutor = x.getNombreTutor()+" "+x.getApPatTutor()+" "+x.getApMatTutor();
                             if (!comparador.isCompleto(encuestasCompletas)) {
-                                ListadoEvaluacionEgresados encuestaIncompleta = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()), 
-                                        x.getNombre() + " " + x.getApellidoPat() + " " + x.getApellidoMat(), x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), nombreCompletoTutor);
+                                String tutorAsignado = "No hay tutor asignado";
+                                if (x.getNombreTutor() != null) {
+                                    tutorAsignado = x.getNombreTutor() + " " + x.getApPatTutor() + " " + x.getApMatTutor();
+                                }
+                                ListadoEvaluacionEgresados encuestaIncompleta = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()),
+                                        x.getNombre() + " " + x.getApellidoPat() + " " + x.getApellidoMat(), x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), tutorAsignado);
                                 listEvaIncompletaDir.add(encuestaIncompleta);
                             }
                         } else {
-                            nombreCompletoTutor = x.getNombreTutor()+" "+x.getApPatTutor()+" "+x.getApMatTutor();
-                            ListadoEvaluacionEgresados sinAccesar = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()), 
-                                    x.getNombre() + " " + x.getApellidoPat() + " " + x.getApellidoMat(), x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), nombreCompletoTutor);
+                            String tutorAsignado = "No hay tutor asignado";
+                            if (x.getNombreTutor() != null) {
+                                tutorAsignado = x.getNombreTutor() + " " + x.getApPatTutor() + " " + x.getApMatTutor();
+                            }
+                            ListadoEvaluacionEgresados sinAccesar = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()),
+                                    x.getNombre() + " " + x.getApellidoPat() + " " + x.getApellidoMat(), x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), tutorAsignado);
                             listEvaNADir.add(sinAccesar);
                         }
                     } catch (Throwable e) {

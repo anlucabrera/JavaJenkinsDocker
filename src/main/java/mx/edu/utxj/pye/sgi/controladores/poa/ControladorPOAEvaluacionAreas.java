@@ -84,7 +84,6 @@ public class ControladorPOAEvaluacionAreas implements Serializable {
     @Getter    StreamedContent content;
     
     @EJB    EjbPoaSelectec poaSelectec;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
     @EJB    EjbCarga carga;
     @EJB    EjbAreasLogeo ejbAreasLogeo;
 

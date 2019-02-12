@@ -25,6 +25,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.Investigaciones;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Messages;
+import org.primefaces.event.RowEditEvent;
 
 @Named
 @ManagedBean
@@ -41,20 +42,19 @@ public class CvProduccion implements Serializable {
     @Getter    @Setter    private Date anio2 = new Date();
     @Getter    @Setter    private Date fechaI = new Date();
     @Getter    @Setter    private Date fechaF = null;
-    @Getter    @Setter    private Date fechaO = new Date();
     //Variables de objetos Entitys
-    @Getter    @Setter    private LibrosPub nuevOBJLibrosPub, selcNuevOBJLibrosPub;
-    @Getter    @Setter    private Memoriaspub nuevOBJMemoriaspub, selcNuevOBJMemoriaspub;
-    @Getter    @Setter    private Articulosp nuevOBJArticulosp, selcNuevOBJArticulosp;
-    @Getter    @Setter    private Investigaciones nuevOBJInvestigaciones = new Investigaciones(), nuevOBJInvestigacionesSelectec;
-    @Getter    @Setter    private Congresos nuevoOBJCongresos = new Congresos(), nuevoOBJCongresoSelectec = new Congresos();
+    @Getter    @Setter    private LibrosPub nuevOBJLibrosPub;
+    @Getter    @Setter    private Memoriaspub nuevOBJMemoriaspub;
+    @Getter    @Setter    private Articulosp nuevOBJArticulosp;
+    @Getter    @Setter    private Investigaciones nuevOBJInvestigaciones = new Investigaciones();
+    @Getter    @Setter    private Congresos nuevoOBJCongresos = new Congresos();
     // listas de variables basicas
     @Getter    @Setter    private List<String> listaSubClase = new ArrayList<>();
     // listas de entitys
     @Getter    @Setter    private List<LibrosPub> nuevaListaLibrosPub = new ArrayList<>();
     @Getter    @Setter    private List<Articulosp> nuevaListaArticulosp = new ArrayList<>();
     @Getter    @Setter    private List<Memoriaspub> nuevaListaMemoriaspub = new ArrayList<>();
-    @Getter    @Setter    private List<Investigaciones> nuevaListatInvestigaciones = new ArrayList<>(),nuevaListatTrabajos=new ArrayList<>(),nuevaListatProyectos=new ArrayList<>();
+    @Getter    @Setter    private List<Investigaciones> nuevaListatInvestigaciones = new ArrayList<>();
     @Getter    @Setter    private List<Congresos> nuevaListaCongresos = new ArrayList<>();
     // variable archivos  
     @Getter    @Setter    private Part file;
@@ -86,7 +86,7 @@ public class CvProduccion implements Serializable {
     }
 
     public void reiniciarValores() {
-         file = null;
+        file = null;
         anioEdi = "";
         anioPub = "";
         nuevOBJLibrosPub = new LibrosPub();
@@ -96,6 +96,7 @@ public class CvProduccion implements Serializable {
         nuevOBJInvestigaciones = new Investigaciones();
     }
 /////////////////////////////////////////////////////////////////////////////Libros\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
     public void createLibros() {
         try {
             //Inicialización de las relaciones entre las tablas “Capacitacionespersonal” con “Personal”, "CursosModalidad" y con "CursosTipo"
@@ -144,7 +145,26 @@ public class CvProduccion implements Serializable {
         }
     }
 
+    public void actualizaLibros(RowEditEvent event) {
+        try {
+            LibrosPub actualizarLib = (LibrosPub) event.getObject();
+            //Primero se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
+            utilidadesCH.agregaBitacora(usuario, actualizarLib.getLibrosp().toString(), "Libros Publicados", "Update");
+            //Se procede a invocar el “EJB” el cual mediante la recepción del objeto se encargará de procesar y actualizar la información en la BD. 
+            ejbProduccionProfecional.actualizarLibrosPub(actualizarLib);
+            //Al finalizar la actualización de la información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();”
+            mostrarListas();
+            //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
+            reiniciarValores();
+            //Finalmente se le informa al usuario cual es el resultado obtenido
+            utilidadesCH.mensajes("", "I", "C");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(CvHabilidades.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 /////////////////////////////////////////////////////////////////////////////Articulos\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\    
+
     public void createArticulos() {
         try {
             //Inicialización de las relaciones entre las tablas “Capacitacionespersonal” con “Personal”, "CursosModalidad" y con "CursosTipo"
@@ -196,7 +216,28 @@ public class CvProduccion implements Serializable {
         }
     }
 
+    public void actualizaArticulos(RowEditEvent event) {
+        try {
+            Articulosp actualizarArte = (Articulosp) event.getObject();
+            //Primero se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
+            utilidadesCH.agregaBitacora(usuario, actualizarArte.getArticuloId().toString(), "Artículos Publicados", "Update");
+            //Se procede a invocar el “EJB” el cual mediante la recepción del objeto se encargará de procesar y actualizar la información en la BD. 
+            ejbProduccionProfecional.actualizarArticulosp(actualizarArte);
+            //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
+            pestaniaActiva = 1;
+            //Al finalizar la actualización de la información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();”
+            mostrarListas();
+            //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
+            reiniciarValores();
+            //Finalmente se le informa al usuario cual es el resultado obtenido
+            utilidadesCH.mensajes("", "I", "C");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(CvHabilidades.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 //////////////////////////////////////////////////////////////////////////Memorias\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
     public void createrMemorias() {
         try {
             //Inicialización de las relaciones entre las tablas “Capacitacionespersonal” con “Personal”, "CursosModalidad" y con "CursosTipo"
@@ -233,7 +274,7 @@ public class CvProduccion implements Serializable {
             //Después de comprobar la existencia de archivos relacionados al registro, se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
             utilidadesCH.agregaBitacora(usuario, memoriaspub.getMemoriaID().toString(), "Memorias Publicadas", "Delate");
             //Posteriormente de realizar el registro en la bitácora se procede a eliminar el registro, esto invocado al “EJB”
-            ejbProduccionProfecional.eliminarMemoriaspub(memoriaspub);
+             ejbProduccionProfecional.eliminarMemoriaspub(memoriaspub);
             //Al finalizar los dos registros de información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();” 
             mostrarListas();
             //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
@@ -243,6 +284,27 @@ public class CvProduccion implements Serializable {
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(CvProduccion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void actualizaMemorias(RowEditEvent event) {
+        try {
+            Memoriaspub actualizarMemo = (Memoriaspub) event.getObject();
+            //Primero se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
+            utilidadesCH.agregaBitacora(usuario, actualizarMemo.getMemoriaID().toString(), "Memorias Publicadas", "Update");
+            //Se procede a invocar el “EJB” el cual mediante la recepción del objeto se encargará de procesar y actualizar la información en la BD. 
+            ejbProduccionProfecional.actualizarMemoriaspub(actualizarMemo);
+            //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
+            pestaniaActiva = 2;
+            //Al finalizar la actualización de la información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();”
+            mostrarListas();
+            //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
+            reiniciarValores();
+            //Finalmente se le informa al usuario cual es el resultado obtenido
+            utilidadesCH.mensajes("", "I", "C");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(CvHabilidades.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -293,7 +355,28 @@ public class CvProduccion implements Serializable {
         }
     }
 
+    public void actualizaInvestigacion(RowEditEvent event) {
+        try {
+            Investigaciones actualizarInves = (Investigaciones) event.getObject();
+            //Primero se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
+            utilidadesCH.agregaBitacora(usuario, actualizarInves.getInvestigacion().toString(), "Investigaciones", "Update");
+            //Se procede a invocar el “EJB” el cual mediante la recepción del objeto se encargará de procesar y actualizar la información en la BD. 
+            ejbProduccionProfecional.actualizarInvestigacion(actualizarInves);
+            //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
+            pestaniaActiva = 3;
+            //Al finalizar la actualización de la información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();”
+            mostrarListas();
+            //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
+            reiniciarValores();
+            //Finalmente se le informa al usuario cual es el resultado obtenido
+            utilidadesCH.mensajes("", "I", "C");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(CvHabilidades.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 ////////////////////////////////////////////////////////////////////////////Congreso\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
     public void createrCongreso() {
         try {
             //Inicialización de las relaciones entre las tablas “ExperienciasLaborales” con “Personal”
@@ -338,6 +421,27 @@ public class CvProduccion implements Serializable {
             Logger.getLogger(CvProduccion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    public void actualizaCongreso(RowEditEvent event) {
+        try {
+            Congresos actualizaCongre = (Congresos) event.getObject();
+            //Primero se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
+            utilidadesCH.agregaBitacora(usuario, actualizaCongre.getCongreso().toString(), "Congresos", "Update");
+            //Se procede a invocar el “EJB” el cual mediante la recepción del objeto se encargará de procesar y actualizar la información en la BD. 
+            ejbProduccionProfecional.actualizarCongresos(actualizaCongre);
+            //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
+            pestaniaActiva = 4;
+            //Al finalizar la actualización de la información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();”
+            mostrarListas();
+            //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
+            reiniciarValores();
+            //Finalmente se le informa al usuario cual es el resultado obtenido
+            utilidadesCH.mensajes("", "I", "C");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(CvHabilidades.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 ///////////////////////////////////////////////////////////////////////////evidencias\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
     public void agregarEvidenciaLibro() {
@@ -380,24 +484,13 @@ public class CvProduccion implements Serializable {
             nuevaListaMemoriaspub.clear();
             nuevaListaCongresos.clear();
             nuevaListatInvestigaciones.clear();
-            nuevaListatProyectos.clear();
-            nuevaListatTrabajos.clear();
 
             nuevaListaArticulosp = ejbProduccionProfecional.mostrarArticulosp(usuario);
             nuevaListaLibrosPub = ejbProduccionProfecional.mostrarLibrosPub(usuario);
             nuevaListaMemoriaspub = ejbProduccionProfecional.mostrarMemoriaspub(usuario);
             nuevaListaCongresos = ejbProduccionProfecional.mostrarCongresos(usuario);
             nuevaListatInvestigaciones = ejbProduccionProfecional.mostrarInvestigacion(usuario);
-            if (!nuevaListatInvestigaciones.isEmpty()) {
-                nuevaListatInvestigaciones.forEach((t) -> {
-                    if (t.getTipo().equals("Proyecto")) {
-                        nuevaListatProyectos.add(t);
-                    } else {
-                        nuevaListatTrabajos.add(t);
-                    }
-                });
-            }
-
+            
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(CvProduccion.class.getName()).log(Level.SEVERE, null, ex);

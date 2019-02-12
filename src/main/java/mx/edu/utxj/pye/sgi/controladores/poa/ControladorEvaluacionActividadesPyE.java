@@ -30,6 +30,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
+import mx.edu.utxj.pye.sgi.util.POAUtilidades;
 import org.omnifaces.util.Messages;
 import org.omnifaces.util.Servlets;
 import org.primefaces.event.RowEditEvent;
@@ -81,9 +82,11 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
     @Getter    StreamedContent content;
     
     @EJB    EjbPoaSelectec poaSelectec;
-    @Inject    ControladorEmpleado controladorEmpleado;
     @EJB    EjbCarga carga;
     @EJB    EjbAreasLogeo ejbAreasLogeo;
+    
+    @Inject    ControladorEmpleado controladorEmpleado;
+    @Inject    POAUtilidades pOAUtilidades;
 
     @PostConstruct
     public void init() {
@@ -91,19 +94,12 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
         actividadesPoasAreas.clear();
                 
         ejes=new EjesRegistro(0);
-                
-        ejercicioFiscal =  Short.parseShort(String.valueOf(fechaActual.getYear() - 101));
-        mes=fechaActual.getMonth();
+        
+        ejercicioFiscal = pOAUtilidades.obtenerejercicioFiscal("Evaluacion", 101);
+        mes = pOAUtilidades.obtenerMes("Evaluacion");
+        mesNombre = pOAUtilidades.obtenerMesNombre(mes);
         
         claveArea = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
-        switch(mes){
-            case 0: mesNombre="Enero"; break;            case 1: mesNombre="Febrero"; break;
-            case 2: mesNombre="Marzo"; break;            case 3: mesNombre="Abril"; break;
-            case 4: mesNombre="Mayo"; break;            case 5: mesNombre="Junio"; break;
-            case 6: mesNombre="Julio"; break;            case 7: mesNombre="Agosto"; break;
-            case 8: mesNombre="Septiembre"; break;            case 9: mesNombre="Octubre"; break;
-            case 10: mesNombre="Noviembre"; break;            case 11: mesNombre="Diciembre"; break;            
-        }
         
         consultarListas();
         System.out.println(" ControladorHabilidadesIIL Fin: " + System.currentTimeMillis());

@@ -73,14 +73,14 @@
         <div id="main-buttons"  >
             <p:toolbar id="tb">
                 <f:facet name="left">
-                    <p:outputLabel value="Administracion de encuesta de servicios" />                            
+                    <p:outputLabel value="Administración de encuesta de satisfacción por servicios" />                            
                 </f:facet>
                 <f:facet name="right"></f:facet>
             </p:toolbar>
             <p:sticky target="tb" />
         </div>
         <p:tabView id="tabView">
-            <p:tab title="Porcentaje de avance por carrera">
+            <p:tab title="Porcentaje de avance por Programa Educativo">
                 <h:form>
                     <p:outputPanel deferred="true">
                         <p:dataTable id="tblAvance" lazy="false" value="#{administracionAvanceEncuestaServicio.avanceEncServ}"
@@ -179,7 +179,7 @@
                             </p:column>
                             <f:facet name="footer">
                                 <p:commandButton actionListener="#{administracionEncuestaServicios.seguimientoEncuestaDirectores()}" value="Actualizar información" icon="fa fa-refresh" process="@this"
-                                                 class="btn btn-primary" update="tabView:fr1:tblEvaluacionesCompletas tabView:fr2:tblEvaluacionesIncompletas tabView:fr3:tblAlumnosNoAccedieron"/>
+                                                 class="btn btn-primary" update="tabView:fr1:tblEvaluacionesCompletas tabView:fr2:tblEvaluacionesIncompletas "/>
                             </f:facet>
                         </p:dataTable>           
                     </p:outputPanel>
@@ -244,7 +244,7 @@
                 </h:form>
             </p:tab>
 
-            <p:tab title="Estudiantes que no han accedido" titleStyleClass="noaccedio">
+            <!--p:tab title="Estudiantes que no han accedido" titleStyleClass="noaccedio">
                 <h:form id="fr3">
                     <p:outputPanel>
                         <p:dataTable id="tblAlumnosNoAccedieron" lazy="false" value="#{administracionEncuestaServicios.listEvaNADir}"   var="alumnosNoAccedieron" filterDelay="700" 
@@ -302,7 +302,7 @@
                     </p:outputPanel>
 
                 </h:form>
-            </p:tab>
+            </p:tab-->
 
 
         </p:tabView>

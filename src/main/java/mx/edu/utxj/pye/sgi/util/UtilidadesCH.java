@@ -17,6 +17,7 @@ import mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado;
 import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
+import org.primefaces.event.RowEditEvent;
 
 @Named
 @ViewScoped
@@ -124,5 +125,9 @@ public class UtilidadesCH implements Serializable {
         
         //Se realiza la separación de la ruta obtenida y se coloca una máscara para poder mostrar los archivos sin exponer su ubicación real.
         return "evidencias2".concat(file.toURI().toString().split("archivos")[1]);
+    }
+    
+    public void onRowCancel(RowEditEvent event) {
+        Messages.addGlobalInfo("¡Operación cancelada!");
     }
 }

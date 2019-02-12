@@ -191,9 +191,9 @@
         </c:if>
 
         <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
-            <c:if test="#{controladorEmpleado.fechaActual.year eq 118}"><!-- validacion de fech limite para que se muestre l aseccion de NUEVO-->
-                <c:if test="#{controladorEmpleado.fechaActual.month le 10}">
-                    <c:if test="#{controladorEmpleado.fechaActual.date le 15}">
+            <c:if test="#{controladorEmpleado.fechaActual.year eq 119}"><!-- validacion de fech limite para que se muestre l aseccion de NUEVO-->
+                <c:if test="#{controladorEmpleado.fechaActual.month le 1}">
+                    <c:if test="#{controladorEmpleado.fechaActual.date le 28}">
                         <div class="box box-primary">
                             <div class="box box-solid">
                                 <div class="box-header with-border">
@@ -208,14 +208,14 @@
                                         <div class="col-lg-3 col-md-6 col-xs-12">
                                             <div class="small-box bg-green">
                                                 <div class="inner">
-                                                    <h3>Incidencias</h3>
+                                                    <h3>Contacto</h3>
                                                     <p>Registro</p>
-                                                    <p>Permite al personal realizar el registro de las incidencias cometidas</p>
+                                                    <p>Contacto de mergencias</p>
                                                 </div>
                                                 <div class="icon">
-                                                    <i class="fa fa-clock-o"/>
+                                                    <i class="fa fa-user-plus"/>
                                                 </div>
-                                                <a href="capitalHumano/perfilEmpleadoIn.xhtml" class="small-box-footer">Registrar</a>
+                                                <a href="capitalHumano/contactoE.xhtml" class="small-box-footer">Registrar</a>
                                             </div>
                                         </div>       
                                     </div>
@@ -225,72 +225,72 @@
                     </c:if>
                 </c:if>                                
             </c:if>
-            <c:if test="#{controladorEmpleado.tienePOA}">
-                <c:if test="#{controladorEmpleado.mensajeGeneral}"> 
-                    <div class="box box-primary">
-                        <div class="box box-solid">
-                            <div class="box-header with-border">
-                                <h2 class="box-title">Notificaciones</h2>
-                                <div class="box-tools pull-right">
-                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                                    </button>
-                                </div>
-                            </div>       
-                            <div class="box-body">  
-                                <div class="row">                                
-                                    <div class="col-lg-6 col-md-6 col-xs-12">
-                                        <div class="small-box #{controladorEmpleado.estiloInfo?'bg-blue':'bg-yellow'}">
-                                            <div class="inner">
-                                                <h3>¡Atento Aviso!</h3>
-                                                <p>#{controladorEmpleado.mensajeIndex1}</p>
-                                                <p style="font-weight: bolder;text-align: center;font-size: 25px;">#{controladorEmpleado.mensajeIndex2}</p>
-                                            </div>
-                                            <div class="icon">
-                                                <i class="fa fa-calendar"/>
-                                            </div>
-                                            <a href="poa/areas/evaluacion.xhtml" class="small-box-footer">Evaluar <i class="fa fa-chevron-circle-right"/></a>
-                                            <a href="siip/modulosRegistro/menu_general.xhtml" class="small-box-footer">Registrar <i class="fa fa-chevron-circle-right"/></a>
-                                            <a href="calendarioActividades.xhtml" class="small-box-footer">Consultar calendario <i class="fa fa-chevron-circle-right"/></a>
-                                        </div>
-                                    </div>                        
-                                </div>
+            <!--c:if test="#{(controladorEmpleado.nuevoOBJListaPersonal.actividad eq 2 || controladorEmpleado.nuevoOBJListaPersonal.actividad eq 4) || (controladorEmpleado.tienePOA and controladorEmpleado.mensajeGeneral)}"--> 
+                <div class="box box-primary">
+                    <div class="box box-solid">
+                        <div class="box-header with-border">
+                            <h2 class="box-title">Notificaciones</h2>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                </button>
                             </div>
                         </div>
-                    </div>    
-                </c:if>
-            </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividad eq 2 || controladorEmpleado.nuevoOBJListaPersonal.actividad eq 4}"> 
-                <c:if test="#{controladorEmpleado.incidenciases.size() eq 0? false:true}">
-                    <div class="box box-primary">
-                        <div class="box box-solid">
-                            <div class="box-header with-border">
-                                <h2 class="box-title">Notificaciones</h2>
-                                <div class="box-tools pull-right">
-                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                                    </button>
-                                </div>
-                            </div>       
-                            <div class="box-body">  
-                                <div class="row">                                
-                                    <div class="col-lg-3 col-md-6 col-xs-12">
-                                        <div class="small-box bg-yellow">
-                                            <div class="inner">
-                                                <h3>Incidencias</h3>
-                                                <p>Validaciones pendientes</p>
-                                                <p>Tiene #{controladorEmpleado.incidenciases.size()} incidencias por validar</p>
-                                            </div>
-                                            <div class="icon">
-                                                <i class="fa fa-check"/>
-                                            </div>
-                                            <a href="capitalHumano/directivos/perfilSubordinadosIn.xhtml" class="small-box-footer">Validar</a>
+                        <div class="box-body">  
+                            <div class="row"> 
+
+                                <div class="col-lg-3 col-md-6 col-xs-12">
+                                    <div class="small-box bg-yellow">
+                                        <div class="inner">
+                                            <h3>Datos Personales</h3>
+                                            <p>Se debe actualizar el Tipo de sangre</p>
                                         </div>
-                                    </div>                        
-                                </div>
+                                        <div class="icon">
+                                            <i class="fa fa-id-card-o"/>
+                                        </div>
+                                        <a href="capitalHumano/perfilEmpleadoDatosPer.xhtml" class="small-box-footer">Actualizar Informacion</a>
+                                    </div>
+                                </div> 
+                                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividad eq 2 || controladorEmpleado.nuevoOBJListaPersonal.actividad eq 4}"> 
+                                    <c:if test="#{controladorEmpleado.incidenciases.size() eq 0? false:true}">
+                                        <div class="col-lg-3 col-md-6 col-xs-12">
+                                            <div class="small-box bg-yellow">
+                                                <div class="inner">
+                                                    <h3>Incidencias</h3>
+                                                    <p>Validaciones pendientes</p>
+                                                    <p>Tiene #{controladorEmpleado.incidenciases.size()} incidencias por validar</p>
+                                                </div>
+                                                <div class="icon">
+                                                    <i class="fa fa-check"/>
+                                                </div>
+                                                <a href="capitalHumano/directivos/perfilSubordinadosIn.xhtml" class="small-box-footer">Validar</a>
+                                            </div>
+                                        </div> 
+                                    </c:if>
+                                </c:if>         
+                                <c:if test="#{controladorEmpleado.tienePOA}">
+                                    <c:if test="#{controladorEmpleado.mensajeGeneral}">                                                             
+                                        <div class="col-lg-6 col-md-6 col-xs-12">
+                                            <div class="small-box #{controladorEmpleado.estiloInfo?'bg-blue':'bg-yellow'}">
+                                                <div class="inner">
+                                                    <h3>¡Atento Aviso!</h3>
+                                                    <p>#{controladorEmpleado.mensajeIndex1}</p>
+                                                    <p style="font-weight: bolder;text-align: center;font-size: 25px;">#{controladorEmpleado.mensajeIndex2}</p>
+                                                </div>
+                                                <div class="icon">
+                                                    <i class="fa fa-calendar"/>
+                                                </div>
+                                                <a href="poa/areas/evaluacion.xhtml" class="small-box-footer">Evaluar <i class="fa fa-chevron-circle-right"/></a>
+                                                <a href="siip/modulosRegistro/menu_general.xhtml" class="small-box-footer">Registrar <i class="fa fa-chevron-circle-right"/></a>
+                                                <a href="calendarioActividades.xhtml" class="small-box-footer">Consultar calendario <i class="fa fa-chevron-circle-right"/></a>
+                                            </div>
+                                        </div> 
+                                    </c:if>
+                                </c:if>              
                             </div>
                         </div>
-                    </div>    
-                </c:if>
-            </c:if>
+                    </div>
+                </div>    
+            <!--/c:if-->
             <c:if test="#{evaluacionDesempenioAdmin.cargada || evaluacion360Admin1.cargada || evaluacion360Admin1.cargada}">
                 <div class="box box-primary">
                     <div class="box box-solid">

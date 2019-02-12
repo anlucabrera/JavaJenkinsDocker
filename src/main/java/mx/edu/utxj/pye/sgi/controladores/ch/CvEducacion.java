@@ -27,6 +27,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
+import org.primefaces.event.RowEditEvent;
 
 @Named
 @ManagedBean
@@ -46,11 +47,10 @@ public class CvEducacion implements Serializable {
 // listas de entitys
     @Getter    @Setter    private List<FormacionAcademica> nuevaListaFormacionAcademica = new ArrayList<>();
     @Getter    @Setter    private List<ExperienciasLaborales> nuevaListaExperienciasLaborales = new ArrayList<>();
-    @Getter    @Setter    private List<Capacitacionespersonal> nuevaListaCapacitacionesInternas = new ArrayList<>();
+    @Getter    @Setter    private List<Capacitacionespersonal> nuevaListaCapacitaciones = new ArrayList<>();
     @Getter    @Setter    private List<CursosTipo> listaCursos = new ArrayList<>();
     @Getter    @Setter    private List<Grados> listaGrados = new ArrayList<>();
     @Getter    @Setter    private List<CursosModalidad> listaModalidades = new ArrayList<>();
-    @Getter    @Setter    private List<Capacitacionespersonal> nuevaListaCapacitacionesExternas = new ArrayList<>();
 // variable archivos    
     @Getter    @Setter    private Part file;
 // EJbs    
@@ -78,8 +78,7 @@ public class CvEducacion implements Serializable {
         listaModalidades.clear();
         nuevaListaFormacionAcademica.clear();
         nuevaListaExperienciasLaborales.clear();
-        nuevaListaCapacitacionesInternas.clear();
-        nuevaListaCapacitacionesExternas.clear();
+        nuevaListaCapacitaciones.clear();
 
         mostrarListas();
             }
@@ -105,33 +104,20 @@ public class CvEducacion implements Serializable {
         try {
             //Inicialización de las relaciones entre las tablas “Formación Académica” con “Personal” y “Grados Académicos”
             nuevoOBJFormacionAcademica.setClavePersonal(new Personal());
-            nuevoOBJFormacionAcademica.setNivelEscolaridad(new Grados());
-            
+            nuevoOBJFormacionAcademica.setNivelEscolaridad(new Grados());            
             //Una vez realizada la inicialización se procede a realizar la asignación de los valores correspondientes mediante los métodos Get().Set(Valor_A_Asignar)
             nuevoOBJFormacionAcademica.getNivelEscolaridad().setGrado(grado);
-            nuevoOBJFormacionAcademica.getClavePersonal().setClave(usuario);
-            
+            nuevoOBJFormacionAcademica.getClavePersonal().setClave(usuario);            
             //Posteriormente se procese a realizar la asignación de valores que no se obtienen mediante la interfaz grafica
-            nuevoOBJFormacionAcademica.setEstatus("Denegado");
-            
-            //En este apartado se procede a comprobar si la información a registrar ya existe en la BD, en caso de ya existir se envía la información al método “updateFormacion” el cual sirve para actualizar la información, posteriormente se cierra el flujo del proceso.
-            if (nuevoOBJFormacionAcademica.getFormacion() != null) {
-                updateFormacion();
-                return;
-            }
-            
+            nuevoOBJFormacionAcademica.setEstatus("Denegado");            
             //En caso de que sea información nueva se procede a enviar la información al “EJB” el cual la agregara a la BD.
-            nuevoOBJFormacionAcademica = ejbEducacion.crearNuevoFormacionAcademica(nuevoOBJFormacionAcademica);
-            
+            nuevoOBJFormacionAcademica = ejbEducacion.crearNuevoFormacionAcademica(nuevoOBJFormacionAcademica);            
             //Después de agregar la información a la BD, se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
-            utilidadesCH.agregaBitacora(usuario, nuevoOBJFormacionAcademica.getFormacion().toString(), "Formación Académica", "Insert");
-            
+            utilidadesCH.agregaBitacora(usuario, nuevoOBJFormacionAcademica.getFormacion().toString(), "Formación Académica", "Insert");            
             //Al finalizar los dos registros de información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();”
-            mostrarListas();
-            
+            mostrarListas();            
             //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
-            reiniciarValores();
-            
+            reiniciarValores();            
             //Finalmente se le informa al usuario cual es el resultado obtenido
             utilidadesCH.mensajes("", "I", "C");
         } catch (Throwable ex) {
@@ -169,16 +155,17 @@ public class CvEducacion implements Serializable {
         }
     }
 
-    public void updateFormacion() {
+    public void updateFormacion(RowEditEvent event) {
         try {
+            FormacionAcademica actualizarForAc = (FormacionAcademica) event.getObject();
             //Primero se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
-            utilidadesCH.agregaBitacora(usuario, nuevoOBJFormacionAcademica.getFormacion().toString(), "Formación Académica", "Update");
+            utilidadesCH.agregaBitacora(usuario, actualizarForAc.getFormacion().toString(), "Formación Académica", "Update");
 
             //Se realiza la asignación de los valores a actualizar
-            nuevoOBJFormacionAcademica.getNivelEscolaridad().setGrado(grado);
+            actualizarForAc.getNivelEscolaridad().setGrado(grado);
 
             //Se procede a invocar el “EJB” el cual mediante la recepción del objeto se encargará de procesar y actualizar la información en la BD. 
-            nuevoOBJFormacionAcademica = ejbEducacion.actualizarFormacionAcademica(nuevoOBJFormacionAcademica);
+            ejbEducacion.actualizarFormacionAcademica(actualizarForAc);
 
             //Al finalizar la actualización de la información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();”
             mostrarListas();
@@ -199,34 +186,20 @@ public class CvEducacion implements Serializable {
         try {
             //Inicialización de las relaciones entre las tablas “ExperienciasLaborales” con “Personal”
             nuevoOBJExpeienciasLaborales.setClavePersonal(new Personal());
-
             //Una vez realizada la inicialización se procede a realizar la asignación de los valores correspondientes mediante los métodos Get().Set(Valor_A_Asignar)
             nuevoOBJExpeienciasLaborales.getClavePersonal().setClave(usuario);
-
             //Posteriormente se procese a realizar la asignación de valores que no se obtienen mediante la interfaz grafica
             nuevoOBJExpeienciasLaborales.setEstatus("Denegado");
-
-            //En este apartado se procede a comprobar si la información a registrar ya existe en la BD, en caso de ya existir se envía la información al método “updateFormacion” el cual sirve para actualizar la información, posteriormente se cierra el flujo del proceso.
-            if (nuevoOBJFormacionAcademica.getFormacion() != null) {
-                updateExperienciaLaboral();
-                return;
-            }
-
             //En caso de que sea información nueva se procede a enviar la información al “EJB” el cual la agregara a la BD.
             nuevoOBJExpeienciasLaborales = ejbEducacion.crearNuevoExperienciasLaborales(nuevoOBJExpeienciasLaborales);
-
             //Después de agregar la información a la BD, se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
             utilidadesCH.agregaBitacora(usuario, nuevoOBJExpeienciasLaborales.getEmpleo().toString(), "Experiencia Laboral", "Insert");
-
             //Al finalizar los dos registros de información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();”
             mostrarListas();
-
             //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
             reiniciarValores();
-
             //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
             pestaniaActiva = 1;
-
             //Finalmente se le informa al usuario cual es el resultado obtenido
             utilidadesCH.mensajes("", "I", "C");
         } catch (Throwable ex) {
@@ -263,13 +236,14 @@ public class CvEducacion implements Serializable {
         }
     }
 
-    public void updateExperienciaLaboral() {
+    public void updateExperienciaLaboral(RowEditEvent event) {
         try {
+            ExperienciasLaborales actualizarExpe = (ExperienciasLaborales) event.getObject();
             //Primero se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
-            utilidadesCH.agregaBitacora(usuario, nuevoOBJExpeienciasLaborales.getEmpleo().toString(), "Experiencia Laboral", "Update");
+            utilidadesCH.agregaBitacora(usuario, actualizarExpe.getEmpleo().toString(), "Experiencia Laboral", "Update");
 
             //Se procede a invocar el “EJB” el cual mediante la recepción del objeto se encargará de procesar y actualizar la información en la BD. 
-            nuevoOBJExpeienciasLaborales = ejbEducacion.actualizarExperienciasLaborales(nuevoOBJExpeienciasLaborales);
+            ejbEducacion.actualizarExperienciasLaborales(actualizarExpe);
 
             //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
             pestaniaActiva = 1;
@@ -292,36 +266,22 @@ public class CvEducacion implements Serializable {
             nuevoOBJCapacitacionespersonal.setClavePersonal(new Personal());
             nuevoOBJCapacitacionespersonal.setModalidad(new CursosModalidad());
             nuevoOBJCapacitacionespersonal.setTipo(new CursosTipo());
-
             //Una vez realizada la inicialización se procede a realizar la asignación de los valores correspondientes mediante los métodos Get().Set(Valor_A_Asignar)
             nuevoOBJCapacitacionespersonal.getClavePersonal().setClave(usuario);
             nuevoOBJCapacitacionespersonal.getModalidad().setModalidad(modalida);
             nuevoOBJCapacitacionespersonal.getTipo().setTipo(tipoCur);
-
             //Posteriormente se procese a realizar la asignación de valores que no se obtienen mediante la interfaz grafica
             nuevoOBJCapacitacionespersonal.setEstatus("Denegado");
-
-            //En este apartado se procede a comprobar si la información a registrar ya existe en la BD, en caso de ya existir se envía la información al método “updateFormacion” el cual sirve para actualizar la información, posteriormente se cierra el flujo del proceso.
-            if (nuevoOBJFormacionAcademica.getFormacion() != null) {
-                updateCapacitacion();
-                return;
-            }
-
             //En caso de que sea información nueva se procede a enviar la información al “EJB” el cual la agregara a la BD.
             nuevoOBJCapacitacionespersonal = ejbEducacion.crearNuevoCapacitacionespersonal(nuevoOBJCapacitacionespersonal);
-
             //Después de agregar la información a la BD, se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
             utilidadesCH.agregaBitacora(usuario, nuevoOBJCapacitacionespersonal.getCursoClave().toString(), "Capacitación Personal", "Insert");
-
             //Al finalizar los dos registros de información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();”
             mostrarListas();
-
             //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
             reiniciarValores();
-
             //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
             pestaniaActiva = 2;
-
             //Finalmente se le informa al usuario cual es el resultado obtenido
             utilidadesCH.mensajes("", "I", "C");
         } catch (Throwable ex) {
@@ -357,17 +317,18 @@ public class CvEducacion implements Serializable {
         }
     }
 
-    public void updateCapacitacion() {
+    public void updateCapacitacion(RowEditEvent event) {
         try {
+            Capacitacionespersonal actualizarCapa = (Capacitacionespersonal) event.getObject();
             //Primero se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
-            utilidadesCH.agregaBitacora(usuario, nuevoOBJCapacitacionespersonal.getCursoClave().toString(), "Capacitación Personal", "Update");
+            utilidadesCH.agregaBitacora(usuario, actualizarCapa.getCursoClave().toString(), "Capacitación Personal", "Update");
 
             //Se realiza la asignación de los valores a actualizar
-            nuevoOBJCapacitacionespersonal.getModalidad().setModalidad(modalida);
-            nuevoOBJCapacitacionespersonal.getTipo().setTipo(tipoCur);
+            actualizarCapa.getModalidad().setModalidad(modalida);
+            actualizarCapa.getTipo().setTipo(tipoCur);
 
             //Se procede a invocar el “EJB” el cual mediante la recepción del objeto se encargará de procesar y actualizar la información en la BD. 
-            nuevoOBJCapacitacionespersonal = ejbEducacion.actualizarCapacitacionespersonal(nuevoOBJCapacitacionespersonal);
+            ejbEducacion.actualizarCapacitacionespersonal(actualizarCapa);
 
             //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
             pestaniaActiva = 1;
@@ -394,10 +355,7 @@ public class CvEducacion implements Serializable {
             //Las listas son llenadas con los registros existentes del usuario logeado en la BD, esto mediante la recepción de su clave.
             nuevaListaFormacionAcademica = ejbEducacion.mostrarFormacionAcademica(usuario);
             nuevaListaExperienciasLaborales = ejbEducacion.mostrarExperienciasLaborales(usuario);
-
-            //Las listas son llenadas con los registros existentes del usuario logeado en la BD, esto mediante la recepción de su clave y el tipo de registro.
-            nuevaListaCapacitacionesInternas = ejbEducacion.mostrarCapacitacionespersonalTipo(usuario, "Interna");
-            nuevaListaCapacitacionesExternas = ejbEducacion.mostrarCapacitacionespersonalTipo(usuario, "Externa");
+            nuevaListaCapacitaciones = ejbEducacion.mostrarCapacitacionespersonal(usuario);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(CvEducacion.class.getName()).log(Level.SEVERE, null, ex);
@@ -477,78 +435,24 @@ public class CvEducacion implements Serializable {
 
     public void filtrarInfoEducacion() {
         switch (grado) {
-            case 1:
-                nomCarrera = false;
-                formaTyC = false;
-                break;
-            case 2:
-                nomCarrera = false;
-                formaTyC = false;
-                break;
-            case 3:
-                nomCarrera = false;
-                formaTyC = false;
-                break;
-            case 4:
-                nomCarrera = false;
-                formaTyC = false;
-                break;
-            case 5:
-                nomCarrera = false;
-                formaTyC = false;
-                break;
-            case 6:
-                nomCarrera = false;
-                formaTyC = false;
-                break;
-            case 7:
-                nomCarrera = true;
-                formaTyC = false;
-                break;
-            case 8:
-                nomCarrera = true;
-                formaTyC = true;
-                break;
-            case 9:
-                nomCarrera = true;
-                formaTyC = false;
-                break;
-            case 10:
-                nomCarrera = true;
-                formaTyC = false;
-                break;
-            case 11:
-                nomCarrera = true;
-                formaTyC = true;
-                break;
-            case 12:
-                nomCarrera = true;
-                formaTyC = false;
-                break;
-            case 13:
-                nomCarrera = true;
-                formaTyC = false;
-                break;
-            case 14:
-                nomCarrera = true;
-                formaTyC = true;
-                break;
-            case 15:
-                nomCarrera = true;
-                formaTyC = true;
-                break;
-            case 16:
-                nomCarrera = true;
-                formaTyC = false;
-                break;
-            case 17:
-                nomCarrera = true;
-                formaTyC = true;
-                break;
-            default:
-                nomCarrera = false;
-                formaTyC = false;
-                break;
+            case 1:                nomCarrera = false;                formaTyC = false;                break;
+            case 2:                nomCarrera = false;                formaTyC = false;                break;
+            case 3:                nomCarrera = false;                formaTyC = false;                break;
+            case 4:                nomCarrera = false;                formaTyC = false;                break;
+            case 5:                nomCarrera = false;                formaTyC = false;                break;
+            case 6:                nomCarrera = false;                formaTyC = false;                break;
+            case 7:                nomCarrera = true;                formaTyC = false;                break;
+            case 8:                nomCarrera = true;                formaTyC = true;                break;
+            case 9:                nomCarrera = true;                formaTyC = false;                break;
+            case 10:                nomCarrera = true;                formaTyC = false;                break;
+            case 11:                nomCarrera = true;                formaTyC = true;                break;
+            case 12:                nomCarrera = true;                formaTyC = false;                break;
+            case 13:                nomCarrera = true;                formaTyC = false;                break;
+            case 14:                nomCarrera = true;                formaTyC = true;                break;
+            case 15:                nomCarrera = true;                formaTyC = true;                break;
+            case 16:                nomCarrera = true;                formaTyC = false;                break;
+            case 17:                nomCarrera = true;                formaTyC = true;                break;
+            default:                nomCarrera = false;                formaTyC = false;                break;
         }
     }
 

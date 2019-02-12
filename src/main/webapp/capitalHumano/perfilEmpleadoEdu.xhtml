@@ -104,7 +104,7 @@
                             </div>
                             <p:tabView activeIndex="#{cvEducacion.pestaniaActiva}">
                                 <p:tab id="tab1" title="Formación académica">
-                                    <h:form id="frmForAc"  enctype="multipart/form-data"> 
+                                    <o:form id="frmForAc"  enctype="multipart/form-data"> 
                                         <p:outputPanel id="registro" autoUpdate="#{cvEducacion.claveR eq 0?false:true}" >
                                             <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                                                 <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
@@ -193,25 +193,13 @@
                                                                                 <div class="form-group">
                                                                                     <div class="col-sm-12 col-md-4 col-lg-4"/>
                                                                                     <div id="div1" class="col-sm-12 col-md-4 col-lg-4">
-                                                                                        <c:if test="#{cvEducacion.claveR eq 0?true:false}">
-                                                                                            <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{cvEducacion.createFormacion()}" disabled="#{cvEducacion.direccionInt.toString() eq '0' ?true:false }"
-                                                                                                             icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('registro')update();" onsuccess="PF('frmListaFormacionAcademica')update();"
-                                                                                                             update="@form" process="@form" /> 
-                                                                                        </c:if>
+                                                                                        <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{cvEducacion.createFormacion()}" disabled="#{cvEducacion.direccionInt.toString() eq '0' ?true:false }"
+                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('registro')update();" onsuccess="PF('frmListaFormacionAcademica')update();"
+                                                                                                         update="@form" process="@form" /> 
+
 
                                                                                     </div>
                                                                                 </div>
-                                                                            </p:outputPanel>
-                                                                            <p:outputPanel >
-                                                                                <p:autoUpdate/>
-                                                                                <c:if test="#{cvEducacion.claveR eq 0?false:true}">
-                                                                                    <div class="col-sm-12 col-md-4 col-lg-4"/>
-                                                                                    <div id="div1" class="col-sm-12 col-md-4 col-lg-4">
-                                                                                        <p:commandButton id="btnBuscarActiuvidades" value="Actualizar información" actionListener="#{cvEducacion.updateFormacion()}"
-                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('registro')update();" onsuccess="PF('frmListaFormacionAcademica')update();"
-                                                                                                         update="@form" process="@form" /> 
-                                                                                    </div>
-                                                                                </c:if>
                                                                             </p:outputPanel>
                                                                         </div>
                                                                     </div>
@@ -239,90 +227,98 @@
                                                 </div>
                                             </c:if>
                                         </p:outputPanel> 
-                                    </h:form>
+                                    </o:form>
                                     <h:form id="frmListaFormacionAcademica">
                                         <p:outputPanel>
                                             <p:remoteCommand name="actualizarTabla" actionListener="#{cvEducacion.metodoBase()}" update="tblFormacion" />
-                                            <p:dataTable id="tblFormacion" value="#{cvEducacion.nuevaListaFormacionAcademica}"
-                                                         paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron registros." rowStyleClass="#{formacion.estatus eq 'Aceptado'?'aceptado':'denegado'}"
-                                                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                                         selectionMode="single"  selection="#{cvEducacion.nuevoOBJFormacionAcademica}" rowKey="#{formacion.formacion}"
-                                                         var="formacion" lazy="true">
+                                            <p:dataTable id="tblFormacion" value="#{cvEducacion.nuevaListaFormacionAcademica}" var="estudios" 
+                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{estudios.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                         editable="true" editMode="row">
 
-                                                <f:facet name="header">
-                                                    <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
-                                                    <p:spacer width="15px"/>
-                                                    <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
-                                                </f:facet>
 
-                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                    <p:ajax event="rowSelect"   update="update"/>
-                                                    <p:ajax event="rowUnselect" update="update"/>
-                                                </c:if>
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
+                                                        <p:column rowspan="2" headerText="Grado" style="width: 300px;" />
+                                                        <p:column rowspan="2" headerText="Institución" style="width: 300px;"/>
+                                                        <p:column rowspan="2" headerText="Fecha" style="width: 200px;"/> 
+                                                        <p:column rowspan="2" headerText="Forma titulación" style="width: 300px;"/>
+                                                        <p:column rowspan="2" headerText="Número cédula" style="width: 300px;"/>
+                                                        <p:column colspan="2" headerText="Evidencias" style="width: 150px;"/>
+                                                    </p:row>
+                                                    <p:row class="success">
+                                                        <p:column headerText="Culminacion"/>
+                                                        <p:column headerText="Cédula"/>
+                                                    </p:row>
+                                                </p:columnGroup>
 
-                                                <p:column style="width: 50px;">
-                                                    <p:commandButton actionListener="#{cvEducacion.deleteFormacion(formacion)}" update="tblFormacion" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{formacion.nivelEscolaridad.nombre}?" icon="ui-icon-alert" />
+                                                <p:ajax event="rowEdit" listener="#{cvEducacion.updateFormacion}" update="@this" oncomplete="actualizarTabla()"/>
+                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla()"/>
+
+                                                <p:column >
+                                                    <p:commandButton actionListener="#{cvEducacion.deleteFormacion(estudios)}" update="tblFormacion" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación del grado: #{estudios.nivelEscolaridad.nombre}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
 
-                                                <p:column headerText="Grado de estudio" 
-                                                          sortBy="#{formacion.nivelEscolaridad.nombre}" 
-                                                          filterBy="#{formacion.nivelEscolaridad.nombre}" 
-                                                          filterMatchMode="contains">
-                                                    <h:outputText value="#{formacion.nivelEscolaridad.nombre}" />
+                                                <p:column >
+                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center;visibility: #{estudios.estatus eq 'Aceptado'?'hidden':'visible'}">
+                                                        <a href="#" class="ui-row-editor-pencil">
+                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                        </a>
+                                                        <a href="#" class="ui-row-editor-check">
+                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                        </a>
+                                                        <p:spacer width="20px"/>
+                                                        <a href="#" class="ui-row-editor-close">
+                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                        </a>
+                                                    </div>
                                                 </p:column>
-
-                                                <p:column headerText="Institución" 
-                                                          sortBy="#{formacion.institucion}" 
-                                                          filterBy="#{formacion.institucion}" 
-                                                          filterMatchMode="contains">
-                                                    <h:outputText value="#{formacion.institucion}"/>
-                                                </p:column> 
-
-                                                <p:column headerText="Fecha de obtención" 
-                                                          sortBy="#{formacion.fechaObtencion}" 
-                                                          filterBy="#{formacion.fechaObtencion}" 
-                                                          filterMatchMode="contains"
-                                                          style="width: 15%">
-                                                    <h:outputText value="#{formacion.fechaObtencion}" >
-                                                        <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
-                                                    </h:outputText>
-                                                </p:column>  
-
-                                                <p:column headerText="Nombre de la carrera" 
-                                                          sortBy="#{formacion.nombreCarrera}" 
-                                                          filterBy="#{formacion.nombreCarrera}" 
-                                                          filterMatchMode="contains">
-                                                    <h:outputText value="#{formacion.nombreCarrera}"/>
-                                                </p:column> 
-
-                                                <f:facet name="footer">
-                                                    <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                        <p:commandButton id="update" value="Actualizar" icon="fa fa-pen" class="btn btn-info" onsuccess="PF('frmForAc')update();"
-                                                                         actionListener="#{cvEducacion.asignaGrado()}" disabled="#{empty cvEducacion.nuevoOBJFormacionAcademica}"/>
-                                                    </c:if>
-                                                </f:facet>
-
-                                                <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
-                                                    <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog1').show()" icon="ui-icon-search" title="View">
-                                                        <f:setPropertyActionListener value="#{formacion}" target="#{cvEducacion.nuevoOBJFormacionAcademica}"/>
-                                                    </p:commandButton>
+                                                <p:column>
+                                                    <h:outputText value="#{estudios.nivelEscolaridad.nombre}" />
                                                 </p:column>
-
-                                            </p:dataTable>
-
-                                            <p:dialog id="dialog1" header="Evidencias" widgetVar="evidenciaDialog1" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
-                                                <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
-                                                    <p:autoUpdate/>
-                                                    <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty cvEducacion.nuevoOBJFormacionAcademica}">
-                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(cvEducacion.nuevoOBJFormacionAcademica.evidenciaTitulo)}"/>       
-                                                        <c:if test="#{cvEducacion.nuevoOBJFormacionAcademica.evidenciaCedula eq null ? false :(cvEducacion.nuevoOBJFormacionAcademica.evidenciaCedula eq '' ?false:true)}">
-                                                            <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{cvEducacion.nuevoOBJFormacionAcademica.evidenciaCedula eq null ?'':(utilidadesCH.convertirRuta(cvEducacion.nuevoOBJFormacionAcademica.evidenciaCedula))}"/>
-                                                        </c:if>
-                                                    </p:panelGrid>
-                                                </p:outputPanel>
-                                            </p:dialog>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{estudios.institucion}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputTextarea value="#{estudios.institucion}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{estudios.fechaObtencion}" ><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{estudios.fechaObtencion}" pattern="dd-MM-yyyy" mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column> 
+                                                <p:column >
+                                                    <h:outputText value="#{estudios.modoTitulacion}" />
+                                                </p:column>
+                                                <p:column >
+                                                    <h:outputText value="#{estudios.cedulaProfesional}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(estudios.evidenciaTitulo)}" target="_blank" style="color: #000000">
+                                                        <i class="fa fa-search"></i>
+                                                        <span>Ver</span>
+                                                    </p:link>
+                                                </p:column>   
+                                                <p:column>
+                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(estudios.evidenciaCedula)}" target="_blank" style="color: #000000">
+                                                        <i class="fa fa-search"></i>
+                                                        <span>Ver</span>
+                                                    </p:link>
+                                                </p:column>   
+                                            </p:dataTable>  
 
                                         </p:outputPanel> 
 
@@ -334,7 +330,7 @@
                                     </h:form>
                                 </p:tab>                               
                                 <p:tab id="tab2" title="Experiencia laboral">
-                                    <h:form id="frmExLab" enctype="multipart/form-data">
+                                    <o:form id="frmExLab" enctype="multipart/form-data">
                                         <p:outputPanel id="registro2" autoUpdate="#{cvEducacion.claveREX eq 0?false:true}">
                                             <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                                                 <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
@@ -389,7 +385,6 @@
                                                                         </div>
                                                                         <hr/>
                                                                         <div class="row">
-
                                                                             <p:outputPanel>            
                                                                                 <p:autoUpdate/>
                                                                                 <div class="form-group">
@@ -402,18 +397,6 @@
                                                                                                          update="@form" process="@form" oncomplete="PF('frmListaEmpleos')update();" /> 
                                                                                     </div>
                                                                                 </div>
-                                                                            </p:outputPanel>
-
-                                                                            <p:outputPanel>            
-                                                                                <p:autoUpdate/>
-                                                                                <c:if test="#{cvEducacion.claveREX eq 0?false:true}">
-                                                                                    <div class="col-sm-12 col-md-4 col-lg-4"/>
-                                                                                    <div id="div1" class="col-sm-12 col-md-4 col-lg-4">
-                                                                                        <p:commandButton id="btnactualizar" value="Actualizar información" actionListener="#{cvEducacion.updateExperienciaLaboral()}"
-                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('registro2')update();" onsuccess="PF('frmListaEmpleos')update();"
-                                                                                                         update="@form" process="@form" /> 
-                                                                                    </div>
-                                                                                </c:if>
                                                                             </p:outputPanel>
                                                                         </div>
                                                                     </div>
@@ -440,76 +423,112 @@
                                                 </div>
                                             </c:if>
                                         </p:outputPanel>
-                                    </h:form>
+                                    </o:form>
                                     <h:form id="frmListaEmpleos">
                                         <p:outputPanel>
                                             <p:remoteCommand name="actualizarTabla2" actionListener="#{cvEducacion.metodoBase()}" update="tblEmpleos" />
-                                            <p:dataTable id="tblEmpleos" value="#{cvEducacion.nuevaListaExperienciasLaborales}"
-                                                         paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron registros." rendered="true" rowStyleClass="#{empleos.estatus eq 'Aceptado'?'aceptado':'denegado'}"
-                                                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                                         selectionMode="single"  selection="#{cvEducacion.nuevoOBJExpeienciasLaborales}" rowKey="#{empleos.empleo}"
-                                                         var="empleos" lazy="true">
+                                            <p:dataTable id="tblEmpleos" value="#{cvEducacion.nuevaListaExperienciasLaborales}" var="trabajaos" 
+                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{trabajaos.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                         editable="true" editMode="row">
 
 
-                                                <f:facet name="header">
-                                                    <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
-                                                    <p:spacer width="15px"/>
-                                                    <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
-                                                </f:facet>
-                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                    <p:ajax event="rowSelect"   update="update"/>
-                                                    <p:ajax event="rowUnselect" update="update"/>
-                                                </c:if>
-                                                <p:column style="width: 50px;">
-                                                    <p:commandButton actionListener="#{cvEducacion.eliminarEmpleos(empleos)}" update="tblEmpleos" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{empleos.puestoDesepenado}?" icon="ui-icon-alert" />
-                                                    </p:commandButton>
-                                                </p:column>
-                                                <p:column headerText="Puesto" 
-                                                          sortBy="#{empleos.puestoDesepenado}" 
-                                                          filterBy="#{empleos.puestoDesepenado}" 
-                                                          filterMatchMode="contains"
-                                                          style="width: 20%">
-                                                    <h:outputText value="#{empleos.puestoDesepenado}" />
-                                                </p:column>
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
+                                                        <p:column rowspan="2" headerText="Puesto" style="width: 300px;" />
+                                                        <p:column rowspan="2" headerText="Institución" style="width: 300px;"/>
+                                                        <p:column colspan="2" headerText="Fecha" style="width: 200px;"/> 
+                                                        <p:column rowspan="2" headerText="Funciones" style="width: 300px;"/>
+                                                        <p:column rowspan="2" headerText="Evidencia" style="width: 50px;"/>
+                                                    </p:row>
+                                                    <p:row class="success">
+                                                        <p:column headerText="Inicio"/>
+                                                        <p:column headerText="Fin"/>
+                                                    </p:row>
+                                                </p:columnGroup>
 
-                                                <p:column headerText="Funciones" 
-                                                          sortBy="#{empleos.funcionesDesempenio}" 
-                                                          filterBy="#{empleos.funcionesDesempenio}" 
-                                                          filterMatchMode="contains">
-                                                    <h:outputText value="#{empleos.funcionesDesempenio}" />
-                                                </p:column>     
+                                                <p:ajax event="rowEdit" listener="#{cvEducacion.updateExperienciaLaboral}" update="@this" oncomplete="actualizarTabla2()"/>
+                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla2()"/>
 
-                                                <p:column headerText="Institución o empresa" 
-                                                          sortBy="#{empleos.institucionEmpresa}" 
-                                                          filterBy="#{empleos.institucionEmpresa}" 
-                                                          filterMatchMode="contains"
-                                                          style="width: 20%">
-                                                    <h:outputText value="#{empleos.institucionEmpresa}" />
-                                                </p:column>
-
-                                                <f:facet name="footer">
-                                                    <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                        <p:commandButton id="update" value="Actualizar" icon="fa fa-pen" class="btn btn-info" onsuccess="PF('frmExLab')update();"
-                                                                         actionListener="#{cvEducacion.asignaclaveREx()}" disabled="#{empty cvEducacion.nuevoOBJExpeienciasLaborales}"/>
-                                                    </c:if>
-                                                </f:facet>
-
-                                                <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
-                                                    <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog2').show()" icon="ui-icon-search" title="View">
-                                                        <f:setPropertyActionListener value="#{empleos}" target="#{cvEducacion.nuevoOBJExpeienciasLaborales}"/>
+                                                <p:column >
+                                                    <p:commandButton actionListener="#{cvEducacion.eliminarEmpleos(trabajaos)}" update="tblEmpleos" oncomplete="actualizarTabla2()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación del trabajo: #{trabajaos.puestoDesepenado}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
 
-                                            </p:dataTable>
-
-                                            <p:dialog header="Evidencias" widgetVar="evidenciaDialog2" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
-                                                <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
-                                                    <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty cvEducacion.nuevoOBJExpeienciasLaborales}">
-                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(cvEducacion.nuevoOBJExpeienciasLaborales.evidenciaNombremiento)}"/>       
-                                                    </p:panelGrid>
-                                                </p:outputPanel>
-                                            </p:dialog>
+                                                <p:column >
+                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center;visibility: #{trabajaos.estatus eq 'Aceptado'?'hidden':'visible'}">
+                                                        <a href="#" class="ui-row-editor-pencil">
+                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                        </a>
+                                                        <a href="#" class="ui-row-editor-check">
+                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                        </a>
+                                                        <p:spacer width="20px"/>
+                                                        <a href="#" class="ui-row-editor-close">
+                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                        </a>
+                                                    </div>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{trabajaos.puestoDesepenado}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputText value="#{trabajaos.puestoDesepenado}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{trabajaos.institucionEmpresa}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputText value="#{trabajaos.institucionEmpresa}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{trabajaos.fechaInicio}" ><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{trabajaos.fechaInicio}" pattern="dd-MM-yyyy" mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column> 
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{trabajaos.fechaFin}" ><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{trabajaos.fechaFin}" pattern="dd-MM-yyyy" mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column> 
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{trabajaos.funcionesDesempenio}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputTextarea value="#{trabajaos.funcionesDesempenio}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(trabajaos.evidenciaNombremiento)}" target="_blank" style="color: #000000">
+                                                        <i class="fa fa-search"></i>
+                                                        <span>Ver</span>
+                                                    </p:link>
+                                                </p:column>   
+                                            </p:dataTable> 
                                         </p:outputPanel>  
                                         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
                                             <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
@@ -518,7 +537,7 @@
                                     </h:form>
                                 </p:tab>                              
                                 <p:tab id="tab3" title="Actualización profesional">
-                                    <h:form id="frmCapacit" enctype="multipart/form-data">
+                                    <o:form id="frmCapacit" enctype="multipart/form-data">
                                         <p:outputPanel id="registro3" autoUpdate="#{cvEducacion.claveRAP eq 0?false:true}">
                                             <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                                                 <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
@@ -652,7 +671,6 @@
                                                                         </div>
                                                                         <hr/>
                                                                         <div class="row">
-
                                                                             <p:outputPanel>            
                                                                                 <p:autoUpdate/>
                                                                                 <div class="form-group">
@@ -665,18 +683,6 @@
                                                                                                          update="@form" process="@form" oncomplete="PF('frmListaCapacitaciones')update();" /> 
                                                                                     </div>
                                                                                 </div>
-                                                                            </p:outputPanel>
-
-                                                                            <p:outputPanel>            
-                                                                                <p:autoUpdate/>
-                                                                                <c:if test="#{cvEducacion.claveRAP eq 0?false:true}">
-                                                                                    <div class="col-sm-12 col-md-12 col-lg-4"/>
-                                                                                    <div id="div1" class="col-sm-12 col-md-12 col-lg-4">
-                                                                                        <p:commandButton id="btnactualizar" value="Actualizar información" actionListener="#{cvEducacion.updateCapacitacion()}"
-                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('registro3')update();" onsuccess="PF('frmListaCapacitaciones')update();"
-                                                                                                         update="@form" process="@form" /> 
-                                                                                    </div>
-                                                                                </c:if>
                                                                             </p:outputPanel>
                                                                         </div>
                                                                     </div>
@@ -703,226 +709,206 @@
                                                 </div>
                                             </c:if>
                                         </p:outputPanel>  
+                                    </o:form>
+                                    <h:form id="frmListaCapacitacionesInstitucionales" >
+                                        <p:outputPanel >
+                                            <p:remoteCommand name="actualizarTabla3" actionListener="#{cvEducacion.metodoBase()}" update="tblActualizacionesProfesionalesUTXJ" />
+                                            <p:dataTable id="tblActualizacionesProfesionalesUTXJ" value="#{cvEducacion.nuevaListaCapacitaciones}" var="capacitaciones" 
+                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         sortBy="#{capacitaciones.tipoCapacitacion}" expandableRowGroups="true" rowStyleClass="#{capacitaciones.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="5,10,15,20,25,30"
+                                                         editable="true" editMode="row">
+
+                                                <p:headerRow>
+                                                    <p:column colspan="14">
+                                                        <h:outputText value="#{capacitaciones.tipoCapacitacion}" />
+                                                    </p:column>
+                                                </p:headerRow>
+
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
+                                                        <p:column rowspan="2" headerText="Nombre" style="width: 250px;" />
+                                                        <p:column rowspan="2" headerText="Tipo" style="width: 100px;"/>
+                                                        <p:column rowspan="2" headerText="Modalidad" style="width: 100px;"/>
+                                                        <p:column rowspan="2" headerText="Categoria" style="width: 100px;"/>
+                                                        <p:column rowspan="2" headerText="Empresa" style="width: 300px;"/>
+                                                        <p:column rowspan="2" headerText="Lugar" style="width: 300px;"/>
+                                                        <p:column rowspan="2" headerText="Duracion" style="width: 50px;"/>
+                                                        <p:column rowspan="2" headerText="Objetivo" style="width: 400px;"/>
+                                                        <p:column colspan="2" headerText="Fecha" style="width: 200px;"/> 
+                                                        <p:column rowspan="2" headerText="Tipo" style="width: 50px;"/>
+                                                        <p:column rowspan="2" headerText="Evidencia" style="width: 50px;"/>
+                                                    </p:row>
+                                                    <p:row class="success">
+                                                        <p:column headerText="Inicio"/>
+                                                        <p:column headerText="Fin"/>
+                                                    </p:row>
+                                                </p:columnGroup>
+
+                                                <p:ajax event="rowEdit" listener="#{cvEducacion.updateCapacitacion}" update="@this" oncomplete="actualizarTabla3()"/>
+                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla3()"/>
+
+                                                <p:column >
+                                                    <p:commandButton actionListener="#{cvEducacion.eliminarCapacitacion(capacitaciones)}" update="tblActualizacionesProfesionalesUTXJ" oncomplete="actualizarTabla3()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la capacitacion: #{capacitaciones.nombre}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                </p:column>
+
+                                                <p:column >
+                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center;visibility: #{capacitaciones.estatus eq 'Aceptado'?'hidden':'visible'}">
+                                                        <a href="#" class="ui-row-editor-pencil">
+                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                        </a>
+                                                        <a href="#" class="ui-row-editor-check">
+                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                        </a>
+                                                        <p:spacer width="20px"/>
+                                                        <a href="#" class="ui-row-editor-close">
+                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                        </a>
+                                                    </div>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.nombre}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputText value="#{capacitaciones.nombre}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.tipo.nombre}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{capacitaciones.tipo.tipo}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItems value="#{cvEducacion.listaCursos}" var="cursos" itemValue="#{cursos.tipo}" itemLabel="#{cursos.nombre}" />
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.modalidad.nombre}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{capacitaciones.modalidad.modalidad}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItems value="#{cvEducacion.listaModalidades}" var="modalidad" itemValue="#{modalidad.modalidad}" itemLabel="#{modalidad.nombre}" />
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.categoriaCapacitacion}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{capacitaciones.categoriaCapacitacion}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'pedagógica'}" itemLabel="#{'pedagógica'}"/>
+                                                                <f:selectItem itemValue="#{'profesional'}" itemLabel="#{'profesional'}"/>
+                                                                <f:selectItem itemValue="#{'Tecnologías de la información'}" itemLabel="#{'Tecnologías de la información'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.empresaImpartidora}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputText value="#{capacitaciones.empresaImpartidora}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.lugar}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputText value="#{capacitaciones.lugar}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.duracionHoras} Hora/s" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputText value="#{capacitaciones.duracionHoras}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.objetivo}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputTextarea value="#{capacitaciones.objetivo}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.fechaInicio}" ><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{capacitaciones.fechaInicio}" pattern="dd-MM-yyyy" mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column> 
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.fechaFin}" ><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{capacitaciones.fechaFin}" pattern="dd-MM-yyyy" mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column> 
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.tipoCapacitacion}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{capacitaciones.tipoCapacitacion}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'Externa'}" itemLabel="#{'Externa'}"/>
+                                                                <f:selectItem itemValue="#{'Interna'}" itemLabel="#{'Interna'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(capacitaciones.evidenciaCapacitacion)}" target="_blank" style="color: #000000">
+                                                        <i class="fa fa-search"></i>
+                                                        <span>Ver</span>
+                                                    </p:link>
+                                                </p:column>   
+                                            </p:dataTable>  
+                                        </p:outputPanel>
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>   
                                     </h:form>
-                                    <p:tabView >
-                                        <p:tab title="Actualizaciones profesionales otorgadas por la institución (UTXJ)" >
-                                            <h:form id="frmListaCapacitacionesInstitucionales" >
-                                                <p:outputPanel >
-                                                    <p:remoteCommand name="actualizarTabla3" actionListener="#{cvEducacion.metodoBase()}" update="tblActualizacionesProfesionalesUTXJ" />
-                                                    <p:dataTable id="tblActualizacionesProfesionalesUTXJ" value="#{cvEducacion.nuevaListaCapacitacionesInternas}"
-                                                                 paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron Registros." rendered="true" rowStyleClass="#{capacitacion.estatus eq 'Aceptado'?'aceptado':'denegado'}"
-                                                                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                                                 selectionMode="single"  selection="#{cvEducacion.nuevoOBJCapacitacionespersonal}" rowKey="#{capacitacion.cursoClave}"
-                                                                 var="capacitacion" lazy="true">
 
-                                                        <f:facet name="header">
-                                                            <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
-                                                            <p:spacer width="15px"/>
-                                                            <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
-                                                        </f:facet>
-
-                                                        <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                            <p:ajax event="rowSelect"   update="update"/>
-                                                            <p:ajax event="rowUnselect" update="update"/>
-                                                        </c:if>
-
-                                                        <p:column style="width: 50px;">
-                                                            <p:commandButton actionListener="#{cvEducacion.eliminarCapacitacion(capacitacion)}" update="tblActualizacionesProfesionalesUTXJ" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                                <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{capacitacion.nombre}?" icon="ui-icon-alert" />
-                                                            </p:commandButton>
-                                                        </p:column>
-
-                                                        <p:column headerText="Tipo de curso" 
-                                                                  sortBy="#{capacitacion.tipo.nombre}" 
-                                                                  filterBy="#{capacitacion.tipo.nombre}" 
-                                                                  filterMatchMode="contains"
-                                                                  style="width: 10%">
-                                                            <h:outputText value="#{capacitacion.tipo.nombre}" />
-                                                        </p:column>
-
-                                                        <p:column headerText="Nombre del curso" 
-                                                                  sortBy="#{capacitacion.nombre}" 
-                                                                  filterBy="#{capacitacion.nombre}" 
-                                                                  filterMatchMode="contains"
-                                                                  style="width: 20%">
-                                                            <h:outputText value="#{capacitacion.nombre}" />
-                                                        </p:column>
-
-                                                        <p:column headerText="Objetivo" 
-                                                                  sortBy="#{capacitacion.objetivo}" 
-                                                                  filterBy="#{capacitacion.objetivo}" 
-                                                                  filterMatchMode="contains">
-                                                            <h:outputText value="#{capacitacion.objetivo}" />
-                                                        </p:column>
-
-                                                        <p:column headerText="Modalidad" 
-                                                                  sortBy="#{capacitacion.modalidad.nombre}" 
-                                                                  filterBy="#{capacitacion.modalidad.nombre}" 
-                                                                  filterMatchMode="contains"
-                                                                  style="width: 10%">
-                                                            <h:outputText value="#{capacitacion.modalidad.nombre}" />
-                                                        </p:column>   
-
-                                                        <p:column headerText="Categoría" 
-                                                                  sortBy="#{capacitacion.categoriaCapacitacion}" 
-                                                                  filterBy="#{capacitacion.categoriaCapacitacion}" 
-                                                                  filterMatchMode="contains"
-                                                                  style="width: 10%">
-                                                            <h:outputText value="#{capacitacion.categoriaCapacitacion}" />
-                                                        </p:column> 
-
-                                                        <p:column headerText="Fecha culminación" 
-                                                                  sortBy="#{capacitacion.fechaFin}" 
-                                                                  filterBy="#{capacitacion.fechaFin}" 
-                                                                  filterMatchMode="contains"
-                                                                  style="width: 10%">
-                                                            <h:outputText value="#{capacitacion.fechaInicio}" >
-                                                                <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
-                                                            </h:outputText>
-                                                            <hr/>
-                                                            <h:outputText value="#{capacitacion.fechaFin}" >
-                                                                <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
-                                                            </h:outputText>
-                                                        </p:column>  
-
-                                                        <f:facet name="footer">
-                                                            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                                <p:commandButton id="update" value="Actualizar" icon="fa fa-pen" class="btn btn-info" onsuccess="PF('frmCapacit')update();"
-                                                                                 actionListener="#{cvEducacion.asignaclaveRAP()}" disabled="#{empty cvEducacion.nuevoOBJCapacitacionespersonal}"/>
-                                                            </c:if>
-                                                        </f:facet>
-
-                                                        <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
-                                                            <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog3').show()" icon="ui-icon-search" title="View">
-                                                                <f:setPropertyActionListener value="#{capacitacion}" target="#{cvEducacion.nuevoOBJCapacitacionespersonal}"/>
-                                                            </p:commandButton>
-                                                        </p:column>
-
-                                                    </p:dataTable>
-
-                                                    <p:dialog header="Evidencias" widgetVar="evidenciaDialog3" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
-                                                        <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
-                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty cvEducacion.nuevoOBJCapacitacionespersonal}">
-                                                                <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(cvEducacion.nuevoOBJCapacitacionespersonal.evidenciaCapacitacion)}"/>       
-                                                            </p:panelGrid>
-                                                        </p:outputPanel>
-                                                    </p:dialog>
-                                                </p:outputPanel>
-                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                                                </p:confirmDialog>   
-                                            </h:form>
-                                        </p:tab>
-                                        <p:tab title="Actualizaciones profesionales obtenidas externamente" >
-                                            <h:form id="frmListaCapacitaciones" >
-                                                <p:outputPanel >
-                                                    <p:remoteCommand name="actualizarTabla4" actionListener="#{cvEducacion.metodoBase()}" update="tblActualizacionesProfesionales" />
-                                                    <p:dataTable id="tblActualizacionesProfesionales" value="#{cvEducacion.nuevaListaCapacitacionesExternas}"
-                                                                 paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30" emptyMessage="No se encontraron Registros." rendered="true" rowStyleClass="#{capacitacion.estatus eq 'Aceptado'?'aceptado':'denegado'}"
-                                                                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                                                 selectionMode="single"  selection="#{cvEducacion.nuevoOBJCapacitacionespersonal}" rowKey="#{capacitacion.cursoClave}"
-                                                                 var="capacitacion" lazy="true">
-
-                                                        <f:facet name="header">
-                                                            <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
-                                                            <p:spacer width="15px"/>
-                                                            <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold"/> 
-                                                        </f:facet>
-                                                        <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                            <p:ajax event="rowSelect"   update="update"/>
-                                                            <p:ajax event="rowUnselect" update="update"/>
-                                                        </c:if>
-
-                                                        <p:column style="width: 50px;">
-                                                            <p:commandButton actionListener="#{cvEducacion.eliminarCapacitacion(capacitacion)}" update="tblActualizacionesProfesionales" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                                <p:confirm header="Confirmación" message="¿Confirma la eliminación de la planeación para #{capacitacion.nombre}?" icon="ui-icon-alert" />
-                                                            </p:commandButton>
-                                                        </p:column>
-
-                                                        <p:column headerText="Tipo de curso" 
-                                                                  sortBy="#{capacitacion.tipo.nombre}" 
-                                                                  filterBy="#{capacitacion.tipo.nombre}" 
-                                                                  filterMatchMode="contains"
-                                                                  style="width: 10%">
-                                                            <h:outputText value="#{capacitacion.tipo.nombre}" />
-                                                        </p:column>
-
-                                                        <p:column headerText="Nombre del curso" 
-                                                                  sortBy="#{capacitacion.nombre}" 
-                                                                  filterBy="#{capacitacion.nombre}" 
-                                                                  filterMatchMode="contains"
-                                                                  style="width: 20%">
-                                                            <h:outputText value="#{capacitacion.nombre}" />
-                                                        </p:column>
-
-                                                        <p:column headerText="Objetivo" 
-                                                                  sortBy="#{capacitacion.objetivo}" 
-                                                                  filterBy="#{capacitacion.objetivo}" 
-                                                                  filterMatchMode="contains">
-                                                            <h:outputText value="#{capacitacion.objetivo}" />
-                                                        </p:column>
-
-                                                        <p:column headerText="Modalidad" 
-                                                                  sortBy="#{capacitacion.modalidad.nombre}" 
-                                                                  filterBy="#{capacitacion.modalidad.nombre}" 
-                                                                  filterMatchMode="contains"
-                                                                  style="width: 10%">
-                                                            <h:outputText value="#{capacitacion.modalidad.nombre}" />
-                                                        </p:column> 
-
-                                                        <p:column headerText="Categoría" 
-                                                                  sortBy="#{capacitacion.categoriaCapacitacion}" 
-                                                                  filterBy="#{capacitacion.categoriaCapacitacion}" 
-                                                                  filterMatchMode="contains"
-                                                                  style="width: 10%">
-                                                            <h:outputText value="#{capacitacion.categoriaCapacitacion}" />
-                                                        </p:column>
-
-                                                        <p:column headerText="Fecha de culminación" 
-                                                                  sortBy="#{capacitacion.fechaFin}" 
-                                                                  filterBy="#{capacitacion.fechaFin}" 
-                                                                  filterMatchMode="contains"
-                                                                  style="width: 10%">
-                                                            <h:outputText value="#{capacitacion.fechaInicio}" >
-                                                                <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
-                                                            </h:outputText>
-                                                            <hr/>
-                                                            <h:outputText value="#{capacitacion.fechaFin}" >
-                                                                <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
-                                                            </h:outputText>
-                                                        </p:column>  
-
-                                                        <f:facet name="footer">
-                                                            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                                <p:commandButton id="update" value="Actualizar" icon="fa fa-pen" class="btn btn-info" onsuccess="PF('frmCapacit')update();"
-                                                                                 actionListener="#{cvEducacion.asignaclaveRAP()}" disabled="#{empty cvEducacion.nuevoOBJCapacitacionespersonal}"/>
-                                                            </c:if>
-                                                        </f:facet>
-
-                                                        <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
-                                                            <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog4').show()" icon="ui-icon-search" title="View">
-                                                                <f:setPropertyActionListener value="#{capacitacion}" target="#{cvEducacion.nuevoOBJCapacitacionespersonal}"/>
-                                                            </p:commandButton>
-                                                        </p:column>
-
-                                                    </p:dataTable>
-
-                                                    <p:dialog header="Evidencias" widgetVar="evidenciaDialog4" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
-                                                        <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
-                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty cvEducacion.nuevoOBJCapacitacionespersonal}">
-                                                                <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(cvEducacion.nuevoOBJCapacitacionespersonal.evidenciaCapacitacion)}"/>       
-                                                            </p:panelGrid>
-                                                        </p:outputPanel>
-                                                    </p:dialog>
-                                                </p:outputPanel>
-                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                                                </p:confirmDialog>   
-                                            </h:form>
-                                        </p:tab>                                        
-                                    </p:tabView>                                                                   
                                 </p:tab>
                                 <p:blockUI block="informacion" widgetVar="bloqueoCargaFile">
                                     Cargando archivo espere por favor.<br />

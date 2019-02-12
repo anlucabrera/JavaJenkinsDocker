@@ -66,7 +66,6 @@ public class CvDatosPersonales implements Serializable {
      */
     public void actualizarInformacionAdicional() {
         try {
-            nuevoOBJInformacionAdicionalPersonal.setEstatus("Aceptado");
             nuevoOBJInformacionAdicionalPersonal.setEdad(calculaEdad.obtenerEdad(nuevoOBJPersonal.getFechaNacimiento()));
             if (nuevoOBJInformacionAdicionalPersonal.getClave() == null) {
                 nuevoOBJInformacionAdicionalPersonal.setClave(nuevoOBJPersonal.getClave());

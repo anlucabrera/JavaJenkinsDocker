@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.sgi.ejb;
 import edu.mx.utxj.pye.seut.util.collection.SerializableArrayList;
 import edu.mx.utxj.pye.seut.util.preguntas.Abierta;
 import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
@@ -120,7 +121,7 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
         q.setParameter("periodo", periodo);
         List<VistaEvaluacionDocenteMateriaPye> l = q.getResultList();
         if (l.isEmpty() || l == null) {
-            return null;
+            return new ArrayList<>();
         } else {
             return l;
         }
@@ -149,7 +150,7 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
         List<EvaluacionDocentesMaterias> l = spq.getResultList();
         if (l == null || l.isEmpty()) {
             System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDocenteMateria.evaluacionActiva() la evaluacion es nula");
-            return null;
+            return new EvaluacionDocentesMaterias();
         } else {
             System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDocenteMateria.evaluacionActiva() la evaluacion activa es : " + l.get(0).getEvaluacion());
 

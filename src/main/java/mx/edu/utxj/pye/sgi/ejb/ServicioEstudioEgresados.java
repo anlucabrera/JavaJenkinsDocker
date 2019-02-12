@@ -60,7 +60,7 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
         q.setParameter("matricula", matricula.toString());
         List<Alumnos> l = q.getResultList();
         if (l.isEmpty()) {
-            return null;
+            return new Alumnos();
         } else {
             return l.get(0);
         }
