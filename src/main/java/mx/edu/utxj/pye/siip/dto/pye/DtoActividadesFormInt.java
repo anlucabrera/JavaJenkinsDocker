@@ -52,7 +52,7 @@ public class DtoActividadesFormInt {
     @Getter private List<LineasAccion> lineasAccion;
     
     @Getter private List<Short> clavesAreasSubordinadas;//claves de areas subordinas que no tienes poa
-
+   
     public DtoActividadesFormInt() {
         setRegistroTipo(new RegistrosTipo((short)16));
         setEje(new EjesRegistro(3));

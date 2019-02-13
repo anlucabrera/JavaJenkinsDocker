@@ -31,7 +31,7 @@ public class ServicioPersonalEvaluaciones implements EjbPersonalEvaluaciones {
 
     @Override
     public List<PeriodosEscolares> getPeriodos(Personal personal) {
-        TypedQuery<DesempenioEvaluaciones> q = f.getEntityManager().createQuery("SELECT e FROM DesempenioEvaluaciones e INNER JOIN e.desempenioEvaluacionResultadosList r WHERE r.pk.evaluado = :evaluado ORDER BY e.periodo DESC ", DesempenioEvaluaciones.class);
+        TypedQuery<DesempenioEvaluaciones> q = f.getEntityManager().createQuery("SELECT e FROM DesempenioEvaluaciones e INNER JOIN e.desempenioEvaluacionResultadosList r WHERE r.desempenioEvaluacionResultadosPK.evaluado = :evaluado ORDER BY e.periodo DESC ", DesempenioEvaluaciones.class);
         q.setParameter("evaluado", personal.getClave());
         List<DesempenioEvaluaciones> evas = q.getResultList();
 
@@ -50,7 +50,7 @@ public class ServicioPersonalEvaluaciones implements EjbPersonalEvaluaciones {
 
     @Override
     public Map<PeriodosEscolares, List<Evaluaciones360Resultados>> getEvaluaciones360PorPeriodo(Personal personal, @NonNull List<PeriodosEscolares> periodos) {
-        TypedQuery<Evaluaciones360Resultados> q = f.getEntityManager().createQuery("SELECT r FROM Evaluaciones360Resultados r WHERE r.pk.evaluado=:evaluado", Evaluaciones360Resultados.class);
+        TypedQuery<Evaluaciones360Resultados> q = f.getEntityManager().createQuery("SELECT r FROM Evaluaciones360Resultados r WHERE r.desempenioEvaluacionResultadosPK.evaluado =:evaluado", Evaluaciones360Resultados.class);
         q.setParameter("evaluado", personal.getClave());
         List<Evaluaciones360Resultados> resultados = q.getResultList();
 
@@ -71,7 +71,7 @@ public class ServicioPersonalEvaluaciones implements EjbPersonalEvaluaciones {
 
     @Override
     public Map<PeriodosEscolares, DesempenioEvaluacionResultados> getEvaluacionesDesempenioPorPeriodo(Personal personal, List<PeriodosEscolares> periodos) {
-        TypedQuery<DesempenioEvaluacionResultados> q = f.getEntityManager().createQuery("SELECT r FROM DesempenioEvaluacionResultados r WHERE r.pk.evaluado =:evaluado", DesempenioEvaluacionResultados.class);
+        TypedQuery<DesempenioEvaluacionResultados> q = f.getEntityManager().createQuery("SELECT r FROM DesempenioEvaluacionResultados r WHERE r.desempenioEvaluacionResultadosPK.evaluado =:evaluado", DesempenioEvaluacionResultados.class);
         q.setParameter("evaluado", personal.getClave());
         List<DesempenioEvaluacionResultados> resultados = q.getResultList();
 

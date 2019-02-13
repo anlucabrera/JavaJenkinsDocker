@@ -25,6 +25,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.pye2.DesercionReprobacionMaterias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
@@ -76,7 +77,7 @@ public class ControladorDesercionReprobacion implements Serializable {
         dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
         if (dto.getSelectItemEjercicioFiscal() == null) {
-            Messages.addGlobalInfo("No existen registros");
+//            Messages.addGlobalInfo("No existen registros");
         } else {
             dto.setEjercicioFiscal((short) ejbItems.itemEjercicioFiscalPorRegistro((short) 26).get(0).getValue());
             dto.setSelectItemMes(ejbItems.itemMesesPorRegistro((short) 26, dto.getEjercicioFiscal()));
@@ -88,6 +89,12 @@ public class ControladorDesercionReprobacion implements Serializable {
         } catch (EventoRegistroNoExistenteException ex) {
             Logger.getLogger(ControladorDesercionReprobacion.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        
+        
+        
+        
+        
         
         
         /*FIN DEL INIT FILTRADO*/
@@ -105,7 +112,7 @@ public class ControladorDesercionReprobacion implements Serializable {
         dto.setEjercicioFiscal(ejercicio);
         dto.setListaDtoReprobacion(ejbDesercionReprobacion.getListaRegistrosReprobacionDto(mes, ejercicio));
         if (dto.getListaDtoReprobacion() == null) {
-            Messages.addGlobalWarn("no se regitros en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
+            Messages.addGlobalWarn("No hay registros de Deserción por Reprobación en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
         }
     }
     
@@ -259,6 +266,25 @@ public class ControladorDesercionReprobacion implements Serializable {
     public void cancelarArchivo() {
         dto.getListaDesercionReprobacion().getReprobacion().clear();
 
+    }
+    
+    public List<DesercionReprobacionMaterias> consultarMatRep(String desercion){
+         return ejbDesercionReprobacion.getListaMateriasReprobadas(desercion);
+    }
+    
+    public void seleccionarMatRep(String clave){
+        dto.setListaMatRep(ejbDesercionReprobacion.getListaMateriasReprobadas(clave));
+        Ajax.update("frmModalMaterias");
+        Ajax.oncomplete("skin();");
+        dto.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaMatRepDialogo();
+    }
+    
+    public void forzarAperturaMatRepDialogo(){
+        if(dto.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalMaterias').show();");
+            dto.setForzarAperturaDialogo(Boolean.FALSE);
+        }
     }
 
 }

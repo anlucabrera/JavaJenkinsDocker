@@ -22,7 +22,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.CuerposAcademicosRegistro;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(of = "cuerposAcademicosRegistro")
+@ToString
 @EqualsAndHashCode
 public class DTOCuerposAcademicosR implements Serializable{
     private static final long serialVersionUID = 2309165007972946655L;

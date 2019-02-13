@@ -27,6 +27,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.sgi.entity.pye2.ParticipantesActividadesFormacionIntegral;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
@@ -260,5 +261,24 @@ public class ControladorPartActFormInt implements Serializable{
             Messages.addGlobalInfo("El registro se alineó de forma correcta.");
         }else Messages.addGlobalError("El registro no pudo alinearse.");
     }
-     
+    
+    public List<ParticipantesActividadesFormacionIntegral> consultarParticipantes(String actividad){
+         return ejb.getListaParticipantesPorActividad(actividad);
+    }
+    
+    public void seleccionarParticipantes(String clave){
+        dto.setListaParticipantes(ejb.getListaParticipantesPorActividad(clave));
+        Ajax.update("frmModalParticipantes");
+        
+        Ajax.oncomplete("skin();");
+        dto.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaParticipantesDialogo();
+    }
+    
+    public void forzarAperturaParticipantesDialogo(){
+        if(dto.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalParticipantes').show();");
+            dto.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
 }

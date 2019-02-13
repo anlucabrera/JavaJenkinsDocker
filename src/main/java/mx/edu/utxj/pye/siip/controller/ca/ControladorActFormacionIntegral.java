@@ -384,5 +384,5 @@ public class ControladorActFormacionIntegral implements Serializable{
             Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
         }
     }
-     
+    
 }

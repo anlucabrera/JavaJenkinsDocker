@@ -42,4 +42,11 @@ public interface EjbPartFormInt {
      * @return entity.
      */
    public ParticipantesActividadesFormacionIntegral getRegistroParticipantesActividadesFormacionIntegral(ParticipantesActividadesFormacionIntegral participantesActividadesFormacionIntegral);
+   
+   /**
+     * Obtiene la lista de participantes por actividad de formación integral.
+     * @param actividad clave de la actividad de formación integral.
+     * @return Lista de participantes.
+     */
+   public List<ParticipantesActividadesFormacionIntegral> getListaParticipantesPorActividad(String actividad);
 }

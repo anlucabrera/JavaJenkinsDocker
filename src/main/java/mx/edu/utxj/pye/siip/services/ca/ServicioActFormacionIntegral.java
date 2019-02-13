@@ -595,5 +595,4 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
             return null;
         }
     }
-
 }

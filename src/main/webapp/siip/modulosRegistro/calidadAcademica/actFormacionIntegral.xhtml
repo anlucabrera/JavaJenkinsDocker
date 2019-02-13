@@ -168,6 +168,14 @@
                                         <p:column headerText="Objetivo" style="width: 400px;">
                                             <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.objetivo}"/>
                                         </p:column>
+                                       <p:column headerText="Participantes" style="width: 400px;">
+                                           <c:set var="participantes" value="#{partActFormInt.consultarParticipantes(actForIntClave)}" />
+                                           <center>Consultar <p:commandButton actionListener="#{partActFormInt.seleccionarParticipantes(actForIntClave)}"
+                                                            class="btn btn-sm #{!empty participantes?'btn-info':'btn-danger'}" 
+                                                            icon="fa fa-search"
+                                                            title="#{!empty participantes?'Consultar participantes registrados':'No se han registrado participantes'}" />
+                                           </center>
+                                       </p:column>
                                     </p:dataTable>
                                     <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
                                         <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
@@ -185,7 +193,7 @@
                                                            tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                                  <c:set var="PartActForEliminado" value="#{partAFI.participantesActividadesFormacionIntegral.registro}"/>
                                                  <p:column headerText="Opciones" style="text-align: center;" width="100">
-                                                     <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{actFormIntegral.eliminarRegistroParticipante(PartActForEliminado)}" onsuccess="actualizar1();" title="Eliminar registro." disabled="#{actFormIntegral.dto.eventoActual ne actFormIntegral.dto.eventoSeleccionado}">
+                                                     <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{actFormIntegral.eliminarRegistroParticipante(PartActForEliminado)}" onsuccess="actualizar1();actualizar();" title="Eliminar registro." disabled="#{actFormIntegral.dto.eventoActual ne actFormIntegral.dto.eventoSeleccionado}">
                                                          <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de Participación del estudiante #{partAFI.participantesActividadesFormacionIntegral.matriculaPeriodosEscolares.matricula} en la Actividad #{partAFI.participantesActividadesFormacionIntegral.actividadFormacionIntegral.nombre}?" icon="ui-icon-alert" />
                                                      </p:commandButton>
                                                      <c:set var="evidencias" value="#{partActFormInt.consultarEvidencias(partAFI)}" />
@@ -319,6 +327,7 @@
                             </div>
                         </h:form>
                     </p:dialog>
+                    <!-- Modal Alineación Actividad de Formación Integral -->
                     <p:dialog id="modalAlineacion" widgetVar="modalAlineacion" width="900" height="auto"  closeOnEscape="true"
                               showEffect="fade" hideEffect="fade" modal="true" draggable="true" header="Alineación a POA." onHide="actualizar();"
                               styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">                        
@@ -399,6 +408,44 @@
                                     <p:message for="actividad"><p:autoUpdate /></p:message>
                                 </div>
                             </div>
+                        </h:form>
+                    </p:dialog>
+                    <!-- Modal Participantes Actividad de Formación Integral -->
+                    <p:dialog id="modalParticipantes" 
+                              widgetVar="modalParticipantes" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{partAFI.dto.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Participantes por Actividad" 
+                              onHide="actualizarModPart();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        
+                        <h:form id="frmModalParticipantes" >
+                            <p:remoteCommand name="actualizarModPart" update="@form:tblModalPart" />
+                            <p:dataTable id="tblModalPart" value="#{partActFormInt.dto.listaParticipantes}" var="participanteAct"
+                                                 emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
+                                                 >
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Actividad"  width="80" />
+                                                <p:column headerText="Matricula"  width="80" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAct.actividadFormacionIntegral.actividadFormacionIntegral}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAct.matriculaPeriodosEscolares.matricula}" /></p:column>
+                                        <f:facet name="footer">
+                                            <span style="font-size: smaller; font-weight: bold;">Total de participantes registrados: #{fn:length(partActFormInt.dto.listaParticipantes)}.</span>
+                                        </f:facet>
+                                    </p:dataTable>
                         </h:form>
                     </p:dialog>
                     <!-- Modal Evidencia Participantes Actividad de Formación Integral -->

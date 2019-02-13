@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.siip.services.ca;
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
@@ -192,5 +193,16 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
 //            System.out.println(ex.toString());
         }
         return participantesActividadesFormacionIntegral;
+    }
+
+    @Override
+    public List<ParticipantesActividadesFormacionIntegral> getListaParticipantesPorActividad(String actividad) {
+         if(actividad == null){
+            return Collections.EMPTY_LIST;
+        }
+        List<ParticipantesActividadesFormacionIntegral> l = f.getEntityManager().createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p JOIN p.actividadFormacionIntegral a WHERE a.actividadFormacionIntegral = :actividadFormacionIntegral", ParticipantesActividadesFormacionIntegral.class)
+                .setParameter("actividadFormacionIntegral", actividad)
+                .getResultList();
+        return l;
     }
 }

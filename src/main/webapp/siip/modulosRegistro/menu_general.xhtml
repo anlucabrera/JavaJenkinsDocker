@@ -33,6 +33,22 @@
         </p:panel>
         <div class="box box-primary">
             <div class="box-header with-border">
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    <h:form prependId="true" id="frmMainButtons" class="form-inline">
+                        <p:outputPanel >
+                            <p:autoUpdate/>
+                            <p:toolbar id="tb">
+                                <f:facet name="left">
+                                    
+                                </f:facet>
+                                <f:facet name="right">
+                                    <p:link href="../manuales/ManualRegistroSIIGeneral.pdf" class="btn btn-info btn-sm" target="_blank" title="Manual Registro SII" ><i class="fa fa-question-circle" /></p:link>
+                                 </f:facet>
+                            </p:toolbar>
+                            <p:sticky target="tb" />
+                        </p:outputPanel>
+                    </h:form>
+                </div>
                 <div class="box-body">
                     <div class="row">
                         <div class="col-lg-12 col-md-12">

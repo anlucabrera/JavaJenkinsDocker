@@ -152,12 +152,54 @@ public interface EjbCuerposAcademicos {
      * @param cuerpoAreasAcademica  Entidad para guardar en base de datos
      * @return 
      */
-    public Boolean guardarProgramaBeneficiadoVinculacion(CuerpoAreasAcademicas cuerpoAreasAcademica);
+    public Boolean guardarCuerpoAreaAcademica(CuerpoAreasAcademicas cuerpoAreasAcademica);
     
     /**
      * Guarda la asignación del área académica con el cuerpo académico
      * @param cuerpoAreasAcademica  Entidad para guardar en base de datos  
      * @return 
      */
-    public Boolean eliminarProgramaBeneficiadoVinculacion(CuerpoAreasAcademicas cuerpoAreasAcademica);
+    public Boolean eliminarCuerpoAreaAcademica(CuerpoAreasAcademicas cuerpoAreasAcademica);
+    
+    /**
+     * Método que da de baja el cuerpo académico seleccionado, así como todo lo relacionado con el: Participantes y Líneas de investigación
+     * @param cuerposAcademicosRegistro
+     * @return 
+     */
+    public Boolean bajaCuerpoAcademico(CuerposAcademicosRegistro cuerposAcademicosRegistro);
+    
+    /**
+     * Método que da de alta el cuerpo académico seleccionado, así como todo lo relacionado con el: Participantes y Líneas de investigación
+     * @param cuerposAcademicosRegistro
+     * @return 
+     */
+    public Boolean altaCuerpoAcademico(CuerposAcademicosRegistro cuerposAcademicosRegistro);
+    
+    /**
+     * Método que da de baja el integrante del cuerpo académico seleccionado
+     * @param cuerpacadIntegrante
+     * @return 
+     */
+    public Boolean bajaCuerpacadIntegrantes(CuerpacadIntegrantes cuerpacadIntegrante);
+    
+    /**
+     * Método que da de alta el integrante del cuerpo académico seleccionada
+     * @param cuerpacadIntegrante
+     * @return 
+     */
+    public Boolean altaCuerpacadIntegrantes(CuerpacadIntegrantes cuerpacadIntegrante);
+    
+    /**
+     * Método que da de baja la linea de investigación del cuerpo académico
+     * @param cuerpacadLineas
+     * @return 
+     */
+    public Boolean bajaCuerpacadLineas(CuerpacadLineas cuerpacadLineas);
+    
+    /**
+     * Método que da de alta la línea de investigación del cuerpo académico
+     * @param cuerpacadLineas
+     * @return 
+     */
+    public Boolean altaCuerpacadLineas(CuerpacadLineas cuerpacadLineas);
 }

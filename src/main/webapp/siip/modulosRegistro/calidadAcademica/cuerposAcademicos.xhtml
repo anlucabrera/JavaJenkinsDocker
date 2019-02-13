@@ -119,12 +119,11 @@
                                                              lazy="true">
                                                     <p:columnGroup type="header">
                                                         <p:row>
-                                                            <p:column rowspan="2" headerText="Opciones" width="110"/>
+                                                            <p:column rowspan="2" headerText="Opciones" width="150"/>
                                                             <p:column rowspan="2" headerText="Clave Registro" width="200" />
                                                             <p:column colspan="2" headerText="Duración" width="400" />
                                                             <p:column rowspan="2" headerText="Cuerpo Académico" width="400" />
                                                             <p:column rowspan="2" headerText="Nivel de Reconocimiento por PRODEP" width="200" />
-                                                            <p:column rowspan="2" headerText="Área Académica" width="400" />
                                                             <p:column rowspan="2" headerText="Área de Estudio" width="400" />
                                                             <p:column rowspan="2" headerText="Disciplina" width="400" />
                                                         </p:row>
@@ -136,14 +135,13 @@
                                                     <c:set var="cuerpoAcademicoEliminar" value="#{cuerpoAcademico.cuerposAcademicosRegistro.registro}"/>
                                                     <p:column style="text-align: center;">
                                                         <div class="btn-group">
-                                                            <p:commandButton class="btn btn-info btn-sm" 
-                                                                             icon="fa fa-trash"
-                                                                             actionListener="#{controladorCuerposAcademicos.eliminarRegistro(cuerpoAcademicoEliminar, cuerpoAcademico.cuerposAcademicosRegistro)}"
-                                                                             onsuccess="actualizar();" 
-                                                                             title="Eliminar registro."
+                                                            <p:commandButton class="btn btn-sm #{cuerpoAcademico.cuerposAcademicosRegistro.estatus?'btn-danger':'btn-info'}"
+                                                                             icon="#{cuerpoAcademico.cuerposAcademicosRegistro.estatus?'fa fa-thumbs-down':'fa fa-thumbs-up'}"
+                                                                             actionListener="#{controladorCuerposAcademicos.bajaCuerpoAcademico(cuerpoAcademico.cuerposAcademicosRegistro)}"
+                                                                             title="#{cuerpoAcademico.cuerposAcademicosRegistro.estatus?'Dar de baja':'Dar de alta'}"
                                                                              rendered="#{controladorCuerposAcademicos.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicos.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
-                                                                <p:confirm header="Eliminar registro"
-                                                                           message="¿Está seguro de eliminar el registro de #{cuerpoAcademico.cuerposAcademicosRegistro.cuerpoAcademico}?"
+                                                                <p:confirm header="Cuerpo académico"
+                                                                           message="¿Está seguro de #{cuerpoAcademico.cuerposAcademicosRegistro.estatus?'dar de baja':'dar de alta'} el registro de #{cuerpoAcademico.cuerposAcademicosRegistro.cuerpoAcademico}?"
                                                                            icon="ui-icon-alert" />
                                                             </p:commandButton>
                                                             <p:spacer width="3" />
@@ -157,6 +155,10 @@
                                                                              class="btn btn-sm #{controladorCuerposAcademicos.verificaAlineacion(cuerpoAcademico.cuerposAcademicosRegistro.registro)?'btn-info':'btn-warning'}"
                                                                              icon="fa fa-cog"
                                                                              title="Alineación a POA."/>
+                                                            <p:commandButton actionListener="#{controladorCuerposAcademicos.abrirCuerpoAreasAcademicas(cuerpoAcademico.cuerposAcademicosRegistro)}"
+                                                                 class="btn btn-sm btn-info"
+                                                                 icon="fa fa-check-circle"
+                                                                 title="Áreas Ácadémicas"/>
                                                         </div>
                                                     </p:column>
                                                     <p:column>
@@ -177,9 +179,6 @@
                                                     </p:column>
                                                     <p:column>
                                                         <h:outputText value="#{cuerpoAcademico.cuerposAcademicosRegistro.nivelProdep}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{cuerpoAcademico.area.nombre}"/>
                                                     </p:column>
                                                     <p:column>
                                                         <h:outputText value="#{cuerpoAcademico.cuerposAcademicosRegistro.areaEstudio.nombre}"/>
@@ -228,14 +227,13 @@
                                                     <c:set var="cuerpAcadIntEliminar" value="#{caIntegrantes.cuerpoAcademicoIntegrantes.registro}"/>
                                                     <p:column style="text-align: center;">
                                                         <div class="btn-group">
-                                                            <p:commandButton class="btn btn-info btn-sm" 
-                                                                             icon="fa fa-trash"
-                                                                             actionListener="#{controladorCuerposAcademicos.eliminarRegistroParticipante(cuerpAcadIntEliminar)}"
-                                                                             onsuccess="actualizar();" 
-                                                                             title="Eliminar registro."
+                                                            <p:commandButton class="btn btn-sm #{caIntegrantes.cuerpoAcademicoIntegrantes.estatus?'btn-danger':'btn-info'}"
+                                                                             icon="#{caIntegrantes.cuerpoAcademicoIntegrantes.estatus?'fa fa-thumbs-down':'fa fa-thumbs-up'}"
+                                                                             actionListener="#{controladorCuerposAcademicos.bajaIntegrante(caIntegrantes.cuerpoAcademicoIntegrantes)}"
+                                                                             title="#{caIntegrantes.cuerpoAcademicoIntegrantes.estatus?'Dar de baja':'Dar de alta'}"
                                                                              rendered="#{controladorCuerposAcademicos.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicos.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
-                                                                <p:confirm header="Eliminar registro"
-                                                                           message="¿Está seguro de eliminar el registro de #{caIntegrantes.cuerpoAcademicoIntegrantes.cuerpoAcademico.nombre}?"
+                                                                <p:confirm header="Integrante"
+                                                                           message="¿Está seguro de #{caIntegrantes.cuerpoAcademicoIntegrantes.estatus?'dar de baja':'dar de alta'} al integrante: #{caIntegrantes.cuerpoAcademicoIntegrantes.cuerpoAcademico.nombre}?"
                                                                            icon="ui-icon-alert" />
                                                             </p:commandButton>
                                                             <p:spacer width="3" />
@@ -283,14 +281,13 @@
                                                     <c:set var="cuerpAcadLineaEliminar" value="#{lineasInvestigacion.registro}"/>
                                                     <p:column style="text-align: center;">
                                                         <div class="btn-group">
-                                                            <p:commandButton class="btn btn-info btn-sm" 
-                                                                             icon="fa fa-trash"
-                                                                             actionListener="#{controladorCuerposAcademicos.eliminarRegistroParticipante(cuerpAcadLineaEliminar)}"
-                                                                             onsuccess="actualizar();" 
-                                                                             title="Eliminar registro."
+                                                            <p:commandButton class="btn btn-sm #{lineasInvestigacion.estatus?'btn-danger':'btn-info'}"
+                                                                             icon="#{lineasInvestigacion.estatus?'fa fa-thumbs-down':'fa fa-thumbs-up'}"
+                                                                             actionListener="#{controladorCuerposAcademicos.bajaLineaInvestigacion(lineasInvestigacion)}"
+                                                                             title="#{lineasInvestigacion.estatus?'Dar de baja':'Dar de alta'}"
                                                                              rendered="#{controladorCuerposAcademicos.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicos.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
-                                                                <p:confirm header="Eliminar registro"
-                                                                           message="¿Está seguro de eliminar el registro de #{lineasInvestigacion.nombre}?"
+                                                                <p:confirm header="Línea de Investigación"
+                                                                           message="¿Está seguro de #{lineasInvestigacion.estatus?'dar de baja':'dar de alta'} la línea de investigación: #{lineasInvestigacion.nombre}?"
                                                                            icon="ui-icon-alert" />
                                                             </p:commandButton>
                                                             <p:spacer width="3" />
@@ -904,6 +901,54 @@
                             </div>
                         </h:form>
                     </p:dialog>
+                    
+                    <!-- Modal de cuerpos académicos pertenecientes al cuerpo académico-->
+                    <p:dialog id="modalCuerpoAreasAcademicas" 
+                              widgetVar="modalCuerpoAreasAcademicas" 
+                              width="800" 
+                              height="280"  
+                              closeOnEscape="true"
+                              visible="#{controladorCuerposAcademicos.dtoCuerposAcademicos.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Áreas Académicas del Cuerpo Académico"
+                              styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
+                        <h:form id="frmCuerpoAreasAcademicas" >
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizarCuerpoAreasAcademicas" 
+                                                     update="@form:tblCuerpoAreasAcademicas" />
+                                    <p:dataTable id="tblCuerpoAreasAcademicas" 
+                                                 value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.listaCuerpoAreasAcademicas}" 
+                                                 var="cuerpoAreasAcademicas"
+                                                 emptyMessage="No se encuentran áreas académicas en el catalogo." 
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Seleccione la opción que corresponda" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;" width="700">
+                                            <div class="btn-group">
+                                                <p:selectBooleanButton id="switchav#{cuerpoAreasAcademicas.areaUniversidad.area}"
+                                                                       value="#{cuerpoAreasAcademicas.existe}"
+                                                                       onLabel="#{cuerpoAreasAcademicas.areaUniversidad.nombre}"
+                                                                       offLabel="#{cuerpoAreasAcademicas.areaUniversidad.nombre}"
+                                                                       onIcon="ui-icon-check"
+                                                                       offIcon="ui-icon-close"
+                                                                       class="btn-sm"
+                                                                       style="width: 700px; text-align: left">
+                                                    <p:ajax listener="#{controladorCuerposAcademicos.guardaCuerpoAreaAcademica(cuerpoAreasAcademicas)}" />
+                                                </p:selectBooleanButton>
+                                            </div>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
 
                     <!-- Sección de subida -->
                     <div class="row">
@@ -929,7 +974,6 @@
                                                                 <p:column colspan="2" headerText="Duración" width="400" />
                                                                 <p:column rowspan="2" headerText="Cuerpo Académico" width="400" />
                                                                 <p:column rowspan="2" headerText="Nivel de Reconocimiento por PRODEP" width="200" />
-                                                                <p:column rowspan="2" headerText="Área Académica" width="400" />
                                                                 <p:column rowspan="2" headerText="Área de Estudio" width="400" />
                                                                 <p:column rowspan="2" headerText="Disciplina" width="400" />
                                                             </p:row>
@@ -956,9 +1000,6 @@
                                                         </p:column>
                                                         <p:column>
                                                             <h:outputText value="#{cuerpoAcademico.cuerposAcademicosRegistro.nivelProdep}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{cuerpoAcademico.area.nombre}"/>
                                                         </p:column>
                                                         <p:column>
                                                             <h:outputText value="#{cuerpoAcademico.cuerposAcademicosRegistro.areaEstudio.nombre}"/>

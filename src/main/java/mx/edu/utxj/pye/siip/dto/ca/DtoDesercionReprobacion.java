@@ -64,7 +64,7 @@ public class DtoDesercionReprobacion {
     @Getter private LineasAccion alineacionLinea;
     @Getter private ActividadesPoa alineacionActividad; 
     
-    @Getter Boolean tieneEvidencia, forzarAperturaDialogo;
+    @Getter Boolean tieneEvidencia, forzarAperturaDialogo, tieneMatRep;
     
     @Getter private List<EventosRegistros> eventosPorPeriodo;
     @Getter private List<EvidenciasDetalle> listaEvidencias;
@@ -76,8 +76,11 @@ public class DtoDesercionReprobacion {
     @Getter private List<LineasAccion> lineasAccion;
     
     @Getter private List<Short> clavesAreasSubordinadas;//claves de areas subordinas que no tienes poa
+    
+    @Getter private List<DesercionReprobacionMaterias> listaMatRep;
 
     public DtoDesercionReprobacion() {
+        tieneMatRep = false;
         tieneEvidencia = false;
         forzarAperturaDialogo = false;
     }
@@ -252,4 +255,13 @@ public class DtoDesercionReprobacion {
         }
     }
     
+    public void setListaMatRep(List<DesercionReprobacionMaterias> listaMatRep) {
+        this.listaMatRep = listaMatRep;
+        setTieneMatRep(!listaMatRep.isEmpty());
+    }
+
+    public void setTieneMatRep(Boolean tieneMatRep) {
+        this.tieneMatRep = tieneMatRep;
+    }
+  
 }

@@ -105,7 +105,7 @@
                                                 <c:set var="desAcadClave" value="#{desercion.desercionPeriodosEscolares.dpe}"/>
                                                 <p:column headerText="Opciones" style="width: 100px; text-align: center;">
                                                     <div class="btn-group"> 
-                                                        <p:commandButton update="@this" process="@this" title="Eliminar convenio" icon="fa fa-trash" onsuccess="actualizarTbl(); actualizarTabla();"
+                                                        <p:commandButton update="@this" process="@this" title="Eliminar registro" icon="fa fa-trash" onsuccess="actualizarTbl(); actualizarTabla();"
                                                                          disabled="#{!desercion.activo}"
                                                                          class="btn btn-info btn-sm" actionListener="#{desercionPer.eliminarRegistro(desAcadReg, desAcadClave)}">
                                                             <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro del estudiante #{desercion.desercionPeriodosEscolares.matriculaPeriodosEscolares.matricula}?" icon="ui-icon-alert" />
@@ -139,13 +139,23 @@
                                                 <p:column headerText="Matricula" style="width: 100px; text-align: center;">
                                                     <h:outputText value="#{desercion.desercionPeriodosEscolares.matriculaPeriodosEscolares.matricula}"/>
                                                 </p:column>
+                                                
+                                                <p:column headerText="Tipo de Baja" style="width: 100px; text-align: center;">
+                                                    <h:outputText value="#{desercion.bajasTipo.descripcion}"/>
+                                                </p:column>
 
                                                 <p:column headerText="Causa Baja" style="width: 120px; text-align: center;">
                                                     <h:outputText value="#{desercion.bajasCausa.causa}"/>
                                                 </p:column>
-
-                                                <p:column headerText="Tipo de Baja" style="width: 100px; text-align: center;">
-                                                    <h:outputText value="#{desercion.bajasTipo.descripcion}"/>
+                                                
+                                                <p:column headerText="Reprobación por Materias" style="width: 120px; text-align: center;">
+                                                    <c:set var="desAcadCausa" value="#{desercion.bajasCausa.cveCausa}"/>
+                                                    <c:set var="materiasRep" value="#{reprobacionPer.consultarMatRep(desAcadClave)}" />
+                                                    <p:commandButton actionListener="#{reprobacionPer.seleccionarMatRep(desAcadClave)}"
+                                                            class="btn btn-sm #{!empty materiasRep?'btn-info':'btn-danger'}" 
+                                                            icon="fa fa-search"
+                                                            disabled="#{desAcadCausa != 3}"
+                                                            title="#{!empty materiasRep?'Consultar materias reprobadas':'No se han registrado materias reprobadas'}" />
                                                 </p:column>
 
                                             </p:dataTable>
@@ -215,6 +225,7 @@
                             </h:form>
                         </div>
                     </div>
+                    <!-- Modal de Evidencia para Deserción Académica -->
                     <p:dialog id="modalCargaEvidencia" widgetVar="modalCargaEvidencia" width="700" height="auto"  closeOnEscape="true" visible="#{desercionPer.dto.forzarAperturaDialogo}"
                               showEffect="fade" hideEffect="fade" modal="true" draggable="true" header="Carga de evidencias" onHide="actualizarTbl();"
                               styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
@@ -284,6 +295,7 @@
                             </div>
                         </h:form>
                     </p:dialog>
+                    <!-- Modal para Alineación Deserción Académica-->
                     <p:dialog id="modalAlineacion" widgetVar="modalAlineacion" width="900" height="auto"  closeOnEscape="true"
                               showEffect="fade" hideEffect="fade" modal="true" draggable="true" header="Alineación a POA." onHide="actualizarTbl();"
                               styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">                        
@@ -365,9 +377,45 @@
                             </div>
                         </h:form>
                     </p:dialog>
-
-
-                    <!--segunda seccion de dialogos-->
+                    <!-- Modal Materias Reprobadas de Deserción Académica por Reprobación -->
+                    <p:dialog id="modalMaterias" 
+                              widgetVar="modalMaterias" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{reprobacionPer.dto.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Materias Reprobadas" 
+                              onHide="actualizarModMat();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        
+                        <h:form id="frmModalMaterias" >
+                            <p:remoteCommand name="actualizarModMat" update="@form:tblModalMat" />
+                            <p:dataTable id="tblModalMat" value="#{reprobacionPer.dto.listaMatRep}" var="matRep"
+                                                 emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
+                                                 >
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Clave"  width="80" />
+                                                <p:column headerText="Asignatura"  width="80" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;"><h:outputText value="#{matRep.dpe.dpe}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{matRep.asignatura.nombre}" /></p:column>
+                                        <f:facet name="footer">
+                                            <span style="font-size: smaller; font-weight: bold;">Total de materias reprobadas: #{pr:length(reprobacionPer.dto.listaMatRep)}.</span>
+                                        </f:facet>
+                                    </p:dataTable>
+                        </h:form>
+                    </p:dialog>
+                    <!--Modal Evidencia Deserción por Reprobación-->
                     <p:dialog id="modalCargaEvidencia1" widgetVar="modalCargaEvidencia1" width="700" height="auto"  closeOnEscape="true" visible="#{reprobacionPer.dto.forzarAperturaDialogo}"
                               showEffect="fade" hideEffect="fade" modal="true" draggable="true" header="Carga de evidencias" onHide="actualizarTbl();"
                               styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
@@ -436,6 +484,7 @@
                             </div>
                         </h:form>
                     </p:dialog>
+                    <!-- Modal Alineación Deserción por Reprobación-->
                     <p:dialog id="modalAlineacion1" widgetVar="modalAlineacion1" width="900" height="auto"  closeOnEscape="true"
                               showEffect="fade" hideEffect="fade" modal="true" draggable="true" header="Alineación a POA." onHide="actualizarTbl();"
                               styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">                        

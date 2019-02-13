@@ -24,7 +24,10 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadIntegrantes;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadLineas;
+import mx.edu.utxj.pye.sgi.entity.pye2.CuerpoAreasAcademicas;
+import mx.edu.utxj.pye.sgi.entity.pye2.CuerpoAreasAcademicasPK;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerposAcademicosRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
@@ -35,6 +38,7 @@ import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.ca.DtoCuerposAcademicos;
 import mx.edu.utxj.pye.siip.dto.ca.DTOCuerpAcadIntegrantes;
 import mx.edu.utxj.pye.siip.dto.ca.DTOCuerpAcadLineas;
+import mx.edu.utxj.pye.siip.dto.ca.DTOCuerpoAreasAcademicas;
 import mx.edu.utxj.pye.siip.dto.ca.DTOCuerposAcademicosR;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbCuerposAcademicos;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
@@ -68,6 +72,11 @@ public class ControladorCuerposAcademicos implements Serializable{
         dtoCuerposAcademicos = new DtoCuerposAcademicos();
         dtoCuerposAcademicos.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short)controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
         filtros();
+        try {
+            dtoCuerposAcademicos.setListaCuerpoAreasAcademicas(ejbCuerposAcademicos.getCuerpoAreasAcademicas());
+        } catch (Throwable ex) {
+            Logger.getLogger(ControladorCuerposAcademicos.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void inicializarListas() {
@@ -174,6 +183,36 @@ public class ControladorCuerposAcademicos implements Serializable{
             Ajax.update("formMuestraDatosActivos");
         } catch (Throwable ex) {
             Logger.getLogger(ControladorCuerposAcademicos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void bajaCuerpoAcademico(CuerposAcademicosRegistro cuerpoAcademicoRegistro){
+        if(cuerpoAcademicoRegistro.getEstatus() == true){
+            ejbCuerposAcademicos.bajaCuerpoAcademico(cuerpoAcademicoRegistro);
+            buscarCuerposAcademicos();
+        }else{
+            ejbCuerposAcademicos.altaCuerpoAcademico(cuerpoAcademicoRegistro);
+            buscarCuerposAcademicos();
+        }
+    }
+    
+    public void bajaIntegrante(CuerpacadIntegrantes cuerpacadIntegrante){
+        if(cuerpacadIntegrante.getEstatus() == true){
+            ejbCuerposAcademicos.bajaCuerpacadIntegrantes(cuerpacadIntegrante);
+            buscarCuerposAcademicos();
+        }else{
+            ejbCuerposAcademicos.altaCuerpacadIntegrantes(cuerpacadIntegrante);
+            buscarCuerposAcademicos();
+        }
+    }
+    
+    public void bajaLineaInvestigacion(CuerpacadLineas cuerpacadLinea){
+        if(cuerpacadLinea.getEstatus() == true){
+            ejbCuerposAcademicos.bajaCuerpacadLineas(cuerpacadLinea);
+            buscarCuerposAcademicos();
+        }else{
+            ejbCuerposAcademicos.altaCuerpacadLineas(cuerpacadLinea);
+            buscarCuerposAcademicos();
         }
     }
     
@@ -538,6 +577,45 @@ public class ControladorCuerposAcademicos implements Serializable{
             cargarAlineacionXActividad();
             Ajax.update("frmAlineacionCuerpAcadLineas");
         }else Messages.addGlobalError("La alineación no pudo eliminarse.");
+    }
+    
+//    Áreas Académicas Asignadas a Cuerpos Académicos
+    
+    public void consultaCuerpoAreaAcademica(){
+        dtoCuerposAcademicos.getListaCuerpoAreasAcademicas().stream().forEach((c) -> {
+            c.setExiste(ejbCuerposAcademicos.verificaCuerpoAreaAcademica(dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro().getCuerpoAcademico(), c.getAreaUniversidad()));
+        });
+    }
+    
+    public void forzarAperturaCuerpoAreasAcademicas(){
+        if(dtoCuerposAcademicos.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalCuerpoAreasAcademicas').show();");
+            dtoCuerposAcademicos.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void abrirCuerpoAreasAcademicas(CuerposAcademicosRegistro cuerpAcad){
+        DTOCuerposAcademicosR dtoCAR = new DTOCuerposAcademicosR();
+        dtoCAR.setCuerposAcademicosRegistro(cuerpAcad);
+        dtoCuerposAcademicos.setRegistroCuerposAcademicosR(dtoCAR);
+        consultaCuerpoAreaAcademica();
+        Ajax.update("frmCuerpoAreasAcademicas");
+        Ajax.oncomplete("skin();");
+        dtoCuerposAcademicos.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaCuerpoAreasAcademicas();
+    }
+    
+    public void guardaCuerpoAreaAcademica(DTOCuerpoAreasAcademicas dtoCAA){
+        CuerpoAreasAcademicasPK caapk = new CuerpoAreasAcademicasPK();
+        caapk.setCuerpoAcademico(dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro().getCuerpoAcademico());
+        caapk.setAreaAcademica(dtoCAA.getAreaUniversidad().getArea());
+        CuerpoAreasAcademicas caa = new CuerpoAreasAcademicas();
+        caa.setCuerpoAreasAcademicasPK(caapk);
+        caa.setCuerposAcademicosRegistro(dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro());
+        Boolean guardado = ejbCuerposAcademicos.guardarCuerpoAreaAcademica(caa);
+        if(guardado){
+            abrirCuerpoAreasAcademicas(dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro());
+        }else  Messages.addGlobalError("El área académica no pudo asignarse.");
     }
     
 }

@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.siip.services.ca;
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
@@ -297,6 +298,17 @@ public class ServicioDesercionReprobacion implements EjbDesercionReprobacion{
 
         }
           return genLst;
+    }
+
+    @Override
+    public List<DesercionReprobacionMaterias> getListaMateriasReprobadas(String desercion) {
+        if(desercion == null){
+            return Collections.EMPTY_LIST;
+        }
+        List<DesercionReprobacionMaterias> l = f.getEntityManager().createQuery("SELECT r FROM DesercionReprobacionMaterias r JOIN r.dpe d WHERE d.dpe = :desercion", DesercionReprobacionMaterias.class)
+                .setParameter("desercion", desercion)
+                .getResultList();
+        return l;
     }
 
     

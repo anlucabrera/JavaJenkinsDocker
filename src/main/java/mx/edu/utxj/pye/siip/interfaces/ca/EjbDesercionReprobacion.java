@@ -93,5 +93,12 @@ public interface EjbDesercionReprobacion {
      * @return
      */
     public List<MateriasProgramaEducativo> getMateriasProgramaEducativoAct();
+    
+     /**
+     * Obtiene la lista de materias reprobadas por deserción.
+     * @param desercion deserción académica.
+     * @return Lista de materias reprobadas.
+     */
+    public List<DesercionReprobacionMaterias> getListaMateriasReprobadas(String desercion);
 }
 

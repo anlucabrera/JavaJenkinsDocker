@@ -75,7 +75,7 @@ public class ControladorFeriasParticipantes implements Serializable{
         dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
         if (dto.getSelectItemEjercicioFiscal() == null) {
-            Messages.addGlobalInfo("No existen registros");
+//            Messages.addGlobalInfo("No existen registros");
         } else {
             dto.setEjercicioFiscal((short) ejbItems.itemEjercicioFiscalPorRegistro((short) 35).get(0).getValue());
             dto.setSelectItemMes(ejbItems.itemMesesPorRegistro((short) 35, dto.getEjercicioFiscal()));
@@ -102,7 +102,7 @@ public class ControladorFeriasParticipantes implements Serializable{
         dto.setEjercicioFiscal(ejercicio);
         dto.setListaFeriasParticipantesDTO(ejbFeriasParticipantes.getRegistrosFParticipantes(mes, ejercicio)); 
         if (dto.getListaFeriasParticipantesDTO() == null) {
-            Messages.addGlobalWarn("no se encontraron actividades registradas en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
+            Messages.addGlobalWarn("No se han registrado Participantes de Ferias en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
         }
     }
    

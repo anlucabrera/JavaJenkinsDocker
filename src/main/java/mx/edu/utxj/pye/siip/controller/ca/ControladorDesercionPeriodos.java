@@ -96,7 +96,7 @@ public class ControladorDesercionPeriodos implements Serializable {
         dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
         if (dto.getSelectItemEjercicioFiscal() == null) {
-            Messages.addGlobalInfo("No existen registros");
+//            Messages.addGlobalInfo("No existen registros");
         } else {
             dto.setEjercicioFiscal((short) ejbItems.itemEjercicioFiscalPorRegistro((short) 25).get(0).getValue());
             dto.setSelectItemMes(ejbItems.itemMesesPorRegistro((short) 25, dto.getEjercicioFiscal()));
@@ -138,7 +138,7 @@ public class ControladorDesercionPeriodos implements Serializable {
         dto.setEjercicioFiscal(ejercicio);      
         dto.setListaDtoDesercion(ejbDesercionPeriodos.getListaRegistrosDesercionDto(mes, ejercicio));
         if ( dto.getListaDtoDesercion() == null) {
-            Messages.addGlobalWarn("no se encontraron actividades registradas en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
+            Messages.addGlobalWarn("No hay registros de Deserción Académica en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
         }
         /*FILTRADO DE REPROBACION*/
         cReporbacion.filtroReprobacion(mes, ejercicio);
@@ -371,5 +371,5 @@ public class ControladorDesercionPeriodos implements Serializable {
             Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
         }
     }
-
+ 
 }

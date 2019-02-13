@@ -22,7 +22,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(of = "organismoVinculado")
+@ToString
 @EqualsAndHashCode
 public class DTOOrganismoVinculado implements Serializable{
 

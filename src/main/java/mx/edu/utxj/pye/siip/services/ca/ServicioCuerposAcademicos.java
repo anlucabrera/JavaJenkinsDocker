@@ -17,10 +17,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.servlet.annotation.MultipartConfig;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
@@ -64,9 +62,8 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
     @EJB
     EjbModulos ejbModulos;
 
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
-
+    private static final Logger LOG = Logger.getLogger(ServicioCuerposAcademicos.class.getName());
+    
     @Override
     public List<DTOCuerposAcademicosR> getListaCuerposAcademicos(String rutaArchivo) throws Throwable {
         if (Files.exists(Paths.get(rutaArchivo))) {
@@ -559,7 +556,7 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
 //        query.setParameter("cuerpoAcademico", cuerpoAcademico);
 //        Integer registro = query.getSingleResult().getRegistro();
 //        return registro;
-        TypedQuery<CuerposAcademicosRegistro> query = em.createQuery("SELECT c FROM CuerposAcademicosRegistro c WHERE c.cuerpoAcademico = :cuerpoAcademico", CuerposAcademicosRegistro.class);
+        TypedQuery<CuerposAcademicosRegistro> query = facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerposAcademicosRegistro c WHERE c.cuerpoAcademico = :cuerpoAcademico", CuerposAcademicosRegistro.class);
         query.setParameter("cuerpoAcademico", cuerpoAcademico);
         Integer registro = 0;
         try {
@@ -574,7 +571,7 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
 
     @Override
     public CuerposAcademicosRegistro getCuerpoAcademico(CuerposAcademicosRegistro cuerpoAcademico) {
-        TypedQuery<CuerposAcademicosRegistro> query = em.createNamedQuery("CuerposAcademicosRegistro.findByCuerpoAcademico", CuerposAcademicosRegistro.class);
+        TypedQuery<CuerposAcademicosRegistro> query = facadeCapitalHumano.getEntityManager().createNamedQuery("CuerposAcademicosRegistro.findByCuerpoAcademico", CuerposAcademicosRegistro.class);
         query.setParameter("cuerpoAcademico", cuerpoAcademico.getCuerpoAcademico());
         try {
             cuerpoAcademico = query.getSingleResult();
@@ -587,7 +584,7 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
 
     @Override
     public CuerpacadIntegrantes getCuerpacadIntegrantes(CuerpacadIntegrantes cuerpacadIntegrante) {
-        TypedQuery<CuerpacadIntegrantes> query = em.createQuery("SELECT c FROM CuerpacadIntegrantes c JOIN c.cuerpoAcademico ca WHERE ca.cuerpoAcademico = :cuerpoAcademico AND c.personal = :personal", CuerpacadIntegrantes.class);
+        TypedQuery<CuerpacadIntegrantes> query = facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerpacadIntegrantes c JOIN c.cuerpoAcademico ca WHERE ca.cuerpoAcademico = :cuerpoAcademico AND c.personal = :personal", CuerpacadIntegrantes.class);
         query.setParameter("cuerpoAcademico", cuerpacadIntegrante.getCuerpoAcademico().getCuerpoAcademico());
         query.setParameter("personal", cuerpacadIntegrante.getPersonal());
         try {
@@ -601,7 +598,7 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
 
     @Override
     public CuerpacadLineas getCuerpacadLineas(CuerpacadLineas cuerpacadLinea) {
-        TypedQuery<CuerpacadLineas> query = em.createQuery("SELECT c FROM CuerpacadLineas c JOIN c.cuerpoAcademico ca WHERE ca.cuerpoAcademico = :cuerpoAcademico AND c.nombre = :nombre", CuerpacadLineas.class);
+        TypedQuery<CuerpacadLineas> query = facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerpacadLineas c JOIN c.cuerpoAcademico ca WHERE ca.cuerpoAcademico = :cuerpoAcademico AND c.nombre = :nombre", CuerpacadLineas.class);
         query.setParameter("cuerpoAcademico", cuerpacadLinea.getCuerpoAcademico().getCuerpoAcademico());
         query.setParameter("nombre", cuerpacadLinea.getNombre());
         try {
@@ -616,7 +613,7 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
     @Override
     public List<CuerpacadDisciplinas> getCuerpacadDisciplinas() {
         List<CuerpacadDisciplinas> cuerpacadDisciplinas = new ArrayList<>();
-        TypedQuery<CuerpacadDisciplinas> query = em.createQuery("SELECT c FROM CuerpacadDisciplinas c ORDER BY c.nombre", CuerpacadDisciplinas.class);
+        TypedQuery<CuerpacadDisciplinas> query = facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerpacadDisciplinas c ORDER BY c.nombre", CuerpacadDisciplinas.class);
         try {
             cuerpacadDisciplinas = query.getResultList();
         } catch (NoResultException | NonUniqueResultException ex) {
@@ -628,7 +625,7 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
     @Override
     public List<CuerpacadAreasEstudio> getCuerpacadAreasEstudio() {
         List<CuerpacadAreasEstudio> cuerpacadAreasEstudios = new ArrayList<>();
-        TypedQuery<CuerpacadAreasEstudio> query = em.createQuery("SELECT c FROM CuerpacadAreasEstudio c ORDER BY c.nombre", CuerpacadAreasEstudio.class);
+        TypedQuery<CuerpacadAreasEstudio> query = facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerpacadAreasEstudio c ORDER BY c.nombre", CuerpacadAreasEstudio.class);
         try {
             cuerpacadAreasEstudios = query.getResultList();
         } catch (NoResultException | NonUniqueResultException ex) {
@@ -640,7 +637,7 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
     @Override
     public List<CuerposAcademicosRegistro> getCuerposAcademicosAct() {
         List<CuerposAcademicosRegistro> genLst = new ArrayList<>();
-        TypedQuery<CuerposAcademicosRegistro> query = em.createQuery("SELECT c FROM CuerposAcademicosRegistro c", CuerposAcademicosRegistro.class);
+        TypedQuery<CuerposAcademicosRegistro> query = facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerposAcademicosRegistro c", CuerposAcademicosRegistro.class);
 
         try {
             genLst = query.getResultList();
@@ -656,12 +653,12 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
         List<DTOCuerposAcademicosR> listaDtoCar = new ArrayList<>();
         List<CuerposAcademicosRegistro> cuerposAcademicosRegistros = new ArrayList<>();
         try {
-            cuerposAcademicosRegistros = em.createQuery("SELECT c FROM CuerposAcademicosRegistro c JOIN c.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND r.area = :area AND c.estatus = true", CuerposAcademicosRegistro.class)
+            cuerposAcademicosRegistros = facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerposAcademicosRegistro c JOIN c.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND r.area = :area", CuerposAcademicosRegistro.class)
                     .setParameter("anio", ejercicio)
                     .setParameter("area", area)
                     .getResultList();
             cuerposAcademicosRegistros.forEach((c) -> {
-                em.refresh(c);
+                facadeCapitalHumano.getEntityManager().refresh(c);
                 listaDtoCar.add(new DTOCuerposAcademicosR(
                         c
                 ));
@@ -677,15 +674,15 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
         List<DTOCuerpAcadIntegrantes> listaDtoCai = new ArrayList<>();
         List<CuerpacadIntegrantes> cuerpacadIntegrantes = new ArrayList<>();
         try {
-            cuerpacadIntegrantes = em.createQuery("SELECT c FROM CuerpacadIntegrantes c JOIN c.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND r.area = :area AND c.cuerpoAcademico.estatus = true", CuerpacadIntegrantes.class)
+            cuerpacadIntegrantes = facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerpacadIntegrantes c JOIN c.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND r.area = :area", CuerpacadIntegrantes.class)
                     .setParameter("anio", ejercicio)
                     .setParameter("area", area)
                     .getResultList();
             cuerpacadIntegrantes.forEach((c) -> {
-                em.refresh(c);
+                facadeCapitalHumano.getEntityManager().refresh(c);
                 listaDtoCai.add(new DTOCuerpAcadIntegrantes(
                         c,
-                        em.find(Personal.class, c.getPersonal())
+                        facadeCapitalHumano.getEntityManager().find(Personal.class, c.getPersonal())
                 ));
             });
             return listaDtoCai;
@@ -697,12 +694,12 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
     @Override
     public List<CuerpacadLineas> getFiltroCuerpAcadLineasEjercicioMesArea(Short ejercicio, Short area) throws Throwable {
         try {
-            List<CuerpacadLineas> cuerpacadLineas = em.createQuery("SELECT c FROM CuerpacadLineas c JOIN c.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND r.area = :area AND c.cuerpoAcademico.estatus = true", CuerpacadLineas.class)
+            List<CuerpacadLineas> cuerpacadLineas = facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerpacadLineas c JOIN c.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND r.area = :area", CuerpacadLineas.class)
                     .setParameter("anio", ejercicio)
                     .setParameter("area", area)
                     .getResultList();
             cuerpacadLineas.stream().forEach((c) -> {
-                em.refresh(c);
+                facadeCapitalHumano.getEntityManager().refresh(c);
             });
 
             return cuerpacadLineas;
@@ -715,7 +712,7 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
     public List<Integer> buscaRegistrosCuerpAcadIntegrantesByCuerpAcad(CuerposAcademicosRegistro cuerposAcademicosRegistro) throws Throwable {
         List<Integer> registros = new ArrayList<>();
         try {
-            return registros = em.createQuery("SELECT c FROM CuerpacadIntegrantes c WHERE c.cuerpoAcademico = :cuerpoAcademico", CuerpacadIntegrantes.class)
+            return registros = facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerpacadIntegrantes c WHERE c.cuerpoAcademico = :cuerpoAcademico", CuerpacadIntegrantes.class)
                     .setParameter("cuerpoAcademico", cuerposAcademicosRegistro)
                     .getResultStream()
                     .map(c -> c.getRegistro())
@@ -729,7 +726,7 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
     public List<Integer> buscaRegistrosCuerpAcadLineasByCuerpAcad(CuerposAcademicosRegistro cuerposAcademicosRegistro) throws Throwable {
         List<Integer> registros = new ArrayList<>();
         try {
-            return registros = em.createQuery("SELECT c FROM CuerpacadLineas c WHERE c.cuerpoAcademico = :cuerpoAcademico", CuerpacadLineas.class)
+            return registros = facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerpacadLineas c WHERE c.cuerpoAcademico = :cuerpoAcademico", CuerpacadLineas.class)
                     .setParameter("cuerpoAcademico", cuerposAcademicosRegistro)
                     .getResultStream()
                     .map(c -> c.getRegistro())
@@ -741,22 +738,207 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
 
     @Override
     public List<DTOCuerpoAreasAcademicas> getCuerpoAreasAcademicas() throws Throwable {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            List<DTOCuerpoAreasAcademicas> dtoCAA = new ArrayList<>();
+            List<AreasUniversidad> areasUniversidad = facadeCapitalHumano.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a JOIN a.categoria c WHERE c.categoria = :categoria AND a.vigente = :vigente ORDER BY a.nombre ASC", AreasUniversidad.class)
+                    .setParameter("categoria", 8)
+                    .setParameter("vigente", "1")
+                    .getResultList();
+            areasUniversidad.stream().forEach((a) -> {
+                dtoCAA.add(new DTOCuerpoAreasAcademicas(
+                        a
+                ));
+            });
+            return dtoCAA;
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
     }
 
     @Override
     public Boolean verificaCuerpoAreaAcademica(String cuerpoAcademico, AreasUniversidad areaUniversidad) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            CuerpoAreasAcademicas caa = facadeCapitalHumano.getEntityManager().createQuery("SELECT a FROM CuerpoAreasAcademicas a INNER JOIN a.cuerposAcademicosRegistro c WHERE c.cuerpoAcademico = :cuerpoAcademico AND a.cuerpoAreasAcademicasPK.areaAcademica = :areaAcademica",CuerpoAreasAcademicas.class)
+                    .setParameter("cuerpoAcademico",cuerpoAcademico)
+                    .setParameter("areaAcademica",areaUniversidad.getArea())
+                    .getSingleResult();
+            if(caa != null) return true;
+            else return false;
+        } catch (NoResultException e) {
+            return false;
+        }
     }
 
     @Override
-    public Boolean guardarProgramaBeneficiadoVinculacion(CuerpoAreasAcademicas cuerpoAreasAcademica) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Boolean guardarCuerpoAreaAcademica(CuerpoAreasAcademicas cuerpoAreasAcademica) {
+        try {
+            if (verificaCuerpoAreaAcademica(cuerpoAreasAcademica.getCuerpoAreasAcademicasPK().getCuerpoAcademico(), facadeCapitalHumano.getEntityManager().find(AreasUniversidad.class, cuerpoAreasAcademica.getCuerpoAreasAcademicasPK().getAreaAcademica()))) {
+                eliminarCuerpoAreaAcademica(cuerpoAreasAcademica);
+            } else {
+                facadeCapitalHumano.setEntityClass(CuerpoAreasAcademicas.class);
+                facadeCapitalHumano.create(cuerpoAreasAcademica);
+                facadeCapitalHumano.flush();
+            }
+            return true;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo asginar el área académica al cuerpo académico.", e);
+            return false;
+        }
     }
 
     @Override
-    public Boolean eliminarProgramaBeneficiadoVinculacion(CuerpoAreasAcademicas cuerpoAreasAcademica) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Boolean eliminarCuerpoAreaAcademica(CuerpoAreasAcademicas cuerpoAreasAcademica) {
+        try {
+            if (verificaCuerpoAreaAcademica(cuerpoAreasAcademica.getCuerpoAreasAcademicasPK().getCuerpoAcademico(), facadeCapitalHumano.getEntityManager().find(AreasUniversidad.class, cuerpoAreasAcademica.getCuerpoAreasAcademicasPK().getAreaAcademica()))) {
+                facadeCapitalHumano.setEntityClass(CuerpoAreasAcademicas.class);
+                facadeCapitalHumano.remove(cuerpoAreasAcademica);
+                facadeCapitalHumano.flush();
+            }
+            return true;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo asginar el área académica al cuerpo académico.", e);
+            return false;
+        }
     }
 
+    @Override
+    public Boolean bajaCuerpoAcademico(CuerposAcademicosRegistro cuerposAcademicosRegistro) {
+        try {
+            Integer comprueba = facadeCapitalHumano.getEntityManager().createQuery("UPDATE CuerposAcademicosRegistro c SET c.estatus = false WHERE c.registro = :registro")
+                    .setParameter("registro", cuerposAcademicosRegistro.getRegistro())
+                    .executeUpdate();
+            if(comprueba != 0){
+                Integer participantes = facadeCapitalHumano.getEntityManager().createQuery("UPDATE CuerpacadIntegrantes c SET c.estatus = false WHERE c.cuerpoAcademico.cuerpoAcademico = :cuerpoAcademico")
+                        .setParameter("cuerpoAcademico", cuerposAcademicosRegistro.getCuerpoAcademico())
+                        .executeUpdate();
+                Integer lineasInvestigacion = facadeCapitalHumano.getEntityManager().createQuery("UPDATE CuerpacadLineas c SET c.estatus = false WHERE c.cuerpoAcademico.cuerpoAcademico = :cuerpoAcademico")
+                        .setParameter("cuerpoAcademico", cuerposAcademicosRegistro.getCuerpoAcademico())
+                        .executeUpdate();
+                Messages.addGlobalInfo("<b>Se ha dado de baja el siguiente Cuerpo Académico: </b> " + cuerposAcademicosRegistro.getCuerpoAcademico());
+                return true;
+            }else{
+                Messages.addGlobalInfo("<b>No se ha podido dar de baja el siguiente Cuerpo Académico: </b> " + cuerposAcademicosRegistro.getCuerpoAcademico());
+                return false;
+            }
+        } catch (Exception e) {
+            Messages.addGlobalInfo("<b>Ha ocurrido un error durante la baja del siguiente Cuerpo Académico: </b> " + cuerposAcademicosRegistro.getCuerpoAcademico() + " Error: " + e);
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean altaCuerpoAcademico(CuerposAcademicosRegistro cuerposAcademicosRegistro) {
+        try {
+            Integer comprueba = facadeCapitalHumano.getEntityManager().createQuery("UPDATE CuerposAcademicosRegistro c SET c.estatus = true WHERE c.registro = :registro")
+                    .setParameter("registro", cuerposAcademicosRegistro.getRegistro())
+                    .executeUpdate();
+            if(comprueba != 0){
+                Integer participantes = facadeCapitalHumano.getEntityManager().createQuery("UPDATE CuerpacadIntegrantes c SET c.estatus = true WHERE c.cuerpoAcademico.cuerpoAcademico = :cuerpoAcademico")
+                        .setParameter("cuerpoAcademico", cuerposAcademicosRegistro.getCuerpoAcademico())
+                        .executeUpdate();
+                Integer lineasInvestigacion = facadeCapitalHumano.getEntityManager().createQuery("UPDATE CuerpacadLineas c SET c.estatus = true WHERE c.cuerpoAcademico.cuerpoAcademico = :cuerpoAcademico")
+                        .setParameter("cuerpoAcademico", cuerposAcademicosRegistro.getCuerpoAcademico())
+                        .executeUpdate();
+                Messages.addGlobalInfo("<b>Se ha dado de alta el siguiente Cuerpo Académico: </b> " + cuerposAcademicosRegistro.getCuerpoAcademico());
+                return true;
+            }else{
+                Messages.addGlobalInfo("<b>No se ha podido dar de alta el siguiente Cuerpo Académico: </b> " + cuerposAcademicosRegistro.getCuerpoAcademico());
+                return false;
+            }
+        } catch (Exception e) {
+            Messages.addGlobalInfo("<b>Ha ocurrido un error durante la activación del siguiente Cuerpo Académico: </b> " + cuerposAcademicosRegistro.getCuerpoAcademico());
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean bajaCuerpacadIntegrantes(CuerpacadIntegrantes cuerpacadIntegrante) {
+        try {
+            Integer participantes = facadeCapitalHumano.getEntityManager().createQuery("UPDATE CuerpacadIntegrantes c SET c.estatus = false WHERE c.registro = :registro")
+                        .setParameter("registro", cuerpacadIntegrante.getRegistro())
+                        .executeUpdate();
+            if(participantes != 0){
+                Messages.addGlobalInfo("<b>Se ha dado de baja el siguiente Participante: </b> " + cuerpacadIntegrante.getPersonal());
+                return true;
+            }else{
+                Messages.addGlobalInfo("<b>No se ha podido dar de baja el siguiente Participante: </b> " + cuerpacadIntegrante.getPersonal());
+                return false;
+            }
+        } catch (Exception e) {
+            Messages.addGlobalInfo("<b>Ha ocurrido un error durante la baja del siguiente Participante: </b> " + cuerpacadIntegrante.getPersonal());
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean altaCuerpacadIntegrantes(CuerpacadIntegrantes cuerpacadIntegrante) {
+        try {
+            CuerposAcademicosRegistro cuerpoAcademicoRegistro = facadeCapitalHumano.getEntityManager().find(CuerposAcademicosRegistro.class, cuerpacadIntegrante.getCuerpoAcademico().getRegistro());
+
+            if (cuerpoAcademicoRegistro.getEstatus() == true) {
+                Integer participantes = facadeCapitalHumano.getEntityManager().createQuery("UPDATE CuerpacadIntegrantes c SET c.estatus = true WHERE c.registro = :registro")
+                        .setParameter("registro", cuerpacadIntegrante.getRegistro())
+                        .executeUpdate();
+                if (participantes != 0) {
+                    Messages.addGlobalInfo("<b>Se ha dado de alta el siguiente Participante: </b> " + cuerpacadIntegrante.getPersonal());
+                    return true;
+                } else {
+                    Messages.addGlobalInfo("<b>No se ha podido dar de alta el siguiente Participante: </b> " + cuerpacadIntegrante.getPersonal());
+                    return false;
+                }
+            } else {
+                Messages.addGlobalInfo("<b>No se ha podido dar de alta el siguiente participante debido a que el cuerpo académico al que pertenece se encuentra dado de baja: </b> " + cuerpacadIntegrante.getPersonal());
+                return false;
+            }
+        } catch (Exception e) {
+            Messages.addGlobalInfo("<b>Ha ocurrido un error durante el alta del siguiente Participante: </b> " + cuerpacadIntegrante.getPersonal());
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean bajaCuerpacadLineas(CuerpacadLineas cuerpacadLineas) {
+        try {
+            Integer participantes = facadeCapitalHumano.getEntityManager().createQuery("UPDATE CuerpacadLineas c SET c.estatus = false WHERE c.registro = :registro")
+                        .setParameter("registro", cuerpacadLineas.getRegistro())
+                        .executeUpdate();
+            if(participantes != 0){
+                Messages.addGlobalInfo("<b>Se ha dado de baja la siguiente Línea de Investigación: </b> " + cuerpacadLineas.getNombre());
+                return true;
+            }else{
+                Messages.addGlobalInfo("<b>No se ha podido dar de baja la siguiente Línea de Investigación: </b> " + cuerpacadLineas.getNombre());
+                return false;
+            }
+        } catch (Exception e) {
+            Messages.addGlobalInfo("<b>Ha ocurrido un error durante la baja de la siguiente Línea de Investigación: </b> " + cuerpacadLineas.getNombre());
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean altaCuerpacadLineas(CuerpacadLineas cuerpacadLineas) {
+        try {
+            CuerposAcademicosRegistro cuerpoAcademicoRegistro = facadeCapitalHumano.getEntityManager().find(CuerposAcademicosRegistro.class, cuerpacadLineas.getCuerpoAcademico().getRegistro());
+
+            if (cuerpoAcademicoRegistro.getEstatus() == true) {
+                Integer participantes = facadeCapitalHumano.getEntityManager().createQuery("UPDATE CuerpacadLineas c SET c.estatus = true WHERE c.registro = :registro")
+                        .setParameter("registro", cuerpacadLineas.getRegistro())
+                        .executeUpdate();
+                if (participantes != 0) {
+                    Messages.addGlobalInfo("<b>Se ha dado de alta el siguiente Participante: </b> " + cuerpacadLineas.getNombre());
+                    return true;
+                } else {
+                    Messages.addGlobalInfo("<b>No se ha podido dar de alta el siguiente Participante: </b> " + cuerpacadLineas.getNombre());
+                    return false;
+                }
+            } else {
+                Messages.addGlobalInfo("<b>No se ha podido dar de alta la siguiente línea de investigación debido a que el cuerpo académico al que pertenece se encuentra dado de baja: </b> " + cuerpacadLineas.getNombre());
+                return false;
+            }
+        } catch (Exception e) {
+            Messages.addGlobalInfo("<b>Ha ocurrido un error durante la alta del siguiente Participante: </b> " + cuerpacadLineas.getNombre());
+            return false;
+        }
+    }
+    
 }
