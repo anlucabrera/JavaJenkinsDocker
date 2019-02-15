@@ -55,10 +55,8 @@ public class ControladorIncidenciasGeneral implements Serializable {
     @Inject    ControladorEmpleado controladorEmpleado;
 
     @PostConstruct
-    public void init() {
-        System.out.println("ControladorIncidenciasPersonal Inicio: " + System.currentTimeMillis());
-        
-        System.out.println("Dias"+(int) ((fechaActual.getTime() - new Date(07, 10, 118).getTime()) / 86400000));
+    public void init() {        
+                
         
         fechaI = new Date();
         fechaF = new Date();
@@ -78,8 +76,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
         area = 0;
         areaNombre = "Todas las áreas";
         mostrarIncidencias(mes);
-        mostrarareas();
-        System.out.println("ControladorIncidenciasPersonal Fin: " + System.currentTimeMillis());
+        mostrarareas();        
     }
 
     public void mostrarareas() {
@@ -201,8 +198,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
                         listaCuidadoses.add(t);
                     }
                 });
-            }
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasGeneral.mostrarIncidencias()"+listaCuidadoses.size());
+            }            
             Ajax.update("frmInciGeneral");
             Ajax.update("frmIncaGeneral");
             Ajax.update("frmCuidGeneral");
@@ -232,21 +228,18 @@ public class ControladorIncidenciasGeneral implements Serializable {
             areaNombre = "Todas las áreas";
         } else {
             areaNombre = buscarArea(area);
-        }
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasGeneral.numeroAreaAsiganado()" + areaNombre);
+        }        
         mostrarIncidencias(mes);
     }
    
     public void eliminarIncidencia(Incidencias incidencias) {
-        try {
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.eliminarIncidencia()");
+        try {            
             if (incidencias.getEvidencia() != null) {
                 CargaArchivosCH.eliminarArchivo(incidencias.getEvidencia());
             }
             ejbNotificacionesIncidencias.eliminarIncidencias(incidencias);
             mostrarIncidencias(mes);
-            Ajax.update("frmInciGeneral");
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.eliminarIncidencia()");
+            Ajax.update("frmInciGeneral");            
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
@@ -254,14 +247,12 @@ public class ControladorIncidenciasGeneral implements Serializable {
     }
      
     public void eliminarIncapacidad(Incapacidad incapacidad) {
-        try {
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.eliminarIncidencia()");
+        try {            
             if (incapacidad.getEvidencia() != null) {
                 CargaArchivosCH.eliminarArchivo(incapacidad.getEvidencia());
             }
             ejbNotificacionesIncidencias.eliminarIncapacidad(incapacidad);
-            mostrarIncidencias(mes);
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.eliminarIncidencia()");
+            mostrarIncidencias(mes);            
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);

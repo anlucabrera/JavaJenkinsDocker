@@ -42,15 +42,13 @@ public class ControladorNotificacionesMultiples implements Serializable {
 
 //@EJB 
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbCreate;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbSelectec;
 //@Inject
     @Inject    ControladorEmpleado controladorEmpleado;
 
     @PostConstruct
-    public void init() {
-        System.out.println("ControladorNotificacionesMultiples Inicio: " + System.currentTimeMillis());
-        usuario = controladorEmpleado.getEmpleadoLogeado();
-        System.out.println("ControladorNotificacionesMultiples Fin: " + System.currentTimeMillis());
+    public void init() {        
+        usuario = controladorEmpleado.getEmpleadoLogeado();        
     }
 
     public void agregarNotificacionMultiple() {
@@ -67,10 +65,22 @@ public class ControladorNotificacionesMultiples implements Serializable {
                 nuevOBJNotificaciones.setStatus(0);
                 nuevOBJNotificaciones.setFecha(fechaActual);
                 switch (tipo) {
+                    case "Personal":
+                        nuevOBJNotificaciones.setTipo(4);
+                        listaListaPersonal.clear();
+                        listaListaPersonal = ejbSelectec.mostrarListaPersonalsPorParametros(nombreO,1);
+                        for (int i = 0; i <= listaListaPersonal.size() - 1; i++) {
+                            nuevoOBJListaPersonal = new ListaPersonal();
+                            nuevoOBJListaPersonal = listaListaPersonal.get(i);
+                            nuevOBJNotificaciones.setClaveTDestino(new Personal(nuevoOBJListaPersonal.getClave()));
+                            nuevOBJNotificaciones = ejbCreate.agregarNotificacion(nuevOBJNotificaciones);
+                        }
+                        Messages.addGlobalInfo("Mensaje enviado a:" + nombreO);
+                        break;
                     case "Categoria":
                         nuevOBJNotificaciones.setTipo(1);
                         listaListaPersonal.clear();
-                        listaListaPersonal = ejbSelectec.mostrarListaPersonalPorCategoria(nombreO);
+                        listaListaPersonal = ejbSelectec.mostrarListaPersonalsPorParametros(nombreO,2);
                         for (int i = 0; i <= listaListaPersonal.size() - 1; i++) {
                             nuevoOBJListaPersonal = new ListaPersonal();
                             nuevoOBJListaPersonal = listaListaPersonal.get(i);
@@ -82,7 +92,7 @@ public class ControladorNotificacionesMultiples implements Serializable {
                     case "Actividad":
                         nuevOBJNotificaciones.setTipo(2);
                         listaListaPersonal.clear();
-                        listaListaPersonal = ejbSelectec.mostrarListaPersonalPorActividad(nombreO);
+                        listaListaPersonal = ejbSelectec.mostrarListaPersonalsPorParametros(nombreO,3);
                         for (int i = 0; i <= listaListaPersonal.size() - 1; i++) {
                             nuevoOBJListaPersonal = new ListaPersonal();
                             nuevoOBJListaPersonal = listaListaPersonal.get(i);
@@ -94,7 +104,7 @@ public class ControladorNotificacionesMultiples implements Serializable {
                     case "Area":
                         nuevOBJNotificaciones.setTipo(3);
                         listaListaPersonal.clear();
-                        listaListaPersonal = ejbSelectec.mostrarListaPersonalPorAreaOpySu(nombreO);
+                        listaListaPersonal = ejbSelectec.mostrarListaPersonalsPorParametros(nombreO,4);
                         for (int i = 0; i <= listaListaPersonal.size() - 1; i++) {
                             nuevoOBJListaPersonal = new ListaPersonal();
                             nuevoOBJListaPersonal = listaListaPersonal.get(i);
@@ -102,18 +112,6 @@ public class ControladorNotificacionesMultiples implements Serializable {
                             nuevOBJNotificaciones = ejbCreate.agregarNotificacion(nuevOBJNotificaciones);
                         }
                         Messages.addGlobalInfo("Mensaje enviado a los empleados del área: " + nombreO);
-                        break;
-                    case "Personal":
-                        nuevOBJNotificaciones.setTipo(4);
-                        listaListaPersonal.clear();
-                        listaListaPersonal = ejbSelectec.mostrarListaDeEmpleadosN(nombreO);
-                        for (int i = 0; i <= listaListaPersonal.size() - 1; i++) {
-                            nuevoOBJListaPersonal = new ListaPersonal();
-                            nuevoOBJListaPersonal = listaListaPersonal.get(i);
-                            nuevOBJNotificaciones.setClaveTDestino(new Personal(nuevoOBJListaPersonal.getClave()));
-                            nuevOBJNotificaciones = ejbCreate.agregarNotificacion(nuevOBJNotificaciones);
-                        }
-                        Messages.addGlobalInfo("Mensaje enviado a:" + nombreO);
                         break;
                 }
             }

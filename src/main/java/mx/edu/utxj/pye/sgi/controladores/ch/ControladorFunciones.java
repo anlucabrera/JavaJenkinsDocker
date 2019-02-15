@@ -68,16 +68,15 @@ public class ControladorFunciones implements Serializable {
     @Getter    @Setter    private List<listaCat> listaCategoriasEspecificas = new ArrayList<>();
     @Getter    @Setter    private listaCat nuevOBJlistaCategoriasEspecificas, nuevOBJlistaCategoriasEspecificas2;
 //@EJB   
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbFunciones ejbFunciones;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbDatosUsuarioLogeado;
 //@Inject
     @Inject    ControladorEmpleado controladorEmpleado;
 
     @PostConstruct
-    public void init() {
-        System.out.println("ControladorFunciones Inicio: " + System.currentTimeMillis());
+    public void init() {        
         claveArea = 0;
         listaClavesEmpleados.clear();
         usuario = controladorEmpleado.getEmpleadoLogeado();
@@ -85,8 +84,7 @@ public class ControladorFunciones implements Serializable {
         listalistaEstatus.add(new listaEstatus(0, "Pendiente"));
         listalistaEstatus.add(new listaEstatus(1, "Resuelta"));
         claveCategoria2 = 1;
-        usuarioLogeado();
-        System.out.println(" ControladorFunciones Fin: " + System.currentTimeMillis());
+        usuarioLogeado();        
     }
 
     public void mostrarListaCategorias() {
@@ -122,11 +120,11 @@ public class ControladorFunciones implements Serializable {
             listaCategorias.clear();
             listaPersonalJefes.clear();
 
-            nuevoOBJListaPersonalLogeado = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeado(usuario);
-            nuveOBJPersonalParaFunciones = ejbDatosUsuarioLogeado.mostrarPersonalLogeado(usuario);
+            nuevoOBJListaPersonalLogeado = ejbPersonal.mostrarListaPersonal(usuario);
+            nuveOBJPersonalParaFunciones = ejbPersonal.mostrarPersonalLogeado(usuario);
 
-            listaListaPersonalSubordinados = ejbDatosUsuarioLogeado.mostrarListaSubordinados(nuevoOBJListaPersonalLogeado);
-            listaPersonalJefes = ejbSelectec.mostrarListaDePersonalParaJefes(nuevoOBJListaPersonalLogeado.getAreaOperativa());
+            listaListaPersonalSubordinados = ejbPersonal.mostrarListaPersonalListSubordinados(nuevoOBJListaPersonalLogeado);
+            listaPersonalJefes = ejbPersonal.mostrarListaPersonalSubordinados(nuevoOBJListaPersonalLogeado.getAreaOperativa());
 
             for (int i = 0; i <= listaListaPersonalSubordinados.size() - 1; i++) {
                 nuevoOBJListaPersonalSub = listaListaPersonalSubordinados.get(i);
@@ -380,9 +378,9 @@ public class ControladorFunciones implements Serializable {
             listaClavesEmpleados.stream().forEach(l -> {
                 try {
                     Integer clave = Integer.parseInt(l);
-                    nuveOBJPersonalActualizacion = ejbDatosUsuarioLogeado.mostrarPersonalLogeado(clave);
+                    nuveOBJPersonalActualizacion = ejbPersonal.mostrarPersonalLogeado(clave);
                     nuveOBJPersonalActualizacion.setCategoriaEspecifica(nuveOBJCategoriasespecificasfuncionesValorAg);
-                    nuveOBJPersonalActualizacion = ejbDatosUsuarioLogeado.actualizarPersonal(nuveOBJPersonalActualizacion);
+                    nuveOBJPersonalActualizacion = ejbPersonal.actualizarPersonal(nuveOBJPersonalActualizacion);
                 } catch (Throwable ex) {
                     Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -460,7 +458,7 @@ public class ControladorFunciones implements Serializable {
 
     public void onRowEditPersonal(RowEditEvent event) {
         try {
-            ejbDatosUsuarioLogeado.actualizarPersonal((Personal) event.getObject());
+            ejbPersonal.actualizarPersonal((Personal) event.getObject());
             usuarioLogeado();
             Messages.addGlobalInfo("¡¡Operación exitosa!!");
         } catch (Throwable ex) {

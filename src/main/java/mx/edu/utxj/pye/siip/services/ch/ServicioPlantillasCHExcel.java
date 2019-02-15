@@ -15,7 +15,6 @@ import lombok.Getter;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
-import mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec;
 import mx.edu.utxj.pye.siip.interfaces.ch.EjbPlantillasCHExcel;
 import mx.edu.utxj.pye.siip.interfaces.ch.EjbComisionesAcademicas;
 import mx.edu.utxj.pye.siip.interfaces.ch.EjbProgramasEstimulos;
@@ -23,6 +22,7 @@ import mx.edu.utxj.pye.siip.interfaces.ch.EjbPersonalCapacitado;
 //import org.jxls.common.Context;
 //import org.jxls.util.JxlsHelper;
 import net.sf.jxls.transformer.XLSTransformer;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 
 /**
  *
@@ -40,7 +40,7 @@ public class ServicioPlantillasCHExcel implements EjbPlantillasCHExcel{
     EjbCatalogos ejbCatalogos;
   
     @EJB
-    EjbSelectec ejbSelectec;
+    EjbPersonal ejbSelectec;
     
     @EJB
     EjbComisionesAcademicas ejbComisionesAcademicas;

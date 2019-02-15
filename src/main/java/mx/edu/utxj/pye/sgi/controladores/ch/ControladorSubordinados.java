@@ -95,7 +95,8 @@ public class ControladorSubordinados implements Serializable {
 
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbFunciones ejbFunciones;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbDatosUsuarioLogeado;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbTecnologia ejbTecnologia;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPremios ejbPremios;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbEducacion ejbEducacion;
@@ -106,8 +107,7 @@ public class ControladorSubordinados implements Serializable {
     @Inject    UtilidadesCH utilidadesCH;
 
     @PostConstruct
-    public void init() {
-        System.out.println("ControladorSubordinados Inicio: " + System.currentTimeMillis());
+    public void init() {        
         estatus.clear();
         estatus.add("Aceptado");
         estatus.add("Denegado");
@@ -131,8 +131,7 @@ public class ControladorSubordinados implements Serializable {
         visible = false;
         mostrarContactosParaNotificacion();
         modulosEventos();
-        mostrarIncidencias(mes);
-        System.out.println("ControladorSubordinados Fin: " + System.currentTimeMillis());
+        mostrarIncidencias(mes);        
     }
 
     public void modulosEventos() {
@@ -150,11 +149,7 @@ public class ControladorSubordinados implements Serializable {
             fechaFR = new Date(); 
             String m="",a="",d="";
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            if (modulosRegistro != null) {
-                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.modulosEventos(1)"+fechaActual.compareTo(modulosRegistro.getFechaInicio()));
-                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.modulosEventos(2)"+fechaActual.compareTo(modulosRegistro.getFechaFin()));
-                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.modulosEventos(3)"+(fechaActual.compareTo(modulosRegistro.getFechaInicio()) >= 0));
-                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.modulosEventos(4)"+(fechaActual.compareTo(modulosRegistro.getFechaFin()) <= 0));
+            if (modulosRegistro != null) {                                                                
                 if ((fechaActual.compareTo(modulosRegistro.getFechaInicio()) >= 0) && (fechaActual.compareTo(modulosRegistro.getFechaFin()) <= 0)) {
                     fechaReportesActiva=true;
                     if (modulosRegistro.getFechaFin().getDate() > 15) {
@@ -192,8 +187,7 @@ public class ControladorSubordinados implements Serializable {
 
                     listaIncapacidadsReporteImpresion = new ArrayList<>();
                     listaIncapacidadsReporteImpresion.clear();
-                    incapacidads = ejbNotificacionesIncidencias.mostrarIncapacidadReporte(fechaIR, fechaFR);
-                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.modulosEventos()"+incapacidads.size());
+                    incapacidads = ejbNotificacionesIncidencias.mostrarIncapacidadReporte(fechaIR, fechaFR);                    
                     if (!incapacidads.isEmpty()) {
                         incapacidads.forEach((t) -> {
                             if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
@@ -225,9 +219,9 @@ public class ControladorSubordinados implements Serializable {
     public void mostrarPerfilSubordinado() {
         try {
             nuevoOBJPersonal = new Personal();
-            nuevoOBJInformacionAdicionalPersonal = ejbDatosUsuarioLogeado.mostrarInformacionAdicionalPersonalLogeado(contactoDestino);
-            nuevoOBJListaPersonal = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeado(contactoDestino);
-            nuevoOBJPersonal = ejbDatosUsuarioLogeado.mostrarPersonalLogeado(contactoDestino);
+            nuevoOBJInformacionAdicionalPersonal = ejbPersonal.mostrarInformacionAdicionalPersonalLogeado(contactoDestino);
+            nuevoOBJListaPersonal = ejbPersonal.mostrarListaPersonal(contactoDestino);
+            nuevoOBJPersonal = ejbPersonal.mostrarPersonalLogeado(contactoDestino);
             informacionCV();
             mostrarFuncioneSubordinado();
         } catch (Throwable ex) {
@@ -319,8 +313,8 @@ public class ControladorSubordinados implements Serializable {
     public void mostrarContactosParaNotificacion() {
         try {
             nuevoOBJListaPersonalLogeado = new ListaPersonal();
-            nuevoOBJListaPersonalLogeado = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeado(empleadoLogeado);
-            nuevaListaListaPersonal = ejbDatosUsuarioLogeado.mostrarListaSubordinados(nuevoOBJListaPersonalLogeado);
+            nuevoOBJListaPersonalLogeado = ejbPersonal.mostrarListaPersonal(empleadoLogeado);
+            nuevaListaListaPersonal = ejbPersonal.mostrarListaPersonalListSubordinados(nuevoOBJListaPersonalLogeado);
             for (int i = 0; i <= nuevaListaListaPersonal.size() - 1; i++) {
                 nuevoOBJListaPersonalFiltro = nuevaListaListaPersonal.get(i);
                 if (Objects.equals(nuevoOBJListaPersonalFiltro.getClave(), nuevoOBJListaPersonalLogeado.getClave())) {
@@ -425,9 +419,7 @@ public class ControladorSubordinados implements Serializable {
                         listaCuidados.add(t);
                     }
                 });
-            }
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.mostrarIncidencias(1)"+listaIncidencias.size());
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.mostrarIncidencias(2)"+listaIncapacidads.size());
+            }                        
             Ajax.update("@(form)");
             Ajax.update("@(form)");
         } catch (Throwable ex) {

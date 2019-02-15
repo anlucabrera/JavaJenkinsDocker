@@ -13,11 +13,11 @@ import javax.inject.Named;
 import javax.servlet.http.Part;
 import mx.edu.utxj.pye.sgi.controladores.ch.CvEducacion;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
-import mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado;
 import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.RowEditEvent;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
 
 @Named
 @ViewScoped
@@ -26,7 +26,7 @@ public class UtilidadesCH implements Serializable {
     @EJB
     EjbCarga carga;
     @EJB
-    private EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    private EjbUtilidadesCH ejbDatosUsuarioLogeado;
 
     public Integer obtenerEdad(Date fechaNa) {
         try {

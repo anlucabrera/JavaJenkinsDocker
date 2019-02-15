@@ -28,7 +28,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 
 @Named
@@ -49,22 +48,20 @@ public class HistoricoPlantillaPersonalEstadistica implements Serializable {
     @Getter    @Setter    private Historicoplantillapersonal nuevoHistoricoplantillapersonal;
     @Getter    @Setter    private List<Historicoplantillapersonal> nuevaListaHistoricoplantillapersonal=new ArrayList<>();
 
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbDatosUsuarioLogeado;
+  
     @PostConstruct
-    public void init() {          
-        System.out.println("ExelPlantillaPersonal Inicio: " + System.currentTimeMillis());
+    public void init() {
         listaHistoricos();
         try {
             nuevaListaListaPersonal.clear();
             nuevoOBJListaListaPersonal = new ListaPersonal();
-
-            nuevaListaListaPersonal = ejbSelectec.mostrarListaDeEmpleados();
+            nuevaListaListaPersonal = ejbPersonal.mostrarListaDeEmpleados();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(HistoricoPlantillaPersonalEstadistica.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("ExelPlantillaPersonal Fin: " + System.currentTimeMillis());
     }
 
     public void generarPlantillaPersoanl() {
@@ -184,7 +181,7 @@ public class HistoricoPlantillaPersonalEstadistica implements Serializable {
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Error de entrada/salida");
         }
-        
+
         try {
             nuevoHistoricoplantillapersonal = new Historicoplantillapersonal();
             nuevoHistoricoplantillapersonal.setRutaArchivo(direccionDescarga);
@@ -211,11 +208,11 @@ public class HistoricoPlantillaPersonalEstadistica implements Serializable {
     }
 
     public String convertirRuta(File file) {
-     return "evidencias2/evidenciasCapitalHumano/PlantillaPersonal".concat(file.toURI().toString().split("config")[1]);
+        return "evidencias2/evidenciasCapitalHumano/PlantillaPersonal".concat(file.toURI().toString().split("config")[1]);
     }
-    
+
     public void listaHistoricos() {
-         try {
+        try {
             nuevaListaHistoricoplantillapersonal.clear();
             nuevaListaHistoricoplantillapersonal = ejbDatosUsuarioLogeado.mostrarHistoricoplantillapersonal();
         } catch (Throwable ex) {
@@ -223,6 +220,4 @@ public class HistoricoPlantillaPersonalEstadistica implements Serializable {
             Logger.getLogger(HistoricoPlantillaPersonalEstadistica.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
 }

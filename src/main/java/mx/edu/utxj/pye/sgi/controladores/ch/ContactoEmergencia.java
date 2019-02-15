@@ -35,7 +35,7 @@ public class ContactoEmergencia implements Serializable {
     @Getter    StreamedContent content;
 //@EJB    
     @EJB    EjbCarga carga;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado; 
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal personal; 
 //@Inject
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesCH calculaEdad;
@@ -54,7 +54,7 @@ public class ContactoEmergencia implements Serializable {
         try {
             ces = new ArrayList<>();
             ces.clear();
-            ces = ejbDatosUsuarioLogeado.mostrarContactosEmergencias(controladorEmpleado.getEmpleadoLogeado());
+            ces = personal.mostrarContactosEmergencias(controladorEmpleado.getEmpleadoLogeado());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ContactoEmergencia.class.getName()).log(Level.SEVERE, null, ex);
@@ -68,7 +68,7 @@ public class ContactoEmergencia implements Serializable {
         try {
             contactoEmergencia.setClavePersonal(new Personal());
             contactoEmergencia.getClavePersonal().setClave(controladorEmpleado.getEmpleadoLogeado());
-            contactoEmergencia = ejbDatosUsuarioLogeado.crearContactosEmergencias(contactoEmergencia);
+            contactoEmergencia = personal.crearContactosEmergencias(contactoEmergencia);
             contactoEmergencia = new ContactoEmergencias();
             Messages.addGlobalInfo("¡Operación exitosa!!");
             consultarContactos();
@@ -81,7 +81,7 @@ public class ContactoEmergencia implements Serializable {
     public void actualizarContactoEmergencia(RowEditEvent event) {
         try {
             ContactoEmergencias actualizarD = (ContactoEmergencias) event.getObject();
-            ejbDatosUsuarioLogeado.actualizarContactosEmergencias(actualizarD);
+            personal.actualizarContactosEmergencias(actualizarD);
             Messages.addGlobalInfo("¡Operación exitosa!!");
             consultarContactos();
         } catch (Throwable ex) {
@@ -92,7 +92,7 @@ public class ContactoEmergencia implements Serializable {
 
     public void eliminarEmergencia(ContactoEmergencias ce) {
         try {
-            ejbDatosUsuarioLogeado.eliminarContactosEmergencias(ce);
+            personal.eliminarContactosEmergencias(ce);
             Messages.addGlobalInfo("¡Operación exitosa!!");
             consultarContactos();
         } catch (Throwable ex) {

@@ -66,9 +66,7 @@ public class CvProduccion implements Serializable {
 
     @PostConstruct
     public void init() {
-        System.out.println("ControladorProduccionPersonal Inicio: " + System.currentTimeMillis());
         usuario = controladorEmpleado.getEmpleadoLogeado();
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorProduccionPersonal.init()" + usuario);
         nuevaListaArticulosp.clear();
         nuevaListaLibrosPub.clear();
         nuevaListaMemoriaspub.clear();
@@ -82,7 +80,6 @@ public class CvProduccion implements Serializable {
         nuevOBJInvestigaciones = new Investigaciones();
 
         mostrarListas();
-        System.out.println("ControladorProduccionPersonal Fin: " + System.currentTimeMillis());
     }
 
     public void reiniciarValores() {

@@ -43,21 +43,19 @@ public class ExelPlantillaPersonal implements Serializable {
     @Getter    @Setter    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     @Getter    @Setter    String sin = "", pp = "", direccionDescarga = "";
 
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
 
     @PostConstruct
     public void init() {
-        System.out.println("ExelPlantillaPersonal Inicio: " + System.currentTimeMillis());
         try {
             nuevaListaListaPersonal.clear();
             nuevoOBJListaListaPersonal = new ListaPersonal();
 
-            nuevaListaListaPersonal = ejbSelectec.mostrarListaDeEmpleados();
+            nuevaListaListaPersonal = ejbPersonal.mostrarListaDeEmpleados();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ExelPlantillaPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("ExelPlantillaPersonal Fin: " + System.currentTimeMillis());
     }
 
     public void generarPlantillaPersoanl() {
@@ -172,7 +170,6 @@ public class ExelPlantillaPersonal implements Serializable {
 
             LOGGER.log(Level.INFO, "Archivo creado exitosamente en {0}", archivo.getAbsolutePath());
             direccionDescarga = convertirRuta(archivo);
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ExelPlantillaPersonal.generarPlantillaPersoanl()"+direccionDescarga);
         } catch (FileNotFoundException ex) {
             LOGGER.log(Level.SEVERE, "Archivo no localizable en sistema de archivos");
         } catch (IOException ex) {

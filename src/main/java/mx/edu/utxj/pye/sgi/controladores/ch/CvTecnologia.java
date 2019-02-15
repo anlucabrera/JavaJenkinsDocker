@@ -53,7 +53,6 @@ public class CvTecnologia implements Serializable{
 
     @PostConstruct
     public void init() {
-        System.out.println("ControladorTecnologia Inicio: " + System.currentTimeMillis());
         usuario = controladorEmpleado.getEmpleadoLogeado();
         claveTrabajador = controladorEmpleado.getClavePersonalLogeado();
 
@@ -66,7 +65,6 @@ public class CvTecnologia implements Serializable{
         nuevaListaInnovaciones.clear();
 
         listaConsultas();
-        System.out.println("ControladorTecnologia Fin: " + System.currentTimeMillis());
     }
 
     public void reiniciarValores() {

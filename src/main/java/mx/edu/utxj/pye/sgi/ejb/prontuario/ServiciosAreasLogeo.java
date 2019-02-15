@@ -34,6 +34,13 @@ public class ServiciosAreasLogeo implements EjbAreasLogeo {
         List<AreasUniversidad> pr = q.getResultList();
         return pr;
     }
+    
+    @Override
+    public List<AreasUniversidad> mostrarAllAreasUniversidad() throws Throwable {
+        TypedQuery<AreasUniversidad> q = em.createQuery("SELECT a FROM AreasUniversidad a", AreasUniversidad.class);
+        List<AreasUniversidad> pr = q.getResultList();
+        return pr;
+    }
     @Override
     public AreasUniversidad mostrarAreasUniversidad(Short areaId) throws Throwable {
         facade.setEntityClass(AreasUniversidad.class);

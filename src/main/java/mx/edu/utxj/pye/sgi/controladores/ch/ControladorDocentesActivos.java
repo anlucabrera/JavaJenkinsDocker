@@ -66,23 +66,20 @@ public class ControladorDocentesActivos implements Serializable {
     @Getter    @Setter    private List<Idiomas> idiomases = new ArrayList<>();
     @Getter    @Setter    private List<Lenguas> lenguases = new ArrayList<>();
     
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbEducacion ejbEducacion;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbHabilidades ejbHabilidades;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPremios ejbPremios;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbTecnologia ejbTecnologia;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbProduccionProfecional ejbProduccionProfecional;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbDatosUsuarioLogeado;
     
     @Inject    ControladorEmpleado controladorEmpleado;
      
     @PostConstruct
-    public void init() {
-        System.out.println("ControladorPersonal Inicio: " + System.currentTimeMillis());
-        generarListasAreas();
-        System.out.println("ControladorPersonal Fin: " + System.currentTimeMillis());
+    public void init() {        
+        generarListasAreas();        
     }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -92,7 +89,7 @@ public class ControladorDocentesActivos implements Serializable {
 
             personalsD.clear();
 
-            ejbSelectec.mostrarListaDeEmpleados().forEach((p) -> {
+            ejbPersonal.mostrarListaDeEmpleados().forEach((p) -> {
                 if (p.getActividad() == 3) {
                     if (p.getCategoriaOperativa() != 41) {
                         personalsD.add(p);
@@ -114,14 +111,14 @@ public class ControladorDocentesActivos implements Serializable {
             listaPersonal = new ListaPersonal();
             informacionAdicionalPersonal = new InformacionAdicionalPersonal();
 
-            personal = ejbDatosUsuarioLogeado.mostrarPersonalLogeado(docenteBusqueda);
-            listaPersonal = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeado(docenteBusqueda);
-            informacionAdicionalPersonal = ejbDatosUsuarioLogeado.mostrarInformacionAdicionalPersonalLogeado(docenteBusqueda);
+            personal = ejbPersonal.mostrarPersonalLogeado(docenteBusqueda);
+            listaPersonal = ejbPersonal.mostrarListaPersonal(docenteBusqueda);
+            informacionAdicionalPersonal = ejbPersonal.mostrarInformacionAdicionalPersonalLogeado(docenteBusqueda);
 
             if(informacionAdicionalPersonal == null){
             informacionAdicionalPersonal = new InformacionAdicionalPersonal();
             informacionAdicionalPersonal.setAutorizacion(false);
-                informacionAdicionalPersonal=ejbDatosUsuarioLogeado.crearNuevoInformacionAdicionalPersonal(informacionAdicionalPersonal);
+                informacionAdicionalPersonal=ejbPersonal.crearNuevoInformacionAdicionalPersonal(informacionAdicionalPersonal);
             }            
             informacionCV();
 

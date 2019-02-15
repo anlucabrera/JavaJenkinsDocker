@@ -28,7 +28,6 @@ import lombok.Getter;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
-import mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
@@ -54,6 +53,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 
 /**
  *
@@ -94,7 +94,7 @@ public class ServicioPlantillasCAExcel implements EjbPlantillasCAExcel {
     @EJB  EjbDesercionReprobacion ejbDesercionReprobacion;
 
     @EJB
-    EjbSelectec ejbSelectec;
+    EjbPersonal ejbSelectec;
 
     public static final String PROGPERTCALIDAD_PLANTILLA = "programasPertCalidad.xlsx";
     public static final String PROGPERTCALIDAD_ACTUALIZADO = "programasPertCalidad_actualizado.xlsx";

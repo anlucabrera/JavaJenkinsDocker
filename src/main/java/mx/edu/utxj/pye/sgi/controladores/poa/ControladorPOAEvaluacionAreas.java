@@ -189,6 +189,7 @@ public class ControladorPOAEvaluacionAreas implements Serializable {
     public void resetearValores() {
         actividadesPoaEditando = new ActividadesPoa();
         actividadMadre = new ActividadesPoa();
+        listaEstrategiaActividadesesEje=new ArrayList<>();
         listaEstrategiaActividadesesEje.clear();
     }
     

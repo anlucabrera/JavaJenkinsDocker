@@ -63,7 +63,7 @@ public class ControladorPersonalReporteRegistros implements Serializable {
     @Getter    @Setter    private Integer total;
     @Getter    @Setter    private String tipo;
     
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbSelectec;
     
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbEducacion ejbEducacion;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbHabilidades ejbHabilidades;
@@ -72,10 +72,8 @@ public class ControladorPersonalReporteRegistros implements Serializable {
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbProduccionProfecional ejbProduccionProfecional;
     
     @PostConstruct
-    public void init() {
-        System.out.println("ControladorPersonalReporteRegistros Inicio: " + System.currentTimeMillis());
-        generarReporte();
-        System.out.println("ControladorPersonalReporteRegistros Fin: " + System.currentTimeMillis());
+    public void init() {      
+        generarReporte();      
     }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   

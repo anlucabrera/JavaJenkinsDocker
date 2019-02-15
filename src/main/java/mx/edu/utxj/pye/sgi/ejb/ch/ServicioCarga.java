@@ -5,7 +5,6 @@
  */
 package mx.edu.utxj.pye.sgi.ejb.ch;
 
-import com.itextpdf.text.log.SysoLogger;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

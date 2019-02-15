@@ -26,15 +26,13 @@ public class ControladorEstadisticaPersonal implements Serializable {
 
     @Getter    @Setter    private List<ListaPersonal> nuevaVistaListaPersonal = new ArrayList<>();
      
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbSelectec;
     
     @Inject    ControladorEmpleado controladorEmpleado;
 
     @PostConstruct
-    public void init() {
-        System.out.println("ControladorPersonalAltasYBajas Inicio: " + System.currentTimeMillis());
-mostrarPlantillaPersonal();
-        System.out.println("ControladorPersonalAltasYBajas Fin: " + System.currentTimeMillis());
+    public void init() {        
+mostrarPlantillaPersonal();        
     }
     
     public void mostrarPlantillaPersonal() {

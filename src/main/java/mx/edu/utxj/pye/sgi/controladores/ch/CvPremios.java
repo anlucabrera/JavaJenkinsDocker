@@ -45,14 +45,12 @@ public class CvPremios implements Serializable{
     @Inject    UtilidadesCH utilidadesCH;
     
     @PostConstruct
-    public void init() {
-        System.out.println("ControladorPremiosyDistinciones Inicio: " + System.currentTimeMillis());
+    public void init() {        
         usuario = controladorEmpleado.getEmpleadoLogeado();
         claveTrabajador = controladorEmpleado.getClavePersonalLogeado();
         nuevoOBJDistinciones = new Distinciones();
         nuevaListaDistinciones.clear();
-        distincionesRegistradas();
-        System.out.println("ControladorPremiosyDistinciones Fin: " + System.currentTimeMillis());
+        distincionesRegistradas();        
     }
 
     public void distincionesRegistradas() {

@@ -30,7 +30,7 @@ import org.omnifaces.util.Messages;
 public class Organigrama implements Serializable {
 
     private static final long serialVersionUID = 2288964212463101066L;
-    
+
     @Getter    @Setter    private ListaPersonal nuevoEmpleado;
     @Getter    @Setter    private Personal nuevoEmpleadoFunciones;
     @Getter    @Setter    private List<ListaPersonal> nuevaListaPersonal = new ArrayList<>();
@@ -38,12 +38,12 @@ public class Organigrama implements Serializable {
     @Getter    @Setter    private List<Funciones> listaDFunciones = new ArrayList<>();
     @Getter    @Setter    private List<String> nuevaListaFuncionesGenerales = new ArrayList<>();
     @Getter    @Setter    private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    @Getter    @Setter    private Integer  sub = 0, sec = 0, ptc = 0, pda = 0, lab = 0;
-    @Getter    @Setter    private Short  area=0,catO=0,catE=0;
+    @Getter    @Setter    private Integer sub = 0, sec = 0, ptc = 0, pda = 0, lab = 0;
+    @Getter    @Setter    private Short area = 0, catO = 0, catE = 0;
     @Getter    @Setter    private String fechaI;
-    
 
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbDatosUsuarioLogeado;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo areasLogeo;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbFunciones ejbFunciones;
 
@@ -80,25 +80,17 @@ public class Organigrama implements Serializable {
                 Ajax.oncomplete("PF('datos').hide();");
             } else {
                 nuevoEmpleado = new ListaPersonal();
-                nuevoEmpleado = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeado(clave);
-                nuevoEmpleadoFunciones = ejbDatosUsuarioLogeado.mostrarPersonalLogeado(nuevoEmpleado.getClave());
+                nuevoEmpleado = ejbPersonal.mostrarListaPersonal(clave);
+                nuevoEmpleadoFunciones = ejbPersonal.mostrarPersonalLogeado(nuevoEmpleado.getClave());
                 areasUniversidad = new AreasUniversidad();
                 areasUniversidad = areasLogeo.mostrarAreasUniversidad(nuevoEmpleado.getAreaOperativa());
                 if (areasUniversidad.getCategoria().getDescripcion().equals("Área Académica")) {
-                    pda = 0;
-                    ptc = 0;
-                    sec = 0;
-                    lab = 0;
+                    pda = 0;                    ptc = 0;                    sec = 0;                    lab = 0;
                     pda = ejbDatosUsuarioLogeado.mostrarListaPersonalCategoriasAreas(Short.parseShort("30"), nuevoEmpleado.getAreaOperativa());
                     ptc = ejbDatosUsuarioLogeado.mostrarListaPersonalCategoriasAreas(Short.parseShort("32"), nuevoEmpleado.getAreaOperativa());
                     sec = ejbDatosUsuarioLogeado.mostrarListaPersonalCategoriasAreas(Short.parseShort("34"), nuevoEmpleado.getAreaOperativa());
                     lab = ejbDatosUsuarioLogeado.mostrarListaPersonalCategoriasAreas(Short.parseShort("41"), nuevoEmpleado.getAreaOperativa());
-                    sub=lab+pda+ptc+sec;
-                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.Organigrama.nodeSelectListener(pda)"+pda);
-                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.Organigrama.nodeSelectListener(ptc)"+ptc);
-                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.Organigrama.nodeSelectListener(sec)"+sec);
-                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.Organigrama.nodeSelectListener(lab)"+lab);
-                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.Organigrama.nodeSelectListener(sub)"+sub);
+                    sub = lab + pda + ptc + sec;
                 }
                 fechaI = dateFormat.format(nuevoEmpleado.getFechaIngreso());
                 buscaFunciones();
@@ -108,29 +100,27 @@ public class Organigrama implements Serializable {
 
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
-            Logger.getLogger(OrganigramView4.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Organigrama.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void buscaFunciones() {
         try {
-            area=0;
-            catO=0;
-            catE=0;
+            area = 0;            catO = 0;            catE = 0;
             nuevaListaFuncionesGenerales.clear();
             nuevaListaFuncionesEspecificas.clear();
             if (nuevoEmpleado.getCategoriaOperativa() == 111) {
-                catO=33;
-            }else{
-                catO=nuevoEmpleado.getCategoriaOperativa();
+                catO = 33;
+            } else {
+                catO = nuevoEmpleado.getCategoriaOperativa();
             }
             if ((nuevoEmpleado.getAreaSuperior() >= 23 && nuevoEmpleado.getAreaSuperior() <= 50) || (nuevoEmpleado.getAreaOperativa() >= 23 && nuevoEmpleado.getAreaOperativa() <= 50)) {
                 area = 61;
             } else {
                 area = nuevoEmpleado.getAreaOperativa();
             }
-            catE=nuevoEmpleadoFunciones.getCategoriaEspecifica().getCategoriaEspecifica();
-            listaDFunciones = ejbFunciones.mostrarListaFuncionesPersonalLogeado(area,catO,catE);
+            catE = nuevoEmpleadoFunciones.getCategoriaEspecifica().getCategoriaEspecifica();
+            listaDFunciones = ejbFunciones.mostrarListaFuncionesPersonalLogeado(area, catO, catE);
             if (listaDFunciones.isEmpty()) {
                 Messages.addGlobalWarn("Sin información de funciones");
             } else {
@@ -147,7 +137,7 @@ public class Organigrama implements Serializable {
             listaDFunciones.clear();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(OrganigramView4.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Organigrama.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

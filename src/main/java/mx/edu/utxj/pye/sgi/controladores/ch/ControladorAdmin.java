@@ -15,14 +15,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
-import mx.edu.utxj.pye.sgi.ejb.poa.FacadePoaService;
 import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreas;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreasPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
@@ -49,22 +47,20 @@ public class ControladorAdmin implements Serializable {
 
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo areasLogeo;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbUtilidadesCH;
 
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesCH utilidadesCH;
 
     @PostConstruct
-    public void init() {
-        System.out.println("ControladorSubordinados Inicio: " + System.currentTimeMillis());
+    public void init() {        
         estatus.clear();
         estatus.add("Aceptado");
         estatus.add("Denegado");
         estatus.add("Pendiente");
         mostrarIncidencias();
         mostrarModulos();
-        mostrarEventos();
-        System.out.println("ControladorSubordinados Fin: " + System.currentTimeMillis());
+        mostrarEventos();        
     }  
     
     public void mostrarEventos() {
@@ -76,8 +72,8 @@ public class ControladorAdmin implements Serializable {
             eventoses.clear();
             eventosesAreases.clear();
             
-            eventoses = ejbDatosUsuarioLogeado.mostrarEventoses();
-            eventosesAreases = ejbDatosUsuarioLogeado.mostrarEventosesAreases();
+            eventoses = ejbUtilidadesCH.mostrarEventoses();
+            eventosesAreases = ejbUtilidadesCH.mostrarEventosesAreases();
             areasLogeo.mostrarAreasUniversidad().forEach((a) -> {
                 if(a.getTienePoa()==true){
                     areasUniversidads.add(a);
@@ -96,7 +92,7 @@ public class ControladorAdmin implements Serializable {
             List<Modulosregistro> ms = new ArrayList<>();
             ms.clear();
 
-            ms = ejbDatosUsuarioLogeado.mostrarModulosregistrosGeneral();
+            ms = ejbUtilidadesCH.mostrarModulosregistrosGeneral();
             if (!ms.isEmpty()) {
                 if (controladorEmpleado.getNuevoOBJListaPersonal().getClave() == 564) {
                     modulosregistros.addAll(ms);
@@ -160,7 +156,7 @@ public class ControladorAdmin implements Serializable {
     public void onRowEditModulos(RowEditEvent event) {
         try {
             Modulosregistro m = (Modulosregistro) event.getObject();
-            ejbDatosUsuarioLogeado.actualizarModulosregistro(m);
+            ejbUtilidadesCH.actualizarModulosregistro(m);
             Messages.addGlobalInfo("¡Operación exitosa!");
             mostrarIncidencias();
             Ajax.update("frmModulos");
@@ -186,7 +182,7 @@ public class ControladorAdmin implements Serializable {
             
             eventosAreas.setEventos(new Eventos(cEve));
             eventosAreas.setEventosAreasPK(new EventosAreasPK(cEve, cAre));
-            ejbDatosUsuarioLogeado.actualizarEventosesAreases(eventosAreas);
+            ejbUtilidadesCH.actualizarEventosesAreases(eventosAreas);
             
             Messages.addGlobalInfo("¡Operación exitosa!");
             mostrarEventos();
@@ -198,12 +194,9 @@ public class ControladorAdmin implements Serializable {
     }
     
     public void eliminarEventoArea(EventosAreas ea) {
-        try {
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.eliminarIncidencia()");
-            
-            ejbDatosUsuarioLogeado.eliminarEventosesEventosAreas(ea);
-            mostrarEventos();
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.eliminarIncidencia()");
+        try {            
+                       ejbUtilidadesCH.eliminarEventosesEventosAreas(ea);
+            mostrarEventos();            
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
@@ -213,7 +206,7 @@ public class ControladorAdmin implements Serializable {
     public void onRowEditEventos(RowEditEvent event) {
         try {
             Eventos e = (Eventos) event.getObject();
-            ejbDatosUsuarioLogeado.actualizarEventoses(e);
+            ejbUtilidadesCH.actualizarEventoses(e);
             Messages.addGlobalInfo("¡Operación exitosa!");
             mostrarEventos();
             Ajax.update("frmEventos");
@@ -256,7 +249,7 @@ public class ControladorAdmin implements Serializable {
             
             eventosAreas.setEventos(new Eventos(eventoC));
             eventosAreas.setEventosAreasPK(new EventosAreasPK(eventoC, areaC));
-            ejbDatosUsuarioLogeado.agregarEventosesAreases(eventosAreas);
+            ejbUtilidadesCH.agregarEventosesAreases(eventosAreas);
             Messages.addGlobalInfo("¡Evento Agregado!");
             mostrarEventos();
         } catch (Throwable ex) {

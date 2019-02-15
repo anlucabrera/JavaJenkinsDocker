@@ -63,22 +63,21 @@ public class ControladorPersonalAltasYBajas implements Serializable {
     @Getter    @Setter    private Bitacoraacceso nuevaBitacoraacceso;
     @Getter    @Setter    private String nombreTabla, numeroRegistro, accion;
     
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbEducacion ejbEducacion; 
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbUtilidadesCH;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
     
     @Inject    ControladorEmpleado controladorEmpleado;
 
     @PostConstruct
-    public void init() {
-        System.out.println("ControladorPersonalAltasYBajas Inicio: " + System.currentTimeMillis());
+    public void init() {        
         usuario = controladorEmpleado.getEmpleadoLogeado();
         estatus.clear();
         estatus.add('B');
         estatus.add('R');
         nuevOBJPersonalSubordinado = new Personal();
-        generarListasAreas();
-        System.out.println("ControladorPersonalAltasYBajas Fin: " + System.currentTimeMillis());
+        generarListasAreas();        
     }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -104,13 +103,13 @@ public class ControladorPersonalAltasYBajas implements Serializable {
                 }
             });           
             Collections.sort(listareasSuperiores, (x, y) -> x.getNombre().compareTo(y.getNombre()));
-            listaGrados = ejbDatosUsuarioLogeado.mostrarListaGrados();
-            listaGeneros = ejbDatosUsuarioLogeado.mostrarListaGeneros();
-            listaActividades = ejbDatosUsuarioLogeado.mostrarListaActividades();
-            listaPersonalTotal = ejbSelectec.mostrarListaDeEmpleadosTotal();
-            listaPersonalBajas = ejbSelectec.mostrarListaDeEmpleadosBajas();
-            listaPersonalCategorias = ejbDatosUsuarioLogeado.mostrarListaPersonalCategorias();
-            listaContactoEmergencias=ejbDatosUsuarioLogeado.mostrarAllContactosEmergencias();
+            listaGrados = ejbEducacion.mostrarListaGrados();
+            listaGeneros = ejbPersonal.mostrarListaGeneros();
+            listaActividades = ejbPersonal.mostrarListaActividades();
+            listaPersonalTotal = ejbPersonal.mostrarListaPersonalsPorEstatus(1);
+            listaPersonalBajas = ejbPersonal.mostrarListaPersonalsPorEstatus(0);
+            listaPersonalCategorias = ejbUtilidadesCH.mostrarListaPersonalCategorias();
+            listaContactoEmergencias=ejbPersonal.mostrarAllContactosEmergencias();
             
             listaPersonalCategorias.forEach((t) -> {
                 if (t.getTipo().equals("Específica")) {                    
@@ -129,7 +128,7 @@ public class ControladorPersonalAltasYBajas implements Serializable {
 
     public void onRowEdit(RowEditEvent event) {
         try {
-            ejbDatosUsuarioLogeado.actualizarPersonal((Personal) event.getObject());
+            ejbPersonal.actualizarPersonal((Personal) event.getObject());
             Messages.addGlobalInfo("¡Operación exitosa!!");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -158,7 +157,7 @@ public class ControladorPersonalAltasYBajas implements Serializable {
             nuevOBJPersonalSubordinado.setSni(false);
             nuevOBJPersonalSubordinado.setPerfilProdep(false);
             nuevOBJPersonalSubordinado.getCategoriaEspecifica().setCategoriaEspecifica(Short.parseShort("1"));
-            ejbDatosUsuarioLogeado.crearNuevoPersonal(nuevOBJPersonalSubordinado);
+            ejbPersonal.crearNuevoPersonal(nuevOBJPersonalSubordinado);
 
             nombreTabla = "Personal";
             numeroRegistro = nuevOBJPersonalSubordinado.getClave().toString();
@@ -177,7 +176,7 @@ public class ControladorPersonalAltasYBajas implements Serializable {
             fechaN = "";
 
             listaPersonalTotal.clear();
-            listaPersonalTotal = ejbSelectec.mostrarListaDeEmpleadosTotal();
+            listaPersonalTotal = ejbPersonal.mostrarListaPersonalsPorEstatus(1);
             nuevOBJPersonalUltimoAgragado = listaPersonalTotal.get(listaPersonalTotal.size() - 1);
             claveUltimaEmpleado = nuevOBJPersonalUltimoAgragado.getClave();
 
@@ -194,7 +193,7 @@ public class ControladorPersonalAltasYBajas implements Serializable {
             nuevoOBJInformacionAdicionalPersonal.setClave(nuevOBJPersonalSubordinado.getClave());
             obtenerEdad();
             nuevoOBJInformacionAdicionalPersonal.setAutorizacion(false);
-            nuevoOBJInformacionAdicionalPersonal = ejbDatosUsuarioLogeado.crearNuevoInformacionAdicionalPersonal(nuevoOBJInformacionAdicionalPersonal);
+            nuevoOBJInformacionAdicionalPersonal = ejbPersonal.crearNuevoInformacionAdicionalPersonal(nuevoOBJInformacionAdicionalPersonal);
             nombreTabla = "Información Adicional";
             numeroRegistro = nuevoOBJInformacionAdicionalPersonal.getClave().toString();
             accion = "Create";
@@ -275,7 +274,7 @@ public class ControladorPersonalAltasYBajas implements Serializable {
             nuevaBitacoraacceso.setTabla(nombreTabla);
             nuevaBitacoraacceso.setAccion(accion);
             nuevaBitacoraacceso.setFechaHora(fechaActual);
-            nuevaBitacoraacceso = ejbDatosUsuarioLogeado.crearBitacoraacceso(nuevaBitacoraacceso);
+            nuevaBitacoraacceso = ejbUtilidadesCH.crearBitacoraacceso(nuevaBitacoraacceso);
 
             nombreTabla = "";
             numeroRegistro = "";

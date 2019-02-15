@@ -79,16 +79,15 @@ public class ControladorEmpleadoLogeado implements Serializable {
     @Getter    @Setter    private ListaPersonal nuevoOBJListaListaPersonal;
 
     @Getter    @Setter    private List<contactosChat> listacontactosChat = new ArrayList<>();
-    @Getter    @Setter    private contactosChat nuevOBJcontactosChat,nuevOBJcontactosChat2,nuevOBJcontactosChat3;
+    @Getter    @Setter    private contactosChat nuevOBJcontactosChat;
     @Getter    @Setter    private contactosChat nuevoOBJcontactosChatSelec = new contactosChat(0, "", 0);  
     @Getter    @Setter    private List<Integer> clavesContactosCChat = new ArrayList<>();
     @Getter    @Setter    private Personal nuevoOBJListaPersonalContacto,nuevoOBJListaPersonal;
     
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
     
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbFunciones ejbFunciones;    
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbEducacion ejbEducacion;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbHabilidades ejbHabilidades;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbTecnologia ejbTecnologia;
@@ -98,21 +97,19 @@ public class ControladorEmpleadoLogeado implements Serializable {
     @Inject    ControladorEmpleado controladorEmpleado;
 
     @PostConstruct
-    public void init() {
-        System.out.println("ControladorEmpleadoLogeado Inicio: " + System.currentTimeMillis());
+    public void init() {        
         empleadoLogeado = controladorEmpleado.getEmpleadoLogeado();
         nuevaListaFuncionesEspecificas.clear();
         nuevaListaFuncionesGenerales.clear();
         nuevoOBJFunciones = new Funciones();
         mostrarPerfilLogeado();
-        listaDoc();
-        System.out.println("ControladorEmpleadoLogeado Fin: " + System.currentTimeMillis());
+        listaDoc();        
     }
 
     public void listaDoc() {
         try {
             listaDocencias.clear();
-            listaDocencias = ejbDatosUsuarioLogeado.mostrarListaDocencias(empleadoLogeado);
+            listaDocencias = ejbPersonal.mostrarListaDocencias(empleadoLogeado);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorEmpleadoLogeado.class.getName()).log(Level.SEVERE, null, ex);
@@ -123,9 +120,9 @@ public class ControladorEmpleadoLogeado implements Serializable {
         try {
             nuevoOBJListaPersonal = new Personal();
 
-            nuevoOBJInformacionAdicionalPersonal = ejbDatosUsuarioLogeado.mostrarInformacionAdicionalPersonalLogeado(empleadoLogeado);
-            nuevoOBJListaListaPersonal = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeado(empleadoLogeado);
-            nuevoOBJListaPersonal = ejbDatosUsuarioLogeado.mostrarPersonalLogeado(empleadoLogeado);
+            nuevoOBJInformacionAdicionalPersonal = ejbPersonal.mostrarInformacionAdicionalPersonalLogeado(empleadoLogeado);
+            nuevoOBJListaListaPersonal = ejbPersonal.mostrarListaPersonal(empleadoLogeado);
+            nuevoOBJListaPersonal = ejbPersonal.mostrarPersonalLogeado(empleadoLogeado);
 
             if (nuevoOBJInformacionAdicionalPersonal==null) {
                 Messages.addGlobalFatal("Sin información complementaria para la clave " + empleadoLogeado);
@@ -267,7 +264,7 @@ public class ControladorEmpleadoLogeado implements Serializable {
             listacontactosChat.clear();
             clavesContactosCChat.clear();
 
-            nuevaListaPersonalContacto = ejbSelectec.mostrarListaDeEmpleadosTotalActivos();
+            nuevaListaPersonalContacto = ejbPersonal.mostrarListaPersonalsPorEstatus(1);
             for (int i = 0; i <= nuevaListaPersonalContacto.size() - 1; i++) {
                 nuevoOBJListaPersonalContacto = new Personal();
                 nuevoOBJListaPersonalContacto = nuevaListaPersonalContacto.get(i);

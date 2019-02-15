@@ -74,7 +74,7 @@ public class LogonMB extends AdminSession implements Serializable {
 
     @EJB private EjbLogin ejbLogin;
     @EJB private Facade f;    
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbDatosUsuarioLogeado;
  //accede al controlador que da permisos a los usuarios
     @Inject permisosUsuarios pUsuarios;
     /*Cuando saiiut falle hacer

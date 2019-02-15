@@ -12,10 +12,10 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
-import mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado;
 import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
 
 @Named
 @ViewScoped
@@ -25,7 +25,7 @@ public class POAUtilidades implements Serializable {
     @Getter    @Setter    private Integer mes=0;
     
     @EJB    EjbCarga carga;
-    @EJB    private EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    @EJB    private EjbUtilidadesCH ejbDatosUsuarioLogeado;
 
     public Short obtenerejercicioFiscal(String tipo, Integer resta) {
         try {

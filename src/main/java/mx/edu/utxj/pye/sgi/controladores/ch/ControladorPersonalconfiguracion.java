@@ -18,7 +18,6 @@ import org.omnifaces.cdi.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
-import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
@@ -57,20 +56,18 @@ public class ControladorPersonalconfiguracion implements Serializable {
     @Getter    StreamedContent content;
     
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbUtilidadesCH;
     @EJB    EjbCarga carga;
     @PostConstruct
-    public void init() {
-        System.out.println("ControladorPersonalconfiguracion Inicio: " + System.currentTimeMillis());
+    public void init() {       
         estatus=new ArrayList<>();
         estatus.clear();
         estatus.add("0");
         estatus.add("1");
         nuevoOBJAreasUniversidad = new AreasUniversidad();
         nuevoOBJPersonalCategorias=new PersonalCategorias();
-        generarListas();
-        System.out.println("ControladorPersonalconfiguracion Fin: " + System.currentTimeMillis());
+        generarListas();       
     }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,11 +85,11 @@ public class ControladorPersonalconfiguracion implements Serializable {
             nuevaListaPersonals.clear();
             listPersonal.clear();
 
-            nuevaListaPersonalCategoriases = ejbDatosUsuarioLogeado.mostrarListaPersonalCategorias();
-            nuevaListaPersonalsFotosFaltantes = ejbSelectec.mostrarListaDeEmpleados();
-            nuevaListaAreasUniversidads = ejbAreasLogeo.mostrarAreasUniversidad();
-            listPersonal = ejbSelectec.mostrarListaDeEmpleadosTotalActivos();
-            nuevaListaPersonals = ejbSelectec.mostrarListaDeEmpleados();
+            nuevaListaPersonalCategoriases = ejbUtilidadesCH.mostrarListaPersonalCategorias();
+            nuevaListaPersonalsFotosFaltantes = ejbPersonal.mostrarListaDeEmpleados();
+            nuevaListaAreasUniversidads = ejbAreasLogeo.mostrarAllAreasUniversidad();
+            listPersonal = ejbPersonal.mostrarListaPersonalsPorEstatus(1);
+            nuevaListaPersonals = ejbPersonal.mostrarListaDeEmpleados();
             nuevaListaCategoriases = ejbAreasLogeo.mostrarCategorias();
 
             empleadoActual = nuevaListaPersonals.iterator();
@@ -147,7 +144,7 @@ public class ControladorPersonalconfiguracion implements Serializable {
 
     public void crearNuevasPersonalCategorias() {
         try {
-            nuevoOBJPersonalCategorias = ejbDatosUsuarioLogeado.crearNuevoPersonalCategorias(nuevoOBJPersonalCategorias);
+            nuevoOBJPersonalCategorias = ejbUtilidadesCH.crearNuevoPersonalCategorias(nuevoOBJPersonalCategorias);
             Messages.addGlobalInfo("¡Operación exitosa!!");
             generarListas();
         } catch (Throwable ex) {
@@ -185,11 +182,10 @@ public class ControladorPersonalconfiguracion implements Serializable {
     }
   
     public String responsable(Integer clave) {
-        try {
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonalconfiguracion.responsable()" + clave);
+        try {           
             if (clave != null) {
                 ListaPersonal listaPersonal = new ListaPersonal();
-                listaPersonal = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeado(clave);
+                listaPersonal = ejbPersonal.mostrarListaPersonal(clave);
                 if (listaPersonal == null) {
                     return "";
                 } else {
@@ -209,9 +205,9 @@ public class ControladorPersonalconfiguracion implements Serializable {
             Personal p = new Personal();
             Personal p2 = new Personal();
             p = (Personal) event.getObject();
-            p2 = ejbDatosUsuarioLogeado.mostrarPersonalLogeado(p.getClave());
+            p2 = ejbPersonal.mostrarPersonalLogeado(p.getClave());
             p2.setCategoria360(new PersonalCategorias(p.getCategoria360().getCategoria()));
-            ejbDatosUsuarioLogeado.actualizarPersonal(p2);
+            ejbPersonal.actualizarPersonal(p2);
             generarListas();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());

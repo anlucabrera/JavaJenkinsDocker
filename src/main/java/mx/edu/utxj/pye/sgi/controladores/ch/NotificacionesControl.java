@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,7 +47,7 @@ public class NotificacionesControl implements Serializable {
     @Getter    @Setter    private ContactosChat nuevoOBJcontactosChatSelec = new ContactosChat(0, "", 0);  
     @Getter    @Setter    private List<Integer> clavesContactosCChat = new ArrayList<>();
     
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbSelectec;
     
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
 
@@ -56,18 +55,16 @@ public class NotificacionesControl implements Serializable {
 
     @PostConstruct
     public void init() {
-        System.out.println("ControladorEmpleadoLogeado Inicio: " + System.currentTimeMillis());
         empleadoLogeado = controladorEmpleado.getEmpleadoLogeado();
         mostrarContactosParaNotificacion();
         mostrarNotificacionesLogeado();
-        System.out.println("ControladorEmpleadoLogeado Fin: " + System.currentTimeMillis());
     }
 
     public void mostrarContactosParaNotificacion() {
         try {
             nuevaListaPersonalContacto = new ArrayList<>();
             nuevaListaPersonalContacto.clear();
-            nuevaListaPersonalContacto = ejbSelectec.mostrarListaDeEmpleadosTotalActivos();
+            nuevaListaPersonalContacto = ejbSelectec.mostrarListaPersonalsPorEstatus(1);
 
             pIterator = nuevaListaPersonalContacto.iterator();
             while (pIterator.hasNext()) {
@@ -126,12 +123,12 @@ public class NotificacionesControl implements Serializable {
             Logger.getLogger(NotificacionesControl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-     
+
     public String actualizaF(Date fechaMensaje) {
-        DateFormat fMensaje=new SimpleDateFormat("EEE d MMM yyyy HH:mm");   
-        
+        DateFormat fMensaje = new SimpleDateFormat("EEE d MMM yyyy HH:mm");
         return fMensaje.format(fechaMensaje);
     }
+
     public void mostrarNotificacionesLogeado() {
         try {
             if (nuevoOBJcontactosChatSelec.getClave() == 0) {
@@ -141,12 +138,11 @@ public class NotificacionesControl implements Serializable {
                 contactoDestino = nuevoOBJcontactosChatSelec.getClave();
                 nombreContacto = nuevoOBJcontactosChatSelec.getNombre();
             }
-            
+
             notificacioneses = new ArrayList<>();
             notificacioneses.clear();
             notificacioneses = ejbNotificacionesIncidencias.mostrarListaDenotificacionesPorUsuario(controladorEmpleado.getNuevoOBJListaPersonal().getClave());
             if (!notificacioneses.isEmpty()) {
-                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.notificacionesControl.mostrarNotificacionesLogeado(1)" + notificacioneses.size());
                 nIterator = notificacioneses.iterator();
                 while (nIterator.hasNext()) {
                     Notificaciones n = nIterator.next();
@@ -161,7 +157,6 @@ public class NotificacionesControl implements Serializable {
                         nIterator.remove();
                     }
                 }
-                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.notificacionesControl.mostrarNotificacionesLogeado(2)" + notificacioneses.size());
             }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -192,7 +187,7 @@ public class NotificacionesControl implements Serializable {
     }
 
     public class ContactosChat {
-       
+
         @Getter        @Setter        private int clave;
         @Getter        @Setter        private String nombre;
         @Getter        @Setter        private int estatus;

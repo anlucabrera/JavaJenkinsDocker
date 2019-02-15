@@ -3,7 +3,6 @@ package mx.edu.utxj.pye.sgi.controladores.ch;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -69,8 +68,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
     @Inject    UtilidadesCH utilidadesCH;
 
     @PostConstruct
-    public void init() {
-        System.out.println("ControladorIncidenciasPersonal Inicio: " + System.currentTimeMillis());
+    public void init() {        
         fechaActual = new Date();
         tiempo = new Date(0, 0, 0, 0, 0);
         registro = true;
@@ -96,8 +94,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
         tiposCuidados.add("Maternos");
         
         usuario = controladorEmpleado.getEmpleadoLogeado();
-        mostrarLista();
-        System.out.println("ControladorIncidenciasPersonal Fin: " + System.currentTimeMillis());
+        mostrarLista();        
     }
 // ------------------------------------------------------------- Generales -------------------------------------------------------------
     public void onRowCancel(RowEditEvent event) {
@@ -140,8 +137,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
                 mes = "0" + (fechaActual.getMonth() + 1);
             } else {
                 mes = String.valueOf(fechaActual.getMonth() + 1);
-            }
-            System.out.println("dia " + fechaActual.getDate() + " mes" + fechaActual.getMonth());
+            }            
             if (fechaActual.getDate() <= 15) {
                 fechaI = dateFormatF.parse("01/" + mes + "/20" + (fechaActual.getYear() - 100));
                 fechaF = dateFormatF.parse("15/" + mes + "/20" + (fechaActual.getYear() - 100));
@@ -175,15 +171,13 @@ public class ControladorIncidenciasPersonal implements Serializable {
                         list2.add(t);
                     }
                 });
-            }
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.mostrarLista(1)"+numeroIN);
+            }            
             if (!list2.isEmpty()) {
                 Collections.sort(list2, (x, y) -> Integer.compare(x.getNumeroOficio(),y.getNumeroOficio()));
                 list2.forEach((t) -> {
                     numeroIN=t.getNumeroOficio();
                 });
-            }
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.mostrarLista(2)"+numeroIN);
+            }            
             nuevOBJIncidencias.setNumeroOficio((numeroIN+1));
 
         } catch (Throwable ex) {
@@ -197,13 +191,10 @@ public class ControladorIncidenciasPersonal implements Serializable {
         try {
             nuevOBJIncidencias.setClavePersonal(new Personal());
             nuevOBJIncidencias.getClavePersonal().setClave(usuario);
-            nuevOBJIncidencias.setEstatus("Pendiente");
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearIncidencia()"+nuevOBJIncidencias.getTipo());
+            nuevOBJIncidencias.setEstatus("Pendiente");            
             if ((tiempo.getHours() == 0 && tiempo.getMinutes() == 0) && (nuevOBJIncidencias.getTipo().equals("Retardo menor") || nuevOBJIncidencias.getTipo().equals("Retardo mayor") || nuevOBJIncidencias.getTipo().equals("Salida anticipada"))) {
                 Messages.addGlobalWarn("¡No puede registrar una incidencia con el tiempo 00:00!");
-            } else {
-                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearIncidencia()"+nuevOBJIncidencias.getTipo());
-                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearIncidencia()"+tiempo.getHours()+" - "+tiempo.getMinutes());
+            } else {                                
                 if (nuevOBJIncidencias.getNumeroOficio() != 0) {
                     switch (nuevOBJIncidencias.getTipo()) {
                         case "Inasistencia":
@@ -315,15 +306,13 @@ public class ControladorIncidenciasPersonal implements Serializable {
     }
 
     public void eliminarIncidencia(Incidencias incidencias) {
-        try {
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.eliminarIncidencia()");
+        try {            
             if (incidencias.getEvidencia() != null) {
                 CargaArchivosCH.eliminarArchivo(incidencias.getEvidencia());
             }
             utilidadesCH.agregaBitacora(usuario, incidencias.getIncidenciaID().toString(), "Incidencias", "Delate");
             ejbNotificacionesIncidencias.eliminarIncidencias(incidencias);
-            mostrarLista();
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.eliminarIncidencia()");
+            mostrarLista();            
             Ajax.update("@form");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -432,14 +421,12 @@ public class ControladorIncidenciasPersonal implements Serializable {
 // ------------------------------------------------------------- Cuidados -------------------------------------------------------------
 
     public void crearCuidado() {
-        try {
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearCuidado()");
+        try {            
             nuevOBJCuidados.setPersonal(new Personal());
             nuevOBJCuidados.getPersonal().setClave(usuario);
             nuevOBJCuidados.setNumero(numeroCU);
             Integer dias = (int) ((nuevOBJCuidados.getFechaFin().getTime() - nuevOBJCuidados.getFechaInicio().getTime()) / 86400000);
-            dias = dias + 1;
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearCuidado()" + dias);
+            dias = dias + 1;            
             nuevOBJCuidados.setNumeroDias(dias);
 
             nuevOBJCuidados = ejbNotificacionesIncidencias.agregarCuidados(nuevOBJCuidados);
@@ -447,8 +434,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
             nuevOBJCuidados = new Cuidados();
             Messages.addGlobalInfo("¡Operación exitosa!");
 
-            mostrarLista();
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearCuidado()");
+            mostrarLista();            
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);

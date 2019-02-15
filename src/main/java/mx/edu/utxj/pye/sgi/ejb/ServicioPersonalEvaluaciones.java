@@ -50,7 +50,7 @@ public class ServicioPersonalEvaluaciones implements EjbPersonalEvaluaciones {
 
     @Override
     public Map<PeriodosEscolares, List<Evaluaciones360Resultados>> getEvaluaciones360PorPeriodo(Personal personal, @NonNull List<PeriodosEscolares> periodos) {
-        TypedQuery<Evaluaciones360Resultados> q = f.getEntityManager().createQuery("SELECT r FROM Evaluaciones360Resultados r WHERE r.desempenioEvaluacionResultadosPK.evaluado =:evaluado", Evaluaciones360Resultados.class);
+        TypedQuery<Evaluaciones360Resultados> q = f.getEntityManager().createQuery("SELECT r FROM Evaluaciones360Resultados r WHERE r.evaluaciones360ResultadosPK.evaluado =:evaluado", Evaluaciones360Resultados.class);
         q.setParameter("evaluado", personal.getClave());
         List<Evaluaciones360Resultados> resultados = q.getResultList();
 

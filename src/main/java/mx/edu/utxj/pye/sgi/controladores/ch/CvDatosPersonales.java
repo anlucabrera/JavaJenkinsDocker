@@ -36,7 +36,7 @@ public class CvDatosPersonales implements Serializable {
     @Getter    StreamedContent content;
 //@EJB    
     @EJB    EjbCarga carga;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado; 
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal; 
 //@Inject
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesCH calculaEdad;
@@ -53,8 +53,8 @@ public class CvDatosPersonales implements Serializable {
      */
     public void consultarPerfil() {
         try {
-            nuevoOBJPersonal = ejbDatosUsuarioLogeado.mostrarPersonalLogeado(controladorEmpleado.getEmpleadoLogeado());
-            nuevoOBJInformacionAdicionalPersonal = ejbDatosUsuarioLogeado.mostrarInformacionAdicionalPersonalLogeado(controladorEmpleado.getEmpleadoLogeado());
+            nuevoOBJPersonal = ejbPersonal.mostrarPersonalLogeado(controladorEmpleado.getEmpleadoLogeado());
+            nuevoOBJInformacionAdicionalPersonal = ejbPersonal.mostrarInformacionAdicionalPersonalLogeado(controladorEmpleado.getEmpleadoLogeado());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(CvDatosPersonales.class.getName()).log(Level.SEVERE, null, ex);
@@ -69,9 +69,9 @@ public class CvDatosPersonales implements Serializable {
             nuevoOBJInformacionAdicionalPersonal.setEdad(calculaEdad.obtenerEdad(nuevoOBJPersonal.getFechaNacimiento()));
             if (nuevoOBJInformacionAdicionalPersonal.getClave() == null) {
                 nuevoOBJInformacionAdicionalPersonal.setClave(nuevoOBJPersonal.getClave());
-                nuevoOBJInformacionAdicionalPersonal = ejbDatosUsuarioLogeado.crearNuevoInformacionAdicionalPersonal(nuevoOBJInformacionAdicionalPersonal);
+                nuevoOBJInformacionAdicionalPersonal = ejbPersonal.crearNuevoInformacionAdicionalPersonal(nuevoOBJInformacionAdicionalPersonal);
             } else {
-                nuevoOBJInformacionAdicionalPersonal = ejbDatosUsuarioLogeado.actualizarInformacionAdicionalPersonal(nuevoOBJInformacionAdicionalPersonal);
+                nuevoOBJInformacionAdicionalPersonal = ejbPersonal.actualizarInformacionAdicionalPersonal(nuevoOBJInformacionAdicionalPersonal);
             }
             Messages.addGlobalInfo("¡Operación exitosa!!");
         } catch (Throwable ex) {

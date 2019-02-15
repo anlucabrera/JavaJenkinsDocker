@@ -76,7 +76,7 @@
                                         <h:form id="frmInciGeneral"> 
                                             <p:remoteCommand name="actualizarTabla" actionListener="#{controladorIncidenciasGeneral.imprimirValores()}" update="tblActividades" /> 
                                             <p:dataTable id="tblActividades"  value="#{controladorAdmin.listaIncidencias}"  var="incidencias"
-                                                         sortBy="#{incidencia.clavePersonal.areaOperativa}" expandableRowGroups="true"
+                                                         sortBy="#{incidencias.clavePersonal.areaSuperior}" expandableRowGroups="true"
                                                          editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
 
                                                 <p:ajax event="rowEdit" listener="#{controladorAdmin.onRowEdit}"  process="@this" update="@this" oncomplete="actualizarTabla()"/>
@@ -84,29 +84,29 @@
 
                                                 <p:headerRow>
                                                     <p:column colspan="8" style="background: #2796cb; color: #FFFFFF;">
-                                                        <h:outputText value="#{controladorAdmin.buscarArea(incidencias.clavePersonal.areaOperativa)}" />
+                                                        <h:outputText value="#{controladorIncidenciasGeneral.buscarArea(incidencias.clavePersonal.actividad.actividad eq 1?incidencias.clavePersonal.areaOperativa:incidencias.clavePersonal.areaSuperior)}" />
                                                     </p:column>
                                                 </p:headerRow>
 
-                                                <p:column headerText="Nomina" style="width: 6%;text-align: center;"
+                                                <p:column headerText="Nomina" style="width: 5%;text-align: center;"
                                                           sortBy="#{incidencias.clavePersonal.clave}" 
                                                           filterBy="#{incidencias.clavePersonal.clave}" 
                                                           filterMatchMode="contains">
                                                     <h:outputText value="#{incidencias.clavePersonal.clave}" />
                                                 </p:column>
-                                                <p:column headerText="Nombre" style="width: 20%;text-align: justify;"
+                                                <p:column headerText="Nombre" style="width: 15%;text-align: justify;"
                                                           sortBy="#{incidencias.clavePersonal.nombre}" 
                                                           filterBy="#{incidencias.clavePersonal.nombre}" 
                                                           filterMatchMode="contains">
                                                     <h:outputText value="#{incidencias.clavePersonal.nombre}" />
                                                 </p:column>        
-                                                <p:column headerText="Tipo"  style="width: 15%;text-align: center;"
-                                                          sortBy="#{incidencias.tipo}" 
-                                                          filterBy="#{incidencias.tipo}" 
+                                                <p:column headerText="Tipo"  style="width: 20%;text-align: center;"
+                                                          sortBy="#{incidencias.tipo}"
+                                                          filterBy="#{incidencias.tipo}"
                                                           filterMatchMode="contains">
                                                     <h:outputText value="#{incidencias.tipo}" />
                                                 </p:column>  
-                                                <p:column headerText="Justificación" style="text-align: justify;">
+                                                <p:column headerText="Justificación" style="text-align: justify; width: 30%">
                                                     <h:outputText value="#{incidencias.justificacion}" />
                                                 </p:column> 
                                                 <p:column headerText="Fecha" style="width: 10%">
@@ -130,10 +130,10 @@
                                                         </f:facet>
                                                     </p:cellEditor>
                                                 </p:column>     
-                                                <p:column headerText="Tiempo" style="width: 9%;text-align: center;">
+                                                <p:column headerText="Tiempo" style="width: 5%;text-align: center;">
                                                     <h:outputText value="#{incidencias.tiempo}" />
                                                 </p:column>  
-                                                <p:column style="width:32px;" class="noprint">
+                                                <p:column style="width:5%;" class="noprint">
                                                     <p:rowEditor />
                                                 </p:column>
                                             </p:dataTable>  
@@ -143,17 +143,17 @@
                                     <p:tab title="Opciones Incidencias">
                                         <h:form id="frmModulos"> 
                                             <p:outputPanel id="incidenciasReporte">
-                                                <p:dataTable id="tblActividades"  value="#{controladorAdmin.modulosregistros}"  var="modulos"
+                                                <p:dataTable id="tblReportes"  value="#{controladorAdmin.modulosregistros}"  var="modulos"
                                                              editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
 
-                                                    <p:ajax event="rowEdit" listener="#{controladorAdmin.onRowEditModulos}" update="tblActividades" process="@this"/>
-                                                    <p:ajax event="rowEditCancel" listener="#{controladorAdmin.onRowCancel}" update="tblActividades" />
+                                                    <p:ajax event="rowEdit" listener="#{controladorAdmin.onRowEditModulos}" update="tblReportes" process="@this"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{controladorAdmin.onRowCancel}" update="tblReportes" />
 
 
 
                                                     <p:column headerText="Nombre" style="width: 20%;text-align: justify;"
-                                                              sortBy="#{modulos.nombre}" 
-                                                              filterBy="#{modulos.nombre}" 
+                                                              sortBy="#{modulos.nombre}"
+                                                              filterBy="#{modulos.nombre}"
                                                               filterMatchMode="contains">
                                                         <h:outputText value="#{modulos.nombre}" />
                                                     </p:column>                                                     

@@ -91,6 +91,19 @@ public class ServiciosNotificacionesIncidencias implements EjbNotificacionesInci
         List<Incidencias> pr = q.getResultList();
         return pr;
     }
+    
+    @Override
+    public List<Incidencias> mostrarIncidenciasReportePendientes(Date fechaI, Date fechaF,Short area, Integer claveP) throws Throwable{
+        TypedQuery<Incidencias> q = em.createQuery("SELECT i FROM Incidencias i JOIN i.clavePersonal cp WHERE (cp.clave!=:clave) AND (i.estatus='Pendiente') AND (cp.areaOperativa=:areaO OR cp.areaSuperior=:areaS) AND (i.fecha BETWEEN :fechaI AND :frchaF) ORDER BY cp.areaOperativa , i.numeroOficio", Incidencias.class);
+        q.setParameter("clave", claveP);
+        q.setParameter("areaO", area);
+        q.setParameter("areaS", area);
+        q.setParameter("fechaI", fechaI);
+        q.setParameter("frchaF", fechaF);
+        q.setParameter("frchaF", fechaF);
+        List<Incidencias> pr = q.getResultList();
+        return pr;
+    }
 
     @Override
     public List<Incidencias> mostrarIncidencias(Integer clave) throws Throwable {

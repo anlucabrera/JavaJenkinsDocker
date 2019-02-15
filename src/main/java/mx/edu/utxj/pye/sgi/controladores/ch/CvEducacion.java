@@ -15,7 +15,6 @@ import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
-import mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbEducacion;
 import mx.edu.utxj.pye.sgi.entity.ch.Capacitacionespersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.CursosModalidad;
@@ -56,7 +55,6 @@ public class CvEducacion implements Serializable {
 // EJbs    
     @EJB    EjbCarga carga;
     @EJB    private EjbEducacion ejbEducacion;
-    @EJB    private EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
 //Injects
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesCH utilidadesCH;
@@ -348,9 +346,9 @@ public class CvEducacion implements Serializable {
     public void mostrarListas() {
         try {
             //Las listas son llenadas con los catálogos existentes en la BD.
-            listaGrados = ejbDatosUsuarioLogeado.mostrarListaGrados();
-            listaCursos = ejbDatosUsuarioLogeado.mostrarListaCursosTipo();
-            listaModalidades = ejbDatosUsuarioLogeado.mostrarListaCursosModalidad();
+            listaGrados = ejbEducacion.mostrarListaGrados();
+            listaCursos = ejbEducacion.mostrarListaCursosTipo();
+            listaModalidades = ejbEducacion.mostrarListaCursosModalidad();
 
             //Las listas son llenadas con los registros existentes del usuario logeado en la BD, esto mediante la recepción de su clave.
             nuevaListaFormacionAcademica = ejbEducacion.mostrarFormacionAcademica(usuario);

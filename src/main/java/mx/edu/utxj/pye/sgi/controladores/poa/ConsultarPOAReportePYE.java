@@ -20,12 +20,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.event.ValueChangeEvent;
-import mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
 
 @Named
 @ManagedBean
@@ -45,7 +46,7 @@ public class ConsultarPOAReportePYE implements Serializable {
     
     @EJB    EjbPoaSelectec poaSelectec;
     @EJB    EjbAreasLogeo ejbAreasLogeo;
-    @EJB    EjbDatosUsuarioLogeado edul;
+    @EJB    EjbPersonal ejbPersonal;
     @Inject    ControladorEmpleado controladorEmpleado;
 
     
@@ -81,7 +82,7 @@ public class ConsultarPOAReportePYE implements Serializable {
             areasUniversidad = new AreasUniversidad();
             listaPersonal = new ListaPersonal();
             areasUniversidad = ejbAreasLogeo.mostrarAreasUniversidad(Short.parseShort(event.getNewValue().toString()));
-            listaPersonal = edul.mostrarVistaListaPersonalLogeado(areasUniversidad.getResponsable());
+            listaPersonal = ejbPersonal.mostrarListaPersonal(areasUniversidad.getResponsable());
             consultarListasValidacionFinal();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());

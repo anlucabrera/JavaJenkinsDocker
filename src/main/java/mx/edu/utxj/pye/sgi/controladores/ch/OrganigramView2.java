@@ -55,7 +55,6 @@ public class OrganigramView2 implements Serializable {
 
     @PostConstruct
     public void init() {
-        System.out.println("OrganigramView2 Inicio: " + System.currentTimeMillis());
         selection = new DefaultOrganigramNode(null, "Ridvan Agar", null);
 
         ConsejoDirectivo = new DefaultOrganigramNode("root", "Consejo Directivo", null);
@@ -85,7 +84,6 @@ public class OrganigramView2 implements Serializable {
         DirecciónDePlaneaciónYEvaluación = addDivision(Rectoría, "Dirección De Planeación Y Evaluación");
         DepartamentoDeInformaciónYEstadística = addDivision2(DirecciónDePlaneaciónYEvaluación, "Departamento De Información Y Estadística", "Ridvan Agar");
         DepartamentoDeInformáticaYEducaciónADistancia = addDivision2(DirecciónDePlaneaciónYEvaluación, "Departamento De Informática Y Educación A Distancia", "Ridvan Agar");
-        System.out.println("OrganigramView2 Fin: " + System.currentTimeMillis());
     }
 
     protected OrganigramNode addDivision(OrganigramNode parent, String name, String... employees) {

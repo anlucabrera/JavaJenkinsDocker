@@ -34,15 +34,12 @@ public class ControladorSoporteTecnico implements Serializable {
 
 //@EJB 
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbCreate;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
 //@Inject
     @Inject    ControladorEmpleado controladorEmpleado;
 
     @PostConstruct
-    public void init() {
-        System.out.println("ControladorSoporteTecnico Inicio: " + System.currentTimeMillis());
-        usuario = controladorEmpleado.getEmpleadoLogeado();
-        System.out.println("ControladorSoporteTecnico Fin: " + System.currentTimeMillis());
+    public void init() {        
+        usuario = controladorEmpleado.getEmpleadoLogeado();        
     }
 
     public void agregarNotificacionMultiple() {

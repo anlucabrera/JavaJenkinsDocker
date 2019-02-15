@@ -3,9 +3,12 @@ package mx.edu.utxj.pye.sgi.ejb.ch;
 import java.util.List;
 import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.ch.Capacitacionespersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.CursosModalidad;
 import mx.edu.utxj.pye.sgi.entity.ch.CursosPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.CursosTipo;
 import mx.edu.utxj.pye.sgi.entity.ch.ExperienciasLaborales;
 import mx.edu.utxj.pye.sgi.entity.ch.FormacionAcademica;
+import mx.edu.utxj.pye.sgi.entity.ch.Grados;
 
 @Local
 public interface EjbEducacion {
@@ -30,7 +33,7 @@ public interface EjbEducacion {
 ////////////////////////////////////////////////////////////////////////////////Actualizacion Profecional
 
     public List<Capacitacionespersonal> mostrarCapacitacionespersonal(Integer claveTrabajador) throws Throwable;
-    
+
     public List<Capacitacionespersonal> mostrarCapacitacionespersonalTipo(Integer claveTrabajador, String tipo) throws Throwable;
 
     public Capacitacionespersonal crearNuevoCapacitacionespersonal(Capacitacionespersonal nuevoCapacitacionespersonal) throws Throwable;
@@ -41,4 +44,11 @@ public interface EjbEducacion {
 
 ////////////////////////////////////////////////////////////////////////////////Cursos Personal
     public List<CursosPersonal> mostrarCursosPersonal(Integer claveTrabajador) throws Throwable;
+
+    ////////////////////////////////////////////////////////////////////////////////Catalogos
+    public List<Grados> mostrarListaGrados() throws Throwable;
+
+    public List<CursosTipo> mostrarListaCursosTipo() throws Throwable;
+
+    public List<CursosModalidad> mostrarListaCursosModalidad() throws Throwable;
 }

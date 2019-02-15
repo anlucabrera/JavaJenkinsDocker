@@ -2,13 +2,10 @@ package mx.edu.utxj.pye.sgi.controladores.ch;
 
 import java.io.File;
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -104,7 +101,7 @@ public class ControladorPersonal implements Serializable {
     @Getter    @Setter    private Bitacoraacceso nuevaBitacoraacceso;
     @Getter    @Setter    private String nombreTabla, numeroRegistro, accion;
     
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbFunciones ejbFunciones;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbEducacion ejbEducacion;
@@ -112,15 +109,13 @@ public class ControladorPersonal implements Serializable {
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPremios ejbPremios;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbTecnologia ejbTecnologia;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbProduccionProfecional ejbProduccionProfecional;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbUtilidadesCH;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
     
     @Inject    ControladorEmpleado controladorEmpleado;
      
     @PostConstruct
-    public void init() {
-        System.out.println("ControladorPersonal Inicio: " + System.currentTimeMillis());
+    public void init() {        
         usuario = controladorEmpleado.getEmpleadoLogeado();
         estatus.clear();
         estatus.add("Aceptado");
@@ -130,8 +125,7 @@ public class ControladorPersonal implements Serializable {
         nuevaListaFuncionesGenerales.clear();
         nuevoOBJFunciones = new Funciones();
         mostrarContactosParaNotificacion();
-        generarListasAreas();
-        System.out.println("ControladorPersonal Fin: " + System.currentTimeMillis());
+        generarListasAreas();        
     }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -155,9 +149,9 @@ public class ControladorPersonal implements Serializable {
             });
 
             Collections.sort(listareasSuperiores, (x, y) -> x.getNombre().compareTo(y.getNombre()));
-            listaGrados = ejbDatosUsuarioLogeado.mostrarListaGrados();
-            listaActividades = ejbDatosUsuarioLogeado.mostrarListaActividades();
-            listaPersonalCategorias = ejbDatosUsuarioLogeado.mostrarListaPersonalCategorias();
+            listaGrados = ejbEducacion.mostrarListaGrados();
+            listaActividades = ejbPersonal.mostrarListaActividades();
+            listaPersonalCategorias = ejbUtilidadesCH.mostrarListaPersonalCategorias();
             
             listaPersonalCategorias.forEach((t) -> {
                 if (t.getTipo().equals("Específica")) {
@@ -176,9 +170,9 @@ public class ControladorPersonal implements Serializable {
             nuevaListaInformacionAdicionalPersonalSubordinado.clear();
             listaPersonalSubordinado.clear();
 
-            nuevoOBJInformacionAdicionalPersonal = ejbDatosUsuarioLogeado.mostrarInformacionAdicionalPersonalLogeado(contactoDestino);
-            nuevOBJPersonalSubordinado = ejbDatosUsuarioLogeado.mostrarPersonalLogeado(contactoDestino);
-            nuevoOBJListaPersonal = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeado(contactoDestino);
+            nuevoOBJInformacionAdicionalPersonal = ejbPersonal.mostrarInformacionAdicionalPersonalLogeado(contactoDestino);
+            nuevOBJPersonalSubordinado = ejbPersonal.mostrarPersonalLogeado(contactoDestino);
+            nuevoOBJListaPersonal = ejbPersonal.mostrarListaPersonal(contactoDestino);
 
             informacionCV();
             mostrarFuncioneSubordinado();
@@ -199,7 +193,7 @@ public class ControladorPersonal implements Serializable {
     public void mostrarContactosParaNotificacion() {
         try {
             listaPersonal.clear();
-            listaPersonal = ejbSelectec.mostrarListaDeEmpleadosTotalActivos();
+            listaPersonal = ejbPersonal.mostrarListaPersonalsPorEstatus(1);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorPersonal.class.getName()).log(Level.SEVERE, null, ex);
@@ -442,7 +436,7 @@ public class ControladorPersonal implements Serializable {
             nuevOBJPersonalSubordinado.getCategoria360().setCategoria(categoria360);
             nuevOBJPersonalSubordinado.getGrado().setGrado(grado);
 
-            ejbDatosUsuarioLogeado.actualizarPersonal(nuevOBJPersonalSubordinado);
+            ejbPersonal.actualizarPersonal(nuevOBJPersonalSubordinado);
             nombreTabla = "Personal";
             numeroRegistro = nuevOBJPersonalSubordinado.getClave().toString();
             accion = "Update";
@@ -606,7 +600,7 @@ public class ControladorPersonal implements Serializable {
             nuevaBitacoraacceso.setTabla(nombreTabla);
             nuevaBitacoraacceso.setAccion(accion);
             nuevaBitacoraacceso.setFechaHora(fechaActual);
-            nuevaBitacoraacceso = ejbDatosUsuarioLogeado.crearBitacoraacceso(nuevaBitacoraacceso);
+            nuevaBitacoraacceso = ejbUtilidadesCH.crearBitacoraacceso(nuevaBitacoraacceso);
 
             nombreTabla = "";
             numeroRegistro = "";

@@ -7,9 +7,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.ch.Capacitacionespersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.CursosModalidad;
 import mx.edu.utxj.pye.sgi.entity.ch.CursosPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.CursosTipo;
 import mx.edu.utxj.pye.sgi.entity.ch.ExperienciasLaborales;
 import mx.edu.utxj.pye.sgi.entity.ch.FormacionAcademica;
+import mx.edu.utxj.pye.sgi.entity.ch.Grados;
+
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
 @Stateful
@@ -137,4 +141,27 @@ public class ServiciosEducacion implements EjbEducacion {
         List<CursosPersonal> pr = q.getResultList();
         return pr;
     }
+    ////////////////////////////////////////////////////////////////////////////////Catalogos
+
+    @Override
+    public List<Grados> mostrarListaGrados() throws Throwable {
+        TypedQuery<Grados> q = em.createQuery("SELECT g FROM Grados g", Grados.class);
+        List<Grados> pr = q.getResultList();
+        return pr;
+    }
+
+    @Override
+    public List<CursosTipo> mostrarListaCursosTipo() throws Throwable {
+        TypedQuery<CursosTipo> q = em.createQuery("SELECT c FROM CursosTipo c", CursosTipo.class);
+        List<CursosTipo> pr = q.getResultList();
+        return pr;
+    }
+
+    @Override
+    public List<CursosModalidad> mostrarListaCursosModalidad() throws Throwable {
+        TypedQuery<CursosModalidad> q = em.createQuery("SELECT c FROM CursosModalidad c", CursosModalidad.class);
+        List<CursosModalidad> pr = q.getResultList();
+        return pr;
+    }
+
 }

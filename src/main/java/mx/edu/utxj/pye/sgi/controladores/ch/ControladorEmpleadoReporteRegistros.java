@@ -63,12 +63,10 @@ public class ControladorEmpleadoReporteRegistros implements Serializable {
     @Getter    @Setter    private reporteRegistros listareporteRegistros;
     @Getter    @Setter    private Integer total;
     @Getter    @Setter    private String tipo,area;
-    
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
-    
+        
     @Inject    ControladorEmpleado controladorEmpleado;
     
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbEducacion ejbEducacion;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbHabilidades ejbHabilidades;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbTecnologia ejbTecnologia;
@@ -76,10 +74,8 @@ public class ControladorEmpleadoReporteRegistros implements Serializable {
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbProduccionProfecional ejbProduccionProfecional;
     
     @PostConstruct
-    public void init() {
-        System.out.println("ControladorEmpleadoReporteRegistros Inicio: " + System.currentTimeMillis());
-        generarReporte();
-        System.out.println(" ControladorEmpleadoReporteRegistros Fin: " + System.currentTimeMillis());
+    public void init() {        
+        generarReporte();        
     }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
@@ -164,9 +160,9 @@ public class ControladorEmpleadoReporteRegistros implements Serializable {
             nuevaVistaListaPersonal.clear();
             nuevoOBJListaPersonal = new ListaPersonal();
 
-            nuevoOBJListaPersonal = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeado(controladorEmpleado.getEmpleadoLogeado());
+            nuevoOBJListaPersonal = ejbPersonal.mostrarListaPersonal(controladorEmpleado.getEmpleadoLogeado());
             area = nuevoOBJListaPersonal.getAreaOperativaNombre();
-            nuevaVistaListaPersonal = ejbDatosUsuarioLogeado.mostrarListaSubordinados(nuevoOBJListaPersonal);
+            nuevaVistaListaPersonal = ejbPersonal.mostrarListaPersonalListSubordinados(nuevoOBJListaPersonal);
             nuevoOBJListaPersonal = new ListaPersonal();
             for (int i = 0; i <= nuevaVistaListaPersonal.size() - 1; i++) {
                 nuevoOBJListaPersonal = nuevaVistaListaPersonal.get(i);

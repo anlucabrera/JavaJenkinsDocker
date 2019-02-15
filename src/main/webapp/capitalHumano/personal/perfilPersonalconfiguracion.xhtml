@@ -163,7 +163,13 @@
                                                         <p:dataTable id="tblDistinciones" value="#{controladorPersonalconfiguracion.nuevaListaAreasUniversidads}"
                                                                      paginator="true" rows="15" rowsPerPageTemplate="15,20,25,30" emptyMessage="No se encontraron registros" rendered="true"
                                                                      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                                                     var="area" editable="true" >
+                                                                     var="area" editable="true" sortBy="#{area.categoria.categoria}" expandableRowGroups="true">
+
+                                                            <p:headerRow>
+                                                                <p:column colspan="5" styleClass="est">
+                                                                    <h:outputText value="#{area.categoria.descripcion}"/>
+                                                                </p:column>
+                                                            </p:headerRow>    
 
                                                             <p:ajax event="rowEdit" listener="#{controladorPersonalconfiguracion.onRowEditModulos}" update="tblDistinciones" process="@this"/>
                                                             <p:ajax event="rowEditCancel" listener="#{controladorPersonalconfiguracion.onRowCancel}" update="tblDistinciones" />
@@ -175,14 +181,6 @@
                                                                       filterMatchMode="contains"
                                                                       style="width: 8%">
                                                                 <h:outputText value="#{area.area}"/>
-                                                            </p:column>
-
-                                                            <p:column headerText="Categoria" 
-                                                                      filterBy="#{area.categoria.descripcion}" 
-                                                                      sortBy="#{area.categoria.descripcion}" 
-                                                                      filterMatchMode="contains"
-                                                                      style="width: 15%">
-                                                                <h:outputText value="#{area.categoria.descripcion}" />
                                                             </p:column>
 
                                                             <p:column headerText="Nombre" 
@@ -289,7 +287,13 @@
                                                 <p:dataTable id="tblDistinciones" value="#{controladorPersonalconfiguracion.nuevaListaPersonalCategoriases}"
                                                              paginator="true" rows="15" rowsPerPageTemplate="15,20,25,30" emptyMessage="No se encontraron registros" rendered="true"
                                                              paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                                             var="distincion">
+                                                             var="distincion" sortBy="#{distincion.tipo}" expandableRowGroups="true">
+
+                                                    <p:headerRow>
+                                                        <p:column colspan="2" styleClass="est">
+                                                            <h:outputText value="#{distincion.tipo eq 'Específica'?'360°':'Genérica'}"/>
+                                                        </p:column>
+                                                    </p:headerRow>       
 
                                                     <p:column headerText="Clave" 
                                                               filterBy="#{distincion.categoria}" 
@@ -298,22 +302,12 @@
                                                               style="width: 10%">
                                                         <h:outputText value="#{distincion.categoria}" />
                                                     </p:column>
-
                                                     <p:column headerText="Nombre" 
                                                               filterBy="#{distincion.nombre}" 
                                                               sortBy="#{distincion.nombre}" 
                                                               filterMatchMode="contains" >
                                                         <h:outputText value="#{distincion.nombre}" />
                                                     </p:column>
-
-                                                    <p:column headerText="Tipo" 
-                                                              filterBy="#{distincion.tipo}" 
-                                                              sortBy="#{distincion.tipo}" 
-                                                              filterMatchMode="contains" 
-                                                              style="width: 20%">
-                                                        <h:outputText value="#{distincion.tipo}" />
-                                                    </p:column>
-
                                                 </p:dataTable>     
                                             </p:outputPanel>
                                         </h:form>
@@ -383,10 +377,17 @@
                                     </p:tab>
                                     <p:tab title="Personal 360">  
                                         <h:form id="frmListaper360">
-                                            <p:dataTable id="tblcat360" var="perosnalFoto" value="#{controladorPersonalconfiguracion.listPersonal}"
+                                            <p:dataTable id="tblcat360" var="perosnalCategorias" value="#{controladorPersonalconfiguracion.listPersonal}"
                                                          rows="10" paginator="true" editable="true" 
                                                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                         rowsPerPageTemplate="10,20,30">
+                                                         rowsPerPageTemplate="10,20,30" sortBy="#{perosnalCategorias.areaSuperior}" expandableRowGroups="true">
+
+                                                <p:headerRow>
+                                                    <p:column colspan="7" styleClass="est">
+                                                        <h:outputText value="#{controladorIncidenciasGeneral.buscarArea(perosnalCategorias.actividad.actividad eq 1?perosnalCategorias.areaOperativa:perosnalCategorias.areaSuperior)}" />
+                                                    </p:column>
+                                                </p:headerRow>       
+
 
                                                 <f:facet name="header">
                                                     Plantilla Perosnal
@@ -397,35 +398,35 @@
 
                                                 <p:columnGroup type="header">
                                                     <p:row class="success">
-                                                        <p:column headerText="No." style="width: 4%; background-color: #cccccc; color: #000000;" sortBy="#{perosnalFoto.clave}" />
-                                                        <p:column headerText="Foto" style="width: 10%; background-color: #cccccc; color: #000000;" sortBy="#{perosnalFoto.clave}" />
-                                                        <p:column headerText="Nombre." style="width: 15%; background-color: #cccccc; color: #000000;" sortBy="#{perosnalFoto.nombre}" />
-                                                        <p:column headerText="Área" style="background-color: #cccccc; color: #000000;" sortBy="#{perosnalFoto.areaOperativa}" />
-                                                        <p:column headerText="Cat. OP" style="background-color: #cccccc; color: #000000;" sortBy="#{perosnalFoto.categoriaOperativa.categoria}" />
-                                                        <p:column headerText="Cat. 360°" style="background-color: #cccccc; color: #000000;" sortBy="#{perosnalFoto.categoria360.categoria}" />
+                                                        <p:column headerText="No." style="width: 4%; background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.clave}" />
+                                                        <p:column headerText="Foto" style="width: 10%; background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.clave}" />
+                                                        <p:column headerText="Nombre." style="width: 15%; background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.nombre}" />
+                                                        <p:column headerText="Área" style="background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.areaOperativa}" />
+                                                        <p:column headerText="Cat. OP" style="background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.categoriaOperativa.categoria}" />
+                                                        <p:column headerText="Cat. 360°" style="background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.categoria360.categoria}" />
                                                         <p:column class="noprint" style="width: 5%; background-color: #cccccc; color: #000000;"/>
                                                     </p:row>
                                                 </p:columnGroup>
                                                 <p:column> 
-                                                    <h:outputText value="#{perosnalFoto.clave}" />
+                                                    <h:outputText value="#{perosnalCategorias.clave}" />
                                                 </p:column>
                                                 <p:column> 
-                                                    <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{perosnalFoto.clave}.jpg" alt="#{perosnalFoto.clave}" class="img-circle" title="Personal #{perosnalFoto.clave}" style="width: 80px; height: 80px; align-content: center;"/>
+                                                    <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{perosnalCategorias.clave}.jpg" alt="#{perosnalCategorias.clave}" class="img-circle" title="Personal #{perosnalCategorias.clave}" style="width: 80px; height: 80px; align-content: center;"/>
                                                 </p:column>
                                                 <p:column> 
-                                                    <h:outputText value="#{perosnalFoto.nombre}" />
+                                                    <h:outputText value="#{perosnalCategorias.nombre}" />
                                                 </p:column>
                                                 <p:column> 
-                                                    <h:outputText value="#{controladorPersonalconfiguracion.nombreArea(perosnalFoto.areaOperativa)}" />
+                                                    <h:outputText value="#{controladorPersonalconfiguracion.nombreArea(perosnalCategorias.areaOperativa)}" />
                                                 </p:column>
                                                 <p:column> 
-                                                    <h:outputText value="#{perosnalFoto.categoriaOperativa.nombre}" />
+                                                    <h:outputText value="#{v.categoriaOperativa.nombre}" />
                                                 </p:column>
                                                 <p:column> 
                                                     <p:cellEditor>
-                                                        <f:facet name="output"><h:outputText value="#{perosnalFoto.categoria360.nombre}" /></f:facet>
+                                                        <f:facet name="output"><h:outputText value="#{perosnalCategorias.categoria360.nombre}" /></f:facet>
                                                         <f:facet name="input">
-                                                            <h:selectOneMenu value="#{perosnalFoto.categoria360.categoria}" style="width:100%">
+                                                            <h:selectOneMenu value="#{perosnalCategorias.categoria360.categoria}" style="width:100%">
                                                                 <f:selectItems value="#{controladorPersonalconfiguracion.nuevaListaPersonalCategoriases360}" var="cat" itemLabel="#{cat.nombre}" itemValue="#{cat.categoria}" />
                                                             </h:selectOneMenu>
                                                         </f:facet>

@@ -28,6 +28,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
 import mx.edu.utxj.pye.sgi.entity.ch.Notificaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Messages;
 
 @Named
@@ -68,16 +69,16 @@ public class ControladorEmpleado implements Serializable {
     @Getter    @Setter    private Date fechaI = new Date();
     @Getter    @Setter    private Date fechaF = new Date();
             
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbSelectec ejbSelectec;
 
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbUtilidadesCH;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
     @Inject    LogonMB logonMB;
+    @Inject    UtilidadesCH uch;
 
     @PostConstruct
-    public void init() {
-        System.out.println("ControladorEmpleado Inicio: " + System.currentTimeMillis());
+    public void init() {        
         // Comentar la siguiente asignación cuando saiiut falle//
         empleadoLogeado = Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
 //      empleadoLogeado = Integer.parseInt(logonMB.getListaUsuarioClaveNominaShiro().getClaveNomina());
@@ -90,8 +91,7 @@ public class ControladorEmpleado implements Serializable {
         informacionComplementariaAEmpleadoLogeado();
         procesoElectoral();
         areaPoa();
-        llenaListaPaises();
-        System.out.println(" ControladorEmpleado Fin: " + System.currentTimeMillis());
+        llenaListaPaises();        
     }
 
     public void informacionComplementariaAEmpleadoLogeado() {
@@ -108,27 +108,13 @@ public class ControladorEmpleado implements Serializable {
                 mes = "0" + (fechaActual.getMonth() + 1);
             } else {
                 mes = String.valueOf(fechaActual.getMonth() + 1);
-            }
-            System.out.println("dia " + fechaActual.getDate() + " mes" + fechaActual.getMonth());
+            }            
 
             fechaI = dateFormatF.parse("01/" + mes + "/20" + (fechaActual.getYear() - 100));
             fechaF = dateFormatF.parse("31/" + mes + "/20" + (fechaActual.getYear() - 100));
 
-            if (!ejbNotificacionesIncidencias.mostrarIncidenciasReporte(fechaI, fechaF).isEmpty()) {
-                ejbNotificacionesIncidencias.mostrarIncidenciasReporte(fechaI, fechaF).forEach((t) -> {
-                    if (t.getEstatus().equals("Pendiente")) {
-                        if (nuevoOBJListaPersonal.getAreaOperativa() == t.getClavePersonal().getAreaOperativa()) {
-                            incidenciases.add(t);
-                        } else {
-                            if (nuevoOBJListaPersonal.getAreaOperativa() == t.getClavePersonal().getAreaSuperior()) {
-                                incidenciases.add(t);
-                            }
-                        }
-                    }
-                });
-            }
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.informacionComplementariaAEmpleadoLogeado()"+incidenciases.size());
-            listaDocencias = ejbDatosUsuarioLogeado.mostrarListaDocencias(empleadoLogeado);
+            incidenciases=ejbNotificacionesIncidencias.mostrarIncidenciasReportePendientes(fechaI, fechaF,nuevoOBJListaPersonal.getAreaOperativa(),nuevoOBJListaPersonal.getClave());
+            listaDocencias = ejbPersonal.mostrarListaDocencias(empleadoLogeado);
             listaNotificaciones = ejbNotificacionesIncidencias.mostrarListaDenotificacionesPorUsuarios(empleadoLogeado, 0);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -139,15 +125,15 @@ public class ControladorEmpleado implements Serializable {
     public void mostrarPerfilLogeado() {
         try {
 
-            nuevoOBJInformacionAdicionalPersonal = ejbDatosUsuarioLogeado.mostrarInformacionAdicionalPersonalLogeado(empleadoLogeado);
-            nuevoOBJListaPersonal = ejbDatosUsuarioLogeado.mostrarVistaListaPersonalLogeado(empleadoLogeado);
+            nuevoOBJInformacionAdicionalPersonal = ejbPersonal.mostrarInformacionAdicionalPersonalLogeado(empleadoLogeado);
+            nuevoOBJListaPersonal = ejbPersonal.mostrarListaPersonal(empleadoLogeado);
 
             if (nuevoOBJInformacionAdicionalPersonal == null) {
                 nuevoOBJInformacionAdicionalPersonal=new InformacionAdicionalPersonal();
                 nuevoOBJInformacionAdicionalPersonal.setClave(empleadoLogeado);
                 nuevoOBJInformacionAdicionalPersonal.setAutorizacion(false);
-                obtenerEdad();
-                ejbDatosUsuarioLogeado.crearNuevoInformacionAdicionalPersonal(nuevoOBJInformacionAdicionalPersonal);
+                nuevoOBJInformacionAdicionalPersonal.setEdad(uch.obtenerEdad(nuevoOBJListaPersonal.getFechaNacimiento()));
+                nuevoOBJInformacionAdicionalPersonal=ejbPersonal.crearNuevoInformacionAdicionalPersonal(nuevoOBJInformacionAdicionalPersonal);
             }
 
             if (nuevoOBJListaPersonal == null) {
@@ -162,57 +148,11 @@ public class ControladorEmpleado implements Serializable {
         }
     }
 
-    public void obtenerEdad() {
-        fechaActual = new Date();
-
-        diaH = fechaActual.getDay();
-        diaN = nuevoOBJListaPersonal.getFechaNacimiento().getDay();
-        mesH = fechaActual.getMonth();
-        mesN = nuevoOBJListaPersonal.getFechaNacimiento().getMonth();
-        anioH = fechaActual.getYear();
-        anioN = nuevoOBJListaPersonal.getFechaNacimiento().getYear();
-
-        if (Objects.equals(diaH, diaN)) {
-            if (Objects.equals(mesH, mesN)) {
-                restaA = anioH - anioN;
-            } else {
-                if (mesH < mesN) {
-                    restaA = (anioH - anioN) - 1;
-                } else {
-                    restaA = anioH - anioN;
-                }
-            }
-        } else {
-            if (diaH < diaN) {
-                if (Objects.equals(mesH, mesN)) {
-                    restaA = (anioH - anioN) - 1;
-                } else {
-                    if (mesH < mesN) {
-                        restaA = (anioH - anioN) - 1;
-                    } else {
-                        restaA = anioH - anioN;
-                    }
-                }
-            } else {
-                if (Objects.equals(mesH, mesN)) {
-                    restaA = (anioH - anioN);
-                } else {
-                    if (mesH < mesN) {
-                        restaA = (anioH - anioN) - 1;
-                    } else {
-                        restaA = anioH - anioN;
-                    }
-                }
-            }
-        }
-        nuevoOBJInformacionAdicionalPersonal.setEdad(restaA);
-    }
-    
     public void procesoElectoral() {
         try {
             nuevaListaEventos.clear();
             nuevaEventos = new Eventos();
-            nuevaListaEventos = ejbDatosUsuarioLogeado.mostrarEventosRegistro("Periodo electoral", "Periodo electoral");
+            nuevaListaEventos = ejbUtilidadesCH.mostrarEventosRegistro("Periodo electoral", "Periodo electoral");
             if (!nuevaListaEventos.isEmpty()) {
                 nuevaEventos = nuevaListaEventos.get(0);
                 if ((fechaActual.before(nuevaEventos.getFechaFin()) || fechaActual.equals(nuevaEventos.getFechaFin()))
@@ -231,7 +171,7 @@ public class ControladorEmpleado implements Serializable {
     public void fechasModulos() {
         try {
             nuevaListaModulosregistro.clear();
-            nuevaListaModulosregistro = ejbDatosUsuarioLogeado.mostrarModulosregistro(nuevoOBJListaPersonal.getActividadNombre());
+            nuevaListaModulosregistro = ejbUtilidadesCH.mostrarModulosregistro(nuevoOBJListaPersonal.getActividadNombre());
             nuevaListaModulosregistro.forEach((t) -> {
                 switch (t.getNombre()) {
                     case "CV":
@@ -280,7 +220,7 @@ public class ControladorEmpleado implements Serializable {
             poaA = false;            poaJ = false;            poaR = false;            poaE = false;
             poaVJ = false;            poaVR = false;            poaVF = false;            poaVEPye = false;
             nuevaListaEventos.clear();
-            nuevaListaEventos = ejbDatosUsuarioLogeado.mostrarEventoses();
+            nuevaListaEventos = ejbUtilidadesCH.mostrarEventoses();
             if (!nuevaListaEventos.isEmpty()) {
                 nuevaListaEventos.forEach((t) -> {
                     if (t.getTipo().equals("POA")) {
@@ -293,7 +233,7 @@ public class ControladorEmpleado implements Serializable {
                                     poaA = true;
                                 } else {
                                     nuevaEventosAreas = new EventosAreas();
-                                    nuevaEventosAreas = ejbDatosUsuarioLogeado.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
+                                    nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
                                     if (nuevaEventosAreas != null) {
                                         poaA = true;
                                     }
@@ -304,7 +244,7 @@ public class ControladorEmpleado implements Serializable {
                                     poaJ = true;
                                 } else {
                                     nuevaEventosAreas = new EventosAreas();
-                                    nuevaEventosAreas = ejbDatosUsuarioLogeado.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
+                                    nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
                                     if (nuevaEventosAreas != null) {
                                         poaJ = true;
                                     }
@@ -315,7 +255,7 @@ public class ControladorEmpleado implements Serializable {
                                     poaR = true;
                                 } else {
                                     nuevaEventosAreas = new EventosAreas();
-                                    nuevaEventosAreas = ejbDatosUsuarioLogeado.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
+                                    nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
                                     if (nuevaEventosAreas != null) {
                                         poaR = true;
                                     }
@@ -327,9 +267,7 @@ public class ControladorEmpleado implements Serializable {
                                     mensajeGeneral=false;
                                     estiloInfo=false;
                                     Integer diasR = (int) ((t.getFechaFin().getTime() - fechaActual.getTime()) / 86400000);
-                                    Integer diasI = (int) ((fechaActual.getTime() - t.getFechaInicio().getTime()) / 86400000);
-                                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.eventosRegistro(diasI)"+diasI);
-                                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.eventosRegistro(diasR)"+diasR);
+                                    Integer diasI = (int) ((fechaActual.getTime() - t.getFechaInicio().getTime()) / 86400000);                                                                        
                                     if (diasI <= 2) {
                                         mensajeIndex1 = "Inicio del periodo para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + mesNombre(t.getFechaInicio().getMonth());
                                         estiloInfo=true;
@@ -343,7 +281,7 @@ public class ControladorEmpleado implements Serializable {
                                     }
                                 } else {
                                     nuevaEventosAreas = new EventosAreas();
-                                    nuevaEventosAreas = ejbDatosUsuarioLogeado.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
+                                    nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
                                     if (nuevaEventosAreas != null) {
                                         poaE = true;
                                     }
@@ -354,7 +292,7 @@ public class ControladorEmpleado implements Serializable {
                                     poaVJ = true;
                                 } else {
                                     nuevaEventosAreas = new EventosAreas();
-                                    nuevaEventosAreas = ejbDatosUsuarioLogeado.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
+                                    nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
                                     if (nuevaEventosAreas != null) {
                                         poaVJ = true;
                                     }
@@ -365,7 +303,7 @@ public class ControladorEmpleado implements Serializable {
                                     poaVR = true;
                                 } else {
                                     nuevaEventosAreas = new EventosAreas();
-                                    nuevaEventosAreas = ejbDatosUsuarioLogeado.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
+                                    nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
                                     if (nuevaEventosAreas != null) {
                                         poaVR = true;
                                     }
@@ -376,7 +314,7 @@ public class ControladorEmpleado implements Serializable {
                                     poaVF = true;
                                 } else {
                                     nuevaEventosAreas = new EventosAreas();
-                                    nuevaEventosAreas = ejbDatosUsuarioLogeado.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
+                                    nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
                                     if (nuevaEventosAreas != null) {
                                         poaVF = true;
                                     }
@@ -387,7 +325,7 @@ public class ControladorEmpleado implements Serializable {
                                     poaVEPye = true;
                                 } else {
                                     nuevaEventosAreas = new EventosAreas();
-                                    nuevaEventosAreas = ejbDatosUsuarioLogeado.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
+                                    nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
                                     if (nuevaEventosAreas != null) {
                                         poaVEPye = true;
                                     }
@@ -445,304 +383,87 @@ public class ControladorEmpleado implements Serializable {
         }
         return mesnN;
     }
+    
     public void llenaListaPaises() {
         listaPaises.clear();
-        listaPaises.add("México");
-        listaPaises.add("Afganistán");
-        listaPaises.add("Albania");
-        listaPaises.add("Alemania");
-        listaPaises.add("Andorra");
-        listaPaises.add("Angola");
-        listaPaises.add("Antigua y Barbuda");
-        listaPaises.add("Arabia Saudita");
-        listaPaises.add("Argelia");
-        listaPaises.add("Argentina");
-        listaPaises.add("Armenia");
-        listaPaises.add("Australia");
-        listaPaises.add("Austria");
-        listaPaises.add("Azerbaiyán");
-        listaPaises.add("Bahamas");
-        listaPaises.add("Bangladés");
-        listaPaises.add("Barbados");
-        listaPaises.add("Baréin");
-        listaPaises.add("Bélgica");
-        listaPaises.add("Belice");
-        listaPaises.add("Benín");
-        listaPaises.add("Bielorrusia");
-        listaPaises.add("Birmania");
-        listaPaises.add("Bolivia");
-        listaPaises.add("Bosnia y Herzegovina");
-        listaPaises.add("Botsuana");
-        listaPaises.add("Brasil");
-        listaPaises.add("Brunéi");
-        listaPaises.add("Bulgaria");
-        listaPaises.add("Burkina Faso");
-        listaPaises.add("Burundi");
-        listaPaises.add("Bután");
-        listaPaises.add("Cabo Verde");
-        listaPaises.add("Camboya");
-        listaPaises.add("Camerún");
-        listaPaises.add("Canadá");
-        listaPaises.add("Catar");
-        listaPaises.add("Chad");
-        listaPaises.add("Chile");
-        listaPaises.add("China");
-        listaPaises.add("Chipre");
-        listaPaises.add("Ciudad del Vaticano");
-        listaPaises.add("Colombia");
-        listaPaises.add("Comoras");
-        listaPaises.add("Corea del Norte");
-        listaPaises.add("Corea del Sur");
-        listaPaises.add("Costa de Marfil");
-        listaPaises.add("Costa Rica");
-        listaPaises.add("Croacia");
-        listaPaises.add("Cuba");
-        listaPaises.add("Dinamarca");
-        listaPaises.add("Dominica");
-        listaPaises.add("Ecuador");
-        listaPaises.add("Egipto");
-        listaPaises.add("El Salvador");
-        listaPaises.add("Emiratos Árabes Unidos");
-        listaPaises.add("Eritrea");
-        listaPaises.add("Eslovaquia");
-        listaPaises.add("Eslovenia");
-        listaPaises.add("España");
-        listaPaises.add("Estados Unidos");
-        listaPaises.add("Estonia");
-        listaPaises.add("Etiopía");
-        listaPaises.add("Filipinas");
-        listaPaises.add("Finlandia");
-        listaPaises.add("Fiyi");
-        listaPaises.add("Francia");
-        listaPaises.add("Gabón");
-        listaPaises.add("Gambia");
-        listaPaises.add("Georgia");
-        listaPaises.add("Ghana");
-        listaPaises.add("Granada");
-        listaPaises.add("Grecia");
-        listaPaises.add("Guatemala");
-        listaPaises.add("Guyana");
-        listaPaises.add("Guinea");
-        listaPaises.add("Guinea ecuatorial");
-        listaPaises.add("Guinea-Bisáu");
-        listaPaises.add("Haití");
-        listaPaises.add("Honduras");
-        listaPaises.add("Hungría");
-        listaPaises.add("India");
-        listaPaises.add("Indonesia");
-        listaPaises.add("Irak");
-        listaPaises.add("Irán");
-        listaPaises.add("Irlanda");
-        listaPaises.add("Islandia");
-        listaPaises.add("Islas Marshall");
-        listaPaises.add("Islas Salomón");
-        listaPaises.add("Israel");
-        listaPaises.add("Italia");
-        listaPaises.add("Jamaica");
-        listaPaises.add("Japón");
-        listaPaises.add("Jordania");
-        listaPaises.add("Kazajistán");
-        listaPaises.add("Kenia");
-        listaPaises.add("Kirguistán");
-        listaPaises.add("Kiribati");
-        listaPaises.add("Kuwait");
-        listaPaises.add("Laos");
-        listaPaises.add("Lesoto");
-        listaPaises.add("Letonia");
-        listaPaises.add("Líbano");
-        listaPaises.add("Liberia");
-        listaPaises.add("Libia");
-        listaPaises.add("Liechtenstein");
-        listaPaises.add("Lituania");
-        listaPaises.add("Luxemburgo");
-        listaPaises.add("Madagascar");
-        listaPaises.add("Malasia");
-        listaPaises.add("Malaui");
-        listaPaises.add("Maldivas");
-        listaPaises.add("Malí");
-        listaPaises.add("Malta");
-        listaPaises.add("Marruecos");
-        listaPaises.add("Mauricio");
-        listaPaises.add("Mauritania");
-        listaPaises.add("Micronesia");
-        listaPaises.add("Moldavia");
-        listaPaises.add("Mónaco");
-        listaPaises.add("Mongolia");
-        listaPaises.add("Montenegro");
-        listaPaises.add("Mozambique");
-        listaPaises.add("Namibia");
-        listaPaises.add("Nauru");
-        listaPaises.add("Nepal");
-        listaPaises.add("Nicaragua");
-        listaPaises.add("Níger");
-        listaPaises.add("Nigeria");
-        listaPaises.add("Noruega");
-        listaPaises.add("Nueva Zelanda");
-        listaPaises.add("Omán");
-        listaPaises.add("Países Bajos");
-        listaPaises.add("Pakistán");
-        listaPaises.add("Palaos");
-        listaPaises.add("Panamá");
-        listaPaises.add("Papúa Nueva Guinea");
-        listaPaises.add("Paraguay");
-        listaPaises.add("Perú");
-        listaPaises.add("Polonia");
-        listaPaises.add("Portugal");
-        listaPaises.add("Reino Unido");
-        listaPaises.add("República Centroafricana");
-        listaPaises.add("República Checa");
-        listaPaises.add("República de Macedonia");
-        listaPaises.add("República del Congo");
-        listaPaises.add("República Democrática del Congo");
-        listaPaises.add("República Dominicana");
-        listaPaises.add("República Sudafricana");
-        listaPaises.add("Ruanda");
-        listaPaises.add("Rumanía");
-        listaPaises.add("Rusia");
-        listaPaises.add("Samoa");
-        listaPaises.add("San Cristóbal y Nieves");
-        listaPaises.add("San Marino");
-        listaPaises.add("San Vicente y las Granadinas");
-        listaPaises.add("Santa Lucía");
-        listaPaises.add("Santo Tomé y Príncipe");
-        listaPaises.add("Senegal");
-        listaPaises.add("Serbia");
-        listaPaises.add("Seychelles");
-        listaPaises.add("Sierra Leona");
-        listaPaises.add("Singapur");
-        listaPaises.add("Siria");
-        listaPaises.add("Somalia");
-        listaPaises.add("Sri Lanka");
-        listaPaises.add("Suazilandia");
-        listaPaises.add("Sudán");
-        listaPaises.add("Sudán del Sur");
-        listaPaises.add("Suecia");
-        listaPaises.add("Suiza");
-        listaPaises.add("Surinam");
-        listaPaises.add("Tailandia");
-        listaPaises.add("Tanzania");
-        listaPaises.add("Tayikistán");
-        listaPaises.add("Timor Oriental");
-        listaPaises.add("Togo");
-        listaPaises.add("Tonga");
-        listaPaises.add("Trinidad y Tobago");
-        listaPaises.add("Túnez");
-        listaPaises.add("Turkmenistán");
-        listaPaises.add("Turquía");
-        listaPaises.add("Tuvalu");
-        listaPaises.add("Ucrania");
-        listaPaises.add("Uganda");
-        listaPaises.add("Uruguay");
-        listaPaises.add("Uzbekistán");
-        listaPaises.add("Vanuatu");
-        listaPaises.add("Venezuela");
-        listaPaises.add("Vietnam");
-        listaPaises.add("Yemen");
-        listaPaises.add("Yibuti");
-        listaPaises.add("Zambia");
-        listaPaises.add("Zimbabue");
-        listaIdiomas.clear();
-        listaIdiomas.add("Español");
-        listaIdiomas.add("Inglés");
-        listaIdiomas.add("Portugués");
-        listaIdiomas.add("Francés");
-        listaIdiomas.add("Neerlandés");
-        listaIdiomas.add("Alemán");
-        listaIdiomas.add("Catalán");
-        listaIdiomas.add("Azerí");
-        listaIdiomas.add("Ruso");
-        listaIdiomas.add("Bosnio");
-        listaIdiomas.add("Croata");
-        listaIdiomas.add("Serbio");
-        listaIdiomas.add("Búlgaro");
-        listaIdiomas.add("Griego");
-        listaIdiomas.add("Turco");
-        listaIdiomas.add("Latín");
-        listaIdiomas.add("Italiano");
-        listaIdiomas.add("Danés");
-        listaIdiomas.add("Eslovaco");
-        listaIdiomas.add("Esloveno");
-        listaIdiomas.add("Estonio");
-        listaIdiomas.add("Finés");
-        listaIdiomas.add("Sueco");
-        listaIdiomas.add("Georgiano");
-        listaIdiomas.add("Hungaro");
-        listaIdiomas.add("Kazajo");
-        listaIdiomas.add("Letón");
-        listaIdiomas.add("Lituano");
-        listaIdiomas.add("Luxemburgués");
-        listaIdiomas.add("Maltés");
-        listaIdiomas.add("Rumano");
-        listaIdiomas.add("Noruego");
-        listaIdiomas.add("Polaco");
-        listaIdiomas.add("Macedonio");
+        listaPaises.add("México");        listaPaises.add("Afganistán");        listaPaises.add("Albania");        listaPaises.add("Alemania");
+        listaPaises.add("Andorra");        listaPaises.add("Angola");        listaPaises.add("Antigua y Barbuda");        listaPaises.add("Arabia Saudita");
+        listaPaises.add("Argelia");        listaPaises.add("Argentina");        listaPaises.add("Armenia");        listaPaises.add("Australia");
+        listaPaises.add("Austria");        listaPaises.add("Azerbaiyán");        listaPaises.add("Bahamas");        listaPaises.add("Bangladés");
+        listaPaises.add("Barbados");        listaPaises.add("Baréin");        listaPaises.add("Bélgica");        listaPaises.add("Belice");
+        listaPaises.add("Benín");        listaPaises.add("Bielorrusia");        listaPaises.add("Birmania");        listaPaises.add("Bolivia");
+        listaPaises.add("Bosnia y Herzegovina");        listaPaises.add("Botsuana");        listaPaises.add("Brasil");        listaPaises.add("Brunéi");
+        listaPaises.add("Bulgaria");        listaPaises.add("Burkina Faso");        listaPaises.add("Burundi");        listaPaises.add("Bután");
+        listaPaises.add("Cabo Verde");        listaPaises.add("Camboya");        listaPaises.add("Camerún");        listaPaises.add("Canadá");
+        listaPaises.add("Catar");        listaPaises.add("Chad");        listaPaises.add("Chile");        listaPaises.add("China");
+        listaPaises.add("Chipre");        listaPaises.add("Ciudad del Vaticano");        listaPaises.add("Colombia");        listaPaises.add("Comoras");
+        listaPaises.add("Corea del Norte");        listaPaises.add("Corea del Sur");        listaPaises.add("Costa de Marfil");        listaPaises.add("Costa Rica");
+        listaPaises.add("Croacia");        listaPaises.add("Cuba");        listaPaises.add("Dinamarca");        listaPaises.add("Dominica");
+        listaPaises.add("Ecuador");        listaPaises.add("Egipto");        listaPaises.add("El Salvador");        listaPaises.add("Emiratos Árabes Unidos");
+        listaPaises.add("Eritrea");        listaPaises.add("Eslovaquia");        listaPaises.add("Eslovenia");        listaPaises.add("España");
+        listaPaises.add("Estados Unidos");        listaPaises.add("Estonia");        listaPaises.add("Etiopía");        listaPaises.add("Filipinas");
+        listaPaises.add("Finlandia");        listaPaises.add("Fiyi");        listaPaises.add("Francia");        listaPaises.add("Gabón");
+        listaPaises.add("Gambia");        listaPaises.add("Georgia");        listaPaises.add("Ghana");        listaPaises.add("Granada");
+        listaPaises.add("Grecia");        listaPaises.add("Guatemala");        listaPaises.add("Guyana");        listaPaises.add("Guinea");
+        listaPaises.add("Guinea ecuatorial");        listaPaises.add("Guinea-Bisáu");        listaPaises.add("Haití");        listaPaises.add("Honduras");
+        listaPaises.add("Hungría");        listaPaises.add("India");        listaPaises.add("Indonesia");        listaPaises.add("Irak");
+        listaPaises.add("Irán");        listaPaises.add("Irlanda");        listaPaises.add("Islandia");        listaPaises.add("Islas Marshall");
+        listaPaises.add("Islas Salomón");        listaPaises.add("Israel");        listaPaises.add("Italia");        listaPaises.add("Jamaica");
+        listaPaises.add("Japón");        listaPaises.add("Jordania");        listaPaises.add("Kazajistán");        listaPaises.add("Kenia");
+        listaPaises.add("Kirguistán");        listaPaises.add("Kiribati");        listaPaises.add("Kuwait");        listaPaises.add("Laos");
+        listaPaises.add("Lesoto");        listaPaises.add("Letonia");        listaPaises.add("Líbano");        listaPaises.add("Liberia");
+        listaPaises.add("Libia");        listaPaises.add("Liechtenstein");        listaPaises.add("Lituania");        listaPaises.add("Luxemburgo");
+        listaPaises.add("Madagascar");        listaPaises.add("Malasia");        listaPaises.add("Malaui");        listaPaises.add("Maldivas");
+        listaPaises.add("Malí");        listaPaises.add("Malta");        listaPaises.add("Marruecos");        listaPaises.add("Mauricio");
+        listaPaises.add("Mauritania");        listaPaises.add("Micronesia");        listaPaises.add("Moldavia");        listaPaises.add("Mónaco");
+        listaPaises.add("Mongolia");        listaPaises.add("Montenegro");        listaPaises.add("Mozambique");        listaPaises.add("Namibia");
+        listaPaises.add("Nauru");        listaPaises.add("Nepal");        listaPaises.add("Nicaragua");        listaPaises.add("Níger");
+        listaPaises.add("Nigeria");        listaPaises.add("Noruega");        listaPaises.add("Nueva Zelanda");        listaPaises.add("Omán");
+        listaPaises.add("Países Bajos");        listaPaises.add("Pakistán");        listaPaises.add("Palaos");        listaPaises.add("Panamá");
+        listaPaises.add("Papúa Nueva Guinea");        listaPaises.add("Paraguay");        listaPaises.add("Perú");        listaPaises.add("Polonia");
+        listaPaises.add("Portugal");        listaPaises.add("Reino Unido");        listaPaises.add("República Centroafricana");        listaPaises.add("República Checa");
+        listaPaises.add("República de Macedonia");        listaPaises.add("República del Congo");        listaPaises.add("República Democrática del Congo");
+        listaPaises.add("República Dominicana");        listaPaises.add("República Sudafricana");        listaPaises.add("Ruanda");        listaPaises.add("Rumanía");
+        listaPaises.add("Rusia");        listaPaises.add("Samoa");        listaPaises.add("San Cristóbal y Nieves");        listaPaises.add("San Marino");
+        listaPaises.add("San Vicente y las Granadinas");        listaPaises.add("Santa Lucía");        listaPaises.add("Santo Tomé y Príncipe");        listaPaises.add("Senegal");
+        listaPaises.add("Serbia");        listaPaises.add("Seychelles");        listaPaises.add("Sierra Leona");        listaPaises.add("Singapur");
+        listaPaises.add("Siria");        listaPaises.add("Somalia");        listaPaises.add("Sri Lanka");        listaPaises.add("Suazilandia");
+        listaPaises.add("Sudán");        listaPaises.add("Sudán del Sur");        listaPaises.add("Suecia");        listaPaises.add("Suiza");        listaPaises.add("Surinam");
+        listaPaises.add("Tailandia");        listaPaises.add("Tanzania");        listaPaises.add("Tayikistán");        listaPaises.add("Timor Oriental");
+        listaPaises.add("Togo");        listaPaises.add("Tonga");        listaPaises.add("Trinidad y Tobago");        listaPaises.add("Túnez");
+        listaPaises.add("Turkmenistán");        listaPaises.add("Turquía");        listaPaises.add("Tuvalu");        listaPaises.add("Ucrania");
+        listaPaises.add("Uganda");        listaPaises.add("Uruguay");        listaPaises.add("Uzbekistán");        listaPaises.add("Vanuatu");
+        listaPaises.add("Venezuela");        listaPaises.add("Vietnam");        listaPaises.add("Yemen");        listaPaises.add("Yibuti");
+        listaPaises.add("Zambia");        listaPaises.add("Zimbabue");        
+        
+        listaIdiomas.clear();        
+        listaIdiomas.add("Español");        listaIdiomas.add("Inglés");        listaIdiomas.add("Portugués");        listaIdiomas.add("Francés");
+        listaIdiomas.add("Neerlandés");        listaIdiomas.add("Alemán");        listaIdiomas.add("Catalán");        listaIdiomas.add("Azerí");
+        listaIdiomas.add("Ruso");        listaIdiomas.add("Bosnio");        listaIdiomas.add("Croata");        listaIdiomas.add("Serbio");
+        listaIdiomas.add("Búlgaro");        listaIdiomas.add("Griego");        listaIdiomas.add("Turco");        listaIdiomas.add("Latín");
+        listaIdiomas.add("Italiano");        listaIdiomas.add("Danés");        listaIdiomas.add("Eslovaco");        listaIdiomas.add("Esloveno");
+        listaIdiomas.add("Estonio");        listaIdiomas.add("Finés");        listaIdiomas.add("Sueco");        listaIdiomas.add("Georgiano");
+        listaIdiomas.add("Hungaro");        listaIdiomas.add("Kazajo");        listaIdiomas.add("Letón");        listaIdiomas.add("Lituano");
+        listaIdiomas.add("Luxemburgués");        listaIdiomas.add("Maltés");        listaIdiomas.add("Rumano");        listaIdiomas.add("Noruego");
+        listaIdiomas.add("Polaco");        listaIdiomas.add("Macedonio");        
+        
         listaLenguas.clear();
-        listaLenguas.add("Akateko");
-        listaLenguas.add("Cucapá");
-        listaLenguas.add("Chocholteco");
-        listaLenguas.add("Guarijío");
-        listaLenguas.add("Ixil");
-        listaLenguas.add("Kumiai");
-        listaLenguas.add("Matlatzinca");
-        listaLenguas.add("Mixe");
-        listaLenguas.add("Paipai");
-        listaLenguas.add("Popoluca de la Sierra");
-        listaLenguas.add("Seri");
-        listaLenguas.add("Tepehuano del Norte");
-        listaLenguas.add("Tojolabal");
-        listaLenguas.add("Yaqui");
-        listaLenguas.add("Amuzgo");
-        listaLenguas.add("Cuicateco");
-        listaLenguas.add("Chontal de Oaxaca");
-        listaLenguas.add("Huasteco");
-        listaLenguas.add("Lakalteko");
-        listaLenguas.add("Kuahl");
-        listaLenguas.add("Mixteco");
-        listaLenguas.add("Pame");
-        listaLenguas.add("Qatok");
-        listaLenguas.add("Tarahumara");
-        listaLenguas.add("Tepehuano del Sur");
-        listaLenguas.add("Totonaco");
-        listaLenguas.add("Zapoteco");
-        listaLenguas.add("Awakateco");
-        listaLenguas.add("Chatino");
-        listaLenguas.add("Chontal de Tabasco");
-        listaLenguas.add("Huave");
-        listaLenguas.add("Chaqchikel");
-        listaLenguas.add("Kiche");
-        listaLenguas.add("Maya");
-        listaLenguas.add("Nahuatl");
-        listaLenguas.add("Pápago");
-        listaLenguas.add("Qanjobal");
-        listaLenguas.add("Tarasco");
-        listaLenguas.add("Texistepequeño");
-        listaLenguas.add("Triqui");
-        listaLenguas.add("Zoque");
-        listaLenguas.add("Ayapaneco");
-        listaLenguas.add("Chichimeco Jonaz");
-        listaLenguas.add("Chuj");
-        listaLenguas.add("Huichol");
-        listaLenguas.add("Kickapoo");
-        listaLenguas.add("Lacandón");
-        listaLenguas.add("Mazahua");
-        listaLenguas.add("Oluteco");
-        listaLenguas.add("Pima");
-        listaLenguas.add("Qeqchí");
-        listaLenguas.add("Teko");
-        listaLenguas.add("Tlahuica");
-        listaLenguas.add("Tseltal");
-        listaLenguas.add("Cora");
-        listaLenguas.add("Chinanteco");
-        listaLenguas.add("Chol");
-        listaLenguas.add("Ixcateco");
-        listaLenguas.add("Kiliwa");
-        listaLenguas.add("Mam");
-        listaLenguas.add("Mazateco");
-        listaLenguas.add("Otomí");
-        listaLenguas.add("Popoloca");
-        listaLenguas.add("Sayulteco");
-        listaLenguas.add("Tepehua");
-        listaLenguas.add("Tlapaneco");
-        listaLenguas.add("Tsotsil");
+        listaLenguas.add("Akateko");        listaLenguas.add("Cucapá");        listaLenguas.add("Chocholteco");        listaLenguas.add("Guarijío");
+        listaLenguas.add("Ixil");        listaLenguas.add("Kumiai");        listaLenguas.add("Matlatzinca");        listaLenguas.add("Mixe");
+        listaLenguas.add("Paipai");        listaLenguas.add("Popoluca de la Sierra");        listaLenguas.add("Seri");        listaLenguas.add("Tepehuano del Norte");
+        listaLenguas.add("Tojolabal");        listaLenguas.add("Yaqui");        listaLenguas.add("Amuzgo");        listaLenguas.add("Cuicateco");
+        listaLenguas.add("Chontal de Oaxaca");        listaLenguas.add("Huasteco");        listaLenguas.add("Lakalteko");        listaLenguas.add("Kuahl");
+        listaLenguas.add("Mixteco");        listaLenguas.add("Pame");        listaLenguas.add("Qatok");        listaLenguas.add("Tarahumara");
+        listaLenguas.add("Tepehuano del Sur");        listaLenguas.add("Totonaco");        listaLenguas.add("Zapoteco");        listaLenguas.add("Awakateco");
+        listaLenguas.add("Chatino");        listaLenguas.add("Chontal de Tabasco");        listaLenguas.add("Huave");        listaLenguas.add("Chaqchikel");
+        listaLenguas.add("Kiche");        listaLenguas.add("Maya");        listaLenguas.add("Nahuatl");        listaLenguas.add("Pápago");
+        listaLenguas.add("Qanjobal");        listaLenguas.add("Tarasco");        listaLenguas.add("Texistepequeño");        listaLenguas.add("Triqui");
+        listaLenguas.add("Zoque");        listaLenguas.add("Ayapaneco");        listaLenguas.add("Chichimeco Jonaz");        listaLenguas.add("Chuj");
+        listaLenguas.add("Huichol");        listaLenguas.add("Kickapoo");        listaLenguas.add("Lacandón");        listaLenguas.add("Mazahua");
+        listaLenguas.add("Oluteco");        listaLenguas.add("Pima");        listaLenguas.add("Qeqchí");        listaLenguas.add("Teko");
+        listaLenguas.add("Tlahuica");        listaLenguas.add("Tseltal");        listaLenguas.add("Cora");        listaLenguas.add("Chinanteco");
+        listaLenguas.add("Chol");        listaLenguas.add("Ixcateco");        listaLenguas.add("Kiliwa");        listaLenguas.add("Mam");
+        listaLenguas.add("Mazateco");        listaLenguas.add("Otomí");        listaLenguas.add("Popoloca");        listaLenguas.add("Sayulteco");
+        listaLenguas.add("Tepehua");        listaLenguas.add("Tlapaneco");        listaLenguas.add("Tsotsil");
     }
 }
