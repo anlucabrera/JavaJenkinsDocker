@@ -5,11 +5,13 @@
  */
 package mx.edu.utxj.pye.siip.dto.pye;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.servlet.http.Part;
 import lombok.Getter;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
@@ -24,6 +26,13 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
  * @author UTXJ
  */
 public class DtoActividadesFormInt {
+    
+     /************************** Lista áreas ****************************************/
+    @Getter private List<Categorias> listaCategoriasPOA;
+    @Getter private List<AreasUniversidad> listaAreasPOA; 
+    
+    @Getter private Categorias categoria;
+    
     @Getter private AreasUniversidad areaPOA;
     @Getter private DTOActFormacionIntegral registro;//representa al registro seleccionado o al registro circulante en la tabla de datos.
     @Getter private EjesRegistro eje;
@@ -37,7 +46,7 @@ public class DtoActividadesFormInt {
     @Getter private ActividadesPoa alineacionActividad; 
     
     @Getter Boolean tieneEvidencia, forzarAperturaDialogo;
-    @Getter private Short area;
+    @Getter private AreasUniversidad area;
     @Getter private String rutaArchivo;
     
     @Getter private List<EventosRegistros> eventosPorPeriodo;
@@ -80,7 +89,7 @@ public class DtoActividadesFormInt {
         this.registroTipo = registroTipo;
     }
 
-    public void setArea(Short area) {
+    public void setArea(AreasUniversidad area) {
         this.area = area;
     }
 
@@ -92,6 +101,7 @@ public class DtoActividadesFormInt {
         this.periodos = periodos;
         if(periodos!=null && !periodos.isEmpty()){            
             setPeriodo(getPeriodos().get(0));
+            nulificarPeriodosConsulta();
         }
     }
 
@@ -107,6 +117,7 @@ public class DtoActividadesFormInt {
         this.eventosPorPeriodo = eventosPorPeriodo;
         if(eventosPorPeriodo != null && !eventosPorPeriodo.isEmpty()){
             setEventoSeleccionado(eventosPorPeriodo.get(0));
+            nulificarPeriodosConsulta();
             if(getEventosPorPeriodo().contains(getEventoActual())){
                 setEventoSeleccionado(getEventoActual());
             }
@@ -206,9 +217,44 @@ public class DtoActividadesFormInt {
 
     public void setAreaPOA(AreasUniversidad areaPOA) {
         this.areaPOA = areaPOA;
+         if(areaPOA == null)
+            nulificarAreaPOA();
     }
 
     public void setClavesAreasSubordinadas(List<Short> clavesAreasSubordinadas) {
         this.clavesAreasSubordinadas = clavesAreasSubordinadas;
     }
+    
+     public void setListaCategoriasPOA(List<Categorias> listaCategoriasPOA) {
+        this.listaCategoriasPOA = listaCategoriasPOA;
+        if(listaCategoriasPOA.isEmpty())
+            nulificarCategoria();
+    }
+
+    public void setListaAreasPOA(List<AreasUniversidad> listaAreasPOA) {
+        this.listaAreasPOA = listaAreasPOA;
+        if(listaAreasPOA.isEmpty())
+            nulificarAreaPOA();
+    }
+
+    public void setCategoria(Categorias categoria) {
+        this.categoria = categoria;
+        if(categoria == null)
+            nulificarCategoria();
+    }
+
+    public void nulificarCategoria(){
+        listaAreasPOA = Collections.EMPTY_LIST;
+        nulificarAreaPOA();
+    }
+    
+    public void nulificarAreaPOA(){
+        periodos = Collections.EMPTY_LIST;
+        nulificarPeriodosConsulta();
+    }
+    
+    public void nulificarPeriodosConsulta(){
+        eventosPorPeriodo = Collections.EMPTY_LIST;
+    }
+    
 }

@@ -456,16 +456,26 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
         if(evento == null || claveArea == null || periodo == null){
             return null;
         }
-        areas = ejbModulos.getAreasDependientes(claveArea);
         
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         List<DTOActFormacionIntegral> l = new ArrayList<>();
-        List<ActividadesFormacionIntegral> entities = f.getEntityManager().createQuery("SELECT a FROM ActividadesFormacionIntegral a INNER JOIN a.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND a.periodo =:periodo AND reg.area IN :areas", ActividadesFormacionIntegral.class)
+        List<ActividadesFormacionIntegral> entities = new ArrayList<>();
+        
+        if(claveArea == 6){
+        entities = f.getEntityManager().createQuery("SELECT a FROM ActividadesFormacionIntegral a INNER JOIN a.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND a.periodo =:periodo AND reg.area =:area", ActividadesFormacionIntegral.class)
+                .setParameter("evento", evento.getEventoRegistro())
+                .setParameter("periodo", periodo.getPeriodo())
+                .setParameter("area", claveArea)
+                .getResultList();
+        }
+        else{
+        areas = ejbModulos.getAreasDependientes(claveArea);
+        entities = f.getEntityManager().createQuery("SELECT a FROM ActividadesFormacionIntegral a INNER JOIN a.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND a.periodo =:periodo AND reg.area IN :areas", ActividadesFormacionIntegral.class)
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
                 .setParameter("areas", areas)
                 .getResultList();
-      
+        }
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
             
@@ -477,11 +487,7 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
                     f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodo()),
                     a));
         });
-        
-
-
         return l;
-
     }
 
     @Override

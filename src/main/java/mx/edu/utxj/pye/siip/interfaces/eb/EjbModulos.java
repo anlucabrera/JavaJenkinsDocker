@@ -284,5 +284,4 @@ public interface EjbModulos {
      * @return Lista de claves de área.
      */
     public List<Short> getAreasDependientes (Short area);
-    
 }
