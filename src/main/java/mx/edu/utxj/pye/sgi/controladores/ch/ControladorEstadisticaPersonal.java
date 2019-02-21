@@ -25,16 +25,16 @@ public class ControladorEstadisticaPersonal implements Serializable {
     private static final long serialVersionUID = 1736039029781733869L;
 
     @Getter    @Setter    private List<ListaPersonal> nuevaVistaListaPersonal = new ArrayList<>();
-     
+
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbSelectec;
-    
+
     @Inject    ControladorEmpleado controladorEmpleado;
 
     @PostConstruct
-    public void init() {        
-mostrarPlantillaPersonal();        
+    public void init() {
+        mostrarPlantillaPersonal();
     }
-    
+
     public void mostrarPlantillaPersonal() {
         try {
             nuevaVistaListaPersonal = ejbSelectec.mostrarListaDeEmpleados();

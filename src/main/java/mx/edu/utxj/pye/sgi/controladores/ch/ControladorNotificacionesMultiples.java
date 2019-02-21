@@ -47,8 +47,8 @@ public class ControladorNotificacionesMultiples implements Serializable {
     @Inject    ControladorEmpleado controladorEmpleado;
 
     @PostConstruct
-    public void init() {        
-        usuario = controladorEmpleado.getEmpleadoLogeado();        
+    public void init() {
+        usuario = controladorEmpleado.getEmpleadoLogeado();
     }
 
     public void agregarNotificacionMultiple() {
@@ -68,7 +68,7 @@ public class ControladorNotificacionesMultiples implements Serializable {
                     case "Personal":
                         nuevOBJNotificaciones.setTipo(4);
                         listaListaPersonal.clear();
-                        listaListaPersonal = ejbSelectec.mostrarListaPersonalsPorParametros(nombreO,1);
+                        listaListaPersonal = ejbSelectec.mostrarListaPersonalsPorParametros(nombreO, 1);
                         for (int i = 0; i <= listaListaPersonal.size() - 1; i++) {
                             nuevoOBJListaPersonal = new ListaPersonal();
                             nuevoOBJListaPersonal = listaListaPersonal.get(i);
@@ -80,7 +80,7 @@ public class ControladorNotificacionesMultiples implements Serializable {
                     case "Categoria":
                         nuevOBJNotificaciones.setTipo(1);
                         listaListaPersonal.clear();
-                        listaListaPersonal = ejbSelectec.mostrarListaPersonalsPorParametros(nombreO,2);
+                        listaListaPersonal = ejbSelectec.mostrarListaPersonalsPorParametros(nombreO, 2);
                         for (int i = 0; i <= listaListaPersonal.size() - 1; i++) {
                             nuevoOBJListaPersonal = new ListaPersonal();
                             nuevoOBJListaPersonal = listaListaPersonal.get(i);
@@ -92,7 +92,7 @@ public class ControladorNotificacionesMultiples implements Serializable {
                     case "Actividad":
                         nuevOBJNotificaciones.setTipo(2);
                         listaListaPersonal.clear();
-                        listaListaPersonal = ejbSelectec.mostrarListaPersonalsPorParametros(nombreO,3);
+                        listaListaPersonal = ejbSelectec.mostrarListaPersonalsPorParametros(nombreO, 3);
                         for (int i = 0; i <= listaListaPersonal.size() - 1; i++) {
                             nuevoOBJListaPersonal = new ListaPersonal();
                             nuevoOBJListaPersonal = listaListaPersonal.get(i);
@@ -104,7 +104,7 @@ public class ControladorNotificacionesMultiples implements Serializable {
                     case "Area":
                         nuevOBJNotificaciones.setTipo(3);
                         listaListaPersonal.clear();
-                        listaListaPersonal = ejbSelectec.mostrarListaPersonalsPorParametros(nombreO,4);
+                        listaListaPersonal = ejbSelectec.mostrarListaPersonalsPorParametros(nombreO, 4);
                         for (int i = 0; i <= listaListaPersonal.size() - 1; i++) {
                             nuevoOBJListaPersonal = new ListaPersonal();
                             nuevoOBJListaPersonal = listaListaPersonal.get(i);

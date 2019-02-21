@@ -61,10 +61,10 @@ public class CvEducacion implements Serializable {
 
     @PostConstruct
     public void init() {
-                // se realiza la inicializacion de las variabes, objetos y listas
+        // se realiza la inicializacion de las variabes, objetos y listas
         formaTyC = false;
         nomCarrera = false;
-        
+
         usuario = controladorEmpleado.getEmpleadoLogeado();
 
         nuevoOBJFormacionAcademica = new FormacionAcademica();
@@ -79,7 +79,7 @@ public class CvEducacion implements Serializable {
         nuevaListaCapacitaciones.clear();
 
         mostrarListas();
-            }
+    }
 
     public void reiniciarValores() {
         grado = 0;
@@ -97,25 +97,25 @@ public class CvEducacion implements Serializable {
         nuevoOBJCapacitacionespersonal = new Capacitacionespersonal();
     }
     ////////////////////////////////////////////Formación Académica\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-   
+
     public void createFormacion() {
         try {
             //Inicialización de las relaciones entre las tablas “Formación Académica” con “Personal” y “Grados Académicos”
             nuevoOBJFormacionAcademica.setClavePersonal(new Personal());
-            nuevoOBJFormacionAcademica.setNivelEscolaridad(new Grados());            
+            nuevoOBJFormacionAcademica.setNivelEscolaridad(new Grados());
             //Una vez realizada la inicialización se procede a realizar la asignación de los valores correspondientes mediante los métodos Get().Set(Valor_A_Asignar)
             nuevoOBJFormacionAcademica.getNivelEscolaridad().setGrado(grado);
-            nuevoOBJFormacionAcademica.getClavePersonal().setClave(usuario);            
+            nuevoOBJFormacionAcademica.getClavePersonal().setClave(usuario);
             //Posteriormente se procese a realizar la asignación de valores que no se obtienen mediante la interfaz grafica
-            nuevoOBJFormacionAcademica.setEstatus("Denegado");            
+            nuevoOBJFormacionAcademica.setEstatus("Denegado");
             //En caso de que sea información nueva se procede a enviar la información al “EJB” el cual la agregara a la BD.
-            nuevoOBJFormacionAcademica = ejbEducacion.crearNuevoFormacionAcademica(nuevoOBJFormacionAcademica);            
+            nuevoOBJFormacionAcademica = ejbEducacion.crearNuevoFormacionAcademica(nuevoOBJFormacionAcademica);
             //Después de agregar la información a la BD, se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
-            utilidadesCH.agregaBitacora(usuario, nuevoOBJFormacionAcademica.getFormacion().toString(), "Formación Académica", "Insert");            
+            utilidadesCH.agregaBitacora(usuario, nuevoOBJFormacionAcademica.getFormacion().toString(), "Formación Académica", "Insert");
             //Al finalizar los dos registros de información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();”
-            mostrarListas();            
+            mostrarListas();
             //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
-            reiniciarValores();            
+            reiniciarValores();
             //Finalmente se le informa al usuario cual es el resultado obtenido
             utilidadesCH.mensajes("", "I", "C");
         } catch (Throwable ex) {
@@ -130,21 +130,16 @@ public class CvEducacion implements Serializable {
             if (formacionAcademica.getEvidenciaCedula() != null) {
                 CargaArchivosCH.eliminarArchivo(formacionAcademica.getEvidenciaCedula());
             }
-
             //También se evalúa si su propiedad evidenciaTitulo cuenta con información, de ser así se procede a invocar el método eliminarArchivo del controlador CargaArchivosCH el cual removerá el archivo permanentemente del servidor.
             if (formacionAcademica.getEvidenciaTitulo() != null) {
                 CargaArchivosCH.eliminarArchivo(formacionAcademica.getEvidenciaTitulo());
             }
-
             //Después de comprobar la existencia de archivos relacionados al registro, se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
             utilidadesCH.agregaBitacora(usuario, formacionAcademica.getFormacion().toString(), "Formación Académica", "Delate");
-
             //Posteriormente de realizar el registro en la bitácora se procede a eliminar el registro, esto invocado al “EJB”
             ejbEducacion.eliminarFormacionAcademica(formacionAcademica);
-
             //Al finalizar los dos registros de información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();” 
             mostrarListas();
-
             //Finalmente se le informa al usuario cual es el resultado obtenido
             utilidadesCH.mensajes("", "I", "C");
         } catch (Throwable ex) {
@@ -158,19 +153,14 @@ public class CvEducacion implements Serializable {
             FormacionAcademica actualizarForAc = (FormacionAcademica) event.getObject();
             //Primero se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
             utilidadesCH.agregaBitacora(usuario, actualizarForAc.getFormacion().toString(), "Formación Académica", "Update");
-
             //Se realiza la asignación de los valores a actualizar
             actualizarForAc.getNivelEscolaridad().setGrado(grado);
-
             //Se procede a invocar el “EJB” el cual mediante la recepción del objeto se encargará de procesar y actualizar la información en la BD. 
             ejbEducacion.actualizarFormacionAcademica(actualizarForAc);
-
             //Al finalizar la actualización de la información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();”
             mostrarListas();
-
             //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
             reiniciarValores();
-
             //Finalmente se le informa al usuario cual es el resultado obtenido
             utilidadesCH.mensajes("", "I", "C");
         } catch (Throwable ex) {
@@ -213,19 +203,14 @@ public class CvEducacion implements Serializable {
             if (experienciasLaborales.getEvidenciaNombremiento() != null) {
                 CargaArchivosCH.eliminarArchivo(experienciasLaborales.getEvidenciaNombremiento());
             }
-
             //Después de comprobar la existencia de archivos relacionados al registro, se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
             utilidadesCH.agregaBitacora(usuario, experienciasLaborales.getEmpleo().toString(), "Experiencia Laboral", "Delate");
-
             //Posteriormente de realizar el registro en la bitácora se procede a eliminar el registro, esto invocado al “EJB”
             ejbEducacion.eliminarExperienciasLaborales(experienciasLaborales);
-
             //Al finalizar los dos registros de información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();” 
             mostrarListas();
-
             //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
             pestaniaActiva = 1;
-
             //Finalmente se le informa al usuario cual es el resultado obtenido
             utilidadesCH.mensajes("", "I", "C");
         } catch (Throwable ex) {
@@ -239,16 +224,12 @@ public class CvEducacion implements Serializable {
             ExperienciasLaborales actualizarExpe = (ExperienciasLaborales) event.getObject();
             //Primero se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
             utilidadesCH.agregaBitacora(usuario, actualizarExpe.getEmpleo().toString(), "Experiencia Laboral", "Update");
-
             //Se procede a invocar el “EJB” el cual mediante la recepción del objeto se encargará de procesar y actualizar la información en la BD. 
             ejbEducacion.actualizarExperienciasLaborales(actualizarExpe);
-
             //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
             pestaniaActiva = 1;
-
             //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
             reiniciarValores();
-
             //Finalmente se le informa al usuario cual es el resultado obtenido
             utilidadesCH.mensajes("", "I", "C");
         } catch (Throwable ex) {
@@ -294,19 +275,14 @@ public class CvEducacion implements Serializable {
             if (capacitacionespersonal.getEvidenciaCapacitacion() != null) {
                 CargaArchivosCH.eliminarArchivo(capacitacionespersonal.getEvidenciaCapacitacion());
             }
-
             //Después de comprobar la existencia de archivos relacionados al registro, se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
             utilidadesCH.agregaBitacora(usuario, capacitacionespersonal.getCursoClave().toString(), "Capacitación Personal", "Delate");
-
             //Posteriormente de realizar el registro en la bitácora se procede a eliminar el registro, esto invocado al “EJB”
             ejbEducacion.eliminarCapacitacionespersonal(capacitacionespersonal);
-
             //Al finalizar los dos registros de información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();” 
             mostrarListas();
-
             //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
             pestaniaActiva = 2;
-
             //Finalmente se le informa al usuario cual es el resultado obtenido
             utilidadesCH.mensajes("", "I", "C");
         } catch (Throwable ex) {
@@ -320,20 +296,15 @@ public class CvEducacion implements Serializable {
             Capacitacionespersonal actualizarCapa = (Capacitacionespersonal) event.getObject();
             //Primero se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
             utilidadesCH.agregaBitacora(usuario, actualizarCapa.getCursoClave().toString(), "Capacitación Personal", "Update");
-
             //Se realiza la asignación de los valores a actualizar
             actualizarCapa.getModalidad().setModalidad(modalida);
             actualizarCapa.getTipo().setTipo(tipoCur);
-
             //Se procede a invocar el “EJB” el cual mediante la recepción del objeto se encargará de procesar y actualizar la información en la BD. 
             ejbEducacion.actualizarCapacitacionespersonal(actualizarCapa);
-
             //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
             pestaniaActiva = 1;
-
             //Posteriormente de actualizar las listas se procede a reiniciar las variables utilizadas en el método, esto a través de la invocación del método “reiniciarValores();”
             reiniciarValores();
-
             //Finalmente se le informa al usuario cual es el resultado obtenido
             utilidadesCH.mensajes("", "I", "C");
         } catch (Throwable ex) {
@@ -349,7 +320,6 @@ public class CvEducacion implements Serializable {
             listaGrados = ejbEducacion.mostrarListaGrados();
             listaCursos = ejbEducacion.mostrarListaCursosTipo();
             listaModalidades = ejbEducacion.mostrarListaCursosModalidad();
-
             //Las listas son llenadas con los registros existentes del usuario logeado en la BD, esto mediante la recepción de su clave.
             nuevaListaFormacionAcademica = ejbEducacion.mostrarFormacionAcademica(usuario);
             nuevaListaExperienciasLaborales = ejbEducacion.mostrarExperienciasLaborales(usuario);

@@ -44,11 +44,11 @@ public class ControladorDocentesActivos implements Serializable {
     private static final long serialVersionUID = 1736039029781733869L;
 
     @Getter    @Setter    private Integer docenteBusqueda = 0;
-            
+
     @Getter    @Setter    private Personal personal = new Personal();
     @Getter    @Setter    private ListaPersonal listaPersonal = new ListaPersonal();
     @Getter    @Setter    private InformacionAdicionalPersonal informacionAdicionalPersonal = new InformacionAdicionalPersonal();
-    
+
     @Getter    @Setter    private List<ListaPersonal> personalsD = new ArrayList<>();
     @Getter    @Setter    private List<HabilidadesInformaticas> habilidadesInformaticases = new ArrayList<>();
     @Getter    @Setter    private List<DesarrollosTecnologicos> desarrollosTecnologicoses = new ArrayList<>();
@@ -65,21 +65,19 @@ public class ControladorDocentesActivos implements Serializable {
     @Getter    @Setter    private List<LibrosPub> librosPubs = new ArrayList<>();
     @Getter    @Setter    private List<Idiomas> idiomases = new ArrayList<>();
     @Getter    @Setter    private List<Lenguas> lenguases = new ArrayList<>();
-    
+
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
-    
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbEducacion ejbEducacion;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbHabilidades ejbHabilidades;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPremios ejbPremios;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbTecnologia ejbTecnologia;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbProduccionProfecional ejbProduccionProfecional;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbDatosUsuarioLogeado;
-    
+
     @Inject    ControladorEmpleado controladorEmpleado;
-     
+
     @PostConstruct
-    public void init() {        
-        generarListasAreas();        
+    public void init() {
+        generarListasAreas();
     }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -115,11 +113,11 @@ public class ControladorDocentesActivos implements Serializable {
             listaPersonal = ejbPersonal.mostrarListaPersonal(docenteBusqueda);
             informacionAdicionalPersonal = ejbPersonal.mostrarInformacionAdicionalPersonalLogeado(docenteBusqueda);
 
-            if(informacionAdicionalPersonal == null){
-            informacionAdicionalPersonal = new InformacionAdicionalPersonal();
-            informacionAdicionalPersonal.setAutorizacion(false);
-                informacionAdicionalPersonal=ejbPersonal.crearNuevoInformacionAdicionalPersonal(informacionAdicionalPersonal);
-            }            
+            if (informacionAdicionalPersonal == null) {
+                informacionAdicionalPersonal = new InformacionAdicionalPersonal();
+                informacionAdicionalPersonal.setAutorizacion(false);
+                informacionAdicionalPersonal = ejbPersonal.crearNuevoInformacionAdicionalPersonal(informacionAdicionalPersonal);
+            }
             informacionCV();
 
         } catch (Throwable ex) {
@@ -127,7 +125,6 @@ public class ControladorDocentesActivos implements Serializable {
             Logger.getLogger(ControladorDocentesActivos.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
 
     public void informacionCV() {
         try {
@@ -147,7 +144,7 @@ public class ControladorDocentesActivos implements Serializable {
             librosPubs = new ArrayList<>();
             idiomases = new ArrayList<>();
             lenguases = new ArrayList<>();
-    
+
             habilidadesInformaticases.clear();
             desarrollosTecnologicoses.clear();
             capacitacionespersonals.clear();
@@ -163,23 +160,23 @@ public class ControladorDocentesActivos implements Serializable {
             librosPubs.clear();
             idiomases.clear();
             lenguases.clear();
-            
+
             habilidadesInformaticases = ejbHabilidades.mostrarHabilidadesInformaticas(docenteBusqueda);
             desarrollosTecnologicoses = ejbTecnologia.mostrarDesarrollosTecnologicos(docenteBusqueda);
             capacitacionespersonals = ejbEducacion.mostrarCapacitacionespersonal(docenteBusqueda);
             experienciasLaboraleses = ejbEducacion.mostrarExperienciasLaborales(docenteBusqueda);
+            investigacioneses = ejbProduccionProfecional.mostrarInvestigacion(docenteBusqueda);
             desarrolloSoftwares = ejbTecnologia.mostrarDesarrolloSoftware(docenteBusqueda);
             formacionAcademicas = ejbEducacion.mostrarFormacionAcademica(docenteBusqueda);
-            investigacioneses = ejbProduccionProfecional.mostrarInvestigacion(docenteBusqueda);
-            innovacioneses = ejbTecnologia.mostrarInnovaciones(docenteBusqueda);
-            distincioneses = ejbPremios.mostrarDistinciones(docenteBusqueda);
             memoriaspubs = ejbProduccionProfecional.mostrarMemoriaspub(docenteBusqueda);
             articulosps = ejbProduccionProfecional.mostrarArticulosp(docenteBusqueda);
             congresoses = ejbProduccionProfecional.mostrarCongresos(docenteBusqueda);
             librosPubs = ejbProduccionProfecional.mostrarLibrosPub(docenteBusqueda);
+            innovacioneses = ejbTecnologia.mostrarInnovaciones(docenteBusqueda);
+            distincioneses = ejbPremios.mostrarDistinciones(docenteBusqueda);
             idiomases = ejbHabilidades.mostrarIdiomas(docenteBusqueda);
             lenguases = ejbHabilidades.mostrarLenguas(docenteBusqueda);
-           
+
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorDocentesActivos.class.getName()).log(Level.SEVERE, null, ex);

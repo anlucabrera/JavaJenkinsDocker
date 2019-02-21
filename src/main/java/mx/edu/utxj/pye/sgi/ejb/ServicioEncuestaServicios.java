@@ -605,6 +605,7 @@ public class ServicioEncuestaServicios implements EjbEncuestaServicios {
      */
     @Override
     public Alumnos obtenerAlumnos(String matricula) {
+        Short grado = 11;
         TypedQuery<Periodos> periodoAct = f2.getEntityManager().createQuery("SELECT p FROM Periodos AS p",Periodos.class);
         List<Periodos> periodos = periodoAct.getResultList();
         periodos.stream().forEach(x -> {
@@ -616,9 +617,15 @@ public class ServicioEncuestaServicios implements EjbEncuestaServicios {
             }
         });
 //        TypedQuery<ViewAlumnos> q = f.getEntityManager().createQuery("SELECT a from Alumno a WHERE a.alumnoPK.periodo= 47 AND a.cuatrimestre=11 AND a.alumnoPK.matricula=:matricula", Alumno.class);
-        TypedQuery<Alumnos> q = f2.getEntityManager().createQuery("SELECT a from Alumnos a WHERE a.matricula=:matricula AND a.cveStatus = :estatus AND a.grupos.gruposPK.cvePeriodo = :periodo ", Alumnos.class);
+        TypedQuery<Alumnos> q = f2.getEntityManager()
+                .createQuery("SELECT a from Alumnos a " 
+                        + "WHERE a.matricula=:matricula AND "
+                        + "a.cveStatus = :estatus AND "
+                        + "a.grupos.gruposPK.cvePeriodo = :periodo AND "
+                        + "a.gradoActual = :grado", Alumnos.class);
         q.setParameter("estatus", 1);
         q.setParameter("periodo", periodo);
+        q.setParameter("grado", grado);
         q.setParameter("matricula", matricula);
         //System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEncuestaServicios.obtenerAlumnos() se ejecuto la consulta");
         List<Alumnos> l = q.getResultList();

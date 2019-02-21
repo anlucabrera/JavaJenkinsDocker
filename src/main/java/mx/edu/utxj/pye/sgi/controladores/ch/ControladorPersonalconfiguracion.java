@@ -12,20 +12,20 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.annotation.ManagedBean;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.Part;
 import org.omnifaces.cdi.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
-import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
+import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.RowEditEvent;
-import org.primefaces.model.StreamedContent;
 
 @Named
 @ManagedBean
@@ -49,25 +49,24 @@ public class ControladorPersonalconfiguracion implements Serializable {
     @Getter    @Setter    private AreasUniversidad nuevoOBJAreasUniversidad;
     @Getter    @Setter    private Categorias nuevoOBJCategorias;
 
-    @Getter    @Setter    private Short claveCatagoria=0;   
+    @Getter    @Setter    private Short claveCatagoria = 0;
 
-     @Getter    @Setter    private Part file;
-    @Getter    private String ruta;
-    @Getter    StreamedContent content;
+    @Getter    @Setter    private Part file;
     
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbUtilidadesCH;
-    @EJB    EjbCarga carga;
+    
+    @Inject    UtilidadesCH utilidadesCH;
     @PostConstruct
-    public void init() {       
-        estatus=new ArrayList<>();
+    public void init() {
+        estatus = new ArrayList<>();
         estatus.clear();
         estatus.add("0");
         estatus.add("1");
         nuevoOBJAreasUniversidad = new AreasUniversidad();
-        nuevoOBJPersonalCategorias=new PersonalCategorias();
-        generarListas();       
+        nuevoOBJPersonalCategorias = new PersonalCategorias();
+        generarListas();
     }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -112,7 +111,7 @@ public class ControladorPersonalconfiguracion implements Serializable {
             Collections.sort(nuevaListaPersonalsFotosFaltantes, (x, y) -> Short.compare(x.getAreaOperativa(), y.getAreaOperativa()));
             Collections.sort(nuevaListaPersonals, (x, y) -> Short.compare(x.getCategoriaOperativa(), y.getCategoriaOperativa()));
             Collections.sort(nuevaListaPersonalCategoriases, (x, y) -> x.getTipo().compareTo(y.getTipo()));
-            
+
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorPersonalconfiguracion.class.getName()).log(Level.SEVERE, null, ex);
@@ -132,7 +131,7 @@ public class ControladorPersonalconfiguracion implements Serializable {
     }
 
     public void actualizarAreaUnivercidad() {
-        try {            
+        try {
             nuevoOBJAreasUniversidad = ejbAreasLogeo.actualizarAreasUniversidad(nuevoOBJAreasUniversidad);
             Messages.addGlobalInfo("¡Operación exitosa!!");
             generarListas();
@@ -154,18 +153,9 @@ public class ControladorPersonalconfiguracion implements Serializable {
     }
 
     public void agregarEvidenciaDistincion() {
-        if (file != null) {
-            ruta = carga.subirFotoPersonal(file, new File("personal".concat(File.separator)));
-            if (!"Error: No se pudo leer el archivo".equals(ruta)) {
-                Messages.addGlobalInfo("Foto agregada!!");
-                ruta = null;
-            } else {
-                ruta = null;
-                Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !!");
-            }
-        } else {
-            Messages.addGlobalWarn("Es necesario seleccionar un archivo !!");
-        }
+        //Se invoca el método agregarEvidencias en el cual se envía ciertos parámetros (descritos dentro del método) el cual regresara la ruta del archivo ya almacenado en el servidor.
+        utilidadesCH.agregarFoto(file, new File("personal".concat(File.separator)));
+        //Finalmente se procede a reiniciar las variables utilizadas en el método
         file = null;
     }
     
@@ -180,9 +170,9 @@ public class ControladorPersonalconfiguracion implements Serializable {
             return "";
         }
     }
-  
+
     public String responsable(Integer clave) {
-        try {           
+        try {
             if (clave != null) {
                 ListaPersonal listaPersonal = new ListaPersonal();
                 listaPersonal = ejbPersonal.mostrarListaPersonal(clave);
@@ -200,6 +190,7 @@ public class ControladorPersonalconfiguracion implements Serializable {
             return "";
         }
     }
+
     public void onRowEdit(RowEditEvent event) {
         try {
             Personal p = new Personal();
@@ -228,9 +219,4 @@ public class ControladorPersonalconfiguracion implements Serializable {
             Logger.getLogger(ControladorAdmin.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-     
-    public void onRowCancel(RowEditEvent event) {
-        Messages.addGlobalWarn("¡Operación cancelada!");
-    }
-
 }

@@ -175,7 +175,7 @@
                                                 </f:facet>
 
                                                 <p:ajax event="rowEdit" listener="#{controladorIncidenciasPersonal.onRowEdit}" update="tblActividades" />
-                                                <p:ajax event="rowEditCancel" listener="#{controladorIncidenciasPersonal.onRowCancel}" update="tblActividades" />
+                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblActividades" />
 
                                                 <p:column style="width: 50px;">
                                                     <p:commandButton actionListener="#{controladorIncidenciasPersonal.eliminarIncidencia(incidencia)}" update="@this" oncomplete="actualizarTabla()" icon="fa fa-trash" 

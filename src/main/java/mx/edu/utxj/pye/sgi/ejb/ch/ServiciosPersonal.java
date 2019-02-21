@@ -209,7 +209,7 @@ public class ServiciosPersonal implements EjbPersonal {
 ////////////////////////////////////////////////////////////////////////////////Catalogos
     @Override
     public List<Docencias> mostrarListaDocencias(Integer claveTrabajador) throws Throwable {
-        TypedQuery<Docencias> q = em.createQuery("SELECT d FROM Docencias d JOIN d.clavePersonal c where c.clave=:clave", Docencias.class);
+        TypedQuery<Docencias> q = em.createQuery("SELECT d FROM Docencias d JOIN d.clavePersonal c where c.clave=:clave ORDER BY d.anio DESC ", Docencias.class);
         q.setParameter("clave", claveTrabajador);
         List<Docencias> pr = q.getResultList();
         return pr;

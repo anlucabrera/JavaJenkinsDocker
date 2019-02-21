@@ -35,19 +35,20 @@ public class ControladorResultadosEvaluaciones implements Serializable {
     @Getter    @Setter    private String tipo;
     @Getter    @Setter    private List<resultadoEva> listaResultadoEva = new ArrayList<resultadoEva>();
     @Getter    @Setter    private resultadoEva nuevoResEva;
-    @Getter    private List<ListaEvaluaciones> listaEvaluaciones = new ArrayList<>();
+    @Getter    private List<ListaEvaluaciones> listaEvaluaciones = new ArrayList<>();    
     @Getter    @Setter    private ListaEvaluaciones nOBRE;
     @Getter    @Setter    DecimalFormat df = new DecimalFormat("#.00");
 //@Inject
-    @Inject    ControladorEmpleado controladorEmpleado;
+    @Inject
+    ControladorEmpleado controladorEmpleado;
 
     @EJB
     EjbPersonalEvaluaciones ejbPersonalEvaluaciones;
 
     @PostConstruct
-    public void init() {        
+    public void init() {
         usuario = controladorEmpleado.getEmpleadoLogeado();
-        mostrarLista();        
+        mostrarLista();
     }
 
     public void mostrarLista() {
@@ -55,11 +56,11 @@ public class ControladorResultadosEvaluaciones implements Serializable {
             listaResultadoEva.clear();
             listaEvaluaciones.clear();
             Personal personal = ejbPersonalEvaluaciones.getPersonal(usuario);
-            List<PeriodosEscolares> periodos = ejbPersonalEvaluaciones.getPeriodos(personal);            
-            Map<PeriodosEscolares, List<Evaluaciones360Resultados>> resultados360 = ejbPersonalEvaluaciones.getEvaluaciones360PorPeriodo(personal, periodos);            
-            Map<PeriodosEscolares, DesempenioEvaluacionResultados> resultadosDesempenio = ejbPersonalEvaluaciones.getEvaluacionesDesempenioPorPeriodo(personal, periodos);            
-            listaEvaluaciones = ejbPersonalEvaluaciones.empaquetar(personal, periodos, resultados360, resultadosDesempenio);            
-            
+            List<PeriodosEscolares> periodos = ejbPersonalEvaluaciones.getPeriodos(personal);
+            Map<PeriodosEscolares, List<Evaluaciones360Resultados>> resultados360 = ejbPersonalEvaluaciones.getEvaluaciones360PorPeriodo(personal, periodos);
+            Map<PeriodosEscolares, DesempenioEvaluacionResultados> resultadosDesempenio = ejbPersonalEvaluaciones.getEvaluacionesDesempenioPorPeriodo(personal, periodos);
+            listaEvaluaciones = ejbPersonalEvaluaciones.empaquetar(personal, periodos, resultados360, resultadosDesempenio);
+
             for (int i = 0; i <= listaEvaluaciones.size() - 1; i++) {
                 nOBRE = listaEvaluaciones.get(i);
 

@@ -42,7 +42,6 @@ public class ControladorEmpleadoReporteRegistros implements Serializable {
 
     @Getter    @Setter    private List<reporteRegistros> listareporteRegistrosPersonal = new ArrayList<reporteRegistros>();
     @Getter    @Setter    private List<ListaPersonal> nuevaVistaListaPersonal = new ArrayList<>();
-    
     @Getter    @Setter    private List<FormacionAcademica> listaFormacionAcademica = new ArrayList<>();
     @Getter    @Setter    private List<ExperienciasLaborales> listaExperienciasLaborales = new ArrayList<>();
     @Getter    @Setter    private List<Capacitacionespersonal> listaCapacitacionespersonal = new ArrayList<>();
@@ -58,24 +57,23 @@ public class ControladorEmpleadoReporteRegistros implements Serializable {
     @Getter    @Setter    private List<Memoriaspub> listaMemoriaspub = new ArrayList<>();
     @Getter    @Setter    private List<Investigaciones> listaInvestigacion = new ArrayList<>();
     @Getter    @Setter    private List<Congresos> listaCongresos = new ArrayList<>();
-    
     @Getter    @Setter    private ListaPersonal nuevoOBJListaPersonal;
     @Getter    @Setter    private reporteRegistros listareporteRegistros;
     @Getter    @Setter    private Integer total;
-    @Getter    @Setter    private String tipo,area;
-        
+    @Getter    @Setter    private String tipo, area;
+
     @Inject    ControladorEmpleado controladorEmpleado;
-    
+
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbEducacion ejbEducacion;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbHabilidades ejbHabilidades;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbTecnologia ejbTecnologia;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPremios ejbPremios;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbProduccionProfecional ejbProduccionProfecional;
-    
+
     @PostConstruct
-    public void init() {        
-        generarReporte();        
+    public void init() {
+        generarReporte();
     }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   
@@ -102,23 +100,23 @@ public class ControladorEmpleadoReporteRegistros implements Serializable {
             listaFormacionAcademica = ejbEducacion.mostrarFormacionAcademica(nuevoOBJListaPersonal.getClave());
             listaExperienciasLaborales = ejbEducacion.mostrarExperienciasLaborales(nuevoOBJListaPersonal.getClave());
             listaCapacitacionespersonal = ejbEducacion.mostrarCapacitacionespersonal(nuevoOBJListaPersonal.getClave());
-            
+
             listaIdiomas = ejbHabilidades.mostrarIdiomas(nuevoOBJListaPersonal.getClave());
             listaHabilidadesInformaticas = ejbHabilidades.mostrarHabilidadesInformaticas(nuevoOBJListaPersonal.getClave());
             listaLenguas = ejbHabilidades.mostrarLenguas(nuevoOBJListaPersonal.getClave());
-            
+
             listaDesarrolloSoftwar = ejbTecnologia.mostrarDesarrolloSoftware(nuevoOBJListaPersonal.getClave());
             listaDesarrollosTecnologicos = ejbTecnologia.mostrarDesarrollosTecnologicos(nuevoOBJListaPersonal.getClave());
             listaInnovaciones = ejbTecnologia.mostrarInnovaciones(nuevoOBJListaPersonal.getClave());
-            
+
             listaDistinciones = ejbPremios.mostrarDistinciones(nuevoOBJListaPersonal.getClave());
-            
+
             listaLibrosPubs = ejbProduccionProfecional.mostrarLibrosPub(nuevoOBJListaPersonal.getClave());
             listaArticulosp = ejbProduccionProfecional.mostrarArticulosp(nuevoOBJListaPersonal.getClave());
             listaMemoriaspub = ejbProduccionProfecional.mostrarMemoriaspub(nuevoOBJListaPersonal.getClave());
             listaInvestigacion = ejbProduccionProfecional.mostrarInvestigacion(nuevoOBJListaPersonal.getClave());
             listaCongresos = ejbProduccionProfecional.mostrarCongresos(nuevoOBJListaPersonal.getClave());
-            
+
             total = listaFormacionAcademica.size() + listaExperienciasLaborales.size() + listaCapacitacionespersonal.size() + listaIdiomas.size() + listaHabilidadesInformaticas.size() + listaLenguas.size() + listaDesarrolloSoftwar.size() + listaDesarrollosTecnologicos.size() + listaInnovaciones.size() + listaDistinciones.size() + listaLibrosPubs.size() + listaArticulosp.size() + listaMemoriaspub.size() + listaInvestigacion.size() + listaCongresos.size();
             if (total.equals(0)) {
                 tipo = "A";

@@ -41,16 +41,15 @@ public class HistoricoPlantillaPersonalEstadistica implements Serializable {
     @Getter    @Setter    private List<ListaPersonal> nuevaListaListaPersonal = new ArrayList<>();
     @Getter    @Setter    private ListaPersonal nuevoOBJListaListaPersonal = new ListaPersonal();
     @Getter    @Setter    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    @Getter    @Setter    DateFormat dateFormat2 = new SimpleDateFormat("dd-MM-yyyy");    
-    @Getter    @Setter    DateFormat dateFormatanio = new SimpleDateFormat("dd-MM-yyyy");
-    @Getter    @Setter    Date actual=new Date();
+    @Getter    @Setter    DateFormat dateFormat2 = new SimpleDateFormat("dd-MM-yyyy");
+    @Getter    @Setter    Date actual = new Date();
     @Getter    @Setter    String sin = "", pp = "", direccionDescarga = "";
     @Getter    @Setter    private Historicoplantillapersonal nuevoHistoricoplantillapersonal;
-    @Getter    @Setter    private List<Historicoplantillapersonal> nuevaListaHistoricoplantillapersonal=new ArrayList<>();
+    @Getter    @Setter    private List<Historicoplantillapersonal> nuevaListaHistoricoplantillapersonal = new ArrayList<>();
 
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbDatosUsuarioLogeado;
-  
+
     @PostConstruct
     public void init() {
         listaHistoricos();

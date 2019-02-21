@@ -28,4 +28,6 @@ public interface EjbAdministracionEncuestaIng {
     public List<AlumnosEncuestas> obtenerResultadosXDirector(String cveDirector);
     
     public List<AlumnosEncuestas> obtenerAlumnosOnceavo();
+    
+    public List<AlumnosEncuestas> obtenerResultadosXTutor(Integer tutor);
 }

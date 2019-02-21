@@ -26,5 +26,7 @@ public interface EjbAdministracionEncuestaServicios {
     public EncuestaServiciosResultados obtenerResultadosEncServXMatricula(Integer matricula);
     
     public List<AlumnosEncuestas> obtenerResultadosXDirector(String cveDirector);
+    
+    public List<AlumnosEncuestas> obtenerResultadosXTutor(Integer cveMaestro);
 
 }

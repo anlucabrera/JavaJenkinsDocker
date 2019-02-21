@@ -164,7 +164,7 @@
                                                                             <div class="icon">
                                                                                 <i class="fa fa-check-square-o"/>
                                                                             </div>
-                                                                            <a href="../capitalHumano/directivos/incidencias.xhtml" class="small-box-footer">Validar</a>
+                                                                            <a href="../capitalHumano/directivos/perfilSubordinadosIn.xhtml" class="small-box-footer">Validar</a>
                                                                         </div>
                                                                     </div>     
                                                                     <div class="col-lg-4 col-md-12 col-xs-12">
@@ -927,10 +927,13 @@
                                                     <div class="col-sm-12 border-right">
                                                         <div class="description-block">
                                                             <h5 class="description-header">Función genérica</h5>
-                                                            <c:forEach var = "i" begin = "0" end = "#{controladorEmpleadoLogeado.nuevaListaFuncionesGenerales.size()-1}">
-                                                                <br/>
-                                                                <span class="description-text" style="text-align: justify">#{controladorEmpleadoLogeado.nuevaListaFuncionesGenerales.get(i)}</span>
-                                                                <br/>
+                                                            <c:forEach var="i" begin="0" end="#{controladorPersonal.listaFuncioneSubordinado.size()-1}">
+                                                                <c:set var="eje" value="#{controladorPersonal.listaFuncioneSubordinado.get(i)}"/>
+                                                                <c:if test="#{eje.tipo eq 'GENERAL'}">
+                                                                    <br/>
+                                                                    <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
+                                                                    <br/>
+                                                                </c:if>                                                                    
                                                             </c:forEach>
                                                         </div>
                                                     </div>
@@ -940,10 +943,13 @@
                                                     <div class="col-sm-12 border-right">
                                                         <div class="description-block">
                                                             <h5 class="description-header">Funciones específicas</h5>
-                                                            <c:forEach var = "i" begin = "0" end = "#{controladorEmpleadoLogeado.nuevaListaFuncionesEspecificas.size()-1}">
-                                                                <br/>
-                                                                <span class="description-text" style="text-align: justify">#{controladorEmpleadoLogeado.nuevaListaFuncionesEspecificas.get(i)}</span>
-                                                                <br/>
+                                                            <c:forEach var="i" begin="0" end="#{controladorPersonal.listaFuncioneSubordinado.size()-1}">
+                                                                <c:set var="eje" value="#{controladorPersonal.listaFuncioneSubordinado.get(i)}"/>
+                                                                <c:if test="#{eje.tipo ne 'GENERAL'}">
+                                                                    <br/>
+                                                                    <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
+                                                                    <br/>
+                                                                </c:if>                                                                    
                                                             </c:forEach>
                                                         </div>
                                                     </div>

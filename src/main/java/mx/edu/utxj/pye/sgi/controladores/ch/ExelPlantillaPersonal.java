@@ -43,7 +43,8 @@ public class ExelPlantillaPersonal implements Serializable {
     @Getter    @Setter    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     @Getter    @Setter    String sin = "", pp = "", direccionDescarga = "";
 
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
+    @EJB
+    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
 
     @PostConstruct
     public void init() {

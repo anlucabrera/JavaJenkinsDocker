@@ -42,7 +42,7 @@
                         </div>
                     </div>
                     <div class="row" >
-                            <div id="basicdiagram" class="col-md-12" style="height: 1000px; width: 100%"/>
+                        <div id="basicdiagram" class="col-md-12" style="height: 1000px; width: 100%"/>
                     </div>
                 </section>
             </p:panel>   
@@ -67,7 +67,7 @@
                                                 <div class="col-sm-12 border-right">
                                                     <div class="description-block">
                                                         <h5 class="description-header">Fecha de ingreso:</h5>
-                                                        <span class="description-text"><p style="text-align: center">#{organigrama.fechaI}</p></span>
+                                                        <span class="description-text"><p style="text-align: center"><h:outputLabel value="#{organigrama.nuevoEmpleado.fechaIngreso}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></p></span>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-12 border-right">
@@ -167,10 +167,13 @@
                                                 <div class="col-sm-12 border-right">
                                                     <div class="description-block">
                                                         <h5 class="description-header">Función genérica</h5>
-                                                        <c:forEach var = "i" begin = "0" end = "#{organigrama.nuevaListaFuncionesGenerales.size()-1}">
-                                                            <span class="description-text" style="text-align: justify">#{organigrama.nuevaListaFuncionesGenerales.get(i)}</span>
-                                                            <br/>
-                                                            <br/>
+                                                        <c:forEach var="i" begin="0" end="#{organigrama.listaDFunciones.size()-1}">
+                                                            <c:set var="eje" value="#{organigrama.listaDFunciones.get(i)}"/>
+                                                            <c:if test="#{eje.tipo eq 'GENERAL'}">
+                                                                <br/>
+                                                                <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
+                                                                <br/>
+                                                            </c:if>                                                                    
                                                         </c:forEach>
                                                     </div>
                                                 </div>
@@ -181,6 +184,7 @@
                             </div>
                         </p:tab>
                         <p:tab title="Funciones específicas">
+
                             <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                 <div class="col-md-12">
                                     <div class="box box-widget widget-user-2">
@@ -195,11 +199,14 @@
                                             <div class="row">
                                                 <div class="col-sm-12 border-right">
                                                     <div class="description-block">
-                                                        <h5 class="description-header">Funciones específicas</h5>
-                                                        <c:forEach var = "i" begin = "0" end = "#{organigrama.nuevaListaFuncionesEspecificas.size()-1}">
-                                                            <span class="description-text" style="text-align: justify">#{organigrama.nuevaListaFuncionesEspecificas.get(i)}</span>
-                                                            <br/>
-                                                            <br/>
+                                                        <h5 class="description-header">Funciones específicas </h5>
+                                                        <c:forEach var="f" begin="0" end="#{organigrama.listaDFunciones.size()-1}">
+                                                            <c:set var="eje" value="#{organigrama.listaDFunciones.get(f)}"/>
+                                                            <c:if test="#{eje.tipo ne 'GENERAL'}">
+                                                                <br/>
+                                                                <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
+                                                                <br/>
+                                                            </c:if>                                                                    
                                                         </c:forEach>
                                                     </div>
                                                 </div>

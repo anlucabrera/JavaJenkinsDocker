@@ -25,6 +25,7 @@ import mx.edu.utxj.pye.sgi.dto.DtoAlumnosEncuesta;
 import mx.edu.utxj.pye.sgi.dto.ListadoEvaluacionEgresados;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuesta;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuestaIng;
+import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionTutores;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaSatisfaccionEgresadosIng;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
@@ -43,7 +44,7 @@ public class AdministracionEncuestaIng implements Serializable{
 
     private static final long serialVersionUID = 4320030263170989982L;
     
-    @Getter @Setter private Boolean esDeIyE,director,aperturas;
+    @Getter @Setter private Boolean esDeIyE,director,aperturas, tutor;
     @Getter @Setter Integer cveTrabajador,usuarioNomina;
     @Getter @Setter String cveDirector;
     @Getter @Setter private List<ListadoEvaluacionEgresados> listaEvaCompleta, listaEvaIncompleta, listaEvaNA, listaFiltrado;
@@ -58,6 +59,7 @@ public class AdministracionEncuestaIng implements Serializable{
     @Inject private LogonMB logonMB;
     @EJB private EjbAdministracionEncuestaIng ejbAdmEI;
     @EJB private EjbAdministracionEncuesta ejbAdmEncuesta;
+    @EJB private EjbAdministracionTutores ejbAdmTutores;
     
     @PostConstruct
     public void init(){
@@ -78,12 +80,16 @@ public class AdministracionEncuestaIng implements Serializable{
                         esDeIyE = true;
                         //seguimientoEncuestaIyE();
                     }
+                    if(!ejbAdmTutores.estTutordeGrupo(cveTrabajador).isEmpty()){
+                        tutor = true;
+                    }
                 }
             }
         } catch (Throwable e) {
             director = false;
             esDeIyE = false;
             aperturas = false;
+            tutor = false;
             Logger.getLogger(AdministracionEncuestaIng.class.getName()).log(Level.SEVERE, null, e);
         }
         
@@ -190,6 +196,48 @@ public class AdministracionEncuestaIng implements Serializable{
                     }
                 });
             
+        } catch (Throwable e) {
+            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + e.getMessage());
+            Logger.getLogger(AdministracionEncuestaIng.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+    
+    public void seguimientoEncuestaTutor(){
+        try {
+            listaEvaCompleta = new ArrayList<>();
+            listaEvaIncompleta = new ArrayList<>();
+            listaEvaNA = new ArrayList<>();
+            Short grado = 11;
+            alumnos11Ing = ejbAdmEI.obtenerResultadosXTutor(cveTrabajador);
+            Comparador<EncuestaSatisfaccionEgresadosIng> comparador = new ComparadorEncuestaSatisfaccionEgresadosIng();
+            alumnos11Ing.forEach(x -> {
+                try {
+                    
+                    EncuestaSatisfaccionEgresadosIng listaCompletaRes = ejbAdmEI.obtenerResultadosEncServXMatricula(Integer.parseInt(x.getMatricula()));
+                    if (listaCompletaRes != null) {
+                        if (comparador.isCompleto(listaCompletaRes)) {
+                            String tutorAsignado = x.getNombreTutor()+" "+x.getApPatTutor()+" "+x.getApMatTutor();
+                            ListadoEvaluacionEgresados encuestasCompletas = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()), 
+                                    x.getNombre() + " " + x.getApellidoPat() + " " + x.getApellidoMat(), x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), tutorAsignado);
+                            listaEvaCompleta.add(encuestasCompletas);
+                        }
+                        if (!comparador.isCompleto(listaCompletaRes)) {
+                            String tutorAsginado = x.getNombreTutor()+" "+x.getApPatTutor()+" "+x.getApMatTutor();
+                            ListadoEvaluacionEgresados encuestasIncompletas = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()), 
+                                    x.getNombre() + " " + x.getApellidoPat() + " " + x.getApellidoMat(), x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), tutorAsginado);
+                            listaEvaIncompleta.add(encuestasIncompletas);
+                        }
+                    } else {
+                        String tutorAsignado = x.getNombreTutor()+" "+x.getApPatTutor()+" "+x.getApMatTutor();
+                        ListadoEvaluacionEgresados sinIngresar = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()), 
+                                x.getNombre() + " " + x.getApellidoPat() + " " + x.getApellidoMat(), x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), tutorAsignado);
+                        listaEvaNA.add(sinIngresar);
+                    }
+                } catch (Throwable e) {
+                    Logger.getLogger(AdministracionEncuestaIng.class.getName()).log(Level.SEVERE, null, e);
+                }
+
+            });
         } catch (Throwable e) {
             Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + e.getMessage());
             Logger.getLogger(AdministracionEncuestaIng.class.getName()).log(Level.SEVERE, null, e);

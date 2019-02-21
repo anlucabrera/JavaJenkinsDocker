@@ -141,57 +141,7 @@
                                 </div>
                                 <p:separator style="max-width: 1000px;" />
                             </c:forEach>
-                            <c:if test="#{encuestaServicios.alumno.gradoActual eq 2}">
-                                <div class="row">
-                                    <div class="panel panel-primary" style="max-width: 900px;margin: auto; font-size: large;">
-                                        <div class="panel-heading aceptado">
-                                            <h3 class="panel-title" style="text-align: justify;">
-                                                Impacto de la política institucional de la universidad
-                                            </h3>
-                                        </div>
-                                        <table class="table table-striped table-responsive">
-                                            <thead>
-                                            <tr class="denegado">
-                                                <th>#</th>
-                                                <th>Pregunta</th>
-                                                <th style="text-align: center; width: 280px;">Opción</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td><h:outputLabel value="74"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
-                                                    <td style="text-align: justify;">
-                                                        ¿Conoces la política institucional de la universidad?
-                                                        <p style="font-size: small">Si la respuesta es: "Si". Responder la pregunta 75</p>
-                                                    </td>
-                                                    <td class="text-center" style="min-width: 120px;">
-                                                        <f:ajax execute="p74">
-                                                            <c:set var="pos" value="74" />
-                                                            <p:selectOneButton  id="p74" value="#{encuestaServicios.respuestas[pos]}" valueChangeListener="#{encuestaServicios.guardarRespuesta}">
-                                                                <f:selectItems class="btn-primary" value="#{encuestaServicios.respuestaSioNo}" />
-                                                            </p:selectOneButton>
-                                                        </f:ajax>
-                                                    </td>
-                                                </tr>
-                                                <tr id="pregunts75">
-                                                    <td><h:outputLabel value="75"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
-                                                    <td style="text-align: justify;">¿La política institucional influyó en la desición para cursar una carrera profesional en la UTXJ?</td>
-                                                    <td class="text-center" style="min-width: 120px;">
-                                                        <f:ajax execute="p75">
-                                                            <c:set var="pos" value="75" />
-                                                            <p:selectOneButton  id="p75" value="#{encuestaServicios.respuestas[pos]}" valueChangeListener="#{encuestaServicios.guardarRespuesta}">
-                                                                <f:selectItems class="btn-primary" value="#{encuestaServicios.rangoDesision}" />
-
-                                                            </p:selectOneButton>
-                                                        </f:ajax>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <p:separator style="max-width: 1000px;" />
-                            </c:if>
+                            
                         </div>
                     </div>
                 </div>

@@ -621,37 +621,46 @@
                                         </h:form>
                                     </p:tab>
                                     <p:tab title="Funciones">
-                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                            <div class="col-md-12">
-                                                <div class="box box-widget widget-user-2">
-                                                    <div class="row">
-                                                        <div class="col-sm-12 border-right">
-                                                            <div class="description-block">
-                                                                <h5 class="description-header">Función genérica</h5>
-                                                                <c:forEach var = "i" begin = "0" end = "#{controladorSubordinados.nuevaListaFuncionesGenerales.size()-1}">
-                                                                    <br/>
-                                                                    <span class="description-text" style="text-align: justify">#{controladorSubordinados.nuevaListaFuncionesGenerales.get(i)}</span>
-                                                                    <br/>
-                                                                </c:forEach>
+                                        <p:outputPanel>
+                                            <p:autoUpdate/>
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-md-12">
+                                                    <div class="box box-widget widget-user-2">
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header">Función genérica</h5>
+                                                                    <c:forEach var="i" begin="0" end="#{controladorSubordinados.listaFuncioneSubordinado.size()-1}">
+                                                                        <c:set var="eje" value="#{controladorSubordinados.listaFuncioneSubordinado.get(i)}"/>
+                                                                        <c:if test="#{eje.tipo eq 'GENERAL'}">
+                                                                            <br/>
+                                                                            <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
+                                                                            <br/>
+                                                                        </c:if>                                                                    
+                                                                    </c:forEach>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <hr/>
-                                                    <div class="row">
-                                                        <div class="col-sm-12 border-right">
-                                                            <div class="description-block">
-                                                                <h5 class="description-header">Funciones específicas </h5>
-                                                                <c:forEach var = "i" begin = "0" end = "#{controladorSubordinados.nuevaListaFuncionesEspecificas.size()-1}">
-                                                                    <br/>
-                                                                    <span class="description-text" style="text-align: justify">#{controladorSubordinados.nuevaListaFuncionesEspecificas.get(i)}</span>
-                                                                    <br/>
-                                                                </c:forEach>
+                                                        <hr/>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header">Funciones específicas </h5>
+                                                                    <c:forEach var="f" begin="0" end="#{controladorSubordinados.listaFuncioneSubordinado.size()-1}">
+                                                                        <c:set var="eje" value="#{controladorSubordinados.listaFuncioneSubordinado.get(f)}"/>
+                                                                        <c:if test="#{eje.tipo ne 'GENERAL'}">
+                                                                            <br/>
+                                                                            <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
+                                                                            <br/>
+                                                                        </c:if>                                                                    
+                                                                    </c:forEach>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </p:outputPanel>
                                     </p:tab>
                                     <p:tab title="Docencias" rendered="#{controladorSubordinados.listaDocencias.size() eq 0? false:true}">
                                         <h:form id="frmExLab">                                               

@@ -17,7 +17,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPremios;
 import mx.edu.utxj.pye.sgi.entity.ch.Distinciones;
-import mx.edu.utxj.pye.sgi.entity.ch.Personal;  
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.RowEditEvent;
@@ -25,13 +25,12 @@ import org.primefaces.event.RowEditEvent;
 @Named
 @ManagedBean
 @ViewScoped
-public class CvPremios implements Serializable{
-    
+public class CvPremios implements Serializable {
+
     private static final long serialVersionUID = -6775211516127859011L;
-    
+
     // variables basicas
     @Getter    @Setter    private Integer usuario, direccionInt = 0;
-    @Getter    @Setter    private String claveTrabajador;
     //Variables de objetos Entitys
     @Getter    @Setter    private Distinciones nuevoOBJDistinciones;
     // listas de entitys
@@ -43,14 +42,13 @@ public class CvPremios implements Serializable{
     //Injects
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesCH utilidadesCH;
-    
+
     @PostConstruct
-    public void init() {        
+    public void init() {
         usuario = controladorEmpleado.getEmpleadoLogeado();
-        claveTrabajador = controladorEmpleado.getClavePersonalLogeado();
         nuevoOBJDistinciones = new Distinciones();
         nuevaListaDistinciones.clear();
-        distincionesRegistradas();        
+        distincionesRegistradas();
     }
 
     public void distincionesRegistradas() {
@@ -91,8 +89,8 @@ public class CvPremios implements Serializable{
         //Se invoca el método agregarEvidencias en el cual se envía ciertos parámetros (descritos dentro del método) el cual regresara la ruta del archivo ya almacenado en el servidor.
         nuevoOBJDistinciones.setEvidenciaDistincion(utilidadesCH.agregarEvidencias(file, usuario.toString(), "premiosDistinciones", ""));
         //Se bacía el valor de la variable file
-        direccionInt=1;
-         file = null;
+        direccionInt = 1;
+        file = null;
     }
 
     public void delDistincion(Distinciones distinciones) {
@@ -136,7 +134,7 @@ public class CvPremios implements Serializable{
     public void onRowCancel(RowEditEvent event) {
         Messages.addGlobalInfo("¡Operación cancelada!");
     }
-    
+
     public void metodoBase() {
 
     }

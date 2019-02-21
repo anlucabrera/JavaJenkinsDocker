@@ -99,7 +99,17 @@ public class ServicioAdministracionEncuestaServicios implements EjbAdministracio
             return ae;
         }
     }
-
+    
+    public List<AlumnosEncuestas> obtenerResultadosXTutor(Integer cveMaestro) {
+        Short grado = 11;
+        List<AlumnosEncuestas> ae = f2.getEntityManager().createQuery("select a from AlumnosEncuestas as a where a.cveMaestro = :cveMaestro AND a.grado = :grado",AlumnosEncuestas.class)
+                .setParameter("cveMaestro", cveMaestro).setParameter("grado", grado).getResultStream().collect(Collectors.toList());
+        if(ae.isEmpty()){
+            return new ArrayList<>();
+        }else{
+            return ae;
+        }
+    }
     
     
 }

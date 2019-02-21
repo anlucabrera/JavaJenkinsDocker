@@ -42,7 +42,7 @@ public class ControladorAdmin implements Serializable {
 
     @Getter    @Setter    private Integer eventoC = 0;
     @Getter    @Setter    private Short areaC = 0;
-    
+
     @Getter    @Setter    private EventosAreas eventosAreas = new EventosAreas();
 
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
@@ -53,29 +53,29 @@ public class ControladorAdmin implements Serializable {
     @Inject    UtilidadesCH utilidadesCH;
 
     @PostConstruct
-    public void init() {        
+    public void init() {
         estatus.clear();
         estatus.add("Aceptado");
         estatus.add("Denegado");
         estatus.add("Pendiente");
         mostrarIncidencias();
         mostrarModulos();
-        mostrarEventos();        
-    }  
-    
+        mostrarEventos();
+    }
+
     public void mostrarEventos() {
         try {
-            areasUniversidads=new ArrayList<>();
-            eventoses=new ArrayList<>();
-            eventosesAreases=new ArrayList<>();
+            areasUniversidads = new ArrayList<>();
+            eventoses = new ArrayList<>();
+            eventosesAreases = new ArrayList<>();
             areasUniversidads.clear();
             eventoses.clear();
             eventosesAreases.clear();
-            
+
             eventoses = ejbUtilidadesCH.mostrarEventoses();
             eventosesAreases = ejbUtilidadesCH.mostrarEventosesAreases();
             areasLogeo.mostrarAreasUniversidad().forEach((a) -> {
-                if(a.getTienePoa()==true){
+                if (a.getTienePoa() == true) {
                     areasUniversidads.add(a);
                 }
             });
@@ -84,7 +84,7 @@ public class ControladorAdmin implements Serializable {
             Logger.getLogger(ControladorAdmin.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void mostrarModulos() {
         try {
             modulosregistros = new ArrayList<>();
@@ -165,7 +165,7 @@ public class ControladorAdmin implements Serializable {
             Logger.getLogger(ControladorAdmin.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-   
+
     public void onRowEditEventosAreas(RowEditEvent event) {
         try {
             EventosAreas e = (EventosAreas) event.getObject();
@@ -173,17 +173,17 @@ public class ControladorAdmin implements Serializable {
             eventosAreas.setEventos(new Eventos());
             eventosAreas.setEventosAreasPK(new EventosAreasPK());
 
-            eventosAreas=e;
-            Integer cEve=0;
-            Short cAre=0;
-            
-            cEve=e.getEventos().getEvento();
-            cAre=Short.parseShort(String.valueOf(e.getEventosAreasPK().getAreaOperativa()));
-            
+            eventosAreas = e;
+            Integer cEve = 0;
+            Short cAre = 0;
+
+            cEve = e.getEventos().getEvento();
+            cAre = Short.parseShort(String.valueOf(e.getEventosAreasPK().getAreaOperativa()));
+
             eventosAreas.setEventos(new Eventos(cEve));
             eventosAreas.setEventosAreasPK(new EventosAreasPK(cEve, cAre));
             ejbUtilidadesCH.actualizarEventosesAreases(eventosAreas);
-            
+
             Messages.addGlobalInfo("¡Operación exitosa!");
             mostrarEventos();
             Ajax.update("frmModulos");
@@ -192,17 +192,17 @@ public class ControladorAdmin implements Serializable {
             Logger.getLogger(ControladorAdmin.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void eliminarEventoArea(EventosAreas ea) {
-        try {            
-                       ejbUtilidadesCH.eliminarEventosesEventosAreas(ea);
-            mostrarEventos();            
+        try {
+            ejbUtilidadesCH.eliminarEventosesEventosAreas(ea);
+            mostrarEventos();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void onRowEditEventos(RowEditEvent event) {
         try {
             Eventos e = (Eventos) event.getObject();
@@ -215,7 +215,7 @@ public class ControladorAdmin implements Serializable {
             Logger.getLogger(ControladorAdmin.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-     
+
     public String buscarArea(Short area) {
         try {
             AreasUniversidad areaU = new AreasUniversidad();
@@ -227,10 +227,10 @@ public class ControladorAdmin implements Serializable {
             return "";
         }
     }
-    
-      public String buscarAreaEventosA(Integer area) {
+
+    public String buscarAreaEventosA(Integer area) {
         try {
-            
+
             AreasUniversidad areaU = new AreasUniversidad();
             areaU = areasLogeo.mostrarAreasUniversidad(Short.parseShort(area.toString()));
             return areaU.getNombre();
@@ -240,13 +240,13 @@ public class ControladorAdmin implements Serializable {
             return "";
         }
     }
-    
+
     public void agreggarEventoArea() {
         try {
-            eventosAreas=new EventosAreas();
+            eventosAreas = new EventosAreas();
             eventosAreas.setEventos(new Eventos());
             eventosAreas.setEventosAreasPK(new EventosAreasPK());
-            
+
             eventosAreas.setEventos(new Eventos(eventoC));
             eventosAreas.setEventosAreasPK(new EventosAreasPK(eventoC, areaC));
             ejbUtilidadesCH.agregarEventosesAreases(eventosAreas);
@@ -256,10 +256,6 @@ public class ControladorAdmin implements Serializable {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-    
-    public void onRowCancel(RowEditEvent event) {
-        Messages.addGlobalWarn("¡Operación cancelada!");
     }
 
     public void imprimirValores() {

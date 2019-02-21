@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -23,10 +22,8 @@ import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
 @ViewScoped
 public class UtilidadesCH implements Serializable {
 
-    @EJB
-    EjbCarga carga;
-    @EJB
-    private EjbUtilidadesCH ejbDatosUsuarioLogeado;
+    @EJB    EjbCarga carga;
+    @EJB    private EjbUtilidadesCH ejbDatosUsuarioLogeado;
 
     public Integer obtenerEdad(Date fechaNa) {
         try {
@@ -70,18 +67,31 @@ public class UtilidadesCH implements Serializable {
 
     public String agregarEvidencias(Part file, String cvT, String registro, String subNivel) {
         String ruta = "";
-
         if (file == null) {
             mensajes("es necesario seleccionar un archivo.", "W", "F");
             return null;
         }
-
         if (subNivel.equals("")) {
             ruta = carga.subir(file, new File(cvT.concat(File.separator).concat(registro).concat(File.separator)));
         } else {
             ruta = carga.subir(file, new File(cvT.concat(File.separator).concat(registro).concat(File.separator).concat(subNivel).concat(File.separator)));
         }
-        
+        if (!"Error: No se pudo leer el archivo".equals(ruta)) {
+            mensajes("el archivo se a cargado.", "I", "C");
+            return ruta;
+        } else {
+            mensajes("no fue posible cargar el archivo, Intente nuevamente.", "E", "F");
+            return "";
+        }
+    }
+
+    public String agregarFoto(Part file, File rutaRelativa) {
+        String ruta = "";
+        if (file == null) {
+            mensajes("es necesario seleccionar una foto.", "W", "F");
+            return null;
+        }
+        ruta = carga.subirFotoPersonal(file, new File("personal".concat(File.separator)));
         if (!"Error: No se pudo leer el archivo".equals(ruta)) {
             mensajes("el archivo se a cargado.", "I", "C");
             return ruta;
@@ -110,23 +120,23 @@ public class UtilidadesCH implements Serializable {
             return;
         }
     }
-    
+
     public String convertirRuta(String ruta) {
         System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesCH.convertirRuta()" + ruta.isEmpty() + "1");
-        
+
         //Se comprueba si la bao contiene la ruta de almacenamiento de la evidencia.
         if (ruta.isEmpty()) {
             mensajes("No fue posible cargar el archivo", "W", "C");
             return null;
         }
-        
+
         //Se inicializa una variable de tipo File mediante la obtención de la ruta (variable enviada desde la interfaz gráfica.
         File file = new File(ruta);
-        
+
         //Se realiza la separación de la ruta obtenida y se coloca una máscara para poder mostrar los archivos sin exponer su ubicación real.
         return "evidencias2".concat(file.toURI().toString().split("archivos")[1]);
     }
-    
+
     public void onRowCancel(RowEditEvent event) {
         Messages.addGlobalInfo("¡Operación cancelada!");
     }

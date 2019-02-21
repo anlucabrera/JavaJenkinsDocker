@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,35 +55,44 @@ import org.primefaces.event.RowEditEvent;
 public class ControladorSubordinados implements Serializable {
 
     private static final long serialVersionUID = 1736039029781733869L;
-
-    @Getter    @Setter    private List<ListaPersonal> nuevaListaListaPersonal = new ArrayList<>(), nuevaListaListaPersonalJefes = new ArrayList<>();
-    @Getter    @Setter    private List<Funciones> listaFuncioneSubordinado = new ArrayList<>();
-    @Getter    @Setter    private List<FormacionAcademica> listaFormacionAcademica = new ArrayList<>();
-    @Getter    @Setter    private List<ExperienciasLaborales> listaExperienciasLaborales = new ArrayList<>();
-    @Getter    @Setter    private List<Capacitacionespersonal> listaCapacitacionespersonal = new ArrayList<>();
+    
+////////////////////////////////////////////////////////////////////////////////Listas CV
     @Getter    @Setter    private List<Idiomas> listaIdiomas = new ArrayList<>();
-    @Getter    @Setter    private List<HabilidadesInformaticas> listaHabilidadesInformaticas = new ArrayList<>();
     @Getter    @Setter    private List<Lenguas> listaLenguas = new ArrayList<>();
-    @Getter    @Setter    private List<DesarrolloSoftware> listaDesarrolloSoftwar = new ArrayList<>();
-    @Getter    @Setter    private List<DesarrollosTecnologicos> listaDesarrollosTecnologicos = new ArrayList<>();
-    @Getter    @Setter    private List<Innovaciones> listaInnovaciones = new ArrayList<>();
-    @Getter    @Setter    private List<Distinciones> listaDistinciones = new ArrayList<>();
+    @Getter    @Setter    private List<Congresos> listaCongresos = new ArrayList<>();
     @Getter    @Setter    private List<LibrosPub> listaLibrosPubs = new ArrayList<>();
     @Getter    @Setter    private List<Articulosp> listaArticulosp = new ArrayList<>();
     @Getter    @Setter    private List<Memoriaspub> listaMemoriaspub = new ArrayList<>();
+    @Getter    @Setter    private List<Innovaciones> listaInnovaciones = new ArrayList<>();
+    @Getter    @Setter    private List<Distinciones> listaDistinciones = new ArrayList<>();
     @Getter    @Setter    private List<Investigaciones> listaInvestigacion = new ArrayList<>();
-    @Getter    @Setter    private List<Congresos> listaCongresos = new ArrayList<>();
-    @Getter    @Setter    private List<String> nuevaListaFuncionesEspecificas = new ArrayList<>(), nuevaListaFuncionesGenerales = new ArrayList<>(), estatus = new ArrayList<>();
+    @Getter    @Setter    private List<DesarrolloSoftware> listaDesarrolloSoftwar = new ArrayList<>();
+    @Getter    @Setter    private List<FormacionAcademica> listaFormacionAcademica = new ArrayList<>();
+    @Getter    @Setter    private List<ExperienciasLaborales> listaExperienciasLaborales = new ArrayList<>();
+    @Getter    @Setter    private List<Capacitacionespersonal> listaCapacitacionespersonal = new ArrayList<>();
+    @Getter    @Setter    private List<DesarrollosTecnologicos> listaDesarrollosTecnologicos = new ArrayList<>();
+    @Getter    @Setter    private List<HabilidadesInformaticas> listaHabilidadesInformaticas = new ArrayList<>();
+  
+////////////////////////////////////////////////////////////////////////////////Funciones
+    @Getter    @Setter    private List<Funciones> listaFuncioneSubordinado = new ArrayList<>();
+
+////////////////////////////////////////////////////////////////////////////////Justificacion de Asistemcias
     @Getter    @Setter    private List<Incidencias> listaIncidencias = new ArrayList<>();
     @Getter    @Setter    private List<Incidencias> listaIncidenciasReporteImpresion = new ArrayList<>();
     @Getter    @Setter    private List<Incidencias> listaIncidenciasIndividuales = new ArrayList<>();
     @Getter    @Setter    private List<Incapacidad> listaIncapacidads = new ArrayList<>();
     @Getter    @Setter    private List<Incapacidad> listaIncapacidadsReporteImpresion = new ArrayList<>();
     @Getter    @Setter    private List<Cuidados> listaCuidados = new ArrayList<>();
+
+////////////////////////////////////////////////////////////////////////////////Variables extra    
+    @Getter    @Setter    private List<ListaPersonal> nuevaListaListaPersonalJefes = new ArrayList<>();
+    @Getter    @Setter    private List<String> estatus = new ArrayList<>();
+        
     @Getter    @Setter    private List<Docencias> listaDocencias = new ArrayList<>();
     @Getter    @Setter    private Modulosregistro modulosRegistro = new Modulosregistro();
     @Getter    @Setter    private String[] nombreAr;
 
+    @Getter    @Setter    private LocalDate fechaNow;
     @Getter    @Setter    private Date fechaActual = new Date(), fechaI = new Date(), fechaF = new Date(),fechaIR = new Date(), fechaFR = new Date();;
     @Getter    @Setter    private Integer empleadoLogeado, contactoDestino, anioNumero = 0;
     @Getter    @Setter    private String mensajeDNotificacion = "", mes = "", numeroQuincena = "1", anio = "";
@@ -113,8 +123,6 @@ public class ControladorSubordinados implements Serializable {
         estatus.add("Denegado");
         estatus.add("Pendiente");
         empleadoLogeado = controladorEmpleado.getEmpleadoLogeado();
-        nuevaListaFuncionesEspecificas.clear();
-        nuevaListaFuncionesGenerales.clear();
         nuevoOBJFunciones = new Funciones();
         if (fechaActual.getDate() <= 15) {
             numeroQuincena = "1";
@@ -137,7 +145,7 @@ public class ControladorSubordinados implements Serializable {
     public void modulosEventos() {
         try {
             fechaReportesActiva=false;
-             List<Incidencias> incidenciases = new ArrayList<>();
+            List<Incidencias> incidenciases = new ArrayList<>();
             incidenciases.clear();
             List<Incapacidad> incapacidads = new ArrayList<>();
             incapacidads.clear();
@@ -158,8 +166,7 @@ public class ControladorSubordinados implements Serializable {
                     } else {
                         a = "20" + (fechaActual.getYear() - 100);
                         switch (modulosRegistro.getFechaFin().getMonth()) {
-                            case 0:
-                                d = "31";                                m = "12";                                a = "20" + (fechaActual.getYear() - 101);                                break;
+                            case 0:                                d = "31";                                m = "12";                                a = "20" + (fechaActual.getYear() - 101);                                break;
                             case 1:                                d = "31";                                m = "01";                                break;
                             case 2:                                d = "28";                                m = "02";                                break;
                             case 3:                                d = "31";                                m = "03";                                break;
@@ -222,6 +229,8 @@ public class ControladorSubordinados implements Serializable {
             nuevoOBJInformacionAdicionalPersonal = ejbPersonal.mostrarInformacionAdicionalPersonalLogeado(contactoDestino);
             nuevoOBJListaPersonal = ejbPersonal.mostrarListaPersonal(contactoDestino);
             nuevoOBJPersonal = ejbPersonal.mostrarPersonalLogeado(contactoDestino);
+            listaIncidenciasIndividuales = ejbNotificacionesIncidencias.mostrarIncidencias(contactoDestino);
+            listaDocencias = ejbPersonal.mostrarListaDocencias(contactoDestino);
             informacionCV();
             mostrarFuncioneSubordinado();
         } catch (Throwable ex) {
@@ -247,7 +256,7 @@ public class ControladorSubordinados implements Serializable {
             listaMemoriaspub.clear();
             listaInvestigacion.clear();
             listaCongresos.clear();
-            
+
             listaFormacionAcademica = ejbEducacion.mostrarFormacionAcademica(contactoDestino);
             listaExperienciasLaborales = ejbEducacion.mostrarExperienciasLaborales(contactoDestino);
             listaCapacitacionespersonal = ejbEducacion.mostrarCapacitacionespersonal(contactoDestino);
@@ -263,7 +272,7 @@ public class ControladorSubordinados implements Serializable {
             listaMemoriaspub = ejbProduccionProfecional.mostrarMemoriaspub(contactoDestino);
             listaInvestigacion = ejbProduccionProfecional.mostrarInvestigacion(contactoDestino);
             listaCongresos = ejbProduccionProfecional.mostrarCongresos(contactoDestino);
-            
+
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
@@ -272,38 +281,14 @@ public class ControladorSubordinados implements Serializable {
 
     public void mostrarFuncioneSubordinado() {
         try {
-            nuevaListaFuncionesGenerales.clear();
-            nuevaListaFuncionesEspecificas.clear();
-            switch (nuevoOBJListaPersonal.getCategoriaOperativa()) {
-                case 30:
-                    listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
-                    break;
-                case 32:
-                    listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
-                    break;
-                case 34:
-                    listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
-                    break;
-                case 41:
-                    listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
-                    break;
-                default:
-                    listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(nuevoOBJListaPersonal.getAreaOperativa(), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
-                    break;
-            }
-            if (listaFuncioneSubordinado.isEmpty()) {
+            if (nuevoOBJListaPersonal.getCategoriaOperativa() == 30
+                    || nuevoOBJListaPersonal.getCategoriaOperativa() == 32
+                    || nuevoOBJListaPersonal.getCategoriaOperativa() == 41
+                    || (nuevoOBJListaPersonal.getCategoriaOperativa() == 34 && (nuevoOBJListaPersonal.getAreaSuperior() >= 23 && nuevoOBJListaPersonal.getAreaSuperior() <= 29))) {
+                listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
             } else {
-                for (int i = 0; i <= listaFuncioneSubordinado.size() - 1; i++) {
-                    nuevoOBJFunciones = new Funciones();
-                    nuevoOBJFunciones = listaFuncioneSubordinado.get(i);
-                    if ("GENERAL".equals(nuevoOBJFunciones.getTipo())) {
-                        nuevaListaFuncionesGenerales.add(nuevoOBJFunciones.getNombre());
-                    } else {
-                        nuevaListaFuncionesEspecificas.add(nuevoOBJFunciones.getNombre());
-                    }
-                }
+                listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(nuevoOBJListaPersonal.getAreaOperativa(), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevoOBJPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
             }
-            listaFuncioneSubordinado.clear();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
@@ -314,14 +299,7 @@ public class ControladorSubordinados implements Serializable {
         try {
             nuevoOBJListaPersonalLogeado = new ListaPersonal();
             nuevoOBJListaPersonalLogeado = ejbPersonal.mostrarListaPersonal(empleadoLogeado);
-            nuevaListaListaPersonal = ejbPersonal.mostrarListaPersonalListSubordinados(nuevoOBJListaPersonalLogeado);
-            for (int i = 0; i <= nuevaListaListaPersonal.size() - 1; i++) {
-                nuevoOBJListaPersonalFiltro = nuevaListaListaPersonal.get(i);
-                if (Objects.equals(nuevoOBJListaPersonalFiltro.getClave(), nuevoOBJListaPersonalLogeado.getClave())) {
-                } else {
-                    nuevaListaListaPersonalJefes.add(nuevoOBJListaPersonalFiltro);
-                }
-            }
+            nuevaListaListaPersonalJefes = ejbPersonal.mostrarListaPersonalListSubordinados(nuevoOBJListaPersonalLogeado);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
@@ -330,6 +308,7 @@ public class ControladorSubordinados implements Serializable {
 
     public void mostrarIncidencias(String mActual) {
         try {
+            fechaNow=LocalDate.now();                                                                                    fechaNow=LocalDate.of(18, 1, 1);                                                                                    
             List<Incidencias> incidenciases = new ArrayList<>();
             incidenciases.clear();
             List<Incapacidad> incapacidads = new ArrayList<>();
@@ -368,6 +347,8 @@ public class ControladorSubordinados implements Serializable {
                     }
                 }
             }
+//            fechaNow=LocalDate.of(18, 1, 1);
+//            fechaI = Date.from(fechaNow.atStartOfDay(ZoneId.systemDefault()).toInstant());;
             fechaI = dateFormat.parse(diai + "/" + mes + "/" + anio);
             fechaF = dateFormat.parse(diaf + "/" + mes + "/" + anio);
 

@@ -79,13 +79,13 @@
             </p:toolbar>
             <p:sticky target="tb" />
         </div>
-        <p:tabView>
+        <p:tabView id="tabView">
 
             <p:tab titleStyleClass="aceptado" titletip="Estudiantes que han finalizado encuesta" title="Estudiantes que han finalizado encuesta" >
-                <h:form>
+                <h:form id="fr1">
                     <p:outputPanel>
-                        <p:dataTable id="tblEvaluacionesIncompletas" lazy="false" value="#{administracionEncTutores.listaEncuestaServCompleta}"   var="encuestaEstudiate" filterDelay="700" 
-                                     paginator="true" rows="7" filteredValue="#{administracionEncTutores.listFiltradoEncEgresados}"
+                        <p:dataTable id="tblEvaluacionesIncompletas" lazy="false" value="#{administracionEncuestaServicios.listaEvaCompleta}"   var="encuestaEstudiate" filterDelay="700" 
+                                     paginator="true" rows="7" filteredValue="#{administracionEncuestaServicios.listaFiltrado}"
                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                                      rowsPerPageTemplate="10,20,30,40,50" 
                                      emptyMessage="No se encontrarono registros"  >
@@ -130,8 +130,9 @@
                                 <h:outputText value="#{encuestaEstudiate.siglas}"/>
                             </p:column>
                             <f:facet name="footer">
-                                <p:commandButton actionListener="#{administracionEncTutores.obtenerAlumnosTutorEncuestaServicios()}" class="btn btn-primary"
-                                                 icon="fa fa-refresh" value="Actualizar información" update="@this" process="@this"/>
+                                <p:commandButton actionListener="#{administracionEncuestaServicios.seguimientoEncuestaTutores()}" class="btn btn-primary"
+                                                 icon="fa fa-refresh" value="Actualizar información" 
+                                                 update="tabView:fr1:tblEvaluacionesIncompletas tabView:fr2:tblEvaluacionesCompletas" process="@this"/>
                             </f:facet>
                         </p:dataTable>           
                     </p:outputPanel>
@@ -139,10 +140,10 @@
                 </h:form>
             </p:tab>
             <p:tab title="Estudiantes que no han finalizado encuesta" titleStyleClass="denegado"  titletip="Estudiantes que no han finalizado encuesta">
-                <h:form>
+                <h:form id="fr2">
                     <p:outputPanel>
-                        <p:dataTable id="tblEvaluacionesCompletas" lazy="false" value="#{administracionEncTutores.listEncuestaServIncompleta}"   var="encuestaEstudiate" filterDelay="700" 
-                                     paginator="true" rows="7" filteredValue="#{administracionEncTutores.listFiltradoEncEgresados}"
+                        <p:dataTable id="tblEvaluacionesCompletas" lazy="false" value="#{administracionEncuestaServicios.listaEvaIncompleta}"   var="encuestaEstudiate" filterDelay="700" 
+                                     paginator="true" rows="7" filteredValue="#{administracionEncuestaServicios.listaFiltrado}"
                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                                      rowsPerPageTemplate="10,20,30,40,50" 
                                      emptyMessage="El cuerpo estudiantil aún no ha finalizado la encuesta, "  >
@@ -185,70 +186,8 @@
                                       sortBy="#{encuestaEstudiate.siglas}">
                                 <h:outputText value="#{encuestaEstudiate.siglas}"/>
                             </p:column>
-                            <f:facet name="footer">
-                                <p:commandButton actionListener="#{administracionEncTutores.obtenerAlumnosTutorEncuestaServicios()}" class="btn btn-primary"
-                                                 icon="fa fa-refresh" value="Actualizar información" update="@this" process="@this"/>
-                            </f:facet>
                         </p:dataTable>           
                     </p:outputPanel>
-                </h:form>
-            </p:tab>
-            <p:tab title="Estudiantes que no han accedido" titleStyleClass="noaccedio">
-                <h:form>
-                    <p:outputPanel>
-                        <p:dataTable id="tblAlumnosNoAccedieron" lazy="false" value="#{administracionEncTutores.listaEncuestaServicios}"   var="alumnosNoAccedieron" filterDelay="700" 
-                                     paginator="true" rows="7" filteredValue="#{administracionEncTutores.listFiltradoEncEgresados}"
-                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
-                                     rowsPerPageTemplate="10,20,30,40,50" 
-                                     emptyMessage="No se encontrarono registros"  >
-
-
-                            <f:facet name="header">
-                                <p:commandLink  ajax="false" class="denegado btn">
-                                    <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
-                                    <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblAlumnosNoAccedieron" 
-                                                    fileName="Reporte_alumnos_que_no_accedieron"/>
-                                </p:commandLink>
-
-                            </f:facet>
-                            <p:column headerText="Matricula" 
-                                      filterBy="#{alumnosNoAccedieron.clave}" 
-                                      filterMatchMode="contains" 
-                                      sortBy="#{alumnosNoAccedieron.clave}"   >                           
-                                <h:outputText value="#{alumnosNoAccedieron.clave}" />
-                            </p:column>
-                            <p:column headerText="Nombre"
-                                      filterBy="#{alumnosNoAccedieron.nombre}"
-                                      filterMatchMode="contains"
-                                      sortBy="#{alumnosNoAccedieron.nombre}">
-                                <h:outputText value="#{alumnosNoAccedieron.nombre}"/>
-                            </p:column>
-                            <p:column headerText="Grado"
-                                      filterBy="#{alumnosNoAccedieron.grado}"
-                                      filterMatchMode="contains"
-                                      sortBy="#{alumnosNoAccedieron.grado}">
-                                <h:outputText value="#{alumnosNoAccedieron.grado}"/>
-                            </p:column>
-                            <p:column headerText="Grupo"
-                                      filterBy="#{alumnosNoAccedieron.grupo}"
-                                      filterMatchMode="contains"
-                                      sortBy="#{alumnosNoAccedieron.grupo}">
-                                <h:outputText value="#{alumnosNoAccedieron.grupo}"/>
-                            </p:column>
-
-                            <p:column headerText="Carrera"
-                                      filterBy="#{alumnosNoAccedieron.siglas}"
-                                      filterMatchMode="contains"
-                                      sortBy="#{alumnosNoAccedieron.siglas}">
-                                <h:outputText value="#{alumnosNoAccedieron.siglas}"/>
-                            </p:column>
-                            <f:facet name="footer">
-                                <p:commandButton actionListener="#{administracionEncTutores.obtenerAlumnosTutorEncuestaServicios()}" class="btn btn-primary"
-                                                 icon="fa fa-refresh" value="Actualizar información" update="@this" process="@this"/>
-                            </f:facet>
-                        </p:dataTable>           
-                    </p:outputPanel>
-
                 </h:form>
             </p:tab>
         </p:tabView>

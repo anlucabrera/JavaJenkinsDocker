@@ -16,12 +16,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
-import mx.edu.utxj.pye.sgi.entity.ch.Actividades;
 import mx.edu.utxj.pye.sgi.entity.ch.Categoriasespecificasfunciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Comentariosfunciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Funciones;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
-import mx.edu.utxj.pye.sgi.entity.ch.Notificaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import org.omnifaces.util.Messages;
@@ -34,49 +32,45 @@ public class ControladorFunciones implements Serializable {
 
     private static final long serialVersionUID = -8842055922698338073L;
 
-    @Getter    @Setter    private String menajeNot, tipo, nombreO,puestoTipo="",nombreCategoriaEspecifica="";
-    @Getter    @Setter    private List<String> listaO = new ArrayList<>();
-    @Getter    @Setter    private List<Notificaciones> listaNotificaciones = new ArrayList<>();
-    @Getter    @Setter    private Notificaciones nuevOBJNotificaciones;
-    @Getter    @Setter    private PersonalCategorias nuevoOBJPersonalCategorias;
-    @Getter    @Setter    private Actividades nuevoOBJActividades;
-    @Getter    @Setter    private Date fechaActual = new Date();
+    @Getter    @Setter    private String puestoTipo = "", nombreCategoriaEspecifica = "";
 /////////////////////////////////////////////////////////////////////////////////////////////////
-    @Getter    @Setter    private List<ListaPersonal> listaListaPersonal = new ArrayList<>(), listaListaPersonalSubordinados = new ArrayList<>();
+    @Getter    @Setter    private List<ListaPersonal> listaListaPersonalSubordinados = new ArrayList<>();
     @Getter    @Setter    private ListaPersonal nuevoOBJListaPersonalLogeado = new ListaPersonal(), nuevoOBJListaPersonalSub = new ListaPersonal();
     @Getter    @Setter    private List<listaCat> listaCategorias = new ArrayList<>();
     @Getter    @Setter    private listaCat nuevOBJlistaCat, nuevOBJlistaCat2;
     @Getter    @Setter    private List<listaAre> listalistaAreas = new ArrayList<>();
     @Getter    @Setter    private listaAre nuevOBJlistaAre, nuevOBJlistaAre2;
-    @Getter    @Setter    private Short claveCategoria = 0, claveCategoria2 = 1,claveArea=0;
+    @Getter    @Setter    private Short claveCategoria = 0, claveCategoria2 = 1, claveArea = 0;
     @Getter    @Setter    private List<Funciones> listaFunciones = new ArrayList<>();
     @Getter    @Setter    private Funciones nuevoOBJFunciones = new Funciones(), nuevoOBJFuncionesSelect;
-    @Getter    @Setter    private Integer usuario, contiene = 0,totalC=0,claveEmpleado=0;
+    @Getter    @Setter    private Integer usuario, contiene = 0, totalC = 0, claveEmpleado = 0;
     @Getter    @Setter    private Iterator<Personal> empleadoActual;
 
     @Getter    @Setter    private List<String> listaClavesEmpleados = new ArrayList<>();
     @Getter    @Setter    private List<Categoriasespecificasfunciones> listaCategoriasespecificasfuncioneses = new ArrayList<>();
-    @Getter    @Setter    private Categoriasespecificasfunciones Categoriasespecificasfuncionesnullo=new Categoriasespecificasfunciones();
+    @Getter    @Setter    private Categoriasespecificasfunciones Categoriasespecificasfuncionesnullo = new Categoriasespecificasfunciones();
 ///////////////////////////////////////////////////////////////////////////////
-    @Getter    @Setter    private Comentariosfunciones nuevoOBJComentariosfunciones=new Comentariosfunciones(),nuevoOBJComentariosfuncionesComparacion=new Comentariosfunciones();
-    @Getter    @Setter    private List<Comentariosfunciones> ListaComentariosfuncionesConsulta=new ArrayList<>();
+    @Getter    @Setter    private Comentariosfunciones nuevoOBJComentariosfunciones = new Comentariosfunciones(), nuevoOBJComentariosfuncionesComparacion = new Comentariosfunciones();
+    @Getter    @Setter    private List<Comentariosfunciones> ListaComentariosfuncionesConsulta = new ArrayList<>();
     @Getter    @Setter    private List<listaEstatus> listalistaEstatus = new ArrayList<>();
-    @Getter    @Setter    private List<Personal> listaPersonalJefes= new ArrayList<>();
-    @Getter    @Setter    private Personal nuveOBJPersonalActualizacion,nuveOBJPersonal,nuveOBJPersonalParaFunciones;
-    @Getter    @Setter    private Categoriasespecificasfunciones nuveOBJCategoriasespecificasfunciones=new Categoriasespecificasfunciones(), nuveOBJCategoriasespecificasfuncionesValorAg=new Categoriasespecificasfunciones();
-    @Getter    @Setter    private List<Categoriasespecificasfunciones> listaCategoriasespecificasConsulta=new ArrayList<>();
+    @Getter    @Setter    private List<Personal> listaPersonalJefes = new ArrayList<>();
+    @Getter    @Setter    private Personal nuveOBJPersonalActualizacion, nuveOBJPersonal, nuveOBJPersonalParaFunciones;
+    @Getter    @Setter    private Categoriasespecificasfunciones nuveOBJCategoriasespecificasfunciones = new Categoriasespecificasfunciones(), nuveOBJCategoriasespecificasfuncionesValorAg = new Categoriasespecificasfunciones();
+    @Getter    @Setter    private List<Categoriasespecificasfunciones> listaCategoriasespecificasConsulta = new ArrayList<>();
     @Getter    @Setter    private List<listaCat> listaCategoriasEspecificas = new ArrayList<>();
     @Getter    @Setter    private listaCat nuevOBJlistaCategoriasEspecificas, nuevOBJlistaCategoriasEspecificas2;
 //@EJB   
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
-    
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbFunciones ejbFunciones;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbDatosUsuarioLogeado;
+    @EJB
+    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
+
+    @EJB
+    private mx.edu.utxj.pye.sgi.ejb.ch.EjbFunciones ejbFunciones;
 //@Inject
-    @Inject    ControladorEmpleado controladorEmpleado;
+    @Inject
+    ControladorEmpleado controladorEmpleado;
 
     @PostConstruct
-    public void init() {        
+    public void init() {
         claveArea = 0;
         listaClavesEmpleados.clear();
         usuario = controladorEmpleado.getEmpleadoLogeado();
@@ -84,7 +78,7 @@ public class ControladorFunciones implements Serializable {
         listalistaEstatus.add(new listaEstatus(0, "Pendiente"));
         listalistaEstatus.add(new listaEstatus(1, "Resuelta"));
         claveCategoria2 = 1;
-        usuarioLogeado();        
+        usuarioLogeado();
     }
 
     public void mostrarListaCategorias() {
@@ -96,26 +90,12 @@ public class ControladorFunciones implements Serializable {
         }
     }
 
-    public static class listaCategorias {
-
-        @Getter        @Setter        private Integer areaOperatova;
-        @Getter        @Setter        private Short categoriaOperativa;
-        @Getter        @Setter        private Short categoriaEspecifica;
-
-        private listaCategorias(Integer _areaOperatova, Short _categoriaOperativa, Short _categoriaEspecifica) {
-            areaOperatova = _areaOperatova;
-            categoriaOperativa = _categoriaOperativa;
-            categoriaEspecifica = _categoriaEspecifica;
-        }
-    }
-
     public void usuarioLogeado() {
         try {
             Categoriasespecificasfuncionesnullo = new Categoriasespecificasfunciones();
             nuveOBJPersonalParaFunciones = new Personal();
             listaCategoriasespecificasfuncioneses.clear();
             listaFunciones.clear();
-            listaListaPersonal.clear();
             listaListaPersonalSubordinados.clear();
             listaCategorias.clear();
             listaPersonalJefes.clear();
@@ -182,7 +162,7 @@ public class ControladorFunciones implements Serializable {
             }
             listalistaAreas.add(new listaAre(Short.parseShort("0"), "Sin áreas subordinadas"));
             listaCategoriasEspecificas.add(new listaCat(Short.parseShort("1"), "Sin categoría especifica"));
-            listaFunciones = ejbFunciones.mostrarListaDeFuncionesXAreaOperativo(nuevoOBJListaPersonalLogeado.getAreaOperativa(), nuevoOBJListaPersonalLogeado.getCategoriaOperativa());
+            listaFunciones = ejbFunciones.mostrarFuncionesPorAreayPuesto(nuevoOBJListaPersonalLogeado.getAreaOperativa(), nuevoOBJListaPersonalLogeado.getCategoriaOperativa(), 1);
             listaCategoriasespecificasfuncioneses = ejbFunciones.mostrarCategoriasespecificasfuncionesArea(nuevoOBJListaPersonalLogeado.getAreaOperativa());
             Categoriasespecificasfuncionesnullo = new Categoriasespecificasfunciones(Short.parseShort("1"), "Sin categoría especifica", Short.parseShort("61"));
             listaCategoriasespecificasfuncioneses.add(Categoriasespecificasfuncionesnullo);
@@ -196,43 +176,13 @@ public class ControladorFunciones implements Serializable {
     public void consultarFuncnPorAyC() {
         try {
             listaFunciones.clear();
-            
-            switch (claveCategoria) {
-                case 0:
-                    if (nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 24 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 56) {
-                        listaFunciones = ejbFunciones.mostrarListaDeFuncionesXAreaOperativo(Short.parseShort("61"), nuevoOBJListaPersonalLogeado.getCategoriaOperativa());
-                    } else {
-                        listaFunciones = ejbFunciones.mostrarListaDeFuncionesXAreaOperativo(nuevoOBJListaPersonalLogeado.getAreaOperativa(), nuevoOBJListaPersonalLogeado.getCategoriaOperativa());
-                    }
-                    break;
-                case 30:
-                    if ((nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 24 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 56) || nuevoOBJListaPersonalLogeado.getAreaOperativa() == 28 || nuevoOBJListaPersonalLogeado.getAreaOperativa() == 47) {
-                        listaFunciones = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), claveCategoria, nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
-                    } else {
-                        listaFunciones = ejbFunciones.mostrarListaFuncionesPersonalLogeado(nuevoOBJListaPersonalLogeado.getAreaOperativa(), claveCategoria, nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
-                    }
-                    break;
-                case 41:
-                    if ((nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 24 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 56) || nuevoOBJListaPersonalLogeado.getAreaOperativa() == 28 || nuevoOBJListaPersonalLogeado.getAreaOperativa() == 47) {
-                        listaFunciones = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), claveCategoria, nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
-                    } else {
-                        listaFunciones = ejbFunciones.mostrarListaFuncionesPersonalLogeado(nuevoOBJListaPersonalLogeado.getAreaOperativa(), claveCategoria, nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
-                    }
-                    break;
-                case 32:
-                    if ((nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 24 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 56) || nuevoOBJListaPersonalLogeado.getAreaOperativa() == 28 || nuevoOBJListaPersonalLogeado.getAreaOperativa() == 47) {
-                        listaFunciones = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), claveCategoria, nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
-                    } else {
-                        listaFunciones = ejbFunciones.mostrarListaFuncionesPersonalLogeado(nuevoOBJListaPersonalLogeado.getAreaOperativa(), claveCategoria, nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
-                    }
-                    break;
-                default:
-                    if (nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 24 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 56) {
-                        listaFunciones = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), claveCategoria, nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
-                    } else {
-                        listaFunciones = ejbFunciones.mostrarListaFuncionesPersonalLogeado(nuevoOBJListaPersonalLogeado.getAreaOperativa(), claveCategoria, nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
-                    }
-                    break;
+            if (nuevoOBJListaPersonalLogeado.getCategoriaOperativa() == 30
+                    || nuevoOBJListaPersonalLogeado.getCategoriaOperativa() == 32
+                    || nuevoOBJListaPersonalLogeado.getCategoriaOperativa() == 41
+                    || (nuevoOBJListaPersonalLogeado.getCategoriaOperativa() == 34 && (nuevoOBJListaPersonalLogeado.getAreaSuperior() >= 23 && nuevoOBJListaPersonalLogeado.getAreaSuperior() <= 29))) {
+                listaFunciones = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaPersonalLogeado.getCategoriaOperativa(), nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
+            } else {
+                listaFunciones = ejbFunciones.mostrarListaFuncionesPersonalLogeado(nuevoOBJListaPersonalLogeado.getAreaOperativa(), nuevoOBJListaPersonalLogeado.getCategoriaOperativa(), nuveOBJPersonalParaFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
             }
             claveArea = 0;
             claveCategoria2 = 1;
@@ -245,54 +195,22 @@ public class ControladorFunciones implements Serializable {
 
     public void filtradoPuestosadministrativos() {
         switch (claveCategoria) {
-            case 1:
-                puestoTipo = "Directivo";
-                break;
-            case 13:
-                puestoTipo = "Directivo";
-                break;
-            case 14:
-                puestoTipo = "Directivo";
-                break;
-            case 18:
-                puestoTipo = "Directivo";
-                break;
-            case 24:
-                puestoTipo = "Directivo";
-                break;
-            case 30:
-                puestoTipo = "Docente";
-                break;
-            case 31:
-                puestoTipo = "Directivo";
-                break;
-            case 32:
-                puestoTipo = "Docente";
-                break;
-            case 33:
-                puestoTipo = "Directivo";
-                break;
-            case 38:
-                puestoTipo = "Directivo";
-                break;
-            case 39:
-                puestoTipo = "Directivo";
-                break;
-            case 40:
-                puestoTipo = "Directivo";
-                break;
-            case 41:
-                puestoTipo = "Docente";
-                break;
-            case 111:
-                puestoTipo = "Directivo";
-                break;
-            case 112:
-                puestoTipo = "Directivo";
-                break;
-            default:
-                puestoTipo = "Administrativo";
-                break;
+            case 1:                puestoTipo = "Directivo";                break;
+            case 13:                puestoTipo = "Directivo";                break;
+            case 14:                puestoTipo = "Directivo";                break;
+            case 18:                puestoTipo = "Directivo";                break;
+            case 24:                puestoTipo = "Directivo";                break;
+            case 30:                puestoTipo = "Docente";                break;
+            case 31:                puestoTipo = "Directivo";                break;
+            case 32:                puestoTipo = "Docente";                break;
+            case 33:                puestoTipo = "Directivo";                break;
+            case 38:                puestoTipo = "Directivo";                break;
+            case 39:                puestoTipo = "Directivo";                break;
+            case 40:                puestoTipo = "Directivo";                break;
+            case 41:                puestoTipo = "Docente";                break;
+            case 111:                puestoTipo = "Directivo";                break;
+            case 112:                puestoTipo = "Directivo";                break;
+            default:                puestoTipo = "Administrativo";                break;
         }
     }
 
@@ -301,9 +219,9 @@ public class ControladorFunciones implements Serializable {
             listaFunciones.clear();
             if (claveCategoria == 0) {
                 if (nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 24 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 56) {
-                    listaFunciones = ejbFunciones.mostrarListaDeFuncionesXAreaOperativo(Short.parseShort("61"), nuevoOBJListaPersonalLogeado.getCategoriaOperativa());
+                    listaFunciones = ejbFunciones.mostrarFuncionesPorAreayPuesto(Short.parseShort("61"), nuevoOBJListaPersonalLogeado.getCategoriaOperativa(), 1);
                 } else {
-                    listaFunciones = ejbFunciones.mostrarListaDeFuncionesXAreaOperativo(nuevoOBJListaPersonalLogeado.getAreaOperativa(), nuevoOBJListaPersonalLogeado.getCategoriaOperativa());
+                    listaFunciones = ejbFunciones.mostrarFuncionesPorAreayPuesto(nuevoOBJListaPersonalLogeado.getAreaOperativa(), nuevoOBJListaPersonalLogeado.getCategoriaOperativa(), 1);
                 }
             } else {
                 if ((nuevoOBJListaPersonalLogeado.getAreaOperativa() >= 24 && nuevoOBJListaPersonalLogeado.getAreaOperativa() <= 56) || (claveArea >= 24 && claveArea <= 56)) {
@@ -321,7 +239,7 @@ public class ControladorFunciones implements Serializable {
     public void consultarFuncnesAC() {
         try {
             listaFunciones.clear();
-            listaFunciones = ejbFunciones.mostrarListaDeFuncionesXAreaYPuestoEspecifico(nuevoOBJListaPersonalLogeado.getAreaOperativa(), claveCategoria2);
+            listaFunciones = ejbFunciones.mostrarFuncionesPorAreayPuesto(nuevoOBJListaPersonalLogeado.getAreaOperativa(), claveCategoria2, 2);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
@@ -335,7 +253,7 @@ public class ControladorFunciones implements Serializable {
             nuevoOBJComentariosfunciones.getIdPersonal().setClave(usuario);
             nuevoOBJComentariosfunciones.getIdFuncion().setFuncion(nuevoOBJFuncionesSelect.getFuncion());
             nuevoOBJComentariosfunciones.setEsatus(0);
-            nuevoOBJComentariosfunciones.setFechaHoraC(fechaActual);
+            nuevoOBJComentariosfunciones.setFechaHoraC(new Date());
 
             nuevoOBJComentariosfunciones = ejbFunciones.agregarComentariosfunciones(nuevoOBJComentariosfunciones);
 
@@ -531,6 +449,19 @@ public class ControladorFunciones implements Serializable {
         private listaEstatus(Integer _clave, String _nombre) {
             clave = _clave;
             nombre = _nombre;
+        }
+    }
+
+    public static class listaCategorias {
+
+        @Getter        @Setter        private Integer areaOperatova;
+        @Getter        @Setter        private Short categoriaOperativa;
+        @Getter        @Setter        private Short categoriaEspecifica;
+
+        private listaCategorias(Integer _areaOperatova, Short _categoriaOperativa, Short _categoriaEspecifica) {
+            areaOperatova = _areaOperatova;
+            categoriaOperativa = _categoriaOperativa;
+            categoriaEspecifica = _categoriaEspecifica;
         }
     }
 }

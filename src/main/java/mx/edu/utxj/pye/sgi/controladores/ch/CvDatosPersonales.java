@@ -1,6 +1,5 @@
 package mx.edu.utxj.pye.sgi.controladores.ch;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.logging.Level;
@@ -14,12 +13,10 @@ import javax.inject.Named;
 import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
-import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.entity.ch.InformacionAdicionalPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Messages;
-import org.primefaces.model.StreamedContent;
 
 @Named
 @ManagedBean
@@ -30,16 +27,13 @@ public class CvDatosPersonales implements Serializable {
 
     @Getter    @Setter    private Personal nuevoOBJPersonal;
     @Getter    @Setter    private InformacionAdicionalPersonal nuevoOBJInformacionAdicionalPersonal;
-    @Getter    @Setter    private String evidencia="";
+    @Getter    @Setter    private String evidencia = "";
     @Getter    @Setter    private Part file;
-    @Getter    private String ruta;
-    @Getter    StreamedContent content;
 //@EJB    
-    @EJB    EjbCarga carga;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal; 
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
 //@Inject
     @Inject    ControladorEmpleado controladorEmpleado;
-    @Inject    UtilidadesCH calculaEdad;
+    @Inject    UtilidadesCH utilidadesCH;
 
     @PostConstruct
     public void init() {
@@ -66,7 +60,7 @@ public class CvDatosPersonales implements Serializable {
      */
     public void actualizarInformacionAdicional() {
         try {
-            nuevoOBJInformacionAdicionalPersonal.setEdad(calculaEdad.obtenerEdad(nuevoOBJPersonal.getFechaNacimiento()));
+            nuevoOBJInformacionAdicionalPersonal.setEdad(utilidadesCH.obtenerEdad(nuevoOBJPersonal.getFechaNacimiento()));
             if (nuevoOBJInformacionAdicionalPersonal.getClave() == null) {
                 nuevoOBJInformacionAdicionalPersonal.setClave(nuevoOBJPersonal.getClave());
                 nuevoOBJInformacionAdicionalPersonal = ejbPersonal.crearNuevoInformacionAdicionalPersonal(nuevoOBJInformacionAdicionalPersonal);
@@ -85,55 +79,43 @@ public class CvDatosPersonales implements Serializable {
     evidencia comprueba si ya existe una registrada en caso de ser así eliminará la que exista y proseguirá a agregar la nueva evidencia en caso de que no exista simplemente la agregara,
      */
     public void agregarEvidencias() {
-        if (file != null) {
-            ruta = carga.subir(file, new File(nuevoOBJPersonal.getClave().toString().concat(File.separator).concat("datosPersonales").concat(File.separator).concat(evidencia).concat(File.separator)));
-            if (!"Error: No se pudo leer el archivo".equals(ruta)) {
-                switch (evidencia) {
-                    case "ComprobanteDomicilio":
-                        if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaDomicilio() != null) {
-                            CargaArchivosCH.eliminarArchivo(nuevoOBJInformacionAdicionalPersonal.getEvidenciaDomicilio());
-                        }
-                        nuevoOBJInformacionAdicionalPersonal.setEvidenciaDomicilio(ruta);
-                        break;
-                    case "CURP":
-                        if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaCurp() != null) {
-                            CargaArchivosCH.eliminarArchivo(nuevoOBJInformacionAdicionalPersonal.getEvidenciaCurp());
-                        }
-                        nuevoOBJInformacionAdicionalPersonal.setEvidenciaCurp(ruta);
-                        break;
-                    case "INE":
-                        if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaIne() != null) {
-                            CargaArchivosCH.eliminarArchivo(nuevoOBJInformacionAdicionalPersonal.getEvidenciaIne());
-                        }
-                        nuevoOBJInformacionAdicionalPersonal.setEvidenciaIne(ruta);
-                        break;
-                    case "ActaDeNacimiento":
-                        if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa() != null) {
-                            CargaArchivosCH.eliminarArchivo(nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa());
-                        }
-                        nuevoOBJInformacionAdicionalPersonal.setEvidenciaActa(ruta);
-                        break;
-                    case "RFC":
-                        if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaRfc() != null) {
-                            CargaArchivosCH.eliminarArchivo(nuevoOBJInformacionAdicionalPersonal.getEvidenciaRfc());
-                        }
-                        nuevoOBJInformacionAdicionalPersonal.setEvidenciaRfc(ruta);
-                        break;
-                    default:
-                        Messages.addGlobalWarn("Es necesario el tipo de evidencia a cargar !!");
-                        break;
+        switch (evidencia) {
+            case "ComprobanteDomicilio":
+                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaDomicilio() != null) {
+                    CargaArchivosCH.eliminarArchivo(nuevoOBJInformacionAdicionalPersonal.getEvidenciaDomicilio());
                 }
-                ruta = null;
-                file = null;
-                evidencia = "";
-                actualizarInformacionAdicional();
-            } else {
-                ruta = null;
-                file = null;
-                Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !!");
-            }
-        } else {
-            Messages.addGlobalWarn("Es necesario seleccionar un archivo !!");
+                nuevoOBJInformacionAdicionalPersonal.setEvidenciaDomicilio(utilidadesCH.agregarEvidencias(file, nuevoOBJPersonal.getClave().toString(), "datosPersonales", evidencia));
+                break;
+            case "CURP":
+                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaCurp() != null) {
+                    CargaArchivosCH.eliminarArchivo(nuevoOBJInformacionAdicionalPersonal.getEvidenciaCurp());
+                }
+                nuevoOBJInformacionAdicionalPersonal.setEvidenciaCurp(utilidadesCH.agregarEvidencias(file, nuevoOBJPersonal.getClave().toString(), "datosPersonales", evidencia));
+                break;
+            case "INE":
+                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaIne() != null) {
+                    CargaArchivosCH.eliminarArchivo(nuevoOBJInformacionAdicionalPersonal.getEvidenciaIne());
+                }
+                nuevoOBJInformacionAdicionalPersonal.setEvidenciaIne(utilidadesCH.agregarEvidencias(file, nuevoOBJPersonal.getClave().toString(), "datosPersonales", evidencia));
+                break;
+            case "ActaDeNacimiento":
+                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa() != null) {
+                    CargaArchivosCH.eliminarArchivo(nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa());
+                }
+                nuevoOBJInformacionAdicionalPersonal.setEvidenciaActa(utilidadesCH.agregarEvidencias(file, nuevoOBJPersonal.getClave().toString(), "datosPersonales", evidencia));
+                break;
+            case "RFC":
+                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaRfc() != null) {
+                    CargaArchivosCH.eliminarArchivo(nuevoOBJInformacionAdicionalPersonal.getEvidenciaRfc());
+                }
+                nuevoOBJInformacionAdicionalPersonal.setEvidenciaRfc(utilidadesCH.agregarEvidencias(file, nuevoOBJPersonal.getClave().toString(), "datosPersonales", evidencia));
+                break;
+            default:
+                Messages.addGlobalWarn("Es necesario el tipo de evidencia a cargar !!");
+                break;
         }
+        file = null;
+        evidencia = "";
+        actualizarInformacionAdicional();
     }
 }

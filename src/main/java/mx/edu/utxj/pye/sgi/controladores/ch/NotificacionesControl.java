@@ -31,24 +31,23 @@ public class NotificacionesControl implements Serializable {
 
     @Getter    @Setter    private List<Personal> nuevaListaPersonalContacto = new ArrayList<>();
     @Getter    @Setter    private List<Notificaciones> notificacioneses = new ArrayList<>();
-    
+
     @Getter    @Setter    private Iterator<Personal> pIterator;
     @Getter    @Setter    private Iterator<Notificaciones> nIterator;
 ////////////////////////////C V//////////////////////////////////
-   
-    @Getter    @Setter    private Date fechaActual = new Date();
-    @Getter    @Setter    private Integer empleadoLogeado=0, contactoDestino=0;
-    @Getter    @Setter    private String mensajeDNotificacion = "",nombreContacto="";
+
+    @Getter    @Setter    private Integer empleadoLogeado = 0, contactoDestino = 0;
+    @Getter    @Setter    private String mensajeDNotificacion = "", nombreContacto = "";
 
     @Getter    @Setter    private Notificaciones nuevoOBJNotificaciones;
 
     @Getter    @Setter    private List<ContactosChat> listacontactosChat = new ArrayList<>(), listaContactosChatFiltrados;
-    @Getter    @Setter    private ContactosChat nuevOBJcontactosChat,nuevOBJcontactosChat2,nuevOBJcontactosChat3;
-    @Getter    @Setter    private ContactosChat nuevoOBJcontactosChatSelec = new ContactosChat(0, "", 0);  
+    @Getter    @Setter    private ContactosChat nuevOBJcontactosChat, nuevOBJcontactosChat2, nuevOBJcontactosChat3;
+    @Getter    @Setter    private ContactosChat nuevoOBJcontactosChatSelec = new ContactosChat(0, "", 0);
     @Getter    @Setter    private List<Integer> clavesContactosCChat = new ArrayList<>();
-    
+
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbSelectec;
-    
+
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
 
     @Inject    ControladorEmpleado controladorEmpleado;
@@ -170,7 +169,7 @@ public class NotificacionesControl implements Serializable {
                 nuevoOBJNotificaciones = new Notificaciones();
                 nuevoOBJNotificaciones.setClaveTDestino(new Personal());
                 nuevoOBJNotificaciones.setClaveTRemitente(new Personal());
-                nuevoOBJNotificaciones.setFecha(fechaActual);
+                nuevoOBJNotificaciones.setFecha(new Date());
                 nuevoOBJNotificaciones.setMensaje(mensajeDNotificacion);
                 nuevoOBJNotificaciones.setStatus(0);
                 nuevoOBJNotificaciones.setTipo(4);

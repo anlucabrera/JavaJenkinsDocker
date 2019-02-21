@@ -38,47 +38,50 @@ public class ControladorEmpleado implements Serializable {
 
     private static final long serialVersionUID = 1736039029781733869L;
 
+////////////////////////////////////////////////////////////////////////////////Datos Perosnales 
+    @Getter    @Setter    private InformacionAdicionalPersonal nuevoOBJInformacionAdicionalPersonal;
+    @Getter    @Setter    private ListaPersonal nuevoOBJListaPersonal;
+
+////////////////////////////////////////////////////////////////////////////////Listas complementarias
     @Getter    @Setter    private List<Docencias> listaDocencias = new ArrayList<>();
     @Getter    @Setter    private List<Notificaciones> listaNotificaciones = new ArrayList<>();
     @Getter    @Setter    private List<Incidencias> incidenciases = new ArrayList<>();
-    @Getter    @Setter    private List<String> listaPaises = new ArrayList<>(),listaIdiomas = new ArrayList<>(),listaLenguas = new ArrayList<>();    
-    @Getter    @Setter    private List<Eventos> nuevaListaEventos = new ArrayList<>();
-    
-    @Getter    @Setter    private Integer empleadoLogeado;
-    @Getter    @Setter    private String clavePersonalLogeado,mandos="",fechaCVBencimiento,fechaFuncionesBencimiento,fechaLimiteCurriculumVitae="",fechaLimiteRegistroFunciones="",
-            mensajeIndex1="",mensajeIndex2="";
 
-    @Getter    @Setter    private InformacionAdicionalPersonal nuevoOBJInformacionAdicionalPersonal;
-    @Getter    @Setter    private ListaPersonal nuevoOBJListaPersonal;    
-    
-    @Getter    @Setter    private Integer diaH,mesH,anioH,diaN,mesN,anioN,restaA,usuario;
-     
-    @Getter    @Setter    private Boolean fechaLimiteCV,fechaLimiteFunciones,procesoElectoralActivo,tienePOA=false,estiloInfo=false,mensajeGeneral=false;
-    @Getter    @Setter    private Boolean poaA=false, poaJ=false, poaR=false,poaE=false,poaVJ=false, poaVR=false, poaVF=false,poaVEPye=false;   
+////////////////////////////////////////////////////////////////////////////////Catalogos
+    @Getter    @Setter    private List<String> listaPaises = new ArrayList<>(), listaIdiomas = new ArrayList<>(), listaLenguas = new ArrayList<>();
+
+////////////////////////////////////////////////////////////////////////////////Utilidades  
+    @Getter    @Setter    private List<Eventos> nuevaListaEventos = new ArrayList<>();
+
+    @Getter    @Setter    private Integer empleadoLogeado;
+    @Getter    @Setter    private String clavePersonalLogeado, mandos = "", fechaCVBencimiento, fechaFuncionesBencimiento, fechaLimiteCurriculumVitae = "", fechaLimiteRegistroFunciones = "",
+            mensajeIndex1 = "", mensajeIndex2 = "";
+
+    @Getter    @Setter    private Boolean fechaLimiteCV, fechaLimiteFunciones, procesoElectoralActivo, tienePOA = false, estiloInfo = false, mensajeGeneral = false;
+    @Getter    @Setter    private Boolean poaA = false, poaJ = false, poaR = false, poaE = false, poaVJ = false, poaVR = false, poaVF = false, poaVEPye = false;
     @Getter    @Setter    private List<Modulosregistro> nuevaListaModulosregistro = new ArrayList<>();
-    
+
     @Getter    @Setter    private Eventos nuevaEventos;
-    @Getter    @Setter    private EventosAreas nuevaEventosAreas=new EventosAreas();
-    
-    @Getter    @Setter    private AreasUniversidad nuevaAreasUniversidad=new AreasUniversidad();
-    
-    
+    @Getter    @Setter    private EventosAreas nuevaEventosAreas = new EventosAreas();
+
+    @Getter    @Setter    private AreasUniversidad nuevaAreasUniversidad = new AreasUniversidad();
+
     @Getter    @Setter    private Date fechaActual = new Date();
     @Getter    @Setter    private DateFormat dateFormat = new SimpleDateFormat("EEEE d MMMM yyyy");
     @Getter    @Setter    private DateFormat dateFormatHora = new SimpleDateFormat("h:mm a");
     @Getter    @Setter    private Date fechaI = new Date();
     @Getter    @Setter    private Date fechaF = new Date();
-            
 
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbUtilidadesCH;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
+    
     @Inject    LogonMB logonMB;
     @Inject    UtilidadesCH uch;
 
     @PostConstruct
-    public void init() {        
+    public void init() {
         // Comentar la siguiente asignación cuando saiiut falle//
         empleadoLogeado = Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
 //      empleadoLogeado = Integer.parseInt(logonMB.getListaUsuarioClaveNominaShiro().getClaveNomina());
@@ -91,7 +94,7 @@ public class ControladorEmpleado implements Serializable {
         informacionComplementariaAEmpleadoLogeado();
         procesoElectoral();
         areaPoa();
-        llenaListaPaises();        
+        llenaListaPaises();
     }
 
     public void informacionComplementariaAEmpleadoLogeado() {
@@ -108,12 +111,12 @@ public class ControladorEmpleado implements Serializable {
                 mes = "0" + (fechaActual.getMonth() + 1);
             } else {
                 mes = String.valueOf(fechaActual.getMonth() + 1);
-            }            
+            }
 
             fechaI = dateFormatF.parse("01/" + mes + "/20" + (fechaActual.getYear() - 100));
             fechaF = dateFormatF.parse("31/" + mes + "/20" + (fechaActual.getYear() - 100));
 
-            incidenciases=ejbNotificacionesIncidencias.mostrarIncidenciasReportePendientes(fechaI, fechaF,nuevoOBJListaPersonal.getAreaOperativa(),nuevoOBJListaPersonal.getClave());
+            incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReportePendientes(fechaI, fechaF, nuevoOBJListaPersonal.getAreaOperativa(), nuevoOBJListaPersonal.getClave());
             listaDocencias = ejbPersonal.mostrarListaDocencias(empleadoLogeado);
             listaNotificaciones = ejbNotificacionesIncidencias.mostrarListaDenotificacionesPorUsuarios(empleadoLogeado, 0);
         } catch (Throwable ex) {
@@ -129,11 +132,11 @@ public class ControladorEmpleado implements Serializable {
             nuevoOBJListaPersonal = ejbPersonal.mostrarListaPersonal(empleadoLogeado);
 
             if (nuevoOBJInformacionAdicionalPersonal == null) {
-                nuevoOBJInformacionAdicionalPersonal=new InformacionAdicionalPersonal();
+                nuevoOBJInformacionAdicionalPersonal = new InformacionAdicionalPersonal();
                 nuevoOBJInformacionAdicionalPersonal.setClave(empleadoLogeado);
                 nuevoOBJInformacionAdicionalPersonal.setAutorizacion(false);
                 nuevoOBJInformacionAdicionalPersonal.setEdad(uch.obtenerEdad(nuevoOBJListaPersonal.getFechaNacimiento()));
-                nuevoOBJInformacionAdicionalPersonal=ejbPersonal.crearNuevoInformacionAdicionalPersonal(nuevoOBJInformacionAdicionalPersonal);
+                nuevoOBJInformacionAdicionalPersonal = ejbPersonal.crearNuevoInformacionAdicionalPersonal(nuevoOBJInformacionAdicionalPersonal);
             }
 
             if (nuevoOBJListaPersonal == null) {
@@ -199,11 +202,11 @@ public class ControladorEmpleado implements Serializable {
         try {
             nuevaAreasUniversidad = ejbAreasLogeo.mostrarAreasUniversidad(nuevoOBJListaPersonal.getAreaOperativa());
             if (nuevaAreasUniversidad != null) {
-                if(nuevaAreasUniversidad.getTienePoa()){
-                    if(Objects.equals(nuevaAreasUniversidad.getResponsable(), empleadoLogeado)){
-                        tienePOA=true;
-                    }else{
-                        tienePOA=false;
+                if (nuevaAreasUniversidad.getTienePoa()) {
+                    if (Objects.equals(nuevaAreasUniversidad.getResponsable(), empleadoLogeado)) {
+                        tienePOA = true;
+                    } else {
+                        tienePOA = false;
                     }
                 }
             }
@@ -264,20 +267,20 @@ public class ControladorEmpleado implements Serializable {
                             case "Evaluacion":
                                 if ((fechaActual.before(t.getFechaFin()) || (fechaActual.getDate() == t.getFechaFin().getDate() && fechaActual.getMonth() == t.getFechaFin().getMonth() && fechaActual.getYear() == t.getFechaFin().getYear())) && (fechaActual.after(t.getFechaInicio()) || fechaActual.equals(t.getFechaInicio()))) {
                                     poaE = true;
-                                    mensajeGeneral=false;
-                                    estiloInfo=false;
+                                    mensajeGeneral = false;
+                                    estiloInfo = false;
                                     Integer diasR = (int) ((t.getFechaFin().getTime() - fechaActual.getTime()) / 86400000);
-                                    Integer diasI = (int) ((fechaActual.getTime() - t.getFechaInicio().getTime()) / 86400000);                                                                        
+                                    Integer diasI = (int) ((fechaActual.getTime() - t.getFechaInicio().getTime()) / 86400000);
                                     if (diasI <= 2) {
                                         mensajeIndex1 = "Inicio del periodo para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + mesNombre(t.getFechaInicio().getMonth());
-                                        estiloInfo=true;
-                                        mensajeGeneral=true;
-                                    } 
-                                    if(diasR <= 5){
+                                        estiloInfo = true;
+                                        mensajeGeneral = true;
+                                    }
+                                    if (diasR <= 5) {
                                         mensajeIndex1 = "La fecha límite para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + mesNombre(t.getFechaFin().getMonth()) + " ¡Está por vencer!";
-                                        mensajeIndex2 = "Restan "+diasR+" días";
-                                        estiloInfo=false;
-                                        mensajeGeneral=true;
+                                        mensajeIndex2 = "Restan " + diasR + " días";
+                                        estiloInfo = false;
+                                        mensajeGeneral = true;
                                     }
                                 } else {
                                     nuevaEventosAreas = new EventosAreas();
@@ -342,48 +345,24 @@ public class ControladorEmpleado implements Serializable {
     }
 
     public String mesNombre(Integer noMes) {
-        String mesnN="";
+        String mesnN = "";
         switch (noMes) {
-            case 0:
-                 mesnN= "Enero";
-                break;
-            case 1:
-                 mesnN= "Febrero";
-                break;
-            case 2:
-                 mesnN= "Marzo";
-                break;
-            case 3:
-                 mesnN= "Abril";
-                break;
-            case 4:
-                 mesnN= "Mayo";
-                break;
-            case 5:
-                 mesnN= "Junio";
-                break;
-            case 6:
-                 mesnN= "Julio";
-                break;
-            case 7:
-                 mesnN= "Agosto";
-                break;
-            case 8:
-                 mesnN= "Septiembre";
-                break;
-            case 9:
-                 mesnN= "Octubre";
-                break;
-            case 10:
-                 mesnN= "Noviembre";
-                break;
-            case 11:
-                 mesnN= "Diciembre";
-                break;
+            case 0:                mesnN = "Enero";                break;
+            case 1:                mesnN = "Febrero";                break;
+            case 2:                mesnN = "Marzo";                break;
+            case 3:                mesnN = "Abril";                break;
+            case 4:                mesnN = "Mayo";                break;
+            case 5:                mesnN = "Junio";                break;
+            case 6:                mesnN = "Julio";                break;
+            case 7:                mesnN = "Agosto";                break;
+            case 8:                mesnN = "Septiembre";                break;
+            case 9:                mesnN = "Octubre";                break;
+            case 10:                mesnN = "Noviembre";                break;
+            case 11:                mesnN = "Diciembre";                break;
         }
         return mesnN;
     }
-    
+
     public void llenaListaPaises() {
         listaPaises.clear();
         listaPaises.add("México");        listaPaises.add("Afganistán");        listaPaises.add("Albania");        listaPaises.add("Alemania");
@@ -428,15 +407,15 @@ public class ControladorEmpleado implements Serializable {
         listaPaises.add("San Vicente y las Granadinas");        listaPaises.add("Santa Lucía");        listaPaises.add("Santo Tomé y Príncipe");        listaPaises.add("Senegal");
         listaPaises.add("Serbia");        listaPaises.add("Seychelles");        listaPaises.add("Sierra Leona");        listaPaises.add("Singapur");
         listaPaises.add("Siria");        listaPaises.add("Somalia");        listaPaises.add("Sri Lanka");        listaPaises.add("Suazilandia");
-        listaPaises.add("Sudán");        listaPaises.add("Sudán del Sur");        listaPaises.add("Suecia");        listaPaises.add("Suiza");        listaPaises.add("Surinam");
-        listaPaises.add("Tailandia");        listaPaises.add("Tanzania");        listaPaises.add("Tayikistán");        listaPaises.add("Timor Oriental");
-        listaPaises.add("Togo");        listaPaises.add("Tonga");        listaPaises.add("Trinidad y Tobago");        listaPaises.add("Túnez");
-        listaPaises.add("Turkmenistán");        listaPaises.add("Turquía");        listaPaises.add("Tuvalu");        listaPaises.add("Ucrania");
-        listaPaises.add("Uganda");        listaPaises.add("Uruguay");        listaPaises.add("Uzbekistán");        listaPaises.add("Vanuatu");
-        listaPaises.add("Venezuela");        listaPaises.add("Vietnam");        listaPaises.add("Yemen");        listaPaises.add("Yibuti");
-        listaPaises.add("Zambia");        listaPaises.add("Zimbabue");        
-        
-        listaIdiomas.clear();        
+        listaPaises.add("Sudán");        listaPaises.add("Sudán del Sur");        listaPaises.add("Suecia");        listaPaises.add("Suiza");
+        listaPaises.add("Surinam");        listaPaises.add("Tailandia");        listaPaises.add("Tanzania");        listaPaises.add("Tayikistán");
+        listaPaises.add("Timor Oriental");        listaPaises.add("Togo");        listaPaises.add("Tonga");        listaPaises.add("Trinidad y Tobago");
+        listaPaises.add("Túnez");        listaPaises.add("Turkmenistán");        listaPaises.add("Turquía");        listaPaises.add("Tuvalu");
+        listaPaises.add("Ucrania");        listaPaises.add("Uganda");        listaPaises.add("Uruguay");        listaPaises.add("Uzbekistán");
+        listaPaises.add("Vanuatu");        listaPaises.add("Venezuela");        listaPaises.add("Vietnam");        listaPaises.add("Yemen");
+        listaPaises.add("Yibuti");        listaPaises.add("Zambia");        listaPaises.add("Zimbabue");
+
+        listaIdiomas.clear();
         listaIdiomas.add("Español");        listaIdiomas.add("Inglés");        listaIdiomas.add("Portugués");        listaIdiomas.add("Francés");
         listaIdiomas.add("Neerlandés");        listaIdiomas.add("Alemán");        listaIdiomas.add("Catalán");        listaIdiomas.add("Azerí");
         listaIdiomas.add("Ruso");        listaIdiomas.add("Bosnio");        listaIdiomas.add("Croata");        listaIdiomas.add("Serbio");
@@ -445,7 +424,7 @@ public class ControladorEmpleado implements Serializable {
         listaIdiomas.add("Estonio");        listaIdiomas.add("Finés");        listaIdiomas.add("Sueco");        listaIdiomas.add("Georgiano");
         listaIdiomas.add("Hungaro");        listaIdiomas.add("Kazajo");        listaIdiomas.add("Letón");        listaIdiomas.add("Lituano");
         listaIdiomas.add("Luxemburgués");        listaIdiomas.add("Maltés");        listaIdiomas.add("Rumano");        listaIdiomas.add("Noruego");
-        listaIdiomas.add("Polaco");        listaIdiomas.add("Macedonio");        
+        listaIdiomas.add("Polaco");        listaIdiomas.add("Macedonio");
         
         listaLenguas.clear();
         listaLenguas.add("Akateko");        listaLenguas.add("Cucapá");        listaLenguas.add("Chocholteco");        listaLenguas.add("Guarijío");

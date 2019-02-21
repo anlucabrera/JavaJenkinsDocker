@@ -172,7 +172,7 @@
                                                             </p:headerRow>    
 
                                                             <p:ajax event="rowEdit" listener="#{controladorPersonalconfiguracion.onRowEditModulos}" update="tblDistinciones" process="@this"/>
-                                                            <p:ajax event="rowEditCancel" listener="#{controladorPersonalconfiguracion.onRowCancel}" update="tblDistinciones" />
+                                                            <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblDistinciones" />
 
 
                                                             <p:column headerText="Clave" 
@@ -394,7 +394,7 @@
                                                 </f:facet>
 
                                                 <p:ajax event="rowEdit" listener="#{controladorPersonalconfiguracion.onRowEdit}" update="tblcat360" process="@this"/>
-                                                <p:ajax event="rowEditCancel" listener="#{controladorPersonalconfiguracion.onRowCancel}" update="tblcat360" />
+                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblcat360" />
 
                                                 <p:columnGroup type="header">
                                                     <p:row class="success">

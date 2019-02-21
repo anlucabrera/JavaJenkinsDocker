@@ -153,7 +153,7 @@
                                                          emptyMessage="No se encontraron Registros." rendered="true">
 
                                                 <p:ajax event="rowEdit" listener="#{controladorIncidenciasPersonal.onRowEditCuidado}" update="tblInca" />
-                                                <p:ajax event="rowEditCancel" listener="#{controladorIncidenciasPersonal.onRowCancel}" update="tblInca" />
+                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblInca" />
 
                                                 <p:column headerText="Asunto" 
                                                           sortBy="#{cuidados.tipo}" 

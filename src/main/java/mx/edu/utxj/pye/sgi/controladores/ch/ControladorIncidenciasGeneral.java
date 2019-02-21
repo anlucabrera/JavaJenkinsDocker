@@ -1,6 +1,5 @@
 package mx.edu.utxj.pye.sgi.controladores.ch;
 
-import java.io.File;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -40,7 +39,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
     @Getter    @Setter    private AreasUniversidad au = new AreasUniversidad();
     @Getter    @Setter    private String[] nombreAr;
     @Getter    @Setter    private String areaNombre = "";
-    @Getter    @Setter    private Short area=0;
+    @Getter    @Setter    private Short area = 0;
 
     @Getter    @Setter    private DateFormat dateFormat = new SimpleDateFormat("HH:mm");
     @Getter    @Setter    private Date fechaActual = new Date(), fechaI = new Date(), fechaF = new Date();
@@ -55,9 +54,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
     @Inject    ControladorEmpleado controladorEmpleado;
 
     @PostConstruct
-    public void init() {        
-                
-        
+    public void init() {
         fechaI = new Date();
         fechaF = new Date();
         fechaActual = new Date();
@@ -76,7 +73,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
         area = 0;
         areaNombre = "Todas las áreas";
         mostrarIncidencias(mes);
-        mostrarareas();        
+        mostrarareas();
     }
 
     public void mostrarareas() {
@@ -99,8 +96,8 @@ public class ControladorIncidenciasGeneral implements Serializable {
             List<Cuidados> cuidadoses = new ArrayList<>();
             cuidadoses.clear();
             if (area != 0) {
-            au = new AreasUniversidad();
-            au = areasLogeo.mostrarAreasUniversidad(area);
+                au = new AreasUniversidad();
+                au = areasLogeo.mostrarAreasUniversidad(area);
             }
             mes = mActual;
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -117,18 +114,18 @@ public class ControladorIncidenciasGeneral implements Serializable {
                     diaf = "15";
                 } else {
                     switch (mes) {
-                        case "01": diaf = "31"; break;
-                        case "02": diaf = "28"; break;
-                        case "03": diaf = "31"; break;
-                        case "04": diaf = "30"; break;
-                        case "05": diaf = "31"; break;
-                        case "06": diaf = "30"; break;
-                        case "07": diaf = "31"; break;
-                        case "08": diaf = "31"; break;
-                        case "09": diaf = "30"; break;
-                        case "10": diaf = "31"; break;
-                        case "11": diaf = "30"; break;
-                        case "12": diaf = "31"; break;
+                        case "01":                            diaf = "31";                            break;
+                        case "02":                            diaf = "28";                            break;
+                        case "03":                            diaf = "31";                            break;
+                        case "04":                            diaf = "30";                            break;
+                        case "05":                            diaf = "31";                            break;
+                        case "06":                            diaf = "30";                            break;
+                        case "07":                            diaf = "31";                            break;
+                        case "08":                            diaf = "31";                            break;
+                        case "09":                            diaf = "30";                            break;
+                        case "10":                            diaf = "31";                            break;
+                        case "11":                            diaf = "30";                            break;
+                        case "12":                            diaf = "31";                            break;
                     }
                     diai = "16";
                 }
@@ -164,7 +161,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
                     }
                 });
             }
-            
+
             listaIncapacidads = new ArrayList<>();
             listaIncapacidads.clear();
             incapacidads = ejbNotificacionesIncidencias.mostrarIncapacidadReporte(fechaI, fechaF);
@@ -186,7 +183,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
             cuidadoses = ejbNotificacionesIncidencias.mostrarCuidadosReporte(fechaI, fechaF);
             if (!cuidadoses.isEmpty()) {
                 cuidadoses.forEach((t) -> {
-                   if (area != 0) {
+                    if (area != 0) {
                         if (t.getPersonal().getAreaOperativa() == area) {
                             if (t.getPersonal().getActividad().getActividad() == 1 || t.getPersonal().getActividad().getActividad() == 3) {
                                 listaCuidadoses.add(t);
@@ -198,7 +195,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
                         listaCuidadoses.add(t);
                     }
                 });
-            }            
+            }
             Ajax.update("frmInciGeneral");
             Ajax.update("frmIncaGeneral");
             Ajax.update("frmCuidGeneral");
@@ -207,7 +204,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-       
+
     public void vistaMensualAsiganado(ValueChangeEvent event) {
         vistaMensual = true;
         vistaMensual = (Boolean) event.getNewValue();
@@ -228,37 +225,37 @@ public class ControladorIncidenciasGeneral implements Serializable {
             areaNombre = "Todas las áreas";
         } else {
             areaNombre = buscarArea(area);
-        }        
+        }
         mostrarIncidencias(mes);
     }
-   
+
     public void eliminarIncidencia(Incidencias incidencias) {
-        try {            
+        try {
             if (incidencias.getEvidencia() != null) {
                 CargaArchivosCH.eliminarArchivo(incidencias.getEvidencia());
             }
             ejbNotificacionesIncidencias.eliminarIncidencias(incidencias);
             mostrarIncidencias(mes);
-            Ajax.update("frmInciGeneral");            
+            Ajax.update("frmInciGeneral");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-     
+
     public void eliminarIncapacidad(Incapacidad incapacidad) {
-        try {            
+        try {
             if (incapacidad.getEvidencia() != null) {
                 CargaArchivosCH.eliminarArchivo(incapacidad.getEvidencia());
             }
             ejbNotificacionesIncidencias.eliminarIncapacidad(incapacidad);
-            mostrarIncidencias(mes);            
+            mostrarIncidencias(mes);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-   
+
     public void numeroAnioAsiganado(ValueChangeEvent event) {
         anio = "";
         anioNumero = 0;
@@ -290,16 +287,6 @@ public class ControladorIncidenciasGeneral implements Serializable {
         m = Integer.parseInt(minu);
         t = h + m;
         return t.toString();
-    }
-
-    public String convertirRutaVistaEvidencia(String ruta) {
-        if (!"".equals(ruta)) {
-            File file = new File(ruta);
-            return "evidencias2".concat(file.toURI().toString().split("archivos")[1]);
-        } else {
-            Messages.addGlobalWarn("No fue posible cargar el archivo1");
-            return null;
-        }
     }
 
     public void novisible() {

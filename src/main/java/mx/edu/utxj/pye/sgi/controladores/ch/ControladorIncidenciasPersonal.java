@@ -12,14 +12,10 @@ import javax.annotation.ManagedBean;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.entity.ch.Incapacidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import org.omnifaces.util.Messages;
-import org.primefaces.model.StreamedContent;
-
-import java.io.File;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,7 +27,6 @@ import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Ajax;
 import org.primefaces.event.RowEditEvent;
 
-
 @Named
 @ManagedBean
 @ViewScoped
@@ -39,28 +34,23 @@ public class ControladorIncidenciasPersonal implements Serializable {
 
     private static final long serialVersionUID = -8842055922698338073L;
 
-    @Getter    @Setter    private Integer usuario,numeroIN=0,numeroCU=0;
+    @Getter    @Setter    private Integer usuario, numeroIN = 0, numeroCU = 0;
     @Getter    @Setter    private String tipo;
-    @Getter    @Setter    private List<String> tiposIncidencias = new ArrayList<>();
-    @Getter    @Setter    private List<String> tiposCuidados = new ArrayList<>();
+    @Getter    @Setter    private List<String> tiposIncidencias = new ArrayList<>(), tiposCuidados = new ArrayList<>();
     @Getter    @Setter    private List<Incidencias> listaIncidencias = new ArrayList<>();
     @Getter    @Setter    private List<Incapacidad> listaIncapacidades = new ArrayList<>();
     @Getter    @Setter    private List<Cuidados> listaCuidados = new ArrayList<>();
-    @Getter    @Setter    private Incidencias nuevOBJIncidencias=new Incidencias(),nuevOBJIncidenciasEditada=new Incidencias();
-    @Getter    @Setter    private Incapacidad nuevOBJIncapacidad=new Incapacidad();
-    @Getter    @Setter    private Cuidados nuevOBJCuidados=new Cuidados();
+    @Getter    @Setter    private Incidencias nuevOBJIncidencias = new Incidencias(), nuevOBJIncidenciasEditada = new Incidencias();
+    @Getter    @Setter    private Incapacidad nuevOBJIncapacidad = new Incapacidad();
+    @Getter    @Setter    private Cuidados nuevOBJCuidados = new Cuidados();
     @Getter    @Setter    private DateFormat dateFormat = new SimpleDateFormat("HH:mm");
-    @Getter    @Setter    private Boolean registro = true,activo=false,archivoSC=false;
-    @Getter    @Setter    private Date tiempo=new Date();
-    @Getter    @Setter    private Date fechaActual= new Date();
-    @Getter    @Setter    private Date fechaI =new Date();
-    @Getter    @Setter    private Date fechaF =new Date();
-
+    @Getter    @Setter    private Boolean registro = true, activo = false, archivoSC = false;
+    @Getter    @Setter    private Date tiempo = new Date();
+    @Getter    @Setter    private Date fechaActual = new Date();
+    @Getter    @Setter    private Date fechaI = new Date();
+    @Getter    @Setter    private Date fechaF = new Date();
     @Getter    @Setter    private Part file;
-    @Getter    private String ruta;
-    @Getter    StreamedContent content;
 
-    @EJB    EjbCarga carga;
 //@EJB
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
 //@Inject
@@ -68,18 +58,18 @@ public class ControladorIncidenciasPersonal implements Serializable {
     @Inject    UtilidadesCH utilidadesCH;
 
     @PostConstruct
-    public void init() {        
+    public void init() {
         fechaActual = new Date();
         tiempo = new Date(0, 0, 0, 0, 0);
         registro = true;
         activo = false;
         nuevOBJIncidencias = new Incidencias();
         nuevOBJIncapacidad = new Incapacidad();
-        nuevOBJCuidados=new Cuidados();
+        nuevOBJCuidados = new Cuidados();
         tiposIncidencias.clear();
         tiposIncidencias.add("No registro entrada");
         tiposIncidencias.add("No registro salida");
-        if (controladorEmpleado.getNuevoOBJListaPersonal().getActividad()== 3){
+        if (controladorEmpleado.getNuevoOBJListaPersonal().getActividad() == 3) {
             tiposIncidencias.add("Retardo");
         } else {
             tiposIncidencias.add("Retardo menor");
@@ -87,33 +77,16 @@ public class ControladorIncidenciasPersonal implements Serializable {
         }
         tiposIncidencias.add("Salida anticipada");
         tiposIncidencias.add("Inasistencia");
-        
+
         tiposCuidados.clear();
         tiposCuidados.add("Familiares");
         tiposCuidados.add("Paternos");
         tiposCuidados.add("Maternos");
-        
+
         usuario = controladorEmpleado.getEmpleadoLogeado();
-        mostrarLista();        
+        mostrarLista();
     }
 // ------------------------------------------------------------- Generales -------------------------------------------------------------
-    public void onRowCancel(RowEditEvent event) {
-        Messages.addGlobalInfo("¡Operación cancelada!");
-    }
-
-    public String convertirRutaVistaEvidencia(String ruta) {
-        if (!"".equals(ruta)) {
-            File file = new File(ruta);
-            return "evidencias2".concat(file.toURI().toString().split("archivos")[1]);
-        } else {
-            Messages.addGlobalWarn("No fue posible cargar el archivo!");
-            return null;
-        }
-    }
-
-    public void metodoBase() {
-
-    }
 
     public void mostrarLista() {
         try {
@@ -137,7 +110,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
                 mes = "0" + (fechaActual.getMonth() + 1);
             } else {
                 mes = String.valueOf(fechaActual.getMonth() + 1);
-            }            
+            }
             if (fechaActual.getDate() <= 15) {
                 fechaI = dateFormatF.parse("01/" + mes + "/20" + (fechaActual.getYear() - 100));
                 fechaF = dateFormatF.parse("15/" + mes + "/20" + (fechaActual.getYear() - 100));
@@ -147,39 +120,34 @@ public class ControladorIncidenciasPersonal implements Serializable {
             }
             if (!listaIncidencias.isEmpty()) {
                 listaIncidencias.forEach((i) -> {
-                    if ((i.getFecha().after(fechaI) || i.getFecha().equals(fechaI))&& (i.getFecha().before(fechaF)|| i.getFecha().equals(fechaF))) {
+                    if ((i.getFecha().after(fechaI) || i.getFecha().equals(fechaI)) && (i.getFecha().before(fechaF) || i.getFecha().equals(fechaF))) {
                         incidenciases.add(i);
                     }
                 });
             }
-            
             if (!incidenciases.isEmpty()) {
                 if (incidenciases.size() >= 2) {
                     registro = false;
                 }
             }
-
             List<Incidencias> list1 = new ArrayList<>();
             List<Incidencias> list2 = new ArrayList<>();
-
-            numeroCU = ejbNotificacionesIncidencias.mostrarCuidadosTotales().size()+1;
+            numeroCU = ejbNotificacionesIncidencias.mostrarCuidadosTotales().size() + 1;
             list1 = ejbNotificacionesIncidencias.mostrarIncidenciasArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
-
             if (!list1.isEmpty()) {
                 list1.forEach((t) -> {
                     if ((t.getFecha().getYear() - 100) == (fechaActual.getYear() - 100)) {
                         list2.add(t);
                     }
                 });
-            }            
+            }
             if (!list2.isEmpty()) {
-                Collections.sort(list2, (x, y) -> Integer.compare(x.getNumeroOficio(),y.getNumeroOficio()));
+                Collections.sort(list2, (x, y) -> Integer.compare(x.getNumeroOficio(), y.getNumeroOficio()));
                 list2.forEach((t) -> {
-                    numeroIN=t.getNumeroOficio();
+                    numeroIN = t.getNumeroOficio();
                 });
-            }            
-            nuevOBJIncidencias.setNumeroOficio((numeroIN+1));
-
+            }
+            nuevOBJIncidencias.setNumeroOficio((numeroIN + 1));
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause());
             Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
@@ -191,10 +159,10 @@ public class ControladorIncidenciasPersonal implements Serializable {
         try {
             nuevOBJIncidencias.setClavePersonal(new Personal());
             nuevOBJIncidencias.getClavePersonal().setClave(usuario);
-            nuevOBJIncidencias.setEstatus("Pendiente");            
+            nuevOBJIncidencias.setEstatus("Pendiente");
             if ((tiempo.getHours() == 0 && tiempo.getMinutes() == 0) && (nuevOBJIncidencias.getTipo().equals("Retardo menor") || nuevOBJIncidencias.getTipo().equals("Retardo mayor") || nuevOBJIncidencias.getTipo().equals("Salida anticipada"))) {
                 Messages.addGlobalWarn("¡No puede registrar una incidencia con el tiempo 00:00!");
-            } else {                                
+            } else {
                 if (nuevOBJIncidencias.getNumeroOficio() != 0) {
                     switch (nuevOBJIncidencias.getTipo()) {
                         case "Inasistencia":
@@ -206,7 +174,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
                                     Messages.addGlobalWarn("¡El Retardo menor es desde los 11 minutos hasta los 20 minutos!");
                                     return;
                                 }
-                            }else{
+                            } else {
                                 if (tiempo.getMinutes() < 11 || tiempo.getMinutes() > 20) {
                                     Messages.addGlobalWarn("¡El Retardo menor es desde los 11 minutos hasta los 20 minutos!");
                                     return;
@@ -228,29 +196,16 @@ public class ControladorIncidenciasPersonal implements Serializable {
                             }
                             break;
                     }
-                    
                     nuevOBJIncidencias.setTiempo(dateFormat.format(tiempo));
                     Integer dias = (int) ((fechaActual.getTime() - nuevOBJIncidencias.getFecha().getTime()) / 86400000);
                     Integer maximo = 0;
                     switch (nuevOBJIncidencias.getFecha().getDay()) {
-                        case 1:
-                            maximo = 1;
-                            break;
-                        case 2:
-                            maximo = 1;
-                            break;
-                        case 3:
-                            maximo = 1;
-                            break;
-                        case 4:
-                            maximo = 1;
-                            break;
-                        case 5:
-                            maximo = 3;
-                            break;
-                        case 6:
-                            maximo = 2;
-                            break;
+                        case 1:                            maximo = 1;                            break;
+                        case 2:                            maximo = 1;                            break;
+                        case 3:                            maximo = 1;                            break;
+                        case 4:                            maximo = 1;                            break;
+                        case 5:                            maximo = 3;                            break;
+                        case 6:                            maximo = 2;                            break;
                     }
                     if (dias <= maximo) {
                         nuevOBJIncidencias = ejbNotificacionesIncidencias.agregarIncidencias(nuevOBJIncidencias);
@@ -272,47 +227,28 @@ public class ControladorIncidenciasPersonal implements Serializable {
     }
 
     public void agregarEvidenciaIncidencia() {
-        if (file != null) {
-            ruta = carga.subir(file, new File(usuario.toString().concat(File.separator).concat("Incidencia").concat(File.separator)));
-            if (!"Error: No se pudo leer el archivo".equals(ruta)) {
-                nuevOBJIncidencias.setEvidencia(ruta);
-                ruta = null;
-            } else {
-                ruta = null;
-                Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !");
-            }
-        } else {
-            Messages.addGlobalWarn("Es necesario seleccionar un archivo !");
-        }
+        //Se invoca el método agregarEvidencias en el cual se envía ciertos parámetros (descritos dentro del método) el cual regresara la ruta del archivo ya almacenado en el servidor.
+        nuevOBJIncidencias.setEvidencia(utilidadesCH.agregarEvidencias(file, usuario.toString(), "Incidencia", ""));
+        //Se bacía el valor de la variable file
         file = null;
     }
 
     public void agregarEvidenciaIncidenciaDesfasada() {
         archivoSC = true;
-        if (file != null) {
-            ruta = carga.subir(file, new File(usuario.toString().concat(File.separator).concat("Incidencia").concat(File.separator)));
-            if (!"Error: No se pudo leer el archivo".equals(ruta)) {
-                nuevOBJIncidenciasEditada.setEvidencia(ruta);
-                editarIncideciaDesfazada();
-                ruta = null;
-            } else {
-                ruta = null;
-                Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !");
-            }
-        } else {
-            Messages.addGlobalWarn("Es necesario seleccionar un archivo !");
-        }
+        //Se invoca el método agregarEvidencias en el cual se envía ciertos parámetros (descritos dentro del método) el cual regresara la ruta del archivo ya almacenado en el servidor.
+        nuevOBJIncidenciasEditada.setEvidencia(utilidadesCH.agregarEvidencias(file, usuario.toString(), "Incidencia", ""));
+        //Se bacía el valor de la variable file
         file = null;
     }
 
     public void eliminarIncidencia(Incidencias incidencias) {
-        try {            
+        try {
             if (incidencias.getEvidencia() != null) {
                 CargaArchivosCH.eliminarArchivo(incidencias.getEvidencia());
             }
             utilidadesCH.agregaBitacora(usuario, incidencias.getIncidenciaID().toString(), "Incidencias", "Delate");
             ejbNotificacionesIncidencias.eliminarIncidencias(incidencias);
-            mostrarLista();            
+            mostrarLista();
             Ajax.update("@form");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -339,24 +275,12 @@ public class ControladorIncidenciasPersonal implements Serializable {
             Integer dias = (int) ((fechaActual.getTime() - incidencias.getFecha().getTime()) / 86400000);
             Integer maximo = 0;
             switch (incidencias.getFecha().getDay()) {
-                case 1:
-                    maximo = 1;
-                    break;
-                case 2:
-                    maximo = 1;
-                    break;
-                case 3:
-                    maximo = 1;
-                    break;
-                case 4:
-                    maximo = 1;
-                    break;
-                case 5:
-                    maximo = 3;
-                    break;
-                case 6:
-                    maximo = 2;
-                    break;
+                case 1:                    maximo = 1;                    break;
+                case 2:                    maximo = 1;                    break;
+                case 3:                    maximo = 1;                    break;
+                case 4:                    maximo = 1;                    break;
+                case 5:                    maximo = 3;                    break;
+                case 6:                    maximo = 2;                    break;
             }
             if (dias <= maximo) {
                 ejbNotificacionesIncidencias.actualizarIncidencias(incidencias);
@@ -377,7 +301,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
             nuevOBJIncapacidad.setClavePersonal(new Personal());
             nuevOBJIncapacidad.getClavePersonal().setClave(usuario);
             nuevOBJIncapacidad = ejbNotificacionesIncidencias.agregarIncapacidad(nuevOBJIncapacidad);
-                        utilidadesCH.agregaBitacora(usuario, nuevOBJIncapacidad.getIncapacidad().toString(), "Incapacidad", "Insert");
+            utilidadesCH.agregaBitacora(usuario, nuevOBJIncapacidad.getIncapacidad().toString(), "Incapacidad", "Insert");
             nuevOBJIncapacidad = new Incapacidad();
             Messages.addGlobalInfo("¡Operación exitosa!");
 
@@ -390,21 +314,10 @@ public class ControladorIncidenciasPersonal implements Serializable {
     }
 
     public void agregarEvidenciaIncapacidad() {
-        if (file != null) {
-            ruta = carga.subir(file, new File(usuario.toString().concat(File.separator).concat("incapacidades").concat(File.separator)));
-            if (!"Error: No se pudo leer el archivo".equals(ruta)) {
-                nuevOBJIncapacidad.setEvidencia(ruta);
-                activo = true;
-                ruta = null;
-            } else {
-                ruta = null;
-                Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !");
-                activo = false;
-            }
-        } else {
-            Messages.addGlobalWarn("Es necesario seleccionar un archivo !");
-            activo = false;
-        }
+        //Se invoca el método agregarEvidencias en el cual se envía ciertos parámetros (descritos dentro del método) el cual regresara la ruta del archivo ya almacenado en el servidor.
+        nuevOBJIncapacidad.setEvidencia(utilidadesCH.agregarEvidencias(file, usuario.toString(), "incapacidades", ""));
+        //Se bacía el valor de la variable file
+        activo = true;
         file = null;
     }
 
@@ -421,20 +334,20 @@ public class ControladorIncidenciasPersonal implements Serializable {
 // ------------------------------------------------------------- Cuidados -------------------------------------------------------------
 
     public void crearCuidado() {
-        try {            
+        try {
             nuevOBJCuidados.setPersonal(new Personal());
             nuevOBJCuidados.getPersonal().setClave(usuario);
             nuevOBJCuidados.setNumero(numeroCU);
             Integer dias = (int) ((nuevOBJCuidados.getFechaFin().getTime() - nuevOBJCuidados.getFechaInicio().getTime()) / 86400000);
-            dias = dias + 1;            
+            dias = dias + 1;
             nuevOBJCuidados.setNumeroDias(dias);
 
             nuevOBJCuidados = ejbNotificacionesIncidencias.agregarCuidados(nuevOBJCuidados);
-                        utilidadesCH.agregaBitacora(usuario, nuevOBJCuidados.getCuidados().toString(), "Cuidados", "Insert");
+            utilidadesCH.agregaBitacora(usuario, nuevOBJCuidados.getCuidados().toString(), "Cuidados", "Insert");
             nuevOBJCuidados = new Cuidados();
             Messages.addGlobalInfo("¡Operación exitosa!");
 
-            mostrarLista();            
+            mostrarLista();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
@@ -442,21 +355,10 @@ public class ControladorIncidenciasPersonal implements Serializable {
     }
 
     public void agregarEvidenciaCuidado() {
-        if (file != null) {
-            ruta = carga.subir(file, new File(usuario.toString().concat(File.separator).concat("cuidados").concat(File.separator)));
-            if (!"Error: No se pudo leer el archivo".equals(ruta)) {
-                nuevOBJCuidados.setEvidencia(ruta);
-                activo = true;
-                ruta = null;
-            } else {
-                ruta = null;
-                Messages.addGlobalWarn("No fue posible cargar el archivo, Intente nuevamente !");
-                activo = false;
-            }
-        } else {
-            Messages.addGlobalWarn("Es necesario seleccionar un archivo !");
-            activo = false;
-        }
+        //Se invoca el método agregarEvidencias en el cual se envía ciertos parámetros (descritos dentro del método) el cual regresara la ruta del archivo ya almacenado en el servidor.
+        nuevOBJCuidados.setEvidencia(utilidadesCH.agregarEvidencias(file, usuario.toString(), "cuidados", ""));
+        //Se bacía el valor de la variable file
+        activo = true;
         file = null;
     }
 
@@ -471,4 +373,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
         }
     }
 
+    public void metodoBase() {
+
+    }
 }

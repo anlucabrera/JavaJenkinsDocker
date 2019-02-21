@@ -14,13 +14,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
-import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.entity.ch.ContactoEmergencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.RowEditEvent;
-import org.primefaces.model.StreamedContent;
 
 @Named
 @ManagedBean
@@ -31,14 +28,10 @@ public class ContactoEmergencia implements Serializable {
 
     @Getter    @Setter    private ContactoEmergencias contactoEmergencia=new ContactoEmergencias();
     @Getter    @Setter    private List<ContactoEmergencias> ces=new ArrayList<>();
-    @Getter    private String ruta;
-    @Getter    StreamedContent content;
 //@EJB    
-    @EJB    EjbCarga carga;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal personal; 
 //@Inject
     @Inject    ControladorEmpleado controladorEmpleado;
-    @Inject    UtilidadesCH calculaEdad;
 
     @PostConstruct
     public void init() {

@@ -271,7 +271,7 @@ public class CvProduccion implements Serializable {
             //Después de comprobar la existencia de archivos relacionados al registro, se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
             utilidadesCH.agregaBitacora(usuario, memoriaspub.getMemoriaID().toString(), "Memorias Publicadas", "Delate");
             //Posteriormente de realizar el registro en la bitácora se procede a eliminar el registro, esto invocado al “EJB”
-             ejbProduccionProfecional.eliminarMemoriaspub(memoriaspub);
+            ejbProduccionProfecional.eliminarMemoriaspub(memoriaspub);
             //Al finalizar los dos registros de información se procede a realizar la actualización de las listas, para esto se invoca al método “mostrarListas();” 
             mostrarListas();
             //Antes de culminar se actualiza el valor de la pestaña del TabView en la interfaz gráfica.
@@ -487,7 +487,7 @@ public class CvProduccion implements Serializable {
             nuevaListaMemoriaspub = ejbProduccionProfecional.mostrarMemoriaspub(usuario);
             nuevaListaCongresos = ejbProduccionProfecional.mostrarCongresos(usuario);
             nuevaListatInvestigaciones = ejbProduccionProfecional.mostrarInvestigacion(usuario);
-            
+
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(CvProduccion.class.getName()).log(Level.SEVERE, null, ex);

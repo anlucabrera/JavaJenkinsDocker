@@ -125,7 +125,23 @@
 
                     <!--tutores-->
                     <c:if test="#{utilidadesAdministracionEvaluaciones.tutor}"><li><p:link href="/evaluaciones/administracion/administracionTutores.xhtml"><i class="fa fa-clipboard"></i><span>Administración como tutor</span></p:link></li></c:if>
-
+                  
+                    <c:if test="#{administracionEncuestaIng.tutor and administracionEncuestaIng.aperturas }">
+                        <li>
+                            <p:link href="/encuestas/seguimiento/admTutoresEncuesta.xhtml">
+                                <i class="fa fa-list-ol"></i><span>Encuesta satisfacción ING</span>
+                            </p:link>
+                        </li>
+                    </c:if>
+                    <c:if test="#{administracionEncuestaServicios.tutor and administracionEncuestaServicios.aperturas}">
+                        <li>
+                            <p:link href="/encuestas/seguimiento/admTutoresporServicio.xhtml">
+                                <i class="fa fa-list-ol"></i><span>Encuesta servicios</span>
+                            </p:link>
+                        </li>
+                    </c:if>
+                    
+                    
                     <!--************ administradores especiales********-->
                     <!--Jefe de personal-->
                     <c:if test="#{utilidadesAdministracionEvaluaciones.personal}"><li><p:link href="/evaluaciones/administracion/admin360.xhtml" ><i class="fa fa-clipboard"></i><span>Genera Evaluaciones</span></p:link></li></c:if>
@@ -175,11 +191,11 @@
                             </p:link>
                         </li>
                         <li>
-                            <p:link href="/capitalHumano/organigramaPrototipo.xhtml">
-                                <i class="fa fa-sitemap"></i>
-                                <span>Organigrama Operativo</span>
-                            </p:link>
-                        </li>
+                                <p:link href="/capitalHumano/organigramaPrototipo.xhtml">
+                                    <i class="fa fa-sitemap"></i>
+                                    <span>Organigrama Operativo</span>
+                                </p:link>
+                            </li>
                     </ul>
                 </li>
                 <li class="treeview">

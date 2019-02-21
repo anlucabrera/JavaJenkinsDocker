@@ -1,8 +1,6 @@
 package mx.edu.utxj.pye.sgi.controladores.ch;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,10 +31,6 @@ public class CvHabilidades implements Serializable {
     private static final long serialVersionUID = -473305993584095094L;
     // variables basicas
     @Getter    @Setter    private Integer usuario, direccionInt = 0, pestaniaActiva;
-    @Getter    @Setter    private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    @Getter    @Setter    private Date fechaC = new Date();
-    @Getter    @Setter    private Date fechaO = new Date();
-    @Getter    @Setter    private Date fechaF = new Date();
     //Variables de objetos Entitys
     @Getter    @Setter    private Lenguas nuevOBJLenguas;
     @Getter    @Setter    private Idiomas nuevOBJIdiomas;
@@ -54,7 +48,7 @@ public class CvHabilidades implements Serializable {
     //Injects 
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesCH utilidadesCH;
-    
+
     @PostConstruct
     public void init() {
         usuario = controladorEmpleado.getEmpleadoLogeado();
@@ -76,7 +70,7 @@ public class CvHabilidades implements Serializable {
         nuevOBJHabilidadesInformaticas = new HabilidadesInformaticas();
         direccionInt = 0;
         listaConocimiento.clear();
-        
+
     }
 /////////////////////////////////////////////////////////////////////////////Lenguas\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
@@ -151,9 +145,6 @@ public class CvHabilidades implements Serializable {
             //Una vez realizada la inicialización se procede a realizar la asignación de los valores correspondientes mediante los métodos Get().Set(Valor_A_Asignar)
             nuevOBJIdiomas.getClavePersonal().setClave(usuario);
             //Posteriormente se procese a realizar la asignación de valores que no se obtienen mediante la interfaz grafica
-            nuevOBJIdiomas.setFechaEvaluacion(fechaC);
-            nuevOBJIdiomas.setFechaVigenciaA(fechaO);
-            nuevOBJIdiomas.setFechaVigenciaDe(fechaF);
             nuevOBJIdiomas.setEstatus("Denegado");
             //En caso de que sea información nueva se procede a enviar la información al “EJB” el cual la agregara a la BD.
             nuevOBJIdiomas = habilidades.crearNuevoIdiomas(nuevOBJIdiomas);

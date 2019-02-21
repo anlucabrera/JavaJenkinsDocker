@@ -662,7 +662,7 @@
                                                                                 <f:facet name="header">
                                                                                     <h4 style="font-weight: bold">Investigación</h4>
                                                                                 </f:facet>
-                                                                                
+
                                                                                 <p:column style="width: 10%" headerText="Tipo de Investigación">
                                                                                     <h:outputText value="#{invest.tipo}"/>
                                                                                 </p:column>
@@ -703,10 +703,13 @@
                                                         <div class="col-sm-12 border-right">
                                                             <div class="description-block">
                                                                 <h5 class="description-header">Función genérica</h5>
-                                                                <c:forEach var = "i" begin = "0" end = "#{controladorPersonal.nuevaListaFuncionesGenerales.size()-1}">
-                                                                    <br/>
-                                                                    <span class="description-text" style="text-align: justify">#{controladorPersonal.nuevaListaFuncionesGenerales.get(i)}</span>
-                                                                    <br/>
+                                                                <c:forEach var="i" begin="0" end="#{controladorPersonal.listaFuncioneSubordinado.size()-1}">
+                                                                    <c:set var="eje" value="#{controladorPersonal.listaFuncioneSubordinado.get(i)}"/>
+                                                                    <c:if test="#{eje.tipo eq 'GENERAL'}">
+                                                                        <br/>
+                                                                        <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
+                                                                        <br/>
+                                                                    </c:if>                                                                    
                                                                 </c:forEach>
                                                             </div>
                                                         </div>
@@ -716,10 +719,13 @@
                                                         <div class="col-sm-12 border-right">
                                                             <div class="description-block">
                                                                 <h5 class="description-header">Funciones específicas </h5>
-                                                                <c:forEach var = "i" begin = "0" end = "#{controladorPersonal.nuevaListaFuncionesEspecificas.size()-1}">
-                                                                    <br/>
-                                                                    <span class="description-text" style="text-align: justify">#{controladorPersonal.nuevaListaFuncionesEspecificas.get(i)}</span>
-                                                                    <br/>
+                                                                <c:forEach var="f" begin="0" end="#{controladorPersonal.listaFuncioneSubordinado.size()-1}">
+                                                                    <c:set var="eje" value="#{controladorPersonal.listaFuncioneSubordinado.get(f)}"/>
+                                                                    <c:if test="#{eje.tipo ne 'GENERAL'}">
+                                                                        <br/>
+                                                                        <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
+                                                                        <br/>
+                                                                    </c:if>                                                                    
                                                                 </c:forEach>
                                                             </div>
                                                         </div>
@@ -958,23 +964,17 @@
                                                                                 </p:column>
 
                                                                                 <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
-                                                                                    <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog1').show()" icon="ui-icon-search" title="View">
-                                                                                        <f:setPropertyActionListener value="#{fac}" target="#{controladorPersonal.selectecOBJFormacionAcademica}"/>
-                                                                                    </p:commandButton>
-                                                                                </p:column>
-
-                                                                            </p:dataTable>
-
-                                                                            <p:dialog header="Evidencias" widgetVar="evidenciaDialog1" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
-                                                                                <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
-                                                                                    <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty controladorPersonal.selectecOBJFormacionAcademica}">
-                                                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorPersonal.convertirRuta(controladorPersonal.selectecOBJFormacionAcademica.evidenciaTitulo)}"/>       
-                                                                                        <c:if test="#{controladorPersonal.selectecOBJFormacionAcademica.evidenciaCedula eq null ? false :(controladorPersonal.selectecOBJFormacionAcademica.evidenciaCedula eq '' ?false:true)}">
-                                                                                            <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorPersonal.selectecOBJFormacionAcademica.evidenciaCedula eq null ?'':(controladorPersonal.convertirRuta2(controladorPersonal.selectecOBJFormacionAcademica.evidenciaCedula))}"/>
-                                                                                        </c:if>
-                                                                                    </p:panelGrid>
-                                                                                </p:outputPanel>
-                                                                            </p:dialog>
+                                                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(fac.evidenciaTitulo)}" target="_blank" style="color: #000000">
+                                                                                        <i class="fa fa-search"></i>
+                                                                                        <span>Ver Título</span>
+                                                                                    </p:link>
+                                                                                    <hr/>
+                                                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(fac.evidenciaCedula)}" target="_blank" style="color: #000000">
+                                                                                        <i class="fa fa-search"></i>
+                                                                                        <span>Ver Cedula</span>
+                                                                                    </p:link>
+                                                                                </p:column>   
+                                                                            </p:dataTable>  
 
                                                                         </h:form>
                                                                     </p:tab>
@@ -1030,20 +1030,12 @@
                                                                                 </p:column>
 
                                                                                 <p:column headerText="Evidencia" style="width:80px;text-align: center">
-                                                                                    <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog2').show()" icon="ui-icon-search" title="View">
-                                                                                        <f:setPropertyActionListener value="#{ela}" target="#{controladorPersonal.selectecOBJLaborales}"/>
-                                                                                    </p:commandButton>
-                                                                                </p:column>
-
-                                                                            </p:dataTable>
-
-                                                                            <p:dialog header="Evidencias" widgetVar="evidenciaDialog2" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
-                                                                                <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
-                                                                                    <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty controladorPersonal.selectecOBJLaborales}">
-                                                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorPersonal.convertirRutaEL(controladorPersonal.selectecOBJLaborales.evidenciaNombremiento)}"/>       
-                                                                                    </p:panelGrid>
-                                                                                </p:outputPanel>
-                                                                            </p:dialog>
+                                                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(ela.evidenciaNombremiento)}" target="_blank" style="color: #000000">
+                                                                                        <i class="fa fa-search"></i>
+                                                                                        <span>Ver</span>
+                                                                                    </p:link>
+                                                                                </p:column>   
+                                                                            </p:dataTable>  
                                                                         </h:form>
                                                                     </p:tab>
                                                                     <p:tab title="Actualización profesional" titletip="#{controladorPersonal.tv3} registros nuevos" titleStyle="#{controladorPersonal.tv3 eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaCapacitacionespersonal.size() eq 0 ?false:true}">
@@ -1106,20 +1098,12 @@
                                                                                 </p:column>
 
                                                                                 <p:column headerText="Evidencia" style="width:80px;text-align: center">
-                                                                                    <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog3').show()" icon="ui-icon-search" title="View">
-                                                                                        <f:setPropertyActionListener value="#{aP}" target="#{controladorPersonal.selectecOBJCapacitacionespersonal}"/>
-                                                                                    </p:commandButton>
-                                                                                </p:column>
-
-                                                                            </p:dataTable>
-
-                                                                            <p:dialog header="Evidencias" widgetVar="evidenciaDialog3" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
-                                                                                <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
-                                                                                    <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty controladorPersonal.selectecOBJCapacitacionespersonal}">
-                                                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorPersonal.convertirRutaAP(controladorPersonal.selectecOBJCapacitacionespersonal.evidenciaCapacitacion)}"/>       
-                                                                                    </p:panelGrid>
-                                                                                </p:outputPanel>
-                                                                            </p:dialog>
+                                                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(aP.evidenciaCapacitacion)}" target="_blank" style="color: #000000">
+                                                                                        <i class="fa fa-search"></i>
+                                                                                        <span>Ver</span>
+                                                                                    </p:link>
+                                                                                </p:column>   
+                                                                            </p:dataTable>  
                                                                         </h:form>
                                                                     </p:tab>
                                                                     <p:tab title="Idiomas" titletip="#{controladorPersonal.tv4} registros nuevos" titleStyle="#{controladorPersonal.tv4 eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaIdiomas.size() eq 0 ?false:true}">
@@ -1180,20 +1164,12 @@
                                                                                 </p:column>
 
                                                                                 <p:column headerText="Evidencia" style="width:80px;text-align: center">
-                                                                                    <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog4').show()" icon="ui-icon-search" title="View">
-                                                                                        <f:setPropertyActionListener value="#{habidi}" target="#{controladorPersonal.selectecOBJIdiomas}"/>
-                                                                                    </p:commandButton>
-                                                                                </p:column>
-
-                                                                            </p:dataTable>
-
-                                                                            <p:dialog header="Evidencias" widgetVar="evidenciaDialog4" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
-                                                                                <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
-                                                                                    <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty controladorPersonal.selectecOBJIdiomas}">
-                                                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorPersonal.convertirRutaId(controladorPersonal.selectecOBJIdiomas.evidenciaDoc)}"/>       
-                                                                                    </p:panelGrid>
-                                                                                </p:outputPanel>
-                                                                            </p:dialog>
+                                                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(habidi.evidenciaDoc)}" target="_blank" style="color: #000000">
+                                                                                        <i class="fa fa-search"></i>
+                                                                                        <span>Ver</span>
+                                                                                    </p:link>
+                                                                                </p:column>   
+                                                                            </p:dataTable>  
                                                                         </h:form>
                                                                     </p:tab>
                                                                     <p:tab title="Desarrollos tecnológicos" titletip="#{controladorPersonal.tv5} registros nuevos" titleStyle="#{controladorPersonal.tv5 eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaDesarrollosTecnologicos.size() eq 0 ?false:true}">
@@ -1248,20 +1224,12 @@
                                                                                 </p:column>
 
                                                                                 <p:column headerText="Evidencia" style="width:80px;text-align: center">
-                                                                                    <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog5').show()" icon="ui-icon-search" title="View">
-                                                                                        <f:setPropertyActionListener value="#{dte}" target="#{controladorPersonal.selectecOBJDesarrollosTecnologicoses}"/>
-                                                                                    </p:commandButton>
-                                                                                </p:column>
-
-                                                                            </p:dataTable>
-
-                                                                            <p:dialog header="Evidencias" widgetVar="evidenciaDialog5" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
-                                                                                <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
-                                                                                    <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty controladorPersonal.selectecOBJDesarrollosTecnologicoses}">
-                                                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorPersonal.convertirRutaDT(controladorPersonal.selectecOBJDesarrollosTecnologicoses.documentoRespaldo)}"/>       
-                                                                                    </p:panelGrid>
-                                                                                </p:outputPanel>
-                                                                            </p:dialog>
+                                                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(dte.documentoRespaldo)}" target="_blank" style="color: #000000">
+                                                                                        <i class="fa fa-search"></i>
+                                                                                        <span>Ver</span>
+                                                                                    </p:link>
+                                                                                </p:column>   
+                                                                            </p:dataTable>  
                                                                         </h:form>
                                                                     </p:tab>  
                                                                     <p:tab title="Premios" titletip="#{controladorPersonal.tv6} registros nuevos" titleStyle="#{controladorPersonal.tv6 eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaDistinciones.size() eq 0 ?false:true}">
@@ -1316,20 +1284,12 @@
                                                                                 </p:column>
 
                                                                                 <p:column headerText="Evidencia" style="width:80px;text-align: center">
-                                                                                    <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog6').show()" icon="ui-icon-search" title="View">
-                                                                                        <f:setPropertyActionListener value="#{dp}" target="#{controladorPersonal.selectecOBJDistincioneses}"/>
-                                                                                    </p:commandButton>
-                                                                                </p:column>
-
-                                                                            </p:dataTable>
-
-                                                                            <p:dialog header="Evidencias" widgetVar="evidenciaDialog6" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
-                                                                                <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
-                                                                                    <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty controladorPersonal.selectecOBJDistincioneses}">
-                                                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorPersonal.convertirRutaPr(controladorPersonal.selectecOBJDistincioneses.evidenciaDistincion)}"/>       
-                                                                                    </p:panelGrid>
-                                                                                </p:outputPanel>
-                                                                            </p:dialog>
+                                                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(dp.evidenciaDistincion)}" target="_blank" style="color: #000000">
+                                                                                        <i class="fa fa-search"></i>
+                                                                                        <span>Ver</span>
+                                                                                    </p:link>
+                                                                                </p:column>   
+                                                                            </p:dataTable>  
                                                                         </h:form>
                                                                     </p:tab>
                                                                     <p:tab title="Libros publicados" titletip="#{controladorPersonal.tv7} registros nuevos" titleStyle="#{controladorPersonal.tv7 eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaLibrosPubs.size() eq 0 ?false:true}">
@@ -1384,20 +1344,12 @@
                                                                                 </p:column>
 
                                                                                 <p:column headerText="Evidencia" style="width:80px;text-align: center">
-                                                                                    <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog7').show()" icon="ui-icon-search" title="View">
-                                                                                        <f:setPropertyActionListener value="#{lp}" target="#{controladorPersonal.selectecOBJLibrosPubs}"/>
-                                                                                    </p:commandButton>
-                                                                                </p:column>
-
-                                                                            </p:dataTable>
-
-                                                                            <p:dialog header="Evidencias" widgetVar="evidenciaDialog7" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
-                                                                                <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
-                                                                                    <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty controladorPersonal.selectecOBJLibrosPubs}">
-                                                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorPersonal.convertirRutaLP(controladorPersonal.selectecOBJLibrosPubs.evidencia)}"/>       
-                                                                                    </p:panelGrid>
-                                                                                </p:outputPanel>
-                                                                            </p:dialog>
+                                                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(lp.evidencia)}" target="_blank" style="color: #000000">
+                                                                                        <i class="fa fa-search"></i>
+                                                                                        <span>Ver</span>
+                                                                                    </p:link>
+                                                                                </p:column>   
+                                                                            </p:dataTable>  
                                                                         </h:form>
                                                                     </p:tab>
                                                                     <p:tab title="Artículos publicados" titletip="#{controladorPersonal.tv8} registros nuevos" titleStyle="#{controladorPersonal.tv8 eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaArticulosp.size() eq 0 ?false:true}">
@@ -1452,20 +1404,12 @@
                                                                                 </p:column>
 
                                                                                 <p:column headerText="Evidencia" style="width:80px;text-align: center">
-                                                                                    <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog8').show()" icon="ui-icon-search" title="View">
-                                                                                        <f:setPropertyActionListener value="#{ap}" target="#{controladorPersonal.selectecOBJoBJArticulosps}"/>
-                                                                                    </p:commandButton>
-                                                                                </p:column>
-
-                                                                            </p:dataTable>
-
-                                                                            <p:dialog header="Evidencias" widgetVar="evidenciaDialog8" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
-                                                                                <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
-                                                                                    <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty controladorPersonal.selectecOBJoBJArticulosps}">
-                                                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorPersonal.convertirRutaAr(controladorPersonal.selectecOBJoBJArticulosps.evidencia)}"/>       
-                                                                                    </p:panelGrid>
-                                                                                </p:outputPanel>
-                                                                            </p:dialog>
+                                                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(ap.evidencia)}" target="_blank" style="color: #000000">
+                                                                                        <i class="fa fa-search"></i>
+                                                                                        <span>Ver</span>
+                                                                                    </p:link>
+                                                                                </p:column>   
+                                                                            </p:dataTable>  
                                                                         </h:form>
                                                                     </p:tab>
                                                                     <p:tab title="Memorias publicadas" titletip="#{controladorPersonal.tv9} registros nuevos" titleStyle="#{controladorPersonal.tv9 eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaMemoriaspub.size() eq 0 ?false:true}">
@@ -1524,20 +1468,12 @@
                                                                                 </p:column>
 
                                                                                 <p:column headerText="Evidencia" style="width:80px;text-align: center">
-                                                                                    <p:commandButton update="@form:evidenicas" oncomplete="PF('evidenciaDialog9').show()" icon="ui-icon-search" title="View">
-                                                                                        <f:setPropertyActionListener value="#{mp}" target="#{controladorPersonal.selectecOBJMemoriaspubs}"/>
-                                                                                    </p:commandButton>
-                                                                                </p:column>
-
-                                                                            </p:dataTable>
-
-                                                                            <p:dialog header="Evidencias" widgetVar="evidenciaDialog9" modal="true" showEffect="fade" hideEffect="fade" resizable="false" position="relative" dynamic="true" width="80%" height="900" style="left:10%; top:20%;">
-                                                                                <p:outputPanel id="evidenicas" style="text-align:center;width: 100%;height: 100%">
-                                                                                    <p:panelGrid  columns="1" style="width: 100%;height: 100%" rendered="#{not empty controladorPersonal.selectecOBJMemoriaspubs}">
-                                                                                        <object type="application/pdf" style="width: 100%;height: 100%;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorPersonal.convertirRutaMP(controladorPersonal.selectecOBJMemoriaspubs.evidencia)}"/>       
-                                                                                    </p:panelGrid>
-                                                                                </p:outputPanel>
-                                                                            </p:dialog>
+                                                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(mp.evidencia)}" target="_blank" style="color: #000000">
+                                                                                        <i class="fa fa-search"></i>
+                                                                                        <span>Ver</span>
+                                                                                    </p:link>
+                                                                                </p:column>   
+                                                                            </p:dataTable>  
                                                                         </h:form>
                                                                     </p:tab>     
 
@@ -1577,38 +1513,38 @@
                                                                             <p:outputLabel value="#{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.estadoCivil}" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
                                                                         </p:panelGrid>
                                                                     </p:tab>
-                                                                    <p:tab title="Acta de nacimiento" rendered="#{controladorPersonal.ruta1 eq ''?false:true}">
+                                                                    <p:tab title="Acta de nacimiento" >
                                                                         <p:outputPanel id="evidenicas1" style="text-align:center;width: 100%;height: 100%" >
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorPersonal.ruta1}"/>       
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaActa)}"/>       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
-                                                                    <p:tab title="Comprobante de domicilio" rendered="#{controladorPersonal.ruta3 eq ''?false:true}">
+                                                                    <p:tab title="Comprobante de domicilio" >
                                                                         <p:outputPanel id="evidenicas2" style="text-align:center;width: 100%;height: 100%" >
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorPersonal.ruta3}"/>       
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaDomicilio)}"/>       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
-                                                                    <p:tab title="CURP" rendered="#{controladorPersonal.ruta2 eq ''?false:true}">
+                                                                    <p:tab title="CURP" >
                                                                         <p:outputPanel id="evidenicas3" style="text-align:center;width: 100%;height: 100%" >
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorPersonal.ruta2}"/>       
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaCurp)}"/>       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
-                                                                    <p:tab title="RFC" rendered="#{controladorPersonal.ruta5 eq ''?false:true}">
+                                                                    <p:tab title="RFC" >
                                                                         <p:outputPanel id="evidenicas4" style="text-align:center;width: 100%;height: 100%" >
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorPersonal.ruta5}"/>       
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaRfc)}"/>       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
-                                                                    <p:tab title="INE" rendered="#{controladorPersonal.ruta4 eq ''?false:true}">
+                                                                    <p:tab title="INE" >
                                                                         <p:outputPanel id="evidenicas5" style="text-align:center;width: 100%;height: 100%" >
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{controladorPersonal.ruta4}"/>       
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaIne)}"/>       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>

@@ -5,15 +5,20 @@
  */
 package mx.edu.utxj.pye.sgi.ejb;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import lombok.Getter;
+import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Grupos;
+import mx.edu.utxj.pye.sgi.saiiut.entity.Periodos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.VistaAlumnosPye;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 
@@ -24,13 +29,12 @@ import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 @Stateful
 public class ServicioAdministracionTutores implements EjbAdministracionTutores {
 
-    @EJB
-    Facade f;
-    @EJB
-    Facade2 f2;
-
+    @EJB Facade f;
+    @EJB Facade2 f2;
+    @Getter @Setter private Integer periodo;
+    
+    
     @Override
-
     public PeriodosEscolares getPeriodoActual() {
         TypedQuery<PeriodosEscolares> q = f.getEntityManager().createQuery("SELECT MAX(p.periodo) FROM PeriodosEscolares AS p ", PeriodosEscolares.class);
         return q.getSingleResult();
@@ -38,10 +42,12 @@ public class ServicioAdministracionTutores implements EjbAdministracionTutores {
 
     @Override
     public List<Grupos> esTutor(Integer maestro, Integer periodo) {
+        Short grado = 11;
 //        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioAdministracionTutores.esTutor() esta es la clave del maestro obtenida : --- > " + maestro);
-        TypedQuery<Grupos> q = f2.getEntityManager().createQuery("SELECT g FROM Grupos AS g WHERE g.cveMaestro = :cveMaestro AND g.gruposPK.cvePeriodo = :cvePeriodo", Grupos.class);
+        TypedQuery<Grupos> q = f2.getEntityManager().createQuery("SELECT g FROM Grupos AS g WHERE g.cveMaestro = :cveMaestro AND g.gruposPK.cvePeriodo = :cvePeriodo AND g.grado = :grado", Grupos.class);
         q.setParameter("cveMaestro", maestro);
         q.setParameter("cvePeriodo", periodo);
+        q.setParameter("grado", grado);
         List<Grupos> lg = q.getResultList();
         if (lg.isEmpty()) {
             return null;
@@ -68,76 +74,6 @@ public class ServicioAdministracionTutores implements EjbAdministracionTutores {
 
     }
 
-//    @Override
-//    public List<String> getResultadosEvaluacion(String matricula, Integer periodo) {
-//        Query q = f.getEntityManager().createNativeQuery(
-//                //                "SELECT\n"
-//                //                + "e.evaluador,\n"
-//                //                + "e.cve_materia,\n"
-//                //                + "e.evaluado,\n"
-//                //                + "e.completo,\n"
-//                //                + "e.incompleto,\n"
-//                //                + "a.matricula,\n"
-//                //                + "a.periodo,\n"
-//                //                + "a.grupo,\n"
-//                //                + "a.apellido_paterno,\n"
-//                //                + "a.apellido_materno\n"
-//                //                + "FROM\n"
-//                //                + "capital_humano.evaluacion_docentes_materia_resultados AS e\n"
-//                //                + "INNER JOIN sescolares.alumno AS a ON e.evaluador = a.matricula\n"
-//                //                + "WHERE\n"
-//                //                + "e.evaluador = ?1 AND\n"
-//                //                + "a.periodo = ?2"
-//                "SELECT\n"
-//                + "e.evaluacion,\n"
-//                + "e.evaluador,\n"
-//                + "e.cve_materia,\n"
-//                + "e.evaluado,\n"
-//                + "e.completo,\n"
-//                + "e.incompleto,\n"
-//                + "e.promedio,\n"
-//                + "a.matricula,\n"
-//                + "a.apellido_paterno,\n"
-//                + "a.apellido_materno,\n"
-//                + "a.nombre,\n"
-//                + "CASE(SUM(e.completo)>=0)\n"
-//                + "WHEN SUM(e.completo) = COUNT(e.evaluador)\n"
-//                + "THEN \"completo\" ELSE 'Incompleto' END AS estatus,\n"
-//                + "SUM(e.completo) as evaluados, COUNT(e.evaluador) as porEvaluar\n"
-//                + "FROM\n"
-//                + "capital_humano.evaluacion_docentes_materia_resultados AS e\n"
-//                + "INNER JOIN sescolares.alumno AS a ON e.evaluador = a.matricula\n"
-//                + "where   a.matricula = ?1 and a.periodo = ?2\n"
-//                + "GROUP BY evaluador"
-//        );
-//        q.setParameter(1, matricula);
-//        q.setParameter(2, periodo);
-//
-////        TypedQuery<EvaluacionDocentesMateriaResultados> q = f.getEntityManager().createQuery("SELECT e FROM EvaluacionDocentesMateriaResultados e WHERE e.pk.evaluador = :evaluador ", EvaluacionDocentesMateriaResultados.class);
-////        q.setParameter("evaluador", matricula);
-////        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioAdministracionTutores.getResultadosEvaluacion() + " + q);
-//        return q.getResultList();
-//    }
-//
-//    @Override
-//    public List<String> getDatosSinEvaluar(String matricula, Integer periodo) {
-//        Query q = f.getEntityManager().createNativeQuery(
-//                "SELECT\n"
-//                + "a.matricula,\n"
-//                + "a.periodo,\n"
-//                + "a.nombre,\n"
-//                + "a.apellido_paterno,\n"
-//                + "a.apellido_materno\n"
-//                + "FROM\n"
-//                + "sescolares.alumno AS a\n"
-//                + "WHERE\n"
-//                + "a.matricula = ?1 AND\n"
-//                + "a.periodo = ?2"
-//        );
-//        q.setParameter(1, matricula);
-//        q.setParameter(2, periodo);
-//        return q.getResultList();
-//    }
 
     @Override
     public List<VistaAlumnosPye> findAllByMatricula(String matricula) {
@@ -147,5 +83,26 @@ public class ServicioAdministracionTutores implements EjbAdministracionTutores {
         q.setParameter(1, matricula);
 //        salida = q.getResultList();
         return q.getResultList();
+    }
+    
+    @Override
+    public List<Grupos> estTutordeGrupo(Integer cvePersona){
+        Short grado = 11;
+        TypedQuery<Periodos> periodoAct = f2.getEntityManager().createQuery("SELECT p FROM Periodos AS p",Periodos.class);
+        List<Periodos> periodos = periodoAct.getResultList();
+        periodos.stream().forEach(x -> {
+            Boolean activo = true;
+            Boolean acv = x.getActivo().equals(true);
+            if (activo.equals(acv)) {
+                periodo = x.getPeriodosPK().getCvePeriodo();
+                System.out.println("Periodo:"+ periodo);
+            }
+        });
+        List<Grupos> tutor = f2.getEntityManager().createQuery("SELECT g FROM Grupos as g WHERE g.gruposPK.cvePeriodo = :periodo AND g.cveMaestro = :cvePersona AND g.grado = :grado",Grupos.class)
+                .setParameter("periodo",periodo)
+                .setParameter("cvePersona", cvePersona)
+                .setParameter("grado", grado)
+                .getResultStream().collect(Collectors.toList());
+        return tutor;
     }
 }

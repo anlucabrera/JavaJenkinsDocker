@@ -27,12 +27,11 @@ import org.primefaces.event.RowEditEvent;
 @Named
 @ManagedBean
 @ViewScoped
-public class CvTecnologia implements Serializable{
+public class CvTecnologia implements Serializable {
 
     private static final long serialVersionUID = 5357883394691887772L;
-        
+
     // variables basicas
-    @Getter    @Setter    private String claveTrabajador;
     @Getter    @Setter    private Integer usuario, direccionInt = 0, pestaniaActiva;
     //Variables de objetos Entitys
     @Getter    @Setter    private DesarrollosTecnologicos nuevoOBJDesarrolloTecnologico;
@@ -49,12 +48,11 @@ public class CvTecnologia implements Serializable{
     @EJB    private EjbTecnologia ejbTecnologia;
     //Injects
     @Inject    ControladorEmpleado controladorEmpleado;
-    @Inject    UtilidadesCH utilidadesCH;   
+    @Inject    UtilidadesCH utilidadesCH;
 
     @PostConstruct
     public void init() {
         usuario = controladorEmpleado.getEmpleadoLogeado();
-        claveTrabajador = controladorEmpleado.getClavePersonalLogeado();
 
         nuevoOBJDesarrolloSoftware = new DesarrolloSoftware();
         nuevoOBJDesarrolloTecnologico = new DesarrollosTecnologicos();
