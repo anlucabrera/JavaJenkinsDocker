@@ -217,33 +217,53 @@ public class ServicioDesercionReprobacion implements EjbDesercionReprobacion{
 
     @Override
     public List<DesercionReprobacionMaterias> getListaReprobacionDTO(String mes, Short ejercicio) {
-        TypedQuery<DesercionReprobacionMaterias> q = f.getEntityManager()
-                .createQuery("SELECT v FROM DesercionReprobacionMaterias v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes v.registros.area = :area", DesercionReprobacionMaterias.class);
-        q.setParameter("mes", mes);
-        q.setParameter("ejercicio", ejercicio);
-        q.setParameter("area", controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
-        List<DesercionReprobacionMaterias> l = q.getResultList();
-        if (l.isEmpty() || l == null) {
+        Short area = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
+        List<DesercionReprobacionMaterias> q = new ArrayList<>();
+        
+        if (area == 6) {
+            q = f.getEntityManager().createQuery("SELECT v FROM DesercionReprobacionMaterias v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes", DesercionReprobacionMaterias.class)
+            .setParameter("mes", mes)
+            .setParameter("ejercicio", ejercicio)
+            .getResultList();
+            
+        } else {
+           q = f.getEntityManager().createQuery("SELECT v FROM DesercionReprobacionMaterias v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes AND v.registros.area = :area", DesercionReprobacionMaterias.class)
+           .setParameter("mes", mes)
+           .setParameter("ejercicio", ejercicio)
+           .setParameter("area", area)
+           .getResultList();
+        }
+        if (q.isEmpty() || q == null) {
             return null;
         } else {            
-            return l;
+            return q;
         }
     }
 
   
     @Override
     public List<DTOReprobacion> getListaDtoReprobacion(String mes, Short ejercicio) {
-         TypedQuery<DesercionReprobacionMaterias> q = f.getEntityManager()
-                .createQuery("SELECT v FROM DesercionReprobacionMaterias v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes AND v.registros.area = :area", DesercionReprobacionMaterias.class);
-        q.setParameter("mes", mes);
-        q.setParameter("ejercicio", ejercicio);
-        q.setParameter("area", controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
-        List<DesercionReprobacionMaterias> l = q.getResultList();
-        if (l.isEmpty() || l == null) {
+        Short area = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
+        List<DesercionReprobacionMaterias> q = new ArrayList<>();
+        
+        if (area == 6) {
+            q = f.getEntityManager().createQuery("SELECT v FROM DesercionReprobacionMaterias v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes", DesercionReprobacionMaterias.class)
+            .setParameter("mes", mes)
+            .setParameter("ejercicio", ejercicio)
+            .getResultList();
+            
+        } else {
+           q = f.getEntityManager().createQuery("SELECT v FROM DesercionReprobacionMaterias v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes AND v.registros.area = :area", DesercionReprobacionMaterias.class)
+           .setParameter("mes", mes)
+           .setParameter("ejercicio", ejercicio)
+           .setParameter("area", area)
+           .getResultList();
+        }
+        if (q.isEmpty() || q == null) {
             return null;
         } else {
             List<DTOReprobacion> ldto = new ArrayList<>();
-            l.forEach(x->{
+            q.forEach(x->{
                 MateriasProgramaEducativo m = f.getEntityManager().find(MateriasProgramaEducativo.class, x.getAsignatura());
                 Personal p = f.getEntityManager().find(Personal.class, x.getDocente());
                 DTOReprobacion dto = new DTOReprobacion(x.getDpe().getMatriculaPeriodosEscolares().getMatricula(), m, p, x);
@@ -255,20 +275,30 @@ public class ServicioDesercionReprobacion implements EjbDesercionReprobacion{
 
     @Override
     public List<ListaDtoReprobacion> getListaRegistrosReprobacionDto(String mes, Short ejercicio) {
-        TypedQuery<DesercionReprobacionMaterias> q = f.getEntityManager()
-                .createQuery("SELECT v FROM DesercionReprobacionMaterias v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes AND v.registros.area = :area", DesercionReprobacionMaterias.class);
-        q.setParameter("mes", mes);
-        q.setParameter("ejercicio", ejercicio);
-        q.setParameter("area", controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
-        List<DesercionReprobacionMaterias> l = q.getResultList();
-        if (l.isEmpty() || l == null) {
+        Short area = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
+        List<DesercionReprobacionMaterias> q = new ArrayList<>();
+        
+        if (area == 6) {
+            q = f.getEntityManager().createQuery("SELECT v FROM DesercionReprobacionMaterias v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes", DesercionReprobacionMaterias.class)
+            .setParameter("mes", mes)
+            .setParameter("ejercicio", ejercicio)
+            .getResultList();
+            
+        } else {
+           q = f.getEntityManager().createQuery("SELECT v FROM DesercionReprobacionMaterias v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes AND v.registros.area = :area", DesercionReprobacionMaterias.class)
+           .setParameter("mes", mes)
+           .setParameter("ejercicio", ejercicio)
+           .setParameter("area", area)
+           .getResultList();
+        }
+        if (q.isEmpty() || q == null) {
             return null;
         } else {
              TypedQuery<EventosRegistros> query = f.getEntityManager().createQuery("SELECT er FROM EventosRegistros er WHERE :fecha BETWEEN er.fechaInicio AND er.fechaFin", EventosRegistros.class);
             query.setParameter("fecha", new Date());
             EventosRegistros eventoRegistro = query.getSingleResult();
             List<ListaDtoReprobacion> ldto = new ArrayList<>();
-            l.forEach(x->{
+            q.forEach(x->{
                 MateriasProgramaEducativo m = f.getEntityManager().find(MateriasProgramaEducativo.class, x.getAsignatura().getCveMateria());
                 Personal p = f.getEntityManager().find(Personal.class, x.getDocente());
                 Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());

@@ -44,11 +44,12 @@
                                 <f:facet name="left">
                                     <p:spacer width="10" />
                                     <c:if test="#{controladorArchivoPresupuestos.etapa eq etapa.MOSTRAR}">
-                                        <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
+                                         <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
                                         <p:outputLabel value="Ejercicio Fiscal" class="form-inline"/>
                                         <p:spacer width="15" class="form-inline"/>
                                         <div class="btn-group">                                        
                                             <p:selectOneMenu value="#{presupuestosEjercicio.dto.ejercicioFiscal}">
+                                                <!--<f:selectItem itemLabel="Ejercicio fiscal"/>-->
                                                 <f:selectItems value="#{presupuestosEjercicio.dto.selectItemEjercicioFiscal}"/>
                                                 <p:ajax process="@this" update="somEjercicioF, formMuestraDatosActivos" listener="#{presupuestosEjercicio.seleccionarMes(presupuestosEjercicio.dto.ejercicioFiscal)}"/>
                                             </p:selectOneMenu>
@@ -59,6 +60,7 @@
                                         <p:spacer width="15" class="form-inline"/>
                                         <div class="btn-group">
                                             <p:selectOneMenu id="somEjercicioF" value="#{presupuestosEjercicio.dto.mes}" >
+                                                <!--<f:selectItem itemLabel="Mes"/>-->
                                                 <f:selectItems value="#{presupuestosEjercicio.dto.selectItemMes}"/>
                                                 <p:ajax process="@this" update="formMuestraDatosActivos" listener="#{presupuestosEjercicio.filtroPresupuestos(presupuestosEjercicio.dto.mes, presupuestosEjercicio.dto.ejercicioFiscal)}" />
                                             </p:selectOneMenu>
@@ -130,6 +132,10 @@
 
                                         <p:column headerText="Fecha de Aplicación" width="100" style="text-align: center;">
                                             <h:outputText value="#{presupuesto.presupuestos.fechaAplicacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                        </p:column>
+                                        
+                                        <p:column headerText="Observaciones" width="100" style="text-align: center;">
+                                            <h:outputText value="#{presupuesto.presupuestos.observaciones}"/>
                                         </p:column>
                                     </p:dataTable>
                                     <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
@@ -307,24 +313,28 @@
                                                      id="dtbPresupuestoPrev"
                                                      var="presupuesto" value="#{presupuestosEjercicio.dto.lista}">
                                            
-                                         <p:column headerText="Operación de Presupuesto" width="100" style="text-align: center;">
-                                            <h:outputText value="#{presupuesto.presupuestos.presupuestoOperacion}"/>
-                                        </p:column>
-                                        <p:column headerText="Tipo de Presupuesto" width="120" style="text-align: center;">
-                                            <h:outputText value="#{presupuesto.presupuestos.presupuestoTipo}"/>
-                                        </p:column>
+                                            <p:column headerText="Operación de Presupuesto" width="100" style="text-align: center;">
+                                                <h:outputText value="#{presupuesto.presupuestos.presupuestoOperacion}"/>
+                                            </p:column>
+                                            <p:column headerText="Tipo de Presupuesto" width="120" style="text-align: center;">
+                                                <h:outputText value="#{presupuesto.presupuestos.presupuestoTipo}"/>
+                                            </p:column>
 
-                                        <p:column headerText="Tipo de Capitulo" width="150" style="text-align: center;">
-                                            <h:outputText value="#{presupuesto.capitulo}"/>
-                                        </p:column>
+                                            <p:column headerText="Tipo de Capitulo" width="150" style="text-align: center;">
+                                                <h:outputText value="#{presupuesto.capitulo}"/>
+                                            </p:column>
 
-                                        <p:column headerText="Monto" width="100" style="text-align: center;">
-                                            <h:outputText value="#{presupuesto.presupuestos.monto}"><f:convertNumber pattern="¤#,##0.00" currencySymbol="$" /></h:outputText>
-                                        </p:column>
+                                            <p:column headerText="Monto" width="100" style="text-align: center;">
+                                                <h:outputText value="#{presupuesto.presupuestos.monto}"><f:convertNumber pattern="¤#,##0.00" currencySymbol="$" /></h:outputText>
+                                            </p:column>
 
-                                        <p:column headerText="Fecha de Aplicación" width="100" style="text-align: center;">
-                                            <h:outputText value="#{presupuesto.presupuestos.fechaAplicacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
-                                        </p:column>
+                                            <p:column headerText="Fecha de Aplicación" width="100" style="text-align: center;">
+                                                <h:outputText value="#{presupuesto.presupuestos.fechaAplicacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                            </p:column>
+
+                                            <p:column headerText="Observaciones" width="100" style="text-align: center;">
+                                                <h:outputText value="#{presupuesto.presupuestos.observaciones}"/>
+                                            </p:column>
                                         </p:dataTable>
                                         <p></p>
                                         <center>

@@ -24,6 +24,8 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
+import lombok.Getter;
+import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
@@ -69,6 +71,8 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
     @EJB EjbPropiedades ep;
     @Inject Caster caster;
     @Inject ControladorEmpleado controladorEmpleado;
+    
+    @Getter @Setter private List<Short> areas;
       
     @Override
     public List<DTORegistroMovilidad> getListaRegistroMovilidad(String rutaArchivo) throws Throwable {
@@ -520,46 +524,16 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
         if(evento == null || claveArea == null || periodo == null){
             return null;
         }
-        List<Short> areas = new ArrayList<>();
-        
-        //obtener la referencia al area operativa del trabajador
-        AreasUniversidad area = f.getEntityManager().find(AreasUniversidad.class, claveArea);
-      
-        //comprobar si el area operativa es un programa educativo referenciar a su area superior para obtener la referencia al area academica
-        Short programaCategoria = (short)ep.leerPropiedadEntera("modulosRegistroProgramaEducativoCategoria").orElse(9);
-        if (Objects.equals(area.getCategoria().getCategoria(), programaCategoria)) {            
-            area = f.getEntityManager().find(AreasUniversidad.class, area.getAreaSuperior());
-
-            //Obtener las claves de todas las areas que dependan de área academicoa
-            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
-                    .setParameter("areaSuperior", area.getArea())
-                    .getResultStream()
-                    .map(au -> au.getArea())
-                    .collect(Collectors.toList());
-
-        }else{//si no es Área Académica
-
-            //Obtener las claves de todas las Áreas que dependan del Área del Usuario Logueado
-            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
-                    .setParameter("areaSuperior", area.getArea())
-                    .getResultStream()
-                    .map(au -> au.getArea())
-                    .collect(Collectors.toList());
-            areas.add(claveArea);
-            //Si no tiene Áreas inferiores es decir la lista es vacía, únicamente se muestran los datos de registro del Área del Usuario Logueado
-            if (areas.isEmpty()) {
-                areas.add(claveArea);
-            }
-        }    
-
+         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         List<DTORegistroMovilidad> l = new ArrayList<>();
-        List<RegistrosMovilidad> entities = f.getEntityManager().createQuery("SELECT r FROM RegistrosMovilidad r INNER JOIN r.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.periodoEscolarCursado=:periodo AND reg.area IN :areas", RegistrosMovilidad.class)
+        List<RegistrosMovilidad> entities = new ArrayList<>();
+      
+        areas = ejbModulos.getAreasDependientes(claveArea);
+        entities = f.getEntityManager().createQuery("SELECT r FROM RegistrosMovilidad r INNER JOIN r.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.periodoEscolarCursado=:periodo AND reg.area IN :areas", RegistrosMovilidad.class)
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
                 .setParameter("areas", areas)
                 .getResultList();
-     
-
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
             Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
@@ -611,48 +585,17 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
         if(evento == null || claveArea == null || periodo == null){
             return null;
         }
-        List<Short> areas = new ArrayList<>();
-        
-        //obtener la referencia al area operativa del trabajador
-        AreasUniversidad area = f.getEntityManager().find(AreasUniversidad.class, claveArea);
-      
-        //comprobar si el area operativa es un programa educativo referenciar a su area superior para obtener la referencia al area academica
-        Short programaCategoria = (short)ep.leerPropiedadEntera("modulosRegistroProgramaEducativoCategoria").orElse(9);
-        if (Objects.equals(area.getCategoria().getCategoria(), programaCategoria)) {            
-            area = f.getEntityManager().find(AreasUniversidad.class, area.getAreaSuperior());
-
-            //Obtener las claves de todas las areas que dependan de área academicoa
-            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
-                    .setParameter("areaSuperior", area.getArea())
-                    .getResultStream()
-                    .map(au -> au.getArea())
-                    .collect(Collectors.toList());
-
-        }else{//si no es Área Académica
-
-            //Obtener las claves de todas las Áreas que dependan del Área del Usuario Logueado
-            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
-                    .setParameter("areaSuperior", area.getArea())
-                    .getResultStream()
-                    .map(au -> au.getArea())
-                    .collect(Collectors.toList());
-            areas.add(claveArea);
-            //Si no tiene Áreas inferiores es decir la lista es vacía, únicamente se muestran los datos de registro del Área del Usuario Logueado
-            if (areas.isEmpty()) {
-                areas.add(claveArea);
-            }
-        }
-          
-        
          //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         List<DTOMovilidadDocente> l = new ArrayList<>();
-        List<RegistroMovilidadDocente> entities = f.getEntityManager().createQuery("SELECT d FROM RegistroMovilidadDocente d INNER JOIN d.registroMovilidad r INNER JOIN d.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.periodoEscolarCursado=:periodo AND reg.area IN :areas", RegistroMovilidadDocente.class)
+        List<RegistroMovilidadDocente> entities = new ArrayList<>();
+      
+        areas = ejbModulos.getAreasDependientes(claveArea);
+        entities = f.getEntityManager().createQuery("SELECT d FROM RegistroMovilidadDocente d INNER JOIN d.registroMovilidad r INNER JOIN d.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.periodoEscolarCursado=:periodo AND reg.area IN :areas", RegistroMovilidadDocente.class)
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
                 .setParameter("areas", areas)
                 .getResultList();
-     
-
+      
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
             Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
@@ -674,47 +617,17 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
         if(evento == null || claveArea == null || periodo == null){
             return null;
         }
-        List<Short> areas = new ArrayList<>();
-        
-        //obtener la referencia al area operativa del trabajador
-        AreasUniversidad area = f.getEntityManager().find(AreasUniversidad.class, claveArea);
-      
-        //comprobar si el area operativa es un programa educativo referenciar a su area superior para obtener la referencia al area academica
-        Short programaCategoria = (short)ep.leerPropiedadEntera("modulosRegistroProgramaEducativoCategoria").orElse(9);
-        if (Objects.equals(area.getCategoria().getCategoria(), programaCategoria)) {            
-            area = f.getEntityManager().find(AreasUniversidad.class, area.getAreaSuperior());
-
-            //Obtener las claves de todas las areas que dependan de área academicoa
-            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
-                    .setParameter("areaSuperior", area.getArea())
-                    .getResultStream()
-                    .map(au -> au.getArea())
-                    .collect(Collectors.toList());
-
-        }else{//si no es Área Académica
-
-            //Obtener las claves de todas las Áreas que dependan del Área del Usuario Logueado
-            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
-                    .setParameter("areaSuperior", area.getArea())
-                    .getResultStream()
-                    .map(au -> au.getArea())
-                    .collect(Collectors.toList());
-            areas.add(claveArea);
-            //Si no tiene Áreas inferiores es decir la lista es vacía, únicamente se muestran los datos de registro del Área del Usuario Logueado
-            if (areas.isEmpty()) {
-                areas.add(claveArea);
-            }
-        }
-  
          //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         List<DTOMovilidadEstudiante> l = new ArrayList<>();
-        List<RegistroMovilidadEstudiante> entities = f.getEntityManager().createQuery("SELECT e FROM RegistroMovilidadEstudiante e INNER JOIN e.registroMovilidad r INNER JOIN e.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.periodoEscolarCursado=:periodo AND reg.area IN :areas", RegistroMovilidadEstudiante.class)
+        List<RegistroMovilidadEstudiante> entities = new ArrayList<>();
+      
+        areas = ejbModulos.getAreasDependientes(claveArea);
+        entities = f.getEntityManager().createQuery("SELECT e FROM RegistroMovilidadEstudiante e INNER JOIN e.registroMovilidad r INNER JOIN e.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.periodoEscolarCursado=:periodo AND reg.area IN :areas", RegistroMovilidadEstudiante.class)
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
                 .setParameter("areas", areas)
                 .getResultList();
-     
-
+  
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
             Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());

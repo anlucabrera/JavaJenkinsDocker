@@ -32,7 +32,7 @@ public class DtoDifusionIems {
      //Variables para almacenar el registro
     @Getter RegistrosTipo registroTipo;    
     @Getter EjesRegistro ejesRegistro;
-    @Getter Short area;
+    @Getter AreasUniversidad area;
     
     @Getter private ListaDifusionIems listaDifusionIems = new ListaDifusionIems();
     
@@ -89,7 +89,7 @@ public class DtoDifusionIems {
         this.ejesRegistro = ejesRegistro;
     }
 
-    public void setArea(Short area) {
+    public void setArea(AreasUniversidad area) {
         this.area = area;
     }
 

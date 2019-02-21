@@ -6,12 +6,17 @@
 package mx.edu.utxj.pye.siip.services.pa;
 
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
@@ -20,6 +25,8 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
+import lombok.Getter;
+import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
@@ -52,8 +59,13 @@ public class ServicioPresupuestos implements EjbPresupuestos{
     @EJB EjbModulos ejbModulos;
     @Inject ControladorEmpleado controladorEmpleado;
     
+    @Getter @Setter private List<Short> areas;
+    
     @Override
     public List<DTOPresupuestos> getListaPresupuestos(String rutaArchivo) throws Throwable {
+        List<Boolean> validarCelda = new ArrayList<>();
+        List<String> datosInvalidos = new ArrayList<>();
+        
         List<DTOPresupuestos> listaDtoPresupuestos = new ArrayList<>();
         Presupuestos presupuestos;
         CapitulosTipos capitulosTipos;
@@ -65,6 +77,9 @@ public class ServicioPresupuestos implements EjbPresupuestos{
         XSSFSheet primeraHoja = libroRegistro.getSheetAt(0);
         XSSFRow fila;
         
+        int obs=0;
+        
+        try {
         if (primeraHoja.getSheetName().equals("Presupuesto")) {
         for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
             fila = (XSSFRow) (Row) primeraHoja.getRow(i);
@@ -127,21 +142,57 @@ public class ServicioPresupuestos implements EjbPresupuestos{
                     default:
                         break;
                 }
+                
+                switch (fila.getCell(9).getCellTypeEnum()) {
+                    case STRING:
+                        presupuestos.setObservaciones(fila.getCell(9).getStringCellValue());
+                        break;
+                    default:
+                        break;
+                }
+                
+                switch (fila.getCell(11).getCellTypeEnum()) {
+                    case FORMULA:
+                        obs = (int) fila.getCell(11).getNumericCellValue();
+                        break;
+                    default:
+                        break;
+                }
+                if (obs == 1) {
+                    validarCelda.add(false);
+                    datosInvalidos.add("Dato incorrecto: Observaciones del presupuesto en la columna: " + (5 + 1) + " y fila: " + (i + 1) + " \n ");
+                }
               
                     dTOPresupuestos.setPresupuestos(presupuestos);
                     listaDtoPresupuestos.add(dTOPresupuestos);
                 }
             }
             libroRegistro.close();
-            Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+            if (validarCelda.contains(false)) {
+                    Messages.addGlobalError("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                    Messages.addGlobalError(datosInvalidos.toString());
+                    excel.delete();
+                    ServicioArchivos.eliminarArchivo(rutaArchivo);
+                  
+                    return Collections.EMPTY_LIST;
+                } else {
+                    Messages.addGlobalInfo("<b>Archivo Validado favor de verificar sus datos antes de guardar su información</b>");
+                    return listaDtoPresupuestos;
+                }
         } else {
             libroRegistro.close();
             excel.delete();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
             Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
+            return Collections.EMPTY_LIST;
         }
-        return listaDtoPresupuestos;
-        
+    } catch (IOException e) {
+            libroRegistro.close();
+            ServicioArchivos.eliminarArchivo(rutaArchivo);
+            Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
+            return Collections.EMPTY_LIST;
+    }
+
     }
 
     @Override
@@ -200,13 +251,32 @@ public class ServicioPresupuestos implements EjbPresupuestos{
 
     @Override
     public List<DTOPresupuestos> getRegistroDTOPresupuestos(String mes, Short ejercicio) {
+        //verificar que los parametros no sean nulos
+        if(mes == null || ejercicio == null){
+            return null;
+        }
+        Short area = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
+        
         List<DTOPresupuestos> ldto = new ArrayList<>();
-        TypedQuery<Presupuestos> q = f.getEntityManager()
-                .createQuery("SELECT p from Presupuestos p WHERE p.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND p.registros.eventoRegistro.mes = :mes AND p.registros.area = :area", Presupuestos.class);
-        q.setParameter("mes", mes);
-        q.setParameter("ejercicio", ejercicio);
-        q.setParameter("area", controladorEmpleado.getNuevaAreasUniversidad().getArea());
-        List<Presupuestos> l = q.getResultList();
+        List<Presupuestos> l = new ArrayList<>();
+        
+         if (area == 6) {
+
+            l = f.getEntityManager().createQuery("SELECT p from Presupuestos p WHERE p.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND p.registros.eventoRegistro.mes = :mes", Presupuestos.class)
+                     .setParameter("mes", mes)
+                     .setParameter("ejercicio", ejercicio)
+                     .getResultList();
+
+        } else {
+            areas = ejbModulos.getAreasDependientes(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+
+             l = f.getEntityManager().createQuery("SELECT p from Presupuestos p WHERE p.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND p.registros.eventoRegistro.mes = :mes AND p.registros.area IN :areas", Presupuestos.class)
+                     .setParameter("mes", mes)
+                     .setParameter("ejercicio", ejercicio)
+                     .setParameter("areas", areas)
+                     .getResultList();
+        }
+                
         if (l.isEmpty() || l == null) {
             return null;
         } else {

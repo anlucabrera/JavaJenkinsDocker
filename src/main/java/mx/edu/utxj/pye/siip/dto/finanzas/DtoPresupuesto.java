@@ -40,7 +40,7 @@ public class DtoPresupuesto {
     @Getter private ActividadesPoa alineacionActividad; 
     
     @Getter Boolean tieneEvidencia, forzarAperturaDialogo;
-    @Getter private Short area;
+    @Getter private AreasUniversidad area;
     @Getter private String rutaArchivo;
     
     @Getter private List<EvidenciasDetalle> listaEvidencias;
@@ -64,9 +64,6 @@ public class DtoPresupuesto {
     @Getter private List<SelectItem> selectItemEjercicioFiscal = new ArrayList<>();
 
     public DtoPresupuesto() {
-        setRegistroTipo(new RegistrosTipo((short)14));
-        setEje(new EjesRegistro(1));
-        
         tieneEvidencia = false;
         forzarAperturaDialogo = false;
     }
@@ -84,7 +81,7 @@ public class DtoPresupuesto {
         this.registroTipo = registroTipo;
     }
 
-    public void setArea(Short area) {
+    public void setArea(AreasUniversidad area) {
         this.area = area;
     }
 

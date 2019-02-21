@@ -37,7 +37,7 @@ public class DtoIngresosPropios {
     @Getter private ActividadesPoa alineacionActividad; 
     
     @Getter Boolean tieneEvidencia, forzarAperturaDialogo;
-    @Getter private Short area;
+    @Getter private AreasUniversidad area;
     @Getter private String rutaArchivo;
     
     @Getter private List<EventosRegistros> eventosPorPeriodo;
@@ -80,7 +80,7 @@ public class DtoIngresosPropios {
         this.registroTipo = registroTipo;
     }
 
-    public void setArea(Short area) {
+    public void setArea(AreasUniversidad area) {
         this.area = area;
     }
 

@@ -10,6 +10,7 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
@@ -127,6 +128,10 @@ public class EntityConverter implements Converter{
                     List<ActividadesPoa> actividadesParticipantes3 = Faces.getSessionAttribute("actividades");
                     ActividadesPoa actividadParticipante3 = new ActividadesPoa(Integer.valueOf(value));
                     return actividadesParticipantes3.get(actividadesParticipantes3.indexOf(actividadParticipante3));
+                case "categoria":
+                    List<Categorias> categorias = Faces.getSessionAttribute("categorias");
+                    Categorias categoria = new Categorias(Short.valueOf(value));
+                    return categorias.get(categorias.indexOf(categoria));
                 default:
                     throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "", component.getClientId() + " no es un componente válido."));
             }
@@ -160,6 +165,8 @@ public class EntityConverter implements Converter{
                 return ((Pais)value).getIdpais().toString();
             else if(value instanceof Estado)
                 return ((Estado)value).getIdestado().toString();
+            else if(value instanceof Categorias)
+                return ((Categorias)value).getCategoria().toString();
             else if(value instanceof Municipio){
                 String json = (new Gson()).toJson(((Municipio)value).getMunicipioPK());
                 return json;

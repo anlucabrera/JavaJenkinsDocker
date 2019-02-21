@@ -29,6 +29,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Meses;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
+import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
@@ -609,4 +610,5 @@ public class ServicioModulos implements EjbModulos {
         
         return areas;
     }
+
 }
