@@ -70,7 +70,7 @@ public class ControladorFeriasProfesiograficas implements Serializable{
      //Variables para verificar permiso del usuario para visualizar apartado
     @Getter @Setter private List<ModulosRegistrosUsuarios> listaReg;
     @Getter @Setter private Integer clavePersonal;
-    @Getter @Setter private Short claveRegistro;
+    @Getter @Setter private Short claveRegistroVIN, claveRegistroPYE;
         
     @PostConstruct
     public void init(){
@@ -79,10 +79,10 @@ public class ControladorFeriasProfesiograficas implements Serializable{
         dto.getRegistroTipo().setRegistroTipo((short) 34);
         dto.setEjesRegistro(new EjesRegistro());
         dto.getEjesRegistro().setEje(4);
-        dto.setArea((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
         dto.setSelectItemEjercicioFiscal(ejbItems.itemEjercicioFiscalPorRegistro((short) 34));
         
-        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
+        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea().getArea()));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
         if (dto.getSelectItemEjercicioFiscal() == null) {
 //            Messages.addGlobalInfo("No existen registros");
@@ -100,7 +100,8 @@ public class ControladorFeriasProfesiograficas implements Serializable{
         }
         
         clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
-        claveRegistro = 27;
+        claveRegistroVIN = 27;
+        claveRegistroPYE = 64;
         consultarPermiso();
     }
     public void descargarPlantilla() throws IOException, Throwable{
@@ -332,7 +333,7 @@ public class ControladorFeriasProfesiograficas implements Serializable{
     
     public void guardaFeriasProfesiograficas() {
         try {
-            ejbFeriasProfesiograficas.guardaFeriasProfesiograficas(dto.getListaFeriasProfesiograficas(), dto.getRegistroTipo(), dto.getEjesRegistro(), dto.getArea(), controladorModulosRegistro.getEventosRegistros());
+            ejbFeriasProfesiograficas.guardaFeriasProfesiograficas(dto.getListaFeriasProfesiograficas(), dto.getRegistroTipo(), dto.getEjesRegistro(), dto.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorFeriasProfesiograficas.class.getName()).log(Level.SEVERE, null, ex);
@@ -344,7 +345,7 @@ public class ControladorFeriasProfesiograficas implements Serializable{
     }
     
      public void consultarPermiso(){
-        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro);
+        listaReg = ejbModulos.getListaPermisoPorRegistroEjesDistintos(clavePersonal, claveRegistroVIN, claveRegistroPYE);
         if(listaReg == null || listaReg.isEmpty()){
             Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
         }

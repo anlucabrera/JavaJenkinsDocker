@@ -201,23 +201,32 @@ public class ServicioFeriasParticipantes implements EjbFeriasParticipantes{
         if(mes == null || ejercicio == null){
             return null;
         }
-        areas = ejbModulos.getAreasDependientes(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
-        
+        Short area = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
+        List<FeriasParticipantes> q = new ArrayList<>();
         List<ListaFeriasParticipantesDTO> ldto = new ArrayList<>();
-        TypedQuery<FeriasParticipantes> q = f.getEntityManager()
-                .createQuery("SELECT p from FeriasParticipantes p WHERE p.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND p.registros.eventoRegistro.mes = :mes AND p.registros.area IN :areas", FeriasParticipantes.class);
-        q.setParameter("mes", mes);
-        q.setParameter("ejercicio", ejercicio);
-        q.setParameter("areas", areas);
-        List<FeriasParticipantes> l = q.getResultList();
-        if (l.isEmpty() || l == null) {
+        
+        if (area == 6) {
+            q = f.getEntityManager().createQuery("SELECT p from FeriasParticipantes p WHERE p.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND p.registros.eventoRegistro.mes = :mes", FeriasParticipantes.class)
+                    .setParameter("mes", mes)
+                    .setParameter("ejercicio", ejercicio)
+                    .getResultList();
+        } else {
+            areas = ejbModulos.getAreasDependientes(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+
+            q = f.getEntityManager().createQuery("SELECT p from FeriasParticipantes p WHERE p.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND p.registros.eventoRegistro.mes = :mes AND p.registros.area IN :areas", FeriasParticipantes.class)
+                    .setParameter("mes", mes)
+                    .setParameter("ejercicio", ejercicio)
+                    .setParameter("areas", areas)
+                    .getResultList();
+        }
+        if (q.isEmpty() || q == null) {
             return null;
         } else {
 //            l.forEach(System.err::println);
             TypedQuery<EventosRegistros> query = f.getEntityManager().createQuery("SELECT er FROM EventosRegistros er WHERE :fecha BETWEEN er.fechaInicio AND er.fechaFin", EventosRegistros.class);
             query.setParameter("fecha", new Date());
             EventosRegistros eventoRegistro = query.getSingleResult();
-            l.forEach(x -> {
+            q.forEach(x -> {
 
                 ListaFeriasParticipantesDTO dto;
                 Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());

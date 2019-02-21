@@ -82,9 +82,9 @@ public class ControladorIngPropios implements Serializable{
     public void init(){
         //        Variables que se obtendrán mediante un método
         dto = new DtoIngresosPropios();  
-        dto.setArea((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
       
-        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
+        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea().getArea()));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());
@@ -137,7 +137,7 @@ public class ControladorIngPropios implements Serializable{
     public void guardaIngresosPropios() {
        if (dto.getLista() != null) {
             try {
-                ejb.guardaIngPropios(dto.getLista(), dto.getRegistroTipo(), dto.getEje(), dto.getArea(), controladorModulosRegistro.getEventosRegistros());
+                ejb.guardaIngPropios(dto.getLista(), dto.getRegistroTipo(), dto.getEje(), dto.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
             } catch (Throwable ex) {
                 Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause()!=null?ex.getCause().getMessage():ex.getMessage());
                 Logger.getLogger(ControladorIngPropios.class.getName()).log(Level.SEVERE, null, ex);
@@ -260,7 +260,7 @@ public class ControladorIngPropios implements Serializable{
     }
     
     public void cargarListaPorEvento(){
-       dto.setLista(ejb.getListaRegistrosPorEventoAreaPeriodo(dto.getEventoSeleccionado(), dto.getArea(), dto.getPeriodo()));
+       dto.setLista(ejb.getListaRegistrosPorEventoAreaPeriodo(dto.getEventoSeleccionado(), dto.getArea().getArea(), dto.getPeriodo()));
     }
     
     public void cargarEvidenciasPorRegistro(){

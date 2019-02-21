@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mx.edu.utxj.pye.siip.controller.vin;
+package mx.edu.utxj.pye.siip.controller.pye;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,10 +46,10 @@ import org.omnifaces.util.Messages;
  *
  * @author UTXJ
  */
-@Named(value = "feriasPart")
+@Named(value = "feriasPartPYE")
 @ManagedBean
 @ViewScoped
-public class ControladorFeriasParticipantes implements Serializable{
+public class ControladorFeriasParticipantesPYE implements Serializable{
 
     private static final long serialVersionUID = 0L;
     @Getter @Setter DtoFeriasParticipantesSet dto;
@@ -72,7 +72,7 @@ public class ControladorFeriasParticipantes implements Serializable{
         dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
         dto.setSelectItemEjercicioFiscal(ejbItems.itemEjercicioFiscalPorRegistro((short) 35));
         
-        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea().getArea()));
+        dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short)16));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
         if (dto.getSelectItemEjercicioFiscal() == null) {
 //            Messages.addGlobalInfo("No existen registros");
@@ -84,7 +84,7 @@ public class ControladorFeriasParticipantes implements Serializable{
          try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());
         } catch (EventoRegistroNoExistenteException ex) {
-            Logger.getLogger(ControladorFeriasParticipantes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorFeriasParticipantesPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -105,75 +105,7 @@ public class ControladorFeriasParticipantes implements Serializable{
             Messages.addGlobalWarn("No se han registrado Participantes de Ferias en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
         }
     }
-   
-    public void abrirAlineacionPOA(ListaFeriasParticipantesDTO registro){
-        dto.setRegistro(registro);        
-        dto.setAlineacionActividad(ejbEvidenciasAlineacion.getActividadAlineada(registro.getFeriasParticipantes().getRegistro()));
-        actualizarEjes();
-        cargarAlineacionXActividad();
-        Ajax.update("frmAlineacion1");
-        Ajax.oncomplete("skin();");
-        Ajax.oncomplete("PF('modalAlineacion1').show();");
-    }
-    
-    public void actualizarActividades(ValueChangeEvent event){
-        dto.setAlineacionLinea((LineasAccion)event.getNewValue());
-        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
-        Faces.setSessionAttribute("actividades", dto.getActividades());
-    }
-    
-    public void actualizarEjes(){
-        dto.setEjes(ejbFiscalizacion.getEjes(dto.getEventoActual().getEjercicioFiscal().getAnio(), dto.getAreaPOA()));
-        if(!dto.getEjes().isEmpty() && dto.getAlineacionEje() == null){
-            dto.setAlineacionEje(dto.getEjes().get(0));
-            dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getAreaPOA()));
-        }
-        Faces.setSessionAttribute("ejes", dto.getEjes());
-    }
-
-    public void actualizarEstrategias(ValueChangeEvent event){
-        dto.setAlineacionEje((EjesRegistro)event.getNewValue());
-        dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getAreaPOA()));
-        dto.nulificarEstrategia();
-        Faces.setSessionAttribute("estrategias", dto.getEstrategias());
-    }
-
-    public void actualizarLineasAccion(ValueChangeEvent event){
-        dto.setAlineacionEstrategia((Estrategias)event.getNewValue());
-        dto.setLineasAccion(ejbFiscalizacion.getLineasAccionPorEstrategia(dto.getAlineacionEstrategia(), dto.getAreaPOA()));
-        dto.nulificarLinea();
-        Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
-    }
-    
-     public void alinearRegistro(){
-        Boolean alineado = ejbEvidenciasAlineacion.alinearRegistroActividad(dto.getAlineacionActividad(), dto.getRegistro().getFeriasParticipantes().getRegistro());
-        if(alineado){
-            filtroFeriaPart(dto.getMes(), dto.getEjercicioFiscal());
-            abrirAlineacionPOA(dto.getRegistro());
-            Messages.addGlobalInfo("El registro se alineó de forma correcta.");
-        }else Messages.addGlobalError("El registro no pudo alinearse.");
-    }
-    
-    public void cargarAlineacionXActividad(){
-        if(dto.getAlineacionActividad() != null){
-            dto.setAlineacionEje(dto.getAlineacionActividad().getCuadroMandoInt().getEje());
-
-            dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getAreaPOA()));
-            dto.setAlineacionEstrategia(dto.getAlineacionActividad().getCuadroMandoInt().getEstrategia());
-            Faces.setSessionAttribute("estrategias", dto.getEstrategias());
-
-            dto.setLineasAccion(ejbFiscalizacion.getLineasAccionPorEstrategia(dto.getAlineacionEstrategia(), dto.getAreaPOA()));
-            dto.setAlineacionLinea(dto.getAlineacionActividad().getCuadroMandoInt().getLineaAccion());
-            Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
-
-            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
-            Faces.setSessionAttribute("actividades", dto.getActividades());
-        }else{
-            dto.setAlineacionEje(null);
-            dto.nulificarEje();
-        }
-    }
-    
+  
     public void cargarEvidenciasPorRegistro(){
         dto.setListaEvidencias(ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(dto.getRegistro().getFeriasParticipantes().getRegistro()));
         Ajax.update("frmEvidencias1");
@@ -187,19 +119,7 @@ public class ControladorFeriasParticipantes implements Serializable{
         File f = new File(evidencia.getRuta());
         Faces.sendFile(f, false);
     }
-    
-    public void eliminarAlineacion(){
-        Boolean eliminado = ejbEvidenciasAlineacion.eliminarAlineacion(dto.getRegistro().getFeriasParticipantes().getRegistro());
-        if(eliminado){ 
-            Messages.addGlobalInfo("La elineación se eliminó de forma correcta.");
-            dto.getRegistro().setActividadAlineada(null);
-            dto.setAlineacionActividad(ejbEvidenciasAlineacion.getActividadAlineada(dto.getRegistro().getFeriasParticipantes().getRegistro()));
-            actualizarEjes();
-            cargarAlineacionXActividad();
-            Ajax.update("frmAlineacion1");
-        }else Messages.addGlobalError("La alineación no pudo eliminarse.");
-    }
-    
+   
     public void eliminarEvidencia(EvidenciasDetalle evidencia){
         Boolean eliminado = ejbEvidenciasAlineacion.eliminarEvidenciaEnRegistro(dto.getRegistro().getFeriasParticipantes().getRegistro(), evidencia);
         if(eliminado){ 
@@ -232,29 +152,97 @@ public class ControladorFeriasParticipantes implements Serializable{
             dto.setForzarAperturaDialogo(Boolean.FALSE);
         }
     }
+    
+      public Boolean verificaAlineacion(Integer registro) throws Throwable{
+        return ejbModulos.verificaActividadAlineadaGeneral(registro);
+    }
+    
+    public void actualizarEjes(Short ejercicio){
+        dto.setEjes(ejbFiscalizacion.getEjes(ejercicio, dto.getAreaPOA()));
+        if(!dto.getEjes().isEmpty() && dto.getAlineacionEje() == null){
+            dto.setAlineacionEje(dto.getEjes().get(0));
+            dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getAreaPOA()));
+        }
+        Faces.setSessionAttribute("ejes", dto.getEjes());
+    }
+    
+    public void cargarAlineacionXActividad(){
+        if(dto.getAlineacionActividad() != null){
+            dto.setAlineacionEje(dto.getAlineacionActividad().getCuadroMandoInt().getEje());
 
-    
-    
-    public void listaFeriasprofParticipantesPrevia(String rutaArchivo) {
-      try {
-            dto.setListaFeriasParticipantes(ejbFeriasParticipantes.getListaFeriasParticipantes(rutaArchivo));
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorFeriasParticipantes.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-     
-    public void guardaFeriasprofParticipantes() {
-         try {
-             ejbFeriasParticipantes.guardaFeriasParticipantes(dto.getListaFeriasParticipantes(), dto.getRegistroTipo(), dto.getEjesRegistro(), dto.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorFeriasParticipantes.class.getName()).log(Level.SEVERE, null, ex);
+            dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getAreaPOA()));
+            dto.setAlineacionEstrategia(dto.getAlineacionActividad().getCuadroMandoInt().getEstrategia());
+            Faces.setSessionAttribute("estrategias", dto.getEstrategias());
+
+            dto.setLineasAccion(ejbFiscalizacion.getLineasAccionPorEstrategia(dto.getAlineacionEstrategia(), dto.getAreaPOA()));
+            dto.setAlineacionLinea(dto.getAlineacionActividad().getCuadroMandoInt().getLineaAccion());
+            Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
+
+            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
+            Faces.setSessionAttribute("actividades", dto.getActividades());
+        }else{
+            dto.setAlineacionEje(null);
+            dto.nulificarEje();
         }
     }
     
-    public void cancelarArchivo(){
-        dto.getListaFeriasParticipantes().getFeriasParticipantes().clear();
+    public void actualizarActividades(ValueChangeEvent event){
+        dto.setAlineacionLinea((LineasAccion)event.getNewValue());
+        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
+        Faces.setSessionAttribute("actividades", dto.getActividades());
+    }
+
+    public void actualizarEstrategias(ValueChangeEvent event){
+        dto.setAlineacionEje((EjesRegistro)event.getNewValue());
+        dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getAreaPOA()));
+        dto.nulificarEstrategia();
+        Faces.setSessionAttribute("estrategias", dto.getEstrategias());
+    }
+
+    public void actualizarLineasAccion(ValueChangeEvent event){
+        dto.setAlineacionEstrategia((Estrategias)event.getNewValue());
+        dto.setLineasAccion(ejbFiscalizacion.getLineasAccionPorEstrategia(dto.getAlineacionEstrategia(), dto.getAreaPOA()));
+        dto.nulificarLinea();
+        Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
     }
     
+    public void abrirAlineacionPOA(ListaFeriasParticipantesDTO registro){
+        try {
+            dto.setRegistro(registro);
+            dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getFeriasParticipantes().getRegistro()));
+            actualizarEjes(dto.getRegistro().getFeriasParticipantes().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+            cargarAlineacionXActividad();
+            Ajax.update("frmAlineacion");
+            Ajax.oncomplete("skin();");
+            Ajax.oncomplete("PF('modalAlineacion').show();");
+        } catch (Throwable ex) {
+            Logger.getLogger(ControladorFeriasParticipantesPYE.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void alinearRegistro(){
+        Boolean alineado = ejbModulos.alinearRegistroActividad(dto.getAlineacionActividad(), dto.getRegistro().getFeriasParticipantes().getRegistro());
+        if(alineado){
+            filtroFeriaPart(dto.getMes(), dto.getEjercicioFiscal());
+            abrirAlineacionPOA(dto.getRegistro());
+            Messages.addGlobalInfo("El registro se alineó de forma correcta.");
+        }else Messages.addGlobalError("El registro no pudo alinearse.");
+    }
+    
+    public void eliminarAlineacion(){
+        Boolean eliminado = ejbModulos.eliminarAlineacion(dto.getRegistro().getFeriasParticipantes().getRegistro());
+        if(eliminado){ 
+            try {
+                Messages.addGlobalInfo("La elineación se eliminó de forma correcta.");
+                dto.getRegistro().setActividadAlineada(null);
+                dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getFeriasParticipantes().getRegistro()));
+                actualizarEjes(dto.getRegistro().getFeriasParticipantes().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+                cargarAlineacionXActividad();
+                Ajax.update("frmAlineacion");
+            } catch (Throwable ex) {
+                Logger.getLogger(ControladorFeriasParticipantesPYE.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }else Messages.addGlobalError("La alineación no pudo eliminarse.");
+    }
+ 
 }

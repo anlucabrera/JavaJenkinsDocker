@@ -64,6 +64,9 @@ public class Presupuestos implements Serializable {
     @Column(name = "fecha_aplicacion")
     @Temporal(TemporalType.DATE)
     private Date fechaAplicacion;
+    @Size(max = 255)
+    @Column(name = "observaciones")
+    private String observaciones;
     @JoinColumn(name = "capitulo_tipo", referencedColumnName = "capitulo_tipo")
     @ManyToOne(optional = false)
     private CapitulosTipos capituloTipo;
@@ -78,14 +81,15 @@ public class Presupuestos implements Serializable {
         this.registro = registro;
     }
 
-    public Presupuestos(Integer registro, String presupuestoOperacion, String presupuestoTipo, double monto, Date fechaAplicacion) {
+    public Presupuestos(Integer registro, String presupuestoOperacion, String presupuestoTipo, double monto, Date fechaAplicacion, String observaciones, CapitulosTipos capituloTipo, Registros registros) {
         this.registro = registro;
         this.presupuestoOperacion = presupuestoOperacion;
         this.presupuestoTipo = presupuestoTipo;
         this.monto = monto;
         this.fechaAplicacion = fechaAplicacion;
+        this.observaciones = observaciones;
     }
-
+    
     public Integer getRegistro() {
         return registro;
     }
@@ -124,6 +128,14 @@ public class Presupuestos implements Serializable {
 
     public void setFechaAplicacion(Date fechaAplicacion) {
         this.fechaAplicacion = fechaAplicacion;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
     }
 
     public CapitulosTipos getCapituloTipo() {

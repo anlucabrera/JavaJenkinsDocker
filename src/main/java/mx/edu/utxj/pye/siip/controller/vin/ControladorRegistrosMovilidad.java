@@ -86,9 +86,9 @@ public class ControladorRegistrosMovilidad implements Serializable{
         dto = new DtoRegistrosMovilidad();  
         dtodoc = new DtoMovilidadDocente();
         dtoest = new DtoMovilidadEstudiantil();
-        dto.setArea((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
         
-        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
+        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea().getArea()));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());
@@ -188,9 +188,9 @@ public class ControladorRegistrosMovilidad implements Serializable{
     }
     
     public void cargarListaPorEvento(){
-       dto.setLista(ejb.getListaRegistrosPorEventoAreaPeriodo(dto.getEventoSeleccionado(), dto.getArea(), dto.getPeriodo()));
-       dtodoc.setLista(ejb.getListaRegistrosPorEventoAreaPeriodoDoc(dto.getEventoSeleccionado(), dto.getArea(), dto.getPeriodo()));
-       dtoest.setLista(ejb.getListaRegistrosPorEventoAreaPeriodoEst(dto.getEventoSeleccionado(), dto.getArea(), dto.getPeriodo()));
+       dto.setLista(ejb.getListaRegistrosPorEventoAreaPeriodo(dto.getEventoSeleccionado(), dto.getArea().getArea(), dto.getPeriodo()));
+       dtodoc.setLista(ejb.getListaRegistrosPorEventoAreaPeriodoDoc(dto.getEventoSeleccionado(), dto.getArea().getArea(), dto.getPeriodo()));
+       dtoest.setLista(ejb.getListaRegistrosPorEventoAreaPeriodoEst(dto.getEventoSeleccionado(), dto.getArea().getArea(), dto.getPeriodo()));
         Ajax.update("formMuestraDatosActivos");
         Ajax.update("formMovDoc");
         Ajax.update("formMovEst");
@@ -288,7 +288,7 @@ public class ControladorRegistrosMovilidad implements Serializable{
     public void guardaRegistroMovilidad() {
        if (dto.getLista() != null) {
             try {
-                ejb.guardaRegistroMovilidad(dto.getLista(), dto.getRegistroTipo(), dto.getEje(), dto.getArea(), controladorModulosRegistro.getEventosRegistros());
+                ejb.guardaRegistroMovilidad(dto.getLista(), dto.getRegistroTipo(), dto.getEje(), dto.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
             } catch (Throwable ex) {
                 Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause()!=null?ex.getCause().getMessage():ex.getMessage());
                 Logger.getLogger(ControladorRegistrosMovilidad.class.getName()).log(Level.SEVERE, null, ex);

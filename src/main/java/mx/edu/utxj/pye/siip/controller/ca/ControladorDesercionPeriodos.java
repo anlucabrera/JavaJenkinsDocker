@@ -90,10 +90,10 @@ public class ControladorDesercionPeriodos implements Serializable {
         dto.getRegistroTipo().setRegistroTipo((short) 25);
         dto.setEjesRegistro(new EjesRegistro());
         dto.getEjesRegistro().setEje(3);
-        dto.setArea((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+       dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
         /*INIT FILTRADO*/
         dto.setSelectItemEjercicioFiscal(ejbItems.itemEjercicioFiscalPorRegistro((short) 25));
-        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
+        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea().getArea()));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
         if (dto.getSelectItemEjercicioFiscal() == null) {
 //            Messages.addGlobalInfo("No existen registros");
@@ -353,7 +353,7 @@ public class ControladorDesercionPeriodos implements Serializable {
 
     public void guardaDesercionPeriodos() {
         try {
-            ejbDesercionPeriodos.guardaDesercionPeriodos(dto.getListaDesercionPeriodos(), dto.getRegistroTipo(), dto.getEjesRegistro(), dto.getArea(), controladorModulosRegistro.getEventosRegistros());
+            ejbDesercionPeriodos.guardaDesercionPeriodos(dto.getListaDesercionPeriodos(), dto.getRegistroTipo(), dto.getEjesRegistro(), dto.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorDesercionPeriodos.class.getName()).log(Level.SEVERE, null, ex);

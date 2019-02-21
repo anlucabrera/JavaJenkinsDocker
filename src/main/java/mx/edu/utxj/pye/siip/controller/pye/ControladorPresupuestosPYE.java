@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mx.edu.utxj.pye.siip.controller.pa;
+package mx.edu.utxj.pye.siip.controller.pye;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,10 +50,10 @@ import org.omnifaces.util.Messages;
  *
  * @author UTXJ
  */
-@Named(value = "presupuestosEjercicio")
+@Named(value = "presupuestosEjercicioPYE")
 @ManagedBean
 @ViewScoped
-public class ControladorPresupuestos implements Serializable{
+public class ControladorPresupuestosPYE implements Serializable{
 
     private static final long serialVersionUID = 4303365491897481485L;
     @Getter @Setter DtoPresupuesto dto;
@@ -71,8 +71,7 @@ public class ControladorPresupuestos implements Serializable{
     //Variables para verificar permiso del usuario para visualizar apartado
     @Getter @Setter private List<ModulosRegistrosUsuarios> listaReg;
     @Getter @Setter private Integer clavePersonal;
-    @Getter @Setter private Short claveRegistroPA;
-    @Getter @Setter private Short claveRegistroEB;
+    @Getter @Setter private Short claveRegistro;
     
     @PostConstruct
     public void init(){
@@ -85,7 +84,7 @@ public class ControladorPresupuestos implements Serializable{
         dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
         dto.setSelectItemEjercicioFiscal(ejbItems.itemEjercicioFiscalPorRegistro((short) 15));
         
-        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea().getArea()));
+        dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short)7));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
         if (dto.getSelectItemEjercicioFiscal() == null) {
             Messages.addGlobalInfo("No existen registros");
@@ -97,21 +96,14 @@ public class ControladorPresupuestos implements Serializable{
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());
         } catch (EventoRegistroNoExistenteException ex) {
-            Logger.getLogger(ControladorPresupuestos.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorPresupuestosPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
-        claveRegistroPA = 5;
-        claveRegistroEB = 54;
+        claveRegistro = 66;
         consultarPermiso();
 
     }
-    
-    public void descargarPlantilla() throws IOException, Throwable{
-        File f = new File(ejbPlantillasPAExcel.getPlantillaPresupuestos());
-        Faces.sendFile(f, true);
-    }
-    
     /*
      * se inicializan los filtrados
      */
@@ -129,132 +121,13 @@ public class ControladorPresupuestos implements Serializable{
             Messages.addGlobalWarn("no se encontraron actividades registradas en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
         }
     }
-    public void listaPresupuestosPrevia(String rutaArchivo) {
-       try {
-            dto.setLista(ejbPresupuestos.getListaPresupuestos(rutaArchivo));
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorPresupuestos.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    public void guardaPresupuestos() {
-       try {
-            ejbPresupuestos.guardaPresupuestos(dto.getLista(), dto.getRegistroTipo(), dto.getEje(), dto.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorPresupuestos.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    public void cancelarArchivo(){
-        dto.getLista().clear();
-
-    }
-    
     public void consultarPermiso(){
-        listaReg = ejbModulos.getListaPermisoPorRegistroEjesDistintos(clavePersonal, claveRegistroPA, claveRegistroEB);
+        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro);
         if(listaReg == null || listaReg.isEmpty()){
             Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
         }
     }
-     
-    public void eliminarRegistro(Integer registro) {
-
-        List<Integer> registroEvidencias = new ArrayList<>();
-        try {
-            registroEvidencias = ejbEvidenciasAlineacion.buscaRegistroEvidenciasRegistro(registro);
-
-            if (registroEvidencias.size() > 0) {
-
-                ejbModulos.eliminarRegistroEvidencias(registroEvidencias);
-                ejbModulos.eliminarRegistro(registro);
-                init();
-                Ajax.update("formMuestraDatosActivos");
-            }
-            if (registroEvidencias.isEmpty()) {
-
-                ejbModulos.eliminarRegistro(registro);
-                init();
-                Ajax.update("formMuestraDatosActivos");
-            }
-
-        } catch (Throwable ex) {
-            Logger.getLogger(ControladorPresupuestos.class.getName()).log(Level.SEVERE, null, ex);
-            Messages.addGlobalError("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
-        }
-    }
-
-    public void abrirAlineacionPOA(DTOPresupuestos registro) {
-        dto.setRegistro(registro);
-        dto.setAlineacionActividad(ejbEvidenciasAlineacion.getActividadAlineada(registro.getPresupuestos().getRegistro()));
-        actualizarEjes();
-        cargarAlineacionXActividad();
-        Ajax.update("frmAlineacion");
-        Ajax.oncomplete("skin();");
-        Ajax.oncomplete("PF('modalAlineacion').show();");
-    }
-
-    public void actualizarActividades(ValueChangeEvent event) {
-        dto.setAlineacionLinea((LineasAccion) event.getNewValue());
-        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
-        Faces.setSessionAttribute("actividades", dto.getActividades());
-    }
-
-    public void actualizarEjes() {
-        dto.setEjes(ejbFiscalizacion.getEjes(dto.getEventoActual().getEjercicioFiscal().getAnio(), dto.getAreaPOA()));
-        if (!dto.getEjes().isEmpty() && dto.getAlineacionEje() == null) {
-            dto.setAlineacionEje(dto.getEjes().get(0));
-            dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getAreaPOA()));
-        }
-        Faces.setSessionAttribute("ejes", dto.getEjes());
-    }
-
-    public void actualizarEstrategias(ValueChangeEvent event) {
-        dto.setAlineacionEje((EjesRegistro) event.getNewValue());
-        dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getAreaPOA()));
-        dto.nulificarEstrategia();
-        Faces.setSessionAttribute("estrategias", dto.getEstrategias());
-    }
-
-    public void actualizarLineasAccion(ValueChangeEvent event) {
-        dto.setAlineacionEstrategia((Estrategias) event.getNewValue());
-        dto.setLineasAccion(ejbFiscalizacion.getLineasAccionPorEstrategia(dto.getAlineacionEstrategia(), dto.getAreaPOA()));
-        dto.nulificarLinea();
-        Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
-    }
-
-    public void alinearRegistro() {
-        Boolean alineado = ejbEvidenciasAlineacion.alinearRegistroActividad(dto.getAlineacionActividad(), dto.getRegistro().getPresupuestos().getRegistro());
-        if (alineado) {
-            filtroPresupuestos(dto.getMes(), dto.getEjercicioFiscal());
-            abrirAlineacionPOA(dto.getRegistro());
-            Messages.addGlobalInfo("El registro se alineó de forma correcta.");
-        } else {
-            Messages.addGlobalError("El registro no pudo alinearse.");
-        }
-    }
-
-    public void cargarAlineacionXActividad() {
-        if (dto.getAlineacionActividad() != null) {
-            dto.setAlineacionEje(dto.getAlineacionActividad().getCuadroMandoInt().getEje());
-
-            dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getAreaPOA()));
-            dto.setAlineacionEstrategia(dto.getAlineacionActividad().getCuadroMandoInt().getEstrategia());
-            Faces.setSessionAttribute("estrategias", dto.getEstrategias());
-
-            dto.setLineasAccion(ejbFiscalizacion.getLineasAccionPorEstrategia(dto.getAlineacionEstrategia(), dto.getAreaPOA()));
-            dto.setAlineacionLinea(dto.getAlineacionActividad().getCuadroMandoInt().getLineaAccion());
-            Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
-
-            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
-            Faces.setSessionAttribute("actividades", dto.getActividades());
-
-        } else {
-            dto.setAlineacionEje(null);
-            dto.nulificarEje();
-        }
-    }
-
+    
     public void cargarEvidenciasPorRegistro() {
         dto.setListaEvidencias(ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(dto.getRegistro().getPresupuestos().getRegistro()));
         Ajax.update("frmEvidencias");
@@ -267,20 +140,6 @@ public class ControladorPresupuestos implements Serializable{
     public void descargarEvidencia(EvidenciasDetalle evidencia) throws IOException {
         File f = new File(evidencia.getRuta());
         Faces.sendFile(f, false);
-    }
-
-    public void eliminarAlineacion() {
-        Boolean eliminado = ejbEvidenciasAlineacion.eliminarAlineacion(dto.getRegistro().getPresupuestos().getRegistro());
-        if (eliminado) {
-            Messages.addGlobalInfo("La elineación se eliminó de forma correcta.");
-            dto.getRegistro().setActividadAlineada(null);
-            dto.setAlineacionActividad(ejbEvidenciasAlineacion.getActividadAlineada(dto.getRegistro().getPresupuestos().getRegistro()));
-            actualizarEjes();
-            cargarAlineacionXActividad();
-            Ajax.update("frmAlineacion");
-        } else {
-            Messages.addGlobalError("La alineación no pudo eliminarse.");
-        }
     }
 
     public void eliminarEvidencia(EvidenciasDetalle evidencia) {
@@ -317,5 +176,97 @@ public class ControladorPresupuestos implements Serializable{
             Ajax.oncomplete("PF('modalCargaEvidencia').show();");
             dto.setForzarAperturaDialogo(Boolean.FALSE);
         }
+    }
+    
+    public Boolean verificaAlineacion(Integer registro) throws Throwable{
+        return ejbModulos.verificaActividadAlineadaGeneral(registro);
+    }
+    
+    public void actualizarEjes(Short ejercicio){
+        dto.setEjes(ejbFiscalizacion.getEjes(ejercicio, dto.getAreaPOA()));
+        if(!dto.getEjes().isEmpty() && dto.getAlineacionEje() == null){
+            dto.setAlineacionEje(dto.getEjes().get(0));
+            dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getAreaPOA()));
+        }
+        Faces.setSessionAttribute("ejes", dto.getEjes());
+    }
+    
+    public void cargarAlineacionXActividad(){
+        if(dto.getAlineacionActividad() != null){
+            dto.setAlineacionEje(dto.getAlineacionActividad().getCuadroMandoInt().getEje());
+
+            dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getAreaPOA()));
+            dto.setAlineacionEstrategia(dto.getAlineacionActividad().getCuadroMandoInt().getEstrategia());
+            Faces.setSessionAttribute("estrategias", dto.getEstrategias());
+
+            dto.setLineasAccion(ejbFiscalizacion.getLineasAccionPorEstrategia(dto.getAlineacionEstrategia(), dto.getAreaPOA()));
+            dto.setAlineacionLinea(dto.getAlineacionActividad().getCuadroMandoInt().getLineaAccion());
+            Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
+
+            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
+            Faces.setSessionAttribute("actividades", dto.getActividades());
+        }else{
+            dto.setAlineacionEje(null);
+            dto.nulificarEje();
+        }
+    }
+    
+    public void actualizarActividades(ValueChangeEvent event){
+        dto.setAlineacionLinea((LineasAccion)event.getNewValue());
+        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
+        Faces.setSessionAttribute("actividades", dto.getActividades());
+    }
+
+    public void actualizarEstrategias(ValueChangeEvent event){
+        dto.setAlineacionEje((EjesRegistro)event.getNewValue());
+        dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getAreaPOA()));
+        dto.nulificarEstrategia();
+        Faces.setSessionAttribute("estrategias", dto.getEstrategias());
+    }
+
+    public void actualizarLineasAccion(ValueChangeEvent event){
+        dto.setAlineacionEstrategia((Estrategias)event.getNewValue());
+        dto.setLineasAccion(ejbFiscalizacion.getLineasAccionPorEstrategia(dto.getAlineacionEstrategia(), dto.getAreaPOA()));
+        dto.nulificarLinea();
+        Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
+    }
+    
+    public void abrirAlineacionPOA(DTOPresupuestos dtoServEnf){
+        try {
+            dto.setRegistro(dtoServEnf);
+            dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getPresupuestos().getRegistro()));
+            actualizarEjes(dto.getRegistro().getPresupuestos().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+            cargarAlineacionXActividad();
+            Ajax.update("frmAlineacion");
+            Ajax.oncomplete("skin();");
+            Ajax.oncomplete("PF('modalAlineacion').show();");
+        } catch (Throwable ex) {
+            Logger.getLogger(ControladorPresupuestosPYE.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void alinearRegistro(){
+        Boolean alineado = ejbModulos.alinearRegistroActividad(dto.getAlineacionActividad(), dto.getRegistro().getPresupuestos().getRegistro());
+        if(alineado){
+            filtroPresupuestos(dto.getMes(), dto.getEjercicioFiscal());
+            abrirAlineacionPOA(dto.getRegistro());
+            Messages.addGlobalInfo("El registro se alineó de forma correcta.");
+        }else Messages.addGlobalError("El registro no pudo alinearse.");
+    }
+    
+    public void eliminarAlineacion(){
+        Boolean eliminado = ejbModulos.eliminarAlineacion(dto.getRegistro().getPresupuestos().getRegistro());
+        if(eliminado){ 
+            try {
+                Messages.addGlobalInfo("La elineación se eliminó de forma correcta.");
+                dto.getRegistro().setActividadAlineada(null);
+                dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getPresupuestos().getRegistro()));
+                actualizarEjes(dto.getRegistro().getPresupuestos().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+                cargarAlineacionXActividad();
+                Ajax.update("frmAlineacion");
+            } catch (Throwable ex) {
+                Logger.getLogger(ControladorPresupuestosPYE.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }else Messages.addGlobalError("La alineación no pudo eliminarse.");
     }
 }

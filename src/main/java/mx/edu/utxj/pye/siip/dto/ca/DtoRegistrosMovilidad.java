@@ -10,6 +10,7 @@ import java.util.List;
 import javax.servlet.http.Part;
 import lombok.Getter;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
@@ -25,6 +26,11 @@ import mx.edu.utxj.pye.siip.dto.vinculacion.DTORegistroMovilidad;
  * @author UTXJ
  */
 public class DtoRegistrosMovilidad {
+    @Getter private List<Categorias> listaCategoriasPOA;
+    @Getter private List<AreasUniversidad> listaAreasPOA; 
+    
+    @Getter private Categorias categoria;
+    
     @Getter private AreasUniversidad areaPOA;
     @Getter private DTORegistroMovilidad registro;//representa al registro seleccionado o al registro circulante en la tabla de datos.
     @Getter private EjesRegistro eje;
@@ -38,7 +44,7 @@ public class DtoRegistrosMovilidad {
     @Getter private ActividadesPoa alineacionActividad; 
     
     @Getter Boolean tieneEvidencia, forzarAperturaDialogo;
-    @Getter private Short area;
+    @Getter private AreasUniversidad area;
     @Getter private String rutaArchivo;
     
     @Getter private List<EventosRegistros> eventosPorPeriodo;
@@ -78,7 +84,7 @@ public class DtoRegistrosMovilidad {
         this.registroTipo = registroTipo;
     }
 
-    public void setArea(Short area) {
+    public void setArea(AreasUniversidad area) {
         this.area = area;
     }
 
@@ -209,6 +215,38 @@ public class DtoRegistrosMovilidad {
 
     public void setClavesAreasSubordinadas(List<Short> clavesAreasSubordinadas) {
         this.clavesAreasSubordinadas = clavesAreasSubordinadas;
+    }
+    
+    public void setListaCategoriasPOA(List<Categorias> listaCategoriasPOA) {
+        this.listaCategoriasPOA = listaCategoriasPOA;
+        if(listaCategoriasPOA.isEmpty())
+            nulificarCategoria();
+    }
+
+    public void setListaAreasPOA(List<AreasUniversidad> listaAreasPOA) {
+        this.listaAreasPOA = listaAreasPOA;
+        if(listaAreasPOA.isEmpty())
+            nulificarAreaPOA();
+    }
+
+    public void setCategoria(Categorias categoria) {
+        this.categoria = categoria;
+        if(categoria == null)
+            nulificarCategoria();
+    }
+
+    public void nulificarCategoria(){
+        listaAreasPOA = Collections.EMPTY_LIST;
+        nulificarAreaPOA();
+    }
+    
+    public void nulificarAreaPOA(){
+        periodos = Collections.EMPTY_LIST;
+        nulificarPeriodosConsulta();
+    }
+    
+    public void nulificarPeriodosConsulta(){
+        eventosPorPeriodo = Collections.EMPTY_LIST;
     }
     
 }

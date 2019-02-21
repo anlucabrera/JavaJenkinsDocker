@@ -28,6 +28,8 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
+import lombok.Getter;
+import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
@@ -67,6 +69,8 @@ public class ServicioIngPropios implements EjbIngPropios{
     @EJB EjbPropiedades ep;
     @Inject Caster caster; 
     @Inject ControladorEmpleado controladorEmpleado;
+    
+    @Getter @Setter private List<Short> areas;
    
     @Override
     public List<DTOIngPropios> getListaIngPropios(String rutaArchivo) throws Throwable, FileNotFoundException, ClassNotFoundException {
@@ -288,36 +292,25 @@ public class ServicioIngPropios implements EjbIngPropios{
         if(evento == null || claveArea == null || periodo == null){
             return null;
         }
-        List<Short> areas = new ArrayList<>();
-        
-        //obtener la referencia al area operativa del trabajador
-        AreasUniversidad area = f.getEntityManager().find(AreasUniversidad.class, claveArea);
-      
-        //comprobar si el area operativa es un programa educativo referenciar a su area superior para obtener la referencia al area academica
-        Short programaCategoria = (short)ep.leerPropiedadEntera("modulosRegistroProgramaEducativoCategoria").orElse(9);
-        
-        if (Objects.equals(area.getCategoria().getCategoria(), programaCategoria)) {            
-            area = f.getEntityManager().find(AreasUniversidad.class, area.getAreaSuperior());
-
-            //Obtener las claves de todas las areas que dependan de área academicoa
-            areas = f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
-                    .setParameter("areaSuperior", area.getArea())
-                    .getResultStream()
-                    .map(au -> au.getArea())
-                    .collect(Collectors.toList());
-
-        }else{//si no es area academica solo filtrar los datos del area operativa del trabajador
-            areas.add(claveArea);
-
-        }
+       //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+        List<DTOIngPropios> l = new ArrayList<>();
+        List<IngresosPropiosCaptados> entities = new ArrayList<>();
         
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
-        List<DTOIngPropios> l = new ArrayList<>();
-        List<IngresosPropiosCaptados> entities = f.getEntityManager().createQuery("SELECT i FROM IngresosPropiosCaptados i INNER JOIN i.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND i.periodoEscolar =:periodoEscolar", IngresosPropiosCaptados.class)
-                .setParameter("evento", evento.getEventoRegistro())
-                .setParameter("periodoEscolar", periodo.getPeriodo())
-                .getResultList();
-      
+        if (claveArea == 6) {
+            entities = f.getEntityManager().createQuery("SELECT i FROM IngresosPropiosCaptados i INNER JOIN i.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND i.periodoEscolar =:periodoEscolar", IngresosPropiosCaptados.class)
+                    .setParameter("evento", evento.getEventoRegistro())
+                    .setParameter("periodoEscolar", periodo.getPeriodo())
+                    .getResultList();
+        } else {
+            areas = ejbModulos.getAreasDependientes(claveArea);
+            entities = f.getEntityManager().createQuery("SELECT i FROM IngresosPropiosCaptados i INNER JOIN i.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND i.periodoEscolar =:periodoEscolar AND reg.area IN :areas", IngresosPropiosCaptados.class)
+                    .setParameter("evento", evento.getEventoRegistro())
+                    .setParameter("periodoEscolar", periodo.getPeriodo())
+                    .setParameter("areas", areas)
+                    .getResultList();
+        }
+        
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
             PeriodosEscolares p = f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodoEscolar());
@@ -337,9 +330,6 @@ public class ServicioIngPropios implements EjbIngPropios{
                     cicloe,
                     periodoe));
         });
-        
-
-
         return l;
     }
 

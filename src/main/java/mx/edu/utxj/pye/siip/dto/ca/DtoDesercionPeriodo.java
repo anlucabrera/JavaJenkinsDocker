@@ -34,7 +34,7 @@ public class DtoDesercionPeriodo {
     @Getter RegistrosTipo registroTipo;    
     @Getter EjesRegistro ejesRegistro;
     @Getter private EventosRegistros eventoActual, eventoSeleccionado;
-    @Getter Short area;
+    @Getter AreasUniversidad area;
     
     @Getter private ListaDesercionPeriodos listaDesercionPeriodos = new ListaDesercionPeriodos();
     /*Fin de las propiedades originales del controlador*/
@@ -91,7 +91,7 @@ public class DtoDesercionPeriodo {
         this.ejesRegistro = ejesRegistro;
     }
 
-    public void setArea(Short area) {
+    public void setArea(AreasUniversidad area) {
         this.area = area;
     }
 

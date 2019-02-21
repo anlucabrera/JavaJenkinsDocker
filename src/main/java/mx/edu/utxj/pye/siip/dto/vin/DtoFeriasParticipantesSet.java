@@ -33,7 +33,7 @@ public class DtoFeriasParticipantesSet {
     //Variables para almacenar el registro
     @Getter RegistrosTipo registroTipo;    
     @Getter EjesRegistro ejesRegistro;
-    @Getter Short area;
+    @Getter AreasUniversidad area;
     
     @Getter private ListaFeriasParticipantes listaFeriasParticipantes = new  ListaFeriasParticipantes();
     /*Controles agregados para las herramientas administrativas*/
@@ -91,7 +91,7 @@ public class DtoFeriasParticipantesSet {
         this.ejesRegistro = ejesRegistro;
     }
 
-    public void setArea(Short area) {
+    public void setArea(AreasUniversidad area) {
         this.area = area;
     }
 

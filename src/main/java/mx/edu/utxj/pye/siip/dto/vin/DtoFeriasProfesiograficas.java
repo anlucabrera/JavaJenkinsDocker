@@ -31,7 +31,7 @@ import mx.edu.utxj.pye.siip.entity.vinculacion.list.ListaFeriasProfesiograficas;
 public class DtoFeriasProfesiograficas {
     @Getter RegistrosTipo registroTipo;    
     @Getter EjesRegistro ejesRegistro;
-    @Getter Short area;
+    @Getter AreasUniversidad area;
     
     @Getter private ListaFeriasProfesiograficas listaFeriasProfesiograficas = new ListaFeriasProfesiograficas();
     /*Controles agregados para las herramientas administrativas*/
@@ -88,7 +88,7 @@ public class DtoFeriasProfesiograficas {
         this.ejesRegistro = ejesRegistro;
     }
 
-    public void setArea(Short area) {
+    public void setArea(AreasUniversidad area) {
         this.area = area;
     }
 

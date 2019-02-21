@@ -13,6 +13,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.BajasCausa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.BajasTipo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.BecaTipos;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.OrganismosEvaluadores;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -75,5 +76,18 @@ public interface EjbCatalogos {
     public List<BajasTipo> getTipoBajaAct();
     
     public List<listaDTOCiclosEscolares> getCiclosEscolaresDTO();
+    
+    /**
+     * Método que devuelve una lista de Categorías para el filtrado de áreas que cuenten con al menos una actividad en POA
+     * @return 
+     */
+    public List<Categorias> getCategoriaAreasConPoa();
+    
+    /**
+     * Método que devuelve una lista de áreas universidad filtradas por categoría y que cuenta con al menos una actividad en POA
+     * @param categoria
+     * @return 
+     */
+    public List<AreasUniversidad> getAreasUniversidadPorCategoriaConPoa(Categorias categoria);
     
 }

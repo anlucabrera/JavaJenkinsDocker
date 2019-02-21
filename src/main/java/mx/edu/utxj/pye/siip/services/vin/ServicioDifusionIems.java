@@ -212,23 +212,34 @@ public class ServicioDifusionIems implements EjbDifusionIems{
         if(mes == null || ejercicio == null){
             return null;
         }
-        areas = ejbModulos.getAreasDependientes(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
-        
+        Short area = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
+        List<DifusionIems> q = new ArrayList<>();
         List<ListaDifusionIemsDTO> ldto = new ArrayList<>();
-        TypedQuery<DifusionIems> q = f.getEntityManager()
-                .createQuery("SELECT a from DifusionIems a WHERE a.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND a.registros.eventoRegistro.mes = :mes AND a.registros.area IN :areas", DifusionIems.class);
-        q.setParameter("mes", mes);
-        q.setParameter("ejercicio", ejercicio);
-        q.setParameter("areas", areas);
-        List<DifusionIems> l = q.getResultList();
-        if (l.isEmpty() || l == null) {
+        
+        if (area == 6) {
+
+            q = f.getEntityManager().createQuery("SELECT a from DifusionIems a WHERE a.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND a.registros.eventoRegistro.mes = :mes", DifusionIems.class)
+                    .setParameter("mes", mes)
+                    .setParameter("ejercicio", ejercicio)
+                    .getResultList();
+
+        } else {
+            areas = ejbModulos.getAreasDependientes(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+
+            q = f.getEntityManager().createQuery("SELECT a from DifusionIems a WHERE a.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND a.registros.eventoRegistro.mes = :mes AND a.registros.area IN :areas", DifusionIems.class)
+                    .setParameter("mes", mes)
+                    .setParameter("ejercicio", ejercicio)
+                    .setParameter("areas", areas)
+                    .getResultList();
+        }
+        if (q.isEmpty() || q == null) {
             return null;
         } else {
 //            l.forEach(System.err::println);
             TypedQuery<EventosRegistros> query = f.getEntityManager().createQuery("SELECT er FROM EventosRegistros er WHERE :fecha BETWEEN er.fechaInicio AND er.fechaFin", EventosRegistros.class);
             query.setParameter("fecha", new Date());
             EventosRegistros eventoRegistro = query.getSingleResult();
-            l.forEach(x -> {
+            q.forEach(x -> {
 
                 ListaDifusionIemsDTO dto;
                 Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());

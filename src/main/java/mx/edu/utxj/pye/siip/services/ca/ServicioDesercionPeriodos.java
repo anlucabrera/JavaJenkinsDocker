@@ -271,33 +271,53 @@ public class ServicioDesercionPeriodos implements EjbDesercionPeriodos{
     
     @Override
     public List<DesercionPeriodosEscolares> getListaDesercionDTO(String mes, Short ejercicio) {
-        TypedQuery<DesercionPeriodosEscolares> q = f.getEntityManager()
-                .createQuery("SELECT v FROM DesercionPeriodosEscolares v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes AND v.registros.area = :area", DesercionPeriodosEscolares.class);
-        q.setParameter("mes", mes);
-        q.setParameter("ejercicio", ejercicio);
-        q.setParameter("area", controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
-        List<DesercionPeriodosEscolares> l = q.getResultList();
-        if (l.isEmpty() || l == null) {
+        Short area = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
+        List<DesercionPeriodosEscolares> entities = new ArrayList<>();
+        
+        if (area == 6) {
+            entities = f.getEntityManager().createQuery("SELECT v FROM DesercionPeriodosEscolares v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes", DesercionPeriodosEscolares.class)
+                    .setParameter("mes", mes)
+                    .setParameter("ejercicio", ejercicio)
+                    .getResultList();
+        } else {
+            entities = f.getEntityManager().createQuery("SELECT v FROM DesercionPeriodosEscolares v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes AND v.registros.area = :area", DesercionPeriodosEscolares.class)
+                    .setParameter("mes", mes)
+                    .setParameter("ejercicio", ejercicio)
+                    .setParameter("area", area)
+                    .getResultList();
+
+        }
+        if (entities.isEmpty() || entities == null) {
             return null;
         } else {
-            return l;
+            return entities;
         }
     }
 
     @Override
     public List<DTODesercion> getListaDtoDesercion(String mes, Short ejercicio) {
-        TypedQuery<DesercionPeriodosEscolares> q = f.getEntityManager()
-                .createQuery("SELECT v FROM DesercionPeriodosEscolares v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes AND v.registros.area = :area", DesercionPeriodosEscolares.class);
-        q.setParameter("mes", mes);
-        q.setParameter("ejercicio", ejercicio);
-        q.setParameter("area", controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
-        List<DesercionPeriodosEscolares> l = q.getResultList();
-        if (l.isEmpty() || l == null) {
+        Short area = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
+        List<DesercionPeriodosEscolares> entities = new ArrayList<>();
+        
+        if (area == 6) {
+            entities = f.getEntityManager().createQuery("SELECT v FROM DesercionPeriodosEscolares v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes", DesercionPeriodosEscolares.class)
+                    .setParameter("mes", mes)
+                    .setParameter("ejercicio", ejercicio)
+                    .getResultList();
+        } else {
+            entities = f.getEntityManager().createQuery("SELECT v FROM DesercionPeriodosEscolares v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes AND v.registros.area = :area", DesercionPeriodosEscolares.class)
+                    .setParameter("mes", mes)
+                    .setParameter("ejercicio", ejercicio)
+                    .setParameter("area", area)
+                    .getResultList();
+
+        }
+        if (entities.isEmpty() || entities == null) {
             return null;
         } else {
             List<DTODesercion> ldto = new ArrayList<>();
 //            l.forEach(System.err::println);
-            l.forEach(x -> {
+            entities.forEach(x -> {
                 PeriodosEscolares p = f.getEntityManager().find(PeriodosEscolares.class, x.getMatriculaPeriodosEscolares().getPeriodo());
                 BajasCausa bc = f.getEntityManager().find(BajasCausa.class, x.getCausaBaja());
                 BajasTipo bt = f.getEntityManager().find(BajasTipo.class, x.getTipoBaja());
@@ -319,13 +339,24 @@ public class ServicioDesercionPeriodos implements EjbDesercionPeriodos{
 
     @Override
     public List<ListaDtoDesercion> getListaRegistrosDesercionDto(String mes, Short ejercicio) {
-        TypedQuery<DesercionPeriodosEscolares> q = f.getEntityManager()
-                .createQuery("SELECT v FROM DesercionPeriodosEscolares v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes AND v.registros.area = :area", DesercionPeriodosEscolares.class);
-        q.setParameter("mes", mes);
-        q.setParameter("ejercicio", ejercicio);
-        q.setParameter("area", controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
-        List<DesercionPeriodosEscolares> l = q.getResultList();
-        if (l.isEmpty() || l == null) {
+        
+        Short area = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
+        List<DesercionPeriodosEscolares> entities = new ArrayList<>();
+        
+        if (area == 6) {
+            entities = f.getEntityManager().createQuery("SELECT v FROM DesercionPeriodosEscolares v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes", DesercionPeriodosEscolares.class)
+                    .setParameter("mes", mes)
+                    .setParameter("ejercicio", ejercicio)
+                    .getResultList();
+        } else {
+            entities = f.getEntityManager().createQuery("SELECT v FROM DesercionPeriodosEscolares v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes AND v.registros.area = :area", DesercionPeriodosEscolares.class)
+                    .setParameter("mes", mes)
+                    .setParameter("ejercicio", ejercicio)
+                    .setParameter("area", area)
+                    .getResultList();
+
+        }
+        if (entities.isEmpty() || entities == null) {
             return null;
         } else {
             List<ListaDtoDesercion> ldto = new ArrayList<>();
@@ -333,7 +364,7 @@ public class ServicioDesercionPeriodos implements EjbDesercionPeriodos{
             query.setParameter("fecha", new Date());
             EventosRegistros eventoRegistro = query.getSingleResult();
             
-            l.forEach(x -> {
+            entities.forEach(x -> {
                 PeriodosEscolares p = f.getEntityManager().find(PeriodosEscolares.class, x.getMatriculaPeriodosEscolares().getPeriodo());
                 BajasCausa bc = f.getEntityManager().find(BajasCausa.class, x.getCausaBaja());
                 BajasTipo bt = f.getEntityManager().find(BajasTipo.class, x.getTipoBaja());
