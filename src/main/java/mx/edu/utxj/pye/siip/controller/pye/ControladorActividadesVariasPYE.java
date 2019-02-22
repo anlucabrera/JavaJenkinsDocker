@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -27,50 +26,49 @@ import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesVariasRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
-import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
-import mx.edu.utxj.pye.siip.dto.ca.DTOServiciosEnfemeriaCicloPeriodos;
-import mx.edu.utxj.pye.siip.dto.ca.DtoServicioEnfermeria;
-import mx.edu.utxj.pye.siip.interfaces.ca.EjbServiciosEnfermeriaCicloPeriodos;
+import mx.edu.utxj.pye.siip.dto.ca.DtoActividadesVarias;
+import mx.edu.utxj.pye.siip.dto.ca.DTOActividadVaria;
+import mx.edu.utxj.pye.siip.interfaces.ca.EjbActividadesVarias;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
-import org.primefaces.component.collector.Collector;
 
 /**
  *
  * @author UTXJ
  */
-@Named 
+@Named
 @ManagedBean
 @ViewScoped
-public class ControladorServiciosEnfermeriaPYE implements Serializable{
+public class ControladorActividadesVariasPYE implements Serializable {
 
-    private static final long serialVersionUID = 8477182284194275657L;
-    
-    @Getter @Setter DtoServicioEnfermeria dto;
-    
-    @EJB    EjbServiciosEnfermeriaCicloPeriodos ejbServiciosEnfermeriaCicloPeriodos;
+    private static final long serialVersionUID = -5901698000368066017L;
+
+    /*Implementacion del patron SET*/
+    @Getter @Setter DtoActividadesVarias dto;
+
+    @EJB    EjbActividadesVarias    ejbActividadesVarias;
     @EJB    EjbModulos              ejbModulos;
     @EJB    EjbFiscalizacion        ejbFiscalizacion;
     @EJB    EjbCatalogos            ejbCatalogos;
-    
-    @Inject ControladorEmpleado controladorEmpleado;
-    @Inject ControladorModulosRegistro controladorModulosRegistro;
-    
+
+    @Inject ControladorEmpleado         controladorEmpleado;
+
     @PostConstruct
-    public void init(){
-        dto = new DtoServicioEnfermeria();
+    public void init() {
+        dto = new DtoActividadesVarias();
         dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
         filtros();
     }
     
-    public void filtros(){
+    public void filtros() {
         llenaCategorias();
         dto.nulificarCategoria();
         Faces.setSessionAttribute("categorias", dto.getListaCategoriasPOA());
@@ -85,7 +83,6 @@ public class ControladorServiciosEnfermeriaPYE implements Serializable{
     
     public void actualizarAnios(ValueChangeEvent e){
         dto.setAreaUniversidadPOA((AreasUniversidad)e.getNewValue());
-        System.out.println("mx.edu.utxj.pye.siip.controller.pye.ControladorServiciosEnfermeriaPYE.actualizarAnios()Area Universidad: " + dto.getAreaUniversidadPOA().getArea());
         llenaAnios();
         dto.nulificarAnioConsulta();
     }
@@ -93,24 +90,18 @@ public class ControladorServiciosEnfermeriaPYE implements Serializable{
     public void actualizarMeses(ValueChangeEvent e){
         dto.setAnioConsulta((short) e.getNewValue());
         llenaMeses();
-        buscaServiciosEnfermeria();
+        buscaActividadesVarias();
     }
     
     public void llenaCategorias() {
-        dto.setListaCategoriasPOA(ejbCatalogos.getCategoriaAreasConPoa()
-                .stream()
-                .filter(categoria -> (short) 6 == categoria.getCategoria())
-                .collect(Collectors.toList()));
+        dto.setListaCategoriasPOA(ejbCatalogos.getCategoriaAreasConPoa());
         if (!dto.getListaCategoriasPOA().isEmpty() && dto.getCategoria() == null) {
             dto.setCategoria(null);
         }
     }
     
     public void llenaAreas() {
-        dto.setListaAreasPOA(ejbCatalogos.getAreasUniversidadPorCategoriaConPoa(dto.getCategoria())
-                .stream()
-                .filter(area -> (short) 11 == area.getArea())
-                .collect(Collectors.toList()));
+        dto.setListaAreasPOA(ejbCatalogos.getAreasUniversidadPorCategoriaConPoa(dto.getCategoria()));
         if (!dto.getListaAreasPOA().isEmpty() && dto.getAreaUniversidadPOA() == null) {
             dto.setAreaUniversidadPOA(null);
         }
@@ -120,7 +111,6 @@ public class ControladorServiciosEnfermeriaPYE implements Serializable{
         dto.setAniosConsulta(ejbModulos.getEjercicioRegistros(dto.getRegistros(), dto.getAreaUniversidadPOA()));
         if (!dto.getAniosConsulta().isEmpty()) {
             dto.setAnioConsulta(null);
-            System.out.println("mx.edu.utxj.pye.siip.controller.pye.ControladorServiciosEnfermeriaPYE.llenaAnios()Anio: " + dto.getAnioConsulta());
         }
     }
     
@@ -128,29 +118,28 @@ public class ControladorServiciosEnfermeriaPYE implements Serializable{
         dto.setMesesConsulta(ejbModulos.getMesesRegistros(dto.getAnioConsulta(), dto.getRegistros(), dto.getAreaUniversidadPOA()));
         if (!dto.getMesesConsulta().isEmpty()) {
             dto.setMesConsulta(null);
-            System.out.println("mx.edu.utxj.pye.siip.controller.pye.ControladorServiciosEnfermeriaPYE.llenaMeses()Mes: " + dto.getMesConsulta());
         }
     }
-
-    public void buscaServiciosEnfermeria() {
+    
+    public void buscaActividadesVarias() {
         if (dto.getMesConsulta() != null && !dto.getMesesConsulta().isEmpty()) {
-            dto.setLista(ejbServiciosEnfermeriaCicloPeriodos.getFiltroServiciosEnfermeriaEjercicioMesArea(dto.getAnioConsulta(), dto.getMesConsulta(), dto.getAreaUniversidadPOA().getArea()));
-            dto.getLista().stream().forEach((senf) -> {
-                senf.getServiciosEnfermeriaCicloPeriodos().setRegistros(ejbModulos.buscaRegistroPorClave(senf.getServiciosEnfermeriaCicloPeriodos().getRegistro()));
+            dto.setLstActividadesVarias(ejbActividadesVarias.getFiltroActividadesVariasEjercicioMesArea(dto.getAnioConsulta(), dto.getMesConsulta(), dto.getAreaUniversidadPOA().getArea()));
+            dto.getLstActividadesVarias().stream().forEach((av) -> {
+                av.setRegistros(ejbModulos.buscaRegistroPorClave(av.getRegistro()));
             });
-        }else{
-            dto.setLista(Collections.EMPTY_LIST);
+        } else {
+            dto.setLstActividadesVarias(Collections.EMPTY_LIST);
         }
         Ajax.update("formMuestraDatosActivos");
     }
     
-    public void eliminarRegistro(Integer registro) {
+    public void eliminarRegistro(Integer registro, ActividadesVariasRegistro actividadVariaRegistro) {
         try {
             ejbModulos.eliminarEvidenciasEnRegistroGeneral(registro, ejbModulos.getListaEvidenciasPorRegistro(registro));
             ejbModulos.eliminarRegistro(registro);
-            buscaServiciosEnfermeria();
+            buscaActividadesVarias();
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorServiciosEnfermeriaPYE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorActividadesVariasPYE.class.getName()).log(Level.SEVERE, null, ex);
             Messages.addGlobalError("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
         }
     }
@@ -161,10 +150,10 @@ public class ControladorServiciosEnfermeriaPYE implements Serializable{
     
     public void cargarEvidenciasPorRegistro(){
         try {
-            dto.setListaEvidencias(ejbModulos.getListaEvidenciasPorRegistro(dto.getRegistro().getServiciosEnfermeriaCicloPeriodos().getRegistro()));
+            dto.setListaEvidencias(ejbModulos.getListaEvidenciasPorRegistro(dto.getRegistro().getActividadVaria().getRegistro()));
             Ajax.update("frmEvidencias");
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorServiciosEnfermeriaPYE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorActividadesVariasPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -175,8 +164,10 @@ public class ControladorServiciosEnfermeriaPYE implements Serializable{
         }
     }
     
-    public void seleccionarRegistro(DTOServiciosEnfemeriaCicloPeriodos dtoServEnf){
-        dto.setRegistro(dtoServEnf);
+    public void seleccionarRegistro(ActividadesVariasRegistro actVar){
+        DTOActividadVaria dtoav = new DTOActividadVaria();
+        dtoav.setActividadVaria(actVar);
+        dto.setRegistro(dtoav);
         cargarEvidenciasPorRegistro();
         Ajax.oncomplete("skin();");
         dto.setForzarAperturaDialogo(Boolean.TRUE);
@@ -185,20 +176,20 @@ public class ControladorServiciosEnfermeriaPYE implements Serializable{
     
     public void subirEvidencias(){
         try {
-            Map.Entry<Boolean, Integer> res = ejbModulos.registrarEvidenciasARegistro(dto.getRegistro().getServiciosEnfermeriaCicloPeriodos().getRegistros(), dto.getArchivos());
+            Map.Entry<Boolean, Integer> res = ejbModulos.registrarEvidenciasARegistro(dto.getRegistro().getActividadVaria().getRegistros(), dto.getArchivos());
             if(res.getKey()){
-                buscaServiciosEnfermeria();
+                buscaActividadesVarias();
                 Messages.addGlobalInfo("Las evidencias se registraron correctamente.");
             }else{
                 Messages.addGlobalError(String.format("Se registraron %s de %s evidencias, verifique e intente agregar las evidencias faltantes.", res.getValue().toString(),String.valueOf(dto.getArchivos().size())));
             }
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorServiciosEnfermeriaPYE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorActividadesVariasPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public void eliminarEvidencia(EvidenciasDetalle evidencia){
-        Boolean eliminado = ejbModulos.eliminarEvidenciaEnRegistro(dto.getRegistro().getServiciosEnfermeriaCicloPeriodos().getRegistros(), evidencia);
+        Boolean eliminado = ejbModulos.eliminarEvidenciaEnRegistro(dto.getRegistro().getActividadVaria().getRegistros(), evidencia);
         if(eliminado){ 
             Messages.addGlobalInfo("El archivo se eliminó de forma correcta.");
             cargarEvidenciasPorRegistro();
@@ -266,42 +257,45 @@ public class ControladorServiciosEnfermeriaPYE implements Serializable{
         Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
     }
     
-    public void abrirAlineacionPOA(DTOServiciosEnfemeriaCicloPeriodos dtoServEnf){
+    public void abrirAlineacionPOA(ActividadesVariasRegistro avr){
         try {
-            dto.setRegistro(dtoServEnf);
-            dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getServiciosEnfermeriaCicloPeriodos().getRegistro()));
-            actualizarEjes(dto.getRegistro().getServiciosEnfermeriaCicloPeriodos().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+            DTOActividadVaria dtoav = new DTOActividadVaria();
+            dtoav.setActividadVaria(avr);
+            dto.setRegistro(dtoav);
+            dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getActividadVaria().getRegistro()));
+            actualizarEjes(dto.getRegistro().getActividadVaria().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
             cargarAlineacionXActividad();
             Ajax.update("frmAlineacion");
             Ajax.oncomplete("skin();");
             Ajax.oncomplete("PF('modalAlineacion').show();");
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorServiciosEnfermeriaPYE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorActividadesVariasPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public void alinearRegistro(){
-        Boolean alineado = ejbModulos.alinearRegistroActividad(dto.getAlineacionActividad(), dto.getRegistro().getServiciosEnfermeriaCicloPeriodos().getRegistro());
+        Boolean alineado = ejbModulos.alinearRegistroActividad(dto.getAlineacionActividad(), dto.getRegistro().getActividadVaria().getRegistro());
         if(alineado){
-            buscaServiciosEnfermeria();
-            abrirAlineacionPOA(dto.getRegistro());
+            buscaActividadesVarias();
+            abrirAlineacionPOA(dto.getRegistro().getActividadVaria());
             Messages.addGlobalInfo("El registro se alineó de forma correcta.");
         }else Messages.addGlobalError("El registro no pudo alinearse.");
     }
     
     public void eliminarAlineacion(){
-        Boolean eliminado = ejbModulos.eliminarAlineacion(dto.getRegistro().getServiciosEnfermeriaCicloPeriodos().getRegistro());
+        Boolean eliminado = ejbModulos.eliminarAlineacion(dto.getRegistro().getActividadVaria().getRegistro());
         if(eliminado){ 
             try {
-                Messages.addGlobalInfo("La elineación se eliminó de forma correcta.");
+                Messages.addGlobalInfo("La alineación se eliminó de forma correcta.");
                 dto.getRegistro().setActividadAlineada(null);
-                dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getServiciosEnfermeriaCicloPeriodos().getRegistro()));
-                actualizarEjes(dto.getRegistro().getServiciosEnfermeriaCicloPeriodos().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+                dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getActividadVaria().getRegistro()));
+                actualizarEjes(dto.getRegistro().getActividadVaria().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
                 cargarAlineacionXActividad();
                 Ajax.update("frmAlineacion");
             } catch (Throwable ex) {
-                Logger.getLogger(ControladorServiciosEnfermeriaPYE.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ControladorActividadesVariasPYE.class.getName()).log(Level.SEVERE, null, ex);
             }
         }else Messages.addGlobalError("La alineación no pudo eliminarse.");
     }
+
 }

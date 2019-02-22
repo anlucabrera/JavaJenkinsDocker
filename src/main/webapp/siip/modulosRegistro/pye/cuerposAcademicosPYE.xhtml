@@ -1,0 +1,1004 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:pr="http://xmlns.jcp.org/jsp/jstl/functions"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="true"/>
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
+        <h:outputScript library="js" name="dialogs.js" />
+    </ui:define>
+    <ui:define name="title">
+        Cuerpos Académicos
+    </ui:define>
+
+    <ui:define name="description">
+        Asegurar la Calidad Académica
+    </ui:define>
+
+    <ui:define name="body"> 
+        <adm:breadcrumb title="Calidad Académica - Cuerpos Académicos"/>
+        <adm:sidebar collapsed="true"/>
+        <p:importEnum type="mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa" var="etapa" allSuffix="ETAPAS" />
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <div class="box box-primary">
+            <div class="box-header with-border">
+
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    <h:form prependId="true" id="frmMainButtons" class="form-inline">
+                        <p:outputPanel >
+                            <p:autoUpdate/>
+                            <p:toolbar id="tb"> 
+                                <f:facet name="left">
+                                    <p:spacer width="10" />
+                                    <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
+                                    <p:outputLabel value="Categoría " for="categoria"/>
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="categoria"
+                                                     required="true"
+                                                     value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.categoria}"
+                                                     valueChangeListener="#{controladorCuerposAcademicosPYE.actualizarAreas}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     converter="entidadConverter2"
+                                                     class="form-control"
+                                                     style="padding-top: 0px">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.listaCategoriasPOA}" 
+                                                       var="categoria" 
+                                                       itemValue="#{categoria}" 
+                                                       itemLabel="#{categoria.descripcion}"
+                                                       itemDescription="#{categoria.descripcion}"/>
+                                        <p:ajax process="@this" listener="#{controladorCuerposAcademicosPYE.buscarCuerposAcademicos()}" update="@(form)" />
+                                    </p:selectOneMenu>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+
+                                    <p:outputLabel value="Área " for="area" />
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="area"
+                                                     required="true"
+                                                     value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.areaUniversidadPOA}"
+                                                     valueChangeListener="#{controladorCuerposAcademicosPYE.actualizarAnios}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     converter="entidadConverter2"
+                                                     class="form-control"
+                                                     style="padding-top: 0px">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.listaAreasPOA}" 
+                                                       var="area" 
+                                                       itemValue="#{area}" 
+                                                       itemLabel="#{area.nombre}"
+                                                       itemDescription="#{area.nombre}" />
+                                        <p:ajax process="@this" listener="#{controladorCuerposAcademicosPYE.buscarCuerposAcademicos()}" update="@(form)" />
+                                    </p:selectOneMenu>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+
+                                    <p:outputLabel value="Ejercicio: " for="anioConsulta"/>
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="anioConsulta"
+                                                     required="true"
+                                                     value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta}"
+                                                     valueChangeListener="#{controladorCuerposAcademicosPYE.actualizarMeses}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     style="padding-top: 0px">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.aniosConsulta}"
+                                                       var="anio"
+                                                       itemValue="#{anio}"
+                                                       itemLabel="#{anio}" />
+                                        <p:ajax process="@this" listener="#{controladorCuerposAcademicosPYE.buscarCuerposAcademicos()}" update="@(form)" />
+                                    </p:selectOneMenu>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+
+                                    <p:outputLabel value="Mes: " for="@form:mesConsulta" />
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="mesConsulta"
+                                                     required="true"
+                                                     value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     style="padding-top:  0px">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesesConsulta}"
+                                                       var="mes"
+                                                       itemValue="#{mes}"
+                                                       itemLabel="#{mes}" />
+                                        <p:ajax process="@this" listener="#{controladorCuerposAcademicosPYE.buscarCuerposAcademicos()}" update="@(form)" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <f:facet name="right">
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
+                                </f:facet>
+                            </p:toolbar>
+                            <p:sticky target="tb" />
+                        </p:outputPanel>
+                    </h:form>
+                </div>
+                <p:separator/>
+
+                <div class="box-body">
+
+                    <!-- Sección de visualización y eliminación -->
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <h:form id="formMuestraDatosActivos">
+                                <center>
+                                    <p:remoteCommand name="actualizar" update="@form:formMuestraDatosActivos" />
+                                    <p:tabView id="tabECCuerposAcademicosPrincipal">
+                                        <p:tab id="tabECCuerpAcad" title="Cuerpos Académicos Registrados">
+                                            <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parametros seleccionados: Ejercicio: #{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta} y Mes: #{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta}"
+                                                         paginator="true"
+                                                         rows="10" 
+                                                         rowsPerPageTemplate="5,10,20,30,40,50"
+                                                         resizeMode="expand"
+                                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                         id="dtbECCuerposAcademicos"
+                                                         var="cuerpoAcademico" value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.lstDtoCuerposAcademicosR}"
+                                                         tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                         lazy="true">
+                                                <p:columnGroup type="header">
+                                                    <p:row>
+                                                        <p:column rowspan="2" headerText="Opciones" width="150"/>
+                                                        <p:column rowspan="2" headerText="Clave Registro" width="200" />
+                                                        <p:column colspan="2" headerText="Duración" width="400" />
+                                                        <p:column rowspan="2" headerText="Cuerpo Académico" width="400" />
+                                                        <p:column rowspan="2" headerText="Nivel de Reconocimiento por PRODEP" width="200" />
+                                                        <p:column rowspan="2" headerText="Área de Estudio" width="400" />
+                                                        <p:column rowspan="2" headerText="Disciplina" width="400" />
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column headerText="Fecha de Inicio" />
+                                                        <p:column headerText="Fecha de Termino" />
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <c:set var="cuerpoAcademicoEliminar" value="#{cuerpoAcademico.cuerposAcademicosRegistro.registro}"/>
+                                                <p:column style="text-align: center;">
+                                                    <div class="btn-group">
+                                                        <p:commandButton class="btn btn-sm #{cuerpoAcademico.cuerposAcademicosRegistro.estatus?'btn-danger':'btn-info'}"
+                                                                         icon="#{cuerpoAcademico.cuerposAcademicosRegistro.estatus?'fa fa-thumbs-down':'fa fa-thumbs-up'}"
+                                                                         actionListener="#{controladorCuerposAcademicosPYE.bajaCuerpoAcademico(cuerpoAcademico.cuerposAcademicosRegistro)}"
+                                                                         title="#{cuerpoAcademico.cuerposAcademicosRegistro.estatus?'Dar de baja':'Dar de alta'}"
+                                                                         rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                            <p:confirm header="Cuerpo académico"
+                                                                       message="¿Está seguro de #{cuerpoAcademico.cuerposAcademicosRegistro.estatus?'dar de baja':'dar de alta'} el registro de #{cuerpoAcademico.cuerposAcademicosRegistro.cuerpoAcademico}?"
+                                                                       icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                        <p:spacer width="3" />
+                                                        <c:set var="evidencias" value="#{controladorCuerposAcademicosPYE.consultarEvidencias(cuerpoAcademico.cuerposAcademicosRegistro.registro)}" />
+                                                        <p:commandButton actionListener="#{controladorCuerposAcademicosPYE.seleccionarRegistroCuerpAcad(cuerpoAcademico)}" 
+                                                                         class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                         icon="fa fa-image"
+                                                                         title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                        <p:spacer width="3" />
+                                                        <p:commandButton actionListener="#{controladorCuerposAcademicosPYE.abrirAlineacionPOACuerpAcad(cuerpoAcademico)}"
+                                                                         class="btn btn-sm #{controladorCuerposAcademicosPYE.verificaAlineacion(cuerpoAcademico.cuerposAcademicosRegistro.registro)?'btn-info':'btn-warning'}"
+                                                                         icon="fa fa-cog"
+                                                                         title="Alineación a POA."/>
+                                                        <p:commandButton actionListener="#{controladorCuerposAcademicosPYE.abrirCuerpoAreasAcademicas(cuerpoAcademico.cuerposAcademicosRegistro)}"
+                                                                         class="btn btn-sm btn-info"
+                                                                         icon="fa fa-check-circle"
+                                                                         title="Áreas Ácadémicas"/>
+                                                    </div>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{cuerpoAcademico.cuerposAcademicosRegistro.cuerpoAcademico}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{cuerpoAcademico.cuerposAcademicosRegistro.fechaInicio}">
+                                                        <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                    </h:outputText>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{cuerpoAcademico.cuerposAcademicosRegistro.fechaTermino}">
+                                                        <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                    </h:outputText>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{cuerpoAcademico.cuerposAcademicosRegistro.nombre}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{cuerpoAcademico.cuerposAcademicosRegistro.nivelProdep}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{cuerpoAcademico.cuerposAcademicosRegistro.areaEstudio.nombre}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{cuerpoAcademico.cuerposAcademicosRegistro.disciplina.nombre}"/>
+                                                </p:column>
+                                                <f:facet name="footer">
+                                                </f:facet>
+                                            </p:dataTable>
+                                            <p:confirmDialog global="true"
+                                                             showEffect="fade"
+                                                             hideEffect="fade"
+                                                             styleClass="panel panel-primary"
+                                                             width="500"
+                                                             closeOnEscape="true">
+                                                <p:commandButton value="Si"
+                                                                 type="button"
+                                                                 styleClass="ui-confirmdialog-yes btn btn-primary" 
+                                                                 icon="ui-icon-check" />
+                                                <p:commandButton value="No" 
+                                                                 type="button" 
+                                                                 styleClass="ui-confirmdialog-no btn btn-primary" 
+                                                                 icon="ui-icon-close" />
+                                            </p:confirmDialog>
+                                        </p:tab>
+
+                                        <p:tab id="tabECCuerpAcadIntegrantes" title="Cuerpos Académicos Integrantes Registrados">
+                                            <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parametros seleccionados: Ejercicio: #{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta} y Mes: #{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta}"
+                                                         paginator="true"
+                                                         rows="10" 
+                                                         rowsPerPageTemplate="5,10,20,30,40,50"
+                                                         resizeMode="expand"
+                                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                         id="dtbECCuerpAcadIntegrantes"
+                                                         var="caIntegrantes" value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.lstDtoCuerpAcadIntegrantes}"
+                                                         tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                         lazy="true">
+                                                <p:columnGroup type="header">
+                                                    <p:row>
+                                                        <p:column headerText="Opciones" width="50" />
+                                                        <p:column headerText="Cuerpo Académico" width="200" />
+                                                        <p:column headerText="Personal" width="400" />
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <c:set var="cuerpAcadIntEliminar" value="#{caIntegrantes.cuerpoAcademicoIntegrantes.registro}"/>
+                                                <p:column style="text-align: center;">
+                                                    <div class="btn-group">
+                                                        <p:commandButton class="btn btn-sm #{caIntegrantes.cuerpoAcademicoIntegrantes.estatus?'btn-danger':'btn-info'}"
+                                                                         icon="#{caIntegrantes.cuerpoAcademicoIntegrantes.estatus?'fa fa-thumbs-down':'fa fa-thumbs-up'}"
+                                                                         actionListener="#{controladorCuerposAcademicosPYE.bajaIntegrante(caIntegrantes.cuerpoAcademicoIntegrantes)}"
+                                                                         title="#{caIntegrantes.cuerpoAcademicoIntegrantes.estatus?'Dar de baja':'Dar de alta'}"
+                                                                         rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                            <p:confirm header="Integrante"
+                                                                       message="¿Está seguro de #{caIntegrantes.cuerpoAcademicoIntegrantes.estatus?'dar de baja':'dar de alta'} al integrante: #{caIntegrantes.cuerpoAcademicoIntegrantes.cuerpoAcademico.nombre}?"
+                                                                       icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                        <p:spacer width="3" />
+                                                        <c:set var="evidencias" value="#{controladorCuerposAcademicosPYE.consultarEvidencias(caIntegrantes.cuerpoAcademicoIntegrantes.registro)}" />
+                                                        <p:commandButton actionListener="#{controladorCuerposAcademicosPYE.seleccionarRegistroCuerpAcadIntegrantes(caIntegrantes)}" 
+                                                                         class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                         icon="fa fa-image"
+                                                                         title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                        <p:spacer width="3" />
+                                                        <p:commandButton actionListener="#{controladorCuerposAcademicosPYE.abrirAlineacionPOACuerpAcadIntegrantes(caIntegrantes)}"
+                                                                         class="btn btn-sm #{controladorCuerposAcademicosPYE.verificaAlineacion(caIntegrantes.cuerpoAcademicoIntegrantes.registro)?'btn-info':'btn-warning'}"
+                                                                         icon="fa fa-cog"
+                                                                         title="Alineación a POA."/>
+                                                    </div>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{caIntegrantes.cuerpoAcademicoIntegrantes.cuerpoAcademico.cuerpoAcademico}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{caIntegrantes.personal.nombre}"/>
+                                                </p:column>
+                                                <f:facet name="footer">
+                                                </f:facet>
+                                            </p:dataTable>
+                                        </p:tab>
+
+                                        <p:tab id="tabECCuerpAcadLineas" title="Líneas de Investigación Registradas">
+                                            <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parametros seleccionados: Ejercicio: #{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta} y Mes: #{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta}"
+                                                         paginator="true"
+                                                         rows="10" 
+                                                         rowsPerPageTemplate="5,10,20,30,40,50"
+                                                         resizeMode="expand"
+                                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                         id="dtbECLineasInvestigacion"
+                                                         var="lineasInvestigacion" value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.lstCuerpAcadLineas}"
+                                                         tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                         lazy="true">
+                                                <p:columnGroup type="header">
+                                                    <p:row>
+                                                        <p:column headerText="Opciones" width="50" />
+                                                        <p:column headerText="Cuerpo Académico" width="200" />
+                                                        <p:column headerText="Línea de investigación" width="400" />
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <c:set var="cuerpAcadLineaEliminar" value="#{lineasInvestigacion.registro}"/>
+                                                <p:column style="text-align: center;">
+                                                    <div class="btn-group">
+                                                        <p:commandButton class="btn btn-sm #{lineasInvestigacion.estatus?'btn-danger':'btn-info'}"
+                                                                         icon="#{lineasInvestigacion.estatus?'fa fa-thumbs-down':'fa fa-thumbs-up'}"
+                                                                         actionListener="#{controladorCuerposAcademicosPYE.bajaLineaInvestigacion(lineasInvestigacion)}"
+                                                                         title="#{lineasInvestigacion.estatus?'Dar de baja':'Dar de alta'}"
+                                                                         rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                            <p:confirm header="Línea de Investigación"
+                                                                       message="¿Está seguro de #{lineasInvestigacion.estatus?'dar de baja':'dar de alta'} la línea de investigación: #{lineasInvestigacion.nombre}?"
+                                                                       icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                        <p:spacer width="3" />
+                                                        <c:set var="evidencias" value="#{controladorCuerposAcademicosPYE.consultarEvidencias(lineasInvestigacion.registro)}" />
+                                                        <p:commandButton actionListener="#{controladorCuerposAcademicosPYE.seleccionarRegistroCuerpAcadLineas(lineasInvestigacion)}" 
+                                                                         class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                         icon="fa fa-image"
+                                                                         title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                        <p:spacer width="3" />
+                                                        <p:commandButton actionListener="#{controladorCuerposAcademicosPYE.abrirAlineacionPOACuerpAcadLineas(lineasInvestigacion)}"
+                                                                         class="btn btn-sm #{controladorCuerposAcademicosPYE.verificaAlineacion(lineasInvestigacion.registro)?'btn-info':'btn-warning'}"
+                                                                         icon="fa fa-cog"
+                                                                         title="Alineación a POA."/>
+                                                    </div>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{lineasInvestigacion.cuerpoAcademico.cuerpoAcademico}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{lineasInvestigacion.nombre}"/>
+                                                </p:column>
+
+                                                <f:facet name="footer">
+                                                </f:facet>
+                                            </p:dataTable>
+                                        </p:tab>
+
+                                    </p:tabView>
+                                </center>
+                            </h:form>
+                        </div>
+                    </div>
+
+                    <!-- Sección de evidencias-->
+
+                    <p:dialog id="modalCargaEvidenciaCuerpAcad" 
+                              widgetVar="modalCargaEvidenciaCuerpAcad" 
+                              width="700" 
+                              height="auto"
+                              closeOnEscape="true"
+                              visible="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.forzarAperturaDialogo}"
+                              showEffect="fade"
+                              hideEffect="fade"
+                              modal="true"
+                              draggable="true"
+                              header="Carga de evidencias"
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary"
+                              responsive="true"
+                              resizable="false"
+                              maximizable="false" >
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:toolbar id="toolbarCuerpAcad">
+                                    <f:facet name="left">
+                                        <p:spacer width="10" />
+                                        <p:outputLabel value="Carga de evidencias: " style="padding-top:  5px"/>
+                                        <p:spacer width="10" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <o:form id="formularioEvidenciaCuerpAcad" 
+                                                enctype="multipart/form-data"
+                                                class="form-inline">
+                                            <o:inputFile id="filesCuerpAcad"
+                                                         value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.archivos}"
+                                                         multiple="true"
+                                                         class="form-control"
+                                                         accept="image/png,image/jpg,image/jpeg,application/pdf"     
+                                                         acceptMessage="Solo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         maxsize="#{caster.evidenciasTamanioLimite}"
+                                                         maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                         required="true"
+                                                         requiredMessage="Debe elegir al menos un archivo"
+                                                         rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                            </o:inputFile>
+                                            <h:commandButton id="btnuploadFilesCuerpAcad" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorCuerposAcademicosPYE.subirEvidenciasCuerpAcad()}"
+                                                             rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                        </o:form>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </div>
+                        <h:form id="frmEvidenciasCuerpAcad">
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Cuerpo Académico: #{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.cuerpoAcademico}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizarEvidenciasCuerpAcad" update="@form:tblEvidenciasCuerpAcad" />
+                                    <p:dataTable id="tblEvidenciasCuerpAcad"
+                                                 value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.listaEvidencias}"
+                                                 var="evidencia"
+                                                 emptyMessage="No se han registrado evidencias de éste registro." 
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 paginator="true" 
+                                                 rows="10"
+                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
+                                                 paginatorAlwaysVisible="false" 
+                                                 paginatorPosition="bottom"
+                                                 >
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Opciones" width="80"/>
+                                                <p:column headerText="Archivo" />
+                                                <p:column headerText="Tipo"     width="80" />
+                                                <p:column headerText="Tamanio"  width="80" />
+                                                <p:column headerText="Mes"      width="80" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;">
+                                            <div class="btn-group">
+                                                <c:set var="evidenciaMes" value="#{evidencia.mes}" />
+                                                <c:set var="evidenciaControlador" value="#{controladorModulosRegistro.eventosRegistros.mes}" />
+                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{controladorCuerposAcademicosPYE.eliminarEvidenciaCuerpAcad(evidencia)}" onsuccess="actualizarEvidenciasCuerpAcad();" title="#{evidenciaMes eq evidenciaControlador?'Eliminar evidencia':'El mes de la evidencia no corresponde con el mes de consulta'}"
+                                                                 rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"
+                                                                 disabled="#{evidenciaMes eq evidenciaControlador?'false':'true'}">
+                                                    <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:spacer width="5" />
+                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorCuerposAcademicosPYE.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                            </div>
+                                        </p:column>
+                                        <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{evidencia.mes}" /></p:column>
+                                        <f:facet name="footer">
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorCuerposAcademicosPYE.dtoCuerposAcademicos.listaEvidencias)}.</span>
+                                        </f:facet>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog id="modalCargaEvidenciaCuerpAcadIntegrantes" 
+                              widgetVar="modalCargaEvidenciaCuerpAcadIntegrantes" 
+                              width="700" 
+                              height="auto"
+                              closeOnEscape="true"
+                              visible="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.forzarAperturaDialogo}"
+                              showEffect="fade"
+                              hideEffect="fade"
+                              modal="true"
+                              draggable="true"
+                              header="Carga de evidencias"
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary"
+                              responsive="true"
+                              resizable="false"
+                              maximizable="false" >
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:toolbar id="toolbarCuerpAcadIntegrantes">
+                                    <f:facet name="left">
+                                        <p:spacer width="10" />
+                                        <p:outputLabel value="Carga de evidencias: " style="padding-top:  5px"/>
+                                        <p:spacer width="10" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <o:form id="formularioEvidenciaCuerpAcadIntegrantes" 
+                                                enctype="multipart/form-data"
+                                                class="form-inline">
+                                            <o:inputFile id="filesCuerpAcadIntegrantes"
+                                                         value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.archivos}"
+                                                         multiple="true"
+                                                         class="form-control"
+                                                         accept="image/png,image/jpg,image/jpeg,application/pdf"     
+                                                         acceptMessage="Solo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         maxsize="#{caster.evidenciasTamanioLimite}"
+                                                         maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                         required="true"
+                                                         requiredMessage="Debe elegir al menos un archivo"
+                                                         rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                            </o:inputFile>
+                                            <h:commandButton id="btnuploadFilesCuerpAcadIntegrantes" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorCuerposAcademicosPYE.subirEvidenciasCuerpAcadIntegrantes()}"
+                                                             rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                        </o:form>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </div>
+                        <h:form id="frmEvidenciasCuerpAcadIntegrantes">
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Cuerpo Académico Integrante: #{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerpAcadIntegrantes.personal.nombre}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizarEvidenciasCuerpAcadIntegrante" update="@form:tblEvidenciasCuerpAcadIntegrante" />
+                                    <p:dataTable id="tblEvidenciasCuerpAcadIntegrante"
+                                                 value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.listaEvidencias}"
+                                                 var="evidencia"
+                                                 emptyMessage="No se han registrado evidencias de éste registro." 
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 paginator="true" 
+                                                 rows="10"
+                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
+                                                 paginatorAlwaysVisible="false" 
+                                                 paginatorPosition="bottom"
+                                                 >
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Opciones" width="80"/>
+                                                <p:column headerText="Archivo" />
+                                                <p:column headerText="Tipo"     width="80" />
+                                                <p:column headerText="Tamanio"  width="80" />
+                                                <p:column headerText="Mes"      width="80" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;">
+                                            <div class="btn-group">
+                                                <c:set var="evidenciaMes" value="#{evidencia.mes}" />
+                                                <c:set var="evidenciaControlador" value="#{controladorModulosRegistro.eventosRegistros.mes}" />
+                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{controladorCuerposAcademicosPYE.eliminarEvidenciaCuerpAcadIntegrante(evidencia)}" onsuccess="actualizarEvidenciasCuerpAcadIntegrante();" title="#{evidenciaMes eq evidenciaControlador?'Eliminar evidencia':'El mes de la evidencia no corresponde con el mes de consulta'}"
+                                                                 rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"
+                                                                 disabled="#{evidenciaMes eq evidenciaControlador?'false':'true'}">
+                                                    <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:spacer width="5" />
+                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorCuerposAcademicosPYE.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                            </div>
+                                        </p:column>
+                                        <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{evidencia.mes}" /></p:column>
+                                        <f:facet name="footer">
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorCuerposAcademicosPYE.dtoCuerposAcademicos.listaEvidencias)}.</span>
+                                        </f:facet>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog id="modalCargaEvidenciaCuerpAcadLineas" 
+                              widgetVar="modalCargaEvidenciaCuerpAcadLineas" 
+                              width="700" 
+                              height="auto"
+                              closeOnEscape="true"
+                              visible="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.forzarAperturaDialogo}"
+                              showEffect="fade"
+                              hideEffect="fade"
+                              modal="true"
+                              draggable="true"
+                              header="Carga de evidencias"
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary"
+                              responsive="true"
+                              resizable="false"
+                              maximizable="false" >
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:toolbar id="toolbarCuerpAcadLineas">
+                                    <f:facet name="left">
+                                        <p:spacer width="10" />
+                                        <p:outputLabel value="Carga de evidencias: " style="padding-top:  5px"/>
+                                        <p:spacer width="10" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <o:form id="formularioEvidenciaCuerpAcadLineas" 
+                                                enctype="multipart/form-data"
+                                                class="form-inline">
+                                            <o:inputFile id="filesCuerpAcadLineas"
+                                                         value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.archivos}"
+                                                         multiple="true"
+                                                         class="form-control"
+                                                         accept="image/png,image/jpg,image/jpeg,application/pdf"     
+                                                         acceptMessage="Solo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         maxsize="#{caster.evidenciasTamanioLimite}"
+                                                         maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                         required="true"
+                                                         requiredMessage="Debe elegir al menos un archivo"
+                                                         rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                            </o:inputFile>
+                                            <h:commandButton id="btnuploadFilesCuerpAcadLineas" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorCuerposAcademicosPYE.subirEvidenciasCuerpAcadLineas()}"
+                                                             rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                        </o:form>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </div>
+                        <h:form id="frmEvidenciasCuerpAcadLineas">
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Linea Cuerpo Académico: #{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerpAcadLineas.cuerpoAcademicoLineas.nombre}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizarEvidenciasCuerpAcadLineas" update="@form:tblEvidenciasCuerpAcadLineas" />
+                                    <p:dataTable id="tblEvidenciasCuerpAcadLineas"
+                                                 value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.listaEvidencias}"
+                                                 var="evidencia"
+                                                 emptyMessage="No se han registrado evidencias de éste registro." 
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 paginator="true" 
+                                                 rows="10"
+                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
+                                                 paginatorAlwaysVisible="false" 
+                                                 paginatorPosition="bottom"
+                                                 >
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Opciones" width="80"/>
+                                                <p:column headerText="Archivo" />
+                                                <p:column headerText="Tipo"     width="80" />
+                                                <p:column headerText="Tamanio"  width="80" />
+                                                <p:column headerText="Mes"      width="80" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;">
+                                            <div class="btn-group">
+                                                <c:set var="evidenciaMes" value="#{evidencia.mes}" />
+                                                <c:set var="evidenciaControlador" value="#{controladorModulosRegistro.eventosRegistros.mes}" />
+                                                <p:commandButton class="btn btn-info btn-sm" 
+                                                                 icon="fa fa-trash" 
+                                                                 actionListener="#{controladorCuerposAcademicosPYE.eliminarEvidenciaCuerpAcadLinea(evidencia)}" 
+                                                                 onsuccess="actualizarEvidenciasCuerpAcadLineas();" 
+                                                                 title="#{evidenciaMes eq evidenciaControlador?'Eliminar evidencia':'El mes de la evidencia no corresponde con el mes de consulta'}"
+                                                                 rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"
+                                                                 disabled="#{evidenciaMes eq evidenciaControlador?'false':'true'}">
+                                                    <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:spacer width="5" />
+                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorCuerposAcademicosPYE.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                            </div>
+                                        </p:column>
+                                        <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{evidencia.mes}" /></p:column>
+                                        <f:facet name="footer">
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorCuerposAcademicosPYE.dtoCuerposAcademicos.listaEvidencias)}.</span>
+                                        </f:facet>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- Sección de alineación a POA -->
+                    <p:dialog id="modalAlineacionCuerpAcad"
+                              widgetVar="modalAlineacionCuerpAcad"
+                              width="900"
+                              height="auto"  
+                              closeOnEscape="true"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Alineación a POA." 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmAlineacionCuerpAcad">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                        <f:facet name="left">
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{controladorCuerposAcademicosPYE.eliminarAlineacionCuerpAcad()}" rendered="#{controladorCuerposAcademicosPYE.verificaAlineacion(controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.registro)}" >
+                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{controladorCuerposAcademicosPYE.alinearRegistroCuerpAcad()}" oncomplete="PF('modalAlineacionCuerpAcad').hide();" />
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Cuerpo Académico: #{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.cuerpoAcademico} " /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                            <c:set var="col1" value="#{'col-md-2'}" />
+                            <c:set var="col2" value="#{'col-md-10'}" />
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="eje" value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.alineacionEje}" valueChangeListener="#{controladorCuerposAcademicosPYE.actualizarEstrategias}" required="true" converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="eje"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="estrategia" value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.alineacionEstrategia}" valueChangeListener="#{controladorCuerposAcademicosPYE.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <p:ajax process="estrategia" update="lineaAccion,actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="estrategia"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="lineaAccion" value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.alineacionLinea}" valueChangeListener="#{controladorCuerposAcademicosPYE.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <p:ajax process="lineaAccion" update="actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="lineaAccion"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="actividad" value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.alineacionActividad}" required="true" converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <p:ajax process="actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="actividad"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog id="modalAlineacionCuerpAcadIntegrantes"
+                              widgetVar="modalAlineacionCuerpAcadIntegrantes"
+                              width="900"
+                              height="auto"  
+                              closeOnEscape="true"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Alineación a POA." 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmAlineacionCuerpAcadIntegrantes">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                        <f:facet name="left">
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{controladorCuerposAcademicosPYE.eliminarAlineacionCuerpAcadIntegrantes()}" rendered="#{controladorCuerposAcademicosPYE.verificaAlineacion(controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerpAcadIntegrantes.cuerpoAcademicoIntegrantes.registro)}" >
+                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{controladorCuerposAcademicosPYE.alinearRegistroCuerpAcadIntegrantes()}" oncomplete="PF('modalAlineacionCuerpAcadIntegrantes').hide();" />
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Cuerpo Académico Personal: #{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerpAcadIntegrantes.personal.nombre} " /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                            <c:set var="col1" value="#{'col-md-2'}" />
+                            <c:set var="col2" value="#{'col-md-10'}" />
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="ejeParticipante" value="Eje: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="ejeParticipante" value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.alineacionEje}" valueChangeListener="#{controladorCuerposAcademicosPYE.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <p:ajax process="ejeParticipante" update="@form:estrategiaParticipante,@form:lineaAccionParticipante,@form:actividadParticipante" />
+                                    </p:selectOneMenu>
+                                    <p:message for="ejeParticipante"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="estrategiaParticipante" value="Estrategia: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="estrategiaParticipante" value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.alineacionEstrategia}" valueChangeListener="#{controladorCuerposAcademicosPYE.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <p:ajax process="estrategiaParticipante" update="lineaAccionParticipante,actividadParticipante" />
+                                    </p:selectOneMenu>
+                                    <p:message for="estrategiaParticipante"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="lineaAccionParticipante" value="Línea de acción: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="lineaAccionParticipante" value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.alineacionLinea}" valueChangeListener="#{controladorCuerposAcademicosPYE.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <p:ajax process="lineaAccionParticipante" update="actividadParticipante" />
+                                    </p:selectOneMenu>
+                                    <p:message for="lineaAccionParticipante"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="actividadParticipante" value="Actividad: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="actividadParticipante" value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.alineacionActividad}" required="true" converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <p:ajax process="actividadParticipante" />
+                                    </p:selectOneMenu>
+                                    <p:message for="actividadParticipante"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog id="modalAlineacionCuerpAcadLineas"
+                              widgetVar="modalAlineacionCuerpAcadLineas"
+                              width="900"
+                              height="auto"  
+                              closeOnEscape="true"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Alineación a POA." 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmAlineacionCuerpAcadLineas">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                        <f:facet name="left">
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{controladorCuerposAcademicosPYE.eliminarAlineacionCuerpAcadLineas()}" rendered="#{controladorCuerposAcademicosPYE.verificaAlineacion(controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerpAcadLineas.cuerpoAcademicoLineas.registro)}" >
+                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{controladorCuerposAcademicosPYE.alinearRegistroCuerpAcadLineas()}" oncomplete="PF('modalAlineacionCuerpAcadLineas').hide();" />
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Cuerpo Académico Linea de Investigación #{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerpAcadLineas.cuerpoAcademicoLineas.nombre} " /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                            <c:set var="col1" value="#{'col-md-2'}" />
+                            <c:set var="col2" value="#{'col-md-10'}" />
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="ejeParticipante2" value="Eje: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="ejeParticipante2" value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.alineacionEje}" valueChangeListener="#{controladorCuerposAcademicosPYE.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <p:ajax process="ejeParticipante2" update="@form:estrategiaParticipante2,@form:lineaAccionParticipante2,@form:actividadParticipante2" />
+                                    </p:selectOneMenu>
+                                    <p:message for="ejeParticipante2"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="estrategiaParticipante2" value="Estrategia: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="estrategiaParticipante2" value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.alineacionEstrategia}" valueChangeListener="#{controladorCuerposAcademicosPYE.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <p:ajax process="estrategiaParticipante2" update="lineaAccionParticipante2,actividadParticipante2" />
+                                    </p:selectOneMenu>
+                                    <p:message for="estrategiaParticipante2"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="lineaAccionParticipante2" value="Línea de acción: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="lineaAccionParticipante2" value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.alineacionLinea}" valueChangeListener="#{controladorCuerposAcademicosPYE.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <p:ajax process="lineaAccionParticipante2" update="actividadParticipante2" />
+                                    </p:selectOneMenu>
+                                    <p:message for="lineaAccionParticipante2"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="actividadParticipante2" value="Actividad: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="actividadParticipante2" value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.alineacionActividad}" required="true" converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <p:ajax process="actividadParticipante2" />
+                                    </p:selectOneMenu>
+                                    <p:message for="actividadParticipante2"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- Modal de cuerpos académicos pertenecientes al cuerpo académico-->
+                    <p:dialog id="modalCuerpoAreasAcademicas" 
+                              widgetVar="modalCuerpoAreasAcademicas" 
+                              width="800" 
+                              height="280"  
+                              closeOnEscape="true"
+                              visible="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Áreas Académicas del Cuerpo Académico"
+                              styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
+                        <h:form id="frmCuerpoAreasAcademicas" >
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizarCuerpoAreasAcademicas" 
+                                                     update="@form:tblCuerpoAreasAcademicas" />
+                                    <p:dataTable id="tblCuerpoAreasAcademicas" 
+                                                 value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.listaCuerpoAreasAcademicas}" 
+                                                 var="cuerpoAreasAcademicas"
+                                                 emptyMessage="No se encuentran áreas académicas en el catalogo." 
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Seleccione la opción que corresponda" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;" width="700">
+                                            <div class="btn-group">
+                                                <p:selectBooleanButton id="switchav#{cuerpoAreasAcademicas.areaUniversidad.area}"
+                                                                       value="#{cuerpoAreasAcademicas.existe}"
+                                                                       onLabel="#{cuerpoAreasAcademicas.areaUniversidad.nombre}"
+                                                                       offLabel="#{cuerpoAreasAcademicas.areaUniversidad.nombre}"
+                                                                       onIcon="ui-icon-check"
+                                                                       offIcon="ui-icon-close"
+                                                                       class="btn-sm"
+                                                                       style="width: 700px; text-align: left">
+                                                    <p:ajax listener="#{controladorCuerposAcademicosPYE.guardaCuerpoAreaAcademica(cuerpoAreasAcademicas)}" />
+                                                </p:selectBooleanButton>
+                                            </div>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -419,7 +419,7 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
         
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         List<DTOMatriculaPeriodosEscolares> l = new ArrayList<>();
-        List<MatriculaPeriodosEscolares> entities = f.getEntityManager().createQuery("SELECT mpe FROM MatriculaPeriodosEscolares mpe INNER JOIN mpe.registros r INNER JOIN r.tipo t WHERE (mpe.periodo=:periodo) AND (t.registroTipo=:tipo) AND (r.area = :area) ORDER BY mpe.programaEducativo,mpe.cuatrimestre,mpe.grupo,mpe.matricula", MatriculaPeriodosEscolares.class)
+        List<MatriculaPeriodosEscolares> entities = f.getEntityManager().createQuery("SELECT mpe FROM MatriculaPeriodosEscolares mpe INNER JOIN FETCH mpe.registros r INNER JOIN r.tipo t WHERE (mpe.periodo=:periodo) AND (t.registroTipo=:tipo) AND (r.area = :area) ORDER BY mpe.programaEducativo,mpe.cuatrimestre,mpe.grupo,mpe.matricula", MatriculaPeriodosEscolares.class)
                 .setParameter("periodo", periodo.getPeriodo())
                 .setParameter("tipo", registrosTipo.getRegistroTipo())
                 .setParameter("area", area.getArea())

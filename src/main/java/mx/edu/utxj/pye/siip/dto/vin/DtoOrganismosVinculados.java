@@ -13,6 +13,7 @@ import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesVinculacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ContactosEmpresa;
@@ -34,6 +35,13 @@ import mx.edu.utxj.pye.sgi.entity.pye2.TelefonosEmpresa;
  * @author Planeacion
  */
 public final class DtoOrganismosVinculados {
+     /************************** Lista áreas ****************************************/
+    @Getter private List<Categorias> listaCategoriasPOA;
+    @Getter private List<AreasUniversidad> listaAreasPOA; 
+    
+    @Getter private Categorias categoria;
+    @Getter private AreasUniversidad areaUniversidadPOA;
+    
     /****************** Programas Educativos Beneficiados con la vinculación *******************/
     @Getter @Setter AreasUniversidad areaUniversidad;
     @Getter private List<DTOProgramasBeneficiadosVinculacion> listaProgramasEducativosBeneficiadosV = new ArrayList<>();
@@ -99,8 +107,8 @@ public final class DtoOrganismosVinculados {
     
     @Getter @Setter private List<OrganismosVinculados> lstOrganismosVinculados;
 
-    public DtoOrganismosVinculados() {        
-        setRegistroTipo(new RegistrosTipo((short)27));
+    public DtoOrganismosVinculados() {
+        setRegistroTipo(new RegistrosTipo((short) 27));
         setEjesRegistro(new EjesRegistro(4));
         setRegistros(new ArrayList<>(Arrays.asList(registroTipo.getRegistroTipo())));
         tieneEvidencia = false;
@@ -109,15 +117,15 @@ public final class DtoOrganismosVinculados {
 
     public void setRegistro(DTOOrganismoVinculado registro) {
         this.registro = registro;
-        if(registro==null){
+        if (registro == null) {
             setListaEvidencias(Collections.EMPTY_LIST);
         }
     }
-    
+
     public void setArchivos(List<Part> archivos) {
         this.archivos = archivos;
     }
-    
+
     public void setListaEvidencias(List<EvidenciasDetalle> listaEvidencias) {
         this.listaEvidencias = listaEvidencias;
         setTieneEvidencia(!listaEvidencias.isEmpty());
@@ -130,138 +138,205 @@ public final class DtoOrganismosVinculados {
     public void setForzarAperturaDialogo(Boolean forzarAperturaDialogo) {
         this.forzarAperturaDialogo = forzarAperturaDialogo;
     }
-    
-    /********************** Alineación POA ************************************/
-    
+
+    /**
+     * ******************** Alineación POA ***********************************
+     */
     public void setAlineacionEje(EjesRegistro alineacionEje) {
         this.alineacionEje = alineacionEje;
-        if(alineacionEje == null)
+        if (alineacionEje == null) {
             nulificarEje();
+        }
     }
-    
-    public void nulificarEje(){
+
+    public void nulificarEje() {
         estrategias = Collections.EMPTY_LIST;
         nulificarEstrategia();
     }
-    
+
     public void setAlineacionEstrategia(Estrategias alineacionEstrategia) {
         this.alineacionEstrategia = alineacionEstrategia;
-        if(alineacionEstrategia == null)
+        if (alineacionEstrategia == null) {
             nulificarEstrategia();
+        }
     }
-    
-    public void nulificarEstrategia(){
+
+    public void nulificarEstrategia() {
         lineasAccion = Collections.EMPTY_LIST;
         nulificarLinea();
     }
-    
+
     public void setAlineacionLinea(LineasAccion alineacionLinea) {
         this.alineacionLinea = alineacionLinea;
-        if(alineacionLinea == null)
+        if (alineacionLinea == null) {
             nulificarLinea();
+        }
     }
-    
-    public void nulificarLinea(){
-         actividades = Collections.EMPTY_LIST; 
+
+    public void nulificarLinea() {
+        actividades = Collections.EMPTY_LIST;
     }
-    
+
     public void setAlineacionActividad(ActividadesPoa alineacionActividad) {
         this.alineacionActividad = alineacionActividad;
     }
-    
-    public void nulificarActividad(){
+
+    public void nulificarActividad() {
         setAlineacionActividad(null);
     }
-    
+
     public void setActividades(List<ActividadesPoa> actividades) {
         this.actividades = actividades;
     }
-    
+
     public void setEjes(List<EjesRegistro> ejes) {
         this.ejes = ejes;
-        if(ejes.isEmpty())
+        if (ejes.isEmpty()) {
             nulificarEje();
+        }
     }
 
     public void setEstrategias(List<Estrategias> estrategias) {
         this.estrategias = estrategias;
-        if(estrategias.isEmpty())
+        if (estrategias.isEmpty()) {
             nulificarEstrategia();
+        }
     }
 
     public void setLineasAccion(List<LineasAccion> lineasAccion) {
         this.lineasAccion = lineasAccion;
-        if(lineasAccion.isEmpty())
+        if (lineasAccion.isEmpty()) {
             nulificarLinea();
+        }
     }
-    
-    /********************** Ubicación ************************************/
-    
-    public void setPais(Pais pais){
+
+    /**
+     * ******************** Ubicación ***********************************
+     */
+    public void setPais(Pais pais) {
         this.pais = pais;
-        if(pais == null){
+        if (pais == null) {
             nulificarPais();
         }
     }
-    
-    public void nulificarPais(){
+
+    public void nulificarPais() {
         estados = Collections.EMPTY_LIST;
         nulificarEstados();
     }
-    
-    public void nulificarEstados(){
+
+    public void nulificarEstados() {
         municipios = Collections.EMPTY_LIST;
         nulificarMunicipios();
     }
-    
-    public void nulificarMunicipios(){
+
+    public void nulificarMunicipios() {
         localidades = Collections.EMPTY_LIST;
     }
-    
-    public void setEstado(Estado estado){
+
+    public void setEstado(Estado estado) {
         this.estado = estado;
-        if(estado == null){
+        if (estado == null) {
             nulificarEstados();
         }
     }
-    
-    public void setMunicipio(Municipio municipio){
+
+    public void setMunicipio(Municipio municipio) {
         this.municipio = municipio;
-        if(municipio == null){
+        if (municipio == null) {
             nulificarMunicipios();
         }
     }
-    
-    public void setLocalidad(Localidad localidad){
+
+    public void setLocalidad(Localidad localidad) {
         this.localidad = localidad;
     }
-    
-    public void setPaises(List<Pais> paises){
+
+    public void setPaises(List<Pais> paises) {
         this.paises = paises;
-        if(paises.isEmpty()){
+        if (paises.isEmpty()) {
             nulificarPais();
         }
     }
-    
-    public void setEstados(List<Estado> estados){
+
+    public void setEstados(List<Estado> estados) {
         this.estados = estados;
-        if(estados.isEmpty()){
+        if (estados.isEmpty()) {
             nulificarEstados();
         }
     }
-    
-    public void setMunicipios(List<Municipio> municipios){
+
+    public void setMunicipios(List<Municipio> municipios) {
         this.municipios = municipios;
-        if(municipios.isEmpty()){
+        if (municipios.isEmpty()) {
             nulificarMunicipios();
         }
     }
-    
-    public void setLocalidades(List<Localidad> localidades){
+
+    public void setLocalidades(List<Localidad> localidades) {
         this.localidades = localidades;
     }
-    
-     public void setListaProgramasEducativosBeneficiadosV(List<DTOProgramasBeneficiadosVinculacion> listaProgramasEducativosBeneficiadosV) {
+
+    public void setListaProgramasEducativosBeneficiadosV(List<DTOProgramasBeneficiadosVinculacion> listaProgramasEducativosBeneficiadosV) {
         this.listaProgramasEducativosBeneficiadosV = listaProgramasEducativosBeneficiadosV;
     }
+    
+    public void setListaCategoriasPOA(List<Categorias> listaCategoriasPOA) {
+        this.listaCategoriasPOA = listaCategoriasPOA;
+        if(listaCategoriasPOA.isEmpty())
+            nulificarCategoria();
+    }
+
+    public void setListaAreasPOA(List<AreasUniversidad> listaAreasPOA) {
+        this.listaAreasPOA = listaAreasPOA;
+        if(listaAreasPOA.isEmpty())
+            nulificarAreaPOA();
+    }
+
+    public void setAniosConsulta(List<Short> aniosConsulta) {
+        this.aniosConsulta = aniosConsulta;
+        if(aniosConsulta.isEmpty())
+            nulificarAnioConsulta();
+    }
+    
+    public void setMesesConsulta(List<String> mesesConsulta) {
+        this.mesesConsulta = mesesConsulta;
+    }
+    
+    public void setCategoria(Categorias categoria) {
+        this.categoria = categoria;
+        if(categoria == null)
+            nulificarCategoria();
+    }
+
+    public void setAreaUniversidadPOA(AreasUniversidad areaUniversidadPOA) {
+        this.areaUniversidadPOA = areaUniversidadPOA;
+        if(areaUniversidadPOA == null)
+            nulificarAreaPOA();
+    }
+
+    public void setAnioConsulta(Short anioConsulta) {
+        this.anioConsulta = anioConsulta;
+        if(anioConsulta == null)
+            nulificarAnioConsulta();
+    }
+    
+    public void setMesConsulta(String mesConsulta) {
+        this.mesConsulta = mesConsulta;
+    }
+    
+    public void nulificarCategoria(){
+        listaAreasPOA = Collections.EMPTY_LIST;
+        nulificarAreaPOA();
+    }
+    
+    public void nulificarAreaPOA(){
+        aniosConsulta = Collections.EMPTY_LIST;
+        nulificarAnioConsulta();
+    }
+    
+    public void nulificarAnioConsulta(){
+        mesesConsulta = Collections.EMPTY_LIST;
+    }
+
 }

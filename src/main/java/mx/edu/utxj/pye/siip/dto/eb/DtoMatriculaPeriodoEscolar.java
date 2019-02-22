@@ -25,6 +25,11 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
  * @author Planeacion
  */
 public final class DtoMatriculaPeriodoEscolar {
+    /************************** Lista áreas ****************************************/
+    @Getter @Setter private List<AreasUniversidad> listaAreasPOA; 
+    
+    @Getter @Setter private AreasUniversidad areaUniversidadPOA;
+    
     @Getter private AreasUniversidad areaPOA;
     @Getter private DTOMatriculaPeriodosEscolares registro;
     @Getter private EjesRegistro eje;

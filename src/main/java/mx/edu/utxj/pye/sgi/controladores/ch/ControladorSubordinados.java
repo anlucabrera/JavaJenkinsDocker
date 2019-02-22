@@ -1,11 +1,7 @@
 package mx.edu.utxj.pye.sgi.controladores.ch;
 
-import java.io.File;
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -101,8 +97,7 @@ public class ControladorSubordinados implements Serializable {
 
     @Getter    @Setter    private LocalDate fechaNow;
     @Getter    @Setter    private Date fechaI = new Date(), fechaF = new Date(),fechaIR = new Date(), fechaFR = new Date();
-    @Getter    @Setter    private Integer empleadoLogeado, contactoDestino, anioNumero = 0;
-    @Getter    @Setter    private String mensajeDNotificacion = "";
+    @Getter    @Setter    private Integer contactoDestino, anioNumero = 0;
     @Getter    @Setter    private Boolean visible = false, fechaReportesActiva=false;
 
 
@@ -120,23 +115,22 @@ public class ControladorSubordinados implements Serializable {
     @Inject    UtilidadesCH utilidadesCH;
 
     @PostConstruct
-    public void init() {        
+    public void init() {
         estatus.clear();
         estatus.add("Aceptado");
         estatus.add("Denegado");
         estatus.add("Pendiente");
-        empleadoLogeado = controladorEmpleado.getEmpleadoLogeado();
-        fechaNow=LocalDate.now();
-        anioNumero =  fechaNow.getYear();
+        fechaNow = LocalDate.now();
+        anioNumero = fechaNow.getYear();
         visible = false;
         mostrarSubordinados();
         reportesJustificacionAsistencias();
-        mostrarIncidencias(String.valueOf(fechaNow.getMonthValue()));        
+        mostrarIncidencias(String.valueOf(fechaNow.getMonthValue()));
     }
-    
+
     public void mostrarSubordinados() {
         try {
-            nuevaListaListaPersonalJefes=new ArrayList<>();
+            nuevaListaListaPersonalJefes = new ArrayList<>();
             nuevaListaListaPersonalJefes.clear();
             nuevaListaListaPersonalJefes = ejbPersonal.mostrarListaPersonalListSubordinados(controladorEmpleado.getNuevoOBJListaPersonal());
         } catch (Throwable ex) {
@@ -144,7 +138,7 @@ public class ControladorSubordinados implements Serializable {
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void reportesJustificacionAsistencias() {
         try {
             fechaReportesActiva = false;
@@ -166,12 +160,12 @@ public class ControladorSubordinados implements Serializable {
                     fechaFR = utilidadesCH.castearLDaD(LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue(), 15));
                 } else {
                     if (fechaMF.getMonthValue() == 1) {
-                        fechaIR = utilidadesCH.castearLDaD(LocalDate.of((fechaMF.getYear()-1), 12, 16));
-                        fechaFR = utilidadesCH.castearLDaD(LocalDate.of((fechaMF.getYear()-1), 12, 31));
+                        fechaIR = utilidadesCH.castearLDaD(LocalDate.of((fechaMF.getYear() - 1), 12, 16));
+                        fechaFR = utilidadesCH.castearLDaD(LocalDate.of((fechaMF.getYear() - 1), 12, 31));
                     } else {
                         fechaIR = utilidadesCH.castearLDaD(LocalDate.of(fechaMF.getYear(), (fechaMF.getMonthValue() - 1), 16));
                         fechaFR = utilidadesCH.castearLDaD(LocalDate.of(fechaMF.getYear(), (fechaMF.getMonthValue() - 1), LocalDate.of(anioNumero, (fechaMF.getMonthValue() - 1), 01).lengthOfMonth()));
-                    }                    
+                    }
                 }
                 incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(fechaIR, fechaFR);
                 if (!incidenciases.isEmpty()) {
@@ -197,14 +191,17 @@ public class ControladorSubordinados implements Serializable {
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
+
     public void mostrarIncidencias(String mActual) {
         try {
-            listaIncidencias = new ArrayList<>();            listaIncidencias.clear();
-            List<Incidencias> incidenciases = new ArrayList<>();            incidenciases.clear();
-            List<Incapacidad> incapacidads = new ArrayList<>();            incapacidads.clear();
-            List<Cuidados> cuidadoses = new ArrayList<>();            cuidadoses.clear();
+            listaIncidencias = new ArrayList<>();
+            listaIncidencias.clear();
+            List<Incidencias> incidenciases = new ArrayList<>();
+            incidenciases.clear();
+            List<Incapacidad> incapacidads = new ArrayList<>();
+            incapacidads.clear();
+            List<Cuidados> cuidadoses = new ArrayList<>();
+            cuidadoses.clear();
             System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.mostrarIncidencias(1)");
             fechaI = utilidadesCH.castearLDaD(LocalDate.of(anioNumero, Integer.parseInt(mActual), 01));
             System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.mostrarIncidencias(2)");
@@ -255,7 +252,6 @@ public class ControladorSubordinados implements Serializable {
         }
     }
 
-
     public void mostrarPerfilSubordinado() {
         try {
             nuevoOBJPersonal = new Personal();
@@ -263,7 +259,7 @@ public class ControladorSubordinados implements Serializable {
             nuevoOBJListaPersonal = ejbPersonal.mostrarListaPersonal(contactoDestino);
             nuevoOBJInformacionAdicionalPersonal = ejbPersonal.mostrarInformacionAdicionalPersonalLogeado(contactoDestino);
             listaIncidenciasIndividuales = ejbNotificacionesIncidencias.mostrarIncidencias(contactoDestino);
-            listaDocencias = ejbPersonal.mostrarListaDocencias(contactoDestino);            
+            listaDocencias = ejbPersonal.mostrarListaDocencias(contactoDestino);
             informacionCV();
             mostrarFuncioneSubordinado();
         } catch (Throwable ex) {
@@ -333,16 +329,16 @@ public class ControladorSubordinados implements Serializable {
             Incidencias incidencias = (Incidencias) event.getObject();
             Integer dias = (int) ((utilidadesCH.castearLDaD(fechaNow).getTime() - incidencias.getFecha().getTime()) / 86400000);
             Integer maximo = 0;
-            switch (incidencias.getFecha().getDay()){
-                case 1:  maximo = 3; break;
-                case 2:  maximo = 3; break;
-                case 3:  maximo = 5; break;
-                case 4:  maximo = 5; break;
-                case 5:  maximo = 5; break;
-                case 6:  maximo = 4; break;
-            }            
+            switch (utilidadesCH.castearDaLD(incidencias.getFecha()).getDayOfWeek()) {
+                case MONDAY:                    maximo = 3;                    break;
+                case TUESDAY:                    maximo = 3;                    break;
+                case WEDNESDAY:                    maximo = 5;                    break;
+                case THURSDAY:                    maximo = 5;                    break;
+                case FRIDAY:                    maximo = 5;                    break;
+                case SATURDAY:                    maximo = 4;                    break;
+            }
             if (dias <= maximo) {
-                utilidadesCH.agregaBitacora(empleadoLogeado, incidencias.getIncidenciaID().toString(), "Incidencia", "Justificación "+incidencias.getEstatus());
+                utilidadesCH.agregaBitacora(controladorEmpleado.getEmpleadoLogeado(), incidencias.getIncidenciaID().toString(), "Incidencia", "Justificación " + incidencias.getEstatus());
                 ejbNotificacionesIncidencias.actualizarIncidencias(incidencias);
                 Messages.addGlobalInfo("¡Operación exitosa!");
             } else {
@@ -365,7 +361,7 @@ public class ControladorSubordinados implements Serializable {
         mostrarIncidencias(String.valueOf(fechaNow.getMonthValue()));
     }
 
-      public String calculaM(String area) {
+    public String calculaM(String area) {
         nombreAr = area.split(":");
         String hora = nombreAr[0];
         String minu = nombreAr[1];
@@ -377,7 +373,7 @@ public class ControladorSubordinados implements Serializable {
         t = h + m;
         return t.toString();
     }
-      
+
     public void imprimirValores() {
     }
 }
