@@ -3,16 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mx.edu.utxj.pye.siip.controller.vin;
+package mx.edu.utxj.pye.siip.controller.pye;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Date;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -23,6 +24,9 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.entity.pye2.ContactosEmpresa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CorreosEmpresa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
@@ -39,7 +43,6 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasBeneficiadosVinculacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasBeneficiadosVinculacionPK;
 import mx.edu.utxj.pye.sgi.entity.pye2.TelefonosEmpresa;
-import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.vin.DtoOrganismosVinculados;
 import mx.edu.utxj.pye.siip.dto.vin.DTOActividadesVinculacion;
@@ -57,10 +60,10 @@ import org.omnifaces.util.Faces;
  *
  * @author UTXJ
  */
-@Named(value = "organismosVinculadosC")
+@Named
 @ManagedBean
 @ViewScoped
-public class ControladorOrganismosVinculados implements Serializable {
+public class ControladorOrganismosVinculadosPYE implements Serializable {
 
     private static final long serialVersionUID = 2262599808841468998L;
     
@@ -70,6 +73,7 @@ public class ControladorOrganismosVinculados implements Serializable {
     @EJB    EjbModulos              ejbModulos;
     @EJB    EjbFiscalizacion        ejbFiscalizacion;
     @EJB    EjbConvenios            ejbConvenios;
+    @EJB    EjbCatalogos            ejbCatalogos;
     
     @Inject ControladorEmpleado controladorEmpleado;
     @Inject ControladorModulosRegistro controladorModulosRegistro;
@@ -83,7 +87,67 @@ public class ControladorOrganismosVinculados implements Serializable {
         try {
             dtoOrganismosVinculado.setListaProgramasEducativosBeneficiadosV(ejbOrganismosVinculados.getProgramasBeneficiadosVinculacion());
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorOrganismosVinculados.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorOrganismosVinculadosPYE.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void filtros() {
+        buscaActividadesVinculacion();
+        llenaCategorias();
+        dtoOrganismosVinculado.nulificarCategoria();
+        Faces.setSessionAttribute("categorias", dtoOrganismosVinculado.getListaCategoriasPOA());
+    }
+    
+    public void actualizarAreas(ValueChangeEvent e) {
+        dtoOrganismosVinculado.setCategoria((Categorias) e.getNewValue());
+        llenaAreas();
+        dtoOrganismosVinculado.nulificarAreaPOA();
+        Faces.setSessionAttribute("areas", dtoOrganismosVinculado.getListaAreasPOA());
+    }
+    
+    public void actualizarAnios(ValueChangeEvent e){
+        dtoOrganismosVinculado.setAreaUniversidadPOA((AreasUniversidad)e.getNewValue());
+        llenaAnios();
+        dtoOrganismosVinculado.nulificarAnioConsulta();
+    }
+    
+    public void actualizarMeses(ValueChangeEvent e){
+        dtoOrganismosVinculado.setAnioConsulta((short) e.getNewValue());
+        llenaMeses();
+        buscaOrganismosVinculados();
+    }
+    
+    public void llenaCategorias() {
+        dtoOrganismosVinculado.setListaCategoriasPOA(ejbCatalogos.getCategoriaAreasConPoa()
+                .stream()
+                .filter(categoria -> (short) 4 == categoria.getCategoria())
+                .collect(Collectors.toList()));
+        if (!dtoOrganismosVinculado.getListaCategoriasPOA().isEmpty() && dtoOrganismosVinculado.getCategoria() == null) {
+            dtoOrganismosVinculado.setCategoria(null);
+        }
+    }
+    
+    public void llenaAreas() {
+        dtoOrganismosVinculado.setListaAreasPOA(ejbCatalogos.getAreasUniversidadPorCategoriaConPoa(dtoOrganismosVinculado.getCategoria())
+                .stream()
+                .filter(area -> (short) 5 == area.getArea())
+                .collect(Collectors.toList()));
+        if (!dtoOrganismosVinculado.getListaAreasPOA().isEmpty() && dtoOrganismosVinculado.getAreaUniversidadPOA() == null) {
+            dtoOrganismosVinculado.setAreaUniversidadPOA(null);
+        }
+    }
+    
+    public void llenaAnios() {
+        dtoOrganismosVinculado.setAniosConsulta(ejbModulos.getEjercicioRegistros(dtoOrganismosVinculado.getRegistros(), dtoOrganismosVinculado.getAreaUniversidadPOA()));
+        if (!dtoOrganismosVinculado.getAniosConsulta().isEmpty()) {
+            dtoOrganismosVinculado.setAnioConsulta(null);
+        }
+    }
+    
+    public void llenaMeses() {
+        dtoOrganismosVinculado.setMesesConsulta(ejbModulos.getMesesRegistros(dtoOrganismosVinculado.getAnioConsulta(), dtoOrganismosVinculado.getRegistros(), dtoOrganismosVinculado.getAreaUniversidadPOA()));
+        if (!dtoOrganismosVinculado.getMesesConsulta().isEmpty()) {
+            dtoOrganismosVinculado.setMesConsulta(null);
         }
     }
     
@@ -97,80 +161,16 @@ public class ControladorOrganismosVinculados implements Serializable {
         dtoOrganismosVinculado.setMunicipios(ejbFiscalizacion.getMunicipiosPorEstado(dtoOrganismosVinculado.getEstado()));
         dtoOrganismosVinculado.setLocalidades(ejbFiscalizacion.getLocalidadesPorMunicipio(dtoOrganismosVinculado.getMunicipio()));
     }
-
-    public void listaOrganismosVinculadosPrevia(String rutaArchivo) {
-        try {
-            if (rutaArchivo != null) {
-                dtoOrganismosVinculado.setRutaArchivo(rutaArchivo);
-                dtoOrganismosVinculado.setLstOrganismosVinculados(ejbOrganismosVinculados.getListaOrganismosVinculados(rutaArchivo));
-            }
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorOrganismosVinculados.class.getName()).log(Level.SEVERE, null, ex);
-            if (dtoOrganismosVinculado.getRutaArchivo() != null) {
-                ServicioArchivos.eliminarArchivo(dtoOrganismosVinculado.getRutaArchivo());
-                dtoOrganismosVinculado.setRutaArchivo(null);
-            }
-        }
-    }
     
-    public void guardaOrganismosVinculados() {
-        if (dtoOrganismosVinculado.getLstOrganismosVinculados()!= null) {
-            try {
-                ejbOrganismosVinculados.guardaOrganismosVinculados(dtoOrganismosVinculado.getLstOrganismosVinculados(), dtoOrganismosVinculado.getRegistroTipo(), dtoOrganismosVinculado.getEjesRegistro(), dtoOrganismosVinculado.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
-            } catch (Throwable ex) {
-                Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-                Logger.getLogger(ControladorOrganismosVinculados.class.getName()).log(Level.SEVERE, null, ex);
-                if (dtoOrganismosVinculado.getRutaArchivo() != null) {
-                    ServicioArchivos.eliminarArchivo(dtoOrganismosVinculado.getRutaArchivo());
-                    dtoOrganismosVinculado.setRutaArchivo(null);
-                }
-            } finally {
-                dtoOrganismosVinculado.getLstOrganismosVinculados().clear();
-                dtoOrganismosVinculado.setRutaArchivo(null);
-            }
-        } else {
-            Messages.addGlobalWarn("¡Es necesario cargar un achivo!");
-        }
-
-    }
-    
-    public void cancelarArchivo(){
-        dtoOrganismosVinculado.getLstOrganismosVinculados().clear();
-//        listaOrganismosVinculados.getOrganismosVinculadosLst().clear();
-        if (dtoOrganismosVinculado.getRutaArchivo() != null) {
-            ServicioArchivos.eliminarArchivo(dtoOrganismosVinculado.getRutaArchivo());
-            dtoOrganismosVinculado.setRutaArchivo(null);
-        }
-    }
-    
-    public void filtros() {
-        dtoOrganismosVinculado.setAniosConsulta(ejbModulos.getEjercicioRegistros(dtoOrganismosVinculado.getRegistros(),dtoOrganismosVinculado.getArea()));
-        if(!dtoOrganismosVinculado.getAniosConsulta().isEmpty()){
-            dtoOrganismosVinculado.setAnioConsulta((short) dtoOrganismosVinculado.getAniosConsulta().get(dtoOrganismosVinculado.getAniosConsulta().size()-1));
-        }
-        dtoOrganismosVinculado.setMesesConsulta(ejbModulos.getMesesRegistros(dtoOrganismosVinculado.getAnioConsulta(),dtoOrganismosVinculado.getRegistros(),dtoOrganismosVinculado.getArea()));
-        if(!dtoOrganismosVinculado.getMesesConsulta().isEmpty()){
-            dtoOrganismosVinculado.setMesConsulta(dtoOrganismosVinculado.getMesesConsulta().stream()
-                .filter(t -> ejbModulos.getEventoRegistro().getMes().equals(t))
-                .findAny()
-                .orElse(dtoOrganismosVinculado.getMesesConsulta().get(dtoOrganismosVinculado.getMesesConsulta().size()-1)));
-        }
-        buscaOrganismosVinculados();
-        buscaActividadesVinculacion();
-    }
-    
-    public void actualizarMeses(ValueChangeEvent e) {
-        dtoOrganismosVinculado.setAnioConsulta((short) e.getNewValue());
-        dtoOrganismosVinculado.setMesesConsulta(ejbModulos.getMesesRegistros(dtoOrganismosVinculado.getAnioConsulta(), dtoOrganismosVinculado.getRegistros(),dtoOrganismosVinculado.getArea()));
-        buscaOrganismosVinculados();
-    }
-
     public void buscaOrganismosVinculados() {
-        dtoOrganismosVinculado.setLstOrganismosVinculados(ejbOrganismosVinculados.getFiltroOrganismoVinculadoEjercicioMesArea(dtoOrganismosVinculado.getAnioConsulta(), dtoOrganismosVinculado.getMesConsulta(), dtoOrganismosVinculado.getArea().getArea()));
-        dtoOrganismosVinculado.getLstOrganismosVinculados().stream().forEach((t) -> {
-            t.setRegistros(ejbModulos.buscaRegistroPorClave(t.getRegistro()));
-        });
+        if (dtoOrganismosVinculado.getMesConsulta() != null && !dtoOrganismosVinculado.getMesesConsulta().isEmpty()) {
+            dtoOrganismosVinculado.setLstOrganismosVinculados(ejbOrganismosVinculados.getFiltroOrganismoVinculadoEjercicioMesArea(dtoOrganismosVinculado.getAnioConsulta(), dtoOrganismosVinculado.getMesConsulta(), dtoOrganismosVinculado.getAreaUniversidadPOA().getArea()));
+            dtoOrganismosVinculado.getLstOrganismosVinculados().stream().forEach((t) -> {
+                t.setRegistros(ejbModulos.buscaRegistroPorClave(t.getRegistro()));
+            });
+        } else {
+            dtoOrganismosVinculado.setLstOrganismosVinculados(Collections.EMPTY_LIST);
+        }
         Ajax.update("formMuestraDatosActivos");
     }
     
@@ -178,16 +178,16 @@ public class ControladorOrganismosVinculados implements Serializable {
         try {
             dtoOrganismosVinculado.setListaActividadesVinculacion(ejbOrganismosVinculados.getActividadesVinculacion());
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorOrganismosVinculados.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorOrganismosVinculadosPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void eliminarRegistro(Integer registro, OrganismosVinculados orgVin) {
         try {
             ejbOrganismosVinculados.bajaOrganismoVinculado(orgVin);
-            filtros();
+            buscaOrganismosVinculados();
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorOrganismosVinculados.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorOrganismosVinculadosPYE.class.getName()).log(Level.SEVERE, null, ex);
             Messages.addGlobalError("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
         }
     }
@@ -201,7 +201,7 @@ public class ControladorOrganismosVinculados implements Serializable {
             dtoOrganismosVinculado.setListaEvidencias(ejbModulos.getListaEvidenciasPorRegistro(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado().getRegistro()));
             Ajax.update("frmEvidencias");
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorOrganismosVinculados.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorOrganismosVinculadosPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -232,7 +232,7 @@ public class ControladorOrganismosVinculados implements Serializable {
                 Messages.addGlobalError(String.format("Se registraron %s de %s evidencias, verifique e intente agregar las evidencias faltantes.", res.getValue().toString(),String.valueOf(dtoOrganismosVinculado.getArchivos().size())));
             }
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorOrganismosVinculados.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorOrganismosVinculadosPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -263,10 +263,10 @@ public class ControladorOrganismosVinculados implements Serializable {
     }
     
     public void actualizarEjes(Short ejercicio){
-        dtoOrganismosVinculado.setEjes(ejbFiscalizacion.getEjes(ejercicio, dtoOrganismosVinculado.getArea()));
+        dtoOrganismosVinculado.setEjes(ejbFiscalizacion.getEjes(ejercicio, dtoOrganismosVinculado.getAreaUniversidadPOA()));
         if(!dtoOrganismosVinculado.getEjes().isEmpty() && dtoOrganismosVinculado.getAlineacionEje() == null){
             dtoOrganismosVinculado.setAlineacionEje(dtoOrganismosVinculado.getEjes().get(0));
-            dtoOrganismosVinculado.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dtoOrganismosVinculado.getAlineacionEje(), dtoOrganismosVinculado.getArea()));
+            dtoOrganismosVinculado.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dtoOrganismosVinculado.getAlineacionEje(), dtoOrganismosVinculado.getAreaUniversidadPOA()));
         }
         Faces.setSessionAttribute("ejes", dtoOrganismosVinculado.getEjes());
     }
@@ -275,15 +275,15 @@ public class ControladorOrganismosVinculados implements Serializable {
         if(dtoOrganismosVinculado.getAlineacionActividad() != null){
             dtoOrganismosVinculado.setAlineacionEje(dtoOrganismosVinculado.getAlineacionActividad().getCuadroMandoInt().getEje());
 
-            dtoOrganismosVinculado.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dtoOrganismosVinculado.getAlineacionEje(), dtoOrganismosVinculado.getArea()));
+            dtoOrganismosVinculado.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dtoOrganismosVinculado.getAlineacionEje(), dtoOrganismosVinculado.getAreaUniversidadPOA()));
             dtoOrganismosVinculado.setAlineacionEstrategia(dtoOrganismosVinculado.getAlineacionActividad().getCuadroMandoInt().getEstrategia());
             Faces.setSessionAttribute("estrategias", dtoOrganismosVinculado.getEstrategias());
 
-            dtoOrganismosVinculado.setLineasAccion(ejbFiscalizacion.getLineasAccionPorEstrategia(dtoOrganismosVinculado.getAlineacionEstrategia(), dtoOrganismosVinculado.getArea()));
+            dtoOrganismosVinculado.setLineasAccion(ejbFiscalizacion.getLineasAccionPorEstrategia(dtoOrganismosVinculado.getAlineacionEstrategia(), dtoOrganismosVinculado.getAreaUniversidadPOA()));
             dtoOrganismosVinculado.setAlineacionLinea(dtoOrganismosVinculado.getAlineacionActividad().getCuadroMandoInt().getLineaAccion());
             Faces.setSessionAttribute("lineasAccion", dtoOrganismosVinculado.getLineasAccion());
 
-            dtoOrganismosVinculado.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoOrganismosVinculado.getAlineacionLinea(), dtoOrganismosVinculado.getArea()));
+            dtoOrganismosVinculado.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoOrganismosVinculado.getAlineacionLinea(), dtoOrganismosVinculado.getAreaUniversidadPOA()));
             Faces.setSessionAttribute("actividades", dtoOrganismosVinculado.getActividades());
         }else{
             dtoOrganismosVinculado.setAlineacionEje(null);
@@ -293,20 +293,20 @@ public class ControladorOrganismosVinculados implements Serializable {
     
     public void actualizarActividades(ValueChangeEvent event){
         dtoOrganismosVinculado.setAlineacionLinea((LineasAccion)event.getNewValue());
-        dtoOrganismosVinculado.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoOrganismosVinculado.getAlineacionLinea(), dtoOrganismosVinculado.getArea()));
+        dtoOrganismosVinculado.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoOrganismosVinculado.getAlineacionLinea(), dtoOrganismosVinculado.getAreaUniversidadPOA()));
         Faces.setSessionAttribute("actividades", dtoOrganismosVinculado.getActividades());
     }
     
     public void actualizarEstrategias(ValueChangeEvent event){
         dtoOrganismosVinculado.setAlineacionEje((EjesRegistro)event.getNewValue());
-        dtoOrganismosVinculado.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dtoOrganismosVinculado.getAlineacionEje(), dtoOrganismosVinculado.getArea()));
+        dtoOrganismosVinculado.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dtoOrganismosVinculado.getAlineacionEje(), dtoOrganismosVinculado.getAreaUniversidadPOA()));
         dtoOrganismosVinculado.nulificarEstrategia();
         Faces.setSessionAttribute("estrategias", dtoOrganismosVinculado.getEstrategias());
     }
     
     public void actualizarLineasAccion(ValueChangeEvent event){
         dtoOrganismosVinculado.setAlineacionEstrategia((Estrategias)event.getNewValue());
-        dtoOrganismosVinculado.setLineasAccion(ejbFiscalizacion.getLineasAccionPorEstrategia(dtoOrganismosVinculado.getAlineacionEstrategia(), dtoOrganismosVinculado.getArea()));
+        dtoOrganismosVinculado.setLineasAccion(ejbFiscalizacion.getLineasAccionPorEstrategia(dtoOrganismosVinculado.getAlineacionEstrategia(), dtoOrganismosVinculado.getAreaUniversidadPOA()));
         dtoOrganismosVinculado.nulificarLinea();
         Faces.setSessionAttribute("lineasAccion", dtoOrganismosVinculado.getLineasAccion());
     }
@@ -323,7 +323,7 @@ public class ControladorOrganismosVinculados implements Serializable {
             Ajax.oncomplete("skin();");
             Ajax.oncomplete("PF('modalAlineacion').show();");
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorOrganismosVinculados.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorOrganismosVinculadosPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -349,7 +349,7 @@ public class ControladorOrganismosVinculados implements Serializable {
             try {
                 dtoOrganismosVinculado.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado().getRegistro()));
             } catch (Throwable ex) {
-                Logger.getLogger(ControladorOrganismosVinculados.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ControladorOrganismosVinculadosPYE.class.getName()).log(Level.SEVERE, null, ex);
             }
             actualizarEjes(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
             cargarAlineacionXActividad();
@@ -636,7 +636,7 @@ public class ControladorOrganismosVinculados implements Serializable {
             Ajax.oncomplete("skin();");
             Ajax.oncomplete("PF('modalUbicacion').show();");
         } catch (Throwable e) {
-            Logger.getLogger(ControladorOrganismosVinculados.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(ControladorOrganismosVinculadosPYE.class.getName()).log(Level.SEVERE, null, e);
         }
     }
     

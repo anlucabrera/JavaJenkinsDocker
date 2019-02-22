@@ -13,6 +13,7 @@ import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.Convenios;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
@@ -26,6 +27,13 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
  * @author Planeacion
  */
 public final class DtoConvenios {
+    /************************** Lista áreas ****************************************/
+    @Getter private List<Categorias> listaCategoriasPOA;
+    @Getter private List<AreasUniversidad> listaAreasPOA; 
+    
+    @Getter private Categorias categoria;
+    @Getter private AreasUniversidad areaUniversidadPOA;
+    
     /************************** Evidencias *************************************/
     @Getter private DTOConvenio registro;
     
@@ -158,6 +166,64 @@ public final class DtoConvenios {
     
     public void setActividades(List<ActividadesPoa> actividades) {
         this.actividades = actividades;
+    }
+    
+    public void setListaCategoriasPOA(List<Categorias> listaCategoriasPOA) {
+        this.listaCategoriasPOA = listaCategoriasPOA;
+        if(listaCategoriasPOA.isEmpty())
+            nulificarCategoria();
+    }
+
+    public void setListaAreasPOA(List<AreasUniversidad> listaAreasPOA) {
+        this.listaAreasPOA = listaAreasPOA;
+        if(listaAreasPOA.isEmpty())
+            nulificarAreaPOA();
+    }
+
+    public void setAniosConsulta(List<Short> aniosConsulta) {
+        this.aniosConsulta = aniosConsulta;
+        if(aniosConsulta.isEmpty())
+            nulificarAnioConsulta();
+    }
+    
+    public void setMesesConsulta(List<String> mesesConsulta) {
+        this.mesesConsulta = mesesConsulta;
+    }
+    
+    public void setCategoria(Categorias categoria) {
+        this.categoria = categoria;
+        if(categoria == null)
+            nulificarCategoria();
+    }
+
+    public void setAreaUniversidadPOA(AreasUniversidad areaUniversidadPOA) {
+        this.areaUniversidadPOA = areaUniversidadPOA;
+        if(areaUniversidadPOA == null)
+            nulificarAreaPOA();
+    }
+
+    public void setAnioConsulta(Short anioConsulta) {
+        this.anioConsulta = anioConsulta;
+        if(anioConsulta == null)
+            nulificarAnioConsulta();
+    }
+    
+    public void setMesConsulta(String mesConsulta) {
+        this.mesConsulta = mesConsulta;
+    }
+    
+    public void nulificarCategoria(){
+        listaAreasPOA = Collections.EMPTY_LIST;
+        nulificarAreaPOA();
+    }
+    
+    public void nulificarAreaPOA(){
+        aniosConsulta = Collections.EMPTY_LIST;
+        nulificarAnioConsulta();
+    }
+    
+    public void nulificarAnioConsulta(){
+        mesesConsulta = Collections.EMPTY_LIST;
     }
     
 }

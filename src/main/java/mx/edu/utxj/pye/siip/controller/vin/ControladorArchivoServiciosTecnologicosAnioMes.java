@@ -60,7 +60,7 @@ public class ControladorArchivoServiciosTecnologicosAnioMes implements Serializa
     public void init(){
         eje = ejes[2];
         ejercicio = ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio();
-        area = ejbModulos.getAreaUniversidadPrincipalRegistro(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());;
+        area = ejbModulos.getAreaUniversidadPrincipalRegistro(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
         setEtapa(RegistroSiipEtapa.MOSTRAR);
     }
     

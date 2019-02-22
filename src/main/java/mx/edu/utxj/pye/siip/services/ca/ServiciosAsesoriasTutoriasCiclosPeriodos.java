@@ -358,7 +358,7 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
     }
 
     @Override
-    public List<DTOAsesoriasTutoriasCicloPeriodos> getListaRegistrosPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo, RegistrosTipo registrosTipo, Short actividad, Integer claveTutor) {
+    public List<DTOAsesoriasTutoriasCicloPeriodos> getListaRegistrosPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo, RegistrosTipo registrosTipo, Short actividad, Integer claveTutor, Short claveAreaEmpleado) {
 //        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaRegistrosPorEventoAreaPeriodo(inicio)");
         //verificar que los parametros no sean nulos
         if(evento == null || claveArea == null || periodo == null){
@@ -390,7 +390,7 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
         
         List<DTOAsesoriasTutoriasCicloPeriodos> l = new ArrayList<>();
         List<AsesoriasTutoriasMensualPeriodosEscolares> entities = new ArrayList<>();
-        if(actividad == 2){ 
+        if(actividad == 2 || claveAreaEmpleado == 6 || claveAreaEmpleado == 9){ 
             entities = facadeEscolar.getEntityManager().createQuery("SELECT atc FROM AsesoriasTutoriasMensualPeriodosEscolares atc INNER JOIN atc.registros r INNER JOIN r.tipo t INNER JOIN r.eventoRegistro er WHERE er.eventoRegistro=:evento AND atc.programaEducativo in :areas AND atc.periodoEscolar=:periodo AND t.registroTipo=:tipo ORDER BY atc.programaEducativo, atc.cuatrimestre, atc.grupo, atc.tipoActividad, atc.tipo", AsesoriasTutoriasMensualPeriodosEscolares.class)
                 .setParameter("areas", areas)
                 .setParameter("evento", evento.getEventoRegistro())
@@ -406,9 +406,6 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
                 .setParameter("claveTutor", claveTutor)
                 .getResultList();
         }
-        
-
-
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
             facadeEscolar.getEntityManager().refresh(e);

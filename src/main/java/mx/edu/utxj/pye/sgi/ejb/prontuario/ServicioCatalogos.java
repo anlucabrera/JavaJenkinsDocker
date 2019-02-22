@@ -247,4 +247,18 @@ public class ServicioCatalogos implements EjbCatalogos{
             return Collections.EMPTY_LIST;
         }
     }
+
+    @Override
+    public List<AreasUniversidad> getAreasUniversidadDepartamentosConPoa() {
+        try {
+            return facadeServGen.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a INNER JOIN a.categoria c WHERE c.categoria = :categoria AND a.vigente = :vigente AND a.tienePoa = :tienePOA", AreasUniversidad.class)
+                    .setParameter("categoria", ((short)6))
+                    .setParameter("vigente", "1")
+                    .setParameter("tienePOA", true)
+                    .getResultList();
+        } catch (NoResultException e) {
+            Messages.addGlobalWarn("<b>No se han encontrado Áreas para el filtrado de ejercicios y mes </b>");
+            return Collections.EMPTY_LIST;
+        }
+    }
 }

@@ -20,6 +20,11 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
  * @author UTXJ
  */
 public final class DtoAsesoriasTutorias {
+    /************************** Lista áreas ****************************************/
+    @Getter @Setter private List<AreasUniversidad> listaAreasPOA; 
+    
+    @Getter @Setter private AreasUniversidad areaUniversidadPOA;
+    
     @Getter private AreasUniversidad areaPOA;
     @Getter private DTOAsesoriasTutoriasCicloPeriodos registro;//representa al registro seleccionado o al registro circulante en la tabla de datos.
     @Getter private EjesRegistro eje;
@@ -98,7 +103,6 @@ public final class DtoAsesoriasTutorias {
     public void setEventosPorPeriodo(List<EventosRegistros> eventosPorPeriodo) {
         this.eventosPorPeriodo = eventosPorPeriodo;
         if(eventosPorPeriodo != null && !eventosPorPeriodo.isEmpty()){//si la lista de eventos existe
-//            eventosPorPeriodo.forEach(e -> System.out.println("mx.edu.utxj.pye.siip.dto.ca.DtoAsesoriasTutorias.setEventosPorPeriodo() evento: " + e.getMes()));
             setEventoSeleccionado(eventosPorPeriodo.get(0));//se selecciona el primer evento de la lista
             if(getEventosPorPeriodo().contains(getEventoActual())){//si la lista de eventos contiene al evento actual se declara a este como seleccionado
                 setEventoSeleccionado(getEventoActual());

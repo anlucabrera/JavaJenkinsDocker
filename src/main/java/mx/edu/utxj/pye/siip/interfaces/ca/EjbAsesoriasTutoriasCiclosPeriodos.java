@@ -46,9 +46,12 @@ public interface EjbAsesoriasTutoriasCiclosPeriodos {
      * @param claveArea Área a la que pertenece el usuario y que servirá como filtro.
      * @param periodo Periodo del evento y que servirá como filtro
      * @param registrosTipo Permite filtrar los registros por el tipo necesario.
+     * @param actividad
+     * @param claveTutor
+     * @param claveAreaEmpleado
      * @return Lista de registros mensuales.
      */
-    public List<DTOAsesoriasTutoriasCicloPeriodos> getListaRegistrosPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo, RegistrosTipo registrosTipo, Short actividad, Integer claveTutor);
+    public List<DTOAsesoriasTutoriasCicloPeriodos> getListaRegistrosPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo, RegistrosTipo registrosTipo, Short actividad, Integer claveTutor, Short claveAreaEmpleado);
     
     /**
      * Comprueba si el periodo del evento actual se encuentra en el periodo mas reciente, en caso de no encontrarlo obtiene el periodo correspondiente.

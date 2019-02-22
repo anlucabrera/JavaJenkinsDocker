@@ -83,7 +83,7 @@ public class ControladorSubordinados implements Serializable {
     @Getter    @Setter    private Modulosregistro modulosRegistro = new Modulosregistro();
     @Getter    @Setter    private String[] nombreAr;
 
-    @Getter    @Setter    private Date fechaActual = new Date(), fechaI = new Date(), fechaF = new Date(),fechaIR = new Date(), fechaFR = new Date();;
+    @Getter    @Setter    private Date fechaActual = new Date(), fechaI = new Date(), fechaF = new Date(),fechaIR = new Date(), fechaFR = new Date();
     @Getter    @Setter    private Integer empleadoLogeado, contactoDestino, anioNumero = 0;
     @Getter    @Setter    private String mensajeDNotificacion = "", mes = "", numeroQuincena = "1", anio = "";
     @Getter    @Setter    private Boolean visible = false, vistaMensual = true,fechaReportesActiva=false;
