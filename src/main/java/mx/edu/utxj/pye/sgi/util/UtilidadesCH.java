@@ -25,11 +25,18 @@ public class UtilidadesCH implements Serializable {
     @EJB    EjbCarga carga;
     @EJB    private EjbUtilidadesCH ejbDatosUsuarioLogeado;
 
+    public LocalDate castearDaLD(Date fecha) {
+        return fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    } 
+    
+    public Date castearLDaD(LocalDate fecha) {
+        return Date.from(fecha.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+    
     public Integer obtenerEdad(Date fechaNa) {
         try {
             LocalDate fechaActual = LocalDate.now();
-            LocalDate fechaNacimi = fechaNa.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();// convertir utill.Date a time.LocalDate
-//            Date date = Date.from(fechaActual.atStartOfDay(ZoneId.systemDefault()).toInstant());// Convertir de time.LocalDate a utill.Date
+            LocalDate fechaNacimi = castearDaLD(fechaNa);
 
             if (fechaActual.getMonthValue() >= fechaNacimi.getMonthValue()) {
                 if (fechaActual.getDayOfMonth() >= fechaNacimi.getDayOfMonth()) {
@@ -122,7 +129,6 @@ public class UtilidadesCH implements Serializable {
     }
 
     public String convertirRuta(String ruta) {
-        System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesCH.convertirRuta()" + ruta.isEmpty() + "1");
 
         //Se comprueba si la bao contiene la ruta de almacenamiento de la evidencia.
         if (ruta.isEmpty()) {

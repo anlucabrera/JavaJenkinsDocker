@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -84,6 +85,12 @@ public class ControladorSubordinados implements Serializable {
     @Getter    @Setter    private List<Incapacidad> listaIncapacidadsReporteImpresion = new ArrayList<>();
     @Getter    @Setter    private List<Cuidados> listaCuidados = new ArrayList<>();
 
+////////////////////////////////////////////////////////////////////////////////Perfil Subordinados
+    @Getter    @Setter    private InformacionAdicionalPersonal nuevoOBJInformacionAdicionalPersonal;
+    @Getter    @Setter    private ListaPersonal nuevoOBJListaPersonal;
+    @Getter    @Setter    private Personal nuevoOBJPersonal;
+    
+    
 ////////////////////////////////////////////////////////////////////////////////Variables extra    
     @Getter    @Setter    private List<ListaPersonal> nuevaListaListaPersonalJefes = new ArrayList<>();
     @Getter    @Setter    private List<String> estatus = new ArrayList<>();
@@ -93,15 +100,11 @@ public class ControladorSubordinados implements Serializable {
     @Getter    @Setter    private String[] nombreAr;
 
     @Getter    @Setter    private LocalDate fechaNow;
-    @Getter    @Setter    private Date fechaActual = new Date(), fechaI = new Date(), fechaF = new Date(),fechaIR = new Date(), fechaFR = new Date();;
+    @Getter    @Setter    private Date fechaI = new Date(), fechaF = new Date(),fechaIR = new Date(), fechaFR = new Date();
     @Getter    @Setter    private Integer empleadoLogeado, contactoDestino, anioNumero = 0;
-    @Getter    @Setter    private String mensajeDNotificacion = "", mes = "", numeroQuincena = "1", anio = "";
-    @Getter    @Setter    private Boolean visible = false, vistaMensual = true,fechaReportesActiva=false;
+    @Getter    @Setter    private String mensajeDNotificacion = "";
+    @Getter    @Setter    private Boolean visible = false, fechaReportesActiva=false;
 
-    @Getter    @Setter    private Funciones nuevoOBJFunciones;
-    @Getter    @Setter    private InformacionAdicionalPersonal nuevoOBJInformacionAdicionalPersonal;
-    @Getter    @Setter    private ListaPersonal nuevoOBJListaPersonal, nuevoOBJListaPersonalFiltro, nuevoOBJListaPersonalLogeado;
-    @Getter    @Setter    private Personal nuevoOBJPersonal;
 
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbFunciones ejbFunciones;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
@@ -123,114 +126,144 @@ public class ControladorSubordinados implements Serializable {
         estatus.add("Denegado");
         estatus.add("Pendiente");
         empleadoLogeado = controladorEmpleado.getEmpleadoLogeado();
-        nuevoOBJFunciones = new Funciones();
-        if (fechaActual.getDate() <= 15) {
-            numeroQuincena = "1";
-        } else {
-            numeroQuincena = "2";
-        }
-        if (fechaActual.getMonth() <= 8) {
-            mes = "0" + (fechaActual.getMonth() + 1);
-        } else {
-            mes = String.valueOf(fechaActual.getMonth() + 1);
-        }
-        anioNumero = fechaActual.getYear() - 100;
-        anio = "20" + anioNumero;
+        fechaNow=LocalDate.now();
+        anioNumero =  fechaNow.getYear();
         visible = false;
-        mostrarContactosParaNotificacion();
-        modulosEventos();
-        mostrarIncidencias(mes);        
+        mostrarSubordinados();
+        reportesJustificacionAsistencias();
+        mostrarIncidencias(String.valueOf(fechaNow.getMonthValue()));        
     }
-
-    public void modulosEventos() {
+    
+    public void mostrarSubordinados() {
         try {
-            fechaReportesActiva=false;
+            nuevaListaListaPersonalJefes=new ArrayList<>();
+            nuevaListaListaPersonalJefes.clear();
+            nuevaListaListaPersonalJefes = ejbPersonal.mostrarListaPersonalListSubordinados(controladorEmpleado.getNuevoOBJListaPersonal());
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void reportesJustificacionAsistencias() {
+        try {
+            fechaReportesActiva = false;
             List<Incidencias> incidenciases = new ArrayList<>();
             incidenciases.clear();
             List<Incapacidad> incapacidads = new ArrayList<>();
             incapacidads.clear();
-            
-            listaIncidenciasReporteImpresion=new ArrayList<>();
-            
+            listaIncidenciasReporteImpresion = new ArrayList<>();
             modulosRegistro = ejbDatosUsuarioLogeado.mostrarModuloregistro("Incidencia");
-            fechaIR = new Date();
-            fechaFR = new Date(); 
-            String m="",a="",d="";
-            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            if (modulosRegistro != null) {                                                                
-                if ((fechaActual.compareTo(modulosRegistro.getFechaInicio()) >= 0) && (fechaActual.compareTo(modulosRegistro.getFechaFin()) <= 0)) {
-                    fechaReportesActiva=true;
-                    if (modulosRegistro.getFechaFin().getDate() > 15) {
-                        fechaIR = dateFormat.parse("01" + "/" + mes + "/" + anio);
-                        fechaFR = dateFormat.parse("15" + "/" + mes + "/" + anio);
-                    } else {
-                        a = "20" + (fechaActual.getYear() - 100);
-                        switch (modulosRegistro.getFechaFin().getMonth()) {
-                            case 0:                                d = "31";                                m = "12";                                a = "20" + (fechaActual.getYear() - 101);                                break;
-                            case 1:                                d = "31";                                m = "01";                                break;
-                            case 2:                                d = "28";                                m = "02";                                break;
-                            case 3:                                d = "31";                                m = "03";                                break;
-                            case 4:                                d = "30";                                m = "04";                                break;
-                            case 5:                                d = "31";                                m = "05";                                break;
-                            case 6:                                d = "30";                                m = "06";                                break;
-                            case 7:                                d = "31";                                m = "07";                                break;
-                            case 8:                                d = "31";                                m = "08";                                break;
-                            case 9:                                d = "30";                                m = "09";                                break;
-                            case 10:                                d = "31";                                m = "10";                                break;
-                            case 11:                                d = "30";                                m = "11";                                break;
-                        }
-                        fechaIR = dateFormat.parse("16" + "/" + m + "/" + a);
-                        fechaFR = dateFormat.parse(d + "/" + m + "/" + a);
-                    }
-
-                    incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(fechaIR, fechaFR);
-                    if (!incidenciases.isEmpty()) {
-                        incidenciases.forEach((Incidencias t) -> {
-                            if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
-                                listaIncidenciasReporteImpresion.add(t);
-                            }
-                        });
-                    }
-
-                    listaIncapacidadsReporteImpresion = new ArrayList<>();
-                    listaIncapacidadsReporteImpresion.clear();
-                    incapacidads = ejbNotificacionesIncidencias.mostrarIncapacidadReporte(fechaIR, fechaFR);                    
-                    if (!incapacidads.isEmpty()) {
-                        incapacidads.forEach((t) -> {
-                            if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
-                                listaIncapacidadsReporteImpresion.add(t);
-                            }
-                        });
-                    }
-                }
-
+            if (modulosRegistro == null) {
+                return;
             }
-            if (!listaIncidenciasReporteImpresion.isEmpty()) {
-                listaIncidenciasReporteImpresion.forEach((t) -> {
-                    if (t.getEstatus().equals("Aceptado")) {
-                        t.setEstatus("JUSTIFICADO");
-                    } else if (t.getEstatus().equals("Denegado")) {
-                        t.setEstatus("NO JUSTIFICADO");
-                    } else if (t.getEstatus().equals("Pendiente")) {
-                        t.setEstatus("");
+            LocalDate fechaMi = utilidadesCH.castearDaLD(modulosRegistro.getFechaInicio());
+            LocalDate fechaMF = utilidadesCH.castearDaLD(modulosRegistro.getFechaFin());
+            if (fechaNow.isAfter(fechaMi) && fechaNow.isBefore(fechaMF)) {
+                fechaReportesActiva = true;
+                if (fechaMF.getDayOfMonth() > 15) {
+                    fechaIR = utilidadesCH.castearLDaD(LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue(), 01));
+                    fechaFR = utilidadesCH.castearLDaD(LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue(), 15));
+                } else {
+                    if (fechaMF.getMonthValue() == 1) {
+                        fechaIR = utilidadesCH.castearLDaD(LocalDate.of((fechaMF.getYear()-1), 12, 16));
+                        fechaFR = utilidadesCH.castearLDaD(LocalDate.of((fechaMF.getYear()-1), 12, 31));
+                    } else {
+                        fechaIR = utilidadesCH.castearLDaD(LocalDate.of(fechaMF.getYear(), (fechaMF.getMonthValue() - 1), 16));
+                        fechaFR = utilidadesCH.castearLDaD(LocalDate.of(fechaMF.getYear(), (fechaMF.getMonthValue() - 1), LocalDate.of(anioNumero, (fechaMF.getMonthValue() - 1), 01).lengthOfMonth()));
+                    }                    
+                }
+                incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(fechaIR, fechaFR);
+                if (!incidenciases.isEmpty()) {
+                    incidenciases.forEach((Incidencias t) -> {
+                        if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
+                            listaIncidenciasReporteImpresion.add(t);
+                        }
+                    });
+                }
+                listaIncapacidadsReporteImpresion = new ArrayList<>();
+                listaIncapacidadsReporteImpresion.clear();
+                incapacidads = ejbNotificacionesIncidencias.mostrarIncapacidadReporte(fechaIR, fechaFR);
+                if (!incapacidads.isEmpty()) {
+                    incapacidads.forEach((t) -> {
+                        if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
+                            listaIncapacidadsReporteImpresion.add(t);
+                        }
+                    });
+                }
+            }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
+    public void mostrarIncidencias(String mActual) {
+        try {
+            listaIncidencias = new ArrayList<>();            listaIncidencias.clear();
+            List<Incidencias> incidenciases = new ArrayList<>();            incidenciases.clear();
+            List<Incapacidad> incapacidads = new ArrayList<>();            incapacidads.clear();
+            List<Cuidados> cuidadoses = new ArrayList<>();            cuidadoses.clear();
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.mostrarIncidencias(1)");
+            fechaI = utilidadesCH.castearLDaD(LocalDate.of(anioNumero, Integer.parseInt(mActual), 01));
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.mostrarIncidencias(2)");
+            fechaF = utilidadesCH.castearLDaD(LocalDate.of(anioNumero, Integer.parseInt(mActual), LocalDate.of(anioNumero, Integer.parseInt(mActual), 01).lengthOfMonth()));
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.mostrarIncidencias(3)");
+            incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(fechaI, fechaF);
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.mostrarIncidencias(4)");
+            if (!incidenciases.isEmpty()) {
+                incidenciases.forEach((t) -> {
+                    if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
+                        if (visible) {
+                            if (t.getEstatus().equals("Pendiente")) {
+                                listaIncidencias.add(t);
+                            }
+                        } else {
+                            listaIncidencias.add(t);
+                        }
                     }
                 });
             }
 
+            listaIncapacidads = new ArrayList<>();
+            listaIncapacidads.clear();
+            incapacidads = ejbNotificacionesIncidencias.mostrarIncapacidadReporte(fechaI, fechaF);
+            if (!incapacidads.isEmpty()) {
+                incapacidads.forEach((t) -> {
+                    if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
+                        listaIncapacidads.add(t);
+                    }
+                });
+            }
+
+            listaCuidados = new ArrayList<>();
+            listaCuidados.clear();
+            cuidadoses = ejbNotificacionesIncidencias.mostrarCuidadosReporte(fechaI, fechaF);
+            if (!cuidadoses.isEmpty()) {
+                cuidadoses.forEach((t) -> {
+                    if ((t.getPersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getPersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getPersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
+                        listaCuidados.add(t);
+                    }
+                });
+            }
+            Ajax.update("@(form)");
+            Ajax.update("@(form)");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+
     public void mostrarPerfilSubordinado() {
         try {
             nuevoOBJPersonal = new Personal();
-            nuevoOBJInformacionAdicionalPersonal = ejbPersonal.mostrarInformacionAdicionalPersonalLogeado(contactoDestino);
-            nuevoOBJListaPersonal = ejbPersonal.mostrarListaPersonal(contactoDestino);
             nuevoOBJPersonal = ejbPersonal.mostrarPersonalLogeado(contactoDestino);
+            nuevoOBJListaPersonal = ejbPersonal.mostrarListaPersonal(contactoDestino);
+            nuevoOBJInformacionAdicionalPersonal = ejbPersonal.mostrarInformacionAdicionalPersonalLogeado(contactoDestino);
             listaIncidenciasIndividuales = ejbNotificacionesIncidencias.mostrarIncidencias(contactoDestino);
-            listaDocencias = ejbPersonal.mostrarListaDocencias(contactoDestino);
+            listaDocencias = ejbPersonal.mostrarListaDocencias(contactoDestino);            
             informacionCV();
             mostrarFuncioneSubordinado();
         } catch (Throwable ex) {
@@ -295,124 +328,10 @@ public class ControladorSubordinados implements Serializable {
         }
     }
 
-    public void mostrarContactosParaNotificacion() {
-        try {
-            nuevoOBJListaPersonalLogeado = new ListaPersonal();
-            nuevoOBJListaPersonalLogeado = ejbPersonal.mostrarListaPersonal(empleadoLogeado);
-            nuevaListaListaPersonalJefes = ejbPersonal.mostrarListaPersonalListSubordinados(nuevoOBJListaPersonalLogeado);
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void mostrarIncidencias(String mActual) {
-        try {
-            fechaNow=LocalDate.now();                                                                                    fechaNow=LocalDate.of(18, 1, 1);                                                                                    
-            List<Incidencias> incidenciases = new ArrayList<>();
-            incidenciases.clear();
-            List<Incapacidad> incapacidads = new ArrayList<>();
-            incapacidads.clear();
-            List<Cuidados> cuidadoses = new ArrayList<>();
-            cuidadoses.clear();
-            
-            mes = mActual;
-            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            fechaI = new Date();
-            fechaF = new Date();
-            String diai = "";
-            String diaf = "";
-            if (vistaMensual) {
-                diai = "01";
-                diaf = "31";
-            } else {
-                if (numeroQuincena.equals("1")) {
-                    diai = "01";
-                    diaf = "15";
-                } else {
-                    diai = "16";
-                    switch (mes) {
-                        case "01": diaf = "31"; break;
-                        case "02": diaf = "28"; break;
-                        case "03": diaf = "31"; break;
-                        case "04": diaf = "30"; break;
-                        case "05": diaf = "31"; break;
-                        case "06": diaf = "30"; break;
-                        case "07": diaf = "31"; break;
-                        case "08": diaf = "31"; break;
-                        case "09": diaf = "30"; break;
-                        case "10": diaf = "31"; break;
-                        case "11": diaf = "30"; break;
-                        case "12": diaf = "31"; break;
-                    }
-                }
-            }
-//            fechaNow=LocalDate.of(18, 1, 1);
-//            fechaI = Date.from(fechaNow.atStartOfDay(ZoneId.systemDefault()).toInstant());;
-            fechaI = dateFormat.parse(diai + "/" + mes + "/" + anio);
-            fechaF = dateFormat.parse(diaf + "/" + mes + "/" + anio);
-
-            listaIncidencias = new ArrayList<>();
-            listaIncidencias.clear();
-            incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(fechaI, fechaF);
-            if (!incidenciases.isEmpty()) {
-                incidenciases.forEach((t) -> {
-                    if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
-                        if (visible) {
-                            if (t.getEstatus().equals("Pendiente")) {
-                                listaIncidencias.add(t);
-                            }
-                        } else {
-                            listaIncidencias.add(t);
-                        }
-                    }
-                });
-            }
-            if (!listaIncidencias.isEmpty()) {
-                listaIncidencias.forEach((t) -> {
-                    if (t.getEstatus().equals("Aceptado")) {
-                        t.setEstatus("JUSTIFICADO");
-                    } else if (t.getEstatus().equals("Denegado")) {
-                        t.setEstatus("NO JUSTIFICADO");
-                    } else if (t.getEstatus().equals("Pendiente")) {
-                        t.setEstatus("");
-                    }
-                });
-            }
-
-            listaIncapacidads = new ArrayList<>();
-            listaIncapacidads.clear();
-            incapacidads = ejbNotificacionesIncidencias.mostrarIncapacidadReporte(fechaI, fechaF);
-            if (!incapacidads.isEmpty()) {
-                incapacidads.forEach((t) -> {
-                    if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
-                        listaIncapacidads.add(t);
-                    }
-                });
-            }
-            
-            listaCuidados = new ArrayList<>();
-            listaCuidados.clear();
-            cuidadoses = ejbNotificacionesIncidencias.mostrarCuidadosReporte(fechaI, fechaF);
-            if (!cuidadoses.isEmpty()) {
-                cuidadoses.forEach((t) -> {
-                    if ((t.getPersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getPersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getPersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
-                        listaCuidados.add(t);
-                    }
-                });
-            }                        
-            Ajax.update("@(form)");
-            Ajax.update("@(form)");
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
     public void onRowEdit(RowEditEvent event) {
         try {
             Incidencias incidencias = (Incidencias) event.getObject();
-            Integer dias = (int) ((fechaActual.getTime() - incidencias.getFecha().getTime()) / 86400000);
+            Integer dias = (int) ((utilidadesCH.castearLDaD(fechaNow).getTime() - incidencias.getFecha().getTime()) / 86400000);
             Integer maximo = 0;
             switch (incidencias.getFecha().getDay()){
                 case 1:  maximo = 3; break;
@@ -421,8 +340,7 @@ public class ControladorSubordinados implements Serializable {
                 case 4:  maximo = 5; break;
                 case 5:  maximo = 5; break;
                 case 6:  maximo = 4; break;
-            }
-            
+            }            
             if (dias <= maximo) {
                 utilidadesCH.agregaBitacora(empleadoLogeado, incidencias.getIncidenciaID().toString(), "Incidencia", "Justificación "+incidencias.getEstatus());
                 ejbNotificacionesIncidencias.actualizarIncidencias(incidencias);
@@ -430,49 +348,21 @@ public class ControladorSubordinados implements Serializable {
             } else {
                 Messages.addGlobalInfo("¡El timepo asiganado para validar incidencia a expirado!");
             }
-            mostrarIncidencias(mes);
+            mostrarIncidencias(String.valueOf(fechaNow.getMonthValue()));
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void vistaMensualAsiganado(ValueChangeEvent event) {
-        vistaMensual = true;
-        vistaMensual = (Boolean) event.getNewValue();
-        mostrarIncidencias(mes);
-    }
-
-    public void numeroQuincenaAsiganado(ValueChangeEvent event) {
-        numeroQuincena = "";
-        numeroQuincena = event.getNewValue().toString();
-        mostrarIncidencias(mes);
-    }
-
     public void numeroAnioAsiganado(ValueChangeEvent event) {
-        anio = "";
         anioNumero = 0;
         anioNumero = Integer.parseInt(event.getNewValue().toString());
-        anio = "20" + anioNumero;
-        mostrarIncidencias(mes);
+        mostrarIncidencias(String.valueOf(fechaNow.getMonthValue()));
     }
 
     public void novisible() {
-        mostrarIncidencias(mes);
-    }
-
-    public void onRowCancel(RowEditEvent event) {
-        Messages.addGlobalWarn("¡Operación cancelada!");
-    }
-
-     public String convertirRutaVistaEvidencia(String ruta) {
-        if (!"".equals(ruta)) {
-            File file = new File(ruta);
-            return "evidencias2".concat(file.toURI().toString().split("archivos")[1]);
-        } else {
-            Messages.addGlobalWarn("No fue posible cargar el archivo!");
-            return null;
-        }
+        mostrarIncidencias(String.valueOf(fechaNow.getMonthValue()));
     }
 
       public String calculaM(String area) {

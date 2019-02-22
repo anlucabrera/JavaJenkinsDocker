@@ -266,11 +266,11 @@
                                                     </p:outputPanel>   
                                                     <p:remoteCommand name="actualizarTabla" actionListener="#{controladorIncidenciasGeneral.imprimirValores()}" update="tblActividades" /> 
                                                     <p:dataTable id="tblActividades"  value="#{controladorIncidenciasGeneral.listaIncapacidads}"  var="incapacidades"
-                                                                 sortBy="#{incapacidades.clavePersonal.areaOperativa}" expandableRowGroups="true"
+                                                                 sortBy="#{incapacidades.clavePersonal.areaSuperior}" expandableRowGroups="true"
                                                                  emptyMessage="No se encontraron Registros." rendered="true">
                                                         <p:headerRow>
                                                             <p:column colspan="6" style="background: #2796cb; color: #FFFFFF;">
-                                                                <h:outputText value="#{controladorIncidenciasGeneral.buscarArea(incapacidades.clavePersonal.areaOperativa)}" />
+                                                                <h:outputText value="#{controladorIncidenciasGeneral.buscarArea(incapacidades.clavePersonal.actividad.actividad eq 1?incapacidades.clavePersonal.areaOperativa:incapacidades.clavePersonal.areaSuperior)}" />
                                                             </p:column>
                                                         </p:headerRow>
                                                         <p:column style="width: 50px;">
@@ -351,11 +351,11 @@
                                                     </p:outputPanel>   
                                                     <p:remoteCommand name="actualizarTabla" actionListener="#{controladorIncidenciasGeneral.imprimirValores()}" update="tblActividades" /> 
                                                     <p:dataTable id="tblActividades"  value="#{controladorIncidenciasGeneral.listaCuidadoses}"  var="cuidados"
-                                                                 sortBy="#{cuidados.personal.areaOperativa}" expandableRowGroups="true"
+                                                                 sortBy="#{cuidados.personal.areaSuperior}" expandableRowGroups="true"
                                                                  emptyMessage="No se encontraron Registros." rendered="true">
                                                         <p:headerRow>
                                                             <p:column colspan="7" style="background: #2796cb; color: #FFFFFF;">
-                                                                <h:outputText value="#{controladorIncidenciasGeneral.buscarArea(cuidados.personal.areaOperativa)}" />
+                                                                <h:outputText value="#{controladorIncidenciasGeneral.buscarArea(cuidados.personal.actividad.actividad eq 1?cuidados.personal.areaOperativa:cuidados.personal.areaSuperior)}" />
                                                             </p:column>
                                                         </p:headerRow>
                                                         <p:column style="width: 5%;">

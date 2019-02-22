@@ -175,10 +175,8 @@ public class ControladorIncidenciasPersonal implements Serializable {
                                     return;
                                 }
                             } else {
-                                if (tiempo.getMinutes() < 11 || tiempo.getMinutes() > 20) {
-                                    Messages.addGlobalWarn("¡El Retardo menor es desde los 11 minutos hasta los 20 minutos!");
-                                    return;
-                                }
+                                Messages.addGlobalWarn("¡El Retardo menor es desde los 11 minutos hasta los 20 minutos!");
+                                return;
                             }
                             break;
                         case "Retardo mayor":

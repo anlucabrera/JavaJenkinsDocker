@@ -927,8 +927,8 @@
                                                     <div class="col-sm-12 border-right">
                                                         <div class="description-block">
                                                             <h5 class="description-header">Función genérica</h5>
-                                                            <c:forEach var="i" begin="0" end="#{controladorPersonal.listaFuncioneSubordinado.size()-1}">
-                                                                <c:set var="eje" value="#{controladorPersonal.listaFuncioneSubordinado.get(i)}"/>
+                                                            <c:forEach var="i" begin="0" end="#{controladorEmpleadoLogeado.listaFuncionesLogeado.size()-1}">
+                                                                <c:set var="eje" value="#{controladorEmpleadoLogeado.listaFuncionesLogeado.get(i)}"/>
                                                                 <c:if test="#{eje.tipo eq 'GENERAL'}">
                                                                     <br/>
                                                                     <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
@@ -943,8 +943,8 @@
                                                     <div class="col-sm-12 border-right">
                                                         <div class="description-block">
                                                             <h5 class="description-header">Funciones específicas</h5>
-                                                            <c:forEach var="i" begin="0" end="#{controladorPersonal.listaFuncioneSubordinado.size()-1}">
-                                                                <c:set var="eje" value="#{controladorPersonal.listaFuncioneSubordinado.get(i)}"/>
+                                                            <c:forEach var="i" begin="0" end="#{controladorEmpleadoLogeado.listaFuncionesLogeado.size()-1}">
+                                                                <c:set var="eje" value="#{controladorEmpleadoLogeado.listaFuncionesLogeado.get(i)}"/>
                                                                 <c:if test="#{eje.tipo ne 'GENERAL'}">
                                                                     <br/>
                                                                     <span class="description-text" style="text-align: justify">#{eje.nombre}</span>

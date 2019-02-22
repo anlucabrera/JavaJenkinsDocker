@@ -30,7 +30,7 @@
             </h1>
         </p:panel>
         <p:panel id="informacion" class="hidden-xs hidden-sm">
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Directivo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Coordinador' || controladorEmpleado.nuevoOBJListaPersonal.clave eq 563}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Directivo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Coordinador'}">
                 <div class="row">
                     <h:form id="frmFunciones">
                         <p:outputLabel value="Subordinados(as)" for="clave" class="col-sm-2 control-label"/>
@@ -763,20 +763,11 @@
                     </div>
                 </section>
             </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Administrativo'}">
-                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave != 563}">
-                    <h1>
-                        Esta página está disponible solo para directivos.
-                    </h1>
-                </c:if>
-            </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Docente'}">
-                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave != 563}">
-                    <h1>
-                        Esta página está disponible solo para directivos.
-                    </h1>
-                </c:if>
-            </c:if>
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Administrativo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Docente'}">
+                <h1>
+                    Esta página está disponible solo para directivos.
+                </h1>
+            </c:if>            
         </p:panel>
     </ui:define>
     <h:outputScript library="js" name="funciones.js" />
