@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
@@ -32,41 +31,41 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
-import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
-import mx.edu.utxj.pye.siip.dto.finanzas.DTOIngPropios;
-import mx.edu.utxj.pye.siip.dto.finanzas.DtoIngresosPropios;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
+import mx.edu.utxj.pye.siip.dto.vin.DtoBolsaTrabajo;
+import mx.edu.utxj.pye.siip.dto.vin.DtoBolsaEntrevistas;
+import mx.edu.utxj.pye.siip.dto.vinculacion.DTOBolsa;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbEvidenciasAlineacion;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
-import mx.edu.utxj.pye.siip.interfaces.pa.EjbIngPropios;
-import mx.edu.utxj.pye.siip.interfaces.pa.EjbPlantillasPAExcel;
+import mx.edu.utxj.pye.siip.interfaces.vin.EjbBolsaTrabajo;
+import mx.edu.utxj.pye.siip.interfaces.vin.EjbPlantillasVINExcel;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 
-
 /**
  *
  * @author UTXJ
  */
-@Named(value = "ingresosPropPYE")
+@Named(value = "bolTrabPYE")
 @ViewScoped
-public class ControladorIngPropiosPYE implements Serializable{
+public class ControladorBolsaTrabajoPYE implements Serializable{
 
-    private static final long serialVersionUID = -5088146452559040903L;
-    //Variables para almacenar el registro
-    @Getter @Setter DtoIngresosPropios dto;
+    private static final long serialVersionUID = 5617198786004196846L;
     
-    @EJB EjbIngPropios ejb;
+    @Getter @Setter DtoBolsaTrabajo dto;
+    @Getter @Setter DtoBolsaEntrevistas dtopart;
+    
+    @EJB EjbBolsaTrabajo ejb;
     @EJB EjbFiscalizacion ejbFiscalizacion;
     @EJB EjbEvidenciasAlineacion ejbEvidenciasAlineacion;
     @EJB EjbModulos ejbModulos;
-    @EJB EjbPlantillasPAExcel ejbPlantillasPAExcel;
+    @EJB EjbPlantillasVINExcel ejbPlantillasVINExcel;
     @Inject ControladorEmpleado controladorEmpleado;
     @Inject ControladorModulosRegistro controladorModulosRegistro;
     
@@ -79,23 +78,26 @@ public class ControladorIngPropiosPYE implements Serializable{
     
     @PostConstruct
     public void init(){
-        //        Variables que se obtendrán mediante un método
-        dto = new DtoIngresosPropios();  
+        dto = new  DtoBolsaTrabajo();  
+        dtopart = new  DtoBolsaEntrevistas();
         dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short)7));
+      
+        dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short)5));
+        dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());
         } catch (EventoRegistroNoExistenteException ex) {
-            Logger.getLogger(ControladorIngPropiosPYE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorBolsaTrabajoPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
         initFiltros();
         
         clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
-        claveRegistro = 67;
+        claveRegistro = 79;
         consultarPermiso();
 
     }
-    public void initFiltros(){
+   
+   public void initFiltros(){
         dto.setPeriodos(ejb.getPeriodosConregistro());
         dto.setEventosPorPeriodo(ejb.getEventosPorPeriodo(dto.getPeriodo()));
         try {
@@ -106,31 +108,23 @@ public class ControladorIngPropiosPYE implements Serializable{
             }
         } catch (PeriodoEscolarNecesarioNoRegistradoException ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
-            Logger.getLogger(ControladorIngPropiosPYE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorBolsaTrabajoPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
         cargarListaPorEvento();
     }
-  
-      public void consultarPermiso(){
-        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro);
-        if(listaReg == null || listaReg.isEmpty()){
-            Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
-        }
-    }
-    
-   
     
     public void cargarListaPorEvento(){
-       dto.setLista(ejb.getListaRegistrosPorEventoAreaPeriodo(dto.getEventoSeleccionado(), dto.getAreaPOA().getArea(), dto.getPeriodo()));
+       dto.setLista(ejb.getListaRegistrosPorEventoAreaPeriodo(dto.getEventoSeleccionado(), dto.getArea().getArea(), dto.getPeriodo()));
+       dtopart.setLista(ejb.getListaRegistrosPorEventoAreaPeriodoPart(dto.getEventoSeleccionado(), dto.getArea().getArea(), dto.getPeriodo()));
     }
     
     public void cargarEvidenciasPorRegistro(){
-        dto.setListaEvidencias(ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(dto.getRegistro().getIngresosPropiosCaptados().getRegistro()));
+        dto.setListaEvidencias(ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(dto.getRegistro().getBolsaTrabajo().getRegistro()));
         Ajax.update("frmEvidencias");
     }
     
-    public List<EvidenciasDetalle> consultarEvidencias(DTOIngPropios registro){
-        return ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(registro.getIngresosPropiosCaptados().getRegistro());
+    public List<EvidenciasDetalle> consultarEvidencias(DTOBolsa registro){
+        return ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(registro.getBolsaTrabajo().getRegistro());
     }
     
     public void descargarEvidencia(EvidenciasDetalle evidencia) throws IOException{
@@ -139,7 +133,7 @@ public class ControladorIngPropiosPYE implements Serializable{
     }
   
     public void eliminarEvidencia(EvidenciasDetalle evidencia){
-        Boolean eliminado = ejbEvidenciasAlineacion.eliminarEvidenciaEnRegistro(dto.getRegistro().getIngresosPropiosCaptados().getRegistro(), evidencia);
+        Boolean eliminado = ejbEvidenciasAlineacion.eliminarEvidenciaEnRegistro(dto.getRegistro().getBolsaTrabajo().getRegistro(), evidencia);
         if(eliminado){ 
             Messages.addGlobalInfo("El archivo se eliminó de forma correcta.");
             cargarEvidenciasPorRegistro();
@@ -155,7 +149,7 @@ public class ControladorIngPropiosPYE implements Serializable{
         }
     }
     
-    public void seleccionarRegistro(DTOIngPropios registro){
+    public void seleccionarRegistro(DTOBolsa registro){
         dto.setRegistro(registro);
         cargarEvidenciasPorRegistro();
         Ajax.oncomplete("skin();");
@@ -164,7 +158,7 @@ public class ControladorIngPropiosPYE implements Serializable{
     }
     
     public void subirEvidencias(){
-        Map.Entry<Boolean, Integer> res = ejbEvidenciasAlineacion.registrarEvidenciasARegistro(dto.getRegistro().getIngresosPropiosCaptados().getRegistro(), dto.getArchivos(), dto.getEventoActual(), dto.getRegistroTipo());
+        Map.Entry<Boolean, Integer> res = ejbEvidenciasAlineacion.registrarEvidenciasARegistro(dto.getRegistro().getBolsaTrabajo().getRegistro(), dto.getArchivos(), dto.getEventoActual(), dto.getRegistroTipo());
         if(res.getKey()){ 
             cargarListaPorEvento();
             Messages.addGlobalInfo("Las evidencias se registraron correctamente.");
@@ -178,6 +172,14 @@ public class ControladorIngPropiosPYE implements Serializable{
         dto.setEventosPorPeriodo(ejb.getEventosPorPeriodo(dto.getPeriodo()));
         cargarListaPorEvento();
     }
+  
+    public void consultarPermiso(){
+        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro);
+        if(listaReg == null || listaReg.isEmpty()){
+            Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
+        }
+    }
+    
     public Boolean verificaAlineacion(Integer registro) throws Throwable{
         return ejbModulos.verificaActividadAlineadaGeneral(registro);
     }
@@ -231,22 +233,22 @@ public class ControladorIngPropiosPYE implements Serializable{
         Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
     }
     
-    public void abrirAlineacionPOA(DTOIngPropios registro){
+    public void abrirAlineacionPOA(DTOBolsa registro){
         try {
             dto.setRegistro(registro);
-            dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getIngresosPropiosCaptados().getRegistro()));
-            actualizarEjes(dto.getRegistro().getIngresosPropiosCaptados().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+            dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getBolsaTrabajo().getRegistro()));
+            actualizarEjes(dto.getRegistro().getBolsaTrabajo().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
             cargarAlineacionXActividad();
             Ajax.update("frmAlineacion");
             Ajax.oncomplete("skin();");
             Ajax.oncomplete("PF('modalAlineacion').show();");
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorServiciosEnfermeriaPYE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorDesercionReprobacionPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public void alinearRegistro(){
-        Boolean alineado = ejbModulos.alinearRegistroActividad(dto.getAlineacionActividad(), dto.getRegistro().getIngresosPropiosCaptados().getRegistro());
+        Boolean alineado = ejbModulos.alinearRegistroActividad(dto.getAlineacionActividad(), dto.getRegistro().getBolsaTrabajo().getRegistro());
         if(alineado){
             cargarListaPorEvento();
             abrirAlineacionPOA(dto.getRegistro());
@@ -255,19 +257,18 @@ public class ControladorIngPropiosPYE implements Serializable{
     }
     
     public void eliminarAlineacion(){
-        Boolean eliminado = ejbModulos.eliminarAlineacion(dto.getRegistro().getIngresosPropiosCaptados().getRegistro());
+        Boolean eliminado = ejbModulos.eliminarAlineacion(dto.getRegistro().getBolsaTrabajo().getRegistro());
         if(eliminado){ 
             try {
                 Messages.addGlobalInfo("La alineación se eliminó de forma correcta.");
                 dto.getRegistro().setActividadAlineada(null);
-                dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getIngresosPropiosCaptados().getRegistro()));
-                actualizarEjes(dto.getRegistro().getIngresosPropiosCaptados().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+                dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getBolsaTrabajo().getRegistro()));
+                actualizarEjes(dto.getRegistro().getBolsaTrabajo().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
                 cargarAlineacionXActividad();
                 Ajax.update("frmAlineacion");
             } catch (Throwable ex) {
-                Logger.getLogger(ControladorServiciosEnfermeriaPYE.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ControladorDesercionReprobacionPYE.class.getName()).log(Level.SEVERE, null, ex);
             }
         }else Messages.addGlobalError("La alineación no pudo eliminarse.");
     }
-    
 }

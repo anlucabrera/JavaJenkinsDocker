@@ -70,9 +70,9 @@ public class ControladorBolsaEntrevistas implements Serializable{
     @PostConstruct
     public void init(){
         dto = new DtoBolsaEntrevistas();        
-        dto.setArea((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
-        
-        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
+        dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+      
+        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea().getArea()));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());
@@ -99,7 +99,7 @@ public class ControladorBolsaEntrevistas implements Serializable{
     public void guardaBolsaEntrevistas() {
      if (dto.getLista() != null) {
             try {
-                ejb.guardaBolsaEntrevistas(dto.getLista(), dto.getRegistroTipo(), dto.getEje(), dto.getArea(), controladorModulosRegistro.getEventosRegistros());
+                ejb.guardaBolsaEntrevistas(dto.getLista(), dto.getRegistroTipo(), dto.getEje(), dto.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
             } catch (Throwable ex) {
                 Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause()!=null?ex.getCause().getMessage():ex.getMessage());
                 Logger.getLogger(ControladorBolsaEntrevistas.class.getName()).log(Level.SEVERE, null, ex);
@@ -256,6 +256,26 @@ public class ControladorBolsaEntrevistas implements Serializable{
             abrirAlineacionPOA(dto.getRegistro());
             Messages.addGlobalInfo("El registro se alineó de forma correcta.");
         }else Messages.addGlobalError("El registro no pudo alinearse.");
+    }
+     
+    public List<DTOBolsaEntrevistas> consultarEntrevistas(String bolsaTrab){
+         return ejb.getListaEntrevistaBolsaTrabajo(bolsaTrab);
+    }
+    
+    public void seleccionarEntrevistas(String clave){
+        dto.setListaEntBolTrab(ejb.getListaEntrevistaBolsaTrabajo(clave));
+        Ajax.update("frmModalEntrevistas");
+        
+        Ajax.oncomplete("skin();");
+        dto.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEntrevistasDialogo();
+    }
+    
+    public void forzarAperturaEntrevistasDialogo(){
+        if(dto.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEntrevistas').show();");
+            dto.setForzarAperturaDialogo(Boolean.FALSE);
+        }
     }
     
 }

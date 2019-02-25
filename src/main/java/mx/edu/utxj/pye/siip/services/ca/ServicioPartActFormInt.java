@@ -20,8 +20,10 @@ import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuestas;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesFormacionIntegral;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.ParticipantesActividadesFormacionIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
@@ -53,6 +55,8 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
     @EJB EjbFiscalizacion ejbFiscalizacion;
     @Inject Caster caster; 
     @Inject ControladorEmpleado controladorEmpleado;
+    
+    String genero;
     
     @Override
     public List<DTOParticipantesActFormInt> getListaPartActFormInt(String rutaArchivo) throws Throwable {
@@ -196,13 +200,34 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
     }
 
     @Override
-    public List<ParticipantesActividadesFormacionIntegral> getListaParticipantesPorActividad(String actividad) {
+    public List<DTOParticipantesActFormInt> getListaParticipantesPorActividad(String actividad) {
          if(actividad == null){
             return Collections.EMPTY_LIST;
         }
-        List<ParticipantesActividadesFormacionIntegral> l = f.getEntityManager().createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p JOIN p.actividadFormacionIntegral a WHERE a.actividadFormacionIntegral = :actividadFormacionIntegral", ParticipantesActividadesFormacionIntegral.class)
+         
+        List<ParticipantesActividadesFormacionIntegral> entities = new ArrayList<>();
+        List<DTOParticipantesActFormInt> l = new ArrayList<>();
+         
+        entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p JOIN p.actividadFormacionIntegral a WHERE a.actividadFormacionIntegral = :actividadFormacionIntegral ORDER BY p.matriculaPeriodosEscolares.matricula ASC", ParticipantesActividadesFormacionIntegral.class)
                 .setParameter("actividadFormacionIntegral", actividad)
                 .getResultList();
+        
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+            MatriculaPeriodosEscolares mat = f.getEntityManager().find(MatriculaPeriodosEscolares.class, e.getMatriculaPeriodosEscolares().getRegistro());
+            genero = mat.getCurp().substring(10, 11);
+            AreasUniversidad progEdu = f.getEntityManager().find(AreasUniversidad.class, mat.getProgramaEducativo());
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+
+            l.add(new DTOParticipantesActFormInt(
+                    e,
+                    mat,
+                    genero,
+                    progEdu,
+                    a));
+        });
+        
         return l;
     }
 }

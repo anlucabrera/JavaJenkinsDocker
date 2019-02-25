@@ -12,7 +12,6 @@ import lombok.Getter;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
-import mx.edu.utxj.pye.sgi.entity.pye2.ParticipantesActividadesFormacionIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
@@ -54,7 +53,7 @@ public class DtoParticipantesFormInt {
     
     @Getter private List<Short> clavesAreasSubordinadas;//claves de areas subordinas que no tienes poa
     
-    @Getter private List<ParticipantesActividadesFormacionIntegral> listaParticipantes;
+    @Getter private List<DTOParticipantesActFormInt> listaParticipantes;
 
     public DtoParticipantesFormInt() {
         setRegistroTipo(new RegistrosTipo((short)17));
@@ -213,7 +212,7 @@ public class DtoParticipantesFormInt {
         this.clavesAreasSubordinadas = clavesAreasSubordinadas;
     }
     
-    public void setListaParticipantes(List<ParticipantesActividadesFormacionIntegral> listaParticipantes) {
+    public void setListaParticipantes(List<DTOParticipantesActFormInt> listaParticipantes) {
         this.listaParticipantes = listaParticipantes;
         setTieneParticipante(!listaParticipantes.isEmpty());
     }

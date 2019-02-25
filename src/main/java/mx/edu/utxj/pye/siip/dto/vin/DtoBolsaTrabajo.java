@@ -38,7 +38,7 @@ public class DtoBolsaTrabajo {
     @Getter private ActividadesPoa alineacionActividad; 
     
     @Getter Boolean tieneEvidencia, forzarAperturaDialogo;
-    @Getter private Short area;
+    @Getter private AreasUniversidad area;
     @Getter private String rutaArchivo;
     
     @Getter private List<EventosRegistros> eventosPorPeriodo;
@@ -81,7 +81,7 @@ public class DtoBolsaTrabajo {
         this.registroTipo = registroTipo;
     }
 
-    public void setArea(Short area) {
+    public void setArea(AreasUniversidad area) {
         this.area = area;
     }
 

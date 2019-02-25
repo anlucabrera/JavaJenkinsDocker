@@ -121,7 +121,7 @@ public class ControladorDifusionIems implements Serializable{
         dto.setListadoDIemsDTO(ejbDifusionIems.getRegistroDifusionIemsDTO(mes, ejercicio));
 
         if (dto.getListadoDIemsDTO().isEmpty() || dto.getListadoDIemsDTO() == null) {
-            Messages.addGlobalWarn("no se encontraron actividades registradas en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
+            Messages.addGlobalWarn("No hay información registrada en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
         }
     }
     public void eliminarRegistro(Integer registro){
@@ -259,7 +259,7 @@ public class ControladorDifusionIems implements Serializable{
     public void eliminarAlineacion(){
         Boolean eliminado = ejbEvidenciasAlineacion.eliminarAlineacion(dto.getRegistro().getDifusion().getRegistro());
         if(eliminado){ 
-            Messages.addGlobalInfo("La elineación se eliminó de forma correcta.");
+            Messages.addGlobalInfo("La alineación se eliminó de forma correcta.");
             dto.getRegistro().setActividadAlineada(null);
             dto.setAlineacionActividad(ejbEvidenciasAlineacion.getActividadAlineada(dto.getRegistro().getDifusion().getRegistro()));
             actualizarEjes();

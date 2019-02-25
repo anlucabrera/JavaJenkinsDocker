@@ -218,7 +218,7 @@ public class ControladorMovilidadDocentePYE implements Serializable{
         Boolean eliminado = ejbModulos.eliminarAlineacion(dto.getRegistro().getRegistroMovilidadDocente().getRegistro());
         if(eliminado){ 
             try {
-                Messages.addGlobalInfo("La elineación se eliminó de forma correcta.");
+                Messages.addGlobalInfo("La alineación se eliminó de forma correcta.");
                 dto.getRegistro().setActividadAlineada(null);
                 dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getRegistroMovilidadDocente().getRegistro()));
                 actualizarEjes(dto.getRegistro().getRegistroMovilidadDocente().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());

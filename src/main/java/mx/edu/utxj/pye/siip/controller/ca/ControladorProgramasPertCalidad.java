@@ -132,7 +132,7 @@ public class ControladorProgramasPertCalidad implements Serializable{
         dto.setEjercicioFiscal(ejercicio);
         dto.setLista(ejbProgramasPertCalidad.getRegistroDTOProgramasPertCalidad(mes, ejercicio));
         if (dto.getLista().isEmpty() || dto.getLista()== null) {
-            Messages.addGlobalWarn("no se encontraron actividades registradas en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
+            Messages.addGlobalWarn("No hay información registrada en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
         }
     }
     

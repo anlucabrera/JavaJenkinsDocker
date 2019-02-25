@@ -41,8 +41,8 @@ public class DtoBolsaEntrevistas {
     @Getter private LineasAccion alineacionLinea;
     @Getter private ActividadesPoa alineacionActividad; 
     
-    @Getter Boolean tieneEvidencia, forzarAperturaDialogo;
-    @Getter private Short area;
+    @Getter Boolean tieneEvidencia, forzarAperturaDialogo, tieneEnt;
+    @Getter private AreasUniversidad area;
     @Getter private String rutaArchivo;
     
     @Getter private List<EventosRegistros> eventosPorPeriodo;
@@ -59,9 +59,11 @@ public class DtoBolsaEntrevistas {
     @Getter private List<Short> clavesAreasSubordinadas;//claves de areas subordinas que no tienes poa
     
     @Getter private List<ActividadesFormacionIntegral> participantesPorActividad;
+    
+    @Getter private List<DTOBolsaEntrevistas> listaEntBolTrab;
 
     public DtoBolsaEntrevistas() {
-        
+        tieneEnt = false;
         setRegistroTipo(new RegistrosTipo((short)2));
         setEje(new EjesRegistro(4));
     }
@@ -85,7 +87,7 @@ public class DtoBolsaEntrevistas {
         this.registroTipo = registroTipo;
     }
 
-    public void setArea(Short area) {
+    public void setArea(AreasUniversidad area) {
         this.area = area;
     }
 
@@ -216,6 +218,15 @@ public class DtoBolsaEntrevistas {
 
     public void setClavesAreasSubordinadas(List<Short> clavesAreasSubordinadas) {
         this.clavesAreasSubordinadas = clavesAreasSubordinadas;
+    }
+    
+    public void setListaEntBolTrab(List<DTOBolsaEntrevistas> listaEntBolTrab) {
+        this.listaEntBolTrab = listaEntBolTrab;
+        setTieneEnt(!listaEntBolTrab.isEmpty());
+    }
+
+    public void setTieneEnt(Boolean tieneEnt) {
+        this.tieneEnt = tieneEnt;
     }
     
     

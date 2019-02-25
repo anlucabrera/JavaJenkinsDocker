@@ -200,8 +200,8 @@
                                             <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.objetivo}"/>
                                         </p:column>
                                        <p:column headerText="Participantes" style="width: 400px;">
-                                           <c:set var="participantes" value="#{partActFormInt.consultarParticipantes(actForIntClave)}" />
-                                           <center>Consultar <p:commandButton actionListener="#{partActFormInt.seleccionarParticipantes(actForIntClave)}"
+                                           <c:set var="participantes" value="#{partActFormIntPYE.consultarParticipantes(actForIntClave)}" />
+                                           <center>Consultar <p:commandButton actionListener="#{partActFormIntPYE.seleccionarParticipantes(actForIntClave)}"
                                                             class="btn btn-sm #{!empty participantes?'btn-info':'btn-danger'}" 
                                                             icon="fa fa-search"
                                                             title="#{!empty participantes?'Consultar participantes registrados':'No se han registrado participantes'}" />
@@ -252,7 +252,7 @@
                                                          multiple="true" 
                                                          class="form-control"
                                                          accept="image/png,image/jpg,image/jpeg,application/pdf" 
-                                                         acceptMessage="Solo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
                                                          maxsize="#{caster.evidenciasTamanioLimite}" 
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true" 
@@ -279,7 +279,7 @@
                                 <div class="col-md-12">
                                     <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
                                     <p:dataTable id="tblEvidencias" value="#{actFormIntegralPYE.dto.listaEvidencias}" var="evidencia"
-                                                 emptyMessage="No se han registrado evidencias de éste registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 emptyMessage="No se han registrado evidencias de este registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
                                                  paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
                                                  >
                                         <p:columnGroup type="header">
@@ -322,7 +322,7 @@
                                         </f:facet>
                                         <f:facet name="right">
                                             <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{actFormIntegralPYE.eliminarAlineacion()}" rendered="#{!empty actFormIntegralPYE.dto.registro.actividadAlineada}" >
-                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de esta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
                                             </p:commandButton>
                                             <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{actFormIntegralPYE.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
                                         </f:facet>
@@ -412,20 +412,24 @@
                         
                         <h:form id="frmModalParticipantes" >
                             <p:remoteCommand name="actualizarModPart" update="@form:tblModalPart" />
-                            <p:dataTable id="tblModalPart" value="#{partActFormInt.dto.listaParticipantes}" var="participanteAct"
+                            <p:dataTable id="tblModalPart" value="#{partActFormIntPYE.dto.listaParticipantes}" var="participanteAct"
                                                  emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
                                                  paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
                                                  >
                                         <p:columnGroup type="header">
                                             <p:row>
-                                                <p:column headerText="Actividad"  width="80" />
                                                 <p:column headerText="Matricula"  width="80" />
+                                                <p:column headerText="Programa Educativo"  width="200"/>
+                                                <p:column headerText="Género"  width="80"/>
+                                                <p:column headerText="Grupo"  width="50" />
                                             </p:row>
                                         </p:columnGroup>
-                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAct.actividadFormacionIntegral.actividadFormacionIntegral}" /></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{participanteAct.matriculaPeriodosEscolares.matricula}" /></p:column>
+                                        <p:column style="text-align: justify;"><h:outputText value="#{participanteAct.programaEducativo.nombre}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAct.genero}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAct.matriculaPeriodosEscolares.cuatrimestre}° #{participanteAct.matriculaPeriodosEscolares.grupo}" /></p:column>
                                         <f:facet name="footer">
-                                            <span style="font-size: smaller; font-weight: bold;">Total de participantes registrados: #{fn:length(partActFormInt.dto.listaParticipantes)}.</span>
+                                            <span style="font-size: smaller; font-weight: bold;">Total de participantes registrados: #{fn:length(partActFormIntPYE.dto.listaParticipantes)}.</span>
                                         </f:facet>
                                     </p:dataTable>
                         </h:form>

@@ -34,6 +34,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.ca.DtoDesercionReprobacion;
+import mx.edu.utxj.pye.siip.dto.escolar.DTOReprobacion;
 import mx.edu.utxj.pye.siip.entity.pye.list.ListaDtoReprobacion;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbDesercionReprobacion;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbEvidenciasAlineacion;
@@ -268,7 +269,7 @@ public class ControladorDesercionReprobacion implements Serializable {
 
     }
     
-    public List<DesercionReprobacionMaterias> consultarMatRep(String desercion){
+    public List<DTOReprobacion> consultarMatRep(String desercion){
          return ejbDesercionReprobacion.getListaMateriasReprobadas(desercion);
     }
     

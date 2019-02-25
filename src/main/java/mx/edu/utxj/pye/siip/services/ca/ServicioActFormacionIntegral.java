@@ -5,7 +5,6 @@
  */
 package mx.edu.utxj.pye.siip.services.ca;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,7 +13,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.ejb.EJB;
@@ -39,6 +37,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesTipos;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosTipos;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
+import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
@@ -71,6 +70,8 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
     @Inject Caster caster; 
     
     @Getter @Setter private List<Short> areas;
+    
+    String genero;
     
     @Override
     public List<DTOActFormacionIntegral> getListaActFormacionIntegral(String rutaArchivo) throws Throwable {
@@ -492,7 +493,7 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
 
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         List<DTOParticipantesActFormInt> l = new ArrayList<>();
-        List<ParticipantesActividadesFormacionIntegral> entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p INNER JOIN p.actividadFormacionIntegral a INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND a.periodo=:periodo AND reg.area IN :areas", ParticipantesActividadesFormacionIntegral.class)
+        List<ParticipantesActividadesFormacionIntegral> entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p INNER JOIN p.actividadFormacionIntegral a INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND a.periodo=:periodo AND reg.area IN :areas ORDER BY p.matriculaPeriodosEscolares.matricula ASC", ParticipantesActividadesFormacionIntegral.class)
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
                 .setParameter("areas", areas)
@@ -502,17 +503,19 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
             Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
-//            ActividadesPoa a = e.getRegistros().getActividadesPoaList().isEmpty()?null:e.getRegistros().getActividadesPoaList().get(0);
+            MatriculaPeriodosEscolares mat = f.getEntityManager().find(MatriculaPeriodosEscolares.class, e.getMatriculaPeriodosEscolares().getRegistro());
+            genero = mat.getCurp().substring(10, 11);
+            AreasUniversidad progEdu = f.getEntityManager().find(AreasUniversidad.class, mat.getProgramaEducativo());
             ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
-
 
             l.add(new DTOParticipantesActFormInt(
                     e,
+                    mat,
+                    genero,
+                    progEdu,
                     a));
         });
         
-
-
         return l;
     }
 

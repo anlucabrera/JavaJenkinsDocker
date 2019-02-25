@@ -84,9 +84,9 @@ public class ControladorBecasPeriodo implements Serializable{
         dto.getRegistroTipo().setRegistroTipo((short)9);
         dto.setEjesRegistro(new EjesRegistro());
         dto.getEjesRegistro().setEje(3);
-        dto.setArea((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
         dto.setSelectItemEjercicioFiscal(ejbItems.itemEjercicioFiscalPorRegistro((short) 9));        
-        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
+        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea().getArea()));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
         if (dto.getSelectItemEjercicioFiscal() == null) {
 //            Messages.addGlobalInfo("No existen registros");
@@ -245,7 +245,7 @@ public class ControladorBecasPeriodo implements Serializable{
     public void eliminarAlineacion(){
         Boolean eliminado = ejbEvidenciasAlineacion.eliminarAlineacion(dto.getRegistro().getBecasPeriodosEscolares().getRegistro());
         if(eliminado){ 
-            Messages.addGlobalInfo("La elineación se eliminó de forma correcta.");
+            Messages.addGlobalInfo("La alineación se eliminó de forma correcta.");
             dto.getRegistro().setActividadAlineada(null);
             dto.setAlineacionActividad(ejbEvidenciasAlineacion.getActividadAlineada(dto.getRegistro().getBecasPeriodosEscolares().getRegistro()));
             actualizarEjes();
@@ -298,7 +298,7 @@ public class ControladorBecasPeriodo implements Serializable{
     
     public void guardaBecasPeriodo(){
         try {
-            ejbBecasPeriodo.guardaBecasPeriodo(dto.getListaBecasPeriodo(), dto.getRegistroTipo(), dto.getEjesRegistro(), dto.getArea(), controladorModulosRegistro.getEventosRegistros());
+            ejbBecasPeriodo.guardaBecasPeriodo(dto.getListaBecasPeriodo(), dto.getRegistroTipo(), dto.getEjesRegistro(), dto.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorBecasPeriodo.class.getName()).log(Level.SEVERE, null, ex);

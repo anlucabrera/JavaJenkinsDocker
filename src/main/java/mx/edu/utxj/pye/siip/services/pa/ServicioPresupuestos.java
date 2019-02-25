@@ -169,7 +169,7 @@ public class ServicioPresupuestos implements EjbPresupuestos{
             }
             libroRegistro.close();
             if (validarCelda.contains(false)) {
-                    Messages.addGlobalError("<b>El archivo cargado contiene datos que no son validos, verifique los datos de la plantilla</b>");
+                    Messages.addGlobalError("<b>El archivo cargado contiene datos que no son válidos, verifique los datos de la plantilla</b>");
                     Messages.addGlobalError(datosInvalidos.toString());
                     excel.delete();
                     ServicioArchivos.eliminarArchivo(rutaArchivo);

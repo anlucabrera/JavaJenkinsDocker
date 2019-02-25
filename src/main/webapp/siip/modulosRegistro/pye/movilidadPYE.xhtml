@@ -346,7 +346,7 @@
                                                          multiple="true" 
                                                          class="form-control"
                                                          accept="image/png,image/jpg,image/jpeg,application/pdf" 
-                                                         acceptMessage="Solo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
                                                          maxsize="#{caster.evidenciasTamanioLimite}" 
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true" 
@@ -369,7 +369,7 @@
                                 <div class="col-md-12">
                                     <p:remoteCommand name="actualizar3" update="@form:tblEvidencias" />
                                     <p:dataTable id="tblEvidencias" value="#{registrosMovilidadPYE.dto.listaEvidencias}" var="evidencia"
-                                                 emptyMessage="No se han registrado evidencias de éste registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 emptyMessage="No se han registrado evidencias de este registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
                                                  paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
                                                  >
                                         <p:columnGroup type="header">
@@ -411,7 +411,7 @@
                                         </f:facet>
                                         <f:facet name="right">
                                             <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{registrosMovilidadPYE.eliminarAlineacion()}" rendered="#{!empty registrosMovilidadPYE.dto.registro.actividadAlineada}" >
-                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de esta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
                                             </p:commandButton>
                                             <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{registrosMovilidadPYE.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
                                         </f:facet>
@@ -511,7 +511,7 @@
                                                          multiple="true" 
                                                          class="form-control"
                                                          accept="image/png,image/jpg,image/jpeg,application/pdf" 
-                                                         acceptMessage="Solo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
                                                          maxsize="#{caster.evidenciasTamanioLimite}" 
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true" 
@@ -538,7 +538,7 @@
                                 <div class="col-md-12">
                                     <p:remoteCommand name="actualizar4" update="@form:tblEvidenciasDoc" />
                                     <p:dataTable id="tblEvidenciasDoc" value="#{movilidadDocentePYE.dto.listaEvidencias}" var="evidenciaDoc"
-                                                 emptyMessage="No se han registrado evidencias de éste registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 emptyMessage="No se han registrado evidencias de este registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
                                                  paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
                                                  >
                                         <p:columnGroup type="header">
@@ -580,7 +580,7 @@
                                         </f:facet>
                                         <f:facet name="right">
                                             <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{movilidadDocentePYE.eliminarAlineacion()}" rendered="#{!empty movilidadDocentePYE.dto.registro.actividadAlineada}" >
-                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de esta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
                                             </p:commandButton>
                                             <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{movilidadDocentePYE.alinearRegistro()}" oncomplete="PF('modalAlineacionDoc').hide();" />
                                         </f:facet>
@@ -685,7 +685,7 @@
                                                          multiple="true" 
                                                          class="form-control"
                                                          accept="image/png,image/jpg,image/jpeg,application/pdf" 
-                                                         acceptMessage="Solo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
                                                          maxsize="#{caster.evidenciasTamanioLimite}" 
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true" 
@@ -712,7 +712,7 @@
                                 <div class="col-md-12">
                                     <p:remoteCommand name="actualizar5" update="@form:tblEvidenciasEst" />
                                     <p:dataTable id="tblEvidenciasEst" value="#{movilidadEstudiantePYE.dto.listaEvidencias}" var="evidenciaEst"
-                                                 emptyMessage="No se han registrado evidencias de éste registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 emptyMessage="No se han registrado evidencias de este registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
                                                  paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
                                                  >
                                         <p:columnGroup type="header">
@@ -754,7 +754,7 @@
                                         </f:facet>
                                         <f:facet name="right">
                                             <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{movilidadEstudiantePYE.eliminarAlineacion()}" rendered="#{!empty movilidadEstudiantePYE.dto.registro.actividadAlineada}" >
-                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de esta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
                                             </p:commandButton>
                                             <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{movilidadEstudiantePYE.alinearRegistro()}" oncomplete="PF('modalAlineacionEst').hide();" />
                                         </f:facet>

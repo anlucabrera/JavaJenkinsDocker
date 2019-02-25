@@ -48,5 +48,5 @@ public interface EjbPartFormInt {
      * @param actividad clave de la actividad de formación integral.
      * @return Lista de participantes.
      */
-   public List<ParticipantesActividadesFormacionIntegral> getListaParticipantesPorActividad(String actividad);
+   public List<DTOParticipantesActFormInt> getListaParticipantesPorActividad(String actividad);
 }

@@ -291,7 +291,7 @@ public class ControladorActFormacionIntegralPYE implements Serializable{
         Boolean eliminado = ejbModulos.eliminarAlineacion(dto.getRegistro().getActividadesFormacionIntegral().getRegistro());
         if(eliminado){ 
             try {
-                Messages.addGlobalInfo("La elineación se eliminó de forma correcta.");
+                Messages.addGlobalInfo("La alineación se eliminó de forma correcta.");
                 dto.getRegistro().setActividadAlineada(null);
                 dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getActividadesFormacionIntegral().getRegistro()));
                 actualizarEjes(dto.getRegistro().getActividadesFormacionIntegral().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
