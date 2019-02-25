@@ -17,15 +17,15 @@
         <h:outputScript library="js" name="dialogs.js" />
     </ui:define>
     <ui:define name="title">
-        Convenios        
+        Eficiencia Terminal Titulación
     </ui:define>
 
     <ui:define name="description">
-        Vinculación Institucional
+        Estadística Básica
     </ui:define>
 
-    <ui:define name="body">
-        <adm:breadcrumb title="Vinculación Institucional - Convenios"/>
+    <ui:define name="body"> 
+        <adm:breadcrumb title="Estadística Básica - Eficiencia Terminal Titulación"/>
         <adm:sidebar collapsed="true"/>
         <p:importEnum type="mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa" var="etapa" allSuffix="ETAPAS" />
         <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
@@ -48,8 +48,8 @@
                                     <p:spacer width="5" />
                                     <p:selectOneMenu id="categoria"
                                                      required="true"
-                                                     value="#{controladorConveniosPYE.dtoConvenios.categoria}"
-                                                     valueChangeListener="#{controladorConveniosPYE.actualizarAreas}"
+                                                     value="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.categoria}"
+                                                     valueChangeListener="#{controladorEficienciaTerminalTitulacionRegistroPYE.actualizarAreas}"
                                                      filter="true"
                                                      filterPlaceholder="Buscar"
                                                      filterMatchMode="contains"
@@ -59,12 +59,12 @@
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " 
                                                       itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorConveniosPYE.dtoConvenios.listaCategoriasPOA}" 
+                                        <f:selectItems value="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.listaCategoriasPOA}" 
                                                        var="categoria" 
                                                        itemValue="#{categoria}" 
                                                        itemLabel="#{categoria.descripcion}"
                                                        itemDescription="#{categoria.descripcion}"/>
-                                        <p:ajax process="@this" listener="#{controladorConveniosPYE.buscaConvenios()}" update="@(form)" />
+                                        <p:ajax process="@this" listener="#{controladorEficienciaTerminalTitulacionRegistroPYE.buscaEficienciaTerminal()}" update="@(form)" />
                                     </p:selectOneMenu>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
 
@@ -72,8 +72,8 @@
                                     <p:spacer width="5" />
                                     <p:selectOneMenu id="area"
                                                      required="true"
-                                                     value="#{controladorConveniosPYE.dtoConvenios.areaUniversidadPOA}"
-                                                     valueChangeListener="#{controladorConveniosPYE.actualizarAnios}"
+                                                     value="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.areaUniversidadPOA}"
+                                                     valueChangeListener="#{controladorEficienciaTerminalTitulacionRegistroPYE.actualizarAnios}"
                                                      filter="true"
                                                      filterPlaceholder="Buscar"
                                                      filterMatchMode="contains"
@@ -83,12 +83,12 @@
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " 
                                                       itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorConveniosPYE.dtoConvenios.listaAreasPOA}" 
+                                        <f:selectItems value="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.listaAreasPOA}" 
                                                        var="area" 
                                                        itemValue="#{area}" 
                                                        itemLabel="#{area.nombre}"
                                                        itemDescription="#{area.nombre}" />
-                                        <p:ajax process="@this" listener="#{controladorConveniosPYE.buscaConvenios()}" update="@(form)" />
+                                        <p:ajax process="@this" listener="#{controladorEficienciaTerminalTitulacionRegistroPYE.buscaEficienciaTerminal()}" update="@(form)" />
                                     </p:selectOneMenu>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
 
@@ -96,8 +96,8 @@
                                     <p:spacer width="5" />
                                     <p:selectOneMenu id="anioConsulta"
                                                      required="true"
-                                                     value="#{controladorConveniosPYE.dtoConvenios.anioConsulta}"
-                                                     valueChangeListener="#{controladorConveniosPYE.actualizarMeses}"
+                                                     value="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.anioConsulta}"
+                                                     valueChangeListener="#{controladorEficienciaTerminalTitulacionRegistroPYE.actualizarMeses}"
                                                      filter="true"
                                                      filterPlaceholder="Buscar"
                                                      filterMatchMode="contains"
@@ -106,11 +106,11 @@
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " 
                                                       itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorConveniosPYE.dtoConvenios.aniosConsulta}"
+                                        <f:selectItems value="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.aniosConsulta}"
                                                        var="anio"
                                                        itemValue="#{anio}"
                                                        itemLabel="#{anio}" />
-                                        <p:ajax process="@this" listener="#{controladorConveniosPYE.buscaConvenios()}" update="@(form)" />
+                                        <p:ajax process="@this" listener="#{controladorEficienciaTerminalTitulacionRegistroPYE.buscaEficienciaTerminal()}" update="@(form)" />
                                     </p:selectOneMenu>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
 
@@ -118,7 +118,7 @@
                                     <p:spacer width="5" />
                                     <p:selectOneMenu id="mesConsulta"
                                                      required="true"
-                                                     value="#{controladorConveniosPYE.dtoConvenios.mesConsulta}"
+                                                     value="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.mesConsulta}"
                                                      filter="true"
                                                      filterPlaceholder="Buscar"
                                                      filterMatchMode="contains"
@@ -127,17 +127,15 @@
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " 
                                                       itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorConveniosPYE.dtoConvenios.mesesConsulta}"
+                                        <f:selectItems value="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.mesesConsulta}"
                                                        var="mes"
                                                        itemValue="#{mes}"
                                                        itemLabel="#{mes}" />
-                                        <p:ajax process="@this" listener="#{controladorConveniosPYE.buscaConvenios()}" update="@(form)" />
+                                        <p:ajax process="@this" listener="#{controladorEficienciaTerminalTitulacionRegistroPYE.buscaEficienciaTerminal()}" update="@(form)" />
                                     </p:selectOneMenu>
                                 </f:facet>
                                 <f:facet name="right">
-                                    <span class="ui-separator">
-                                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                                    </span>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
                                 </f:facet>
                             </p:toolbar>
@@ -153,102 +151,178 @@
                         <div class="col-lg-12 col-md-12">
                             <h:form id="formMuestraDatosActivos">
                                 <p:remoteCommand name="actualizar" update="@form:formMuestraDatosActivos"/>
-                                <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parámetros seleccionados: Ejercicio: #{controladorConveniosPYE.dtoConvenios.anioConsulta} y Mes: #{controladorConveniosPYE.dtoConvenios.mesConsulta}"
-                                             paginator="true" 
+                                <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parámetros seleccionados: Ejercicio: #{controladorEficienciaTerminalTitulacionRegistroPYE.dto.anioConsulta} y Mes: #{controladorEficienciaTerminalTitulacionRegistroPYE.dto.mesConsulta}" 
+                                             paginator="true"
                                              rows="10" 
-                                             rowsPerPageTemplate="10,20,30,40,50"
+                                             rowsPerPageTemplate="5,10,20,30,40,50"
                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
                                              resizeMode="expand"
-                                             id="dtbConvenios"
-                                             var="convenio" 
-                                             value="#{controladorConveniosPYE.dtoConvenios.lstConvenios}"
-                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                             id="dtbEficienciaTerminalTitulacion"
+                                             var="eficienciaTerminal" 
+                                             value="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.listaEficienciaTerminal}"
+                                             tableStyleClass="table-bordered table-hover table-condensed table-responsive">
                                     <p:columnGroup type="header">
-                                        <p:column headerText="Opciones" width="120" />
-                                        <p:column headerText="Empresa" width="500"/>
-                                        <p:column headerText="Fecha de firma" width="100"/>
-                                        <p:column headerText="Vigencia" width="100"/>
-                                        <p:column headerText="Objetivo" width="400"/>
-                                        <p:column headerText="Descripción" width="400"/>
-                                        <p:column headerText="Impacto" width="400"/>
-                                        <p:column headerText="Estudiantes Beneficiados Hombres" width="100"/>
-                                        <p:column headerText="Estudiantes Beneficiados Mujeres" width="100"/>
-                                        <p:column headerText="Docentes Beneficiados Hombres" width="100"/>
-                                        <p:column headerText="Docentes Beneficiados Mujeres" width="100"/>
-                                        <p:column headerText="Recursos obtenidos" width="150"/>
+                                        <p:row>
+                                            <p:column rowspan="3" headerText="Opciones" width="100" />
+                                            <p:column rowspan="3" headerText="Fecha Corte" width="100" />
+                                            <p:column rowspan="3" headerText="Programa Educativo" width="350" />
+                                            <p:column rowspan="3" headerText="Generación" width="100" />
+                                            <p:column rowspan="3" headerText="Fecha Ingreso Mes / Año" width="120"/>
+                                            <p:column rowspan="3" headerText="Fecha Egreso Mes / Año" width="120"/>
+                                            <p:column rowspan="2" colspan="3" headerText="Nuevo ingreso" width="200"/>
+                                            <p:column colspan="9" headerText="Egresados" width="600"/>
+                                            <p:column rowspan="2" colspan="3" headerText="Total de egresados" width="200" />
+                                            <p:column rowspan="2" colspan="3" headerText="Titulados" width="200" />
+                                            <p:column rowspan="2" colspan="3" headerText="Titulados DGP" width="200" />
+                                            <p:column rowspan="3" headerText="Eficiencia Terminal" width="100" />
+                                            <p:column rowspan="3" headerText="Tasa de titulación" width="100" />
+                                            <p:column rowspan="3" headerText="Registro ante DGP" width="100" />
+                                        </p:row>
+                                        <p:row>
+                                            <p:column colspan="3" headerText="Con su corte" />
+                                            <p:column colspan="3" headerText="Rezagados" />
+                                            <p:column colspan="3" headerText="Segunda carrera" />
+                                        </p:row>
+                                        <p:row>
+                                            <p:column headerText="H"/>
+                                            <p:column headerText="M"/>
+                                            <p:column headerText="T"/>
+                                            <p:column headerText="H"/>
+                                            <p:column headerText="M"/>
+                                            <p:column headerText="T"/>
+                                            <p:column headerText="H"/>
+                                            <p:column headerText="M"/>
+                                            <p:column headerText="T"/>
+                                            <p:column headerText="H"/>
+                                            <p:column headerText="M"/>
+                                            <p:column headerText="T"/>
+                                            <p:column headerText="H"/>
+                                            <p:column headerText="M"/>
+                                            <p:column headerText="T"/>
+                                            <p:column headerText="H"/>
+                                            <p:column headerText="M"/>
+                                            <p:column headerText="T"/>
+                                            <p:column headerText="H"/>
+                                            <p:column headerText="M"/>
+                                            <p:column headerText="T"/>
+                                        </p:row>
                                     </p:columnGroup>
-                                    <c:set var="convenioEliminado" value="#{convenio.registro}"/>
+                                    <c:set var="eficienciaEliminada" value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.registro}" />
                                     <p:column style="text-align: center;">
                                         <div class="btn-group">
                                             <p:commandButton class="btn btn-info btn-sm"
                                                              icon="fa fa-trash"
-                                                             actionListener="#{controladorConveniosPYE.eliminarRegistro(convenioEliminado, convenio)}"
+                                                             actionListener="#{controladorEficienciaTerminalTitulacionRegistroPYE.eliminarRegistro(eficienciaEliminada)}"
                                                              onsuccess="actualizar();"
-                                                             title="Eliminar convenio"
-                                                             rendered="#{controladorConveniosPYE.dtoConvenios.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorConveniosPYE.dtoConvenios.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                             title="Eliminar eficiencia terminal"
+                                                             rendered="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEficienciaTerminalTitulacionRegistroPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
                                                 <p:confirm header="Eliminar registro" 
-                                                           message="¿Está seguro de eliminar el convenio: #{convenio.empresa.nombre} ?" 
+                                                           message="¿Está seguro de eliminar el corte de: #{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.fechaCorte} ?" 
                                                            icon="ui-icon-alert" />
                                             </p:commandButton>
-                                            <c:set var="evidencias" value="#{controladorConveniosPYE.consultarEvidencias(convenio.registro)}" />
-                                            <p:commandButton actionListener="#{controladorConveniosPYE.seleccionarRegistro(convenio)}"
+                                            <c:set var="evidencias" value="#{controladorEficienciaTerminalTitulacionRegistroPYE.consultarEvidencias(eficienciaTerminal.eficienciaTerminalTitulacionRegistro.registro)}" />
+                                            <p:commandButton actionListener="#{controladorEficienciaTerminalTitulacionRegistroPYE.seleccionarRegistro(eficienciaTerminal)}"
                                                              class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
                                                              icon="fa fa-image"
                                                              title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
-                                            <p:commandButton actionListener="#{controladorConveniosPYE.abrirAlineacionPOA(convenio)}"
-                                                             class="btn btn-sm #{controladorConveniosPYE.verificaAlineacion(convenio.registro)?'btn-info':'btn-warning'}"
+                                            <p:commandButton actionListener="#{controladorEficienciaTerminalTitulacionRegistroPYE.abrirAlineacionPOA(eficienciaTerminal)}"
+                                                             class="btn btn-sm #{controladorEficienciaTerminalTitulacionRegistroPYE.verificaAlineacion(eficienciaTerminal.eficienciaTerminalTitulacionRegistro.registro)?'btn-info':'btn-warning'}"
                                                              icon="fa fa-cog"
                                                              title="Alineación a POA." />
                                         </div>
-                                    </p:column>    
-
-                                    <p:column>
-                                        <h:outputText value="#{convenio.empresa.nombre}"/>
                                     </p:column>
-
                                     <p:column>
-                                        <h:outputText value="#{convenio.fechaFirma}">
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.fechaCorte}">
                                             <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
                                         </h:outputText>
                                     </p:column>
-
                                     <p:column>
-                                        <h:outputText value="#{convenio.vigencia}">
-                                            <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
-                                        </h:outputText>
+                                        <h:outputText value="#{eficienciaTerminal.areasUniversidad.nombre}"/>
                                     </p:column>
-
+                                    <p:column >
+                                        <h:outputText value="#{eficienciaTerminal.generacion}"/>
+                                    </p:column>
                                     <p:column>
-                                        <h:outputText value="#{convenio.objetivo}"/>
+                                        <h:outputText value="#{eficienciaTerminal.periodoInicio}"/>
                                     </p:column>
-
                                     <p:column>
-                                        <h:outputText value="#{convenio.descripcion}"/>
+                                        <h:outputText value="#{eficienciaTerminal.periodoFin}"/>
                                     </p:column>
-
                                     <p:column>
-                                        <h:outputText value="#{convenio.impacto}"/>
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.alumnosh}"/>
                                     </p:column>
-
                                     <p:column>
-                                        <h:outputText value="#{convenio.ebh}"/>
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.alumnosm}"/>
                                     </p:column>
-
                                     <p:column>
-                                        <h:outputText value="#{convenio.ebm}"/>
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.alumnosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.alumnosm}"/>
                                     </p:column>
-
                                     <p:column>
-                                        <h:outputText value="#{convenio.dbh}"/>
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egrecorh}"/>
                                     </p:column>
-
                                     <p:column>
-                                        <h:outputText value="#{convenio.dbm}"/>
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egrecorm}"/>
                                     </p:column>
-
                                     <p:column>
-                                        <h:outputText value="$ #{convenio.recursosObtenidos}"/>
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egrecorh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egrecorm}"/>
                                     </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.rezagadosh}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.rezagadosm}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.rezagadosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.rezagadosm}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.segcarrerah}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.segcarreram}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.segcarrerah + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.segcarreram}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egresadosh}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egresadosm}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egresadosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egresadosm}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.tituladosh}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.tituladosm}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.tituladosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.tituladosm}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.registradosh}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.registradosm}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.registradosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.registradosm}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{controladorEficienciaTerminalTitulacionRegistroPYE.calculaEficienciaTerminal((eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egresadosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egresadosm),(eficienciaTerminal.eficienciaTerminalTitulacionRegistro.alumnosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.alumnosm))} %"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{controladorEficienciaTerminalTitulacionRegistroPYE.calculaTasaTitulacion((eficienciaTerminal.eficienciaTerminalTitulacionRegistro.tituladosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.tituladosm), (eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egresadosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.egresadosm))} %"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{controladorEficienciaTerminalTitulacionRegistroPYE.calculaRegistroDGP((eficienciaTerminal.eficienciaTerminalTitulacionRegistro.registradosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.registradosm), (eficienciaTerminal.eficienciaTerminalTitulacionRegistro.tituladosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.tituladosm))} %"/>
+                                    </p:column>
+                                    <f:facet name="footer">
+                                        En el mes de: #{controladorEficienciaTerminalTitulacionRegistroPYE.dto.mesConsulta} hay un total de: #{fn:length(controladorEficienciaTerminalTitulacionRegistroPYE.dto.listaEficienciaTerminal)} registros de corte de Eficiencia Terminal.
+                                    </f:facet>
                                 </p:dataTable>
                                 <p:confirmDialog global="true" 
                                                  showEffect="fade" 
@@ -276,7 +350,7 @@
                               width="700" 
                               height="auto"  
                               closeOnEscape="true" 
-                              visible="#{controladorConveniosPYE.dtoConvenios.forzarAperturaDialogo}"
+                              visible="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.forzarAperturaDialogo}"
                               showEffect="fade" 
                               hideEffect="fade" 
                               modal="true" 
@@ -289,7 +363,7 @@
                               maximizable="false">
                         <div class="row">
                             <div class="col-md-12">
-                                <p:toolbar>
+                                <p:toolbar rendered="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEficienciaTerminalTitulacionRegistroPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
                                     <f:facet name="left">
                                         <p:spacer width="10" />
                                         <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px;" />
@@ -300,7 +374,7 @@
                                                 enctype="multipart/form-data" 
                                                 class="form-inline"  >
                                             <o:inputFile id="files" 
-                                                         value="#{controladorConveniosPYE.dtoConvenios.archivos}"  
+                                                         value="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.archivos}"  
                                                          multiple="true" 
                                                          class="form-control"
                                                          accept="image/png,image/jpg,image/jpeg,application/pdf" 
@@ -309,10 +383,13 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true" 
                                                          requiredMessage="Debe elegir al menos un archivo." 
-                                                         rendered="#{controladorConveniosPYE.dtoConvenios.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorConveniosPYE.dtoConvenios.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
-                                            <h:commandButton id="btnuploadFiles" value="Subir archivos" class="btn btn-primary" actionListener="#{controladorConveniosPYE.subirEvidencias()}" 
-                                                             rendered="#{controladorConveniosPYE.dtoConvenios.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorConveniosPYE.dtoConvenios.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                            <h:commandButton id="btnuploadFiles" 
+                                                             value="Subir archivos" 
+                                                             class="btn btn-primary" 
+                                                             actionListener="#{controladorEficienciaTerminalTitulacionRegistroPYE.subirEvidencias()}" 
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -321,14 +398,14 @@
                         <h:form id="frmEvidencias" >
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
-                                <div class="col-md-12"><p:outputLabel value="Convenio: #{controladorConveniosPYE.dtoConvenios.registro.convenio.empresa.nombre}" /></div>
+                                <div class="col-md-12"><p:outputLabel value="Eficiencia terminal con corte a: #{controladorEficienciaTerminalTitulacionRegistroPYE.dto.registro.eficienciaTerminalTitulacionRegistro.fechaCorte}" /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px" />
                             <div class="row">
                                 <div class="col-md-12">
                                     <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
                                     <p:dataTable id="tblEvidencias" 
-                                                 value="#{controladorConveniosPYE.dtoConvenios.listaEvidencias}" 
+                                                 value="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.listaEvidencias}" 
                                                  var="evidencia"
                                                  emptyMessage="No se han registrado evidencias de este registro." 
                                                  tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
@@ -350,9 +427,10 @@
                                             <div class="btn-group">
                                                 <p:commandButton class="btn btn-info btn-sm" 
                                                                  icon="fa fa-trash" 
-                                                                 actionListener="#{controladorConveniosPYE.eliminarEvidencia(evidencia)}" 
+                                                                 actionListener="#{controladorEficienciaTerminalTitulacionRegistroPYE.eliminarEvidencia(evidencia)}" 
                                                                  onsuccess="actualizar2();" 
-                                                                 title="Eliminar evidencia.">
+                                                                 title="Eliminar evidencia."
+                                                                 rendered="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEficienciaTerminalTitulacionRegistroPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
                                                     <p:confirm header="Eliminar evidencia" 
                                                                message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" 
                                                                icon="ui-icon-alert" />
@@ -360,7 +438,7 @@
                                                 <p:spacer width="5" />
                                                 <p:commandLink class="btn btn-info btn-sm"
                                                                ajax="false" 
-                                                               action="#{controladorConveniosPYE.descargarEvidencia(evidencia)}" 
+                                                               action="#{controladorEficienciaTerminalTitulacionRegistroPYE.descargarEvidencia(evidencia)}" 
                                                                target="_blank" 
                                                                title="Descargar evidencia.">
                                                     <i class="fa fa-download" />
@@ -371,7 +449,7 @@
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
                                         <f:facet name="footer">
-                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorConveniosPYE.dtoConvenios.listaEvidencias)}.</span>
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorEficienciaTerminalTitulacionRegistroPYE.dto.listaEvidencias)}.</span>
                                         </f:facet>
                                     </p:dataTable>
                                 </div>
@@ -399,25 +477,25 @@
                         <h:form id="frmAlineacion" >
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorConveniosPYE.dtoConvenios.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorConveniosPYE.dtoConvenios.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar rendered="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEficienciaTerminalTitulacionRegistroPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
                                             <p:commandButton class="btn btn-primary" 
                                                              value="Eliminar alineación" 
                                                              icon="fa fa-trash" 
-                                                             actionListener="#{controladorConveniosPYE.eliminarAlineacion()}" 
-                                                             rendered="#{controladorConveniosPYE.verificaAlineacion(controladorConveniosPYE.dtoConvenios.registro.convenio.registro)}" >
+                                                             actionListener="#{controladorEficienciaTerminalTitulacionRegistroPYE.eliminarAlineacion()}" 
+                                                             rendered="#{controladorEficienciaTerminalTitulacionRegistroPYE.verificaAlineacion(controladorEficienciaTerminalTitulacionRegistroPYE.dto.registro.eficienciaTerminalTitulacionRegistro.registro)}" >
                                                 <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
                                             </p:commandButton>
-                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{controladorConveniosPYE.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
+                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{controladorEficienciaTerminalTitulacionRegistroPYE.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
                                         </f:facet>
                                     </p:toolbar>
                                 </div>
                             </div>                            
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
-                                <div class="col-md-12"><p:outputLabel value="Convenio: #{controladorConveniosPYE.dtoConvenios.registro.convenio.empresa.nombre} " /></div>
+                                <div class="col-md-12"><p:outputLabel value="Eficiencia Terminal con corte: #{controladorEficienciaTerminalTitulacionRegistroPYE.dto.registro.eficienciaTerminalTitulacionRegistro.fechaCorte} " /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
@@ -426,10 +504,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="eje" value="#{controladorConveniosPYE.dtoConvenios.alineacionEje}" valueChangeListener="#{controladorConveniosPYE.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="eje" value="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.alineacionEje}" valueChangeListener="#{controladorEficienciaTerminalTitulacionRegistroPYE.actualizarEstrategias}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorConveniosPYE.dtoConvenios.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <f:selectItems value="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
                                         <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="eje"><p:autoUpdate /></p:message>
@@ -438,10 +516,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="estrategia" value="#{controladorConveniosPYE.dtoConvenios.alineacionEstrategia}" valueChangeListener="#{controladorConveniosPYE.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="estrategia" value="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.alineacionEstrategia}" valueChangeListener="#{controladorEficienciaTerminalTitulacionRegistroPYE.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorConveniosPYE.dtoConvenios.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <f:selectItems value="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
                                         <p:ajax process="estrategia" update="lineaAccion,actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="estrategia"><p:autoUpdate /></p:message>
@@ -450,10 +528,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="lineaAccion" value="#{controladorConveniosPYE.dtoConvenios.alineacionLinea}" valueChangeListener="#{controladorConveniosPYE.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="lineaAccion" value="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.alineacionLinea}" valueChangeListener="#{controladorEficienciaTerminalTitulacionRegistroPYE.actualizarActividades}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorConveniosPYE.dtoConvenios.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <f:selectItems value="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
                                         <p:ajax process="lineaAccion" update="actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="lineaAccion"><p:autoUpdate /></p:message>
@@ -462,10 +540,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="actividad" value="#{controladorConveniosPYE.dtoConvenios.alineacionActividad}" required="true" converter="entidadConverter2">
+                                    <p:selectOneMenu id="actividad" value="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.alineacionActividad}" required="true" converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorConveniosPYE.dtoConvenios.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <f:selectItems value="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
                                         <p:ajax process="actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="actividad"><p:autoUpdate /></p:message>
@@ -473,7 +551,6 @@
                             </div>
                         </h:form>
                     </p:dialog>
-
                 </div>
             </div>
         </div>

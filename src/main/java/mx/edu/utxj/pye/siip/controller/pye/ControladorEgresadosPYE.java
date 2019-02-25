@@ -76,6 +76,7 @@ public class ControladorEgresadosPYE implements Serializable{
         dto.nulificarCategoria();
         Faces.setSessionAttribute("categorias", dto.getListaCategoriasPOA());
     }
+    
     public void actualizarAreas(ValueChangeEvent e) {
         dto.setCategoria((Categorias) e.getNewValue());
         llenaAreas();

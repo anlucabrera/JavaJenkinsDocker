@@ -25,6 +25,11 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
  * @author UTXJ
  */
 public final class DtoDistribucionEquipamiento {
+    /************************** Lista áreas ****************************************/
+    @Getter @Setter private List<AreasUniversidad> listaAreasPOA; 
+    
+    @Getter @Setter private AreasUniversidad areaUniversidadPOA;
+    
     @Getter private AreasUniversidad areaPOA;
     @Getter private DTOEquiposComputoCPE registroEquiposComputoCPE;
     @Getter private DTOEquiposComputoInternetCPE registroEquiposInternetCPE;

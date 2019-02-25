@@ -92,4 +92,6 @@ public interface EjbCatalogos {
     
     public List<AreasUniversidad> getAreasUniversidadDepartamentosConPoa();
     
+    public List<AreasUniversidad> getAreasUniversidadCoordinacionesConPoa();
+    
 }

@@ -6,7 +6,6 @@
 package mx.edu.utxj.pye.siip.dto.eb;
 
 import java.io.Serializable;
-import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
