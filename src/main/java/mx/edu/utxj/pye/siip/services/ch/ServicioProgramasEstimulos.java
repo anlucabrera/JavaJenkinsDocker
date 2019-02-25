@@ -181,13 +181,13 @@ public class ServicioProgramasEstimulos implements EjbProgramasEstimulos{
             }
              libroRegistro.close();
             if (validarCelda.contains(false)) {
-                    Messages.addGlobalError("<b>La hoja de registros de Programas de Estimulos contiene datos que no son válidos, verifique los datos de la plantilla</b>");
+                    Messages.addGlobalError("<b>La hoja de registros de Programas de Estímulos contiene datos que no son válidos, verifique los datos de la plantilla</b>");
                     Messages.addGlobalError(datosInvalidos.toString());
                     excel.delete();
                     ServicioArchivos.eliminarArchivo(rutaArchivo);
                     return Collections.EMPTY_LIST;
                 } else {
-                    Messages.addGlobalInfo("<b>Hoja de Programas de Estimulos Validada favor de verificar sus datos antes de guardar su información</b>");
+                    Messages.addGlobalInfo("<b>Hoja de Programas de Estímulos Validada favor de verificar sus datos antes de guardar su información</b>");
                     return listaDtoProgEst;
                 }
         } else {

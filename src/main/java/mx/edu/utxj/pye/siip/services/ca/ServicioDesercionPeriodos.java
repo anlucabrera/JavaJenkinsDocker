@@ -62,6 +62,8 @@ public class ServicioDesercionPeriodos implements EjbDesercionPeriodos{
     @EJB Facade f;
     @EJB EjbFiscalizacion ejbFiscalizacion;
     @Inject ControladorEmpleado controladorEmpleado;
+    
+    String genero;
    
     @Override
     public ListaDesercionPeriodos getListaDesercionPeriodos(String rutaArchivo) throws Throwable {
@@ -378,13 +380,15 @@ public class ServicioDesercionPeriodos implements EjbDesercionPeriodos{
                 String generacion = String.valueOf(inicio) + "-"+ String.valueOf(fin);
                 String cicloe = sdf.format(p.getCiclo().getInicio()) + " - " + sdf.format(p.getCiclo().getFin());
                 Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());
-                AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class,  registro.getArea());
+                MatriculaPeriodosEscolares mat = f.getEntityManager().find(MatriculaPeriodosEscolares.class, x.getMatriculaPeriodosEscolares().getRegistro());
+                genero = mat.getCurp().substring(10, 11);
+                AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class,  mat.getProgramaEducativo());
                 ActividadesPoa a =  registro.getActividadesPoaList().isEmpty()?null: registro.getActividadesPoaList().get(0);
                 if (eventoRegistro.equals(registro.getEventoRegistro())) {
-                    ListaDtoDesercion dto = new ListaDtoDesercion(true, cicloe, periodo, generacion, bc, bt, x, au, a);
+                    ListaDtoDesercion dto = new ListaDtoDesercion(true, cicloe, periodo, generacion, bc, bt, x, mat, genero, au, a);
                     ldto.add(dto);
                 } else {
-                    ListaDtoDesercion dto = new ListaDtoDesercion(false, cicloe, periodo, generacion, bc, bt, x, au, a);
+                    ListaDtoDesercion dto = new ListaDtoDesercion(false, cicloe, periodo, generacion, bc, bt, x, mat, genero, au, a);
                     ldto.add(dto);
                 }   
             });

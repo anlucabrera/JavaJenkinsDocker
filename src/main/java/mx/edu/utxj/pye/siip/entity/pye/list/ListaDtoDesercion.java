@@ -16,6 +16,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.BajasCausa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.BajasTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.DesercionPeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
 
 /**
  *
@@ -31,6 +32,8 @@ public class ListaDtoDesercion {
     @Getter @Setter private BajasCausa bajasCausa;
     @Getter @Setter private BajasTipo bajasTipo;
     @Getter @Setter private DesercionPeriodosEscolares desercionPeriodosEscolares;
+    @Getter @Setter private MatriculaPeriodosEscolares matriculaPeriodosEscolares;
+    @Getter @Setter private String genero;
     
     @Getter @Setter private AreasUniversidad areasUniversidad;
     @Getter @Setter private ActividadesPoa actividadAlineada;

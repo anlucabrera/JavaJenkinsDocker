@@ -27,6 +27,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.DesercionPeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.DesercionReprobacionMaterias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.MateriasProgramaEducativo;
+import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -264,9 +265,16 @@ public class ServicioDesercionReprobacion implements EjbDesercionReprobacion{
         } else {
             List<DTOReprobacion> ldto = new ArrayList<>();
             q.forEach(x->{
-                MateriasProgramaEducativo m = f.getEntityManager().find(MateriasProgramaEducativo.class, x.getAsignatura());
+                MateriasProgramaEducativo m = f.getEntityManager().find(MateriasProgramaEducativo.class, x.getAsignatura().getCveMateria());
                 Personal p = f.getEntityManager().find(Personal.class, x.getDocente());
-                DTOReprobacion dto = new DTOReprobacion(x.getDpe().getMatriculaPeriodosEscolares().getMatricula(), m, p, x);
+                MatriculaPeriodosEscolares mat = f.getEntityManager().find(MatriculaPeriodosEscolares.class, x.getDpe().getMatriculaPeriodosEscolares().getRegistro());
+                AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, mat.getProgramaEducativo());
+                DTOReprobacion dto = new DTOReprobacion(mat.getMatricula(),
+                    m,
+                    p,
+                    x,
+                    au,
+                    mat);
                 ldto.add(dto);
             });            
             return ldto;
@@ -331,13 +339,33 @@ public class ServicioDesercionReprobacion implements EjbDesercionReprobacion{
     }
 
     @Override
-    public List<DesercionReprobacionMaterias> getListaMateriasReprobadas(String desercion) {
+    public List<DTOReprobacion> getListaMateriasReprobadas(String desercion) {
         if(desercion == null){
             return Collections.EMPTY_LIST;
         }
-        List<DesercionReprobacionMaterias> l = f.getEntityManager().createQuery("SELECT r FROM DesercionReprobacionMaterias r JOIN r.dpe d WHERE d.dpe = :desercion", DesercionReprobacionMaterias.class)
+        List<DesercionReprobacionMaterias> entities = new ArrayList<>();
+        List<DTOReprobacion> l = new ArrayList<>();
+        
+        entities = f.getEntityManager().createQuery("SELECT r FROM DesercionReprobacionMaterias r JOIN r.dpe d WHERE d.dpe = :desercion", DesercionReprobacionMaterias.class)
                 .setParameter("desercion", desercion)
                 .getResultList();
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+            MateriasProgramaEducativo m = f.getEntityManager().find(MateriasProgramaEducativo.class, e.getAsignatura().getCveMateria());
+            Personal p = f.getEntityManager().find(Personal.class, e.getDocente());
+            MatriculaPeriodosEscolares mat = f.getEntityManager().find(MatriculaPeriodosEscolares.class, e.getDpe().getMatriculaPeriodosEscolares().getRegistro());
+            AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, mat.getProgramaEducativo());
+
+            l.add(new DTOReprobacion(
+                    mat.getMatricula(),
+                    m,
+                    p,
+                    e,
+                    au,
+                    mat));
+        });
+        
         return l;
     }
 

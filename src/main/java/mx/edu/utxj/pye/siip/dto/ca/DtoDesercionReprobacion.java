@@ -77,7 +77,7 @@ public class DtoDesercionReprobacion {
     
     @Getter private List<Short> clavesAreasSubordinadas;//claves de areas subordinas que no tienes poa
     
-    @Getter private List<DesercionReprobacionMaterias> listaMatRep;
+    @Getter private List<DTOReprobacion> listaMatRep;
 
     public DtoDesercionReprobacion() {
         tieneMatRep = false;
@@ -255,7 +255,7 @@ public class DtoDesercionReprobacion {
         }
     }
     
-    public void setListaMatRep(List<DesercionReprobacionMaterias> listaMatRep) {
+    public void setListaMatRep(List<DTOReprobacion> listaMatRep) {
         this.listaMatRep = listaMatRep;
         setTieneMatRep(!listaMatRep.isEmpty());
     }

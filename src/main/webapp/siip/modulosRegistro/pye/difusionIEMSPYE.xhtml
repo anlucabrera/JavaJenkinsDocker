@@ -29,7 +29,7 @@
         <p:importEnum type="mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa" var="etapa" allSuffix="ETAPAS" />
         <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
             <h1>
-                Esta página está disponible solo para pantallas superiores a 1024px.
+                Esta página está disponible sólo para pantallas superiores a 1024px.
             </h1>
         </p:panel>
         <c:if test="#{difIemsPYE.listaReg ne null}">
@@ -145,7 +145,7 @@
                                     <f:facet name="right">
                                         <o:form id="formularioEvidencia" enctype="multipart/form-data" class="form-inline"  >
                                             <o:inputFile id="files" value="#{difIemsPYE.dto.archivos}"  multiple="true" class="form-control"
-                                                         accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Solo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
                                                          maxsize="#{caster.evidenciasTamanioLimite}" maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true" requiredMessage="Debe elegir al menos un archivo." >
                                             </o:inputFile>
@@ -170,7 +170,7 @@
                                 <div class="col-md-12">
                                     <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
                                     <p:dataTable id="tblEvidencias" value="#{difIemsPYE.dto.listaEvidencias}" var="evidencia"
-                                                 emptyMessage="No se han registrado evidencias de éste registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 emptyMessage="No se han registrado evidencias de este registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
                                                  paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
                                                  >
                                         <p:columnGroup type="header">
@@ -212,7 +212,7 @@
                                         </f:facet>
                                         <f:facet name="right">
                                             <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{difIemsPYE.eliminarAlineacion()}" rendered="#{!empty difIemsPYE.dto.registro.actividadAlineada}" >
-                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de esta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
                                             </p:commandButton>
                                             <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{difIemsPYE.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
                                         </f:facet>

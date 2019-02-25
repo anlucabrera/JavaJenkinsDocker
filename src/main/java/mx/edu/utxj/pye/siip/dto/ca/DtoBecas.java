@@ -32,7 +32,7 @@ public class DtoBecas {
     @Getter RegistrosTipo registroTipo;    
     @Getter EjesRegistro ejesRegistro;
     @Getter private EventosRegistros eventoActual, eventoSeleccionado;
-    @Getter Short area;    
+    @Getter AreasUniversidad area;    
     @Getter  private ListaBecasPeriodo listaBecasPeriodo = new ListaBecasPeriodo();
     
     /*Controles agregados para las herramientas administrativas*/
@@ -91,7 +91,7 @@ public class DtoBecas {
         this.ejesRegistro = ejesRegistro;
     }
 
-    public void setArea(Short area) {
+    public void setArea(AreasUniversidad area) {
         this.area = area;
     }
 

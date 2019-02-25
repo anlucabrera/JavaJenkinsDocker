@@ -42,4 +42,11 @@ public interface EjbBolsaEntrevistas {
      * @return entity.
      */
    public BolsaTrabajoEntrevistas getRegistroBolsaTrabajoEntrevistas(BolsaTrabajoEntrevistas bolsaTrabajoEntrevistas);
+   
+   /**
+     * Obtiene la lista de entrevistas por bolsa de trabajo.
+     * @param bolsaTrab clave de la bolsa de trabajo.
+     * @return Lista de entrevistas.
+     */
+   public List<DTOBolsaEntrevistas> getListaEntrevistaBolsaTrabajo(String bolsaTrab);
 }

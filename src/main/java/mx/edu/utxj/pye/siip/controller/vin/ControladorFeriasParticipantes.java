@@ -191,7 +191,7 @@ public class ControladorFeriasParticipantes implements Serializable{
     public void eliminarAlineacion(){
         Boolean eliminado = ejbEvidenciasAlineacion.eliminarAlineacion(dto.getRegistro().getFeriasParticipantes().getRegistro());
         if(eliminado){ 
-            Messages.addGlobalInfo("La elineación se eliminó de forma correcta.");
+            Messages.addGlobalInfo("La alineación se eliminó de forma correcta.");
             dto.getRegistro().setActividadAlineada(null);
             dto.setAlineacionActividad(ejbEvidenciasAlineacion.getActividadAlineada(dto.getRegistro().getFeriasParticipantes().getRegistro()));
             actualizarEjes();

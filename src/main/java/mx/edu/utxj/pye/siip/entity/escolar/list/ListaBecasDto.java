@@ -15,6 +15,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.BecaTipos;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.BecasPeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
 
 /**
  *
@@ -27,7 +28,8 @@ public class ListaBecasDto {
     @Getter @Setter private String periodoAsignacion;
     @Getter @Setter private BecaTipos becaTipos;
     @Getter @Setter private BecasPeriodosEscolares becasPeriodosEscolares;
-    
+    @Getter @Setter private MatriculaPeriodosEscolares matriculaPeriodosEscolares;
+    @Getter @Setter private String genero;
     
     @Getter @Setter private AreasUniversidad areasUniversidad;
     @Getter @Setter private ActividadesPoa actividadAlineada;

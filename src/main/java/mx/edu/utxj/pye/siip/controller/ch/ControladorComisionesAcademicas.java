@@ -147,7 +147,7 @@ public class ControladorComisionesAcademicas implements Serializable{
         dto.setLista(ejbComisionesAcademicas.getRegistroDTOComAcad(mes, ejercicio));
         dtopart.setLista(ejbComisionesAcademicas.getRegistroDTOPartComAcad(mes, ejercicio));
         if (dto.getLista().isEmpty() || dto.getLista()== null) {
-            Messages.addGlobalWarn("no se encontraron actividades registradas en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
+            Messages.addGlobalWarn("No hay información registrada en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
         }
       
     }

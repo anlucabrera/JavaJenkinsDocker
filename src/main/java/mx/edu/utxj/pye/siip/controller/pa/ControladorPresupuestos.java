@@ -126,7 +126,7 @@ public class ControladorPresupuestos implements Serializable{
         dto.setLista(ejbPresupuestos.getRegistroDTOPresupuestos(mes, ejercicio));
 
         if (dto.getLista().isEmpty() || dto.getLista()== null) {
-            Messages.addGlobalWarn("no se encontraron actividades registradas en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
+            Messages.addGlobalWarn("No hay información registrada en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
         }
     }
     public void listaPresupuestosPrevia(String rutaArchivo) {

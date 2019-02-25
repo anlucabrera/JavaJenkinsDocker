@@ -31,6 +31,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
+import mx.edu.utxj.pye.siip.dto.escolar.DTOReprobacion;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.ca.DtoDesercionReprobacion;
@@ -105,7 +106,7 @@ public class ControladorDesercionReprobacionPYE implements Serializable {
         dto.setEjercicioFiscal(ejercicio);
         dto.setListaDtoReprobacion(ejbDesercionReprobacion.getListaRegistrosReprobacionDto(mes, ejercicio));
         if (dto.getListaDtoReprobacion() == null) {
-            Messages.addGlobalWarn("No hay registros de Deserción por Reprobación en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
+//            Messages.addGlobalWarn("No hay registros de Deserción por Reprobación en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
         }
     }
    
@@ -156,7 +157,7 @@ public class ControladorDesercionReprobacionPYE implements Serializable {
         }
     }
 
-    public List<DesercionReprobacionMaterias> consultarMatRep(String desercion){
+    public List<DTOReprobacion> consultarMatRep(String desercion){
          return ejbDesercionReprobacion.getListaMateriasReprobadas(desercion);
     }
     
@@ -255,7 +256,7 @@ public class ControladorDesercionReprobacionPYE implements Serializable {
         Boolean eliminado = ejbModulos.eliminarAlineacion(dto.getRegistro().getDesercionReprobacionMaterias().getRegistro());
         if(eliminado){ 
             try {
-                Messages.addGlobalInfo("La elineación se eliminó de forma correcta.");
+                Messages.addGlobalInfo("La alineación se eliminó de forma correcta.");
                 dto.getRegistro().setActividadAlineada(null);
                 dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getDesercionReprobacionMaterias().getRegistro()));
                 actualizarEjes(dto.getRegistro().getDesercionReprobacionMaterias().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());

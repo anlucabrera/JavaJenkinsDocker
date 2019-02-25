@@ -155,7 +155,7 @@
                                                 <c:set var="partFerReg" value="#{ferproP.feriasParticipantes.registro}"/>
                                                 <p:column headerText="Opciones" style="width: 80px; text-align: center;">
                                                     <div class="btn-group"> 
-                                                        <p:commandButton update="@this" process="@this" title="Eliminar convenio" icon="fa fa-trash" onsuccess="actualizarTabla()"
+                                                        <p:commandButton update="@this" process="@this" title="Eliminar registro" icon="fa fa-trash" onsuccess="actualizarTabla()"
                                                                          disabled="#{!ferproP.activo}"
                                                                          class="btn btn-info btn-sm" actionListener="#{feriasPro.eliminarRegistroParticipante(partFerReg)}">
                                                             <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro del IEMS #{ferproP.feriasParticipantes.iems.nombre}?" icon="ui-icon-alert" />
@@ -212,7 +212,7 @@
                                     <f:facet name="right">
                                         <o:form id="formularioEvidencia" enctype="multipart/form-data" class="form-inline"  >
                                             <o:inputFile id="files" value="#{feriasPro.dto.archivos}"  multiple="true" class="form-control"
-                                                         accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Solo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
                                                          maxsize="#{caster.evidenciasTamanioLimite}" maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true" requiredMessage="Debe elegir al menos un archivo." >
                                             </o:inputFile>
@@ -237,7 +237,7 @@
                                 <div class="col-md-12">
                                     <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
                                     <p:dataTable id="tblEvidencias" value="#{feriasPro.dto.listaEvidencias}" var="evidencia"
-                                                 emptyMessage="No se han registrado evidencias de éste registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 emptyMessage="No se han registrado evidencias de este registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
                                                  paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
                                                  >
                                         <p:columnGroup type="header">
@@ -279,7 +279,7 @@
                                         </f:facet>
                                         <f:facet name="right">
                                             <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{feriasPro.eliminarAlineacion()}" rendered="#{!empty feriasPro.dto.registro.actividadAlineada}" >
-                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de esta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
                                             </p:commandButton>
                                             <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{feriasPro.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
                                         </f:facet>
@@ -365,7 +365,7 @@
                                     <f:facet name="right">
                                         <o:form id="formularioEvidencia1" enctype="multipart/form-data" class="form-inline"  >
                                             <o:inputFile id="files" value="#{feriasPart.dto.archivos}"  multiple="true" class="form-control"
-                                                         accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Solo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
                                                          maxsize="#{caster.evidenciasTamanioLimite}" maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true" requiredMessage="Debe elegir al menos un archivo." >
                                             </o:inputFile>
@@ -390,7 +390,7 @@
                                 <div class="col-md-12">
                                     <p:remoteCommand name="actualizar12" update="@form:tblEvidencias1" />
                                     <p:dataTable id="tblEvidencias1" value="#{feriasPart.dto.listaEvidencias}" var="evidencia"
-                                                 emptyMessage="No se han registrado evidencias de éste registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 emptyMessage="No se han registrado evidencias de este registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
                                                  paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
                                                  >
                                         <p:columnGroup type="header">
@@ -432,7 +432,7 @@
                                         </f:facet>
                                         <f:facet name="right">
                                             <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{feriasPart.eliminarAlineacion()}" rendered="#{!empty feriasPart.dto.registro.actividadAlineada}" >
-                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de esta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
                                             </p:commandButton>
                                             <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{feriasPart.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
                                         </f:facet>
@@ -605,7 +605,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <o:inputFile id="file" value="#{controladorArchivoFerias.file}" 
-                                                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" acceptMessage="Solo se permiten archivos XLSX." 
+                                                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" acceptMessage="Sólo se permiten archivos XLSX." 
                                                  maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." 
                                                  required="true" requiredMessage="Debe elegir un archivo." >
                                     </o:inputFile>

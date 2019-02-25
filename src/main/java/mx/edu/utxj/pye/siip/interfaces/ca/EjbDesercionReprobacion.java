@@ -99,6 +99,6 @@ public interface EjbDesercionReprobacion {
      * @param desercion deserción académica.
      * @return Lista de materias reprobadas.
      */
-    public List<DesercionReprobacionMaterias> getListaMateriasReprobadas(String desercion);
+    public List<DTOReprobacion> getListaMateriasReprobadas(String desercion);
 }
 

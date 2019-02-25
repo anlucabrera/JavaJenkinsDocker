@@ -118,7 +118,7 @@ public class ControladorPresupuestosPYE implements Serializable{
         dto.setLista(ejbPresupuestos.getRegistroDTOPresupuestos(mes, ejercicio));
 
         if (dto.getLista().isEmpty() || dto.getLista()== null) {
-            Messages.addGlobalWarn("no se encontraron actividades registradas en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
+            Messages.addGlobalWarn("No hay presupuesto registrado en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
         }
     }
     public void consultarPermiso(){
@@ -258,7 +258,7 @@ public class ControladorPresupuestosPYE implements Serializable{
         Boolean eliminado = ejbModulos.eliminarAlineacion(dto.getRegistro().getPresupuestos().getRegistro());
         if(eliminado){ 
             try {
-                Messages.addGlobalInfo("La elineación se eliminó de forma correcta.");
+                Messages.addGlobalInfo("La alineación se eliminó de forma correcta.");
                 dto.getRegistro().setActividadAlineada(null);
                 dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getPresupuestos().getRegistro()));
                 actualizarEjes(dto.getRegistro().getPresupuestos().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());

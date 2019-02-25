@@ -262,7 +262,7 @@ public class ControladorPartActFormIntPYE implements Serializable{
         }else Messages.addGlobalError("El registro no pudo alinearse.");
     }
     
-    public List<ParticipantesActividadesFormacionIntegral> consultarParticipantes(String actividad){
+    public List<DTOParticipantesActFormInt> consultarParticipantes(String actividad){
          return ejb.getListaParticipantesPorActividad(actividad);
     }
     

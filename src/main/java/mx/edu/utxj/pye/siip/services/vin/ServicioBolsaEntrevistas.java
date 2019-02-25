@@ -5,26 +5,22 @@
  */
 package mx.edu.utxj.pye.siip.services.vin;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
-import lombok.Getter;
-import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.BolsaTrabajo;
 import mx.edu.utxj.pye.sgi.entity.pye2.BolsaTrabajoEntrevistas;
@@ -238,43 +234,7 @@ public class ServicioBolsaEntrevistas implements EjbBolsaEntrevistas{
                 }
             }
         });
-          
-        
-//            List<String> listaCondicional = new ArrayList<>();
-//            lista.forEach((bolsaEntrevistas) -> {
-//                    try {
-//                        BolsaTrabajo bolsaTrabajo = ejbBolsaTrabajo.getRegistroBolsaTrabajo(bolsaEntrevistas.getBolsaTrabajoEntrevistas().getBolsatrabent());
-//
-//                        if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), bolsaTrabajo.getPeriodo())) {
-//
-//                            f.setEntityClass(BolsaTrabajoEntrevistas.class);
-//                            BolsaTrabajoEntrevistas bolTrabEntEncontrado = getRegistroBolsaTrabajoEntrevistas(bolsaEntrevistas.getBolsaTrabajoEntrevistas());
-//                            Boolean registroAlmacenado = false;
-//                            if (bolTrabEntEncontrado != null) {
-//                                listaCondicional.add(bolsaEntrevistas.getBolsaTrabajoEntrevistas().getBolsatrabent().getBolsatrab() + " - " + bolsaEntrevistas.getBolsaTrabajoEntrevistas().getMatricula());
-//                                registroAlmacenado = true;
-//                            }
-//                            if (registroAlmacenado) {
-//                                bolsaEntrevistas.getBolsaTrabajoEntrevistas().setRegistro(bolTrabEntEncontrado.getRegistro());
-//                                bolsaEntrevistas.getBolsaTrabajoEntrevistas().getBolsatrabent().setRegistro(bolTrabEntEncontrado.getBolsatrabent().getRegistro());
-//                                f.edit(bolsaEntrevistas.getBolsaTrabajoEntrevistas());
-//                                addDetailMessage("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
-//                            } else {
-//                                Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-//                                bolsaEntrevistas.getBolsaTrabajoEntrevistas().getBolsatrabent().setRegistro(ejbBolsaTrabajo.getRegistroBolsaTrabajoEspecifico(bolsaEntrevistas.getBolsaTrabajoEntrevistas().getBolsatrabent().getBolsatrab()));
-//                                bolsaEntrevistas.getBolsaTrabajoEntrevistas().setRegistro(registro.getRegistro());
-//                                f.create(bolsaEntrevistas.getBolsaTrabajoEntrevistas());
-//                                addDetailMessage("<b>Se guardaron los registros correctamente</b> ");
-//                            }
-//                            f.flush();
-//                        } else {
-//
-//                            addDetailMessage("<b>No puede registrar información de periodos anteriores</b>");
-//                        }
-//                    } catch (Throwable ex) {
-//                        Logger.getLogger(ServicioBolsaTrabajo.class.getName()).log(Level.SEVERE, null, ex);
-//                    }
-//            });
+   
     }
 
     @Override
@@ -290,5 +250,35 @@ public class ServicioBolsaEntrevistas implements EjbBolsaEntrevistas{
             ex.toString();
         }
         return bolsaTrabajoEntrevistas; 
+    }
+
+    @Override
+    public List<DTOBolsaEntrevistas> getListaEntrevistaBolsaTrabajo(String bolsaTrab) {
+        if(bolsaTrab == null){
+            return Collections.EMPTY_LIST;
+        }
+         
+        List<BolsaTrabajoEntrevistas> entities = new ArrayList<>();
+        List<DTOBolsaEntrevistas> l = new ArrayList<>();
+         
+        entities = f.getEntityManager().createQuery("SELECT e FROM BolsaTrabajoEntrevistas e JOIN e.bolsatrabent b WHERE b.bolsatrab = :bolsaTrab", BolsaTrabajoEntrevistas.class)
+                .setParameter("bolsaTrab", bolsaTrab)
+                .getResultList();
+        
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+             Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+             ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+             
+            l.add(new DTOBolsaEntrevistas(
+                    e,
+                    f.getEntityManager().find(AreasUniversidad.class, e.getProgramaEducativo()),
+                    f.getEntityManager().find(Generaciones.class, e.getGeneracion()),
+                    a,
+                    "",
+                    ""));
+        });
+        
+        return l;
     }
 }
