@@ -43,7 +43,7 @@
                             <p:toolbar id="tb"> 
                                 <f:facet name="left">
                                     <p:spacer width="10" />
-                                        <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
+                                    <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
                                     <p:outputLabel value="Categoría " for="categoria"/>
                                     <p:spacer width="5" />
                                     <p:selectOneMenu id="categoria"
@@ -152,325 +152,333 @@
                         <div class="col-lg-12 col-md-12">
                             <h:form id="formMuestraDatosActivos">
                                 <p:remoteCommand name="actualizar" update="@form:formMuestraDatosActivos" />
-                                
-                                    <center>
-                                        <p:tabView id="tabEgresadosEliminacionConsulta">
-                                            <p:tab id="tabAEGEliminacionConsulta" title="Actividad del Egresado/a">
-                                                <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parametros seleccionados: Ejercicio: #{controladorEgresadosPYE.dto.anioConsulta} y Mes: #{controladorEgresadosPYE.dto.mesConsulta}"
-                                                             paginator="true"
-                                                             rows="10" 
-                                                             rowsPerPageTemplate="5,10,20,30,40,50"
-                                                             resizeMode="expand"
-                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
-                                                             id="dtbActividadEgresadosEliminacionConsulta"
-                                                             var="actividadEgresado" value="#{controladorEgresadosPYE.dto.listaActividadEgresado}"
-                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
-                                                    <p:columnGroup type="header">
-                                                        <p:row>
-                                                            <p:column headerText="Opciones"             width="100" />
-                                                            <p:column headerText="Fecha de corte"       width="100" />
-                                                            <p:column headerText="Generación"           width="100" />
-                                                            <p:column headerText="Programa Educativo"   width="600" />
-                                                            <p:column headerText="Tipo de Actividad"    width="350" />
-                                                            <p:column headerText="Hombres"              width="100" />
-                                                            <p:column headerText="Mujeres"              width="100" />
-                                                            <p:column headerText="Total"                width="100" />
-                                                        </p:row>
-                                                    </p:columnGroup>
-                                                    <c:set var="actividadEgresadoEliminar" value="#{actividadEgresado.actividadEgresadoGeneracion.registro}"/>
-                                                    <p:column style="text-align: center;">
-                                                        <div class="btn-group">
-                                                            <p:commandButton class="btn btn-info btn-sm" 
-                                                                             icon="fa fa-trash"
-                                                                             actionListener="#{controladorEgresadosPYE.eliminarRegistro(actividadEgresadoEliminar)}"
-                                                                             onsuccess="actualizar();" 
-                                                                             title="Eliminar registro."
-                                                                             rendered="#{controladorEgresadosPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresadosPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
-                                                                <p:confirm header="Eliminar registro"
-                                                                           message="¿Está seguro de eliminar el registro de la generación: #{actividadEgresado.generacion}?"
-                                                                           icon="ui-icon-alert" />
-                                                            </p:commandButton>
-                                                            <p:spacer width="3" />
-                                                            <c:set var="evidencias" value="#{controladorEgresadosPYE.consultarEvidencias(actividadEgresadoEliminar)}" />
-                                                            <p:commandButton actionListener="#{controladorEgresadosPYE.seleccionarRegistro(actividadEgresado)}" 
-                                                                             class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
-                                                                             icon="fa fa-image"
-                                                                             title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
-                                                            <p:spacer width="3" />
-                                                            <p:commandButton actionListener="#{controladorEgresadosPYE.abrirAlineacionPOA(actividadEgresado)}"
-                                                                             class="btn btn-sm #{controladorEgresadosPYE.verificaAlineacion(actividadEgresadoEliminar)?'btn-info':'btn-warning'}"
-                                                                             icon="fa fa-cog"
-                                                                             title="Alineación a POA."/>
-                                                        </div>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{actividadEgresado.actividadEgresadoGeneracion.fecha}">
-                                                            <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
-                                                        </h:outputText>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{actividadEgresado.generacion}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{actividadEgresado.programaEducativo.nombre}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{actividadEgresado.actividadEgresadoGeneracion.actividad.descripcion}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{actividadEgresado.actividadEgresadoGeneracion.hombres}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{actividadEgresado.actividadEgresadoGeneracion.mujeres}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{actividadEgresado.total}"/>
-                                                    </p:column>
-                                                </p:dataTable>
-                                            </p:tab>
 
-                                            <p:tab id="tabAEEGEliminacionConsulta" title="Actividad Económica Egresados/as">
-                                                <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parametros seleccionados: Ejercicio: #{controladorEgresadosPYE.dto.anioConsulta} y Mes: #{controladorEgresadosPYE.dto.mesConsulta}"
-                                                             paginator="true"
-                                                             rows="10" 
-                                                             rowsPerPageTemplate="5,10,20,30,40,50"
-                                                             resizeMode="expand"
-                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
-                                                             id="dtbActividadEconomicaEgresadosEliminacionConsulta"
-                                                             var="actividadEconomicaEgresado" value="#{controladorEgresadosPYE.dto.listaActividadEconomicaEgresado}"
-                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
-                                                    <p:columnGroup type="header">
-                                                        <p:row>
-                                                            <p:column headerText="Opciones"             width="100"  />
-                                                            <p:column headerText="Fecha de corte"       width="100" />
-                                                            <p:column headerText="Generación"           width="100" />
-                                                            <p:column headerText="Programa Educativo"   width="600" />
-                                                            <p:column headerText="Sector de Trabajo"    width="200" />
-                                                            <p:column headerText="Cantidad"             width="100" />
-                                                            <p:column headerText="Actividad Económica"  width="300" />
-                                                            <p:column headerText="Cantidad"             width="100" />
-                                                        </p:row>
-                                                    </p:columnGroup>
-                                                    <c:set var="actividadEconomicaEgresadoEliminar" value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.registro}"/>
-                                                    <p:column style="text-align: center;">
-                                                        <div class="btn-group">
-                                                            <p:commandButton class="btn btn-info btn-sm" 
-                                                                             icon="fa fa-trash"
-                                                                             actionListener="#{controladorEgresadosPYE.eliminarRegistro(actividadEconomicaEgresadoEliminar)}"
-                                                                             onsuccess="actualizar();" 
-                                                                             title="Eliminar registro."
-                                                                             rendered="#{controladorEgresadosPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresadosPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
-                                                                <p:confirm header="Eliminar registro"
-                                                                           message="¿Está seguro de eliminar el registro de la generación: #{actividadEconomicaEgresado.generacion}?"
-                                                                           icon="ui-icon-alert" />
-                                                            </p:commandButton>
-                                                            <p:spacer width="3" />
-                                                            <c:set var="evidencias" value="#{controladorEgresadosPYE.consultarEvidencias(actividadEconomicaEgresadoEliminar)}" />
-                                                            <p:commandButton actionListener="#{controladorEgresadosPYE.seleccionarRegistroAEE(actividadEconomicaEgresado)}" 
-                                                                             class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
-                                                                             icon="fa fa-image"
-                                                                             title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
-                                                            <p:spacer width="3" />
-                                                            <p:commandButton actionListener="#{controladorEgresadosPYE.abrirAlineacionPOAAEE(actividadEconomicaEgresado)}"
-                                                                             class="btn btn-sm #{controladorEgresadosPYE.verificaAlineacion(actividadEconomicaEgresadoEliminar)?'btn-info':'btn-warning'}"
-                                                                             icon="fa fa-cog"
-                                                                             title="Alineación a POA."/>
-                                                        </div>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.fecha}">
-                                                            <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
-                                                        </h:outputText>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{actividadEconomicaEgresado.generacion}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{actividadEconomicaEgresado.programaEducativo.nombre}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.sector.descripcion}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.cantSector}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.giro.descripcion}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.cantGiro}"/>
-                                                    </p:column>
-                                                </p:dataTable>
-                                            </p:tab>
+                                <center>
+                                    <p:tabView id="tabEgresadosEliminacionConsulta">
+                                        <p:tab id="tabAEGEliminacionConsulta" title="Actividad del Egresado/a">
+                                            <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parametros seleccionados: Ejercicio: #{controladorEgresadosPYE.dto.anioConsulta} y Mes: #{controladorEgresadosPYE.dto.mesConsulta}"
+                                                         paginator="true"
+                                                         rows="10" 
+                                                         rowsPerPageTemplate="5,10,20,30,40,50"
+                                                         resizeMode="expand"
+                                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                         id="dtbActividadEgresadosEliminacionConsulta"
+                                                         var="actividadEgresado" value="#{controladorEgresadosPYE.dto.listaActividadEgresado}"
+                                                         tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                <p:columnGroup type="header">
+                                                    <p:row>
+                                                        <p:column headerText="Opciones"             width="100" />
+                                                        <p:column headerText="Fecha de corte"       width="100" />
+                                                        <p:column headerText="Generación"           width="100" />
+                                                        <p:column headerText="Programa Educativo"   width="600" />
+                                                        <p:column headerText="Tipo de Actividad"    width="350" />
+                                                        <p:column headerText="Hombres"              width="100" />
+                                                        <p:column headerText="Mujeres"              width="100" />
+                                                        <p:column headerText="Total"                width="100" />
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <c:set var="actividadEgresadoEliminar" value="#{actividadEgresado.actividadEgresadoGeneracion.registro}"/>
+                                                <p:column style="text-align: center;">
+                                                    <div class="btn-group">
+                                                        <p:commandButton class="btn btn-info btn-sm" 
+                                                                         icon="fa fa-trash"
+                                                                         actionListener="#{controladorEgresadosPYE.eliminarRegistro(actividadEgresadoEliminar)}"
+                                                                         onsuccess="actualizar();" 
+                                                                         title="Eliminar registro."
+                                                                         rendered="#{controladorEgresadosPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresadosPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                            <p:confirm header="Eliminar registro"
+                                                                       message="¿Está seguro de eliminar el registro de la generación: #{actividadEgresado.generacion}?"
+                                                                       icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                        <p:spacer width="3" />
+                                                        <c:set var="evidencias" value="#{controladorEgresadosPYE.consultarEvidencias(actividadEgresadoEliminar)}" />
+                                                        <p:commandButton actionListener="#{controladorEgresadosPYE.seleccionarRegistro(actividadEgresado)}" 
+                                                                         class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                         icon="fa fa-image"
+                                                                         title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                        <p:spacer width="3" />
+                                                        <p:commandButton actionListener="#{controladorEgresadosPYE.abrirAlineacionPOA(actividadEgresado)}"
+                                                                         class="btn btn-sm #{controladorEgresadosPYE.verificaAlineacion(actividadEgresadoEliminar)?'btn-info':'btn-warning'}"
+                                                                         icon="fa fa-cog"
+                                                                         title="Alineación a POA."/>
+                                                    </div>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{actividadEgresado.actividadEgresadoGeneracion.fecha}">
+                                                        <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                    </h:outputText>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{actividadEgresado.generacion}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{actividadEgresado.programaEducativo.nombre}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{actividadEgresado.actividadEgresadoGeneracion.actividad.descripcion}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{actividadEgresado.actividadEgresadoGeneracion.hombres}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{actividadEgresado.actividadEgresadoGeneracion.mujeres}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{actividadEgresado.total}"/>
+                                                </p:column>
+                                                <f:facet name="footer">
+                                                    En el mes de: #{controladorEgresadosPYE.dto.mesConsulta} hay un total de: #{fn:length(controladorEgresadosPYE.dto.listaActividadEgresado)} registros de Actividades de Egresados.
+                                                </f:facet>
+                                            </p:dataTable>
+                                        </p:tab>
 
-                                            <p:tab id="tabNivelOcupacionEliminacionConsulta" title="Nivel Ocupación">
-                                                <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parametros seleccionados: Ejercicio: #{controladorEgresadosPYE.dto.anioConsulta} y Mes: #{controladorEgresadosPYE.dto.mesConsulta}"
-                                                             paginator="true"
-                                                             rows="10" 
-                                                             rowsPerPageTemplate="5,10,20,30,40,50"
-                                                             resizeMode="expand"
-                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
-                                                             id="dtbNivelOcupacionEliminacionConsulta"
-                                                             var="nivelOcupacionEG" value="#{controladorEgresadosPYE.dto.listaNivelOcupacionEgresado}"
-                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
-                                                    <p:columnGroup type="header">
-                                                        <p:row>
-                                                            <p:column   headerText="Opciones"             width="100"  />
-                                                            <p:column   headerText="Fecha de corte"       width="100" />
-                                                            <p:column   headerText="Generación"           width="100" />
-                                                            <p:column   headerText="Programa Educativo"   width="600" />
-                                                            <p:column   headerText="Ocupación"            width="200" />
-                                                            <p:column   headerText="Hombres"              width="100" />
-                                                            <p:column   headerText="Mujeres"              width="100" />
-                                                            <p:column   headerText="Total"                width="100" />
-                                                        </p:row>
-                                                    </p:columnGroup>
-                                                    <c:set var="nivelOcupacionEGEliminar" value="#{nivelOcupacionEG.nivelOcupacionEgresadosGeneracion.registro}"/>
-                                                    <p:column style="text-align: center;">
-                                                        <div class="btn-group">
-                                                            <p:commandButton class="btn btn-info btn-sm" 
-                                                                             icon="fa fa-trash"
-                                                                             actionListener="#{controladorEgresadosPYE.eliminarRegistro(nivelOcupacionEGEliminar)}"
-                                                                             onsuccess="actualizar();" 
-                                                                             title="Eliminar registro."
-                                                                             rendered="#{controladorEgresadosPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresadosPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
-                                                                <p:confirm header="Eliminar registro"
-                                                                           message="¿Está seguro de eliminar el registro de la generación: #{nivelOcupacionEG.generacion}?"
-                                                                           icon="ui-icon-alert" />
-                                                            </p:commandButton>
-                                                            <p:spacer width="3" />
-                                                            <c:set var="evidencias" value="#{controladorEgresadosPYE.consultarEvidencias(nivelOcupacionEGEliminar)}" />
-                                                            <p:commandButton actionListener="#{controladorEgresadosPYE.seleccionarRegistroNOE(nivelOcupacionEG)}" 
-                                                                             class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
-                                                                             icon="fa fa-image"
-                                                                             title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
-                                                            <p:spacer width="3" />
-                                                            <p:commandButton actionListener="#{controladorEgresadosPYE.abrirAlineacionPOANOE(nivelOcupacionEG)}"
-                                                                             class="btn btn-sm #{controladorEgresadosPYE.verificaAlineacion(nivelOcupacionEGEliminar)?'btn-info':'btn-warning'}"
-                                                                             icon="fa fa-cog"
-                                                                             title="Alineación a POA."/>
-                                                        </div>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{nivelOcupacionEG.nivelOcupacionEgresadosGeneracion.fecha}">
-                                                            <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
-                                                        </h:outputText>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{nivelOcupacionEG.generacion}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{nivelOcupacionEG.programaEducativo.nombre}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{nivelOcupacionEG.nivelOcupacionEgresadosGeneracion.ocupacion.descripcion}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{nivelOcupacionEG.nivelOcupacionEgresadosGeneracion.hombres}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{nivelOcupacionEG.nivelOcupacionEgresadosGeneracion.mujeres}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{nivelOcupacionEG.total}"/>
-                                                    </p:column>
-                                                    <f:facet name="footer">
-                                                    </f:facet>
-                                                </p:dataTable>
-                                            </p:tab>
+                                        <p:tab id="tabAEEGEliminacionConsulta" title="Actividad Económica Egresados/as">
+                                            <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parametros seleccionados: Ejercicio: #{controladorEgresadosPYE.dto.anioConsulta} y Mes: #{controladorEgresadosPYE.dto.mesConsulta}"
+                                                         paginator="true"
+                                                         rows="10" 
+                                                         rowsPerPageTemplate="5,10,20,30,40,50"
+                                                         resizeMode="expand"
+                                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                         id="dtbActividadEconomicaEgresadosEliminacionConsulta"
+                                                         var="actividadEconomicaEgresado" value="#{controladorEgresadosPYE.dto.listaActividadEconomicaEgresado}"
+                                                         tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                <p:columnGroup type="header">
+                                                    <p:row>
+                                                        <p:column headerText="Opciones"             width="100"  />
+                                                        <p:column headerText="Fecha de corte"       width="100" />
+                                                        <p:column headerText="Generación"           width="100" />
+                                                        <p:column headerText="Programa Educativo"   width="600" />
+                                                        <p:column headerText="Sector de Trabajo"    width="200" />
+                                                        <p:column headerText="Cantidad"             width="100" />
+                                                        <p:column headerText="Actividad Económica"  width="300" />
+                                                        <p:column headerText="Cantidad"             width="100" />
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <c:set var="actividadEconomicaEgresadoEliminar" value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.registro}"/>
+                                                <p:column style="text-align: center;">
+                                                    <div class="btn-group">
+                                                        <p:commandButton class="btn btn-info btn-sm" 
+                                                                         icon="fa fa-trash"
+                                                                         actionListener="#{controladorEgresadosPYE.eliminarRegistro(actividadEconomicaEgresadoEliminar)}"
+                                                                         onsuccess="actualizar();" 
+                                                                         title="Eliminar registro."
+                                                                         rendered="#{controladorEgresadosPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresadosPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                            <p:confirm header="Eliminar registro"
+                                                                       message="¿Está seguro de eliminar el registro de la generación: #{actividadEconomicaEgresado.generacion}?"
+                                                                       icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                        <p:spacer width="3" />
+                                                        <c:set var="evidencias" value="#{controladorEgresadosPYE.consultarEvidencias(actividadEconomicaEgresadoEliminar)}" />
+                                                        <p:commandButton actionListener="#{controladorEgresadosPYE.seleccionarRegistroAEE(actividadEconomicaEgresado)}" 
+                                                                         class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                         icon="fa fa-image"
+                                                                         title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                        <p:spacer width="3" />
+                                                        <p:commandButton actionListener="#{controladorEgresadosPYE.abrirAlineacionPOAAEE(actividadEconomicaEgresado)}"
+                                                                         class="btn btn-sm #{controladorEgresadosPYE.verificaAlineacion(actividadEconomicaEgresadoEliminar)?'btn-info':'btn-warning'}"
+                                                                         icon="fa fa-cog"
+                                                                         title="Alineación a POA."/>
+                                                    </div>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.fecha}">
+                                                        <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                    </h:outputText>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{actividadEconomicaEgresado.generacion}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{actividadEconomicaEgresado.programaEducativo.nombre}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.sector.descripcion}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.cantSector}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.giro.descripcion}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.cantGiro}"/>
+                                                </p:column>
+                                                <f:facet name="footer">
+                                                    En el mes de: #{controladorEgresadosPYE.dto.mesConsulta} hay un total de: #{fn:length(controladorEgresadosPYE.dto.listaActividadEconomicaEgresado)} registros de Actividad Económica de Egresados.
+                                                </f:facet>
+                                            </p:dataTable>
+                                        </p:tab>
 
-                                            <p:tab id="tabNivelIngresosEliminacionConsulta" title="Nivel Ingresos">
-                                                <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parametros seleccionados: Ejercicio: #{controladorEgresadosPYE.dto.anioConsulta} y Mes: #{controladorEgresadosPYE.dto.mesConsulta}"
-                                                             paginator="true"
-                                                             rows="10" 
-                                                             rowsPerPageTemplate="5,10,20,30,40,50"
-                                                             resizeMode="expand"
-                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
-                                                             id="dtbNivelIngresosEliminacionConsulta"
-                                                             var="nivelIngresoEG" value="#{controladorEgresadosPYE.dto.listaNivelIngresoEgresado}"
-                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
-                                                    <p:columnGroup type="header">
-                                                        <p:row>
-                                                            <p:column headerText="Opciones"             width="100"  />
-                                                            <p:column headerText="Fecha de corte"       width="100" />
-                                                            <p:column headerText="Generación"           width="100" />
-                                                            <p:column headerText="Programa Educativo"   width="600" />
-                                                            <p:column headerText="Ingreso"              width="200" />
-                                                            <p:column headerText="Hombres"              width="100" />
-                                                            <p:column headerText="Mujeres"              width="100" />
-                                                            <p:column headerText="Total"                width="100" />
-                                                        </p:row>
-                                                    </p:columnGroup>
-                                                    <c:set var="nivelIngresoEGEliminar" value="#{nivelIngresoEG.nivelIngresosEgresadosGeneracion.registro}"/>
-                                                    <p:column style="text-align: center;">
-                                                        <div class="btn-group">
-                                                            <p:commandButton class="btn btn-info btn-sm" 
-                                                                             icon="fa fa-trash"
-                                                                             actionListener="#{controladorEgresadosPYE.eliminarRegistro(nivelIngresoEGEliminar)}"
-                                                                             onsuccess="actualizar();" 
-                                                                             title="Eliminar registro."
-                                                                             rendered="#{controladorEgresadosPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresadosPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
-                                                                <p:confirm header="Eliminar registro"
-                                                                           message="¿Está seguro de eliminar el registro de la generación: #{nivelIngresoEG.generacion}?"
-                                                                           icon="ui-icon-alert" />
-                                                            </p:commandButton>
-                                                            <p:spacer width="3" />
-                                                            <c:set var="evidencias" value="#{controladorEgresadosPYE.consultarEvidencias(nivelIngresoEGEliminar)}" />
-                                                            <p:commandButton actionListener="#{controladorEgresadosPYE.seleccionarRegistroNIE(nivelIngresoEG)}" 
-                                                                             class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
-                                                                             icon="fa fa-image"
-                                                                             title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
-                                                            <p:spacer width="3" />
-                                                            <p:commandButton actionListener="#{controladorEgresadosPYE.abrirAlineacionPOANIE(nivelIngresoEG)}"
-                                                                             class="btn btn-sm #{controladorEgresadosPYE.verificaAlineacion(nivelIngresoEGEliminar)?'btn-info':'btn-warning'}"
-                                                                             icon="fa fa-cog"
-                                                                             title="Alineación a POA."/>
-                                                        </div>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{nivelIngresoEG.nivelIngresosEgresadosGeneracion.fecha}">
-                                                            <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
-                                                        </h:outputText>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{nivelIngresoEG.generacion}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{nivelIngresoEG.programaEducativo.nombre}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{nivelIngresoEG.nivelIngresosEgresadosGeneracion.ingreso.ingresos}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{nivelIngresoEG.nivelIngresosEgresadosGeneracion.hombres}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{nivelIngresoEG.nivelIngresosEgresadosGeneracion.mujeres}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{nivelIngresoEG.total}"/>
-                                                    </p:column>
-                                                    <f:facet name="footer">
-                                                    </f:facet>
-                                                </p:dataTable>
-                                                <p:confirmDialog global="true"
-                                                                 showEffect="fade"
-                                                                 hideEffect="fade"
-                                                                 styleClass="panel panel-primary"
-                                                                 width="500"
-                                                                 closeOnEscape="true">
-                                                    <p:commandButton value="Si"
-                                                                     type="button"
-                                                                     styleClass="ui-confirmdialog-yes btn btn-primary" 
-                                                                     icon="ui-icon-check" />
-                                                    <p:commandButton value="No" 
-                                                                     type="button" 
-                                                                     styleClass="ui-confirmdialog-no btn btn-primary" 
-                                                                     icon="ui-icon-close" />
-                                                </p:confirmDialog>
-                                            </p:tab>
-                                        </p:tabView>
-                                    </center>
+                                        <p:tab id="tabNivelOcupacionEliminacionConsulta" title="Nivel Ocupación">
+                                            <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parametros seleccionados: Ejercicio: #{controladorEgresadosPYE.dto.anioConsulta} y Mes: #{controladorEgresadosPYE.dto.mesConsulta}"
+                                                         paginator="true"
+                                                         rows="10" 
+                                                         rowsPerPageTemplate="5,10,20,30,40,50"
+                                                         resizeMode="expand"
+                                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                         id="dtbNivelOcupacionEliminacionConsulta"
+                                                         var="nivelOcupacionEG" value="#{controladorEgresadosPYE.dto.listaNivelOcupacionEgresado}"
+                                                         tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                <p:columnGroup type="header">
+                                                    <p:row>
+                                                        <p:column   headerText="Opciones"             width="100"  />
+                                                        <p:column   headerText="Fecha de corte"       width="100" />
+                                                        <p:column   headerText="Generación"           width="100" />
+                                                        <p:column   headerText="Programa Educativo"   width="600" />
+                                                        <p:column   headerText="Ocupación"            width="200" />
+                                                        <p:column   headerText="Hombres"              width="100" />
+                                                        <p:column   headerText="Mujeres"              width="100" />
+                                                        <p:column   headerText="Total"                width="100" />
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <c:set var="nivelOcupacionEGEliminar" value="#{nivelOcupacionEG.nivelOcupacionEgresadosGeneracion.registro}"/>
+                                                <p:column style="text-align: center;">
+                                                    <div class="btn-group">
+                                                        <p:commandButton class="btn btn-info btn-sm" 
+                                                                         icon="fa fa-trash"
+                                                                         actionListener="#{controladorEgresadosPYE.eliminarRegistro(nivelOcupacionEGEliminar)}"
+                                                                         onsuccess="actualizar();" 
+                                                                         title="Eliminar registro."
+                                                                         rendered="#{controladorEgresadosPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresadosPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                            <p:confirm header="Eliminar registro"
+                                                                       message="¿Está seguro de eliminar el registro de la generación: #{nivelOcupacionEG.generacion}?"
+                                                                       icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                        <p:spacer width="3" />
+                                                        <c:set var="evidencias" value="#{controladorEgresadosPYE.consultarEvidencias(nivelOcupacionEGEliminar)}" />
+                                                        <p:commandButton actionListener="#{controladorEgresadosPYE.seleccionarRegistroNOE(nivelOcupacionEG)}" 
+                                                                         class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                         icon="fa fa-image"
+                                                                         title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                        <p:spacer width="3" />
+                                                        <p:commandButton actionListener="#{controladorEgresadosPYE.abrirAlineacionPOANOE(nivelOcupacionEG)}"
+                                                                         class="btn btn-sm #{controladorEgresadosPYE.verificaAlineacion(nivelOcupacionEGEliminar)?'btn-info':'btn-warning'}"
+                                                                         icon="fa fa-cog"
+                                                                         title="Alineación a POA."/>
+                                                    </div>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{nivelOcupacionEG.nivelOcupacionEgresadosGeneracion.fecha}">
+                                                        <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                    </h:outputText>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{nivelOcupacionEG.generacion}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{nivelOcupacionEG.programaEducativo.nombre}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{nivelOcupacionEG.nivelOcupacionEgresadosGeneracion.ocupacion.descripcion}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{nivelOcupacionEG.nivelOcupacionEgresadosGeneracion.hombres}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{nivelOcupacionEG.nivelOcupacionEgresadosGeneracion.mujeres}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{nivelOcupacionEG.total}"/>
+                                                </p:column>
+                                                <f:facet name="footer">
+                                                    En el mes de: #{controladorEgresadosPYE.dto.mesConsulta} hay un total de: #{fn:length(controladorEgresadosPYE.dto.listaNivelOcupacionEgresado)} registros de Nivel de Ocupación de Egresados.
+                                                </f:facet>
+                                            </p:dataTable>
+                                        </p:tab>
+
+                                        <p:tab id="tabNivelIngresosEliminacionConsulta" title="Nivel Ingresos">
+                                            <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parametros seleccionados: Ejercicio: #{controladorEgresadosPYE.dto.anioConsulta} y Mes: #{controladorEgresadosPYE.dto.mesConsulta}"
+                                                         paginator="true"
+                                                         rows="10" 
+                                                         rowsPerPageTemplate="5,10,20,30,40,50"
+                                                         resizeMode="expand"
+                                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                         id="dtbNivelIngresosEliminacionConsulta"
+                                                         var="nivelIngresoEG" value="#{controladorEgresadosPYE.dto.listaNivelIngresoEgresado}"
+                                                         tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                <p:columnGroup type="header">
+                                                    <p:row>
+                                                        <p:column headerText="Opciones"             width="100"  />
+                                                        <p:column headerText="Fecha de corte"       width="100" />
+                                                        <p:column headerText="Generación"           width="100" />
+                                                        <p:column headerText="Programa Educativo"   width="600" />
+                                                        <p:column headerText="Ingreso"              width="200" />
+                                                        <p:column headerText="Hombres"              width="100" />
+                                                        <p:column headerText="Mujeres"              width="100" />
+                                                        <p:column headerText="Total"                width="100" />
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <c:set var="nivelIngresoEGEliminar" value="#{nivelIngresoEG.nivelIngresosEgresadosGeneracion.registro}"/>
+                                                <p:column style="text-align: center;">
+                                                    <div class="btn-group">
+                                                        <p:commandButton class="btn btn-info btn-sm" 
+                                                                         icon="fa fa-trash"
+                                                                         actionListener="#{controladorEgresadosPYE.eliminarRegistro(nivelIngresoEGEliminar)}"
+                                                                         onsuccess="actualizar();" 
+                                                                         title="Eliminar registro."
+                                                                         rendered="#{controladorEgresadosPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresadosPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                            <p:confirm header="Eliminar registro"
+                                                                       message="¿Está seguro de eliminar el registro de la generación: #{nivelIngresoEG.generacion}?"
+                                                                       icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                        <p:spacer width="3" />
+                                                        <c:set var="evidencias" value="#{controladorEgresadosPYE.consultarEvidencias(nivelIngresoEGEliminar)}" />
+                                                        <p:commandButton actionListener="#{controladorEgresadosPYE.seleccionarRegistroNIE(nivelIngresoEG)}" 
+                                                                         class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                         icon="fa fa-image"
+                                                                         title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                        <p:spacer width="3" />
+                                                        <p:commandButton actionListener="#{controladorEgresadosPYE.abrirAlineacionPOANIE(nivelIngresoEG)}"
+                                                                         class="btn btn-sm #{controladorEgresadosPYE.verificaAlineacion(nivelIngresoEGEliminar)?'btn-info':'btn-warning'}"
+                                                                         icon="fa fa-cog"
+                                                                         title="Alineación a POA."/>
+                                                    </div>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{nivelIngresoEG.nivelIngresosEgresadosGeneracion.fecha}">
+                                                        <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                    </h:outputText>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{nivelIngresoEG.generacion}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{nivelIngresoEG.programaEducativo.nombre}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{nivelIngresoEG.nivelIngresosEgresadosGeneracion.ingreso.ingresos}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{nivelIngresoEG.nivelIngresosEgresadosGeneracion.hombres}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{nivelIngresoEG.nivelIngresosEgresadosGeneracion.mujeres}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{nivelIngresoEG.total}"/>
+                                                </p:column>
+                                                <f:facet name="footer">
+                                                    En el mes de: #{controladorEgresadosPYE.dto.mesConsulta} hay un total de: #{fn:length(controladorEgresadosPYE.dto.listaNivelIngresoEgresado)} registros de Nivel de Ingresos de Egresados.
+                                                </f:facet>
+                                            </p:dataTable>
+                                            <p:confirmDialog global="true"
+                                                             showEffect="fade"
+                                                             hideEffect="fade"
+                                                             styleClass="panel panel-primary"
+                                                             width="500"
+                                                             closeOnEscape="true">
+                                                <p:commandButton value="Si"
+                                                                 type="button"
+                                                                 styleClass="ui-confirmdialog-yes btn btn-primary" 
+                                                                 icon="ui-icon-check" />
+                                                <p:commandButton value="No" 
+                                                                 type="button" 
+                                                                 styleClass="ui-confirmdialog-no btn btn-primary" 
+                                                                 icon="ui-icon-close" />
+                                            </p:confirmDialog>
+                                        </p:tab>
+                                    </p:tabView>
+                                </center>
                             </h:form>
                         </div>
                     </div>
@@ -509,7 +517,7 @@
                                                          multiple="true"
                                                          class="form-control"
                                                          accept="image/png,image/jpg,image/jpeg,application/pdf"     
-                                                         acceptMessage="Solo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
                                                          maxsize="#{caster.evidenciasTamanioLimite}"
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
@@ -535,7 +543,7 @@
                                     <p:dataTable id="tblEvidencias"
                                                  value="#{controladorEgresadosPYE.dto.listaEvidencias}"
                                                  var="evidencia"
-                                                 emptyMessage="No se han registrado evidencias de éste registro." 
+                                                 emptyMessage="No se han registrado evidencias de este registro." 
                                                  tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
                                                  paginator="true" 
                                                  rows="10"
@@ -611,7 +619,7 @@
                                                          multiple="true"
                                                          class="form-control"
                                                          accept="image/png,image/jpg,image/jpeg,application/pdf"     
-                                                         acceptMessage="Solo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
                                                          maxsize="#{caster.evidenciasTamanioLimite}"
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
@@ -637,7 +645,7 @@
                                     <p:dataTable id="tblEvidenciasAEE"
                                                  value="#{controladorEgresadosPYE.dto.listaEvidencias}"
                                                  var="evidencia"
-                                                 emptyMessage="No se han registrado evidencias de éste registro." 
+                                                 emptyMessage="No se han registrado evidencias de este registro." 
                                                  tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
                                                  paginator="true" 
                                                  rows="10"
@@ -713,7 +721,7 @@
                                                          multiple="true"
                                                          class="form-control"
                                                          accept="image/png,image/jpg,image/jpeg,application/pdf"     
-                                                         acceptMessage="Solo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
                                                          maxsize="#{caster.evidenciasTamanioLimite}"
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
@@ -739,7 +747,7 @@
                                     <p:dataTable id="tblEvidenciasNOE"
                                                  value="#{controladorEgresadosPYE.dto.listaEvidencias}"
                                                  var="evidencia"
-                                                 emptyMessage="No se han registrado evidencias de éste registro." 
+                                                 emptyMessage="No se han registrado evidencias de este registro." 
                                                  tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
                                                  paginator="true" 
                                                  rows="10"
@@ -815,7 +823,7 @@
                                                          multiple="true"
                                                          class="form-control"
                                                          accept="image/png,image/jpg,image/jpeg,application/pdf"     
-                                                         acceptMessage="Solo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
                                                          maxsize="#{caster.evidenciasTamanioLimite}"
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
@@ -841,7 +849,7 @@
                                     <p:dataTable id="tblEvidenciasNIE"
                                                  value="#{controladorEgresadosPYE.dto.listaEvidencias}"
                                                  var="evidencia"
-                                                 emptyMessage="No se han registrado evidencias de éste registro." 
+                                                 emptyMessage="No se han registrado evidencias de este registro." 
                                                  tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
                                                  paginator="true" 
                                                  rows="10"

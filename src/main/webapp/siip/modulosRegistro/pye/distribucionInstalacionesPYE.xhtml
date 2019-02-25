@@ -41,34 +41,72 @@
                             <p:autoUpdate/>
                             <p:toolbar id="tb"> 
                                 <f:facet name="left">
-                                    <p:spacer width="10" />
-                                    <c:if test="#{controladorArchivoDistribucionInstalaciones.etapa eq etapa.MOSTRAR}">
-                                        <p:outputLabel value="Periodo: " for="periodo" />
-                                        <p:spacer width="3" />
-                                        <p:selectOneMenu id="periodo" converter="entityConverter"
-                                                         value="#{controladorDistribucionInstalaciones.dto.periodo}" valueChangeListener="#{controladorDistribucionInstalaciones.actualizarMeses}"
-                                                         class="form-control" style="padding-top: 0px;">
-                                            <f:selectItems value="#{controladorDistribucionInstalaciones.dto.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" itemDescription="#{caster.periodoToString(periodo)}" />
-                                            <p:ajax process="@this" update="@(form)" />
-                                        </p:selectOneMenu>
-                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                        <p:outputLabel value="Mes: " for="mes" />
-                                        <p:spacer width="3" />
-                                        <p:selectOneMenu id="mes" value="#{controladorDistribucionInstalaciones.dto.eventoSeleccionado}" converter="entityConverter" class="form-control" style="padding-top: 0px;">
-                                            <f:selectItems value="#{controladorDistribucionInstalaciones.dto.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" itemDescription="#{evento.mes}"  />
-                                            <p:ajax process="@this" listener="#{controladorDistribucionInstalaciones.cargarListaPorEvento()}" update="@(form)" />
-                                        </p:selectOneMenu>
-                                    </c:if>
+                                    
+                                    <p:outputLabel value="Área " for="area" />
+                                    <p:spacer width="3" />
+                                    <p:selectOneMenu id="area"
+                                                     required="true"
+                                                     value="#{controladorDistribucionInstalacionesPYE.dto.areaUniversidadPOA}"
+                                                     valueChangeListener="#{controladorDistribucionInstalacionesPYE.actualizaPeriodosEscolares}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     converter="entidadConverter2"
+                                                     class="form-control"
+                                                     style="padding-top: 0px">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorDistribucionInstalacionesPYE.dto.listaAreasPOA}" 
+                                                       var="area" 
+                                                       itemValue="#{area}" 
+                                                       itemLabel="#{area.nombre}"
+                                                       itemDescription="#{area.nombre}" />
+                                        <p:ajax process="@this" update="@(form)" />
+                                    </p:selectOneMenu>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+
+                                    <p:outputLabel value="Periodo: " 
+                                                   for="periodo" />
+                                    <p:spacer width="3" />
+                                    <p:selectOneMenu id="periodo" 
+                                                     converter="entityConverter"
+                                                     value="#{controladorDistribucionInstalacionesPYE.dto.periodo}" 
+                                                     valueChangeListener="#{controladorDistribucionInstalacionesPYE.actualizarMeses}"
+                                                     class="form-control" 
+                                                     style="padding-top: 0px;">
+                                        <f:selectItems value="#{controladorDistribucionInstalacionesPYE.dto.periodos}" 
+                                                       var="periodo" 
+                                                       itemValue="#{periodo}" 
+                                                       itemLabel="#{caster.periodoToString(periodo)}" 
+                                                       itemDescription="#{caster.periodoToString(periodo)}" />
+                                        <p:ajax process="@this" 
+                                                update="@(form)" />
+                                    </p:selectOneMenu>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    
+                                    <p:outputLabel value="Mes: " 
+                                                   for="mes" />
+                                    <p:spacer width="3" />
+                                    <p:selectOneMenu id="mes" 
+                                                     value="#{controladorDistribucionInstalacionesPYE.dto.eventoSeleccionado}" 
+                                                     converter="entityConverter" 
+                                                     class="form-control" 
+                                                     style="padding-top: 0px;">
+                                        <f:selectItems value="#{controladorDistribucionInstalacionesPYE.dto.eventosPorPeriodo}" 
+                                                       var="evento" 
+                                                       itemValue="#{evento}" 
+                                                       itemLabel="#{evento.mes}" 
+                                                       itemDescription="#{evento.mes}"  />
+                                        <p:ajax process="@this" 
+                                                listener="#{controladorDistribucionInstalacionesPYE.cargarListaPorEvento()}" 
+                                                update="@(form)" />
+                                    </p:selectOneMenu>
+                                    
                                 </f:facet>
                                 <f:facet name="right">
-                                    <div class="btn-group">
-                                        <p:commandButton value="Cargar Archivo de Excel" icon="fa fa-file-excel-o" onclick="PF('modalCargaArchivo').show()" class="btn btn-primary btn-sm"/>
-                                    </div>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <c:if test="#{controladorArchivoDistribucionInstalaciones.etapa eq etapa.CARGAR}">
-                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="distribucionInstalaciones?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
-                                    </c:if>
-                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="#{controladorPlantillasEB.descargarPlantillaDistribucionInstalaciones()}" target="_blank" title="Descargar Plantilla Distribución Instalaciones"><i class="fa fa-download" /></p:commandLink>
+
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
                                 </f:facet>
                             </p:toolbar>
@@ -91,7 +129,7 @@
                                             <p:tab id="tabCapacidadInstaladaElimCons" title="Capacidad Instalada">
                                                 <p:dataTable id="dtbCapacidadInstaladaElimCons"
                                                              emptyMessage="Sin datos en el periodo seleccionado."
-                                                             value="#{controladorDistribucionInstalaciones.dto.listaCapIns}"
+                                                             value="#{controladorDistribucionInstalacionesPYE.dto.listaCapIns}"
                                                              var="capacidadInstalada"
                                                              paginator="true"
                                                              rows="10" 
@@ -113,16 +151,16 @@
                                                         <div class="btn-group">
                                                             <p:commandButton class="btn btn-info btn-sm" 
                                                                              icon="fa fa-trash" 
-                                                                             actionListener="#{controladorDistribucionInstalaciones.eliminarRegistro(capacidadInstalada)}"
+                                                                             actionListener="#{controladorDistribucionInstalacionesPYE.eliminarRegistro(capacidadInstalada)}"
                                                                              title="Eliminar registro."
-                                                                             rendered="#{controladorDistribucionInstalaciones.dto.periodoEscolarActivo eq controladorDistribucionInstalaciones.dto.periodo}">
+                                                                             rendered="#{controladorDistribucionInstalacionesPYE.dto.periodoEscolarActivo eq controladorDistribucionInstalacionesPYE.dto.periodo}">
                                                                 <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro del ciclo escolar: #{capacidadInstalada.cicloEscolar}" icon="ui-icon-alert" />
                                                             </p:commandButton>
-                                                            <c:set var="evidencias" value="#{controladorDistribucionInstalaciones.consultarEvidencias(capacidadInstalada)}" />
-                                                            <p:commandButton actionListener="#{controladorDistribucionInstalaciones.seleccionarRegistro(capacidadInstalada)}"
+                                                            <c:set var="evidencias" value="#{controladorDistribucionInstalacionesPYE.consultarEvidencias(capacidadInstalada)}" />
+                                                            <p:commandButton actionListener="#{controladorDistribucionInstalacionesPYE.seleccionarRegistro(capacidadInstalada)}"
                                                                              class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" icon="fa fa-image"
                                                                              title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
-                                                            <p:commandButton actionListener="#{controladorDistribucionInstalaciones.abrirAlineacionPOA(capacidadInstalada)}"
+                                                            <p:commandButton actionListener="#{controladorDistribucionInstalacionesPYE.abrirAlineacionPOA(capacidadInstalada)}"
                                                                              class="btn btn-sm #{!empty capacidadInstalada.actividadAlineada?'btn-info':'btn-warning'}" icon="fa fa-cog"
                                                                              title="Alineación a POA." />
                                                         </div>
@@ -142,13 +180,16 @@
                                                     <p:column>
                                                         <h:outputText value="#{capacidadInstalada.totalEspaciosDocentes}"/>
                                                     </p:column>
+                                                    <f:facet name="footer">
+                                                        En el mes de: #{controladorDistribucionInstalacionesPYE.dto.eventoSeleccionado.mes} hay un total de: #{fn:length(controladorDistribucionInstalacionesPYE.dto.listaCapIns)} registros de Capacidad Instalada.
+                                                    </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
 
                                             <p:tab id="tabDistribucionAulasElimCons" title="Distribución de aulas">
                                                 <p:dataTable id="dtbDistribucionAulasElimCons"
                                                              emptyMessage="Sin datos en el periodo seleccionado."
-                                                             value="#{controladorDistribucionInstalaciones.dto.listaDisAulas}"
+                                                             value="#{controladorDistribucionInstalacionesPYE.dto.listaDisAulas}"
                                                              var="distribucionAula"
                                                              paginator="true"
                                                              rows="10" 
@@ -171,16 +212,16 @@
                                                         <div class="btn-group">
                                                             <p:commandButton class="btn btn-info btn-sm" 
                                                                              icon="fa fa-trash" 
-                                                                             actionListener="#{controladorDistribucionInstalaciones.eliminarRegistroDA(distribucionAula)}"
+                                                                             actionListener="#{controladorDistribucionInstalacionesPYE.eliminarRegistroDA(distribucionAula)}"
                                                                              title="Eliminar registro."
-                                                                             rendered="#{controladorDistribucionInstalaciones.dto.periodoEscolarActivo.periodo eq distribucionAula.distribucionAulasCicloPeriodosEscolares.periodoEscolar}">
+                                                                             rendered="#{controladorDistribucionInstalacionesPYE.dto.periodoEscolarActivo.periodo eq distribucionAula.distribucionAulasCicloPeriodosEscolares.periodoEscolar}">
                                                                 <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro del periodo: #{distribucionAula.periodoEscolar}" icon="ui-icon-alert" />
                                                             </p:commandButton>
-                                                            <c:set var="evidencias" value="#{controladorDistribucionInstalaciones.consultarEvidenciasDA(distribucionAula)}" />
-                                                            <p:commandButton actionListener="#{controladorDistribucionInstalaciones.seleccionarRegistroDA(distribucionAula)}"
+                                                            <c:set var="evidencias" value="#{controladorDistribucionInstalacionesPYE.consultarEvidenciasDA(distribucionAula)}" />
+                                                            <p:commandButton actionListener="#{controladorDistribucionInstalacionesPYE.seleccionarRegistroDA(distribucionAula)}"
                                                                              class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" icon="fa fa-image"
                                                                              title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
-                                                            <p:commandButton actionListener="#{controladorDistribucionInstalaciones.abrirAlineacionPOADA(distribucionAula)}"
+                                                            <p:commandButton actionListener="#{controladorDistribucionInstalacionesPYE.abrirAlineacionPOADA(distribucionAula)}"
                                                                              class="btn btn-sm #{!empty distribucionAula.actividadAlineada?'btn-info':'btn-warning'}" icon="fa fa-cog"
                                                                              title="Alineación a POA." />
                                                         </div>
@@ -204,13 +245,14 @@
                                                         <h:outputText value="#{distribucionAula.distribucionAulasCicloPeriodosEscolares.acondicionadas}"/>
                                                     </p:column>
                                                     <f:facet name="footer">
+                                                        En el mes de: #{controladorDistribucionInstalacionesPYE.dto.eventoSeleccionado.mes} hay un total de: #{fn:length(controladorDistribucionInstalacionesPYE.dto.listaDisAulas)} registros de Distribución de Aulas.
                                                     </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
                                             <p:tab id="tabDistribucionLabTallElimCons" title="Distribución de Laboratorios y Talleres">
                                                 <p:dataTable id="dtbDistribucionLabTallElimCons"
                                                              emptyMessage="Sin datos en el periodo seleccionado."
-                                                             value="#{controladorDistribucionInstalaciones.dto.listaDisLabTall}"
+                                                             value="#{controladorDistribucionInstalacionesPYE.dto.listaDisLabTall}"
                                                              var="distribucionLabTall" 
                                                              paginator="true"
                                                              rows="10" 
@@ -234,16 +276,16 @@
                                                         <div class="btn-group">
                                                             <p:commandButton class="btn btn-info btn-sm" 
                                                                              icon="fa fa-trash" 
-                                                                             actionListener="#{controladorDistribucionInstalaciones.eliminarRegistroDLT(distribucionLabTall)}"
+                                                                             actionListener="#{controladorDistribucionInstalacionesPYE.eliminarRegistroDLT(distribucionLabTall)}"
                                                                              title="Eliminar registro."
-                                                                             rendered="#{controladorDistribucionInstalaciones.dto.periodoEscolarActivo.periodo eq distribucionLabTall.distribucionLabtallCicloPeriodosEscolares.periodoEscolar}">
+                                                                             rendered="#{controladorDistribucionInstalacionesPYE.dto.periodoEscolarActivo.periodo eq distribucionLabTall.distribucionLabtallCicloPeriodosEscolares.periodoEscolar}">
                                                                 <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro del periodo: #{distribucionLabTall.periodoEscolar}" icon="ui-icon-alert" />
                                                             </p:commandButton>
-                                                            <c:set var="evidencias" value="#{controladorDistribucionInstalaciones.consultarEvidenciasDLT(distribucionLabTall)}" />
-                                                            <p:commandButton actionListener="#{controladorDistribucionInstalaciones.seleccionarRegistroDLT(distribucionLabTall)}"
+                                                            <c:set var="evidencias" value="#{controladorDistribucionInstalacionesPYE.consultarEvidenciasDLT(distribucionLabTall)}" />
+                                                            <p:commandButton actionListener="#{controladorDistribucionInstalacionesPYE.seleccionarRegistroDLT(distribucionLabTall)}"
                                                                              class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" icon="fa fa-image"
                                                                              title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
-                                                            <p:commandButton actionListener="#{controladorDistribucionInstalaciones.abrirAlineacionPOADLT(distribucionLabTall)}"
+                                                            <p:commandButton actionListener="#{controladorDistribucionInstalacionesPYE.abrirAlineacionPOADLT(distribucionLabTall)}"
                                                                              class="btn btn-sm #{!empty distribucionLabTall.actividadAlineada?'btn-info':'btn-warning'}" icon="fa fa-cog"
                                                                              title="Alineación a POA." />
                                                         </div>
@@ -271,6 +313,9 @@
                                                             <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
                                                         </h:outputText>
                                                     </p:column>
+                                                    <f:facet name="footer">
+                                                        En el mes de: #{controladorDistribucionInstalacionesPYE.dto.eventoSeleccionado.mes} hay un total de: #{fn:length(controladorDistribucionInstalacionesPYE.dto.listaDisLabTall)} registros de Distribución de Laboratorios y Talleres.
+                                                    </f:facet>
                                                 </p:dataTable>
                                                 <p:confirmDialog global="true" 
                                                                  showEffect="fade" 
@@ -295,14 +340,14 @@
                             </h:form>
                         </div>
                     </div>
-                    
+
                     <!-- Carga de Evidencias - Capacidad Instalada -->
                     <p:dialog id="modalCargaEvidencia" 
                               widgetVar="modalCargaEvidencia" 
                               width="700" 
                               height="auto"  
                               closeOnEscape="true" 
-                              visible="#{controladorDistribucionInstalaciones.dto.forzarAperturaDialogo}"
+                              visible="#{controladorDistribucionInstalacionesPYE.dto.forzarAperturaDialogo}"
                               showEffect="fade" 
                               hideEffect="fade" 
                               modal="true" 
@@ -325,7 +370,7 @@
                                         <o:form id="formularioEvidenciaCA" 
                                                 enctype="multipart/form-data" class="form-inline">
                                             <o:inputFile id="filesCA" 
-                                                         value="#{controladorDistribucionInstalaciones.dto.archivos}"  
+                                                         value="#{controladorDistribucionInstalacionesPYE.dto.archivos}"  
                                                          multiple="true" 
                                                          class="form-control"
                                                          accept="image/png,image/jpg,image/jpeg,application/pdf" 
@@ -338,7 +383,7 @@
                                             <h:commandButton id="btnuploadFilesCA" 
                                                              value="Subir archivos" 
                                                              class="btn btn-primary"
-                                                             actionListener="#{controladorDistribucionInstalaciones.subirEvidencias()}" />
+                                                             actionListener="#{controladorDistribucionInstalacionesPYE.subirEvidencias()}" />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -348,14 +393,14 @@
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
                                 <div class="col-md-4"><p:outputLabel value="Ciclo Escolar: " /></div>
-                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalaciones.dto.registroCapacidadInstalada.cicloEscolar}" /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalacionesPYE.dto.registroCapacidadInstalada.cicloEscolar}" /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
                                 <div class="col-md-12">
                                     <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
                                     <p:dataTable id="tblEvidencias" 
-                                                 value="#{controladorDistribucionInstalaciones.dto.listaEvidencias}" 
+                                                 value="#{controladorDistribucionInstalacionesPYE.dto.listaEvidencias}" 
                                                  var="evidencia"
                                                  emptyMessage="No se han registrado evidencias de este registro." 
                                                  tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
@@ -377,17 +422,17 @@
                                             <div class="btn-group">
                                                 <p:commandButton class="btn btn-info btn-sm" 
                                                                  icon="fa fa-trash" 
-                                                                 actionListener="#{controladorDistribucionInstalaciones.eliminarEvidencia(evidencia)}" 
+                                                                 actionListener="#{controladorDistribucionInstalacionesPYE.eliminarEvidencia(evidencia)}" 
                                                                  onsuccess="actualizar2();"
                                                                  title="Eliminar evidencia."
-                                                                 rendered="#{controladorDistribucionInstalaciones.dto.periodoEscolarActivo eq controladorDistribucionInstalaciones.dto.periodo}">
+                                                                 rendered="#{controladorDistribucionInstalacionesPYE.dto.periodoEscolarActivo eq controladorDistribucionInstalacionesPYE.dto.periodo}">
                                                     <p:confirm header="Eliminar evidencia" 
                                                                message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" 
                                                                icon="ui-icon-alert" />
                                                 </p:commandButton>
                                                 <p:commandLink class="btn btn-info btn-sm" 
                                                                ajax="false" 
-                                                               action="#{controladorDistribucionInstalaciones.descargarEvidencia(evidencia)}" 
+                                                               action="#{controladorDistribucionInstalacionesPYE.descargarEvidencia(evidencia)}" 
                                                                target="_blank" 
                                                                title="Descargar evidencia.">
                                                     <i class="fa fa-download" />
@@ -398,21 +443,21 @@
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
                                         <f:facet name="footer">
-                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorDistribucionInstalaciones.dto.listaEvidencias)}.</span>
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorDistribucionInstalacionesPYE.dto.listaEvidencias)}.</span>
                                         </f:facet>
                                     </p:dataTable>
                                 </div>
                             </div>
                         </h:form>
                     </p:dialog>
-                    
+
                     <!-- Carga de Evidencias - Distribución de aulas -->
                     <p:dialog id="modalCargaEvidenciaDA" 
                               widgetVar="modalCargaEvidenciaDA" 
                               width="700" 
                               height="auto"  
                               closeOnEscape="true" 
-                              visible="#{controladorDistribucionInstalaciones.dto.forzarAperturaDialogo}"
+                              visible="#{controladorDistribucionInstalacionesPYE.dto.forzarAperturaDialogo}"
                               showEffect="fade" 
                               hideEffect="fade" 
                               modal="true" 
@@ -435,7 +480,7 @@
                                         <o:form id="formularioEvidenciaDA" 
                                                 enctype="multipart/form-data" class="form-inline">
                                             <o:inputFile id="filesDA" 
-                                                         value="#{controladorDistribucionInstalaciones.dto.archivos}"  
+                                                         value="#{controladorDistribucionInstalacionesPYE.dto.archivos}"  
                                                          multiple="true" 
                                                          class="form-control"
                                                          accept="image/png,image/jpg,image/jpeg,application/pdf" 
@@ -448,7 +493,7 @@
                                             <h:commandButton id="btnuploadFilesDA" 
                                                              value="Subir archivos" 
                                                              class="btn btn-primary"
-                                                             actionListener="#{controladorDistribucionInstalaciones.subirEvidenciasDA()}" />
+                                                             actionListener="#{controladorDistribucionInstalacionesPYE.subirEvidenciasDA()}" />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -458,18 +503,18 @@
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
                                 <div class="col-md-4"><p:outputLabel value="Ciclo Escolar: " /></div>
-                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalaciones.dto.registroDistribucionAulas.cicloEscolar}" /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalacionesPYE.dto.registroDistribucionAulas.cicloEscolar}" /></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4"><p:outputLabel value="Periodo Escolar: " /></div>
-                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalaciones.dto.registroDistribucionAulas.periodoEscolar}" /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalacionesPYE.dto.registroDistribucionAulas.periodoEscolar}" /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
                                 <div class="col-md-12">
                                     <p:remoteCommand name="actualizar3" update="@form:tblEvidenciasDA" />
                                     <p:dataTable id="tblEvidenciasDA" 
-                                                 value="#{controladorDistribucionInstalaciones.dto.listaEvidencias}" 
+                                                 value="#{controladorDistribucionInstalacionesPYE.dto.listaEvidencias}" 
                                                  var="evidencia"
                                                  emptyMessage="No se han registrado evidencias de este registro." 
                                                  tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
@@ -491,17 +536,17 @@
                                             <div class="btn-group">
                                                 <p:commandButton class="btn btn-info btn-sm" 
                                                                  icon="fa fa-trash" 
-                                                                 actionListener="#{controladorDistribucionInstalaciones.eliminarEvidenciaDA(evidencia)}" 
+                                                                 actionListener="#{controladorDistribucionInstalacionesPYE.eliminarEvidenciaDA(evidencia)}" 
                                                                  onsuccess="actualizar3();"
                                                                  title="Eliminar evidencia."
-                                                                 rendered="#{controladorDistribucionInstalaciones.dto.periodoEscolarActivo.periodo eq controladorDistribucionInstalaciones.dto.registroDistribucionAulas.distribucionAulasCicloPeriodosEscolares.periodoEscolar}">
+                                                                 rendered="#{controladorDistribucionInstalacionesPYE.dto.periodoEscolarActivo.periodo eq controladorDistribucionInstalacionesPYE.dto.registroDistribucionAulas.distribucionAulasCicloPeriodosEscolares.periodoEscolar}">
                                                     <p:confirm header="Eliminar evidencia" 
                                                                message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" 
                                                                icon="ui-icon-alert" />
                                                 </p:commandButton>
                                                 <p:commandLink class="btn btn-info btn-sm" 
                                                                ajax="false" 
-                                                               action="#{controladorDistribucionInstalaciones.descargarEvidencia(evidencia)}" 
+                                                               action="#{controladorDistribucionInstalacionesPYE.descargarEvidencia(evidencia)}" 
                                                                target="_blank" 
                                                                title="Descargar evidencia.">
                                                     <i class="fa fa-download" />
@@ -512,21 +557,21 @@
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
                                         <f:facet name="footer">
-                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorDistribucionInstalaciones.dto.listaEvidencias)}.</span>
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorDistribucionInstalacionesPYE.dto.listaEvidencias)}.</span>
                                         </f:facet>
                                     </p:dataTable>
                                 </div>
                             </div>
                         </h:form>
                     </p:dialog>
-                    
+
                     <!-- Carga de Evidencias - Distribución de laboratorios y talleres -->
                     <p:dialog id="modalCargaEvidenciaDLT" 
                               widgetVar="modalCargaEvidenciaDLT" 
                               width="700" 
                               height="auto"  
                               closeOnEscape="true" 
-                              visible="#{controladorDistribucionInstalaciones.dto.forzarAperturaDialogo}"
+                              visible="#{controladorDistribucionInstalacionesPYE.dto.forzarAperturaDialogo}"
                               showEffect="fade" 
                               hideEffect="fade" 
                               modal="true" 
@@ -549,7 +594,7 @@
                                         <o:form id="formularioEvidenciaDLT" 
                                                 enctype="multipart/form-data" class="form-inline">
                                             <o:inputFile id="filesDA" 
-                                                         value="#{controladorDistribucionInstalaciones.dto.archivos}"  
+                                                         value="#{controladorDistribucionInstalacionesPYE.dto.archivos}"  
                                                          multiple="true" 
                                                          class="form-control"
                                                          accept="image/png,image/jpg,image/jpeg,application/pdf" 
@@ -562,7 +607,7 @@
                                             <h:commandButton id="btnuploadFilesDLT" 
                                                              value="Subir archivos" 
                                                              class="btn btn-primary"
-                                                             actionListener="#{controladorDistribucionInstalaciones.subirEvidenciasDLT()}" />
+                                                             actionListener="#{controladorDistribucionInstalacionesPYE.subirEvidenciasDLT()}" />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -572,18 +617,18 @@
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
                                 <div class="col-md-4"><p:outputLabel value="Ciclo Escolar: " /></div>
-                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalaciones.dto.registroDistribucionLabTall.cicloEscolar}" /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalacionesPYE.dto.registroDistribucionLabTall.cicloEscolar}" /></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4"><p:outputLabel value="Periodo Escolar: " /></div>
-                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalaciones.dto.registroDistribucionLabTall.periodoEscolar}" /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalacionesPYE.dto.registroDistribucionLabTall.periodoEscolar}" /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
                                 <div class="col-md-12">
                                     <p:remoteCommand name="actualizar4" update="@form:tblEvidenciasDLT" />
                                     <p:dataTable id="tblEvidenciasDLT" 
-                                                 value="#{controladorDistribucionInstalaciones.dto.listaEvidencias}" 
+                                                 value="#{controladorDistribucionInstalacionesPYE.dto.listaEvidencias}" 
                                                  var="evidencia"
                                                  emptyMessage="No se han registrado evidencias de este registro." 
                                                  tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
@@ -605,17 +650,17 @@
                                             <div class="btn-group">
                                                 <p:commandButton class="btn btn-info btn-sm" 
                                                                  icon="fa fa-trash" 
-                                                                 actionListener="#{controladorDistribucionInstalaciones.eliminarEvidenciaDLT(evidencia)}" 
+                                                                 actionListener="#{controladorDistribucionInstalacionesPYE.eliminarEvidenciaDLT(evidencia)}" 
                                                                  onsuccess="actualizar4();"
                                                                  title="Eliminar evidencia."
-                                                                 rendered="#{controladorDistribucionInstalaciones.dto.periodoEscolarActivo.periodo eq controladorDistribucionInstalaciones.dto.registroDistribucionLabTall.distribucionLabtallCicloPeriodosEscolares.periodoEscolar}">
+                                                                 rendered="#{controladorDistribucionInstalacionesPYE.dto.periodoEscolarActivo.periodo eq controladorDistribucionInstalacionesPYE.dto.registroDistribucionLabTall.distribucionLabtallCicloPeriodosEscolares.periodoEscolar}">
                                                     <p:confirm header="Eliminar evidencia" 
                                                                message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" 
                                                                icon="ui-icon-alert" />
                                                 </p:commandButton>
                                                 <p:commandLink class="btn btn-info btn-sm" 
                                                                ajax="false" 
-                                                               action="#{controladorDistribucionInstalaciones.descargarEvidencia(evidencia)}" 
+                                                               action="#{controladorDistribucionInstalacionesPYE.descargarEvidencia(evidencia)}" 
                                                                target="_blank" 
                                                                title="Descargar evidencia.">
                                                     <i class="fa fa-download" />
@@ -626,14 +671,14 @@
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
                                         <f:facet name="footer">
-                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorDistribucionInstalaciones.dto.listaEvidencias)}.</span>
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorDistribucionInstalacionesPYE.dto.listaEvidencias)}.</span>
                                         </f:facet>
                                     </p:dataTable>
                                 </div>
                             </div>
                         </h:form>
                     </p:dialog>
-                    
+
                     <!-- Alineación a POA - Capacidad Instalada -->
                     <p:dialog id="modalAlineacion" 
                               widgetVar="modalAlineacion" 
@@ -653,15 +698,15 @@
                         <h:form id="frmAlineacion">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorDistribucionInstalaciones.dto.periodoEscolarActivo.ciclo.ciclo eq controladorDistribucionInstalaciones.dto.periodo.ciclo.ciclo}">
+                                    <p:toolbar rendered="#{controladorDistribucionInstalacionesPYE.dto.periodoEscolarActivo.ciclo.ciclo eq controladorDistribucionInstalacionesPYE.dto.periodo.ciclo.ciclo}">
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
                                             <p:commandButton class="btn btn-primary" 
                                                              value="Eliminar alineación" 
                                                              icon="fa fa-trash" 
-                                                             actionListener="#{controladorDistribucionInstalaciones.eliminarAlineacion()}" 
-                                                             rendered="#{!empty controladorDistribucionInstalaciones.dto.registroCapacidadInstalada.actividadAlineada}" >
+                                                             actionListener="#{controladorDistribucionInstalacionesPYE.eliminarAlineacion()}" 
+                                                             rendered="#{!empty controladorDistribucionInstalacionesPYE.dto.registroCapacidadInstalada.actividadAlineada}" >
                                                 <p:confirm header="Eliminar alineación" 
                                                            message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." 
                                                            icon="ui-icon-alert" />
@@ -669,7 +714,7 @@
                                             <p:commandButton class="btn btn-primary" 
                                                              value="Guardar alineación" 
                                                              icon="fa fa-save" 
-                                                             actionListener="#{controladorDistribucionInstalaciones.alinearRegistro()}" 
+                                                             actionListener="#{controladorDistribucionInstalacionesPYE.alinearRegistro()}" 
                                                              oncomplete="PF('modalAlineacion').hide();" />
                                         </f:facet>
                                     </p:toolbar>
@@ -678,7 +723,7 @@
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
                                 <div class="col-md-4"><p:outputLabel value="Ciclo Escolar " /></div>
-                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalaciones.dto.registroCapacidadInstalada.cicloEscolar}" /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalacionesPYE.dto.registroCapacidadInstalada.cicloEscolar}" /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
@@ -687,10 +732,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="eje" value="#{controladorDistribucionInstalaciones.dto.alineacionEje}" valueChangeListener="#{controladorDistribucionInstalaciones.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="eje" value="#{controladorDistribucionInstalacionesPYE.dto.alineacionEje}" valueChangeListener="#{controladorDistribucionInstalacionesPYE.actualizarEstrategias}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <f:selectItems value="#{controladorDistribucionInstalacionesPYE.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
                                         <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="eje"><p:autoUpdate /></p:message>
@@ -699,10 +744,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="estrategia" value="#{controladorDistribucionInstalaciones.dto.alineacionEstrategia}" valueChangeListener="#{controladorDistribucionInstalaciones.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="estrategia" value="#{controladorDistribucionInstalacionesPYE.dto.alineacionEstrategia}" valueChangeListener="#{controladorDistribucionInstalacionesPYE.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <f:selectItems value="#{controladorDistribucionInstalacionesPYE.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
                                         <p:ajax process="estrategia" update="lineaAccion,actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="estrategia"><p:autoUpdate /></p:message>
@@ -711,10 +756,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="lineaAccion" value="#{controladorDistribucionInstalaciones.dto.alineacionLinea}" valueChangeListener="#{controladorDistribucionInstalaciones.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="lineaAccion" value="#{controladorDistribucionInstalacionesPYE.dto.alineacionLinea}" valueChangeListener="#{controladorDistribucionInstalacionesPYE.actualizarActividades}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <f:selectItems value="#{controladorDistribucionInstalacionesPYE.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
                                         <p:ajax process="lineaAccion" update="actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="lineaAccion"><p:autoUpdate /></p:message>
@@ -723,10 +768,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="actividad" value="#{controladorDistribucionInstalaciones.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                    <p:selectOneMenu id="actividad" value="#{controladorDistribucionInstalacionesPYE.dto.alineacionActividad}" required="true" converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <f:selectItems value="#{controladorDistribucionInstalacionesPYE.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
                                         <p:ajax process="actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="actividad"><p:autoUpdate /></p:message>
@@ -734,7 +779,7 @@
                             </div>
                         </h:form>
                     </p:dialog>
-                    
+
                     <!-- Alineación a POA - Distribución Aulas -->
                     <p:dialog id="modalAlineacionDA" 
                               widgetVar="modalAlineacionDA" 
@@ -754,15 +799,15 @@
                         <h:form id="frmAlineacionDA">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorDistribucionInstalaciones.dto.periodoEscolarActivo.periodo eq controladorDistribucionInstalaciones.dto.registroDistribucionAulas.distribucionAulasCicloPeriodosEscolares.periodoEscolar}">
+                                    <p:toolbar rendered="#{controladorDistribucionInstalacionesPYE.dto.periodoEscolarActivo.periodo eq controladorDistribucionInstalacionesPYE.dto.registroDistribucionAulas.distribucionAulasCicloPeriodosEscolares.periodoEscolar}">
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
                                             <p:commandButton class="btn btn-primary" 
                                                              value="Eliminar alineación" 
                                                              icon="fa fa-trash" 
-                                                             actionListener="#{controladorDistribucionInstalaciones.eliminarAlineacionDA()}" 
-                                                             rendered="#{!empty controladorDistribucionInstalaciones.dto.registroDistribucionAulas.actividadAlineada}" >
+                                                             actionListener="#{controladorDistribucionInstalacionesPYE.eliminarAlineacionDA()}" 
+                                                             rendered="#{!empty controladorDistribucionInstalacionesPYE.dto.registroDistribucionAulas.actividadAlineada}" >
                                                 <p:confirm header="Eliminar alineación" 
                                                            message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." 
                                                            icon="ui-icon-alert" />
@@ -770,7 +815,7 @@
                                             <p:commandButton class="btn btn-primary" 
                                                              value="Guardar alineación" 
                                                              icon="fa fa-save" 
-                                                             actionListener="#{controladorDistribucionInstalaciones.alinearRegistroDA()}" 
+                                                             actionListener="#{controladorDistribucionInstalacionesPYE.alinearRegistroDA()}" 
                                                              oncomplete="PF('modalAlineacionDA').hide();" />
                                         </f:facet>
                                     </p:toolbar>
@@ -779,11 +824,11 @@
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
                                 <div class="col-md-4"><p:outputLabel value="Ciclo Escolar: " /></div>
-                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalaciones.dto.registroDistribucionAulas.cicloEscolar}" /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalacionesPYE.dto.registroDistribucionAulas.cicloEscolar}" /></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4"><p:outputLabel value="Periodo Escolar: " /></div>
-                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalaciones.dto.registroDistribucionAulas.periodoEscolar}" /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalacionesPYE.dto.registroDistribucionAulas.periodoEscolar}" /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
@@ -792,10 +837,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="ejeParticipante" value="Eje: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="ejeParticipante" value="#{controladorDistribucionInstalaciones.dto.alineacionEje}" valueChangeListener="#{controladorDistribucionInstalaciones.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="ejeParticipante" value="#{controladorDistribucionInstalacionesPYE.dto.alineacionEje}" valueChangeListener="#{controladorDistribucionInstalacionesPYE.actualizarEstrategias}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <f:selectItems value="#{controladorDistribucionInstalacionesPYE.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
                                         <p:ajax process="ejeParticipante" update="@form:estrategiaParticipante,@form:lineaAccionParticipante,@form:actividadParticipante" />
                                     </p:selectOneMenu>
                                     <p:message for="ejeParticipante"><p:autoUpdate /></p:message>
@@ -804,10 +849,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="estrategiaParticipante" value="Estrategia: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="estrategiaParticipante" value="#{controladorDistribucionInstalaciones.dto.alineacionEstrategia}" valueChangeListener="#{controladorDistribucionInstalaciones.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="estrategiaParticipante" value="#{controladorDistribucionInstalacionesPYE.dto.alineacionEstrategia}" valueChangeListener="#{controladorDistribucionInstalacionesPYE.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <f:selectItems value="#{controladorDistribucionInstalacionesPYE.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
                                         <p:ajax process="estrategiaParticipante" update="lineaAccionParticipante,actividadParticipante" />
                                     </p:selectOneMenu>
                                     <p:message for="estrategiaParticipante"><p:autoUpdate /></p:message>
@@ -816,10 +861,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="lineaAccionParticipante" value="Línea de acción: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="lineaAccionParticipante" value="#{controladorDistribucionInstalaciones.dto.alineacionLinea}" valueChangeListener="#{controladorDistribucionInstalaciones.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="lineaAccionParticipante" value="#{controladorDistribucionInstalacionesPYE.dto.alineacionLinea}" valueChangeListener="#{controladorDistribucionInstalacionesPYE.actualizarActividades}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <f:selectItems value="#{controladorDistribucionInstalacionesPYE.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
                                         <p:ajax process="lineaAccionParticipante" update="actividadParticipante" />
                                     </p:selectOneMenu>
                                     <p:message for="lineaAccionParticipante"><p:autoUpdate /></p:message>
@@ -828,10 +873,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="actividadParticipante" value="Actividad: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="actividadParticipante" value="#{controladorDistribucionInstalaciones.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                    <p:selectOneMenu id="actividadParticipante" value="#{controladorDistribucionInstalacionesPYE.dto.alineacionActividad}" required="true" converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <f:selectItems value="#{controladorDistribucionInstalacionesPYE.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
                                         <p:ajax process="actividadParticipante" />
                                     </p:selectOneMenu>
                                     <p:message for="actividadParticipante"><p:autoUpdate /></p:message>
@@ -839,7 +884,7 @@
                             </div>
                         </h:form>
                     </p:dialog>
-                    
+
                     <!-- Alineación a POA - Distribución de Laboratorios y talleres -->
                     <p:dialog id="modalAlineacionDLT" 
                               widgetVar="modalAlineacionDLT" 
@@ -859,15 +904,15 @@
                         <h:form id="frmAlineacionDLT">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorDistribucionInstalaciones.dto.periodoEscolarActivo.periodo eq controladorDistribucionInstalaciones.dto.registroDistribucionLabTall.distribucionLabtallCicloPeriodosEscolares.periodoEscolar}">
+                                    <p:toolbar rendered="#{controladorDistribucionInstalacionesPYE.dto.periodoEscolarActivo.periodo eq controladorDistribucionInstalacionesPYE.dto.registroDistribucionLabTall.distribucionLabtallCicloPeriodosEscolares.periodoEscolar}">
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
                                             <p:commandButton class="btn btn-primary" 
                                                              value="Eliminar alineación" 
                                                              icon="fa fa-trash" 
-                                                             actionListener="#{controladorDistribucionInstalaciones.eliminarAlineacionDLT()}" 
-                                                             rendered="#{!empty controladorDistribucionInstalaciones.dto.registroDistribucionLabTall.actividadAlineada}" >
+                                                             actionListener="#{controladorDistribucionInstalacionesPYE.eliminarAlineacionDLT()}" 
+                                                             rendered="#{!empty controladorDistribucionInstalacionesPYE.dto.registroDistribucionLabTall.actividadAlineada}" >
                                                 <p:confirm header="Eliminar alineación" 
                                                            message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." 
                                                            icon="ui-icon-alert" />
@@ -875,7 +920,7 @@
                                             <p:commandButton class="btn btn-primary" 
                                                              value="Guardar alineación" 
                                                              icon="fa fa-save" 
-                                                             actionListener="#{controladorDistribucionInstalaciones.alinearRegistroDLT()}" 
+                                                             actionListener="#{controladorDistribucionInstalacionesPYE.alinearRegistroDLT()}" 
                                                              oncomplete="PF('modalAlineacionDLT').hide();" />
                                         </f:facet>
                                     </p:toolbar>
@@ -884,11 +929,11 @@
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
                                 <div class="col-md-4"><p:outputLabel value="Ciclo Escolar: " /></div>
-                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalaciones.dto.registroDistribucionLabTall.cicloEscolar}" /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalacionesPYE.dto.registroDistribucionLabTall.cicloEscolar}" /></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4"><p:outputLabel value="Periodo Escolar: " /></div>
-                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalaciones.dto.registroDistribucionLabTall.periodoEscolar}" /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionInstalacionesPYE.dto.registroDistribucionLabTall.periodoEscolar}" /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
@@ -897,10 +942,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="ejeParticipante2" value="Eje: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="ejeParticipante2" value="#{controladorDistribucionInstalaciones.dto.alineacionEje}" valueChangeListener="#{controladorDistribucionInstalaciones.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="ejeParticipante2" value="#{controladorDistribucionInstalacionesPYE.dto.alineacionEje}" valueChangeListener="#{controladorDistribucionInstalacionesPYE.actualizarEstrategias}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <f:selectItems value="#{controladorDistribucionInstalacionesPYE.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
                                         <p:ajax process="ejeParticipante2" update="@form:estrategiaParticipante2,@form:lineaAccionParticipante2,@form:actividadParticipante2" />
                                     </p:selectOneMenu>
                                     <p:message for="ejeParticipante2"><p:autoUpdate /></p:message>
@@ -909,10 +954,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="estrategiaParticipante2" value="Estrategia: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="estrategiaParticipante2" value="#{controladorDistribucionInstalaciones.dto.alineacionEstrategia}" valueChangeListener="#{controladorDistribucionInstalaciones.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="estrategiaParticipante2" value="#{controladorDistribucionInstalacionesPYE.dto.alineacionEstrategia}" valueChangeListener="#{controladorDistribucionInstalacionesPYE.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <f:selectItems value="#{controladorDistribucionInstalacionesPYE.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
                                         <p:ajax process="estrategiaParticipante2" update="lineaAccionParticipante2,actividadParticipante2" />
                                     </p:selectOneMenu>
                                     <p:message for="estrategiaParticipante2"><p:autoUpdate /></p:message>
@@ -921,10 +966,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="lineaAccionParticipante2" value="Línea de acción: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="lineaAccionParticipante2" value="#{controladorDistribucionInstalaciones.dto.alineacionLinea}" valueChangeListener="#{controladorDistribucionInstalaciones.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="lineaAccionParticipante2" value="#{controladorDistribucionInstalacionesPYE.dto.alineacionLinea}" valueChangeListener="#{controladorDistribucionInstalacionesPYE.actualizarActividades}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <f:selectItems value="#{controladorDistribucionInstalacionesPYE.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
                                         <p:ajax process="lineaAccionParticipante2" update="actividadParticipante2" />
                                     </p:selectOneMenu>
                                     <p:message for="lineaAccionParticipante2"><p:autoUpdate /></p:message>
@@ -933,10 +978,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="actividadParticipante2" value="Actividad: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="actividadParticipante2" value="#{controladorDistribucionInstalaciones.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                    <p:selectOneMenu id="actividadParticipante2" value="#{controladorDistribucionInstalacionesPYE.dto.alineacionActividad}" required="true" converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorDistribucionInstalaciones.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <f:selectItems value="#{controladorDistribucionInstalacionesPYE.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
                                         <p:ajax process="actividadParticipante2" />
                                     </p:selectOneMenu>
                                     <p:message for="actividadParticipante2"><p:autoUpdate /></p:message>
@@ -959,7 +1004,7 @@
                                                              rowsPerPageTemplate="5,10,20,30,40,50"
                                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
                                                              id="dtbCapacidadInstalada"
-                                                             var="capacidadInstalada" value="#{controladorDistribucionInstalaciones.dto.listaCapIns}"
+                                                             var="capacidadInstalada" value="#{controladorDistribucionInstalacionesPYE.dto.listaCapIns}"
                                                              resizeMode="expand"
                                                              tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                                     <f:facet name="header">
@@ -1002,7 +1047,7 @@
                                                              rowsPerPageTemplate="5,10,20,30,40,50"
                                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
                                                              id="dtbDistribucionAulas"
-                                                             var="distribucionAula" value="#{controladorDistribucionInstalaciones.dto.listaDisAulas}"
+                                                             var="distribucionAula" value="#{controladorDistribucionInstalacionesPYE.dto.listaDisAulas}"
                                                              resizeMode="expand"
                                                              tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                                     <f:facet name="header">
@@ -1045,7 +1090,7 @@
                                                              rowsPerPageTemplate="5,10,20,30,40,50"
                                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
                                                              id="dtbDistribucionLabTall"
-                                                             var="distribucionLabTall" value="#{controladorDistribucionInstalaciones.dto.listaDisLabTall}"
+                                                             var="distribucionLabTall" value="#{controladorDistribucionInstalacionesPYE.dto.listaDisLabTall}"
                                                              resizeMode="expand"
                                                              tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                                     <f:facet name="header">
@@ -1091,9 +1136,9 @@
 
                                         </p:tabView>
                                         <p></p>
-                                        <p:commandButton id="btnGuardar" value="Guardar Datos" actionListener="#{controladorDistribucionInstalaciones.guardaDistribucionInstalaciones()}" icon="fa fa-pencil-square-o" class="btn-primary" update="formPrevisualizacionDatos"/>
+                                        <p:commandButton id="btnGuardar" value="Guardar Datos" actionListener="#{controladorDistribucionInstalacionesPYE.guardaDistribucionInstalaciones()}" icon="fa fa-pencil-square-o" class="btn-primary" update="formPrevisualizacionDatos"/>
                                         <p:spacer width="5" />
-                                        <p:commandButton id="btnCancelar" value="Cancelar" actionListener="#{controladorDistribucionInstalaciones.cancelarArchivo()}" icon="fa fa-times-circle" class="btn-danger" update=":formPrevisualizacionDatos,:formMuestraDatosActivos"/>
+                                        <p:commandButton id="btnCancelar" value="Cancelar" actionListener="#{controladorDistribucionInstalacionesPYE.cancelarArchivo()}" icon="fa fa-times-circle" class="btn-danger" update=":formPrevisualizacionDatos,:formMuestraDatosActivos"/>
                                     </center>
                                 </c:if>
                             </h:form>

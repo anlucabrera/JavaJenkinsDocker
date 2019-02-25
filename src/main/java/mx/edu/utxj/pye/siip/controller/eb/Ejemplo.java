@@ -12,8 +12,11 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.Normalizer;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.function.Supplier;
@@ -114,9 +117,35 @@ public class Ejemplo {
 
         System.out.println("-------------------------------------------------------");
         System.out.println("Ejecudado desde IntelliJ IDEA");
+        
+        
+        System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() Método de ejemplo de la clase LocalDate");
+        Date fechaInicioActividadCorrecta = new Date(2019, 02, 23);
+        Date fechaInicioActividadIncorrecta = new Date(2019, 01, 15);
+        
+//        Fechas de evento
+        Date fechaInicioEventoBD = new Date(2019-02-16);
+        Date fechaFinEventoBD = new Date(2019,03,05);
+        
+        LocalDate fechaInicioActividad = fechaInicioActividadCorrecta.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate fechaInicioActividadInc = fechaInicioActividadIncorrecta.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate fechaInicioEvento = fechaInicioEventoBD.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate fechaFinEvento = fechaFinEventoBD.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        
+//        Fechas correctas
+        System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() fechas correctas: ");
+        System.out.println("Fecha InicioEvento: " + fechaInicioActividad.compareTo(fechaInicioEvento));
+        System.out.println("Fecha FinEvento:    " + fechaInicioActividad.compareTo(fechaFinEvento));
+        
+        System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() fechas incorrectas: ");
+        System.out.println("Fecha InicioEvento:     " + fechaInicioActividadInc.compareTo(fechaInicioEvento));
+        System.out.println("Fecha FinEvento;        " + fechaInicioActividadInc.compareTo(fechaFinEvento));
     }
-    public static String quitarEspaciosTelefono(String cadena){
-        if(cadena == null) return "";
+
+    public static String quitarEspaciosTelefono(String cadena) {
+        if (cadena == null) {
+            return "";
+        }
         return cadena.replace(" ", "").trim();
     }
     public static String quitarGuionesEspacios(String string){

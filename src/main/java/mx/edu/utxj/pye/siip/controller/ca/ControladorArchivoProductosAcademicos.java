@@ -84,7 +84,7 @@ public class ControladorArchivoProductosAcademicos implements Serializable{
             } else {
                 rutaArchivo = null;
                 file.delete();
-                Messages.addGlobalWarn("¡No fue posible cargar el archivo, Intentelo nuevamente!");
+                Messages.addGlobalWarn("¡No fue posible cargar el archivo, Inténtelo nuevamente!");
             }
         } else {
              Messages.addGlobalWarn("¡Es necesario seleccionar un archivo!");

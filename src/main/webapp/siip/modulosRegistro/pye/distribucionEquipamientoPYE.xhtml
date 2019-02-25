@@ -42,34 +42,71 @@
                             <p:autoUpdate/>
                             <p:toolbar id="tb"> 
                                 <f:facet name="left">
-                                    <p:spacer width="10" />
-                                    <c:if test="#{controladorArchivoDistribucionEquipamiento.etapa eq etapa.MOSTRAR}">
-                                        <p:outputLabel value="Periodo: " for="periodo" />
-                                        <p:spacer width="3" />
-                                        <p:selectOneMenu id="periodo" converter="entityConverter"
-                                                         value="#{controladorDistribucionEquipamiento.dto.periodo}" valueChangeListener="#{controladorDistribucionEquipamiento.actualizarMeses}"
-                                                         class="form-control" style="padding-top: 0px;">
-                                            <f:selectItems value="#{controladorDistribucionEquipamiento.dto.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" itemDescription="#{caster.periodoToString(periodo)}" />
-                                            <p:ajax process="@this" update="@(form)" />
-                                        </p:selectOneMenu>
-                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                        <p:outputLabel value="Mes: " for="mes" />
-                                        <p:spacer width="3" />
-                                        <p:selectOneMenu id="mes" value="#{controladorDistribucionEquipamiento.dto.eventoSeleccionado}" converter="entityConverter" class="form-control" style="padding-top: 0px;">
-                                            <f:selectItems value="#{controladorDistribucionEquipamiento.dto.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" itemDescription="#{evento.mes}"  />
-                                            <p:ajax process="@this" listener="#{controladorDistribucionEquipamiento.cargarListaPorEvento()}" update="@(form)" />
-                                        </p:selectOneMenu>
-                                    </c:if>
+                                    
+                                    <p:outputLabel value="Área " for="area" />
+                                    <p:spacer width="3" />
+                                    <p:selectOneMenu id="area"
+                                                     required="true"
+                                                     value="#{controladorDistribucionEquipamientoPYE.dto.areaUniversidadPOA}"
+                                                     valueChangeListener="#{controladorDistribucionEquipamientoPYE.actualizaPeriodosEscolares}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     converter="entidadConverter2"
+                                                     class="form-control"
+                                                     style="padding-top: 0px">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorDistribucionEquipamientoPYE.dto.listaAreasPOA}" 
+                                                       var="area" 
+                                                       itemValue="#{area}" 
+                                                       itemLabel="#{area.nombre}"
+                                                       itemDescription="#{area.nombre}" />
+                                        <p:ajax process="@this" update="@(form)" />
+                                    </p:selectOneMenu>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+
+                                    <p:outputLabel value="Periodo: " 
+                                                   for="periodo" />
+                                    <p:spacer width="3" />
+                                    <p:selectOneMenu id="periodo" 
+                                                     converter="entityConverter"
+                                                     value="#{controladorDistribucionEquipamientoPYE.dto.periodo}" 
+                                                     valueChangeListener="#{controladorDistribucionEquipamientoPYE.actualizarMeses}"
+                                                     class="form-control" 
+                                                     style="padding-top: 0px;">
+                                        <f:selectItems value="#{controladorDistribucionEquipamientoPYE.dto.periodos}" 
+                                                       var="periodo" 
+                                                       itemValue="#{periodo}" 
+                                                       itemLabel="#{caster.periodoToString(periodo)}" 
+                                                       itemDescription="#{caster.periodoToString(periodo)}" />
+                                        <p:ajax process="@this" 
+                                                update="@(form)" />
+                                    </p:selectOneMenu>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    
+                                    <p:outputLabel value="Mes: " 
+                                                   for="mes" />
+                                    <p:spacer width="3" />
+                                    <p:selectOneMenu id="mes" 
+                                                     value="#{controladorDistribucionEquipamientoPYE.dto.eventoSeleccionado}" 
+                                                     converter="entityConverter" 
+                                                     class="form-control" 
+                                                     style="padding-top: 0px;">
+                                        <f:selectItems value="#{controladorDistribucionEquipamientoPYE.dto.eventosPorPeriodo}" 
+                                                       var="evento" 
+                                                       itemValue="#{evento}" 
+                                                       itemLabel="#{evento.mes}" 
+                                                       itemDescription="#{evento.mes}"  />
+                                        <p:ajax process="@this" 
+                                                listener="#{controladorDistribucionEquipamientoPYE.cargarListaPorEvento()}" 
+                                                update="@(form)" />
+                                    </p:selectOneMenu>
+                                    
                                 </f:facet>
                                 <f:facet name="right">
-                                    <div class="btn-group">
-                                        <p:commandButton value="Cargar Archivo de Excel" icon="fa fa-file-excel-o" onclick="PF('modalCargaArchivo').show()" class="btn btn-primary btn-sm"/>
-                                    </div>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <c:if test="#{controladorArchivoDistribucionEquipamiento.etapa eq etapa.CARGAR}">
-                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="distribucionEquipamiento?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
-                                    </c:if>
-                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="#{controladorPlantillasEB.descargarPlantillaDistribucionEquipamiento()}" target="_blank" title="Descargar Plantilla Distribución Equipamiento"><i class="fa fa-download" /></p:commandLink>
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
 
                                 </f:facet>
@@ -87,14 +124,14 @@
                         <div class="col-lg-12 col-md-12">
                             <h:form id="formMuestraDatosActivos">
                                 <center>
-                                <p:remoteCommand name="actualizar" update="@form:formMuestraDatosActivos" />
-                                <c:if test="#{controladorArchivoDistribucionEquipamiento.etapa eq etapa.MOSTRAR}">
+                                    <p:remoteCommand name="actualizar" update="@form:formMuestraDatosActivos" />
+
                                     <p:tabView id="tabDistribucionEquipamientoEliminacionConsulta">
                                         <p:tab id="tabDECEliminacionConsulta" title="Distribución de equipo de cómputo">
                                             <div class="table-responsive">
                                                 <p:dataTable id="dtbDistribucionEquipamientoEliminacionConsulta"
                                                              emptyMessage="Sin datos en el periodo seleccionado."
-                                                             value="#{controladorDistribucionEquipamiento.dto.listaEquiposComputo}"
+                                                             value="#{controladorDistribucionEquipamientoPYE.dto.listaEquiposComputo}"
                                                              var="equipoComputo"
                                                              paginator="true"
                                                              rows="10" 
@@ -134,16 +171,16 @@
                                                         <div class="btn-group">
                                                             <p:commandButton class="btn btn-info btn-sm" 
                                                                              icon="fa fa-trash" 
-                                                                             actionListener="#{controladorDistribucionEquipamiento.eliminarRegistro(equipoComputo)}"
+                                                                             actionListener="#{controladorDistribucionEquipamientoPYE.eliminarRegistro(equipoComputo)}"
                                                                              title="Eliminar registro."
-                                                                             rendered="#{controladorDistribucionEquipamiento.dto.periodoEscolarActivo.periodo eq equipoComputo.equiposComputoCicloPeriodoEscolar.periodoEscolar}">
+                                                                             rendered="#{controladorDistribucionEquipamientoPYE.dto.periodoEscolarActivo.periodo eq equipoComputo.equiposComputoCicloPeriodoEscolar.periodoEscolar}">
                                                                 <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de #{equipoComputo.periodoEscolar}" icon="ui-icon-alert" />
                                                             </p:commandButton>
-                                                            <c:set var="evidencias" value="#{controladorDistribucionEquipamiento.consultarEvidencias(equipoComputo)}" />
-                                                            <p:commandButton actionListener="#{controladorDistribucionEquipamiento.seleccionarRegistro(equipoComputo)}"
+                                                            <c:set var="evidencias" value="#{controladorDistribucionEquipamientoPYE.consultarEvidencias(equipoComputo)}" />
+                                                            <p:commandButton actionListener="#{controladorDistribucionEquipamientoPYE.seleccionarRegistro(equipoComputo)}"
                                                                              class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" icon="fa fa-image"
                                                                              title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
-                                                            <p:commandButton actionListener="#{controladorDistribucionEquipamiento.abrirAlineacionPOA(equipoComputo)}"
+                                                            <p:commandButton actionListener="#{controladorDistribucionEquipamientoPYE.abrirAlineacionPOA(equipoComputo)}"
                                                                              class="btn btn-sm #{!empty equipoComputo.actividadAlineada?'btn-info':'btn-warning'}" icon="fa fa-cog"
                                                                              title="Alineación a POA." />
                                                         </div>
@@ -193,6 +230,9 @@
                                                     <p:column>
                                                         <h:outputText value="#{equipoComputo.equiposComputoCicloPeriodoEscolar.mmsPort}"/>
                                                     </p:column>
+                                                    <f:facet name="footer">
+                                                        En el mes de: #{controladorDistribucionEquipamientoPYE.dto.eventoSeleccionado.mes} hay un total de: #{fn:length(controladorDistribucionEquipamientoPYE.dto.listaEquiposComputo)} registros de Equipos de Computo.
+                                                    </f:facet>
                                                 </p:dataTable>
                                                 <p:confirmDialog global="true" 
                                                                  showEffect="fade" 
@@ -217,7 +257,7 @@
                                             <div class="table-responsive">
                                                 <p:dataTable id="dtbDistribucionEquipamientoInternetEliminacionConsulta"
                                                              emptyMessage="Sin datos en el periodo seleccionado."
-                                                             value="#{controladorDistribucionEquipamiento.dto.listaEquiposComputoInternet}"
+                                                             value="#{controladorDistribucionEquipamientoPYE.dto.listaEquiposComputoInternet}"
                                                              var="equipoComputoInternet"
                                                              paginator="true"
                                                              rows="10" 
@@ -257,16 +297,16 @@
                                                         <div class="btn-group">
                                                             <p:commandButton class="btn btn-info btn-sm" 
                                                                              icon="fa fa-trash" 
-                                                                             actionListener="#{controladorDistribucionEquipamiento.eliminarRegistroECI(equipoComputoInternet)}"
+                                                                             actionListener="#{controladorDistribucionEquipamientoPYE.eliminarRegistroECI(equipoComputoInternet)}"
                                                                              title="Eliminar registro."
-                                                                             rendered="#{controladorDistribucionEquipamiento.dto.periodoEscolarActivo.periodo eq equipoComputoInternet.equiposComputoInternetCicloPeriodoEscolar.periodoEscolar}">
+                                                                             rendered="#{controladorDistribucionEquipamientoPYE.dto.periodoEscolarActivo.periodo eq equipoComputoInternet.equiposComputoInternetCicloPeriodoEscolar.periodoEscolar}">
                                                                 <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de #{equipoComputoInternet.periodoEscolar}" icon="ui-icon-alert" />
                                                             </p:commandButton>
-                                                            <c:set var="evidencias" value="#{controladorDistribucionEquipamiento.consultarEvidenciasECI(equipoComputoInternet)}" />
-                                                            <p:commandButton actionListener="#{controladorDistribucionEquipamiento.seleccionarRegistroECI(equipoComputoInternet)}"
+                                                            <c:set var="evidencias" value="#{controladorDistribucionEquipamientoPYE.consultarEvidenciasECI(equipoComputoInternet)}" />
+                                                            <p:commandButton actionListener="#{controladorDistribucionEquipamientoPYE.seleccionarRegistroECI(equipoComputoInternet)}"
                                                                              class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" icon="fa fa-image"
                                                                              title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
-                                                            <p:commandButton actionListener="#{controladorDistribucionEquipamiento.abrirAlineacionPOAECI(equipoComputoInternet)}"
+                                                            <p:commandButton actionListener="#{controladorDistribucionEquipamientoPYE.abrirAlineacionPOAECI(equipoComputoInternet)}"
                                                                              class="btn btn-sm #{!empty equipoComputoInternet.actividadAlineada?'btn-info':'btn-warning'}" icon="fa fa-cog"
                                                                              title="Alineación a POA." />
                                                         </div>
@@ -316,23 +356,25 @@
                                                     <p:column>
                                                         <h:outputText value="#{equipoComputoInternet.equiposComputoInternetCicloPeriodoEscolar.mmsPort}"/>
                                                     </p:column>
+                                                    <f:facet name="footer">
+                                                        En el mes de: #{controladorDistribucionEquipamientoPYE.dto.eventoSeleccionado.mes} hay un total de: #{fn:length(controladorDistribucionEquipamientoPYE.dto.listaEquiposComputoInternet)} registros de Equipos de Computo con Internet.
+                                                    </f:facet>
                                                 </p:dataTable>
                                             </div>
                                         </p:tab>
                                     </p:tabView>
-                                </c:if>
                                 </center>
                             </h:form>
                         </div>
                     </div>
-                    
+
                     <!-- Carga de Evidencias - Distribución de equipamiento -->
                     <p:dialog id="modalCargaEvidencia" 
                               widgetVar="modalCargaEvidencia" 
                               width="700" 
                               height="auto"  
                               closeOnEscape="true" 
-                              visible="#{controladorDistribucionEquipamiento.dto.forzarAperturaDialogo}"
+                              visible="#{controladorDistribucionEquipamientoPYE.dto.forzarAperturaDialogo}"
                               showEffect="fade" 
                               hideEffect="fade" 
                               modal="true" 
@@ -355,7 +397,7 @@
                                         <o:form id="formularioEvidenciaEC" 
                                                 enctype="multipart/form-data" class="form-inline">
                                             <o:inputFile id="filesEC" 
-                                                         value="#{controladorDistribucionEquipamiento.dto.archivos}"  
+                                                         value="#{controladorDistribucionEquipamientoPYE.dto.archivos}"  
                                                          multiple="true" 
                                                          class="form-control"
                                                          accept="image/png,image/jpg,image/jpeg,application/pdf" 
@@ -368,7 +410,7 @@
                                             <h:commandButton id="btnuploadFilesEC" 
                                                              value="Subir archivos" 
                                                              class="btn btn-primary"
-                                                             actionListener="#{controladorDistribucionEquipamiento.subirEvidencias()}" />
+                                                             actionListener="#{controladorDistribucionEquipamientoPYE.subirEvidencias()}" />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -378,18 +420,18 @@
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
                                 <div class="col-md-4"><p:outputLabel value="Ciclo Escolar " /></div>
-                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionEquipamiento.dto.registroEquiposComputoCPE.cicloEscolar}" /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionEquipamientoPYE.dto.registroEquiposComputoCPE.cicloEscolar}" /></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4"><p:outputLabel value="Periodo Escolar " /></div>
-                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionEquipamiento.dto.registroEquiposComputoCPE.periodoEscolar}" /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionEquipamientoPYE.dto.registroEquiposComputoCPE.periodoEscolar}" /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
                                 <div class="col-md-12">
                                     <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
                                     <p:dataTable id="tblEvidencias" 
-                                                 value="#{controladorDistribucionEquipamiento.dto.listaEvidencias}" 
+                                                 value="#{controladorDistribucionEquipamientoPYE.dto.listaEvidencias}" 
                                                  var="evidencia"
                                                  emptyMessage="No se han registrado evidencias de este registro." 
                                                  tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
@@ -411,17 +453,17 @@
                                             <div class="btn-group">
                                                 <p:commandButton class="btn btn-info btn-sm" 
                                                                  icon="fa fa-trash" 
-                                                                 actionListener="#{controladorDistribucionEquipamiento.eliminarEvidencia(evidencia)}" 
+                                                                 actionListener="#{controladorDistribucionEquipamientoPYE.eliminarEvidencia(evidencia)}" 
                                                                  onsuccess="actualizar2();"
                                                                  title="Eliminar evidencia."
-                                                                 rendered="#{controladorDistribucionEquipamiento.dto.periodoEscolarActivo.periodo eq controladorDistribucionEquipamiento.dto.registroEquiposComputoCPE.equiposComputoCicloPeriodoEscolar.periodoEscolar}">
+                                                                 rendered="#{controladorDistribucionEquipamientoPYE.dto.periodoEscolarActivo.periodo eq controladorDistribucionEquipamientoPYE.dto.registroEquiposComputoCPE.equiposComputoCicloPeriodoEscolar.periodoEscolar}">
                                                     <p:confirm header="Eliminar evidencia" 
                                                                message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" 
                                                                icon="ui-icon-alert" />
                                                 </p:commandButton>
                                                 <p:commandLink class="btn btn-info btn-sm" 
                                                                ajax="false" 
-                                                               action="#{controladorDistribucionEquipamiento.descargarEvidencia(evidencia)}" 
+                                                               action="#{controladorDistribucionEquipamientoPYE.descargarEvidencia(evidencia)}" 
                                                                target="_blank" 
                                                                title="Descargar evidencia.">
                                                     <i class="fa fa-download" />
@@ -432,21 +474,21 @@
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
                                         <f:facet name="footer">
-                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorDistribucionEquipamiento.dto.listaEvidencias)}.</span>
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorDistribucionEquipamientoPYE.dto.listaEvidencias)}.</span>
                                         </f:facet>
                                     </p:dataTable>
                                 </div>
                             </div>
                         </h:form>
                     </p:dialog>
-                    
+
                     <!-- Carga de Evidencias - Distribución de equipamiento Internet -->
                     <p:dialog id="modalCargaEvidenciaECI" 
                               widgetVar="modalCargaEvidenciaECI" 
                               width="700" 
                               height="auto"  
                               closeOnEscape="true" 
-                              visible="#{controladorDistribucionEquipamiento.dto.forzarAperturaDialogo}"
+                              visible="#{controladorDistribucionEquipamientoPYE.dto.forzarAperturaDialogo}"
                               showEffect="fade" 
                               hideEffect="fade" 
                               modal="true" 
@@ -469,7 +511,7 @@
                                         <o:form id="formularioEvidenciaECI" 
                                                 enctype="multipart/form-data" class="form-inline">
                                             <o:inputFile id="filesECI" 
-                                                         value="#{controladorDistribucionEquipamiento.dto.archivos}"  
+                                                         value="#{controladorDistribucionEquipamientoPYE.dto.archivos}"  
                                                          multiple="true" 
                                                          class="form-control"
                                                          accept="image/png,image/jpg,image/jpeg,application/pdf" 
@@ -482,7 +524,7 @@
                                             <h:commandButton id="btnuploadFilesECI" 
                                                              value="Subir archivos" 
                                                              class="btn btn-primary"
-                                                             actionListener="#{controladorDistribucionEquipamiento.subirEvidenciasECI()}" />
+                                                             actionListener="#{controladorDistribucionEquipamientoPYE.subirEvidenciasECI()}" />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -492,18 +534,18 @@
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
                                 <div class="col-md-4"><p:outputLabel value="Ciclo Escolar " /></div>
-                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionEquipamiento.dto.registroEquiposInternetCPE.cicloEscolar}" /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionEquipamientoPYE.dto.registroEquiposInternetCPE.cicloEscolar}" /></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4"><p:outputLabel value="Periodo Escolar " /></div>
-                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionEquipamiento.dto.registroEquiposInternetCPE.periodoEscolar}" /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionEquipamientoPYE.dto.registroEquiposInternetCPE.periodoEscolar}" /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
                                 <div class="col-md-12">
                                     <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
                                     <p:dataTable id="tblEvidencias" 
-                                                 value="#{controladorDistribucionEquipamiento.dto.listaEvidencias}" 
+                                                 value="#{controladorDistribucionEquipamientoPYE.dto.listaEvidencias}" 
                                                  var="evidencia"
                                                  emptyMessage="No se han registrado evidencias de este registro." 
                                                  tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
@@ -525,17 +567,17 @@
                                             <div class="btn-group">
                                                 <p:commandButton class="btn btn-info btn-sm" 
                                                                  icon="fa fa-trash" 
-                                                                 actionListener="#{controladorDistribucionEquipamiento.eliminarEvidenciaECI(evidencia)}" 
+                                                                 actionListener="#{controladorDistribucionEquipamientoPYE.eliminarEvidenciaECI(evidencia)}" 
                                                                  onsuccess="actualizar2();"
                                                                  title="Eliminar evidencia."
-                                                                 rendered="#{controladorDistribucionEquipamiento.dto.periodoEscolarActivo.periodo eq controladorDistribucionEquipamiento.dto.registroEquiposInternetCPE.equiposComputoInternetCicloPeriodoEscolar.periodoEscolar}">
+                                                                 rendered="#{controladorDistribucionEquipamientoPYE.dto.periodoEscolarActivo.periodo eq controladorDistribucionEquipamientoPYE.dto.registroEquiposInternetCPE.equiposComputoInternetCicloPeriodoEscolar.periodoEscolar}">
                                                     <p:confirm header="Eliminar evidencia" 
                                                                message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" 
                                                                icon="ui-icon-alert" />
                                                 </p:commandButton>
                                                 <p:commandLink class="btn btn-info btn-sm" 
                                                                ajax="false" 
-                                                               action="#{controladorDistribucionEquipamiento.descargarEvidencia(evidencia)}" 
+                                                               action="#{controladorDistribucionEquipamientoPYE.descargarEvidencia(evidencia)}" 
                                                                target="_blank" 
                                                                title="Descargar evidencia.">
                                                     <i class="fa fa-download" />
@@ -546,14 +588,14 @@
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
                                         <f:facet name="footer">
-                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorDistribucionEquipamiento.dto.listaEvidencias)}.</span>
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorDistribucionEquipamientoPYE.dto.listaEvidencias)}.</span>
                                         </f:facet>
                                     </p:dataTable>
                                 </div>
                             </div>
                         </h:form>
                     </p:dialog>
-                    
+
                     <!-- Alineación a POA -->
                     <p:dialog id="modalAlineacion" 
                               widgetVar="modalAlineacion" 
@@ -573,15 +615,15 @@
                         <h:form id="frmAlineacion">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorDistribucionEquipamiento.dto.periodoEscolarActivo.periodo eq controladorDistribucionEquipamiento.dto.registroEquiposComputoCPE.equiposComputoCicloPeriodoEscolar.periodoEscolar}">
+                                    <p:toolbar rendered="#{controladorDistribucionEquipamientoPYE.dto.periodoEscolarActivo.periodo eq controladorDistribucionEquipamientoPYE.dto.registroEquiposComputoCPE.equiposComputoCicloPeriodoEscolar.periodoEscolar}">
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
                                             <p:commandButton class="btn btn-primary" 
                                                              value="Eliminar alineación" 
                                                              icon="fa fa-trash" 
-                                                             actionListener="#{controladorDistribucionEquipamiento.eliminarAlineacion()}" 
-                                                             rendered="#{!empty controladorDistribucionEquipamiento.dto.registroEquiposComputoCPE.actividadAlineada}" >
+                                                             actionListener="#{controladorDistribucionEquipamientoPYE.eliminarAlineacion()}" 
+                                                             rendered="#{!empty controladorDistribucionEquipamientoPYE.dto.registroEquiposComputoCPE.actividadAlineada}" >
                                                 <p:confirm header="Eliminar alineación" 
                                                            message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." 
                                                            icon="ui-icon-alert" />
@@ -589,7 +631,7 @@
                                             <p:commandButton class="btn btn-primary" 
                                                              value="Guardar alineación" 
                                                              icon="fa fa-save" 
-                                                             actionListener="#{controladorDistribucionEquipamiento.alinearRegistro()}" 
+                                                             actionListener="#{controladorDistribucionEquipamientoPYE.alinearRegistro()}" 
                                                              oncomplete="PF('modalAlineacion').hide();" />
                                         </f:facet>
                                     </p:toolbar>
@@ -598,11 +640,11 @@
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
                                 <div class="col-md-4"><p:outputLabel value="Ciclo Escolar " /></div>
-                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionEquipamiento.dto.registroEquiposComputoCPE.cicloEscolar}" /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionEquipamientoPYE.dto.registroEquiposComputoCPE.cicloEscolar}" /></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4"><p:outputLabel value="Periodo Escolar " /></div>
-                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionEquipamiento.dto.registroEquiposComputoCPE.periodoEscolar}" /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionEquipamientoPYE.dto.registroEquiposComputoCPE.periodoEscolar}" /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
@@ -611,10 +653,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="eje" value="#{controladorDistribucionEquipamiento.dto.alineacionEje}" valueChangeListener="#{controladorDistribucionEquipamiento.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="eje" value="#{controladorDistribucionEquipamientoPYE.dto.alineacionEje}" valueChangeListener="#{controladorDistribucionEquipamientoPYE.actualizarEstrategias}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorDistribucionEquipamiento.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <f:selectItems value="#{controladorDistribucionEquipamientoPYE.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
                                         <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="eje"><p:autoUpdate /></p:message>
@@ -623,10 +665,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="estrategia" value="#{controladorDistribucionEquipamiento.dto.alineacionEstrategia}" valueChangeListener="#{controladorDistribucionEquipamiento.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="estrategia" value="#{controladorDistribucionEquipamientoPYE.dto.alineacionEstrategia}" valueChangeListener="#{controladorDistribucionEquipamientoPYE.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorDistribucionEquipamiento.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <f:selectItems value="#{controladorDistribucionEquipamientoPYE.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
                                         <p:ajax process="estrategia" update="lineaAccion,actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="estrategia"><p:autoUpdate /></p:message>
@@ -635,10 +677,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="lineaAccion" value="#{controladorDistribucionEquipamiento.dto.alineacionLinea}" valueChangeListener="#{controladorDistribucionEquipamiento.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="lineaAccion" value="#{controladorDistribucionEquipamientoPYE.dto.alineacionLinea}" valueChangeListener="#{controladorDistribucionEquipamientoPYE.actualizarActividades}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorDistribucionEquipamiento.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <f:selectItems value="#{controladorDistribucionEquipamientoPYE.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
                                         <p:ajax process="lineaAccion" update="actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="lineaAccion"><p:autoUpdate /></p:message>
@@ -647,10 +689,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="actividad" value="#{controladorDistribucionEquipamiento.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                    <p:selectOneMenu id="actividad" value="#{controladorDistribucionEquipamientoPYE.dto.alineacionActividad}" required="true" converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorDistribucionEquipamiento.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <f:selectItems value="#{controladorDistribucionEquipamientoPYE.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
                                         <p:ajax process="actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="actividad"><p:autoUpdate /></p:message>
@@ -658,7 +700,7 @@
                             </div>
                         </h:form>
                     </p:dialog>
-                    
+
                     <!-- Alineación a POA - Distribución de equipo de computo con internet -->
                     <p:dialog id="modalAlineacionECI" 
                               widgetVar="modalAlineacionECI" 
@@ -678,15 +720,15 @@
                         <h:form id="frmAlineacionECI">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorDistribucionEquipamiento.dto.periodoEscolarActivo.periodo eq controladorDistribucionEquipamiento.dto.registroEquiposInternetCPE.equiposComputoInternetCicloPeriodoEscolar.periodoEscolar}">
+                                    <p:toolbar rendered="#{controladorDistribucionEquipamientoPYE.dto.periodoEscolarActivo.periodo eq controladorDistribucionEquipamientoPYE.dto.registroEquiposInternetCPE.equiposComputoInternetCicloPeriodoEscolar.periodoEscolar}">
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
                                             <p:commandButton class="btn btn-primary" 
                                                              value="Eliminar alineación" 
                                                              icon="fa fa-trash" 
-                                                             actionListener="#{controladorDistribucionEquipamiento.eliminarAlineacionECI()}" 
-                                                             rendered="#{!empty controladorDistribucionEquipamiento.dto.registroEquiposInternetCPE.actividadAlineada}" >
+                                                             actionListener="#{controladorDistribucionEquipamientoPYE.eliminarAlineacionECI()}" 
+                                                             rendered="#{!empty controladorDistribucionEquipamientoPYE.dto.registroEquiposInternetCPE.actividadAlineada}" >
                                                 <p:confirm header="Eliminar alineación" 
                                                            message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." 
                                                            icon="ui-icon-alert" />
@@ -694,7 +736,7 @@
                                             <p:commandButton class="btn btn-primary" 
                                                              value="Guardar alineación" 
                                                              icon="fa fa-save" 
-                                                             actionListener="#{controladorDistribucionEquipamiento.alinearRegistroECI()}" 
+                                                             actionListener="#{controladorDistribucionEquipamientoPYE.alinearRegistroECI()}" 
                                                              oncomplete="PF('modalAlineacion').hide();" />
                                         </f:facet>
                                     </p:toolbar>
@@ -703,11 +745,11 @@
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
                                 <div class="col-md-4"><p:outputLabel value="Ciclo Escolar " /></div>
-                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionEquipamiento.dto.registroEquiposInternetCPE.cicloEscolar}" /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionEquipamientoPYE.dto.registroEquiposInternetCPE.cicloEscolar}" /></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4"><p:outputLabel value="Periodo Escolar " /></div>
-                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionEquipamiento.dto.registroEquiposInternetCPE.periodoEscolar}" /></div>
+                                <div class="col-md-8"><p:outputLabel value="#{controladorDistribucionEquipamientoPYE.dto.registroEquiposInternetCPE.periodoEscolar}" /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
@@ -716,10 +758,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="ejeParticipante" value="Eje: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="ejeParticipante" value="#{controladorDistribucionEquipamiento.dto.alineacionEje}" valueChangeListener="#{controladorDistribucionEquipamiento.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="ejeParticipante" value="#{controladorDistribucionEquipamientoPYE.dto.alineacionEje}" valueChangeListener="#{controladorDistribucionEquipamientoPYE.actualizarEstrategias}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorDistribucionEquipamiento.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <f:selectItems value="#{controladorDistribucionEquipamientoPYE.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
                                         <p:ajax process="ejeParticipante" update="@form:estrategiaParticipante,@form:lineaAccionParticipante,@form:actividadParticipante" />
                                     </p:selectOneMenu>
                                     <p:message for="ejeParticipante"><p:autoUpdate /></p:message>
@@ -728,10 +770,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="estrategiaParticipante" value="Estrategia: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="estrategiaParticipante" value="#{controladorDistribucionEquipamiento.dto.alineacionEstrategia}" valueChangeListener="#{controladorDistribucionEquipamiento.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="estrategiaParticipante" value="#{controladorDistribucionEquipamientoPYE.dto.alineacionEstrategia}" valueChangeListener="#{controladorDistribucionEquipamientoPYE.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorDistribucionEquipamiento.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <f:selectItems value="#{controladorDistribucionEquipamientoPYE.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
                                         <p:ajax process="estrategiaParticipante" update="lineaAccionParticipante,actividadParticipante" />
                                     </p:selectOneMenu>
                                     <p:message for="estrategiaParticipante"><p:autoUpdate /></p:message>
@@ -740,10 +782,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="lineaAccionParticipante" value="Línea de acción: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="lineaAccionParticipante" value="#{controladorDistribucionEquipamiento.dto.alineacionLinea}" valueChangeListener="#{controladorDistribucionEquipamiento.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="lineaAccionParticipante" value="#{controladorDistribucionEquipamientoPYE.dto.alineacionLinea}" valueChangeListener="#{controladorDistribucionEquipamientoPYE.actualizarActividades}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorDistribucionEquipamiento.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <f:selectItems value="#{controladorDistribucionEquipamientoPYE.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
                                         <p:ajax process="lineaAccionParticipante" update="actividadParticipante" />
                                     </p:selectOneMenu>
                                     <p:message for="lineaAccionParticipante"><p:autoUpdate /></p:message>
@@ -752,10 +794,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="actividadParticipante" value="Actividad: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="actividadParticipante" value="#{controladorDistribucionEquipamiento.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                    <p:selectOneMenu id="actividadParticipante" value="#{controladorDistribucionEquipamientoPYE.dto.alineacionActividad}" required="true" converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorDistribucionEquipamiento.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <f:selectItems value="#{controladorDistribucionEquipamientoPYE.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
                                         <p:ajax process="actividadParticipante" />
                                     </p:selectOneMenu>
                                     <p:message for="actividadParticipante"><p:autoUpdate /></p:message>
@@ -763,258 +805,8 @@
                             </div>
                         </h:form>
                     </p:dialog>
-                    
-                    <!-- Sección de subida -->
-                    <div class="row">
-                        <div class="col-lg-12 col-md-12">
-                            <h:form id="formPrevisualizacionDatos" prependId="false">
-                                <c:if test="#{controladorArchivoDistribucionEquipamiento.etapa eq etapa.CARGAR}">
-                                    <center>
-                                        <p:tabView id="tabDistribucionEquipamiento">
-                                            <p:tab id="tabDEC" title="Distribución de equipo de cómputo">
-                                                <div class="table-responsive">
-                                                    <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
-                                                                 paginator="true"
-                                                                 rows="10" 
-                                                                 rowsPerPageTemplate="5,10,20,30,40,50"
-                                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
-                                                                 id="dtbDistribucionEquipamiento"
-                                                                 var="equipoComputo" value="#{controladorDistribucionEquipamiento.dto.listaEquiposComputo}"
-                                                                 resizeMode="expand"
-                                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
-                                                        <f:facet name="header">
-                                                            Previsualización de datos
-                                                        </f:facet>
-                                                        <p:columnGroup type="header">
-                                                            <p:row>
-                                                                <p:column rowspan="2" headerText="Ciclo Escolar" width="200" />
-                                                                <p:column rowspan="2" headerText="Periodo Escolar" width="200" />
-                                                                <p:column colspan="3" headerText="Equipos de cómputo" width="600" />
-                                                                <p:column colspan="2" headerText="Docente de tiempo completo" width="400" />
-                                                                <p:column colspan="2" headerText="Docente de Asignatura" width="400" />
-                                                                <p:column colspan="2" headerText="Estudiantes" width="400" />
-                                                                <p:column colspan="2" headerText="Personal Administrativo" width="400" />
-                                                                <p:column colspan="2" headerText="Mandos Medios y Superiores" width="400" />
-                                                            </p:row>
-                                                            <p:row>
-                                                                <p:column headerText="Total" />
-                                                                <p:column headerText="Escritorio" />
-                                                                <p:column headerText="Portátiles" />
-                                                                <p:column headerText="Escritorio" />
-                                                                <p:column headerText="Portátiles" />
-                                                                <p:column headerText="Escritorio" />
-                                                                <p:column headerText="Portátiles" />
-                                                                <p:column headerText="Escritorio" />
-                                                                <p:column headerText="Portátiles" />
-                                                                <p:column headerText="Escritorio" />
-                                                                <p:column headerText="Portátiles" />
-                                                                <p:column headerText="Escritorio" />
-                                                                <p:column headerText="Portátiles" />
-                                                            </p:row>
-                                                        </p:columnGroup>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputo.cicloEscolar}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputo.periodoEscolar}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputo.total}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputo.escritorio}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputo.portatiles}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputo.equiposComputoCicloPeriodoEscolar.dtcEsc}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputo.equiposComputoCicloPeriodoEscolar.dtcPort}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputo.equiposComputoCicloPeriodoEscolar.daEsc}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputo.equiposComputoCicloPeriodoEscolar.daPort}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputo.equiposComputoCicloPeriodoEscolar.estEsc}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputo.equiposComputoCicloPeriodoEscolar.estPor}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputo.equiposComputoCicloPeriodoEscolar.admEsc}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputo.equiposComputoCicloPeriodoEscolar.admPort}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputo.equiposComputoCicloPeriodoEscolar.mmsEsc}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputo.equiposComputoCicloPeriodoEscolar.mmsPort}"/>
-                                                        </p:column>
-                                                    </p:dataTable>
-                                                </div>
-                                            </p:tab>
-
-                                            <p:tab id="tabDECI" title="Distribución de equipo de cómputo con internet">
-                                                <div class="table-responsive">
-                                                    <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
-                                                                 paginator="true"
-                                                                 rows="10" 
-                                                                 rowsPerPageTemplate="5,10,20,30,40,50"
-                                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
-                                                                 id="dtbDistribucionEquipamientoInternet"
-                                                                 var="equipoComputoInternet" value="#{controladorDistribucionEquipamiento.dto.listaEquiposComputoInternet}"
-                                                                 resizeMode="expand"
-                                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
-                                                        <f:facet name="header">
-                                                            Previsualización de datos
-                                                        </f:facet>
-                                                        <p:columnGroup type="header">
-                                                            <p:row>
-                                                                <p:column rowspan="2" headerText="Ciclo Escolar" width="200" />
-                                                                <p:column rowspan="2" headerText="Periodo Escolar" width="200" />
-                                                                <p:column colspan="3" headerText="Equipos de cómputo" width="600" />
-                                                                <p:column colspan="2" headerText="Docente de tiempo completo" width="400" />
-                                                                <p:column colspan="2" headerText="Docente de Asignatura" width="400" />
-                                                                <p:column colspan="2" headerText="Estudiantes" width="400" />
-                                                                <p:column colspan="2" headerText="Personal Administrativo" width="400" />
-                                                                <p:column colspan="2" headerText="Mandos Medios y Superiores" width="400" />
-                                                            </p:row>
-                                                            <p:row>
-                                                                <p:column headerText="Total" />
-                                                                <p:column headerText="Escritorio" />
-                                                                <p:column headerText="Portátiles" />
-                                                                <p:column headerText="Escritorio" />
-                                                                <p:column headerText="Portátiles" />
-                                                                <p:column headerText="Escritorio" />
-                                                                <p:column headerText="Portátiles" />
-                                                                <p:column headerText="Escritorio" />
-                                                                <p:column headerText="Portátiles" />
-                                                                <p:column headerText="Escritorio" />
-                                                                <p:column headerText="Portátiles" />
-                                                                <p:column headerText="Escritorio" />
-                                                                <p:column headerText="Portátiles" />
-                                                            </p:row>
-                                                        </p:columnGroup>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputoInternet.cicloEscolar}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputoInternet.periodoEscolar}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputoInternet.total}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputoInternet.escritorio}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputoInternet.portatiles}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputoInternet.equiposComputoInternetCicloPeriodoEscolar.dtcEsc}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputoInternet.equiposComputoInternetCicloPeriodoEscolar.dtcPort}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputoInternet.equiposComputoInternetCicloPeriodoEscolar.daEsc}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputoInternet.equiposComputoInternetCicloPeriodoEscolar.daPort}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputoInternet.equiposComputoInternetCicloPeriodoEscolar.estEsc}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputoInternet.equiposComputoInternetCicloPeriodoEscolar.estPor}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputoInternet.equiposComputoInternetCicloPeriodoEscolar.admEsc}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputoInternet.equiposComputoInternetCicloPeriodoEscolar.admPort}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputoInternet.equiposComputoInternetCicloPeriodoEscolar.mmsEsc}"/>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{equipoComputoInternet.equiposComputoInternetCicloPeriodoEscolar.mmsPort}"/>
-                                                        </p:column>
-                                                    </p:dataTable>
-                                                </div>
-                                            </p:tab>
-                                        </p:tabView>
-                                        <p></p>
-                                        <p:commandButton id="btnGuardar" 
-                                                         value="Guardar Datos" 
-                                                         actionListener="#{controladorDistribucionEquipamiento.guardaDistribucionEquipamiento()}" 
-                                                         icon="fa fa-pencil-square-o" 
-                                                         class="btn-primary" 
-                                                         update="formPrevisualizacionDatos"/>
-                                        <p:spacer width="5" />
-                                        <p:commandButton id="btnCancelar" 
-                                                         value="Cancelar" 
-                                                         actionListener="#{controladorDistribucionEquipamiento.cancelarArchivo()}" 
-                                                         icon="fa fa-times-circle" 
-                                                         class="btn-danger" 
-                                                         update=":formPrevisualizacionDatos,:formMuestraDatosActivos"/>
-                                    </center>
-                                </c:if>
-                            </h:form>
-                        </div>
-                    </div>
 
                 </div>
-
-                <p:dialog widgetVar="modalCargaArchivo" 
-                          width="400" 
-                          height="auto" 
-                          showEffect="fade" 
-                          hideEffect="fade" 
-                          modal="true" 
-                          header="Carga de Archivo" 
-                          styleClass="panel panel-primary" 
-                          responsive="true" 
-                          resizable="false" 
-                          maximizable="false">
-                    <center>
-                        <h:form id="formularioContenedor" enctype="multipart/form-data">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <o:inputFile id="file" 
-                                                 value="#{controladorArchivoDistribucionEquipamiento.file}"
-                                                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
-                                                 acceptMessage="Solo se permiten archivos XLSX."
-                                                 maxsize="#{100*1024*1024}" 
-                                                 maxsizeMessage="El tamaño máximo permitido son 100MB."
-                                                 required="true" 
-                                                 requiredMessage="Debe elegir un archivo." >
-                                    </o:inputFile>
-                                    <p:messages for="file" ><p:autoUpdate/></p:messages>
-                                </div>
-                                <p:separator />
-                                <div class="col-md-12">
-                                    <h:commandButton id="btnuploadFile" 
-                                                     value="Subir archivo" 
-                                                     class="btn btn-primary" 
-                                                     action="#{controladorArchivoDistribucionEquipamiento.subirExcelDistribucionEquipamiento()}" />
-                                </div>
-                            </div>
-                        </h:form>
-                        <p:blockUI block="formularioContenedor" 
-                                   widgetVar="bloqueoCargaFile" 
-                                   trigger="formularioContenedor:btnuploadFile">
-                            Cargando archivo espere por favor.<br />
-                        </p:blockUI>
-                    </center>
-                </p:dialog>
 
             </div>
         </div>

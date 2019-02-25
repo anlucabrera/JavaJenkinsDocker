@@ -3,16 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mx.edu.utxj.pye.siip.controller.eb;
+package mx.edu.utxj.pye.siip.controller.pye;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Date;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -23,11 +24,14 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
-import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
+import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.eb.DTOEficienciaTerminalTitulacionRegistro;
 import mx.edu.utxj.pye.siip.dto.eb.DtoEficienciaTerminal;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbEficienciaTerminalTitulacionRegistro;
@@ -44,7 +48,7 @@ import org.omnifaces.util.Messages;
 @Named
 @ManagedBean
 @ViewScoped
-public class ControladorEficienciaTerminalTitulacionRegistro implements Serializable{
+public class ControladorEficienciaTerminalTitulacionRegistroPYE implements Serializable{
 
     private static final long serialVersionUID = -2757897393394368408L;
     
@@ -55,6 +59,7 @@ public class ControladorEficienciaTerminalTitulacionRegistro implements Serializ
     @EJB    EjbEficienciaTerminalTitulacionRegistro     ejbEficienciaTerminalTitulacionRegistro;
     @EJB    EjbModulos                                  ejbModulos;
     @EJB    EjbFiscalizacion                            ejbFiscalizacion;
+    @EJB    EjbCatalogos                                ejbCatalogos;
     
     @Inject     ControladorEmpleado             controladorEmpleado;
     @Inject     ControladorModulosRegistro      controladorModulosRegistro;
@@ -94,87 +99,84 @@ public class ControladorEficienciaTerminalTitulacionRegistro implements Serializ
         return promedioRegistroDGP;
     }
     
-    public void listaEficienciaTerminalTitulacionRegistroPrevia(String rutaArchivo){
-        try {
-            if (rutaArchivo != null) {
-                dto.setRutaArchivo(rutaArchivo);
-                dto.setListaEficienciaTerminal(ejbEficienciaTerminalTitulacionRegistro.getListaEficienciaTerminalTitulacionRegistros(rutaArchivo));
-            }
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEficienciaTerminalTitulacionRegistro.class.getName()).log(Level.SEVERE, null, ex);
-            if(rutaArchivo != null){
-                ServicioArchivos.eliminarArchivo(rutaArchivo);
-                dto.setRutaArchivo(null);
-            }
-        }
-    }
-    
-    public void guardaEficienciaTerminalTitulacion(){
-        if (dto.getListaEficienciaTerminal() != null) {
-            try {
-                ejbEficienciaTerminalTitulacionRegistro.guardaEficienciaTerminalTitulacionRegistros(dto.getListaEficienciaTerminal(), dto.getRegistroTipo(), dto.getEjesRegistro(), dto.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
-                Messages.addGlobalInfo("La información se ha almacenado de manera correcta");
-            } catch (Throwable ex) {
-                Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-                Logger.getLogger(ControladorEficienciaTerminalTitulacionRegistro.class.getName()).log(Level.SEVERE, null, ex);
-                if (dto.getRutaArchivo() != null) {
-                    ServicioArchivos.eliminarArchivo(dto.getRutaArchivo());
-                    dto.setRutaArchivo(null);
-                }
-            } finally {
-                dto.getListaEficienciaTerminal().clear();
-                dto.setRutaArchivo(null);
-            }
-        } else {
-            Messages.addGlobalWarn("¡Es necesario cargar un achivo!");
-        }
-    }
-    
-    public void cancelarArchivo(){
-        dto.getListaEficienciaTerminal().clear();
-        if (dto.getRutaArchivo() != null) {
-            ServicioArchivos.eliminarArchivo(dto.getRutaArchivo());
-            dto.setRutaArchivo(null);
-        }
-    }
-    
     public void filtros(){
-        dto.setAniosConsulta(ejbModulos.getEjercicioRegistros(dto.getRegistros(), dto.getArea()));
-        if (!dto.getAniosConsulta().isEmpty()) {
-            dto.setAnioConsulta((short) dto.getAniosConsulta().get(dto.getAniosConsulta().size() - 1));
-        }
-        dto.setMesesConsulta(ejbModulos.getMesesRegistros(dto.getAnioConsulta(), dto.getRegistros(), dto.getArea()));
-        if (!dto.getMesesConsulta().isEmpty()) {
-            dto.setMesConsulta(dto.getMesesConsulta().stream()
-                    .filter(t -> ejbModulos.getEventoRegistro().getMes().equals(t))
-                    .findAny()
-                    .orElse(dto.getMesesConsulta().get(dto.getMesesConsulta().size() - 1)));
-        }
+        llenaCategorias();
+        dto.nulificarCategoria();
+        Faces.setSessionAttribute("categorias", dto.getListaCategoriasPOA());
+    }
+    
+    public void actualizarAreas(ValueChangeEvent e) {
+        dto.setCategoria((Categorias) e.getNewValue());
+        llenaAreas();
+        dto.nulificarAreaPOA();
+        Faces.setSessionAttribute("areas", dto.getListaAreasPOA());
+    }
+    
+    public void actualizarAnios(ValueChangeEvent e){
+        dto.setAreaUniversidadPOA((AreasUniversidad)e.getNewValue());
+        llenaAnios();
+        dto.nulificarAnioConsulta();
+    }
+    
+    public void actualizarMeses(ValueChangeEvent e){
+        dto.setAnioConsulta((short) e.getNewValue());
+        llenaMeses();
         buscaEficienciaTerminal();
     }
     
-    public void actualizarMeses(ValueChangeEvent e) {
-        dto.setAnioConsulta((short) e.getNewValue());
-        dto.setMesesConsulta(ejbModulos.getMesesRegistros(dto.getAnioConsulta(), dto.getRegistros(),dto.getArea()));
-        buscaEficienciaTerminal();
+    public void llenaCategorias() {
+        dto.setListaCategoriasPOA(ejbCatalogos.getCategoriaAreasConPoa()
+                .stream()
+                .filter(categoria -> (short) 7 == categoria.getCategoria())
+                .collect(Collectors.toList()));
+        if (!dto.getListaCategoriasPOA().isEmpty() && dto.getCategoria() == null) {
+            dto.setCategoria(null);
+        }
+    }
+    
+    public void llenaAreas() {
+        dto.setListaAreasPOA(ejbCatalogos.getAreasUniversidadPorCategoriaConPoa(dto.getCategoria())
+                .stream()
+                .filter(area -> (short) 60 == area.getArea())
+                .collect(Collectors.toList()));
+        if (!dto.getListaAreasPOA().isEmpty() && dto.getAreaUniversidadPOA() == null) {
+            dto.setAreaUniversidadPOA(null);
+        }
+    }
+    
+    public void llenaAnios() {
+        dto.setAniosConsulta(ejbModulos.getEjercicioRegistros(dto.getRegistros(), dto.getAreaUniversidadPOA()));
+        if (!dto.getAniosConsulta().isEmpty()) {
+            dto.setAnioConsulta(null);
+        }
+    }
+    
+    public void llenaMeses() {
+        dto.setMesesConsulta(ejbModulos.getMesesRegistros(dto.getAnioConsulta(), dto.getRegistros(), dto.getAreaUniversidadPOA()));
+        if (!dto.getMesesConsulta().isEmpty()) {
+            dto.setMesConsulta(null);
+        }
     }
     
     public void buscaEficienciaTerminal() {
-        dto.setListaEficienciaTerminal(ejbEficienciaTerminalTitulacionRegistro.getFiltroEficienciaTerminalEjercicioMesArea(dto.getAnioConsulta(), dto.getMesConsulta(), dto.getArea().getArea()));
-        dto.getListaEficienciaTerminal().stream().forEach((et) -> {
-            et.getEficienciaTerminalTitulacionRegistro().setRegistros(ejbModulos.buscaRegistroPorClave(et.getEficienciaTerminalTitulacionRegistro().getRegistro()));
-        });
+        if (dto.getMesConsulta() != null && !dto.getMesesConsulta().isEmpty()) {
+            dto.setListaEficienciaTerminal(ejbEficienciaTerminalTitulacionRegistro.getFiltroEficienciaTerminalEjercicioMesArea(dto.getAnioConsulta(), dto.getMesConsulta(), dto.getAreaUniversidadPOA().getArea()));
+            dto.getListaEficienciaTerminal().stream().forEach((et) -> {
+                et.getEficienciaTerminalTitulacionRegistro().setRegistros(ejbModulos.buscaRegistroPorClave(et.getEficienciaTerminalTitulacionRegistro().getRegistro()));
+            });
+        } else {
+            dto.setListaEficienciaTerminal(Collections.EMPTY_LIST);
+        }
         Ajax.update("formMuestraDatosActivos");
     }
-    
+
     public void eliminarRegistro(Integer registro) {
         try {
             ejbModulos.eliminarEvidenciasEnRegistroGeneral(registro, ejbModulos.getListaEvidenciasPorRegistro(registro));
             ejbModulos.eliminarRegistro(registro);
-            filtros();
+            buscaEficienciaTerminal();
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorEficienciaTerminalTitulacionRegistro.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorEficienciaTerminalTitulacionRegistroPYE.class.getName()).log(Level.SEVERE, null, ex);
             Messages.addGlobalError("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
         }
     }
@@ -188,7 +190,7 @@ public class ControladorEficienciaTerminalTitulacionRegistro implements Serializ
             dto.setListaEvidencias(ejbModulos.getListaEvidenciasPorRegistro(dto.getRegistro().getEficienciaTerminalTitulacionRegistro().getRegistro()));
             Ajax.update("frmEvidencias");
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorEficienciaTerminalTitulacionRegistro.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorEficienciaTerminalTitulacionRegistroPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -217,7 +219,7 @@ public class ControladorEficienciaTerminalTitulacionRegistro implements Serializ
                 Messages.addGlobalError(String.format("Se registraron %s de %s evidencias, verifique e intente agregar las evidencias faltantes.", res.getValue().toString(),String.valueOf(dto.getArchivos().size())));
             }
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorEficienciaTerminalTitulacionRegistro.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorEficienciaTerminalTitulacionRegistroPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -248,10 +250,10 @@ public class ControladorEficienciaTerminalTitulacionRegistro implements Serializ
     }
     
     public void actualizarEjes(Short ejercicio){
-        dto.setEjes(ejbFiscalizacion.getEjes(ejercicio, dto.getArea()));
+        dto.setEjes(ejbFiscalizacion.getEjes(ejercicio, dto.getAreaUniversidadPOA()));
         if(!dto.getEjes().isEmpty() && dto.getAlineacionEje() == null){
             dto.setAlineacionEje(dto.getEjes().get(0));
-            dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getArea()));
+            dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getAreaUniversidadPOA()));
         }
         Faces.setSessionAttribute("ejes", dto.getEjes());
     }
@@ -260,15 +262,15 @@ public class ControladorEficienciaTerminalTitulacionRegistro implements Serializ
         if(dto.getAlineacionActividad() != null){
             dto.setAlineacionEje(dto.getAlineacionActividad().getCuadroMandoInt().getEje());
 
-            dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getArea()));
+            dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getAreaUniversidadPOA()));
             dto.setAlineacionEstrategia(dto.getAlineacionActividad().getCuadroMandoInt().getEstrategia());
             Faces.setSessionAttribute("estrategias", dto.getEstrategias());
 
-            dto.setLineasAccion(ejbFiscalizacion.getLineasAccionPorEstrategia(dto.getAlineacionEstrategia(), dto.getArea()));
+            dto.setLineasAccion(ejbFiscalizacion.getLineasAccionPorEstrategia(dto.getAlineacionEstrategia(), dto.getAreaUniversidadPOA()));
             dto.setAlineacionLinea(dto.getAlineacionActividad().getCuadroMandoInt().getLineaAccion());
             Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
 
-            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getArea()));
+            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaUniversidadPOA()));
             Faces.setSessionAttribute("actividades", dto.getActividades());
         }else{
             dto.setAlineacionEje(null);
@@ -278,20 +280,20 @@ public class ControladorEficienciaTerminalTitulacionRegistro implements Serializ
     
     public void actualizarActividades(ValueChangeEvent event){
         dto.setAlineacionLinea((LineasAccion)event.getNewValue());
-        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getArea()));
+        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaUniversidadPOA()));
         Faces.setSessionAttribute("actividades", dto.getActividades());
     }
     
     public void actualizarEstrategias(ValueChangeEvent event){
         dto.setAlineacionEje((EjesRegistro)event.getNewValue());
-        dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getArea()));
+        dto.setEstrategias(ejbFiscalizacion.getEstrategiasPorEje(dto.getAlineacionEje(), dto.getAreaUniversidadPOA()));
         dto.nulificarEstrategia();
         Faces.setSessionAttribute("estrategias", dto.getEstrategias());
     }
     
     public void actualizarLineasAccion(ValueChangeEvent event){
         dto.setAlineacionEstrategia((Estrategias)event.getNewValue());
-        dto.setLineasAccion(ejbFiscalizacion.getLineasAccionPorEstrategia(dto.getAlineacionEstrategia(), dto.getArea()));
+        dto.setLineasAccion(ejbFiscalizacion.getLineasAccionPorEstrategia(dto.getAlineacionEstrategia(), dto.getAreaUniversidadPOA()));
         dto.nulificarLinea();
         Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
     }
@@ -306,7 +308,7 @@ public class ControladorEficienciaTerminalTitulacionRegistro implements Serializ
             Ajax.oncomplete("skin();");
             Ajax.oncomplete("PF('modalAlineacion').show();");
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorEficienciaTerminalTitulacionRegistro.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorEficienciaTerminalTitulacionRegistroPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -327,7 +329,7 @@ public class ControladorEficienciaTerminalTitulacionRegistro implements Serializ
             try {
                 dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getEficienciaTerminalTitulacionRegistro().getRegistro()));
             } catch (Throwable ex) {
-                Logger.getLogger(ControladorEficienciaTerminalTitulacionRegistro.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ControladorEficienciaTerminalTitulacionRegistroPYE.class.getName()).log(Level.SEVERE, null, ex);
             }
             actualizarEjes(dto.getRegistro().getEficienciaTerminalTitulacionRegistro().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
             cargarAlineacionXActividad();
