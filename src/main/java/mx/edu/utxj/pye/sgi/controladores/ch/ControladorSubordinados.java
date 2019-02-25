@@ -96,7 +96,7 @@ public class ControladorSubordinados implements Serializable {
     @Getter    @Setter    private String[] nombreAr;
 
     @Getter    @Setter    private LocalDate fechaNow;
-    @Getter    @Setter    private Date fechaI = new Date(), fechaF = new Date(),fechaIR = new Date(), fechaFR = new Date();
+    @Getter    @Setter    private LocalDate fechaI ,fechaF,fechaIR, fechaFR;
     @Getter    @Setter    private Integer contactoDestino, anioNumero = 0;
     @Getter    @Setter    private Boolean visible = false, fechaReportesActiva=false;
 
@@ -156,18 +156,18 @@ public class ControladorSubordinados implements Serializable {
             if (fechaNow.isAfter(fechaMi) && fechaNow.isBefore(fechaMF)) {
                 fechaReportesActiva = true;
                 if (fechaMF.getDayOfMonth() > 15) {
-                    fechaIR = utilidadesCH.castearLDaD(LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue(), 01));
-                    fechaFR = utilidadesCH.castearLDaD(LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue(), 15));
+                    fechaIR = LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue(), 01);
+                    fechaFR = LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue(), 15);
                 } else {
                     if (fechaMF.getMonthValue() == 1) {
-                        fechaIR = utilidadesCH.castearLDaD(LocalDate.of((fechaMF.getYear() - 1), 12, 16));
-                        fechaFR = utilidadesCH.castearLDaD(LocalDate.of((fechaMF.getYear() - 1), 12, 31));
+                        fechaIR = LocalDate.of((fechaMF.getYear() - 1), 12, 16);
+                        fechaFR = LocalDate.of((fechaMF.getYear() - 1), 12, 31);
                     } else {
-                        fechaIR = utilidadesCH.castearLDaD(LocalDate.of(fechaMF.getYear(), (fechaMF.getMonthValue() - 1), 16));
-                        fechaFR = utilidadesCH.castearLDaD(LocalDate.of(fechaMF.getYear(), (fechaMF.getMonthValue() - 1), LocalDate.of(anioNumero, (fechaMF.getMonthValue() - 1), 01).lengthOfMonth()));
+                        fechaIR = LocalDate.of(fechaMF.getYear(), (fechaMF.getMonthValue() - 1), 16);
+                        fechaFR = LocalDate.of(fechaMF.getYear(), (fechaMF.getMonthValue() - 1), LocalDate.of(anioNumero, (fechaMF.getMonthValue() - 1), 01).lengthOfMonth());
                     }
                 }
-                incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(fechaIR, fechaFR);
+                incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(utilidadesCH.castearLDaD(fechaIR), utilidadesCH.castearLDaD(fechaFR));
                 if (!incidenciases.isEmpty()) {
                     incidenciases.forEach((Incidencias t) -> {
                         if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
@@ -177,7 +177,7 @@ public class ControladorSubordinados implements Serializable {
                 }
                 listaIncapacidadsReporteImpresion = new ArrayList<>();
                 listaIncapacidadsReporteImpresion.clear();
-                incapacidads = ejbNotificacionesIncidencias.mostrarIncapacidadReporte(fechaIR, fechaFR);
+                incapacidads = ejbNotificacionesIncidencias.mostrarIncapacidadReporte(utilidadesCH.castearLDaD(fechaIR), utilidadesCH.castearLDaD(fechaFR));
                 if (!incapacidads.isEmpty()) {
                     incapacidads.forEach((t) -> {
                         if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
@@ -202,13 +202,9 @@ public class ControladorSubordinados implements Serializable {
             incapacidads.clear();
             List<Cuidados> cuidadoses = new ArrayList<>();
             cuidadoses.clear();
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.mostrarIncidencias(1)");
-            fechaI = utilidadesCH.castearLDaD(LocalDate.of(anioNumero, Integer.parseInt(mActual), 01));
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.mostrarIncidencias(2)");
-            fechaF = utilidadesCH.castearLDaD(LocalDate.of(anioNumero, Integer.parseInt(mActual), LocalDate.of(anioNumero, Integer.parseInt(mActual), 01).lengthOfMonth()));
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.mostrarIncidencias(3)");
-            incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(fechaI, fechaF);
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados.mostrarIncidencias(4)");
+            fechaI = LocalDate.of(anioNumero, Integer.parseInt(mActual), 01);
+            fechaF = LocalDate.of(anioNumero, Integer.parseInt(mActual), LocalDate.of(anioNumero, Integer.parseInt(mActual), 01).lengthOfMonth());
+                incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
             if (!incidenciases.isEmpty()) {
                 incidenciases.forEach((t) -> {
                     if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
@@ -225,7 +221,7 @@ public class ControladorSubordinados implements Serializable {
 
             listaIncapacidads = new ArrayList<>();
             listaIncapacidads.clear();
-            incapacidads = ejbNotificacionesIncidencias.mostrarIncapacidadReporte(fechaI, fechaF);
+            incapacidads = ejbNotificacionesIncidencias.mostrarIncapacidadReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
             if (!incapacidads.isEmpty()) {
                 incapacidads.forEach((t) -> {
                     if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
@@ -236,7 +232,7 @@ public class ControladorSubordinados implements Serializable {
 
             listaCuidados = new ArrayList<>();
             listaCuidados.clear();
-            cuidadoses = ejbNotificacionesIncidencias.mostrarCuidadosReporte(fechaI, fechaF);
+            cuidadoses = ejbNotificacionesIncidencias.mostrarCuidadosReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
             if (!cuidadoses.isEmpty()) {
                 cuidadoses.forEach((t) -> {
                     if ((t.getPersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getPersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getPersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {

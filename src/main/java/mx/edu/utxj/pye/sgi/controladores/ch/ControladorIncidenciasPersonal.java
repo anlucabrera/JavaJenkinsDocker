@@ -3,6 +3,7 @@ package mx.edu.utxj.pye.sgi.controladores.ch;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,9 +47,9 @@ public class ControladorIncidenciasPersonal implements Serializable {
     @Getter    @Setter    private DateFormat dateFormat = new SimpleDateFormat("HH:mm");
     @Getter    @Setter    private Boolean registro = true, activo = false, archivoSC = false;
     @Getter    @Setter    private Date tiempo = new Date();
-    @Getter    @Setter    private Date fechaActual = new Date();
-    @Getter    @Setter    private Date fechaI = new Date();
-    @Getter    @Setter    private Date fechaF = new Date();
+    @Getter    @Setter    private LocalDate fechaActual = LocalDate.now();
+    @Getter    @Setter    private LocalDate fechaI = LocalDate.now();
+    @Getter    @Setter    private LocalDate fechaF = LocalDate.now();
     @Getter    @Setter    private Part file;
 
 //@EJB
@@ -59,7 +60,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
 
     @PostConstruct
     public void init() {
-        fechaActual = new Date();
+        fechaActual = LocalDate.now();
         tiempo = new Date(0, 0, 0, 0, 0);
         registro = true;
         activo = false;
@@ -90,37 +91,27 @@ public class ControladorIncidenciasPersonal implements Serializable {
 
     public void mostrarLista() {
         try {
-            DateFormat dateFormatF = new SimpleDateFormat("dd/MM/yyyy");
-            fechaActual = new Date();
-            listaIncidencias = new ArrayList<>();
-            listaIncidencias.clear();
-            listaIncapacidades = new ArrayList<>();
-            listaIncapacidades.clear();
+            fechaActual =LocalDate.now();
+            listaIncidencias = new ArrayList<>();            listaIncidencias.clear();
+            listaIncapacidades = new ArrayList<>();            listaIncapacidades.clear();
 
             listaIncidencias = ejbNotificacionesIncidencias.mostrarIncidencias(usuario);
             listaIncapacidades = ejbNotificacionesIncidencias.mostrarIncapacidad(usuario);
             listaCuidados = ejbNotificacionesIncidencias.mostrarCuidados(usuario);
 
-            List<Incidencias> incidenciases = new ArrayList<>();
-            incidenciases.clear();
-            fechaI = new Date();
-            fechaF = new Date();
-            String mes = "";
-            if (fechaActual.getMonth() <= 8) {
-                mes = "0" + (fechaActual.getMonth() + 1);
+            List<Incidencias> incidenciases = new ArrayList<>();            incidenciases.clear();
+            
+            if (fechaActual.getDayOfMonth() <= 15) {
+                fechaI = LocalDate.of(fechaActual.getYear(), fechaActual.getMonthValue(), 01);
+                fechaF = LocalDate.of(fechaActual.getYear(), fechaActual.getMonthValue(), 15);
             } else {
-                mes = String.valueOf(fechaActual.getMonth() + 1);
-            }
-            if (fechaActual.getDate() <= 15) {
-                fechaI = dateFormatF.parse("01/" + mes + "/20" + (fechaActual.getYear() - 100));
-                fechaF = dateFormatF.parse("15/" + mes + "/20" + (fechaActual.getYear() - 100));
-            } else {
-                fechaI = dateFormatF.parse("16/" + mes + "/20" + (fechaActual.getYear() - 100));
-                fechaF = dateFormatF.parse("31/" + mes + "/20" + (fechaActual.getYear() - 100));
-            }
+                fechaI = LocalDate.of(fechaActual.getYear(), fechaActual.getMonthValue(), 16);
+                fechaF = LocalDate.of(fechaActual.getYear(), fechaActual.getMonthValue(), LocalDate.of(fechaActual.getYear(), fechaActual.getMonthValue(), 01).lengthOfMonth());
+            }         
+            
             if (!listaIncidencias.isEmpty()) {
                 listaIncidencias.forEach((i) -> {
-                    if ((i.getFecha().after(fechaI) || i.getFecha().equals(fechaI)) && (i.getFecha().before(fechaF) || i.getFecha().equals(fechaF))) {
+                    if ((utilidadesCH.castearDaLD(i.getFecha()).isAfter(fechaI) || utilidadesCH.castearDaLD(i.getFecha()).equals(fechaI)) && (utilidadesCH.castearDaLD(i.getFecha()).isBefore(fechaF) || utilidadesCH.castearDaLD(i.getFecha()).equals(fechaF))) {
                         incidenciases.add(i);
                     }
                 });
@@ -136,7 +127,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
             list1 = ejbNotificacionesIncidencias.mostrarIncidenciasArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
             if (!list1.isEmpty()) {
                 list1.forEach((t) -> {
-                    if ((t.getFecha().getYear() - 100) == (fechaActual.getYear() - 100)) {
+                    if ((utilidadesCH.castearDaLD(t.getFecha()).getYear() - 100) == (fechaActual.getYear() - 100)) {
                         list2.add(t);
                     }
                 });
@@ -195,16 +186,16 @@ public class ControladorIncidenciasPersonal implements Serializable {
                             break;
                     }
                     nuevOBJIncidencias.setTiempo(dateFormat.format(tiempo));
-                    Integer dias = (int) ((fechaActual.getTime() - nuevOBJIncidencias.getFecha().getTime()) / 86400000);
+                    Integer dias = (int) ((utilidadesCH.castearLDaD(fechaActual).getTime() - nuevOBJIncidencias.getFecha().getTime()) / 86400000);
                     Integer maximo = 0;
-                    switch (nuevOBJIncidencias.getFecha().getDay()) {
-                        case 1:                            maximo = 1;                            break;
-                        case 2:                            maximo = 1;                            break;
-                        case 3:                            maximo = 1;                            break;
-                        case 4:                            maximo = 1;                            break;
-                        case 5:                            maximo = 3;                            break;
-                        case 6:                            maximo = 2;                            break;
-                    }
+                    switch (utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getDayOfWeek()) {
+                        case MONDAY:                    maximo = 1;                    break;
+                        case TUESDAY:                    maximo = 1;                    break;
+                        case WEDNESDAY:                    maximo = 1;                    break;
+                        case THURSDAY:                    maximo = 1;                    break;
+                        case FRIDAY:                    maximo = 3;                    break;
+                        case SATURDAY:                    maximo = 2;                    break;
+            }
                     if (dias <= maximo) {
                         nuevOBJIncidencias = ejbNotificacionesIncidencias.agregarIncidencias(nuevOBJIncidencias);
                         utilidadesCH.agregaBitacora(usuario, nuevOBJIncidencias.getIncidenciaID().toString(), "Incidencias", "Insert");
@@ -270,15 +261,15 @@ public class ControladorIncidenciasPersonal implements Serializable {
         try {
             Incidencias incidencias = (Incidencias) event.getObject();
             incidencias.setTiempo(dateFormat.format(dateFormat.parse(incidencias.getTiempo())));
-            Integer dias = (int) ((fechaActual.getTime() - incidencias.getFecha().getTime()) / 86400000);
+            Integer dias = (int) ((utilidadesCH.castearLDaD(fechaActual).getTime() - incidencias.getFecha().getTime()) / 86400000);
             Integer maximo = 0;
-            switch (incidencias.getFecha().getDay()) {
-                case 1:                    maximo = 1;                    break;
-                case 2:                    maximo = 1;                    break;
-                case 3:                    maximo = 1;                    break;
-                case 4:                    maximo = 1;                    break;
-                case 5:                    maximo = 3;                    break;
-                case 6:                    maximo = 2;                    break;
+            switch (utilidadesCH.castearDaLD(incidencias.getFecha()).getDayOfWeek()) {
+                case MONDAY:                    maximo = 1;                    break;
+                case TUESDAY:                    maximo = 1;                    break;
+                case WEDNESDAY:                    maximo = 1;                    break;
+                case THURSDAY:                    maximo = 1;                    break;
+                case FRIDAY:                    maximo = 3;                    break;
+                case SATURDAY:                    maximo = 2;                    break;
             }
             if (dias <= maximo) {
                 ejbNotificacionesIncidencias.actualizarIncidencias(incidencias);

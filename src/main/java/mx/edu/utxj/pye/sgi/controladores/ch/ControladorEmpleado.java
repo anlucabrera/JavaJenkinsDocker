@@ -4,6 +4,7 @@ import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -66,11 +67,11 @@ public class ControladorEmpleado implements Serializable {
 
     @Getter    @Setter    private AreasUniversidad nuevaAreasUniversidad = new AreasUniversidad();
 
-    @Getter    @Setter    private Date fechaActual = new Date();
+    @Getter    @Setter    private LocalDate fechaActual = LocalDate.now();
     @Getter    @Setter    private DateFormat dateFormat = new SimpleDateFormat("EEEE d MMMM yyyy");
     @Getter    @Setter    private DateFormat dateFormatHora = new SimpleDateFormat("h:mm a");
-    @Getter    @Setter    private Date fechaI = new Date();
-    @Getter    @Setter    private Date fechaF = new Date();
+    @Getter    @Setter    private LocalDate fechaI = LocalDate.now();
+    @Getter    @Setter    private LocalDate fechaF = LocalDate.now();
 
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbUtilidadesCH;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
@@ -86,7 +87,6 @@ public class ControladorEmpleado implements Serializable {
         empleadoLogeado = Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
 //      empleadoLogeado = Integer.parseInt(logonMB.getListaUsuarioClaveNominaShiro().getClaveNomina());
         // fin de asignación
-//        empleadoLogeado=49;
         clavePersonalLogeado = empleadoLogeado.toString();
         listaPaises.clear();
         listaIdiomas.clear();
@@ -99,24 +99,18 @@ public class ControladorEmpleado implements Serializable {
 
     public void informacionComplementariaAEmpleadoLogeado() {
         try {
-            DateFormat dateFormatF = new SimpleDateFormat("dd/MM/yyyy");
             incidenciases.clear();
             listaDocencias.clear();
             listaNotificaciones.clear();
 
-            fechaI = new Date();
-            fechaF = new Date();
-            String mes = "";
-            if (fechaActual.getMonth() <= 8) {
-                mes = "0" + (fechaActual.getMonth() + 1);
-            } else {
-                mes = String.valueOf(fechaActual.getMonth() + 1);
-            }
+            fechaI = LocalDate.now();
+            fechaF = LocalDate.now();
 
-            fechaI = dateFormatF.parse("01/" + mes + "/20" + (fechaActual.getYear() - 100));
-            fechaF = dateFormatF.parse("31/" + mes + "/20" + (fechaActual.getYear() - 100));
+            fechaI = LocalDate.of(fechaActual.getYear(), fechaActual.getMonthValue(), 01);
+            fechaF = LocalDate.of(fechaActual.getYear(), fechaActual.getMonthValue(), LocalDate.of(fechaActual.getYear(), fechaActual.getMonthValue(), 01).lengthOfMonth());
 
-            incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReportePendientes(fechaI, fechaF, nuevoOBJListaPersonal.getAreaOperativa(), nuevoOBJListaPersonal.getClave());
+
+            incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReportePendientes(uch.castearLDaD(fechaI), uch.castearLDaD(fechaF), nuevoOBJListaPersonal.getAreaOperativa(), nuevoOBJListaPersonal.getClave());
             listaDocencias = ejbPersonal.mostrarListaDocencias(empleadoLogeado);
             listaNotificaciones = ejbNotificacionesIncidencias.mostrarListaDenotificacionesPorUsuarios(empleadoLogeado, 0);
         } catch (Throwable ex) {
@@ -158,8 +152,8 @@ public class ControladorEmpleado implements Serializable {
             nuevaListaEventos = ejbUtilidadesCH.mostrarEventosRegistro("Periodo electoral", "Periodo electoral");
             if (!nuevaListaEventos.isEmpty()) {
                 nuevaEventos = nuevaListaEventos.get(0);
-                if ((fechaActual.before(nuevaEventos.getFechaFin()) || fechaActual.equals(nuevaEventos.getFechaFin()))
-                        && (fechaActual.after(nuevaEventos.getFechaInicio()) || fechaActual.equals(nuevaEventos.getFechaInicio()))) {
+                if ((fechaActual.isBefore(uch.castearDaLD(nuevaEventos.getFechaFin())) || fechaActual.equals(nuevaEventos.getFechaFin()))
+                        && (fechaActual.isAfter(uch.castearDaLD(nuevaEventos.getFechaInicio())) || fechaActual.equals(nuevaEventos.getFechaInicio()))) {
                     procesoElectoralActivo = true;
                 } else {
                     procesoElectoralActivo = false;
@@ -178,12 +172,12 @@ public class ControladorEmpleado implements Serializable {
             nuevaListaModulosregistro.forEach((t) -> {
                 switch (t.getNombre()) {
                     case "CV":
-                        fechaLimiteCV = fechaActual.before(t.getFechaFin());
+                        fechaLimiteCV = fechaActual.isBefore(uch.castearDaLD(t.getFechaFin()));
                         fechaCVBencimiento = dateFormat.format(t.getFechaFin());
                         fechaLimiteCurriculumVitae = "La fecha límite para la actualización de currículum vitae es el día " + dateFormat.format(t.getFechaFin()) + " a las " + dateFormatHora.format(t.getFechaFin());
                         break;
                     case "Funciones":
-                        fechaLimiteFunciones = fechaActual.before(t.getFechaFin());
+                        fechaLimiteFunciones = fechaActual.isBefore(uch.castearDaLD(t.getFechaFin()));
                         fechaFuncionesBencimiento = dateFormat.format(t.getFechaFin());
                         fechaLimiteRegistroFunciones = "La fecha límite para la revisión y actualización de funciones del personal administrativo y docente es el día " + dateFormat.format(t.getFechaFin()) + " a las " + dateFormatHora.format(t.getFechaFin());
                         break;
@@ -219,7 +213,7 @@ public class ControladorEmpleado implements Serializable {
 
     public void eventosRegistro() {
         try {
-            fechaActual = new Date();
+            fechaActual = LocalDate.now();
             poaA = false;            poaJ = false;            poaR = false;            poaE = false;
             poaVJ = false;            poaVR = false;            poaVF = false;            poaVEPye = false;
             nuevaListaEventos.clear();
@@ -232,45 +226,21 @@ public class ControladorEmpleado implements Serializable {
                         t.getFechaFin().setSeconds(59);
                         switch (t.getNombre()) {
                             case "Registro":
-                                if ((fechaActual.before(t.getFechaFin()) || (fechaActual.getDate() == t.getFechaFin().getDate() && fechaActual.getMonth() == t.getFechaFin().getMonth() && fechaActual.getYear() == t.getFechaFin().getYear())) && (fechaActual.after(t.getFechaInicio()) || fechaActual.equals(t.getFechaInicio()))) {
-                                    poaA = true;
-                                } else {
-                                    nuevaEventosAreas = new EventosAreas();
-                                    nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
-                                    if (nuevaEventosAreas != null) {
-                                        poaA = true;
-                                    }
-                                }
+                                poaA = periodoActivoPOA(t);
                                 break;
                             case "Justificacion":
-                                if ((fechaActual.before(t.getFechaFin()) || (fechaActual.getDate() == t.getFechaFin().getDate() && fechaActual.getMonth() == t.getFechaFin().getMonth() && fechaActual.getYear() == t.getFechaFin().getYear())) && (fechaActual.after(t.getFechaInicio()) || fechaActual.equals(t.getFechaInicio()))) {
-                                    poaJ = true;
-                                } else {
-                                    nuevaEventosAreas = new EventosAreas();
-                                    nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
-                                    if (nuevaEventosAreas != null) {
-                                        poaJ = true;
-                                    }
-                                }
+                                poaJ = periodoActivoPOA(t);
                                 break;
                             case "Recurso":
-                                if ((fechaActual.before(t.getFechaFin()) || (fechaActual.getDate() == t.getFechaFin().getDate() && fechaActual.getMonth() == t.getFechaFin().getMonth() && fechaActual.getYear() == t.getFechaFin().getYear())) && (fechaActual.after(t.getFechaInicio()) || fechaActual.equals(t.getFechaInicio()))) {
-                                    poaR = true;
-                                } else {
-                                    nuevaEventosAreas = new EventosAreas();
-                                    nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
-                                    if (nuevaEventosAreas != null) {
-                                        poaR = true;
-                                    }
-                                }
+                                poaR = periodoActivoPOA(t);
                                 break;
                             case "Evaluacion":
-                                if ((fechaActual.before(t.getFechaFin()) || (fechaActual.getDate() == t.getFechaFin().getDate() && fechaActual.getMonth() == t.getFechaFin().getMonth() && fechaActual.getYear() == t.getFechaFin().getYear())) && (fechaActual.after(t.getFechaInicio()) || fechaActual.equals(t.getFechaInicio()))) {
-                                    poaE = true;
+                                poaE = periodoActivoPOA(t);
+                                if (poaE) {
                                     mensajeGeneral = false;
                                     estiloInfo = false;
-                                    Integer diasR = (int) ((t.getFechaFin().getTime() - fechaActual.getTime()) / 86400000);
-                                    Integer diasI = (int) ((fechaActual.getTime() - t.getFechaInicio().getTime()) / 86400000);
+                                    Integer diasR = (int) ((t.getFechaFin().getTime() - uch.castearLDaD(fechaActual).getTime()) / 86400000);
+                                    Integer diasI = (int) ((uch.castearLDaD(fechaActual).getTime() - t.getFechaInicio().getTime()) / 86400000);
                                     if (diasI <= 2) {
                                         mensajeIndex1 = "Inicio del periodo para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + mesNombre(t.getFechaInicio().getMonth());
                                         estiloInfo = true;
@@ -282,57 +252,19 @@ public class ControladorEmpleado implements Serializable {
                                         estiloInfo = false;
                                         mensajeGeneral = true;
                                     }
-                                } else {
-                                    nuevaEventosAreas = new EventosAreas();
-                                    nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
-                                    if (nuevaEventosAreas != null) {
-                                        poaE = true;
-                                    }
                                 }
                                 break;
                             case "VJustificacion":
-                                if ((fechaActual.before(t.getFechaFin()) || (fechaActual.getDate() == t.getFechaFin().getDate() && fechaActual.getMonth() == t.getFechaFin().getMonth() && fechaActual.getYear() == t.getFechaFin().getYear())) && (fechaActual.after(t.getFechaInicio()) || fechaActual.equals(t.getFechaInicio()))) {
-                                    poaVJ = true;
-                                } else {
-                                    nuevaEventosAreas = new EventosAreas();
-                                    nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
-                                    if (nuevaEventosAreas != null) {
-                                        poaVJ = true;
-                                    }
-                                }
+                                poaVJ = periodoActivoPOA(t);
                                 break;
                             case "VRecurso":
-                                if ((fechaActual.before(t.getFechaFin()) || (fechaActual.getDate() == t.getFechaFin().getDate() && fechaActual.getMonth() == t.getFechaFin().getMonth() && fechaActual.getYear() == t.getFechaFin().getYear())) && (fechaActual.after(t.getFechaInicio()) || fechaActual.equals(t.getFechaInicio()))) {
-                                    poaVR = true;
-                                } else {
-                                    nuevaEventosAreas = new EventosAreas();
-                                    nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
-                                    if (nuevaEventosAreas != null) {
-                                        poaVR = true;
-                                    }
-                                }
+                                poaVR = periodoActivoPOA(t);
                                 break;
                             case "VFinal":
-                                if ((fechaActual.before(t.getFechaFin()) || (fechaActual.getDate() == t.getFechaFin().getDate() && fechaActual.getMonth() == t.getFechaFin().getMonth() && fechaActual.getYear() == t.getFechaFin().getYear())) && (fechaActual.after(t.getFechaInicio()) || fechaActual.equals(t.getFechaInicio()))) {
-                                    poaVF = true;
-                                } else {
-                                    nuevaEventosAreas = new EventosAreas();
-                                    nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
-                                    if (nuevaEventosAreas != null) {
-                                        poaVF = true;
-                                    }
-                                }
+                                poaVF = periodoActivoPOA(t);
                                 break;
                             case "EvaluacionPYE":
-                                if ((fechaActual.before(t.getFechaFin()) || (fechaActual.getDate() == t.getFechaFin().getDate() && fechaActual.getMonth() == t.getFechaFin().getMonth() && fechaActual.getYear() == t.getFechaFin().getYear())) && (fechaActual.after(t.getFechaInicio()) || fechaActual.equals(t.getFechaInicio()))) {
-                                    poaVEPye = true;
-                                } else {
-                                    nuevaEventosAreas = new EventosAreas();
-                                    nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
-                                    if (nuevaEventosAreas != null) {
-                                        poaVEPye = true;
-                                    }
-                                }
+                                poaVEPye = periodoActivoPOA(t);
                                 break;
                         }
                     }
@@ -344,6 +276,19 @@ public class ControladorEmpleado implements Serializable {
         }
     }
 
+     public Boolean periodoActivoPOA(Eventos t){
+         if ((fechaActual.isBefore(uch.castearDaLD(t.getFechaFin())) || (fechaActual.getDayOfMonth() == uch.castearDaLD(t.getFechaFin()).getDayOfMonth() && fechaActual.getMonthValue() == uch.castearDaLD(t.getFechaFin()).getMonthValue() && fechaActual.getYear() == uch.castearDaLD(t.getFechaFin()).getYear())) && (fechaActual.isAfter(uch.castearDaLD(t.getFechaInicio())) || fechaActual.equals(uch.castearDaLD(t.getFechaInicio())))) {
+             return true;
+         } else {
+             nuevaEventosAreas = new EventosAreas();
+             nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
+             if (nuevaEventosAreas != null) {
+                 return true;
+             }else{
+                 return false;
+             }
+         }
+     }
     public String mesNombre(Integer noMes) {
         String mesnN = "";
         switch (noMes) {

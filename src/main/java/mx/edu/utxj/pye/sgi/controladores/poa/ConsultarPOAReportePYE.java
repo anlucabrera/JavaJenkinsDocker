@@ -14,6 +14,7 @@ import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,11 +23,9 @@ import java.util.logging.Logger;
 import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
-import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
-import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
 
 @Named
 @ManagedBean
@@ -34,7 +33,7 @@ import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
 public class ConsultarPOAReportePYE implements Serializable {
     
     @Getter    @Setter    private Short ejercicioFiscal = 0;
-    @Getter    @Setter    private Date fechaActual=new Date();
+    @Getter    @Setter    private LocalDate fechaActual=LocalDate.now();
     
     @Getter    @Setter    private ListaPersonal listaPersonal=new ListaPersonal();
     @Getter    @Setter    private AreasUniversidad areasUniversidad=new AreasUniversidad();
@@ -53,7 +52,8 @@ public class ConsultarPOAReportePYE implements Serializable {
     @PostConstruct
     public void init() {
         System.out.println("ControladorHabilidadesIIL Inicio: " + System.currentTimeMillis());
-        ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 101));
+        ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear()-2001));
+        System.out.println("ControladorHabilidadesIIL Inicio: " + ejercicioFiscal);
         ejeses=new ArrayList<>();
         ejeses.clear();
         mostrarAreasTienenPOA();
