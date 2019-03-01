@@ -3,6 +3,7 @@ package mx.edu.utxj.pye.sgi.util;
 import java.io.File;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.logging.Level;
@@ -31,6 +32,20 @@ public class UtilidadesCH implements Serializable {
     
     public Date castearLDaD(LocalDate fecha) {
         return Date.from(fecha.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+    
+    public LocalDateTime castearDaLDT(Date fecha) {
+        return LocalDateTime.ofInstant(fecha.toInstant(), ZoneId.systemDefault());
+    } 
+    
+    public Date castearLDTaD(LocalDateTime fecha) {
+        return Date.from(fecha.atZone(ZoneId.systemDefault()).toInstant());
+    } 
+    
+    public String calculaMinutos(Date time) {
+        LocalDateTime tiempo =castearDaLDT(time);
+        Integer total=(tiempo.getHour()*60)+tiempo.getMinute();  
+        return total.toString();
     }
     
     public Integer obtenerEdad(Date fechaNa) {

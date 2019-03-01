@@ -23,7 +23,7 @@ public interface EjbPersonal {
     public List<ListaPersonal> mostrarListaPersonalListSubordinados(ListaPersonal perosona);
 
     ////////////////////////////////////////////////////////////////////////////////Personal
-    public List<Personal> mostrarListaPersonalSubordinados(Short area) throws Throwable;
+    public List<Personal> mostrarListaPersonalSubordinados(Short area,Integer claveTrabajador) throws Throwable;
 
     public List<Personal> mostrarListaPersonalsPorEstatus(Integer estatus) throws Throwable;
 

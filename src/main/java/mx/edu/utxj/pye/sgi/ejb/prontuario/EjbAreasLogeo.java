@@ -11,10 +11,12 @@ public interface EjbAreasLogeo {
 ////////////////////////////////////////////////////////////////////////////////Prontuario /////////////////////////////////////////////////////////////////////////////  
     public List<Categorias> mostrarCategorias() throws Throwable;
 
-    public List<AreasUniversidad> mostrarAreasUniversidad() throws Throwable;
-    
+    public List<AreasUniversidad> mostrarAreasUniversidadActivas() throws Throwable;
+
+    public List<AreasUniversidad> mostrarAreasUniversidadSubordinadas(Short area) throws Throwable;
+
     public List<AreasUniversidad> mostrarAllAreasUniversidad() throws Throwable;
-    
+
     public AreasUniversidad mostrarAreasUniversidad(Short areaId) throws Throwable;
 
     public AreasUniversidad agregarAreasUniversidad(AreasUniversidad au) throws Throwable;

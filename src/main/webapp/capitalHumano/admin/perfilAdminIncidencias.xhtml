@@ -75,12 +75,12 @@
                                     <p:tab title="Reporte Incidencias">
                                         <h:form id="frmInciGeneral"> 
                                             <p:remoteCommand name="actualizarTabla" actionListener="#{controladorIncidenciasGeneral.imprimirValores()}" update="tblActividades" /> 
-                                            <p:dataTable id="tblActividades"  value="#{controladorAdmin.listaIncidencias}"  var="incidencias"
+                                            <p:dataTable id="tblActividades"  value="#{administracionControl.listaIncidencias}"  var="incidencias"
                                                          sortBy="#{incidencias.clavePersonal.areaSuperior}" expandableRowGroups="true"
                                                          editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
 
-                                                <p:ajax event="rowEdit" listener="#{controladorAdmin.onRowEdit}"  process="@this" update="@this" oncomplete="actualizarTabla()"/>
-                                                <p:ajax event="rowEditCancel" listener="#{controladorAdmin.onRowCancel}" update="tblActividades" />
+                                                <p:ajax event="rowEdit" listener="#{administracionControl.onRowEdit}"  process="@this" update="@this" oncomplete="actualizarTabla()"/>
+                                                <p:ajax event="rowEditCancel" listener="#{administracionControl.onRowCancel}" update="tblActividades" />
 
                                                 <p:headerRow>
                                                     <p:column colspan="8" style="background: #2796cb; color: #FFFFFF;">
@@ -125,7 +125,7 @@
                                                         <f:facet name="output"><h:outputText value="#{incidencias.estatus}" /></f:facet>
                                                         <f:facet name="input">
                                                             <h:selectOneMenu value="#{incidencias.estatus}" style="width:100%">
-                                                                <f:selectItems value="#{controladorAdmin.estatus}" var="estatus" itemLabel="#{estatus}" itemValue="#{estatus}" />
+                                                                <f:selectItems value="#{administracionControl.estatus}" var="estatus" itemLabel="#{estatus}" itemValue="#{estatus}" />
                                                             </h:selectOneMenu>
                                                         </f:facet>
                                                     </p:cellEditor>
@@ -143,11 +143,11 @@
                                     <p:tab title="Opciones Incidencias">
                                         <h:form id="frmModulos"> 
                                             <p:outputPanel id="incidenciasReporte">
-                                                <p:dataTable id="tblReportes"  value="#{controladorAdmin.modulosregistros}"  var="modulos"
+                                                <p:dataTable id="tblReportes"  value="#{administracionControl.modulosregistros}"  var="modulos"
                                                              editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
 
-                                                    <p:ajax event="rowEdit" listener="#{controladorAdmin.onRowEditModulos}" update="tblReportes" process="@this"/>
-                                                    <p:ajax event="rowEditCancel" listener="#{controladorAdmin.onRowCancel}" update="tblReportes" />
+                                                    <p:ajax event="rowEdit" listener="#{administracionControl.onRowEditModulos}" update="tblReportes" process="@this"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{administracionControl.onRowCancel}" update="tblReportes" />
 
 
 

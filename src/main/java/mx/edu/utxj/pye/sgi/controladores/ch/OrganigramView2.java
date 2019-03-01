@@ -15,32 +15,10 @@ public class OrganigramView2 implements Serializable {
 
     private static final long serialVersionUID = 2288964212463101066L;
 
-    private OrganigramNode ConsejoDirectivo;
     private OrganigramNode selection;
 
-    private OrganigramNode Rectoría;
-    private OrganigramNode AbogadoGeneral;
-    private OrganigramNode SecretaríaAcadémica;
-    private OrganigramNode DivisiónDeCarreraDelÁreaEconómicoAdministrativa;
-    private OrganigramNode DivisiónDeCarreraDelÁreaTecnologíasDeLaInformaciónYComunicación;
-    private OrganigramNode DivisiónDeCarreraDelÁreaMecatrónicaYAutomatización;
-    private OrganigramNode DivisiónDeCarreraDelÁreaAgroIndustrialAlimentaria;
-    private OrganigramNode DivisiónDeCarreraDelÁreaMantenimientoIndustrial;
-    private OrganigramNode DivisiónDeCarreraDelÁreaSalud;
-    private OrganigramNode DepartamentoDeServiciosEscolares;
-    private OrganigramNode DepartamentoDeFortalecimientoYDesarrolloAcadémico;
-    private OrganigramNode DepartamentoDeServiciosEstudiantiles;
-    private OrganigramNode DirecciónDeAdministraciónYFinanzas;
-    private OrganigramNode SubdirecciónDeRecursosFinancieros;
-    private OrganigramNode DepartamentoDeProgramaciónYContabilidad;
-    private OrganigramNode DepartamentoDeRecursosMaterialesYServiciosGenerales;
-    private OrganigramNode DepartamentoDePersonal;
-    private OrganigramNode DirecciónDeExtensiónYVinculación;
-    private OrganigramNode DepartamentoDePrensaDifusiónYActividadesCulturales;
-    private OrganigramNode DepartamentoServiciosTecnológicosYConvenios;
-    private OrganigramNode DirecciónDePlaneaciónYEvaluación;
-    private OrganigramNode DepartamentoDeInformaciónYEstadística;
-    private OrganigramNode DepartamentoDeInformáticaYEducaciónADistancia;
+    private OrganigramNode cnd,     rec,     dag,     sec,     daa,     tic,     dam,     agr,     ami,     das,     dse,     fda;
+    private OrganigramNode ses,     daf,     srf,     dpc,     rms,     dep,     dev,     pda,     stc,     pye,     die,     inf;
 
     private boolean zoom = true;
     private String style = ""
@@ -57,36 +35,36 @@ public class OrganigramView2 implements Serializable {
     public void init() {
         selection = new DefaultOrganigramNode(null, "Ridvan Agar", null);
 
-        ConsejoDirectivo = new DefaultOrganigramNode("root", "Consejo Directivo", null);
-        ConsejoDirectivo.setCollapsible(false);
-        ConsejoDirectivo.setDroppable(true);
+        cnd = new DefaultOrganigramNode("root", "Consejo Directivo", null);
+        cnd.setCollapsible(false);
+        cnd.setDroppable(true);
 
-        Rectoría = addDivision3(ConsejoDirectivo, "Rectoría");
-        AbogadoGeneral = addDivision(Rectoría, "Abogado General");
-        SecretaríaAcadémica = addDivision(Rectoría, "Secretaría Académica");
-        DivisiónDeCarreraDelÁreaEconómicoAdministrativa = addDivision2(SecretaríaAcadémica, "División De Carrera Del Área Económico Administrativa", "Ridvan Agar");
-        DivisiónDeCarreraDelÁreaTecnologíasDeLaInformaciónYComunicación = addDivision2(SecretaríaAcadémica, "División De Carrera Del Área Tecnologías De La Información Y Comunicación", "Ridvan Agar");
-        DivisiónDeCarreraDelÁreaMecatrónicaYAutomatización = addDivision2(SecretaríaAcadémica, "División De Carrera Del Área Mecatrónica Y Automatización", "Ridvan Agar");
-        DivisiónDeCarreraDelÁreaAgroIndustrialAlimentaria = addDivision2(SecretaríaAcadémica, "División De Carrera Del ÁreaAgro - Industrial Alimentaria", "Ridvan Agar");
-        DivisiónDeCarreraDelÁreaMantenimientoIndustrial = addDivision2(SecretaríaAcadémica, "División De Carrera Del Área Mantenimiento Industrial", "Ridvan Agar");
-        DivisiónDeCarreraDelÁreaSalud = addDivision2(SecretaríaAcadémica, "División De Carrera Del Área Salud", "Ridvan Agar");
-        DepartamentoDeServiciosEscolares = addDivision2(SecretaríaAcadémica, "Departamento De Servicios Escolares", "Ridvan Agar");
-        DepartamentoDeFortalecimientoYDesarrolloAcadémico = addDivision2(SecretaríaAcadémica, "Departamento De Fortalecimiento Y Desarrollo Académico", "Ridvan Agar");
-        DepartamentoDeServiciosEstudiantiles = addDivision2(SecretaríaAcadémica, "Departamento De Servicios Estudiantiles", "Ridvan Agar");
-        DirecciónDeAdministraciónYFinanzas = addDivision(Rectoría, "Dirección De Administración Y Finanzas");
-        SubdirecciónDeRecursosFinancieros = addDivision3(DirecciónDeAdministraciónYFinanzas, "Subdirección De Recursos Financieros");
-        DepartamentoDeProgramaciónYContabilidad = addDivision2(SubdirecciónDeRecursosFinancieros, "DepartamentoDeProgramación Y Contabilidad", "Ridvan Agar");
-        DepartamentoDeRecursosMaterialesYServiciosGenerales = addDivision2(DirecciónDeAdministraciónYFinanzas, "Departamento De Recursos Materiales Y Servicios Generales", "Ridvan Agar");
-        DepartamentoDePersonal = addDivision2(DirecciónDeAdministraciónYFinanzas, "Departamento De Personal", "Ridvan Agar");
-        DirecciónDeExtensiónYVinculación = addDivision(Rectoría, "Dirección De Extensión Y Vinculación");
-        DepartamentoDePrensaDifusiónYActividadesCulturales = addDivision2(DirecciónDeExtensiónYVinculación, "Departamento De Prensa, Difusión Y Actividades Culturales", "Ridvan Agar");
-        DepartamentoServiciosTecnológicosYConvenios = addDivision2(DirecciónDeExtensiónYVinculación, "Departamento Servicios Tecnológicos Y Convenios", "Ridvan Agar");
-        DirecciónDePlaneaciónYEvaluación = addDivision(Rectoría, "Dirección De Planeación Y Evaluación");
-        DepartamentoDeInformaciónYEstadística = addDivision2(DirecciónDePlaneaciónYEvaluación, "Departamento De Información Y Estadística", "Ridvan Agar");
-        DepartamentoDeInformáticaYEducaciónADistancia = addDivision2(DirecciónDePlaneaciónYEvaluación, "Departamento De Informática Y Educación A Distancia", "Ridvan Agar");
+        rec = addDivision3(cnd, "Rectoría");
+        dag = addDivision1(rec, "Abogado General");
+        sec = addDivision1(rec, "Secretaría Académica");
+        daa = addDivision2(sec, "División De Carrera Del Área Económico Administrativa", "Ridvan Agar");
+        tic = addDivision2(sec, "División De Carrera Del Área Tecnologías De La Información Y Comunicación", "Ridvan Agar");
+        dam = addDivision2(sec, "División De Carrera Del Área Mecatrónica Y Automatización", "Ridvan Agar");
+        agr = addDivision2(sec, "División De Carrera Del ÁreaAgro - Industrial Alimentaria", "Ridvan Agar");
+        ami = addDivision2(sec, "División De Carrera Del Área Mantenimiento Industrial", "Ridvan Agar");
+        das = addDivision2(sec, "División De Carrera Del Área Salud", "Ridvan Agar");
+        dse = addDivision2(sec, "Departamento De Servicios Escolares", "Ridvan Agar");
+        fda = addDivision2(sec, "Departamento De Fortalecimiento Y Desarrollo Académico", "Ridvan Agar");
+        ses = addDivision2(sec, "Departamento De Servicios Estudiantiles", "Ridvan Agar");
+        daf = addDivision1(rec, "Dirección De Administración Y Finanzas");
+        srf = addDivision3(daf, "Subdirección De Recursos Financieros");
+        dpc = addDivision2(srf, "DepartamentoDeProgramación Y Contabilidad", "Ridvan Agar");
+        rms = addDivision2(daf, "Departamento De Recursos Materiales Y Servicios Generales", "Ridvan Agar");
+        dep = addDivision2(daf, "Departamento De Personal", "Ridvan Agar");
+        dev = addDivision1(rec, "Dirección De Extensión Y Vinculación");
+        pda = addDivision2(dev, "Departamento De Prensa, Difusión Y Actividades Culturales", "Ridvan Agar");
+        stc = addDivision2(dev, "Departamento Servicios Tecnológicos Y Convenios", "Ridvan Agar");
+        pye = addDivision1(rec, "Dirección De Planeación Y Evaluación");
+        die = addDivision2(pye, "Departamento De Información Y Estadística", "Ridvan Agar");
+        inf = addDivision2(pye, "Departamento De Informática Y Educación A Distancia", "Ridvan Agar");
     }
 
-    protected OrganigramNode addDivision(OrganigramNode parent, String name, String... employees) {
+    protected OrganigramNode addDivision1(OrganigramNode parent, String name, String... employees) {
         OrganigramNode divisionNode = new DefaultOrganigramNode("division", name, parent);
         divisionNode.setCollapsible(true);
 
@@ -131,11 +109,11 @@ public class OrganigramView2 implements Serializable {
     }
 
     public OrganigramNode getRootNode() {
-        return ConsejoDirectivo;
+        return cnd;
     }
 
     public void setRootNode(OrganigramNode rootNode) {
-        this.ConsejoDirectivo = rootNode;
+        this.cnd = rootNode;
     }
 
     public OrganigramNode getSelection() {

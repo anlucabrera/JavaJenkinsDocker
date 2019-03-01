@@ -107,7 +107,7 @@
                                                                                 </div>
                                                                                 <div class="col-sm-3 col-md-3 col-lg-3">                                                                                
                                                                                     <p:outputLabel for="tiempo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tiempo de incidencia" />
-                                                                                    <p:calendar locale="es" id="tiempo" value="#{controladorIncidenciasPersonal.tiempo}" pattern="HH:mm" timeOnly="true" required="true" requiredMessage="Si la incidencia no tiene tiempo favor de colocar el valor en 00:00"/>
+                                                                                    <p:calendar locale="es" id="tiempo" value="#{controladorIncidenciasPersonal.nuevOBJIncidencias.tiempo}" pattern="HH:mm" timeOnly="true" required="true" requiredMessage="Si la incidencia no tiene tiempo favor de colocar el valor en 00:00"/>
                                                                                     <p:message for="tiempo"><p:autoUpdate/></p:message>     
                                                                                 </div>  
                                                                                 <div class="col-sm-12 col-md-12 col-lg-12">                                                                     
@@ -177,16 +177,24 @@
                                                 <p:ajax event="rowEdit" listener="#{controladorIncidenciasPersonal.onRowEdit}" update="tblActividades" />
                                                 <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblActividades" />
 
-                                                <p:column style="width: 50px;">
+                                                <p:column style="width: 5%;">
                                                     <p:commandButton actionListener="#{controladorIncidenciasPersonal.eliminarIncidencia(incidencia)}" update="@this" oncomplete="actualizarTabla()" icon="fa fa-trash" 
                                                                      onsuccess="PF('frmInci').update();" styleClass="btn-primary" title="Eliminar Incidencias" disabled="#{incidencia.estatus eq 'Pendiente'?false:true}">
                                                         <p:confirm header="Confirmación" message="¿Confirma la eliminación de la incidencia de #{incidencia.tipo} del dia #{incidencia.fecha}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
+                                                <p:column headerText="Numero Oficio" 
+                                                          sortBy="#{incidencia.tipo}" 
+                                                          filterBy="#{incidencia.tipo}" 
+                                                          filterMatchMode="contains" 
+                                                          style="width: 7%;text-align: center">
+                                                    <h:outputText value="#{incidencia.numeroOficio}" />
+                                                </p:column>
                                                 <p:column headerText="Tipo de incidencia" 
                                                           sortBy="#{incidencia.tipo}" 
                                                           filterBy="#{incidencia.tipo}" 
-                                                          filterMatchMode="contains">
+                                                          filterMatchMode="contains" 
+                                                          style="width: 15%">
                                                     <p:cellEditor>
                                                         <f:facet name="output"><h:outputText value="#{incidencia.tipo}" /></f:facet>
                                                         <f:facet name="input">
@@ -199,7 +207,8 @@
                                                 <p:column headerText="Justificación" 
                                                           sortBy="#{incidencia.justificacion}" 
                                                           filterBy="#{incidencia.justificacion}" 
-                                                          filterMatchMode="contains">
+                                                          filterMatchMode="contains" 
+                                                          style="width: 40%">
                                                     <p:cellEditor>
                                                         <f:facet name="output"><h:outputText value="#{incidencia.justificacion}" /></f:facet>
                                                         <f:facet name="input">
@@ -210,7 +219,8 @@
                                                 <p:column headerText="Fecha" 
                                                           sortBy="#{incidencia.fecha}" 
                                                           filterBy="#{incidencia.fecha}" 
-                                                          filterMatchMode="contains">
+                                                          filterMatchMode="contains" 
+                                                          style="width: 10%;text-align: center">
                                                     <p:cellEditor>
                                                         <f:facet name="output"> <h:outputLabel value="#{incidencia.fecha}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></f:facet>
                                                         <f:facet name="input">
@@ -221,16 +231,16 @@
                                                 <p:column headerText="Tiempo" 
                                                           sortBy="#{incidencia.tiempo}" 
                                                           filterBy="#{incidencia.tiempo}" 
-                                                          filterMatchMode="contains">
-
+                                                          filterMatchMode="contains" 
+                                                          style="width: 10%;text-align: center">
                                                     <p:cellEditor>
-                                                        <f:facet name="output"><h:outputText value="#{incidencia.tiempo}" /></f:facet>
+                                                        <f:facet name="output"><h:outputLabel value="0#{incidencia.tiempo.hours}:#{incidencia.tiempo.minutes}" /></f:facet>
                                                         <f:facet name="input">
-                                                            <p:inputMask value="#{incidencia.tiempo}" mask="99:99"/>
+                                                            <p:calendar locale="es" value="#{incidencia.tiempo}" pattern="HH:mm" mask="true" />
                                                         </f:facet>
                                                     </p:cellEditor>
                                                 </p:column>  
-                                                <p:column headerText="Evidencia(s)" style="width:85px;text-align: center;">
+                                                <p:column headerText="Evidencia(s)" style="width:7%;text-align: center;">
                                                     <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(incidencia.evidencia)}" target="_blank" style=" visibility:#{incidencia.evidencia eq null?'hidden':'visible'};">
                                                         <i class="fa fa-search"></i>
                                                         <span>Ver</span>
@@ -242,7 +252,7 @@
                                                         </p:commandButton>
                                                     </p:column>
                                                 </p:column>
-                                                <p:column style="width:32px;" class="noprint" >
+                                                <p:column style="width:6%" class="noprint" >
                                                     <p:rowEditor style="visibility: #{incidencia.estatus eq 'Pendiente'?'visible':'hidden'}"/>
                                                 </p:column>
                                             </p:dataTable>  

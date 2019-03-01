@@ -1,8 +1,6 @@
 package mx.edu.utxj.pye.sgi.controladores.ch;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -49,8 +47,6 @@ public class ControladorPersonalAltasYBajas implements Serializable {
     @Getter    @Setter    private List<ContactoEmergencias> listaContactoEmergencias = new ArrayList<>();
     @Getter    @Setter    private List<Short> listaClaveAS = new ArrayList<>();
 
-    @Getter    @Setter    private DateFormat formatoF = new SimpleDateFormat("dd/MM/yyyy");
-    @Getter    @Setter    private String fechaN, fechaI;
     @Getter    @Setter    private Short actividad = 0, categoriaOP = 0, categoriaOF = 0, categoria360 = 0, grado = 0, genero = 0;
     @Getter    @Setter    private Integer claveUltimaEmpleado = 0;
     @Getter    @Setter    private Personal nuevOBJPersonalSubordinado, nuevOBJPersonalUltimoAgragado;
@@ -89,7 +85,7 @@ public class ControladorPersonalAltasYBajas implements Serializable {
             listaContactoEmergencias.clear();
             listaPersonalCategorias360.clear();
 
-            listaAreasUniversidads = ejbAreasLogeo.mostrarAreasUniversidad();
+            listaAreasUniversidads = ejbAreasLogeo.mostrarAreasUniversidadActivas();
             listaAreasUniversidads.forEach((t) -> {
                 if (t.getCategoria().getCategoria() == Short.parseShort("10") || t.getCategoria().getCategoria() == Short.parseShort("9")) {
                 } else {
@@ -146,8 +142,6 @@ public class ControladorPersonalAltasYBajas implements Serializable {
             nuevOBJPersonalSubordinado.getActividad().setActividad(actividad);
             nuevOBJPersonalSubordinado.getCategoriaOperativa().setCategoria(categoriaOP);
             nuevOBJPersonalSubordinado.getCategoria360().setCategoria(categoria360);
-            nuevOBJPersonalSubordinado.setFechaIngreso(formatoF.parse(fechaI));
-            nuevOBJPersonalSubordinado.setFechaNacimiento(formatoF.parse(fechaN));
             nuevOBJPersonalSubordinado.setSni(false);
             nuevOBJPersonalSubordinado.setPerfilProdep(false);
             nuevOBJPersonalSubordinado.getCategoriaEspecifica().setCategoriaEspecifica(Short.parseShort("1"));
@@ -163,8 +157,6 @@ public class ControladorPersonalAltasYBajas implements Serializable {
             categoriaOF = 0;
             actividad = 0;
             categoriaOP = 0;
-            fechaI = "";
-            fechaN = "";
 
             listaPersonalTotal.clear();
             listaPersonalTotal = ejbPersonal.mostrarListaPersonalsPorEstatus(1);

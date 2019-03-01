@@ -5,9 +5,11 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -242,12 +244,12 @@ public class ControladorEmpleado implements Serializable {
                                     Integer diasR = (int) ((t.getFechaFin().getTime() - uch.castearLDaD(fechaActual).getTime()) / 86400000);
                                     Integer diasI = (int) ((uch.castearLDaD(fechaActual).getTime() - t.getFechaInicio().getTime()) / 86400000);
                                     if (diasI <= 2) {
-                                        mensajeIndex1 = "Inicio del periodo para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + mesNombre(t.getFechaInicio().getMonth());
+                                        mensajeIndex1 = "Inicio del periodo para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + uch.castearDaLD(t.getFechaInicio()).getMonth().getDisplayName(TextStyle.FULL, Locale.ROOT);
                                         estiloInfo = true;
                                         mensajeGeneral = true;
                                     }
                                     if (diasR <= 5) {
-                                        mensajeIndex1 = "La fecha límite para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + mesNombre(t.getFechaFin().getMonth()) + " ¡Está por vencer!";
+                                        mensajeIndex1 = "La fecha límite para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + uch.castearDaLD(t.getFechaInicio()).getMonth().getDisplayName(TextStyle.FULL, Locale.GERMANY) + " ¡Está por vencer!";
                                         mensajeIndex2 = "Restan " + diasR + " días";
                                         estiloInfo = false;
                                         mensajeGeneral = true;

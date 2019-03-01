@@ -85,7 +85,7 @@
                                                                             </div>
                                                                             <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                 <label for="fechaN" class="col-sm-12 control-label">Fecha de nacimiento</label>
-                                                                                <p:inputMask class="form-control" id="fechaN" placeholder="día-mes-año" mask="99/99/9999" value="#{controladorPersonalAltasYBajas.fechaN}"/>
+                                                                                <p:calendar locale="es" id="fechaN" value="#{controladorPersonalAltasYBajas.nuevOBJPersonalSubordinado.fechaNacimiento}" pattern="dd-MM-yyyy" placeholder="00-00-0000" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
                                                                                 <hr/>                                                                       
                                                                             </div>
                                                                             <div class="col-sm-4 col-md-4 col-lg-4">
@@ -151,7 +151,7 @@
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <label for="fechaI" class="col-sm-12 control-label">Fecha de Ingreso</label>
-                                                                                <p:inputMask class="form-control" id="fechaI" placeholder="día-mes-año" mask="99/99/9999" value="#{controladorPersonalAltasYBajas.fechaI}"/>
+                                                                                <p:calendar locale="es" id="fechaI" value="#{controladorPersonalAltasYBajas.nuevOBJPersonalSubordinado.fechaIngreso}" pattern="dd-MM-yyyy" placeholder="00-00-0000" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
                                                                                 <hr/>
                                                                             </div>
                                                                             <div class="col-sm-6 col-md-6 col-lg-6">

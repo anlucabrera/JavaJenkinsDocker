@@ -357,19 +357,6 @@ public class ControladorSubordinados implements Serializable {
         mostrarIncidencias(String.valueOf(fechaNow.getMonthValue()));
     }
 
-    public String calculaM(String area) {
-        nombreAr = area.split(":");
-        String hora = nombreAr[0];
-        String minu = nombreAr[1];
-        Integer h = 0;
-        Integer m = 0;
-        Integer t = 0;
-        h = Integer.parseInt(hora) * 60;
-        m = Integer.parseInt(minu);
-        t = h + m;
-        return t.toString();
-    }
-
     public void imprimirValores() {
     }
 }

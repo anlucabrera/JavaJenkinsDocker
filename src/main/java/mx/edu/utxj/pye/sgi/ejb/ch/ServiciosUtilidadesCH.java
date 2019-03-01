@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.sgi.ejb.ch;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
@@ -105,6 +106,18 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
     public List<PersonalCategorias> mostrarListaPersonalCategorias() throws Throwable {
         TypedQuery<PersonalCategorias> q = em.createQuery("SELECT p FROM PersonalCategorias p", PersonalCategorias.class);
         List<PersonalCategorias> pr = q.getResultList();
+        return pr;
+    }
+
+    @Override
+    public List<PersonalCategorias> mostrarListaPersonalCategoriasArea(Short area) throws Throwable {
+        TypedQuery<PersonalCategorias> q = em.createQuery("SELECT c FROM Personal p INNER JOIN p.categoriaOperativa c WHERE (p.areaOperativa = :areaOperativa OR p.areaSuperior=:areaSuperior) GROUP BY c.categoria", PersonalCategorias.class);
+        q.setParameter("areaOperativa", area);
+        q.setParameter("areaSuperior", area);
+        List<PersonalCategorias> pr = q.getResultList();
+       if (pr.isEmpty() ) {
+          pr=new ArrayList<>();
+        } 
         return pr;
     }
 

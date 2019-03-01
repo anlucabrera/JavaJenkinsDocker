@@ -1,6 +1,7 @@
 package mx.edu.utxj.pye.sgi.controladores.ch;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,11 +15,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
-import mx.edu.utxj.pye.sgi.entity.ch.Actividades;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Notificaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
+import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Messages;
 
 @Named
@@ -28,27 +28,23 @@ public class ControladorNotificacionesMultiples implements Serializable {
 
     private static final long serialVersionUID = -8842055922698338073L;
 
-    @Getter    @Setter    private Integer usuario;
     @Getter    @Setter    private String menajeNot, tipo, nombreO;
     @Getter    @Setter    private List<String> listaO = new ArrayList<>();
-    @Getter    @Setter    private List<Notificaciones> listaNotificaciones = new ArrayList<>();
     @Getter    @Setter    private Notificaciones nuevOBJNotificaciones;
     @Getter    @Setter    private List<ListaPersonal> listaListaPersonal = new ArrayList<>();
-    @Getter    @Setter    private PersonalCategorias nuevoOBJPersonalCategorias;
-    @Getter    @Setter    private Actividades nuevoOBJActividades;
     @Getter    @Setter    private ListaPersonal nuevoOBJListaPersonal;
 
-    @Getter    @Setter    private Date fechaActual = new Date();
+    @Getter    @Setter    private LocalDate fechaActual = LocalDate.now();
 
 //@EJB 
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbCreate;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbSelectec;
 //@Inject
     @Inject    ControladorEmpleado controladorEmpleado;
+    @Inject    UtilidadesCH uch;
 
     @PostConstruct
     public void init() {
-        usuario = controladorEmpleado.getEmpleadoLogeado();
     }
 
     public void agregarNotificacionMultiple() {
@@ -61,9 +57,9 @@ public class ControladorNotificacionesMultiples implements Serializable {
                 nuevOBJNotificaciones.setClaveTRemitente(new Personal());
                 listaListaPersonal.clear();
                 nuevOBJNotificaciones.setMensaje(menajeNot);
-                nuevOBJNotificaciones.setClaveTRemitente(new Personal(usuario));
+                nuevOBJNotificaciones.setClaveTRemitente(new Personal(controladorEmpleado.getEmpleadoLogeado()));
                 nuevOBJNotificaciones.setStatus(0);
-                nuevOBJNotificaciones.setFecha(fechaActual);
+                nuevOBJNotificaciones.setFecha(uch.castearLDaD(fechaActual));
                 switch (tipo) {
                     case "Personal":
                         nuevOBJNotificaciones.setTipo(4);

@@ -36,6 +36,8 @@ public interface EjbUtilidadesCH {
 ////////////////////////////////////////////////////////////////////////////////Personal Categorias
     public List<PersonalCategorias> mostrarListaPersonalCategorias() throws Throwable;
 
+    public List<PersonalCategorias> mostrarListaPersonalCategoriasArea(Short area) throws Throwable;
+
     public PersonalCategorias crearNuevoPersonalCategorias(PersonalCategorias nuevoPersonalCategorias) throws Throwable;
 
 ////////////////////////////////////////////////////////////////////////////////Bitacora Accesos

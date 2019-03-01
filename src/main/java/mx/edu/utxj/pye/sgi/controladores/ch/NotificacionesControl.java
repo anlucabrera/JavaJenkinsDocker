@@ -34,15 +34,13 @@ public class NotificacionesControl implements Serializable {
 
     @Getter    @Setter    private Iterator<Personal> pIterator;
     @Getter    @Setter    private Iterator<Notificaciones> nIterator;
-////////////////////////////C V//////////////////////////////////
 
-    @Getter    @Setter    private Integer empleadoLogeado = 0, contactoDestino = 0;
+    @Getter    @Setter    private Integer contactoDestino = 0;
     @Getter    @Setter    private String mensajeDNotificacion = "", nombreContacto = "";
 
     @Getter    @Setter    private Notificaciones nuevoOBJNotificaciones;
 
     @Getter    @Setter    private List<ContactosChat> listacontactosChat = new ArrayList<>(), listaContactosChatFiltrados;
-    @Getter    @Setter    private ContactosChat nuevOBJcontactosChat, nuevOBJcontactosChat2, nuevOBJcontactosChat3;
     @Getter    @Setter    private ContactosChat nuevoOBJcontactosChatSelec = new ContactosChat(0, "", 0);
     @Getter    @Setter    private List<Integer> clavesContactosCChat = new ArrayList<>();
 
@@ -54,7 +52,6 @@ public class NotificacionesControl implements Serializable {
 
     @PostConstruct
     public void init() {
-        empleadoLogeado = controladorEmpleado.getEmpleadoLogeado();
         mostrarContactosParaNotificacion();
         mostrarNotificacionesLogeado();
     }
@@ -174,7 +171,7 @@ public class NotificacionesControl implements Serializable {
                 nuevoOBJNotificaciones.setStatus(0);
                 nuevoOBJNotificaciones.setTipo(4);
                 nuevoOBJNotificaciones.setClaveTDestino(new Personal(contactoDestino));
-                nuevoOBJNotificaciones.setClaveTRemitente(new Personal(empleadoLogeado));
+                nuevoOBJNotificaciones.setClaveTRemitente(new Personal(controladorEmpleado.getEmpleadoLogeado()));
                 nuevoOBJNotificaciones = ejbNotificacionesIncidencias.agregarNotificacion(nuevoOBJNotificaciones);
                 mensajeDNotificacion = "";
             }

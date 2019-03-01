@@ -207,13 +207,13 @@
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-6 col-lg-2">         
                                                                                     <p:outputLabel for="anio" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Año de publicación" />
-                                                                                    <p:inputText id="anio" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Año de publicación" value="#{cvProduccion.anioPub}"/>
+                                                                                    <p:calendar locale="es" id="anio" value="#{cvProduccion.nuevOBJLibrosPub.anioPub}" pattern="yyyy" placeholder="0000" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
                                                                                     <p:message for="anio" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-6 col-lg-2">                                                                                    
                                                                                     <p:outputLabel for="anioedi" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Año de edición" />
-                                                                                    <p:inputText id="anioedi" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Año de edición" value="#{cvProduccion.anioEdi}"/>
+                                                                                    <p:calendar locale="es" id="anioedi" value="#{cvProduccion.nuevOBJLibrosPub.anioEdicion}" pattern="yyyy" placeholder="0000" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
                                                                                     <p:message for="anioedi" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
@@ -634,13 +634,13 @@
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-6 col-lg-3"> 
                                                                                     <p:outputLabel for="anioPub" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Año de publicación" />
-                                                                                    <p:inputText id="anioPub" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Año de publicación" value="#{cvProduccion.anioPub}"/>
+                                                                                    <p:calendar locale="es" id="anioPub" value="#{cvProduccion.nuevOBJArticulosp.anioPublicacion}" pattern="yyyy" placeholder="0000" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
                                                                                     <p:message for="anioPub" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-6 col-lg-3"> 
                                                                                     <p:outputLabel for="anioEdicion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Año de edición" />
-                                                                                    <p:inputText id="anioEdicion" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Año de edición" value="#{cvProduccion.anioEdi}"/>
+                                                                                    <p:calendar locale="es" id="anioEdicion" value="#{cvProduccion.nuevOBJArticulosp.enioEdicion}" pattern="yyyy" placeholder="0000" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
                                                                                     <p:message for="anioEdicion" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
@@ -968,7 +968,7 @@
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-6 col-lg-3">  
                                                                                     <p:outputLabel for="anioPub" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Año de publicación" />
-                                                                                    <p:inputText id="anioPub" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Año de publicación" value="#{cvProduccion.anioPub}"/>
+                                                                                    <p:calendar locale="es" id="anioPub" value="#{cvProduccion.nuevOBJMemoriaspub.anioDePublicacion}" pattern="yyyy" placeholder="0000" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
                                                                                     <p:message for="anioPub" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
@@ -1232,25 +1232,25 @@
                                                                             <div class="form-group">                                                                                
                                                                                 <div class="col-sm-12 col-md-12 col-lg-6"> 
                                                                                     <p:outputLabel for="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Título de la investigación" />
-                                                                                    <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Titulo de la investigacion" value="#{cvProduccion.nombre}"/>
+                                                                                    <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Titulo de la investigacion" value="#{cvProduccion.nuevOBJInvestigaciones.nombreInvestigacion}"/>
                                                                                     <p:message for="nombre" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-12 col-lg-6"> 
                                                                                     <p:outputLabel for="lugar" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Institución (donde fue realizada)" />
-                                                                                    <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="lugar" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Institución" value="#{cvProduccion.istitucion}"/>
+                                                                                    <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="lugar" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Institución" value="#{cvProduccion.nuevOBJInvestigaciones.institucion}"/>
                                                                                     <p:message for="lugar" display="tooltip"/>                                                                         
                                                                                     <hr/>
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-12 col-lg-6"> 
                                                                                     <p:outputLabel for="desc" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Descripción" />
-                                                                                    <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="desc" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Descripción" value="#{cvProduccion.descripcion}"/>
+                                                                                    <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="desc" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Descripción" value="#{cvProduccion.nuevOBJInvestigaciones.decripcion}"/>
                                                                                     <p:message for="desc" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-12 col-lg-6">
                                                                                     <p:outputLabel for="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo" />
-                                                                                    <p:selectOneMenu id="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvProduccion.tipoDr}" >
+                                                                                    <p:selectOneMenu id="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvProduccion.nuevOBJInvestigaciones.tipo}" >
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                         <f:selectItem itemValue="Proyecto" itemLabel=" Proyecto "/>
                                                                                         <f:selectItem itemValue="Trabajo" itemLabel=" Trabajo "/>
@@ -1260,13 +1260,13 @@
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-6 col-lg-6"> 
                                                                                     <p:outputLabel for="fechaIn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de inicio" />
-                                                                                    <p:calendar navigator="true" locale="es" required="true" requiredMessage="No puede tener un campo vacío" id="fechaIn" value="#{cvProduccion.fechaI}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                    <p:calendar navigator="true" locale="es" required="true" requiredMessage="No puede tener un campo vacío" id="fechaIn" value="#{cvProduccion.nuevOBJInvestigaciones.fechaInicio}" pattern="dd-MM-yyyy" mask="true" />
                                                                                     <p:message for="fechaIn" display="tooltip" /> 
                                                                                     <hr/>     
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-6 col-lg-6"> 
                                                                                     <p:outputLabel for="fechaFin" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de fin, vació si esta en proceso" />
-                                                                                    <p:calendar navigator="true" title="En caso de estar en proceso dejar vacío el campo" locale="es" id="fechaFin" value="#{cvProduccion.fechaF}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                    <p:calendar navigator="true" title="En caso de estar en proceso dejar vacío el campo" locale="es" id="fechaFin" value="#{cvProduccion.nuevOBJInvestigaciones.fechaFin}" pattern="dd-MM-yyyy" mask="true" />
                                                                                     <p:message for="fechaFin" display="tooltip" />
                                                                                     <hr/>
                                                                                 </div>

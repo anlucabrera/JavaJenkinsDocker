@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.sgi.ejb.prontuario;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
@@ -28,10 +29,21 @@ public class ServiciosAreasLogeo implements EjbAreasLogeo {
     }
 
     @Override
-    public List<AreasUniversidad> mostrarAreasUniversidad() throws Throwable {
+    public List<AreasUniversidad> mostrarAreasUniversidadActivas() throws Throwable {
         TypedQuery<AreasUniversidad> q = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.vigente = :vigente", AreasUniversidad.class);
         q.setParameter("vigente", "1");
         List<AreasUniversidad> pr = q.getResultList();
+        return pr;
+    }
+    @Override
+    public List<AreasUniversidad> mostrarAreasUniversidadSubordinadas(Short area) throws Throwable {
+        TypedQuery<AreasUniversidad> q = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.areaSuperior = :areaSuperior AND a.vigente = :vigente", AreasUniversidad.class);
+        q.setParameter("areaSuperior", area);
+        q.setParameter("vigente", "1");
+        List<AreasUniversidad> pr = q.getResultList();
+        if (pr.isEmpty() ) {
+          pr=new ArrayList<>();
+        } 
         return pr;
     }
     

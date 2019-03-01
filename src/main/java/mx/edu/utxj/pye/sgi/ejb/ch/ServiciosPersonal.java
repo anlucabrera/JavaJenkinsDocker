@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.sgi.ejb.ch;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
@@ -70,6 +71,9 @@ public class ServiciosPersonal implements EjbPersonal {
         q.setParameter("areaSuperior", perosona.getAreaOperativa());
         q.setParameter("clave", perosona.getClave());
         List<ListaPersonal> pr = q.getResultList();
+        if (pr.isEmpty() ) {
+          pr=new ArrayList<>();
+        } 
         return pr;
     }
 ////////////////////////////////////////////////////////////////////////////////Personal
@@ -86,12 +90,16 @@ public class ServiciosPersonal implements EjbPersonal {
     }
 
     @Override
-    public List<Personal> mostrarListaPersonalSubordinados(Short area) throws Throwable {
-        TypedQuery<Personal> q = em.createQuery("SELECT p FROM Personal p WHERE (p.areaOperativa = :areaOperativa OR p.areaSuperior=:areaSuperior) AND  p.status<>:status ORDER BY p.clave", Personal.class);
+    public List<Personal> mostrarListaPersonalSubordinados(Short area,Integer claveTrabajador) throws Throwable {
+        TypedQuery<Personal> q = em.createQuery("SELECT p FROM Personal p WHERE (p.areaOperativa = :areaOperativa OR p.areaSuperior=:areaSuperior) AND  p.status<>:status AND p.clave!=:clave ORDER BY p.clave", Personal.class);
         q.setParameter("status", 'B');
         q.setParameter("areaOperativa", area);
         q.setParameter("areaSuperior", area);
+        q.setParameter("clave", claveTrabajador);
         List<Personal> pr = q.getResultList();
+        if (pr.isEmpty() ) {
+          pr=new ArrayList<>();
+        } 
         return pr;
     }
 

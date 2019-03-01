@@ -132,6 +132,9 @@ public class ControladorEmpleadoLogeado implements Serializable {
                     || (nuevoOBJListaListaPersonal.getCategoriaOperativa() == 34 && (nuevoOBJListaListaPersonal.getAreaSuperior() >= 23 && nuevoOBJListaListaPersonal.getAreaSuperior() <= 29))) {
                 listaFuncionesLogeado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
             } else {
+                if (nuevoOBJListaListaPersonal.getAreaOperativa() >= 23 && nuevoOBJListaListaPersonal.getAreaOperativa() <= 29) {
+                    listaFuncionesLogeado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
+                }
                 listaFuncionesLogeado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(nuevoOBJListaListaPersonal.getAreaOperativa(), nuevoOBJListaListaPersonal.getCategoriaOperativa(), nuevoOBJListaPersonal.getCategoriaEspecifica().getCategoriaEspecifica());
             }
         } catch (Throwable ex) {

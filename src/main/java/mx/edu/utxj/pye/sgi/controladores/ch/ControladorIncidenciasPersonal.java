@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,7 +38,6 @@ public class ControladorIncidenciasPersonal implements Serializable {
     private static final long serialVersionUID = -8842055922698338073L;
 
     @Getter    @Setter    private Integer usuario, numeroIN = 0, numeroCU = 0;
-    @Getter    @Setter    private String tipo;
     @Getter    @Setter    private List<String> tiposIncidencias = new ArrayList<>(), tiposCuidados = new ArrayList<>();
     @Getter    @Setter    private List<Incidencias> listaIncidencias = new ArrayList<>();
     @Getter    @Setter    private List<Incapacidad> listaIncapacidades = new ArrayList<>();
@@ -46,7 +47,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
     @Getter    @Setter    private Cuidados nuevOBJCuidados = new Cuidados();
     @Getter    @Setter    private DateFormat dateFormat = new SimpleDateFormat("HH:mm");
     @Getter    @Setter    private Boolean registro = true, activo = false, archivoSC = false;
-    @Getter    @Setter    private Date tiempo = new Date();
+    @Getter    @Setter    private LocalDateTime actual = LocalDateTime.now();
     @Getter    @Setter    private LocalDate fechaActual = LocalDate.now();
     @Getter    @Setter    private LocalDate fechaI = LocalDate.now();
     @Getter    @Setter    private LocalDate fechaF = LocalDate.now();
@@ -61,10 +62,10 @@ public class ControladorIncidenciasPersonal implements Serializable {
     @PostConstruct
     public void init() {
         fechaActual = LocalDate.now();
-        tiempo = new Date(0, 0, 0, 0, 0);
         registro = true;
         activo = false;
         nuevOBJIncidencias = new Incidencias();
+        nuevOBJIncidencias.setTiempo(utilidadesCH.castearLDTaD(LocalDateTime.of(fechaActual, LocalTime.of(0, 0, 0))));
         nuevOBJIncapacidad = new Incapacidad();
         nuevOBJCuidados = new Cuidados();
         tiposIncidencias.clear();
@@ -151,17 +152,18 @@ public class ControladorIncidenciasPersonal implements Serializable {
             nuevOBJIncidencias.setClavePersonal(new Personal());
             nuevOBJIncidencias.getClavePersonal().setClave(usuario);
             nuevOBJIncidencias.setEstatus("Pendiente");
-            if ((tiempo.getHours() == 0 && tiempo.getMinutes() == 0) && (nuevOBJIncidencias.getTipo().equals("Retardo menor") || nuevOBJIncidencias.getTipo().equals("Retardo mayor") || nuevOBJIncidencias.getTipo().equals("Salida anticipada"))) {
+            actual = utilidadesCH.castearDaLDT(nuevOBJIncidencias.getTiempo());
+            if ((actual.getHour() == 0 && actual.getMinute() == 0) && (nuevOBJIncidencias.getTipo().equals("Retardo menor") || nuevOBJIncidencias.getTipo().equals("Retardo mayor") || nuevOBJIncidencias.getTipo().equals("Salida anticipada"))) {
                 Messages.addGlobalWarn("¡No puede registrar una incidencia con el tiempo 00:00!");
             } else {
                 if (nuevOBJIncidencias.getNumeroOficio() != 0) {
                     switch (nuevOBJIncidencias.getTipo()) {
                         case "Inasistencia":
-                            tiempo = new Date(0, 0, 0, 8, 0);
+                            actual = LocalDateTime.of(fechaActual, LocalTime.of(8, 0, 0));
                             break;
                         case "Retardo menor":
-                            if (tiempo.getHours() != 0) {
-                                if (tiempo.getMinutes() < 11 || tiempo.getMinutes() > 20) {
+                            if (actual.getHour() == 0) {
+                                if (actual.getMinute() < 11 || actual.getMinute() > 20) {
                                     Messages.addGlobalWarn("¡El Retardo menor es desde los 11 minutos hasta los 20 minutos!");
                                     return;
                                 }
@@ -171,21 +173,35 @@ public class ControladorIncidenciasPersonal implements Serializable {
                             }
                             break;
                         case "Retardo mayor":
-                            if (tiempo.getHours() == 0) {
-                                if (tiempo.getMinutes() < 21) {
+                            if (actual.getHour() == 0) {
+                                if (actual.getMinute() < 21) {
                                     Messages.addGlobalWarn("¡El Retardo mayor es desde los 21 minutos!");
                                     return;
                                 }
                             }
+                            if (actual.getHour() >= 8) {
+                                Messages.addGlobalWarn("¡El Retardo mayor no puede ser igual o mayor a las 8 horas, en dado caso es una Inasistencia!");
+                                return;
+                            }
                             break;
                         case "Retardo":
-                            if (tiempo.getMinutes() < 6) {
+                            if (actual.getMinute() < 6) {
                                 Messages.addGlobalWarn("¡El Retardo es desde de los 6 minutos!");
+                                return;
+                            }
+                            if (actual.getHour() >= 8) {
+                                Messages.addGlobalWarn("¡El Retardo no puede ser igual o mayor a las 8 horas, en dado caso es una Inasistencia!");
+                                return;
+                            }
+                            break;
+                            case "Salida anticipada":
+                            if (actual.getHour() >= 8) {
+                                Messages.addGlobalWarn("¡La Salida anticipada no puede ser igual o mayor a las 8 horas, en dado caso es una Inasistencia!");
                                 return;
                             }
                             break;
                     }
-                    nuevOBJIncidencias.setTiempo(dateFormat.format(tiempo));
+                    nuevOBJIncidencias.setTiempo(utilidadesCH.castearLDTaD(actual));
                     Integer dias = (int) ((utilidadesCH.castearLDaD(fechaActual).getTime() - nuevOBJIncidencias.getFecha().getTime()) / 86400000);
                     Integer maximo = 0;
                     switch (utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getDayOfWeek()) {
@@ -200,6 +216,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
                         nuevOBJIncidencias = ejbNotificacionesIncidencias.agregarIncidencias(nuevOBJIncidencias);
                         utilidadesCH.agregaBitacora(usuario, nuevOBJIncidencias.getIncidenciaID().toString(), "Incidencias", "Insert");
                         nuevOBJIncidencias = new Incidencias();
+                        nuevOBJIncidencias.setTiempo(utilidadesCH.castearLDTaD(LocalDateTime.of(fechaActual, LocalTime.of(0, 0, 0))));
                         Messages.addGlobalInfo("¡Operación exitosa!");
                     } else {
                         Messages.addGlobalWarn("¡El tiempo maximo para el registro de incidencia ya expiro!");
@@ -260,7 +277,10 @@ public class ControladorIncidenciasPersonal implements Serializable {
     public void onRowEdit(RowEditEvent event) {
         try {
             Incidencias incidencias = (Incidencias) event.getObject();
-            incidencias.setTiempo(dateFormat.format(dateFormat.parse(incidencias.getTiempo())));
+            if ((utilidadesCH.castearDaLDT(incidencias.getTiempo()).getHour() == 8 && utilidadesCH.castearDaLDT(incidencias.getTiempo()).getMinute() != 0)|| utilidadesCH.castearDaLDT(incidencias.getTiempo()).getHour() > 8) {
+                Messages.addGlobalWarn("¡No se puede registrar una incidencia cuyo tiempo sea mayor a la jornada laboral (8 horas)!");
+                return;
+            }
             Integer dias = (int) ((utilidadesCH.castearLDaD(fechaActual).getTime() - incidencias.getFecha().getTime()) / 86400000);
             Integer maximo = 0;
             switch (utilidadesCH.castearDaLD(incidencias.getFecha()).getDayOfWeek()) {

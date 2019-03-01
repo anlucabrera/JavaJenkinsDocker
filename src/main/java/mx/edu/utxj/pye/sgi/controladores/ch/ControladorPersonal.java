@@ -128,7 +128,7 @@ public class ControladorPersonal implements Serializable {
             listaPersonalCategorias.clear();
             listaPersonalCategorias360.clear();
 
-            listaAreasUniversidads = ejbAreasLogeo.mostrarAreasUniversidad();
+            listaAreasUniversidads = ejbAreasLogeo.mostrarAreasUniversidadActivas();
             listaAreasUniversidads.forEach((t) -> {
                 if (t.getCategoria().getCategoria() <= Short.parseShort("8")) {
                     listareasSuperiores.add(t);

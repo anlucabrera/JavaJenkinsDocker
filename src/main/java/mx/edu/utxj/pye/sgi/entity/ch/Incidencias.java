@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author PLANEACION
  */
 @Entity
 @Table(name = "incidencias", catalog = "capital_humano", schema = "")
@@ -65,9 +65,9 @@ public class Incidencias implements Serializable {
     private Date fecha;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 255)
     @Column(name = "tiempo")
-    private String tiempo;
+    @Temporal(TemporalType.TIME)
+    private Date tiempo;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 300)
@@ -92,7 +92,7 @@ public class Incidencias implements Serializable {
         this.incidenciaID = incidenciaID;
     }
 
-    public Incidencias(Integer incidenciaID, int numeroOficio, String tipo, Date fecha, String tiempo, String justificacion, String estatus) {
+    public Incidencias(Integer incidenciaID, int numeroOficio, String tipo, Date fecha, Date tiempo, String justificacion, String estatus) {
         this.incidenciaID = incidenciaID;
         this.numeroOficio = numeroOficio;
         this.tipo = tipo;
@@ -134,11 +134,11 @@ public class Incidencias implements Serializable {
         this.fecha = fecha;
     }
 
-    public String getTiempo() {
+    public Date getTiempo() {
         return tiempo;
     }
 
-    public void setTiempo(String tiempo) {
+    public void setTiempo(Date tiempo) {
         this.tiempo = tiempo;
     }
 

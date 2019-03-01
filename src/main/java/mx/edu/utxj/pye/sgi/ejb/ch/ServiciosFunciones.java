@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.sgi.ejb.ch;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
@@ -36,6 +37,9 @@ public class ServiciosFunciones implements EjbFunciones {
         }
         q.setParameter("areaOperativa", area);
         List<Funciones> pr = q.getResultList();
+        if (pr.isEmpty() ) {
+          pr=new ArrayList<>();
+        } 
         return pr;
     }
 
@@ -92,6 +96,9 @@ public class ServiciosFunciones implements EjbFunciones {
     public List<Comentariosfunciones> mostrarComentariosfunciones() throws Throwable {
         TypedQuery<Comentariosfunciones> q = em.createQuery("SELECT c FROM Comentariosfunciones c", Comentariosfunciones.class);
         List<Comentariosfunciones> pr = q.getResultList();
+        if (pr.isEmpty() ) {
+          pr=new ArrayList<>();
+        } 
         return pr;
     }
 
@@ -115,9 +122,13 @@ public class ServiciosFunciones implements EjbFunciones {
 
     @Override
     public List<Categoriasespecificasfunciones> mostrarCategoriasespecificasfuncionesArea(Short area) throws Throwable {
-        TypedQuery<Categoriasespecificasfunciones> q = em.createQuery("SELECT c FROM Categoriasespecificasfunciones c WHERE c.area=:area", Categoriasespecificasfunciones.class);
-        q.setParameter("area", area);
+        TypedQuery<Categoriasespecificasfunciones> q = em.createQuery("SELECT c FROM Personal p INNER JOIN p.categoriaEspecifica c WHERE (p.areaOperativa = :areaOperativa OR p.areaSuperior=:areaSuperior) GROUP BY c.categoriaEspecifica", Categoriasespecificasfunciones.class);
+        q.setParameter("areaOperativa", area);
+        q.setParameter("areaSuperior", area);
         List<Categoriasespecificasfunciones> pr = q.getResultList();
+        if (pr.isEmpty() ) {
+          pr=new ArrayList<>();
+        } 
         return pr;
     }
 

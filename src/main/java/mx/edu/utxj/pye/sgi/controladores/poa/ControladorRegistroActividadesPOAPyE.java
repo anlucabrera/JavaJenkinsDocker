@@ -111,7 +111,7 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
             actividadesPoasAreas.clear();
 
             actividadesPoasAreasConRegistros = poaSelectec.mostrarAreasQueRegistraronActividades();
-            areasUniversidads = ejbAreasLogeo.mostrarAreasUniversidad();
+            areasUniversidads = ejbAreasLogeo.mostrarAreasUniversidadActivas();
             areasUniversidadsRegistros.add(new AreasUniversidad(Short.parseShort("0"), "Seleccione uno", "Seleccione uno", "1", false));
             if (!actividadesPoasAreasConRegistros.isEmpty()) {
                 actividadesPoasAreasConRegistros.forEach((t) -> {

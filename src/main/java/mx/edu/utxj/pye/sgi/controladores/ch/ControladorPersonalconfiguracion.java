@@ -216,7 +216,7 @@ public class ControladorPersonalconfiguracion implements Serializable {
             generarListas();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorAdmin.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

@@ -112,7 +112,7 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
         areasUniversidads.clear();
         areasUniversidadsRegistros.clear();
         areasUniversidadsRegistros.add(new AreasUniversidad(Short.parseShort("0"), "Seleccione uno", "Seleccione uno", "1",false));
-        areasUniversidads = ejbAreasLogeo.mostrarAreasUniversidad();
+        areasUniversidads = ejbAreasLogeo.mostrarAreasUniversidadActivas();
         actividadesPoasAreasConRegistros = poaSelectec.mostrarAreasQueRegistraronActividades();
         actividadesPoasAreas = poaSelectec.mostrarActividadesPoasArea(claveArea);
        

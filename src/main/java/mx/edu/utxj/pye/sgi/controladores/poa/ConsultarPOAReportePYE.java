@@ -65,7 +65,7 @@ public class ConsultarPOAReportePYE implements Serializable {
             areasUniversidads = new ArrayList<>();
             areasUniversidads.clear();
             areasUniversidads.add(new AreasUniversidad(Short.parseShort("0"), "Seleccione uno", "Seleccione uno", "1", false));
-            ejbAreasLogeo.mostrarAreasUniversidad().forEach((t) -> {
+            ejbAreasLogeo.mostrarAreasUniversidadActivas().forEach((t) -> {
                 if (t.getTienePoa()) {
                     areasUniversidads.add(t);
                 }

@@ -5,8 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,12 +15,14 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.annotation.ManagedBean;
+import javax.inject.Inject;
 import javax.inject.Named;
 import org.omnifaces.cdi.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.ch.Historicoplantillapersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
+import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -40,9 +42,7 @@ public class HistoricoPlantillaPersonalEstadistica implements Serializable {
 
     @Getter    @Setter    private List<ListaPersonal> nuevaListaListaPersonal = new ArrayList<>();
     @Getter    @Setter    private ListaPersonal nuevoOBJListaListaPersonal = new ListaPersonal();
-    @Getter    @Setter    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    @Getter    @Setter    DateFormat dateFormat2 = new SimpleDateFormat("dd-MM-yyyy");
-    @Getter    @Setter    Date actual = new Date();
+    @Getter    @Setter    LocalDate actual = LocalDate.now();
     @Getter    @Setter    String sin = "", pp = "", direccionDescarga = "";
     @Getter    @Setter    private Historicoplantillapersonal nuevoHistoricoplantillapersonal;
     @Getter    @Setter    private List<Historicoplantillapersonal> nuevaListaHistoricoplantillapersonal = new ArrayList<>();
@@ -50,6 +50,8 @@ public class HistoricoPlantillaPersonalEstadistica implements Serializable {
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbDatosUsuarioLogeado;
 
+    @Inject    UtilidadesCH uch;
+    
     @PostConstruct
     public void init() {
         listaHistoricos();
@@ -67,7 +69,7 @@ public class HistoricoPlantillaPersonalEstadistica implements Serializable {
         // Creamos el archivo donde almacenaremos la hoja
         // de calculo, recuerde usar la extensión correcta,
         // en este caso .xlsx
-        File archivo = new File("PlantillaPersonal" + dateFormat2.format(actual) + ".xlsx");
+        File archivo = new File("PlantillaPersonal" + actual.format(DateTimeFormatter.ISO_LOCAL_DATE) + ".xlsx");
 
         // Creamos el libro de trabajo de Excel formato OOXML
         Workbook workbook = new XSSFWorkbook();
@@ -115,7 +117,7 @@ public class HistoricoPlantillaPersonalEstadistica implements Serializable {
             String[] datos = {
                 nuevoOBJListaListaPersonal.getClave().toString(),
                 nuevoOBJListaListaPersonal.getNombre(),
-                dateFormat.format(nuevoOBJListaListaPersonal.getFechaIngreso()),
+                uch.castearDaLD(nuevoOBJListaListaPersonal.getFechaIngreso()).format(DateTimeFormatter.ISO_LOCAL_DATE),
                 nuevoOBJListaListaPersonal.getStatus().toString(),
                 nuevoOBJListaListaPersonal.getGeneroNombre(),
                 nuevoOBJListaListaPersonal.getAreaSuperiorNombre(),
@@ -128,7 +130,7 @@ public class HistoricoPlantillaPersonalEstadistica implements Serializable {
                 nuevoOBJListaListaPersonal.getPerfilProfesional(),
                 String.valueOf(nuevoOBJListaListaPersonal.getExperienciaDocente()) + " año(s)",
                 String.valueOf(nuevoOBJListaListaPersonal.getExperienciaLaboral()) + " año(s)",
-                dateFormat.format(nuevoOBJListaListaPersonal.getFechaNacimiento()),
+                uch.castearDaLD(nuevoOBJListaListaPersonal.getFechaNacimiento()).format(DateTimeFormatter.ISO_LOCAL_DATE),
                 nuevoOBJListaListaPersonal.getLocalidad(),
                 nuevoOBJListaListaPersonal.getMunicipio(),
                 nuevoOBJListaListaPersonal.getEstado(),
@@ -185,15 +187,15 @@ public class HistoricoPlantillaPersonalEstadistica implements Serializable {
             nuevoHistoricoplantillapersonal = new Historicoplantillapersonal();
             nuevoHistoricoplantillapersonal.setRutaArchivo(direccionDescarga);
             switch (actual.getMonth()) {
-                case 0:
+                case JANUARY:
                     nuevoHistoricoplantillapersonal.setCuatrimestre("Enero - Abril");
                     nuevoHistoricoplantillapersonal.setMescaptura("Enero");
                     break;
-                case 4:
+                case MAY:
                     nuevoHistoricoplantillapersonal.setCuatrimestre("Mayo - Agosto");
                     nuevoHistoricoplantillapersonal.setMescaptura("Mayo");
                     break;
-                case 8:
+                case SEPTEMBER:
                     nuevoHistoricoplantillapersonal.setCuatrimestre("Septiembre - Diciembre");
                     nuevoHistoricoplantillapersonal.setMescaptura("Septiembre");
                     break;

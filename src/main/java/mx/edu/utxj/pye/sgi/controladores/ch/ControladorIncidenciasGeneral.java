@@ -43,7 +43,6 @@ public class ControladorIncidenciasGeneral implements Serializable {
     @Getter    @Setter    private String areaNombre = "";
     @Getter    @Setter    private Short area = 0;
 
-    @Getter    @Setter    private DateFormat dateFormat = new SimpleDateFormat("HH:mm");
     @Getter    @Setter    private LocalDate fechaActual = LocalDate.now(), fechaI = LocalDate.now(), fechaF = LocalDate.now();
     @Getter    @Setter    private Integer empleadoLogeado, contactoDestino, anioNumero = 0;
     @Getter    @Setter    private String mensajeDNotificacion = "", numeroQuincena = "1";
@@ -77,7 +76,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
         try {
             listaAreasUniversidads = new ArrayList<>();
             listaAreasUniversidads.clear();
-            listaAreasUniversidads = areasLogeo.mostrarAreasUniversidad();
+            listaAreasUniversidads = areasLogeo.mostrarAreasUniversidadActivas();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
@@ -238,19 +237,6 @@ public class ControladorIncidenciasGeneral implements Serializable {
             Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
             return "";
         }
-    }
-
-    public String calculaM(String area) {
-        nombreAr = area.split(":");
-        String hora = nombreAr[0];
-        String minu = nombreAr[1];
-        Integer h = 0;
-        Integer m = 0;
-        Integer t = 0;
-        h = Integer.parseInt(hora) * 60;
-        m = Integer.parseInt(minu);
-        t = h + m;
-        return t.toString();
     }
 
     public void novisible() {

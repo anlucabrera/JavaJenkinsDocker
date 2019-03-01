@@ -1,8 +1,7 @@
 package mx.edu.utxj.pye.sgi.controladores.ch;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,12 +35,8 @@ public class CvProduccion implements Serializable {
 
     // variables basicas
     @Getter    @Setter    private Integer usuario, direccionInt1 = 0, direccionInt2 = 0, direccionInt3 = 0, traduccion, pestaniaActiva;
-    @Getter    @Setter    private String anioPub, anioEdi, clase, tipoDr = "", nombre = "", istitucion = "", descripcion = "";
-    @Getter    @Setter    private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    @Getter    @Setter    private Date anio1 = new Date();
-    @Getter    @Setter    private Date anio2 = new Date();
+    @Getter    @Setter    private String clase;
     @Getter    @Setter    private Date fechaI = new Date();
-    @Getter    @Setter    private Date fechaF = null;
     //Variables de objetos Entitys
     @Getter    @Setter    private LibrosPub nuevOBJLibrosPub;
     @Getter    @Setter    private Memoriaspub nuevOBJMemoriaspub;
@@ -84,8 +79,6 @@ public class CvProduccion implements Serializable {
 
     public void reiniciarValores() {
         file = null;
-        anioEdi = "";
-        anioPub = "";
         nuevOBJLibrosPub = new LibrosPub();
         nuevoOBJCongresos = new Congresos();
         nuevOBJArticulosp = new Articulosp();
@@ -101,10 +94,6 @@ public class CvProduccion implements Serializable {
             //Una vez realizada la inicialización se procede a realizar la asignación de los valores correspondientes mediante los métodos Get().Set(Valor_A_Asignar)
             nuevOBJLibrosPub.getClavePersonal().setClave(usuario);
             //Posteriormente se procese a realizar la asignación de valores que no se obtienen mediante la interfaz grafica
-            anio1 = dateFormat.parse("01/01/" + anioPub);
-            anio2 = dateFormat.parse("01/01/" + anioEdi);
-            nuevOBJLibrosPub.setAnioEdicion(anio2);
-            nuevOBJLibrosPub.setAnioPub(anio1);
             nuevOBJLibrosPub.setEstatus("Denegado");
             //En caso de que sea información nueva se procede a enviar la información al “EJB” el cual la agregara a la BD.
             nuevOBJLibrosPub = ejbProduccionProfecional.crearNuevoLibrosPub(nuevOBJLibrosPub);
@@ -169,10 +158,6 @@ public class CvProduccion implements Serializable {
             //Una vez realizada la inicialización se procede a realizar la asignación de los valores correspondientes mediante los métodos Get().Set(Valor_A_Asignar)
             nuevOBJArticulosp.getClavePersonal().setClave(usuario);
             //Posteriormente se procese a realizar la asignación de valores que no se obtienen mediante la interfaz grafica
-            anio1 = dateFormat.parse("01/01/" + anioPub);
-            anio2 = dateFormat.parse("01/01/" + anioEdi);
-            nuevOBJArticulosp.setEnioEdicion(anio2);
-            nuevOBJArticulosp.setAnioPublicacion(anio1);
             nuevOBJArticulosp.setEstatus("Denegado");
             //En caso de que sea información nueva se procede a enviar la información al “EJB” el cual la agregara a la BD.
             nuevOBJArticulosp = ejbProduccionProfecional.crearNuevoArticulosp(nuevOBJArticulosp);
@@ -242,8 +227,6 @@ public class CvProduccion implements Serializable {
             //Una vez realizada la inicialización se procede a realizar la asignación de los valores correspondientes mediante los métodos Get().Set(Valor_A_Asignar)
             nuevOBJMemoriaspub.setClavePersonal(new Personal(usuario));
             //Posteriormente se procese a realizar la asignación de valores que no se obtienen mediante la interfaz grafica
-            anio1 = dateFormat.parse("01/01/" + anioPub);
-            nuevOBJMemoriaspub.setAnioDePublicacion(anio1);
             nuevOBJMemoriaspub.setEstatus("Denegado");
             //En caso de que sea información nueva se procede a enviar la información al “EJB” el cual la agregara a la BD.
             nuevOBJMemoriaspub = ejbProduccionProfecional.crearNuevoMemoriaspub(nuevOBJMemoriaspub);
@@ -310,12 +293,6 @@ public class CvProduccion implements Serializable {
         try {
             //Posteriormente se procese a realizar la asignación de valores que no se obtienen mediante la interfaz grafica
             nuevOBJInvestigaciones.setClavePerosnal(usuario);
-            nuevOBJInvestigaciones.setNombreInvestigacion(nombre);
-            nuevOBJInvestigaciones.setFechaInicio(fechaI);
-            nuevOBJInvestigaciones.setFechaFin(fechaF);
-            nuevOBJInvestigaciones.setInstitucion(istitucion);
-            nuevOBJInvestigaciones.setDecripcion(descripcion);
-            nuevOBJInvestigaciones.setTipo(tipoDr);
             //En caso de que sea información nueva se procede a enviar la información al “EJB” el cual la agregara a la BD.
             nuevOBJInvestigaciones = ejbProduccionProfecional.crearNuevoInvestigacion(nuevOBJInvestigaciones);
             //Después de agregar la información a la BD, se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
@@ -381,7 +358,7 @@ public class CvProduccion implements Serializable {
             //Una vez realizada la inicialización se procede a realizar la asignación de los valores correspondientes mediante los métodos Get().Set(Valor_A_Asignar)
             nuevoOBJCongresos.setClavePersonal(new Personal(usuario));
             //Posteriormente se procese a realizar la asignación de valores que no se obtienen mediante la interfaz grafica
-            nuevoOBJCongresos.setFechaCongreso(dateFormat.format(fechaI));
+            nuevoOBJCongresos.setFechaCongreso(utilidadesCH.castearDaLD(fechaI).format(DateTimeFormatter.ISO_LOCAL_DATE));
             nuevoOBJCongresos.setEstatus("Aceptado");
             //En caso de que sea información nueva se procede a enviar la información al “EJB” el cual la agregara a la BD.
             nuevoOBJCongresos = ejbProduccionProfecional.crearNuevoCongresos(nuevoOBJCongresos);
@@ -499,52 +476,32 @@ public class CvProduccion implements Serializable {
         listaSubClase.clear();
         switch (clase) {
             case "Según el grado de dificultad que entraña su consecución":
-                listaSubClase.add("Simples");
-                listaSubClase.add("Complejos");
+                listaSubClase.add("Simples");                listaSubClase.add("Complejos");
                 break;
             case "Según la procedencia del capital":
-                listaSubClase.add("Públicos");
-                listaSubClase.add("Privados");
-                listaSubClase.add("Mixtos");
+                listaSubClase.add("Públicos");                listaSubClase.add("Privados");                listaSubClase.add("Mixtos");
                 break;
             case "Según el grado de experimentación del proyecto y sus objetivos":
-                listaSubClase.add("Experimentales");
-                listaSubClase.add("Normalizados");
+                listaSubClase.add("Experimentales");                listaSubClase.add("Normalizados");
                 break;
             case "Según el sector":
-                listaSubClase.add("Construcción");
-                listaSubClase.add("Energía");
-                listaSubClase.add("Minería");
-                listaSubClase.add("Transformación");
-                listaSubClase.add("Medio Ambiente");
-                listaSubClase.add("Industriales");
+                listaSubClase.add("Construcción");                listaSubClase.add("Energía");                listaSubClase.add("Minería");
+                listaSubClase.add("Transformación");                listaSubClase.add("Medio Ambiente");                listaSubClase.add("Industriales");
                 listaSubClase.add("Servicios");
                 break;
             case "Según el ámbito":
-                listaSubClase.add("Ingeniería");
-                listaSubClase.add("Económicos");
-                listaSubClase.add("Fiscales");
-                listaSubClase.add("Legales");
-                listaSubClase.add("Médicos");
-                listaSubClase.add("Matemáticos");
-                listaSubClase.add("Artísticos");
-                listaSubClase.add("Literarios");
-                listaSubClase.add("Tecnológicos");
+                listaSubClase.add("Ingeniería");                listaSubClase.add("Económicos");                listaSubClase.add("Fiscales");
+                listaSubClase.add("Legales");                listaSubClase.add("Médicos");                listaSubClase.add("Matemáticos");
+                listaSubClase.add("Artísticos");                listaSubClase.add("Literarios");                listaSubClase.add("Tecnológicos");
                 listaSubClase.add("Informáticos");
                 break;
             case "Según su orientación":
-                listaSubClase.add("Productivos");
-                listaSubClase.add("Educativos");
-                listaSubClase.add("Sociales");
-                listaSubClase.add("Comunitarios");
-                listaSubClase.add("Investigación");
+                listaSubClase.add("Productivos");                listaSubClase.add("Educativos");                listaSubClase.add("Sociales");
+                listaSubClase.add("Comunitarios");                listaSubClase.add("Investigación");
                 break;
             case "Según su área de influencia":
-                listaSubClase.add("Supranacionales");
-                listaSubClase.add("Internacionales");
-                listaSubClase.add("Nacionales");
-                listaSubClase.add("Regionales");
-                listaSubClase.add("Locales");
+                listaSubClase.add("Supranacionales");                listaSubClase.add("Internacionales");                listaSubClase.add("Nacionales");
+                listaSubClase.add("Regionales");                listaSubClase.add("Locales");
                 break;
         }
     }

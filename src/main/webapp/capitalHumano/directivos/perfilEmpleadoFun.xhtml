@@ -73,7 +73,7 @@
                                     <h:form >
                                         <div class="col-lg-3 col-xs-3"/>
                                         <div class="col-lg-2 col-xs-2">
-                                            <p:commandButton id="comentarios" rendered="#{controladorFunciones.nuevoOBJListaPersonalLogeado.areaOperativa eq 28?true:false}" disabled="#{controladorFunciones.totalC eq 0? true:false}" title="#{controladorFunciones.totalC} Observaciones pendientes " value="Observaciones" icon="fa fa-info-circle" class="btn btn-info" oncomplete="PF('dlgObser').show();"/>                                                                    
+                                            <p:commandButton id="comentarios" rendered="#{controladorFunciones.listaPersonalLogeado.areaOperativa eq 28?true:false}" disabled="#{controladorFunciones.totalC eq 0? true:false}" title="#{controladorFunciones.totalC} Observaciones pendientes " value="Observaciones" icon="fa fa-info-circle" class="btn btn-info" oncomplete="PF('dlgObser').show();"/>                                                                    
                                         </div> 
                                         <p:outputPanel>            
                                             <p:autoUpdate/>
@@ -94,207 +94,195 @@
                                 </div>
                                 <p:tabView>
                                     <p:tab title="Funciones">
-                                        <c:if test="#{controladorEmpleado.fechaLimiteFunciones}">
-                                            <h:form id="frmInci"> 
-                                                <p:outputPanel>
-                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                        <div class="col-md-12">
-                                                            <div class="box box-widget widget-user-2">
-                                                                <div class="row">
-                                                                    <div class="col-sm-12 border-right">
-                                                                        <div class="description-block">
-                                                                            <div class="row">
-                                                                                <div class="form-group">
-                                                                                    <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                                        <p:outputLabel for="catP" style="font-size: large" value="Categoría/Puesto"/>                                
-                                                                                        <p:selectOneMenu id="catP" widgetVar="catP" value="#{controladorFunciones.claveCategoria}" filter="true" filterMatchMode="contains" style = "height:100%; width: 100%; object-fit: contain;" class="control-label">
-                                                                                            <f:selectItem itemValue="0" itemLabel="Todas las categorías"/>
-                                                                                            <f:selectItems value="#{controladorFunciones.listaCategorias}" var="categorias" itemValue="#{categorias.clave}" itemLabel="#{categorias.nombre}" />
-                                                                                            <c:if test="#{controladorFunciones.nuevoOBJListaPersonalLogeado.areaOperativa==28}">
-                                                                                                <f:selectItem itemValue="30" itemLabel="Profesor/a de asignatura"/>    
-                                                                                                <f:selectItem itemValue="32" itemLabel="Profesor/a tiempo completo"/>    
-                                                                                                <f:selectItem itemValue="41" itemLabel="Técnico/a Laboratorista"/>   
-                                                                                            </c:if>                                                                                    
-                                                                                            <p:ajax listener="#{controladorFunciones.consultarFuncnPorAyC()}" process="catP" update="tblActividades area"/>
-                                                                                        </p:selectOneMenu>
-                                                                                        <p:message for="catP" display="tooltip" />                                                                                
-                                                                                        <hr/>                                                                         
-                                                                                        <p:outputPanel>            
-                                                                                            <p:autoUpdate/>
-                                                                                            <p:outputLabel for="area" style="font-size: large" value="Área específica"/>                                
-                                                                                            <p:selectOneRadio id="area" columns="2" widgetVar="area" value="#{controladorFunciones.claveArea}" style = "height:100%; width: 100%; object-fit: contain;" class="control-label" disabled="#{
-                                                                                                                                                              controladorFunciones.claveCategoria eq 1?false:
-                                                                                                                                                              controladorFunciones.claveCategoria eq 13?false:
-                                                                                                                                                              controladorFunciones.claveCategoria eq 14?false:
-                                                                                                                                                              controladorFunciones.claveCategoria eq 18?false:
-                                                                                                                                                              controladorFunciones.claveCategoria eq 24?false:
-                                                                                                                                                              controladorFunciones.claveCategoria eq 33?false:
-                                                                                                                                                              controladorFunciones.claveCategoria eq 38?false:
-                                                                                                                                                              controladorFunciones.claveCategoria eq 39?false:
-                                                                                                                                                              controladorFunciones.claveCategoria eq 111?false:
-                                                                                                                                                              controladorFunciones.claveCategoria eq 112?false:true}">
-                                                                                                <f:selectItems value="#{controladorFunciones.listalistaAreas}" var="categorias" itemValue="#{categorias.clave}" itemLabel="#{categorias.nombre}" />
-                                                                                                <p:ajax listener="#{controladorFunciones.consultarFuncnPorAC()}" process="area" update="tblActividades"/>
-                                                                                            </p:selectOneRadio>
-                                                                                            <p:message for="area" display="tooltip" />   
-                                                                                            <hr/>
-                                                                                        </p:outputPanel>
-                                                                                        <p:outputPanel autoUpdate="true" >
-                                                                                            <p:outputLabel for="puestosEspe" style="font-size: large" rendered="#{controladorFunciones.listaCategoriasEspecificas.size() eq 0?false:true}" value="Categoría específica"/>                                
-                                                                                            <p:selectOneRadio id="puestosEspe" columns="2" widgetVar="puestosEspe" value="#{controladorFunciones.claveCategoria2}" style = "height:100%; width: 100%; object-fit: contain;" class="control-label" disabled="#{controladorFunciones.puestoTipo eq 'Administrativo'?false:true}">
-                                                                                                <f:selectItems value="#{controladorFunciones.listaCategoriasEspecificas}" var="categorias" itemValue="#{categorias.clave}" itemLabel="#{categorias.nombre}" />
-                                                                                                <p:ajax listener="#{controladorFunciones.consultarFuncnesAC()}" process="puestosEspe" update="tblActividades"/>
-                                                                                            </p:selectOneRadio>
-                                                                                            <p:message for="puestosEspe" display="tooltip" />
-                                                                                            <hr/>       
-                                                                                        </p:outputPanel>
-                                                                                        <p:outputLabel for="funcion" style="font-size: large" value="Función"/>                                
-                                                                                        <p:inputTextarea id="funcion" class="form-control" placeholder="Función" value="#{controladorFunciones.nuevoOBJFunciones.nombre}"/>
-                                                                                        <p:message for="funcion" display="tooltip" />
-                                                                                        <hr/> 
-                                                                                        <p:outputLabel for="tipo" style="font-size: large" value="Tipo"/>                                
-                                                                                        <p:selectOneRadio id="tipo" value="#{controladorFunciones.nuevoOBJFunciones.tipo}" style = "height:100%; width: 100%; object-fit: contain;" class="control-label">
-                                                                                            <f:selectItem itemValue="GENERAL" itemLabel="General"/>
-                                                                                            <f:selectItem itemValue="ESPECIFICA" itemLabel="Especifica"/>
-                                                                                        </p:selectOneRadio>  
-                                                                                        <p:message for="tipo" display="tooltip" />         
-                                                                                    </div>
+                                        <!--c:if test="#{controladorEmpleado.fechaLimiteFunciones}"-->
+                                        <h:form id="frmInci"> 
+                                            <p:outputPanel>
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                    <p:outputLabel for="catP" style="font-size: large" value="Categoría/Puesto"/>                                
+                                                                                    <p:selectOneMenu id="catP" widgetVar="catP" value="#{controladorFunciones.claveCategoria}" filter="true" filterMatchMode="contains" style = "height:100%; width: 100%; object-fit: contain;" class="control-label">
+                                                                                        <f:selectItem itemValue="0" itemLabel="Todas las categorías"/>
+                                                                                        <f:selectItems value="#{controladorFunciones.personalCategoriases}" var="categorias" itemValue="#{categorias.categoria}" itemLabel="#{categorias.nombre}" />
+                                                                                        <c:if test="#{controladorFunciones.listaPersonalLogeado.areaOperativa==2}">
+                                                                                            <f:selectItem itemValue="30" itemLabel="Profesor/a de asignatura"/>    
+                                                                                            <f:selectItem itemValue="32" itemLabel="Profesor/a tiempo completo"/>    
+                                                                                            <f:selectItem itemValue="41" itemLabel="Técnico/a Laboratorista"/>   
+                                                                                        </c:if>                                                                                    
+                                                                                        <p:ajax listener="#{controladorFunciones.consultarFuncnPorAyC()}" process="catP" update="@form area"/>
+                                                                                    </p:selectOneMenu>
+                                                                                    <p:message for="catP" display="tooltip" />                                                                                
+                                                                                    <hr/>                                                                         
+                                                                                    <p:outputPanel>            
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:outputLabel for="area" style="font-size: large" value="Área específica"/>                                
+                                                                                        <p:selectOneRadio id="area" columns="2" widgetVar="area" value="#{controladorFunciones.claveArea}" style = "height:100%; width: 100%; object-fit: contain;" class="control-label" disabled="#{
+                                                                                                                                                          controladorFunciones.claveCategoria eq 1?false:
+                                                                                                                                                          controladorFunciones.claveCategoria eq 13?false:
+                                                                                                                                                          controladorFunciones.claveCategoria eq 14?false:
+                                                                                                                                                          controladorFunciones.claveCategoria eq 18?false:
+                                                                                                                                                          controladorFunciones.claveCategoria eq 24?false:
+                                                                                                                                                          controladorFunciones.claveCategoria eq 33?false:
+                                                                                                                                                          controladorFunciones.claveCategoria eq 38?false:
+                                                                                                                                                          controladorFunciones.claveCategoria eq 39?false:
+                                                                                                                                                          controladorFunciones.claveCategoria eq 111?false:
+                                                                                                                                                          controladorFunciones.claveCategoria eq 112?false:true}">
+                                                                                            <f:selectItems value="#{controladorFunciones.areasUniversidads}" var="areaU" itemValue="#{areaU.area}" itemLabel="#{areaU.nombre}" />
+                                                                                            <p:ajax listener="#{controladorFunciones.consultarFuncnPorAC()}" process="area" update="@form"/>
+                                                                                        </p:selectOneRadio>
+                                                                                        <p:message for="area" display="tooltip" />   
+                                                                                        <hr/>
+                                                                                    </p:outputPanel>
+                                                                                    <p:outputPanel autoUpdate="true" >
+                                                                                        <p:outputLabel for="puestosEspe" style="font-size: large" rendered="#{controladorFunciones.categoriasespecificasfuncioneses.size() eq 0?false:true}" value="Categoría específica"/>                                
+                                                                                        <p:selectOneRadio id="puestosEspe" columns="2" widgetVar="puestosEspe" value="#{controladorFunciones.claveCategoria2}" style = "height:100%; width: 100%; object-fit: contain;" class="control-label" disabled="#{controladorFunciones.puestoTipo eq 'Administrativo'?false:true}">
+                                                                                            <f:selectItems value="#{controladorFunciones.categoriasespecificasfuncioneses}" var="categoriasEs" itemValue="#{categoriasEs.categoriaEspecifica}" itemLabel="#{categoriasEs.nombreCategoria}" />
+                                                                                            <p:ajax listener="#{controladorFunciones.consultarFuncnesAC()}" process="puestosEspe" update="@form"/>
+                                                                                        </p:selectOneRadio>
+                                                                                        <p:message for="puestosEspe" display="tooltip" />
+                                                                                        <hr/>       
+                                                                                    </p:outputPanel>
+                                                                                    <p:outputLabel for="funcion" style="font-size: large" value="Función"/>                                
+                                                                                    <p:inputTextarea id="funcion" class="form-control" placeholder="Función" value="#{controladorFunciones.nuevoOBJFunciones.nombre}"/>
+                                                                                    <p:message for="funcion" display="tooltip" />
+                                                                                    <hr/> 
+                                                                                    <p:outputLabel for="tipo" style="font-size: large" value="Tipo"/>                                
+                                                                                    <p:selectOneRadio id="tipo" value="#{controladorFunciones.nuevoOBJFunciones.tipo}" style = "height:100%; width: 100%; object-fit: contain;" class="control-label">
+                                                                                        <f:selectItem itemValue="GENERAL" itemLabel="General"/>
+                                                                                        <f:selectItem itemValue="ESPECIFICA" itemLabel="Especifica"/>
+                                                                                    </p:selectOneRadio>  
+                                                                                    <p:message for="tipo" display="tooltip" />         
                                                                                 </div>
                                                                             </div>
-                                                                            <hr/>
-                                                                            <div class="row">
-                                                                                <div class="form-group">
-                                                                                    <div class="col-sm-4 col-md-4 col-lg-4"/>
-                                                                                    <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                        <p:outputPanel>            
-                                                                                            <p:autoUpdate/>
-                                                                                            <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{controladorFunciones.crearFuncion()}" icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form tblActividades" process="@form" 
-                                                                                                             disabled="#{controladorFunciones.claveCategoria eq 1?true:
-                                                                                                                         controladorFunciones.claveCategoria eq 18?true:
-                                                                                                                         controladorFunciones.claveCategoria eq 33?true:
-                                                                                                                         controladorFunciones.claveCategoria eq 38?true:
-                                                                                                                         controladorFunciones.claveCategoria eq 111?true:
-                                                                                                                         controladorFunciones.nuevoOBJListaPersonalLogeado.areaOperativa != 28?(
-                                                                                                                         controladorFunciones.claveCategoria eq 30?true:(
-                                                                                                                         controladorFunciones.claveCategoria eq 32?true:(
-                                                                                                                         controladorFunciones.claveCategoria eq 41?true:false))):false}"/>
-                                                                                        </p:outputPanel>                                                                                    
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <hr/>
                                                                         </div>
+                                                                        <hr/>
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                    <p:outputPanel>            
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{controladorFunciones.crearFuncion()}" icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form" process="@form" 
+                                                                                                         disabled="#{controladorFunciones.claveCategoria eq 1?true:
+                                                                                                                     controladorFunciones.claveCategoria eq 18?true:
+                                                                                                                     controladorFunciones.claveCategoria eq 33?true:
+                                                                                                                     controladorFunciones.claveCategoria eq 38?true:
+                                                                                                                     controladorFunciones.claveCategoria eq 111?true:
+                                                                                                                     controladorFunciones.listaPersonalLogeado.areaOperativa != 28?(
+                                                                                                                     controladorFunciones.claveCategoria eq 30?true:(
+                                                                                                                     controladorFunciones.claveCategoria eq 32?true:(
+                                                                                                                     controladorFunciones.claveCategoria eq 41?true:false))):false}"/>
+                                                                                    </p:outputPanel>                                                                                    
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr/>
                                                                     </div>
                                                                 </div>
-                                                                <hr/>                                                        
                                                             </div>
+                                                            <hr/>                                                        
                                                         </div>
                                                     </div>
-                                                </p:outputPanel>
-                                                <p:outputPanel>
-                                                    <p:dataTable id="tblActividades"  value="#{controladorFunciones.listaFunciones}"  var="funcion"
-                                                                 paginator="true" rows="10"
-                                                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                                 rowsPerPageTemplate="5,10,15,20,25,30"
-                                                                 emptyMessage="No se encontraron funciones." rendered="true"
-                                                                 editable="true" style="margin-bottom:20px"
-                                                                 selectionMode="single" selection="#{controladorFunciones.nuevoOBJFuncionesSelect}" rowKey="#{funcion.funcion}">
+                                                </div>
+                                            </p:outputPanel>
+                                        </h:form>
+                                        <h:form id="frmListaDistinciones">
+                                            <p:outputPanel >
+                                                <p:remoteCommand name="actualizarTabla" actionListener="#{controladorFunciones.metodoBase()}" update="tblDistinciones" />
+                                                <p:dataTable id="tblDistinciones" value="#{controladorFunciones.funcioneses}" var="funciones" 
+                                                             emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30"
+                                                             editable="true" editMode="row">
 
-                                                        <p:ajax event="rowEdit" listener="#{controladorFunciones.onRowEdit}" update="tblActividades" />
-                                                        <p:ajax event="rowEditCancel" listener="#{controladorFunciones.onRowCancel}" update="tblActividades" />
-                                                        <p:ajax event="rowSelect"   update="delate coment"/>
-                                                        <p:ajax event="rowUnselect" update="delate coment"/>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px" />
+                                                            <p:column rowspan="2" headerText="Categoría/Puesto" style="width: 100px;" />
+                                                            <p:column rowspan="2" headerText="Categoría/Puesto especifico" style="width: 100px;"/>
+                                                            <p:column rowspan="2" headerText="Descripción" style="width: 450px;"/>
+                                                            <p:column rowspan="2" headerText="Tipo" style="width: 250px;"/> 
+                                                        </p:row>
+                                                    </p:columnGroup>
 
-                                                        <p:column headerText="Categoría/Puesto" 
-                                                                  sortBy="#{funcion.categoriaOperativa.nombre}" 
-                                                                  filterBy="#{funcion.categoriaOperativa.nombre}" 
-                                                                  filterMatchMode="contains"
-                                                                  style="width:200px; text-align: center">
-                                                            <h:outputText value="#{funcion.categoriaOperativa.nombre}" />
-                                                        </p:column>
+                                                    <p:ajax event="rowEdit" listener="#{controladorFunciones.actualizarFuncion}" update="@this" oncomplete="actualizarTabla()"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla()"/>
 
-                                                        <p:column headerText="Categoría/Puesto especifico" 
-                                                                  sortBy="#{funcion.categoriaEspesifica.nombreCategoria}" 
-                                                                  filterBy="#{funcion.categoriaEspesifica.nombreCategoria}" 
-                                                                  filterMatchMode="contains"
-                                                                  style="width:200px; text-align: center">
-                                                            <h:outputText value="#{funcion.categoriaEspesifica.nombreCategoria}" />
-                                                        </p:column>
+                                                    <p:column>
+                                                        <p:commandButton actionListener="#{controladorFunciones.eliminarFuncion(funciones)}" update="tblDistinciones" oncomplete="actualizarTabla()" 
+                                                                         icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación"
+                                                                         disabled="#{controladorFunciones.delateDisable(funciones.categoriaOperativa.categoria)}">
+                                                            <p:confirm header="Confirmación" message="¿Confirma la eliminación de la Funcion #{funciones.categoriaOperativa.nombre}?" icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                    </p:column>
 
-                                                        <p:column headerText="Función" 
-                                                                  sortBy="#{funcion.nombre}" 
-                                                                  filterBy="#{funcion.nombre}" 
-                                                                  filterMatchMode="contains"
-                                                                  style="text-align: justify">
-                                                            <p:cellEditor >
-                                                                <f:facet name="output"><h:outputText value="#{funcion.nombre}" /></f:facet>
-                                                                <f:facet name="input"><p:inputTextarea value="#{funcion.nombre}" style = "height:100%; width: 100%; object-fit: contain;"/></f:facet>
-                                                            </p:cellEditor>
-                                                        </p:column>
+                                                    <p:column >
+                                                        <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" 
+                                                             style="align-content: center; visibility:#{controladorFunciones.editVisible(funciones.categoriaOperativa.categoria) eq false?'hidden':'visible'};">
+                                                            <a href="#" class="ui-row-editor-pencil">
+                                                                <span class="ui-icon ui-icon-pencil"></span>
+                                                            </a>
+                                                            <a href="#" class="ui-row-editor-check">
+                                                                <span class="ui-icon ui-icon-check ui-c"></span>
+                                                            </a>
+                                                            <p:spacer width="20px"/>
+                                                            <a href="#" class="ui-row-editor-close">
+                                                                <span class="ui-icon ui-icon-close ui-c"></span>
+                                                            </a>
+                                                        </div>
+                                                    </p:column >
+                                                    <p:column >
+                                                        <p:commandButton icon="fa fa-comments" styleClass="btn-primary"
+                                                                         process="@this" disabled="#{controladorFunciones.comentDisable(funciones.categoriaOperativa.categoria)}">
+                                                            <f:setPropertyActionListener target="# {controladorIncidenciasPersonal.nuevOBJIncidenciasEditada}" value="# {incidencia}" />
+                                                        </p:commandButton>
+                                                    </p:column>
 
-                                                        <p:column headerText="Tipo" 
-                                                                  sortBy="#{funcion.tipo}" 
-                                                                  filterBy="#{funcion.tipo}" 
-                                                                  filterMatchMode="contains"
-                                                                  style="width:150px; text-align: center">
-                                                            <h:outputText value="#{funcion.tipo}"/>
-                                                        </p:column>
+                                                    <p:column >
+                                                        <h:outputText value="#{funciones.categoriaOperativa.nombre}" />
+                                                    </p:column>                                        
+                                                    <p:column >
+                                                        <h:outputText value="#{funciones.categoriaEspesifica.nombreCategoria}" />
+                                                    </p:column> 
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{funciones.nombre}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputTextarea value="#{funciones.nombre}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"><h:outputText value="#{funciones.tipo}" /></f:facet>
+                                                            <f:facet name="input">
+                                                                <h:selectOneMenu value="#{funciones.tipo}">
+                                                                    <f:selectItem itemValue="#{'GENERAL'}" itemLabel="#{'GENERAL'}"/>
+                                                                    <f:selectItem itemValue="#{'ESPECIFICA'}" itemLabel="#{'ESPECIFICA'}"/>
+                                                                </h:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                </p:dataTable>
 
-                                                        <p:column headerText="Editar" style="width:80px; " visible="#{
-                                                                  funcion.categoriaOperativa.categoria eq 1?false:
-                                                                      funcion.categoriaOperativa.categoria eq 18?false:
-                                                                      funcion.categoriaOperativa.categoria eq 33?false:
-                                                                      funcion.categoriaOperativa.categoria eq 38?false:
-                                                                      funcion.categoriaOperativa.categoria eq 111?false:                                                                                                                                                                  
-                                                                      controladorFunciones.nuevoOBJListaPersonalLogeado.areaOperativa != 28 ? 
-                                                                      (funcion.categoriaOperativa.categoria eq 30?false:
-                                                                      (funcion.categoriaOperativa.categoria eq 32?false:
-                                                                      (funcion.categoriaOperativa.categoria eq 41?false:true))):true}">
+                                            </p:outputPanel>                                 
 
-                                                            <div id="j_idt110:frmInci:tblActividades:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
-                                                                <a href="#" class="ui-row-editor-pencil">
-                                                                    <span class="ui-icon ui-icon-pencil"></span>
-                                                                </a>
-                                                                <a href="#" class="ui-row-editor-check">
-                                                                    <span class="ui-icon ui-icon-check ui-c"></span>
-                                                                </a>
-                                                                <p:spacer width="20px"/>
-                                                                <a href="#" class="ui-row-editor-close">
-                                                                    <span class="ui-icon ui-icon-close ui-c"></span>
-                                                                </a>
-                                                            </div>
-                                                        </p:column>
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                            </p:confirmDialog>   
 
-                                                        <f:facet name="footer">
-                                                            <p:commandButton id="delate" value="Eliminar" icon="fa fa-eraser" class="btn btn-danger" oncomplete="PF('dlgDelate1').show();" disabled="#{controladorFunciones.claveCategoria eq 1?true:
-                                                                                                                                                                                                       controladorFunciones.claveCategoria eq 18?true:
-                                                                                                                                                                                                       controladorFunciones.claveCategoria eq 30?(controladorFunciones.nuevoOBJListaPersonalLogeado.areaOperativa != 28 ? true:empty controladorFunciones.nuevoOBJFuncionesSelect):
-                                                                                                                                                                                                       controladorFunciones.claveCategoria eq 32?(controladorFunciones.nuevoOBJListaPersonalLogeado.areaOperativa != 28 ? true:empty controladorFunciones.nuevoOBJFuncionesSelect):
-                                                                                                                                                                                                       controladorFunciones.claveCategoria eq 33?true:
-                                                                                                                                                                                                       controladorFunciones.claveCategoria eq 38?true:
-                                                                                                                                                                                                       controladorFunciones.claveCategoria eq 41?(controladorFunciones.nuevoOBJListaPersonalLogeado.areaOperativa != 28 ? true:empty controladorFunciones.nuevoOBJFuncionesSelect):
-                                                                                                                                                                                                       controladorFunciones.claveCategoria eq 111?true:
-                                                                                                                                                                                                       controladorFunciones.nuevoOBJFuncionesSelect.categoriaOperativa.categoria eq 1?true:
-                                                                                                                                                                                                       controladorFunciones.nuevoOBJFuncionesSelect.categoriaOperativa.categoria eq 18?true:
-                                                                                                                                                                                                       controladorFunciones.nuevoOBJFuncionesSelect.categoriaOperativa.categoria eq 33?true:
-                                                                                                                                                                                                       controladorFunciones.nuevoOBJFuncionesSelect.categoriaOperativa.categoria eq 38?true:
-                                                                                                                                                                                                       controladorFunciones.nuevoOBJFuncionesSelect.categoriaOperativa.categoria eq 111?true:
-                                                                                                                                                                                                       empty controladorFunciones.nuevoOBJFuncionesSelect}"/>
-                                                            <p:commandButton id="coment" value="Escribir observación" icon="fa fa-pencil" class="btn btn-info" oncomplete="PF('dlgcoment').show();" rendered="#{controladorFunciones.nuevoOBJListaPersonalLogeado.areaOperativa eq 1 ? true:
-                                                                                                                                                                                                        controladorFunciones.nuevoOBJListaPersonalLogeado.areaOperativa eq 4 ? true:
-                                                                                                                                                                                                        controladorFunciones.nuevoOBJListaPersonalLogeado.areaOperativa eq 11 ? true:
-                                                                                                                                                                                                        controladorFunciones.nuevoOBJListaPersonalLogeado.areaOperativa eq 16 ? true:
-                                                                                                                                                                                                        controladorFunciones.nuevoOBJListaPersonalLogeado.areaOperativa eq 20 ? true:
-                                                                                                                                                                                                        controladorFunciones.nuevoOBJListaPersonalLogeado.areaOperativa eq 24 ? true:
-                                                                                                                                                                                                        controladorFunciones.nuevoOBJListaPersonalLogeado.areaOperativa eq 47 ? true:false}" disabled="#{controladorFunciones.claveCategoria eq 30?empty controladorFunciones.nuevoOBJFuncionesSelect:
-                                                                                                                                                                                                        controladorFunciones.claveCategoria eq 32?empty controladorFunciones.nuevoOBJFuncionesSelect:
-                                                                                                                                                                                                        controladorFunciones.claveCategoria eq 41?empty controladorFunciones.nuevoOBJFuncionesSelect:true}"/>
-                                                        </f:facet>
+                                        </h:form>    
 
-                                                    </p:dataTable>  
-                                                </p:outputPanel>    
-                                            </h:form>
-                                        </c:if>
+                                        <!--/c:if-->
                                         <c:if test="#{!controladorEmpleado.fechaLimiteFunciones}">
                                             <!--div class="box box-solid">
                                                 <div class="box-header with-border">
@@ -312,13 +300,13 @@
 
                                                                 <div class="info-box-content">
                                                                     <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                                                    <span class="info-box-number">La fecha límite para la actualización de curriculum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de curriculum se ha vencido <p style="# {controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>                
                                                 </div>
-                                            </div-->
+                                            </div>
                                             <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                 <div class="col-md-12">
                                                     <div class="box box-widget widget-user-2">
@@ -355,7 +343,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div-->
                                         </c:if>
                                     </p:tab>
                                     <p:tab title="Organigrama oficial">
@@ -428,7 +416,7 @@
                                             <p:dataTable id="dtbBajas" var="ByR" paginator="true" rows="10"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30"
-                                                         value="#{controladorFunciones.listaPersonalJefes}" editable="true" style="margin-bottom:20px">
+                                                         value="#{controladorFunciones.subordinadosPersonals}" editable="true" style="margin-bottom:20px">
                                                 <f:facet name="header">
                                                     Subordinados y puestos específicos
                                                 </f:facet>
@@ -466,7 +454,7 @@
                                                         <f:facet name="output"><h:outputText value="#{ByR.categoriaEspecifica.nombreCategoria}"/></f:facet>
                                                         <f:facet name="input">
                                                             <h:selectOneMenu value="#{ByR.categoriaEspecifica.categoriaEspecifica}" style="width:100%">
-                                                                <f:selectItems value="#{controladorFunciones.listaCategoriasespecificasfuncioneses}" var="estatus" itemLabel="#{estatus.nombreCategoria}" itemValue="#{estatus.categoriaEspecifica}" />
+                                                                <f:selectItems value="#{controladorFunciones.categoriasespecificasfuncioneses}" var="estatus" itemLabel="#{estatus.nombreCategoria}" itemValue="#{estatus.categoriaEspecifica}" />
                                                             </h:selectOneMenu>
                                                         </f:facet>
                                                     </p:cellEditor>
@@ -514,7 +502,7 @@
 
                                 <p:outputLabel value="Empleados para nuevo puesto específico" for="empleNP"/>
                                 <p:selectManyCheckbox id="empleNP" value="#{controladorFunciones.listaClavesEmpleados}" layout="responsive" columns="1">
-                                    <f:selectItems value="#{controladorFunciones.listaListaPersonalSubordinados}" var="subordinado" itemLabel="#{subordinado.nombre} - #{subordinado.categoriaOperativaNombre}" itemValue="#{subordinado.clave}" />
+                                    <f:selectItems value="#{controladorFunciones.subordinadosListaPersonals}" var="subordinado" itemLabel="#{subordinado.nombre} - #{subordinado.categoriaOperativaNombre}" itemValue="#{subordinado.clave}" />
                                 </p:selectManyCheckbox>
                                 <p:message for="empleNP"/>
                             </h:panelGrid>
@@ -545,7 +533,7 @@
 
             <h:form id="frmObser" >
                 <p:dialog id="dlgObser" header="Comentarios" widgetVar="dlgObser" minimizable="true" maximizable="true" position="center">
-                    <p:dataTable id="tblComents"  value="#{controladorFunciones.listaComentariosfuncionesConsulta}"  var="comentario"
+                    <p:dataTable id="tblComents"  value="#{controladorFunciones.comentariosfuncioneses}"  var="comentario"
                                  paginator="true" rows="5"
                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                  rowsPerPageTemplate="5,10,15,20,25,30"
@@ -604,7 +592,8 @@
                                 <f:facet name="output"><h:outputText value="#{comentario.esatus eq 0?'Pendiente':'Resuelta'}" /></f:facet>
                                 <f:facet name="input">
                                     <h:selectOneMenu value="#{comentario.esatus}">
-                                        <f:selectItems value="#{controladorFunciones.listalistaEstatus}" var="esatus" itemLabel="#{esatus.nombre}" itemValue="#{esatus.clave}" />
+                                        <f:selectItems itemLabel="#{'Pendiente'}" itemValue="#{0}" />
+                                        <f:selectItems itemLabel="#{'Resuelta'}" itemValue="#{1}" />
                                     </h:selectOneMenu>
                                 </f:facet>
                             </p:cellEditor>
@@ -615,293 +604,8 @@
                         </p:column>                  
                     </p:dataTable>  
                 </p:dialog>
-            </h:form>
+            </h:form>   
 
-            <h:form id="frmDelate1" >
-                <p:dialog id="dlgDelate1" header="Eliminación" widgetVar="dlgDelate1" minimizable="true" maximizable="true" position="center">
-                    <f:facet name="footer">
-                        <p:commandButton id="btncancelar" value="NO" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" onsuccess="PF('dlgDelate1').hide();"/>
-                        <p:commandButton id="btnAceptar" value="SI" class="btn btn-primary" actionListener="#{controladorFunciones.eliminarFuncion()}" icon="fa fa-check" process="@form" update="@form" onsuccess="PF('dlgDelate1').hide();"/>
-                    </f:facet>
-                    <p:outputPanel>            
-                        <p:autoUpdate/>
-                        <h:panelGrid columns="1"  class="col-md-12">
-                            <p:outputLabel value="¿Está seguro de eliminar este registro?"/>
-                        </h:panelGrid>
-                    </p:outputPanel>
-                </p:dialog>
-            </h:form>     
-
-            <h:form id="des">
-                <p:outputPanel autoUpdate="true" style="max-width: 350px; max-height: 550px;">
-                    <p:dialog id="datos" widgetVar="datos" position="center">
-                        <p:tabView style="max-width: 350px; max-height: 550px;">
-                            <p:tab title="Datos personales">
-                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                    <div class="col-md-12">
-                                        <div class="box box-widget widget-user-2">
-                                            <div class="widget-user-header bg-aqua-active">
-                                                <div class="widget-user-image">
-                                                    <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{organigramView4.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigramView4.nuevoEmpleado.clave}" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/>
-                                                </div>
-                                                <h3 class="widget-user-username">#{organigramView4.nuevoEmpleado.nombre}</h3>
-                                                <h5 class="widget-user-desc">#{organigramView4.nuevoEmpleado.categoriaOperativaNombre}</h5>
-                                            </div>
-                                            <div class="box-footer">
-                                                <div class="row">
-                                                    <div class="col-sm-12 border-right">
-                                                        <div class="description-block">
-                                                            <h5 class="description-header">Fecha de ingreso:</h5>
-                                                            <span class="description-text"><p style="text-align: center">#{organigramView4.fechaI}</p></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-12 border-right">
-                                                        <div class="description-block">
-                                                            <h5 class="description-header">Grado de estudios:</h5>
-                                                            <span class="description-text"><p style="text-align: center">#{organigramView4.nuevoEmpleado.perfilProfesional}</p></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-12">
-                                                        <div class="description-block">
-                                                            <h5 class="description-header">Área de adscripción:</h5>
-                                                            <span class="description-text"><p style="text-align: center">#{organigramView4.nuevoEmpleado.areaOperativaNombre}</p></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </p:tab>
-                            <p:tab title="Funciones generales">
-                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                    <div class="col-md-12">
-                                        <div class="box box-widget widget-user-2">
-                                            <div class="widget-user-header bg-aqua-active">
-                                                <div class="widget-user-image">
-                                                    <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{organigramView4.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigramView4.nuevoEmpleado.clave}" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/>
-                                                </div>
-                                                <h3 class="widget-user-username">#{organigramView4.nuevoEmpleado.nombre}</h3>
-                                                <h5 class="widget-user-desc">#{organigramView4.nuevoEmpleado.categoriaOperativaNombre}</h5>
-                                            </div>
-                                            <div class="box-footer">
-                                                <div class="row">
-                                                    <div class="col-sm-12 border-right">
-                                                        <div class="description-block">
-                                                            <h5 class="description-header">Función genérica</h5>
-                                                            <c:forEach var = "i" begin = "0" end = "#{organigramView4.nuevaListaFuncionesGenerales.size()-1}">
-                                                                <span class="description-text" style="text-align: justify">#{organigramView4.nuevaListaFuncionesGenerales.get(i)}</span>
-                                                                <br/>
-                                                                <br/>
-                                                            </c:forEach>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </p:tab>
-                            <p:tab title="Funciones específicas">
-                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                    <div class="col-md-12">
-                                        <div class="box box-widget widget-user-2">
-                                            <div class="widget-user-header bg-aqua-active">
-                                                <div class="widget-user-image">
-                                                    <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{organigramView4.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigramView4.nuevoEmpleado.clave}" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/> 
-                                                </div>
-                                                <h3 class="widget-user-username">#{organigramView4.nuevoEmpleado.nombre}</h3>
-                                                <h5 class="widget-user-desc">#{organigramView4.nuevoEmpleado.categoriaOperativaNombre}</h5>
-                                            </div>
-                                            <div class="box-footer">
-                                                <div class="row">
-                                                    <div class="col-sm-12 border-right">
-                                                        <div class="description-block">
-                                                            <h5 class="description-header">Funciones específicas</h5>
-                                                            <c:forEach var = "i" begin = "0" end = "#{organigramView4.nuevaListaFuncionesEspecificas.size()-1}">
-                                                                <span class="description-text" style="text-align: justify">#{organigramView4.nuevaListaFuncionesEspecificas.get(i)}</span>
-                                                                <br/>
-                                                                <br/>
-                                                            </c:forEach>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </p:tab>
-                        </p:tabView>
-                    </p:dialog>
-                </p:outputPanel>
-            </h:form>
-
-            <h:form id="areas">
-                <p:outputPanel autoUpdate="true" style="max-width: 350px; max-height: 550px;">
-                    <p:dialog id="areEdu" widgetVar="areEdu" position="center">
-                        <p:tabView style="max-width: 350px; max-height: 550px;">
-                            <p:tab title="Datos personales">
-                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                    <div class="col-md-12">
-                                        <div class="box box-widget widget-user-2">
-                                            <div class="widget-user-header bg-aqua-active">
-                                                <div class="widget-user-image">
-                                                    <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{organigramView4.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigramView4.nuevoEmpleado.clave}" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/>
-                                                </div>
-                                                <h3 class="widget-user-username">#{organigramView4.nuevoEmpleado.nombre}</h3>
-                                                <h5 class="widget-user-desc">#{organigramView4.nuevoEmpleado.categoriaOperativaNombre}</h5>
-                                            </div>
-                                            <div class="box-footer">
-                                                <div class="row">
-                                                    <div class="col-sm-12 border-right">
-                                                        <div class="description-block">
-                                                            <h5 class="description-header">Fecha de ingreso:</h5>
-                                                            <span class="description-text"><p style="text-align: center">#{organigramView4.fechaI}</p></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-12 border-right">
-                                                        <div class="description-block">
-                                                            <h5 class="description-header">Grado de estudios:</h5>
-                                                            <span class="description-text"><p style="text-align: center">#{organigramView4.nuevoEmpleado.perfilProfesional}</p></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-12">
-                                                        <div class="description-block">
-                                                            <h5 class="description-header">Área de adscripción:</h5>
-                                                            <span class="description-text"><p style="text-align: center">#{organigramView4.nuevoEmpleado.areaOperativaNombre}</p></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </p:tab>
-                            <p:tab title="Subordinados" >
-                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                    <div class="col-md-12">
-                                        <div class="box box-widget widget-user-2">
-                                            <div class="widget-user-header bg-aqua-active">
-                                                <div class="widget-user-image">
-                                                    <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{organigramView4.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigramView4.nuevoEmpleado.clave}" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/>
-                                                </div>
-                                                <h3 class="widget-user-username">#{organigramView4.nuevoEmpleado.nombre}</h3>
-                                                <h5 class="widget-user-desc">#{organigramView4.nuevoEmpleado.categoriaOperativaNombre}</h5>
-                                            </div>
-                                            <div class="box-footer">
-                                                <div class="row">
-                                                    <c:choose>
-                                                        <c:when test="#{organigramView4.sec != 0}">
-                                                            <div class="col-sm-6 border-right">
-                                                                <div class="description-block">
-                                                                    <h5 class="description-header">Secretaria(s):</h5>
-                                                                    <span class="description-text"><p style="text-align: center">#{organigramView4.sec}</p></span>
-                                                                </div>
-                                                            </div>
-                                                        </c:when>
-                                                        <c:when test="#{organigramView4.sec == 0}"/>
-                                                    </c:choose>
-                                                    <c:choose>
-                                                        <c:when test="#{organigramView4.ptc!= 0}">
-                                                            <div class="col-sm-6 border-right">
-                                                                <div class="description-block">
-                                                                    <h5 class="description-header">Profesor(es) de tiempo completo:</h5>
-                                                                    <span class="description-text"><p style="text-align: center">#{organigramView4.ptc}</p></span>
-                                                                </div>
-                                                            </div>
-                                                        </c:when>
-                                                        <c:when test="#{organigramView4.ptc == 0}"/>
-                                                    </c:choose>
-                                                    <c:choose>
-                                                        <c:when test="#{organigramView4.pda != 0}">
-                                                            <div class="col-sm-6">
-                                                                <div class="description-block">
-                                                                    <h5 class="description-header">Profesor(es) de asignatura:</h5>
-                                                                    <span class="description-text"><p style="text-align: center">#{organigramView4.pda}</p></span>
-                                                                </div>
-                                                            </div>
-                                                        </c:when>
-                                                        <c:when test="#{organigramView4.pda == 0}"/>
-                                                    </c:choose>
-                                                    <c:choose>
-                                                        <c:when test="#{organigramView4.lab != 0}">
-                                                            <div class="col-sm-6">
-                                                                <div class="description-block">
-                                                                    <h5 class="description-header">Laboratorista(s):</h5>
-                                                                    <span class="description-text"><p style="text-align: center">#{organigramView4.lab}</p></span>
-                                                                </div>
-                                                            </div>
-                                                        </c:when>
-                                                        <c:when test="#{organigramView4.lab == 0}"/>
-                                                    </c:choose>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </p:tab>
-                            <p:tab title="Funciones generales">
-                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                    <div class="col-md-12">
-                                        <div class="box box-widget widget-user-2">
-                                            <div class="widget-user-header bg-aqua-active">
-                                                <div class="widget-user-image">
-                                                    <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{organigramView4.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigramView4.nuevoEmpleado.clave}" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/>
-                                                </div>
-                                                <h3 class="widget-user-username">#{organigramView4.nuevoEmpleado.nombre}</h3>
-                                                <h5 class="widget-user-desc">#{organigramView4.nuevoEmpleado.categoriaOperativaNombre}</h5>
-                                            </div>
-                                            <div class="box-footer">
-                                                <div class="row">
-                                                    <div class="col-sm-12 border-right">
-                                                        <div class="description-block">
-                                                            <h5 class="description-header">Función genérica</h5>
-                                                            <c:forEach var = "i" begin = "0" end = "#{organigramView4.nuevaListaFuncionesGenerales.size()-1}">
-                                                                <span class="description-text" style="text-align: justify">#{organigramView4.nuevaListaFuncionesGenerales.get(i)}</span>
-                                                                <br/>
-                                                                <br/>
-                                                            </c:forEach>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </p:tab>
-                            <p:tab title="Funciones específicas">
-                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                    <div class="col-md-12">
-                                        <div class="box box-widget widget-user-2">
-                                            <div class="widget-user-header bg-aqua-active">
-                                                <div class="widget-user-image">
-                                                    <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{organigramView4.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigramView4.nuevoEmpleado.clave}" title="Personal #{organigramView4.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/>
-                                                </div>
-                                                <h3 class="widget-user-username">#{organigramView4.nuevoEmpleado.nombre}</h3>
-                                                <h5 class="widget-user-desc">#{organigramView4.nuevoEmpleado.categoriaOperativaNombre}</h5>
-                                            </div>
-                                            <div class="box-footer">
-                                                <div class="row">
-                                                    <div class="col-sm-12 border-right">
-                                                        <div class="description-block">
-                                                            <h5 class="description-header">Funciones específicas </h5>
-                                                            <c:forEach var = "i" begin = "0" end = "#{organigramView4.nuevaListaFuncionesEspecificas.size()-1}">
-                                                                <span class="description-text" style="text-align: justify">#{organigramView4.nuevaListaFuncionesEspecificas.get(i)}</span>
-                                                                <br/>
-                                                                <br/>
-                                                            </c:forEach>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </p:tab>
-                        </p:tabView>
-                    </p:dialog>
-                </p:outputPanel>
-            </h:form>
 
         </c:if>
         <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Administrativo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Docente'}">

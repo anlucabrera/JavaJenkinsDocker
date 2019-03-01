@@ -55,7 +55,6 @@ public class Organigrama implements Serializable {
     public void nodeSelectListener() {
         try {
             sub = 0;            sec = 0;            ptc = 0;            pda = 0;            lab = 0;
-            AreasUniversidad areasUniversidad = new AreasUniversidad();
 
             Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
             int clave = Integer.valueOf(params.get("clave"));
@@ -67,7 +66,7 @@ public class Organigrama implements Serializable {
                 nuevoEmpleado = new ListaPersonal();
                 nuevoEmpleado = ejbPersonal.mostrarListaPersonal(clave);
                 nuevoEmpleadoFunciones = ejbPersonal.mostrarPersonalLogeado(nuevoEmpleado.getClave());
-                areasUniversidad = new AreasUniversidad();
+                AreasUniversidad areasUniversidad = new AreasUniversidad();
                 areasUniversidad = areasLogeo.mostrarAreasUniversidad(nuevoEmpleado.getAreaOperativa());
                 if (areasUniversidad.getCategoria().getDescripcion().equals("Área Académica")) {
                     pda = 0;                    ptc = 0;                    sec = 0;                    lab = 0;
