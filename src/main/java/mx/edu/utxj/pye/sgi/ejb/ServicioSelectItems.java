@@ -335,13 +335,13 @@ public class ServicioSelectItems implements EJBSelectItems {
             List<Registros> qr = new ArrayList<>();
             
             if (areaSeleccionada == 6) {
-                qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo ORDER BY r.registro DESC", Registros.class)
+                qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo ORDER BY r.eventoRegistro.eventoRegistro DESC", Registros.class)
                 .setParameter("tipo", tipo)
                 .getResultList();
                         
             } else {
                 areas = ejbModulos.getAreasDependientes(areaSeleccionada);
-                qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.area IN :areas ORDER BY r.registro DESC", Registros.class)
+                qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.area IN :areas ORDER BY r.eventoRegistro.eventoRegistro DESC", Registros.class)
                 .setParameter("tipo", tipo)
                 .setParameter("areas", areas)
                 .getResultList();
@@ -370,7 +370,7 @@ public class ServicioSelectItems implements EJBSelectItems {
             List<Registros> qr = new ArrayList<>();
             
             if (areaSeleccionada == 6) {
-                qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio ORDER BY r.registro DESC", Registros.class)
+                qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio ORDER BY r.eventoRegistro.eventoRegistro DESC", Registros.class)
                         .setParameter("tipo", tipo)
                         .setParameter("ejercicio", ejercicio)
                         .getResultList();
@@ -378,7 +378,7 @@ public class ServicioSelectItems implements EJBSelectItems {
             } else {
                 areas = ejbModulos.getAreasDependientes(areaSeleccionada);
 
-                qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.area IN :areas AND r.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio ORDER BY r.registro DESC", Registros.class)
+                qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.area IN :areas AND r.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio ORDER BY r.eventoRegistro.eventoRegistro DESC", Registros.class)
                         .setParameter("tipo", tipo)
                         .setParameter("areas", areas)
                         .setParameter("ejercicio", ejercicio)

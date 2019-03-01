@@ -5,15 +5,9 @@
  */
 package mx.edu.utxj.pye.siip.controller.pye;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -27,11 +21,9 @@ import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
-import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
-import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
-import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
+import mx.edu.utxj.pye.siip.controller.vin.ControladorFeriasParticipantes;
 import mx.edu.utxj.pye.siip.dto.vin.DtoFeriasParticipantesSet;
 import mx.edu.utxj.pye.siip.entity.vinculacion.list.ListaFeriasParticipantesDTO;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbEvidenciasAlineacion;
@@ -58,102 +50,18 @@ public class ControladorFeriasParticipantesPYE implements Serializable{
     @EJB EjbFeriasParticipantes ejbFeriasParticipantes;
     @EJB EjbEvidenciasAlineacion ejbEvidenciasAlineacion;
     @EJB EjbModulos ejbModulos;
-    
+    @Inject ControladorFeriasParticipantes controladorFeriasParticipantes;
     @Inject ControladorEmpleado controladorEmpleado;
     @Inject ControladorModulosRegistro controladorModulosRegistro;
     
     @PostConstruct
     public void init(){
         dto = new DtoFeriasParticipantesSet();
-        dto.setRegistroTipo(new RegistrosTipo());
-        dto.getRegistroTipo().setRegistroTipo((short) 35);
-        dto.setEjesRegistro(new EjesRegistro());
-        dto.getEjesRegistro().setEje(4);
         dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        dto.setSelectItemEjercicioFiscal(ejbItems.itemEjercicioFiscalPorRegistro((short) 35));
-        
         dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short)16));
-        dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
-        if (dto.getSelectItemEjercicioFiscal() == null) {
-//            Messages.addGlobalInfo("No existen registros");
-        } else {
-            dto.setEjercicioFiscal((short) ejbItems.itemEjercicioFiscalPorRegistro((short) 35).get(0).getValue());
-            dto.setSelectItemMes(ejbItems.itemMesesPorRegistro((short) 35, dto.getEjercicioFiscal()));
-            filtroFeriaPart(dto.getSelectItemMes().get(0).getLabel(), dto.getEjercicioFiscal());
-        }
-         try {
-            dto.setEventoActual(ejbModulos.getEventoRegistro());
-        } catch (EventoRegistroNoExistenteException ex) {
-            Logger.getLogger(ControladorFeriasParticipantesPYE.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
     
-    /*
-     * se inizializan los filtrados
-     */
-    public void seleccionarMes(Short ejercicioFiscal) {
-        dto.setSelectItemMes(ejbItems.itemMesesPorRegistro((short) 35, ejercicioFiscal));
-        filtroFeriaPart(dto.getSelectItemMes().get(0).getLabel(), ejercicioFiscal);
-    }
-
-    public void filtroFeriaPart(String mes, Short ejercicio) {
-
-        dto.setMes(mes);
-        dto.setEjercicioFiscal(ejercicio);
-        dto.setListaFeriasParticipantesDTO(ejbFeriasParticipantes.getRegistrosFParticipantes(mes, ejercicio)); 
-        if (dto.getListaFeriasParticipantesDTO() == null) {
-            Messages.addGlobalWarn("No se han registrado Participantes de Ferias en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
-        }
-    }
-  
-    public void cargarEvidenciasPorRegistro(){
-        dto.setListaEvidencias(ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(dto.getRegistro().getFeriasParticipantes().getRegistro()));
-        Ajax.update("frmEvidencias1");
-    }
-    
-    public List<EvidenciasDetalle> consultarEvidencias(ListaFeriasParticipantesDTO registro){
-        return ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(registro.getFeriasParticipantes().getRegistro());
-    }
-    
-    public void descargarEvidencia(EvidenciasDetalle evidencia) throws IOException{
-        File f = new File(evidencia.getRuta());
-        Faces.sendFile(f, false);
-    }
-   
-    public void eliminarEvidencia(EvidenciasDetalle evidencia){
-        Boolean eliminado = ejbEvidenciasAlineacion.eliminarEvidenciaEnRegistro(dto.getRegistro().getFeriasParticipantes().getRegistro(), evidencia);
-        if(eliminado){ 
-            Messages.addGlobalInfo("El archivo se eliminó de forma correcta.");
-            cargarEvidenciasPorRegistro();
-            Ajax.update("frmEvidencias1");
-        }else Messages.addGlobalError("El archivo no pudo eliminarse.");
-    }
-    
-     public void seleccionarRegistro(ListaFeriasParticipantesDTO registro){
-        dto.setRegistro(registro);
-        cargarEvidenciasPorRegistro();
-        Ajax.oncomplete("skin();");
-        dto.setForzarAperturaDialogo(Boolean.TRUE);
-        forzarAperturaEvidenciasDialogo();
-    }
-    
-    public void subirEvidencias(){
-        Map.Entry<Boolean, Integer> res = ejbEvidenciasAlineacion.registrarEvidenciasARegistro(dto.getRegistro().getFeriasParticipantes().getRegistro(), dto.getArchivos(), dto.getEventoActual(), dto.getRegistroTipo());
-        if(res.getKey()){ 
-            filtroFeriaPart(dto.getMes(), dto.getEjercicioFiscal());
-            Messages.addGlobalInfo("Las evidencias se registraron correctamente.");
-        }else{ 
-            Messages.addGlobalError(String.format("Se registraron %s de %s evidencias, verifique e intente agregar las evidencias faltantes.", res.getValue().toString(),String.valueOf(dto.getArchivos().size())));
-        }
-    }
-    public void forzarAperturaEvidenciasDialogo(){
-        if(dto.getForzarAperturaDialogo()){
-            Ajax.oncomplete("PF('modalCargaEvidencia1').show();");
-            dto.setForzarAperturaDialogo(Boolean.FALSE);
-        }
-    }
-    
-      public Boolean verificaAlineacion(Integer registro) throws Throwable{
+    public Boolean verificaAlineacion(Integer registro) throws Throwable{
         return ejbModulos.verificaActividadAlineadaGeneral(registro);
     }
     
@@ -216,14 +124,14 @@ public class ControladorFeriasParticipantesPYE implements Serializable{
             Ajax.oncomplete("skin();");
             Ajax.oncomplete("PF('modalAlineacion').show();");
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorFeriasParticipantesPYE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorFeriasProfesiograficasPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public void alinearRegistro(){
         Boolean alineado = ejbModulos.alinearRegistroActividad(dto.getAlineacionActividad(), dto.getRegistro().getFeriasParticipantes().getRegistro());
         if(alineado){
-            filtroFeriaPart(dto.getMes(), dto.getEjercicioFiscal());
+            controladorFeriasParticipantes.filtroFeriaPart(dto.getMes(), dto.getEjercicioFiscal());
             abrirAlineacionPOA(dto.getRegistro());
             Messages.addGlobalInfo("El registro se alineó de forma correcta.");
         }else Messages.addGlobalError("El registro no pudo alinearse.");
@@ -240,9 +148,8 @@ public class ControladorFeriasParticipantesPYE implements Serializable{
                 cargarAlineacionXActividad();
                 Ajax.update("frmAlineacion");
             } catch (Throwable ex) {
-                Logger.getLogger(ControladorFeriasParticipantesPYE.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ControladorFeriasProfesiograficasPYE.class.getName()).log(Level.SEVERE, null, ex);
             }
         }else Messages.addGlobalError("La alineación no pudo eliminarse.");
     }
- 
 }

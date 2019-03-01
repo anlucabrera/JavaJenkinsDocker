@@ -5,16 +5,10 @@
  */
 package mx.edu.utxj.pye.siip.controller.pye;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -28,12 +22,10 @@ import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
-import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
-import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
-import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
+import mx.edu.utxj.pye.siip.controller.vin.ControladorDifusionIems;
 import mx.edu.utxj.pye.siip.dto.vin.DtoDifusionIems;
 import mx.edu.utxj.pye.siip.entity.vinculacion.list.ListaDifusionIemsDTO;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbEvidenciasAlineacion;
@@ -61,6 +53,7 @@ public class ControladorDifusionIemsPYE implements Serializable{
     @EJB EjbFiscalizacion ejbFiscalizacion;
     @EJB EjbEvidenciasAlineacion ejbEvidenciasAlineacion;
     @EJB EjbModulos ejbModulos;
+    @Inject ControladorDifusionIems controladorDifusionIems;
     @Inject ControladorEmpleado controladorEmpleado;
     @Inject ControladorModulosRegistro controladorModulosRegistro;
     @EJB EjbPlantillasVINExcel ejbPlantillasVINExcel;
@@ -74,97 +67,15 @@ public class ControladorDifusionIemsPYE implements Serializable{
     public void init(){
         //        Variables que se obtendrán mediante un método
         dto = new DtoDifusionIems();
-        dto.setRegistroTipo(new RegistrosTipo());
-        dto.getRegistroTipo().setRegistroTipo((short)29);
-        dto.setEjesRegistro(new EjesRegistro());
-        dto.getEjesRegistro().setEje(4);
+        
         dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        dto.setSelectItemEjercicioFiscal(ejbItems.itemEjercicioFiscalPorRegistro((short) 29));
         
         dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short)16));
-        dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
-        if (dto.getSelectItemEjercicioFiscal() == null) {
-            Messages.addGlobalInfo("No existen registros");
-        } else {
-            dto.setEjercicioFiscal((short) ejbItems.itemEjercicioFiscalPorRegistro((short) 29).get(0).getValue());
-            dto.setSelectItemMes(ejbItems.itemMesesPorRegistro((short) 29, dto.getEjercicioFiscal()));
-            filtroIems(dto.getSelectItemMes().get(0).getLabel(), dto.getEjercicioFiscal());
-        }     
-        try {
-            dto.setEventoActual(ejbModulos.getEventoRegistro());
-        } catch (EventoRegistroNoExistenteException ex) {
-            Logger.getLogger(ControladorDifusionIemsPYE.class.getName()).log(Level.SEVERE, null, ex);
-        }
+       
         clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
         claveRegistro = 65;
         consultarPermiso();
         
-    }
-  
-     /*
-     * se inizializan los filtrados
-     */
-    public void seleccionarMes(Short ejercicioFiscal) {
-        dto.setSelectItemMes(ejbItems.itemMesesPorRegistro((short) 29, ejercicioFiscal));
-        filtroIems(dto.getSelectItemMes().get(0).getLabel(), ejercicioFiscal);
-    }
-
-    public void filtroIems(String mes, Short ejercicio) {
-
-        dto.setMes(mes);
-        dto.setEjercicioFiscal(ejercicio);
-        dto.setListadoDIemsDTO(ejbDifusionIems.getRegistroDifusionIemsDTO(mes, ejercicio));
-
-        if (dto.getListadoDIemsDTO().isEmpty() || dto.getListadoDIemsDTO() == null) {
-            Messages.addGlobalWarn("No hay información registrada en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
-        }
-    }
-   
-    public void cargarEvidenciasPorRegistro(){
-        dto.setListaEvidencias(ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(dto.getRegistro().getDifusion().getRegistro()));
-        Ajax.update("frmEvidencias");
-    }
-    
-    public List<EvidenciasDetalle> consultarEvidencias(ListaDifusionIemsDTO registro){
-        return ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(registro.getDifusion().getRegistro());
-    }
-    
-    public void descargarEvidencia(EvidenciasDetalle evidencia) throws IOException{
-        File f = new File(evidencia.getRuta());
-        Faces.sendFile(f, false);
-    }
-  
-    public void eliminarEvidencia(EvidenciasDetalle evidencia){
-        Boolean eliminado = ejbEvidenciasAlineacion.eliminarEvidenciaEnRegistro(dto.getRegistro().getDifusion().getRegistro(), evidencia);
-        if(eliminado){ 
-            Messages.addGlobalInfo("El archivo se eliminó de forma correcta.");
-            cargarEvidenciasPorRegistro();
-            Ajax.update("frmEvidencias");
-        }else Messages.addGlobalError("El archivo no pudo eliminarse.");
-    }
-    
-     public void seleccionarRegistro(ListaDifusionIemsDTO registro){
-        dto.setRegistro(registro);
-        cargarEvidenciasPorRegistro();
-        Ajax.oncomplete("skin();");
-        dto.setForzarAperturaDialogo(Boolean.TRUE);
-        forzarAperturaEvidenciasDialogo();
-    }
-    
-    public void subirEvidencias(){
-        Map.Entry<Boolean, Integer> res = ejbEvidenciasAlineacion.registrarEvidenciasARegistro(dto.getRegistro().getDifusion().getRegistro(), dto.getArchivos(), dto.getEventoActual(), dto.getRegistroTipo());
-        if(res.getKey()){ 
-            filtroIems(dto.getMes(), dto.getEjercicioFiscal());
-            Messages.addGlobalInfo("Las evidencias se registraron correctamente.");
-        }else{ 
-            Messages.addGlobalError(String.format("Se registraron %s de %s evidencias, verifique e intente agregar las evidencias faltantes.", res.getValue().toString(),String.valueOf(dto.getArchivos().size())));
-        }
-    }
-    public void forzarAperturaEvidenciasDialogo(){
-        if(dto.getForzarAperturaDialogo()){
-            Ajax.oncomplete("PF('modalCargaEvidencia').show();");
-            dto.setForzarAperturaDialogo(Boolean.FALSE);
-        }
     }
     
      public void consultarPermiso(){
@@ -244,7 +155,7 @@ public class ControladorDifusionIemsPYE implements Serializable{
     public void alinearRegistro(){
         Boolean alineado = ejbModulos.alinearRegistroActividad(dto.getAlineacionActividad(), dto.getRegistro().getDifusion().getRegistro());
         if(alineado){
-            filtroIems(dto.getMes(), dto.getEjercicioFiscal());
+            controladorDifusionIems.filtroIems(dto.getMes(), dto.getEjercicioFiscal());
             abrirAlineacionPOA(dto.getRegistro());
             Messages.addGlobalInfo("El registro se alineó de forma correcta.");
         }else Messages.addGlobalError("El registro no pudo alinearse.");

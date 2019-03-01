@@ -157,60 +157,15 @@ public class ControladorActFormacionIntegralPYE implements Serializable{
     }
     
     public void cargarListaPorEvento(){
+        if(dto.getEventoSeleccionado()== null)
+       {
+            dto.setEventoSeleccionado(dto.getEventosPorPeriodo().get(0));
+       }
        dto.setLista(ejb.getListaRegistrosPorEventoAreaPeriodo(dto.getEventoSeleccionado(), dto.getAreaPOA().getArea(), dto.getPeriodo()));
        dtopart.setLista(ejb.getListaRegistrosPorEventoAreaPeriodoPart(dto.getEventoSeleccionado(), dto.getAreaPOA().getArea(), dto.getPeriodo()));
     }
     
-    public void cargarEvidenciasPorRegistro(){
-        dto.setListaEvidencias(ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(dto.getRegistro().getActividadesFormacionIntegral().getRegistro()));
-        Ajax.update("frmEvidencias");
-    }
-    
-    public List<EvidenciasDetalle> consultarEvidencias(DTOActFormacionIntegral registro){
-        return ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(registro.getActividadesFormacionIntegral().getRegistro());
-    }
-    
-    public void descargarEvidencia(EvidenciasDetalle evidencia) throws IOException{
-        File f = new File(evidencia.getRuta());
-        Faces.sendFile(f, false);
-    }
-       
-    
-    public void eliminarEvidencia(EvidenciasDetalle evidencia){
-        Boolean eliminado = ejbEvidenciasAlineacion.eliminarEvidenciaEnRegistro(dto.getRegistro().getActividadesFormacionIntegral().getRegistro(), evidencia);
-        if(eliminado){ 
-            Messages.addGlobalInfo("El archivo se eliminó de forma correcta.");
-            cargarEvidenciasPorRegistro();
-            Ajax.update("frmEvidencias");
-        }else Messages.addGlobalError("El archivo no pudo eliminarse.");
-    }
-    
-      
-    public void forzarAperturaEvidenciasDialogo(){
-        if(dto.getForzarAperturaDialogo()){
-            Ajax.oncomplete("PF('modalCargaEvidencia').show();");
-            dto.setForzarAperturaDialogo(Boolean.FALSE);
-        }
-    }
-    
-    public void seleccionarRegistro(DTOActFormacionIntegral registro){
-        dto.setRegistro(registro);
-        cargarEvidenciasPorRegistro();
-        Ajax.oncomplete("skin();");
-        dto.setForzarAperturaDialogo(Boolean.TRUE);
-        forzarAperturaEvidenciasDialogo();
-    }
-    
-    public void subirEvidencias(){
-        Map.Entry<Boolean, Integer> res = ejbEvidenciasAlineacion.registrarEvidenciasARegistro(dto.getRegistro().getActividadesFormacionIntegral().getRegistro(), dto.getArchivos(), dto.getEventoActual(), dto.getRegistroTipo());
-        if(res.getKey()){ 
-            cargarListaPorEvento();
-            Messages.addGlobalInfo("Las evidencias se registraron correctamente.");
-        }else{ 
-            Messages.addGlobalError(String.format("Se registraron %s de %s evidencias, verifique e intente agregar las evidencias faltantes.", res.getValue().toString(),String.valueOf(dto.getArchivos().size())));
-        }
-    }
-    
+   
     public Boolean verificaAlineacion(Integer registro) throws Throwable{
         return ejbModulos.verificaActividadAlineadaGeneral(registro);
     }
@@ -274,7 +229,7 @@ public class ControladorActFormacionIntegralPYE implements Serializable{
             Ajax.oncomplete("skin();");
             Ajax.oncomplete("PF('modalAlineacion').show();");
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorServiciosEnfermeriaPYE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorActFormacionIntegralPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -298,7 +253,7 @@ public class ControladorActFormacionIntegralPYE implements Serializable{
                 cargarAlineacionXActividad();
                 Ajax.update("frmAlineacion");
             } catch (Throwable ex) {
-                Logger.getLogger(ControladorServiciosEnfermeriaPYE.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ControladorActFormacionIntegralPYE.class.getName()).log(Level.SEVERE, null, ex);
             }
         }else Messages.addGlobalError("La alineación no pudo eliminarse.");
     }

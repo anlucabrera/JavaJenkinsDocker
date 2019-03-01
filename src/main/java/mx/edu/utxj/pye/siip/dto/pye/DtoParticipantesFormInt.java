@@ -18,6 +18,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
+import mx.edu.utxj.pye.siip.dto.eb.DTODatosEstudiante;
 /**
  *
  * @author UTXJ
@@ -53,7 +54,7 @@ public class DtoParticipantesFormInt {
     
     @Getter private List<Short> clavesAreasSubordinadas;//claves de areas subordinas que no tienes poa
     
-    @Getter private List<DTOParticipantesActFormInt> listaParticipantes;
+    @Getter private List<DTODatosEstudiante> listaParticipantes;
 
     public DtoParticipantesFormInt() {
         setRegistroTipo(new RegistrosTipo((short)17));
@@ -212,7 +213,7 @@ public class DtoParticipantesFormInt {
         this.clavesAreasSubordinadas = clavesAreasSubordinadas;
     }
     
-    public void setListaParticipantes(List<DTOParticipantesActFormInt> listaParticipantes) {
+    public void setListaParticipantes(List<DTODatosEstudiante> listaParticipantes) {
         this.listaParticipantes = listaParticipantes;
         setTieneParticipante(!listaParticipantes.isEmpty());
     }

@@ -40,6 +40,7 @@ import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoExceptio
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
+import mx.edu.utxj.pye.siip.controller.pye.ControladorRegistrosMovilidadPYE;
 import mx.edu.utxj.pye.siip.dto.ca.DtoRegistrosMovilidad;
 import mx.edu.utxj.pye.siip.dto.ca.DtoMovilidadDocente;
 import mx.edu.utxj.pye.siip.dto.ca.DtoMovilidadEstudiantil;
@@ -72,6 +73,7 @@ public class ControladorRegistrosMovilidad implements Serializable{
     @EJB EjbModulos ejbModulos;
     @EJB EjbPlantillasCAExcel ejbPlantillasCAExcel;
     @Inject ControladorEmpleado controladorEmpleado;
+    @Inject ControladorRegistrosMovilidadPYE controladorRegistrosMovilidadPYE;
     @Inject ControladorModulosRegistro controladorModulosRegistro;
     
     @EJB Facade f;
@@ -360,6 +362,7 @@ public class ControladorRegistrosMovilidad implements Serializable{
             
             ejbModulos.eliminarRegistro(registro);
             initFiltros();
+            controladorRegistrosMovilidadPYE.initFiltros();
             Ajax.update("formMuestraDatosActivos");
             Ajax.update("formMovDoc");
             Ajax.update("formMovEst");
@@ -385,6 +388,7 @@ public class ControladorRegistrosMovilidad implements Serializable{
                 ejbModulos.eliminarRegistroEvidencias(registroEvidencias);
                 ejbModulos.eliminarRegistro(registro);
                 initFiltros();
+                controladorRegistrosMovilidadPYE.initFiltros();
                 Ajax.update("formMovDoc");
                 Ajax.update("formMovEst");
                 
@@ -393,6 +397,7 @@ public class ControladorRegistrosMovilidad implements Serializable{
             
                 ejbModulos.eliminarRegistro(registro);
                 initFiltros();
+                controladorRegistrosMovilidadPYE.initFiltros();
                 Ajax.update("formMovDoc");
                 Ajax.update("formMovEst");
             }

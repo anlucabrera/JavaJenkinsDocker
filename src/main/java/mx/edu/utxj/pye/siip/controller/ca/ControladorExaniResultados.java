@@ -87,9 +87,9 @@ public class ControladorExaniResultados implements Serializable{
         selectCiclos = eJBSelectItems.itemCiclos();
         
         dto = new DtoExani();  
-        dto.setArea((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
     
-        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
+        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea().getArea()));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());
@@ -128,7 +128,7 @@ public class ControladorExaniResultados implements Serializable{
     public void guardaExaniResultados(){
         if (dto.getLista() != null) {
             try {
-                ejb.guardaExaniResultadosCiclosEscolares(dto.getLista(), dto.getRegistroTipo(), dto.getEje(), dto.getArea(), controladorModulosRegistro.getEventosRegistros());
+                ejb.guardaExaniResultadosCiclosEscolares(dto.getLista(), dto.getRegistroTipo(), dto.getEje(), dto.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
             } catch (Throwable ex) {
                 Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause()!=null?ex.getCause().getMessage():ex.getMessage());
                 Logger.getLogger(ControladorExaniResultados.class.getName()).log(Level.SEVERE, null, ex);
