@@ -5,17 +5,10 @@
  */
 package mx.edu.utxj.pye.siip.controller.pye;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -29,11 +22,9 @@ import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
-import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
-import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
-import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
+import mx.edu.utxj.pye.siip.controller.ca.ControladorDesercionPeriodos;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.ca.DtoDesercionPeriodo;
 import mx.edu.utxj.pye.siip.dto.ca.DtoDesercionReprobacion;
@@ -71,7 +62,7 @@ public class ControladorDesercionPeriodosPYE implements Serializable {
     @EJB EjbModulos ejbModulos;
     @EJB EjbPlantillasCAExcel ejbPlantillasCAExcel;
     
-
+    @Inject ControladorDesercionPeriodos controladorDesercionPeriodos;
     @Inject ControladorEmpleado controladorEmpleado;
     @Inject ControladorModulosRegistro controladorModulosRegistro;
     
@@ -84,92 +75,14 @@ public class ControladorDesercionPeriodosPYE implements Serializable {
     public void init() {
         //        Variables que se obtendrán mediante un método 
         dto = new DtoDesercionPeriodo();
-
-        dto.setRegistroTipo(new RegistrosTipo());
-        dto.getRegistroTipo().setRegistroTipo((short) 25);
-        dto.setEjesRegistro(new EjesRegistro());
-        dto.getEjesRegistro().setEje(3);
         dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        /*INIT FILTRADO*/
-        dto.setSelectItemEjercicioFiscal(ejbItems.itemEjercicioFiscalPorRegistro((short) 25));
         dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short)10));
-        dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
-        if (dto.getSelectItemEjercicioFiscal() == null) {
-//            Messages.addGlobalInfo("No existen registros");
-        } else {
-            dto.setEjercicioFiscal((short) ejbItems.itemEjercicioFiscalPorRegistro((short) 25).get(0).getValue());
-            dto.setSelectItemMes(ejbItems.itemMesesPorRegistro((short) 25, dto.getEjercicioFiscal()));
-
-            filtroDesercion(dto.getSelectItemMes().get(0).getLabel(), dto.getEjercicioFiscal());
-            /*SE INICIALIZA EL INIT DEL CONTROLADOR DE DESERCION POR REPORBACION PARA 
-        QUE AMBOS FILTROS SE REFLEJEN AL MISMO TIEMPO*/
-            cReporbacion.init();
-        }
-        /*FIN DEL INIT FILTRADO*/
-         try {
-            dto.setEventoActual(ejbModulos.getEventoRegistro());
-        } catch (EventoRegistroNoExistenteException ex) {
-            Logger.getLogger(ControladorDesercionPeriodosPYE.class.getName()).log(Level.SEVERE, null, ex);
-        }
         
         clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave(); 
         claveRegistro = 63;
         consultarPermiso();
     }
  
-    /*INICIO DEL FILTRADO Y ELIMINACION*/
-    public void seleccionarMes(Short ejercicioFiscal) {
-        dto.setSelectItemMes(ejbItems.itemMesesPorRegistro((short) 25, ejercicioFiscal));
-        filtroDesercion(dto.getSelectItemMes().get(0).getLabel(), ejercicioFiscal);
-        cReporbacion.seleccionarMes(ejercicioFiscal);
-        cReporbacion.filtroReprobacion(dto.getSelectItemMes().get(0).getLabel(), ejercicioFiscal);
-    }
-
-    public void filtroDesercion(String mes, Short ejercicio) {
-
-        dto.setMes(mes);
-        dto.setEjercicioFiscal(ejercicio);      
-        dto.setListaDtoDesercion(ejbDesercionPeriodos.getListaRegistrosDesercionDto(mes, ejercicio));
-        if ( dto.getListaDtoDesercion() == null) {
-            Messages.addGlobalWarn("No hay registros de Deserción Académica en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
-        }
-        /*FILTRADO DE REPROBACION*/
-        cReporbacion.filtroReprobacion(mes, ejercicio);
-    }
-    
-   
-    /*FIN DEL FILTRADO*/
-    
-  
-    public void cargarEvidenciasPorRegistro(){
-        dto.setListaEvidencias(ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(dto.getRegistro().getDesercionPeriodosEscolares().getRegistro()));
-        Ajax.update("frmEvidencias");
-    }
-    
-    public List<EvidenciasDetalle> consultarEvidencias(ListaDtoDesercion registro){
-        return ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(registro.getDesercionPeriodosEscolares().getRegistro());
-    }
-    
-    public void descargarEvidencia(EvidenciasDetalle evidencia) throws IOException{
-        File f = new File(evidencia.getRuta());
-        Faces.sendFile(f, false);
-    }
-  
-     public void seleccionarRegistro(ListaDtoDesercion registro){
-        dto.setRegistro(registro);
-        cargarEvidenciasPorRegistro();
-        Ajax.oncomplete("skin();");
-        dto.setForzarAperturaDialogo(Boolean.TRUE);
-        forzarAperturaEvidenciasDialogo();
-    }
-  
-    public void forzarAperturaEvidenciasDialogo(){
-        if(dto.getForzarAperturaDialogo()){
-            Ajax.oncomplete("PF('modalCargaEvidencia').show();");
-            dto.setForzarAperturaDialogo(Boolean.FALSE);
-        }
-    }
-    
      public void consultarPermiso(){
         listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro);
         if(listaReg == null || listaReg.isEmpty()){
@@ -247,7 +160,7 @@ public class ControladorDesercionPeriodosPYE implements Serializable {
     public void alinearRegistro(){
         Boolean alineado = ejbModulos.alinearRegistroActividad(dto.getAlineacionActividad(), dto.getRegistro().getDesercionPeriodosEscolares().getRegistro());
         if(alineado){
-            filtroDesercion(dto.getMes(), dto.getEjercicioFiscal());
+            controladorDesercionPeriodos.filtroDesercion(dto.getMes(), dto.getEjercicioFiscal());
             abrirAlineacionPOA(dto.getRegistro());
             Messages.addGlobalInfo("El registro se alineó de forma correcta.");
         }else Messages.addGlobalError("El registro no pudo alinearse.");

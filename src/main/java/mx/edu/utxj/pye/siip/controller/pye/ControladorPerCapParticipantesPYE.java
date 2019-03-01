@@ -28,115 +28,58 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
-import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
-import mx.edu.utxj.pye.siip.dto.vin.DtoBolsaTrabajo;
-import mx.edu.utxj.pye.siip.dto.vin.DtoBolsaEntrevistas;
-import mx.edu.utxj.pye.siip.dto.vinculacion.DTOBolsaEntrevistas;
+import mx.edu.utxj.pye.siip.controller.pye.ControladorPersonalCapacitadoPYE;
+import mx.edu.utxj.pye.siip.interfaces.ch.EjbPersonalCapacitado;
+import mx.edu.utxj.pye.siip.interfaces.ch.EjbPartPerCap;
+import mx.edu.utxj.pye.siip.dto.caphum.DTOPerCapParticipantes;
+import mx.edu.utxj.pye.siip.dto.ch.DtoPersonalCapacitado;
+import mx.edu.utxj.pye.siip.dto.ch.DtoParticipantesPerCap;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbEvidenciasAlineacion;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
-import mx.edu.utxj.pye.siip.interfaces.vin.EjbBolsaTrabajo;
-import mx.edu.utxj.pye.siip.interfaces.vin.EjbBolsaEntrevistas;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 
+
 /**
  *
  * @author UTXJ
  */
-@Named(value = "entBolTrabPYE")
+@Named(value = "partPersonalCapPYE")
 @ViewScoped
-public class ControladorBolsaEntrevistasPYE implements Serializable{
+public class ControladorPerCapParticipantesPYE implements Serializable{
 
-    private static final long serialVersionUID = -4428992189523224082L;
-    
-    @Getter @Setter DtoBolsaEntrevistas dto;
-    @Getter @Setter DtoBolsaTrabajo dtoreg;
+    private static final long serialVersionUID = 5435251973855152708L;
+    @Getter @Setter DtoParticipantesPerCap dto;
+    @Getter @Setter DtoPersonalCapacitado dtoreg;
    
-    @EJB EjbBolsaEntrevistas ejb;
-    @EJB EjbBolsaTrabajo ejbreg;
+    @EJB EjbPartPerCap ejb;
+    @EJB EjbPersonalCapacitado ejbreg;
     @EJB EjbFiscalizacion ejbFiscalizacion;
     @EJB EjbEvidenciasAlineacion ejbEvidenciasAlineacion;
     @EJB EjbModulos ejbModulos;
     @Inject ControladorEmpleado controladorEmpleado;
+    @Inject ControladorPersonalCapacitadoPYE controladorPersonalCapacitadoPYE;
     @Inject ControladorModulosRegistro controladorModulosRegistro;
-    @Inject ControladorBolsaTrabajoPYE controladorBolsaTrabajo;
-    
-    @EJB Facade f;
-    
+  
     @PostConstruct
     public void init(){
-        dto = new DtoBolsaEntrevistas();        
+        dto = new DtoParticipantesPerCap();        
         dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-      
-        dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short)5));
+        dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short)13));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());
         } catch (EventoRegistroNoExistenteException ex) {
-            Logger.getLogger(ControladorBolsaEntrevistasPYE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorPersonalCapacitadoPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-   
-     /* Se agregó para Evidencias por Participante  */
-    public void subirEvidencias(){
-        Map.Entry<Boolean, Integer> res = ejbEvidenciasAlineacion.registrarEvidenciasARegistro(dto.getRegistro().getBolsaTrabajoEntrevistas().getRegistro(), dto.getArchivos(), dto.getEventoActual(), dto.getRegistroTipo());
-        if(res.getKey()){ 
-            controladorBolsaTrabajo.cargarListaPorEvento();
-            Messages.addGlobalInfo("Las evidencias se registraron correctamente.");
-        }else{ 
-            Messages.addGlobalError(String.format("Se registraron %s de %s evidencias, verifique e intente agregar las evidencias faltantes.", res.getValue().toString(),String.valueOf(dto.getArchivos().size())));
-        }
-    }
-     public void cargarEvidenciasPorRegistro(){
-        dto.setListaEvidencias(ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(dto.getRegistro().getBolsaTrabajoEntrevistas().getRegistro()));
-        Ajax.update("frmEvidenciasPart");
-    }
-     
-    public void consultarEvidencias(){
-        dto.setListaEvidencias(ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(dto.getRegistro().getBolsaTrabajoEntrevistas().getRegistro()));
-        Ajax.update("frmEvidenciasPart");
+        
     }
     
-    public List<EvidenciasDetalle> consultarEvidencias(DTOBolsaEntrevistas registro){
-         return ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(registro.getBolsaTrabajoEntrevistas().getRegistro());
-    }
-    
-    public void eliminarEvidencia(EvidenciasDetalle evidencia){
-        Boolean eliminado = ejbEvidenciasAlineacion.eliminarEvidenciaEnRegistro(dto.getRegistro().getBolsaTrabajoEntrevistas().getRegistro(), evidencia);
-        if(eliminado){ 
-            Messages.addGlobalInfo("El archivo se eliminó de forma correcta.");
-            cargarEvidenciasPorRegistro();
-            Ajax.update("frmEvidenciasPart");
-        }else Messages.addGlobalError("El archivo no pudo eliminarse.");
-    }
-    
-    public void forzarAperturaEvidenciasDialogo(){
-        if(dto.getForzarAperturaDialogo()){
-            Ajax.oncomplete("PF('modalCargaEvidenciaPart').show();");
-            dto.setForzarAperturaDialogo(Boolean.FALSE);
-        }
-    }
-    
-    public void seleccionarRegistro(DTOBolsaEntrevistas registro){
-        dto.setRegistro(registro);
-        cargarEvidenciasPorRegistro();
-        Ajax.oncomplete("skin();");
-        dto.setForzarAperturaDialogo(Boolean.TRUE);
-        forzarAperturaEvidenciasDialogo();
-    }
-    
-    
-     public void descargarEvidencia(EvidenciasDetalle evidencia) throws IOException{
-        File f = new File(evidencia.getRuta());
-        Faces.sendFile(f, false);
-    }
-     
-     /* Se agregó para Alineación a Poa Participantes*/
-   public Boolean verificaAlineacion(Integer registro) throws Throwable{
+    public Boolean verificaAlineacion(Integer registro) throws Throwable{
         return ejbModulos.verificaActividadAlineadaGeneral(registro);
     }
     
@@ -189,64 +132,45 @@ public class ControladorBolsaEntrevistasPYE implements Serializable{
         Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
     }
     
-    public void abrirAlineacionPOA(DTOBolsaEntrevistas registro){
+    public void abrirAlineacionPOA(DTOPerCapParticipantes registro){
         try {
             dto.setRegistro(registro);
-            dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getBolsaTrabajoEntrevistas().getRegistro()));
-            actualizarEjes(dto.getRegistro().getBolsaTrabajoEntrevistas().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+            dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getParticipantesPersonalCapacitado().getRegistro()));
+            actualizarEjes(dto.getRegistro().getParticipantesPersonalCapacitado().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
             cargarAlineacionXActividad();
             Ajax.update("frmAlineacion");
             Ajax.oncomplete("skin();");
             Ajax.oncomplete("PF('modalAlineacion').show();");
+            
+            System.err.println("abrirAlineacionPOA reg - " + dto.getRegistro() + " alineacion - " + dto.getAlineacionActividad().getActividadPoa() + " actualizarEjes " + dto.getRegistro().getParticipantesPersonalCapacitado().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorDesercionReprobacionPYE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorPerCapParticipantesPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public void alinearRegistro(){
-        Boolean alineado = ejbModulos.alinearRegistroActividad(dto.getAlineacionActividad(), dto.getRegistro().getBolsaTrabajoEntrevistas().getRegistro());
+        Boolean alineado = ejbModulos.alinearRegistroActividad(dto.getAlineacionActividad(), dto.getRegistro().getParticipantesPersonalCapacitado().getRegistro());
         if(alineado){
-            controladorBolsaTrabajo.cargarListaPorEvento();
+            controladorPersonalCapacitadoPYE.cargarListaPorEvento();
             abrirAlineacionPOA(dto.getRegistro());
             Messages.addGlobalInfo("El registro se alineó de forma correcta.");
         }else Messages.addGlobalError("El registro no pudo alinearse.");
     }
     
     public void eliminarAlineacion(){
-        Boolean eliminado = ejbModulos.eliminarAlineacion(dto.getRegistro().getBolsaTrabajoEntrevistas().getRegistro());
+        Boolean eliminado = ejbModulos.eliminarAlineacion(dto.getRegistro().getParticipantesPersonalCapacitado().getRegistro());
         if(eliminado){ 
             try {
                 Messages.addGlobalInfo("La alineación se eliminó de forma correcta.");
                 dto.getRegistro().setActividadAlineada(null);
-                dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getBolsaTrabajoEntrevistas().getRegistro()));
-                actualizarEjes(dto.getRegistro().getBolsaTrabajoEntrevistas().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+                dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getParticipantesPersonalCapacitado().getRegistro()));
+                actualizarEjes(dto.getRegistro().getParticipantesPersonalCapacitado().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
                 cargarAlineacionXActividad();
                 Ajax.update("frmAlineacion");
             } catch (Throwable ex) {
-                Logger.getLogger(ControladorDesercionReprobacionPYE.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ControladorPerCapParticipantesPYE.class.getName()).log(Level.SEVERE, null, ex);
             }
         }else Messages.addGlobalError("La alineación no pudo eliminarse.");
     }
      
-    /* Modal de Entrevistas */
-    public List<DTOBolsaEntrevistas> consultarEntrevistas(String bolsaTrab){
-         return ejb.getListaEntrevistaBolsaTrabajo(bolsaTrab);
-    }
-    
-    public void seleccionarEntrevistas(String clave){
-        dto.setListaEntBolTrab(ejb.getListaEntrevistaBolsaTrabajo(clave));
-        Ajax.update("frmModalEntrevistas");
-        
-        Ajax.oncomplete("skin();");
-        dto.setForzarAperturaDialogo(Boolean.TRUE);
-        forzarAperturaEntrevistasDialogo();
-    }
-    
-    public void forzarAperturaEntrevistasDialogo(){
-        if(dto.getForzarAperturaDialogo()){
-            Ajax.oncomplete("PF('modalEntrevistas').show();");
-            dto.setForzarAperturaDialogo(Boolean.FALSE);
-        }
-    }
-    
 }

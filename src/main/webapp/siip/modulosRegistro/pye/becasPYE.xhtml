@@ -47,10 +47,10 @@
                                         <p:outputLabel value="Ejercicio Fiscal" class="form-inline"/>
                                         <p:spacer width="15" class="form-inline"/>
                                         <div class="btn-group">                                        
-                                            <p:selectOneMenu value="#{becasPeriodoPYE.dto.ejercicioFiscal}">
+                                            <p:selectOneMenu value="#{becasPeriodo.dto.ejercicioFiscal}">
                                                 <!--<f:selectItem itemLabel="Ejercicio fiscal"/>-->
-                                                <f:selectItems value="#{becasPeriodoPYE.dto.selectItemEjercicioFiscal}"/>
-                                                <p:ajax process="@this" update="somEjercicioF, formMuestraDatosActivos" listener="#{becasPeriodoPYE.seleccionarMes(becasPeriodoPYE.dto.ejercicioFiscal)}"/>
+                                                <f:selectItems value="#{becasPeriodo.dto.selectItemEjercicioFiscal}"/>
+                                                <p:ajax process="@this" update="somEjercicioF, formMuestraDatosActivos" listener="#{becasPeriodo.seleccionarMes(becasPeriodo.dto.ejercicioFiscal)}"/>
                                             </p:selectOneMenu>
                                         </div>
                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
@@ -58,9 +58,9 @@
                                         <p:outputLabel value="Mes" class="form-inline"/>
                                         <p:spacer width="15" class="form-inline"/>
                                         <div class="btn-group">
-                                            <p:selectOneMenu id="somEjercicioF" value="#{becasPeriodoPYE.dto.mes}" >
-                                                <f:selectItems value="#{becasPeriodoPYE.dto.selectItemMes}"/>
-                                                <p:ajax process="@this" update="formMuestraDatosActivos" listener="#{becasPeriodoPYE.filtroDeActividades(becasPeriodoPYE.dto.mes, becasPeriodoPYE.dto.ejercicioFiscal)}" />
+                                            <p:selectOneMenu id="somEjercicioF" value="#{becasPeriodo.dto.mes}" >
+                                                <f:selectItems value="#{becasPeriodo.dto.selectItemMes}"/>
+                                                <p:ajax process="@this" update="formMuestraDatosActivos" listener="#{becasPeriodo.filtroDeActividades(becasPeriodo.dto.mes, becasPeriodo.dto.ejercicioFiscal)}" />
                                             </p:selectOneMenu>
                                         </div>
                                 </f:facet>
@@ -84,12 +84,17 @@
                                                  resizeMode="expand"
                                                  tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
                                                  id="dtbBecasPeriodoDTO"
-                                                 var="becas" value="#{becasPeriodoPYE.dto.listaBecasDto}">
+                                                 var="becas" value="#{becasPeriodo.dto.listaBecasDto}">
                                         <c:set var="becasReg" value="#{becas.becasPeriodosEscolares.registro}"/>
                                         <p:column headerText="Opciones" width="100" style="text-align: center;">
                                             <div class="btn-group">
-                                                <c:set var="evidencias" value="#{becasPeriodoPYE.consultarEvidencias(becas)}" />
-                                                <p:commandButton actionListener="#{becasPeriodoPYE.seleccionarRegistro(becas)}"
+                                                <p:commandButton update="@this" process="@this" title="Eliminar actividad" icon="fa fa-trash" onsuccess="actualizarTabla()"
+                                                                 disabled="#{!becas.activo}"
+                                                                 class="btn btn-info btn-sm" actionListener="#{becasPeriodo.eliminarRegistro(becasReg)}">
+                                                    <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro del estudiante #{becas.becasPeriodosEscolares.matriculaPeriodosEscolares.matricula}?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <c:set var="evidencias" value="#{becasPeriodo.consultarEvidencias(becas)}" />
+                                                <p:commandButton actionListener="#{becasPeriodo.seleccionarRegistro(becas)}"
                                                                  class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" icon="fa fa-image"
                                                                  title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
                                                  <p:commandButton actionListener="#{becasPeriodoPYE.abrirAlineacionPOA(becas)}"
@@ -150,12 +155,12 @@
                                     </f:facet>
                                     <f:facet name="right">
                                         <o:form id="formularioEvidencia" enctype="multipart/form-data" class="form-inline"  >
-                                            <o:inputFile id="files" value="#{becasPeriodoPYE.dto.archivos}"  multiple="true" class="form-control"
+                                            <o:inputFile id="files" value="#{becasPeriodo.dto.archivos}"  multiple="true" class="form-control"
                                                          accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
                                                          maxsize="#{caster.evidenciasTamanioLimite}" maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true" requiredMessage="Debe elegir al menos un archivo." >
                                             </o:inputFile>
-                                            <h:commandButton id="btnuploadFiles" value="Subir archivos" class="btn btn-primary" actionListener="#{becasPeriodoPYE.subirEvidencias()}" />
+                                            <h:commandButton id="btnuploadFiles" value="Subir archivos" class="btn btn-primary" actionListener="#{becasPeriodo.subirEvidencias()}" />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -165,17 +170,17 @@
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
                                 <div class="col-md-2"><p:outputLabel value="Matricula: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{becasPeriodoPYE.dto.registro.becasPeriodosEscolares.matriculaPeriodosEscolares.matricula}" /></div>
+                                <div class="col-md-10"><p:outputLabel value="#{becasPeriodo.dto.registro.becasPeriodosEscolares.matriculaPeriodosEscolares.matricula}" /></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-2"><p:outputLabel value="Beca: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{becasPeriodoPYE.dto.registro.becaTipos.nombre}" /></div>
+                                <div class="col-md-10"><p:outputLabel value="#{becasPeriodo.dto.registro.becaTipos.nombre}" /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
                                 <div class="col-md-12">
                                     <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
-                                    <p:dataTable id="tblEvidencias" value="#{becasPeriodoPYE.dto.listaEvidencias}" var="evidencia"
+                                    <p:dataTable id="tblEvidencias" value="#{becasPeriodo.dto.listaEvidencias}" var="evidencia"
                                                  emptyMessage="No se han registrado evidencias de este registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
                                                  paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
                                                  >
@@ -189,17 +194,17 @@
                                         </p:columnGroup>
                                         <p:column style="text-align: center;">
                                             <div class="btn-group">
-                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{becasPeriodoPYE.eliminarEvidencia(evidencia)}" onsuccess="actualizar2();" title="Eliminar evidencia.">
+                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{becasPeriodo.eliminarEvidencia(evidencia)}" onsuccess="actualizar2();" title="Eliminar evidencia.">
                                                     <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
                                                 </p:commandButton>
-                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{becasPeriodoPYE.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{becasPeriodo.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
                                             </div>
                                         </p:column>
                                         <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
                                         <f:facet name="footer">
-                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{becasPeriodoPYE.dto.listaEvidencias.size()}.</span>
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{becasPeriodo.dto.listaEvidencias.size()}.</span>
                                         </f:facet>
                                     </p:dataTable>
                                 </div>
@@ -217,7 +222,7 @@
 
                                         </f:facet>
                                         <f:facet name="right">
-                                            <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{becasPeriodoPYE.eliminarAlineacion()}" rendered="#{!empty becasPeriodoPYE.dto.registro.actividadAlineada}" >
+                                            <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{becasPeriodoPYE.eliminarAlineacion()}" rendered="#{!empty becasPeriodo.dto.registro.actividadAlineada}" >
                                                 <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de esta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
                                             </p:commandButton>
                                             <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{becasPeriodoPYE.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
@@ -228,11 +233,11 @@
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
                                 <div class="col-md-2"><p:outputLabel value="Matricula: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{becasPeriodoPYE.dto.registro.becasPeriodosEscolares.matriculaPeriodosEscolares.matricula}" /></div>
+                                <div class="col-md-10"><p:outputLabel value="#{becasPeriodo.dto.registro.becasPeriodosEscolares.matriculaPeriodosEscolares.matricula}" /></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-2"><p:outputLabel value="Beca: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{becasPeriodoPYE.dto.registro.becaTipos.nombre}" /></div>
+                                <div class="col-md-10"><p:outputLabel value="#{becasPeriodo.dto.registro.becaTipos.nombre}" /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <c:set var="fila" value="#{'padding-bottom: 5px;'}" />

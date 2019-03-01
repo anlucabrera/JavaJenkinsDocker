@@ -5,12 +5,16 @@
  */
 package mx.edu.utxj.pye.siip.controller.pye;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
@@ -19,48 +23,45 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
-import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
-import mx.edu.utxj.pye.siip.dto.finanzas.DtoPresupuesto;
-import mx.edu.utxj.pye.siip.dto.finanzas.DTOPresupuestos;
+import mx.edu.utxj.pye.siip.controller.ca.ControladorAcervoBibliografico;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
-import mx.edu.utxj.pye.siip.controller.pa.ControladorPresupuestos;
-import mx.edu.utxj.pye.siip.interfaces.pa.EjbPlantillasPAExcel;
+import mx.edu.utxj.pye.siip.dto.escolar.DTOAcervoBibliograficoPeriodosEscolares;
+import mx.edu.utxj.pye.siip.dto.ca.DtoAcervoBibliografico;
+import mx.edu.utxj.pye.siip.interfaces.ca.EjbAcervoBibliografico;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbEvidenciasAlineacion;
+import mx.edu.utxj.pye.siip.interfaces.ca.EjbPlantillasCAExcel;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
-import mx.edu.utxj.pye.siip.interfaces.pa.EjbPresupuestos;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 
-
 /**
  *
  * @author UTXJ
  */
-@Named(value = "presupuestosEjercicioPYE")
-@ManagedBean
+@Named(value = "acervoBibPYE")
 @ViewScoped
-public class ControladorPresupuestosPYE implements Serializable{
-
-    private static final long serialVersionUID = 4303365491897481485L;
-    @Getter @Setter DtoPresupuesto dto;
+public class ControladorAcervoBibliograficoPYE implements Serializable{
     
-    @EJB EJBSelectItems ejbItems;
-    @EJB EjbPresupuestos  ejbPresupuestos;
-    @EJB EjbFiscalizacion ejbFiscalizacion;  
-    @EJB EjbModulos ejbModulos;
+    private static final long serialVersionUID = 5645467688715180237L;
+    //Variables para almacenar el registro
+    @Getter @Setter DtoAcervoBibliografico dto;
+    
+    @EJB EjbAcervoBibliografico ejb;
     @EJB EjbEvidenciasAlineacion ejbEvidenciasAlineacion;
-    @EJB EjbPlantillasPAExcel ejbPlantillasPAExcel;
+    @EJB EjbFiscalizacion ejbFiscalizacion;
+    @EJB EjbModulos ejbModulos;
+    @EJB EjbPlantillasCAExcel ejbPlantillasCAExcel;
     @Inject ControladorEmpleado controladorEmpleado;
-    @Inject ControladorPresupuestos controladorPresupuestos;
+    @Inject ControladorAcervoBibliografico controladorAcervoBibliografico;
     @Inject ControladorModulosRegistro controladorModulosRegistro;
-    
+   
     //Variables para verificar permiso del usuario para visualizar apartado
     @Getter @Setter private List<ModulosRegistrosUsuarios> listaReg;
     @Getter @Setter private Integer clavePersonal;
@@ -68,22 +69,18 @@ public class ControladorPresupuestosPYE implements Serializable{
     
     @PostConstruct
     public void init(){
-         //        Variables que se obtendrán mediante un método
-        dto = new DtoPresupuesto();
-       
+        dto = new DtoAcervoBibliografico();  
         dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-       
-        dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short)7));
+    
+        dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short)11));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
-                
+        
+        
         clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
-        claveRegistro = 66;
+        claveRegistro = 84;
         consultarPermiso();
 
     }
-    /*
-     * se inicializan los filtrados
-     */
    
     public void consultarPermiso(){
         listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro);
@@ -91,7 +88,8 @@ public class ControladorPresupuestosPYE implements Serializable{
             Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
         }
     }
-    public Boolean verificaAlineacion(Integer registro) throws Throwable{
+    
+     public Boolean verificaAlineacion(Integer registro) throws Throwable{
         return ejbModulos.verificaActividadAlineadaGeneral(registro);
     }
     
@@ -144,42 +142,43 @@ public class ControladorPresupuestosPYE implements Serializable{
         Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
     }
     
-    public void abrirAlineacionPOA(DTOPresupuestos dtoServEnf){
+    public void abrirAlineacionPOA(DTOAcervoBibliograficoPeriodosEscolares registro){
         try {
-            dto.setRegistro(dtoServEnf);
-            dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getPresupuestos().getRegistro()));
-            actualizarEjes(dto.getRegistro().getPresupuestos().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+            dto.setRegistro(registro);
+            dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getAcervoBibliograficoPeriodosEscolares().getRegistro()));
+            actualizarEjes(dto.getRegistro().getAcervoBibliograficoPeriodosEscolares().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
             cargarAlineacionXActividad();
             Ajax.update("frmAlineacion");
             Ajax.oncomplete("skin();");
             Ajax.oncomplete("PF('modalAlineacion').show();");
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorPresupuestosPYE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorAcervoBibliograficoPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public void alinearRegistro(){
-        Boolean alineado = ejbModulos.alinearRegistroActividad(dto.getAlineacionActividad(), dto.getRegistro().getPresupuestos().getRegistro());
+        Boolean alineado = ejbModulos.alinearRegistroActividad(dto.getAlineacionActividad(), dto.getRegistro().getAcervoBibliograficoPeriodosEscolares().getRegistro());
         if(alineado){
-            controladorPresupuestos.filtroPresupuestos(dto.getMes(), dto.getEjercicioFiscal());
+            controladorAcervoBibliografico.cargarListaPorEvento();
             abrirAlineacionPOA(dto.getRegistro());
             Messages.addGlobalInfo("El registro se alineó de forma correcta.");
         }else Messages.addGlobalError("El registro no pudo alinearse.");
     }
     
     public void eliminarAlineacion(){
-        Boolean eliminado = ejbModulos.eliminarAlineacion(dto.getRegistro().getPresupuestos().getRegistro());
+        Boolean eliminado = ejbModulos.eliminarAlineacion(dto.getRegistro().getAcervoBibliograficoPeriodosEscolares().getRegistro());
         if(eliminado){ 
             try {
                 Messages.addGlobalInfo("La alineación se eliminó de forma correcta.");
                 dto.getRegistro().setActividadAlineada(null);
-                dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getPresupuestos().getRegistro()));
-                actualizarEjes(dto.getRegistro().getPresupuestos().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+                dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getAcervoBibliograficoPeriodosEscolares().getRegistro()));
+                actualizarEjes(dto.getRegistro().getAcervoBibliograficoPeriodosEscolares().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
                 cargarAlineacionXActividad();
                 Ajax.update("frmAlineacion");
             } catch (Throwable ex) {
-                Logger.getLogger(ControladorPresupuestosPYE.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ControladorAcervoBibliograficoPYE.class.getName()).log(Level.SEVERE, null, ex);
             }
         }else Messages.addGlobalError("La alineación no pudo eliminarse.");
     }
+    
 }

@@ -38,6 +38,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import mx.edu.utxj.pye.siip.controller.pye.ControladorActFormacionIntegralPYE;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbActFormacionIntegral;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbPlantillasCAExcel;
 import mx.edu.utxj.pye.siip.dto.pye.DTOActFormacionIntegral;
@@ -68,6 +69,7 @@ public class ControladorActFormacionIntegral implements Serializable{
     @EJB EjbEvidenciasAlineacion ejbEvidenciasAlineacion;
     @EJB EjbModulos ejbModulos;
     @EJB EjbPlantillasCAExcel ejbPlantillasCAExcel;
+    @Inject ControladorActFormacionIntegralPYE controladorActFormacionIntegralPYE;
     @Inject ControladorEmpleado controladorEmpleado;
     @Inject ControladorModulosRegistro controladorModulosRegistro;
     
@@ -182,8 +184,13 @@ public class ControladorActFormacionIntegral implements Serializable{
     }
     
     public void cargarListaPorEvento(){
+       if(dto.getEventoSeleccionado()== null)
+       {
+            dto.setEventoSeleccionado(dto.getEventosPorPeriodo().get(0));
+       }
        dto.setLista(ejb.getListaRegistrosPorEventoAreaPeriodo(dto.getEventoSeleccionado(), dto.getArea().getArea(), dto.getPeriodo()));
        dtopart.setLista(ejb.getListaRegistrosPorEventoAreaPeriodoPart(dto.getEventoSeleccionado(), dto.getArea().getArea(), dto.getPeriodo()));
+      
     }
     
     public void cargarEvidenciasPorRegistro(){
@@ -327,6 +334,7 @@ public class ControladorActFormacionIntegral implements Serializable{
                    }
                    ejbModulos.eliminarRegistroParticipantes(registroParticipantes);
                    initFiltros();
+                   controladorActFormacionIntegralPYE.initFiltros();
                    Ajax.update("formMuestraDatosActivos");
                    Ajax.update("formMuestraDatosActivosPAFI");
                }
@@ -335,11 +343,13 @@ public class ControladorActFormacionIntegral implements Serializable{
 
                    ejbModulos.eliminarRegistroEvidencias(registroEvidencias);
                    initFiltros();
+                   controladorActFormacionIntegralPYE.initFiltros();
                    Ajax.update("formMuestraDatosActivos");
                }
 
                ejbModulos.eliminarRegistro(registro);
                initFiltros();
+               controladorActFormacionIntegralPYE.initFiltros();
                Ajax.update("formMuestraDatosActivos");
 
            } catch (Throwable ex) {

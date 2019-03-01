@@ -308,6 +308,11 @@ public class ServicioBolsaTrabajo implements EjbBolsaTrabajo{
         if(evento == null || claveArea == null || periodo == null){
             return null;
         }
+        
+        
+        
+        
+        
         areas = ejbModulos.getAreasDependientes(claveArea);
         
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas

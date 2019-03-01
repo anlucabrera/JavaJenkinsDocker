@@ -16,15 +16,15 @@
         <h:outputScript library="js" name="dialogs.js" />
     </ui:define>
     <ui:define name="title">
-        Ingresos Propios
+        EXANI
     </ui:define>
 
     <ui:define name="description">
-        Fortalecer los Procesos de Gestión Institucional
+        Asegurar la Calidad Académica
     </ui:define>
 
     <ui:define name="body">
-        <adm:breadcrumb title="Fortalecer los Procesos de Gestión Institucional - Ingresos Propios"/>
+        <adm:breadcrumb title="Asegurar la Calidad Académica - EXANI"/>
         <adm:sidebar collapsed="true"/>
         <p:importEnum type="mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa" var="etapa" allSuffix="ETAPAS" />
         <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
@@ -32,7 +32,7 @@
                 Esta página está disponible solo para pantallas superiores a 1024px.
             </h1>
         </p:panel>
-        <c:if test="#{ingresosPropPYE.listaReg ne null}">
+        <c:if test="#{exaniResPYE.listaReg ne null}">
         <div class="box box-primary">
             <div class="box-header with-border">
                 <div id="main-buttons" class="hidden-sm hidden-xs" >
@@ -41,27 +41,20 @@
                             <p:autoUpdate/>
                             <p:toolbar id="tb">
                                 <f:facet name="left">
-                                    <p:spacer width="10" />
-                                        <p:outputLabel value="Periodo: " for="periodo" />
-                                        <p:spacer width="3" />
-                                        <p:selectOneMenu id="periodo" converter="entityConverter"
-                                                         value="#{ingresosPropPYE.dto.periodo}" valueChangeListener="#{ingresosPropPYE.actualizarMeses}"
-                                                         class="form-control" style="padding-top: 0px;">
-                                            <f:selectItems value="#{ingresosPropPYE.dto.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" itemDescription="#{caster.periodoToString(periodo)}" />
-                                            <p:ajax process="@this" update="@(form)" />
+                                    <c:if test="#{controladorArchivoExani.etapa eq etapa.MOSTRAR}">
+                                        <p:spacer width="10" />
+                                        <p:outputLabel value="Ciclos Escolares: " for="ciclosEscolares" />
+                                        <div class="btn-group">
+                                        <p:selectOneMenu id="ciclosEscolares" value="#{exaniRes.cicloEsc}" rendered="true">
+                                            <f:selectItems value="#{exaniRes.selectCiclos}"/>
+                                            <p:ajax process="@this" update="frmMainButtons, formMuestraDatosActivos" onsuccess="Rc()"/>
                                         </p:selectOneMenu>
-                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                        <p:outputLabel value="Mes: " for="mes" />
-                                        <p:spacer width="3" />
-                                        <p:selectOneMenu id="mes" value="#{ingresosPropPYE.dto.eventoSeleccionado}" converter="entityConverter" class="form-control" style="padding-top: 0px;">
-                                            <f:selectItems value="#{ingresosPropPYE.dto.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" itemDescription="#{evento.mes}"  />
-                                            <p:ajax process="@this" listener="#{ingresosPropPYE.cargarListaPorEvento()}" update="@(form)" />
-                                        </p:selectOneMenu>
+                                        <p:remoteCommand name="Rc"  actionListener="#{exaniRes.obtenerListaExani()}" update="formMuestraDatosActivos" process="@this"/>
+                                        </div>
+                                    </c:if>
                                 </f:facet>
                                 <f:facet name="right">
-                                    <div class="btn-group">
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
-                                    </div>
                                 </f:facet>
                             </p:toolbar>
                             <p:sticky target="tb" />
@@ -76,46 +69,53 @@
                         <div class="col-lg-12 col-md-12">
                              <center>
                             <h:form id="formMuestraDatosActivos">
-                                    <p:remoteCommand name="actualizar" update="@form:dtbIngPropios" />
-                                    <p:dataTable id="dtbIngPropios" emptyMessage="Sin datos en el periodo seleccionado." value="#{ingresosPropPYE.dto.lista}" var="ingProp"
+                                    <p:remoteCommand name="actualizar" update="@form:dtbExani" />
+                                    <p:dataTable id="dtbExani" emptyMessage="Sin datos en el periodo seleccionado." value="#{exaniRes.listaDTOExani}" var="exaniResultados"
                                                  paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
                                                  resizeMode="expand"
                                                  tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                         <p:columnGroup type="header">
-                                            <p:row>
-                                                <p:column headerText="Opciones" style="width: 100px;"/>
-                                                <p:column headerText="Ciclo Escolar" style="width: 100px;"/>
-                                                <p:column headerText="Periodo Escolar" style="width: 100px;"/>
-                                                <p:column headerText="Concepto Ingresos Captados" style="width: 100px;"/>
-                                                <p:column headerText="Fecha de Ingreso" style="width: 100px;"/>
-                                                <p:column headerText="Monto" style="width: 100px;"/>
-                                                <p:column headerText="Descripción" style="width: 100px;"/>
-                                            </p:row>
+                                                <p:row>
+                                                    <p:column rowspan="2" headerText="Opciones" style="width: 100px;"/>
+                                                    <p:column rowspan="2" headerText="Ciclo Escolar" style="width: 100px;"/>
+                                                    <p:column rowspan="2" headerText="Programa Educativo" style="width: 200px;"/>
+                                                    <p:column rowspan="2" headerText="Egresados/as de bachillerato que presentaron el EXANI - II en la UT" style="width: 200px;"/> 
+                                                    <p:column colspan="3" headerText="Rango de Calificaciones Obtenidas" style="width: 600px;"/>
+                                                    <p:column rowspan="2" headerText="Estudiantes de nuevo ingreso inscritos/as a la UT que presentaron el EXANI II en el ciclo escolar" style="width: 200px;"/>
+                                                    <p:column rowspan="2" headerText="Estudiantes de nuevo ingreso inscritos/as a la UT que no presentaron el EXANI II en el ciclo escolar" style="width: 200px;"/>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column headerText="Estudiantes de nuevo ingreso que presentaron el EXANI – II y lograron 1,101 a 1,300 puntos de calificación" style="width: 200px;"/>
+                                                    <p:column headerText="Estudiantes de nuevo ingreso que presentaron el EXANI – II y lograron 901 a 1,100 puntos de calificación" style="width: 200px;"/>
+                                                    <p:column headerText="Estudiantes de nuevo ingreso que presentaron el EXANI – II y lograron 700 a 900 puntos de calificación" style="width: 200px;"/>
+
+                                                </p:row>
                                         </p:columnGroup>
-                                        <c:set var="ingPropReg" value="#{ingProp.ingresosPropiosCaptados.registro}"/>
+                                        <c:set var="exaniReg" value="#{exaniResultados.exaniResultadosCiclosEscolares.registro}"/>
                                         <p:column style="width: 100px; text-align: center;">
                                             <div class="btn-group">
-                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{ingresosProp.eliminarRegistro(ingPropReg)}" onsuccess="actualizar();" title="Eliminar registro." disabled="#{ingresosPropPYE.dto.eventoActual ne ingresosPropPYE.dto.eventoSeleccionado}">
-                                                    <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro del Ciclo #{ingProp.cicloEscolar} del cuatrimestre #{ingProp.periodoEscolar}?" icon="ui-icon-alert" />
+                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{exaniRes.eliminarRegistro(exaniReg)}" onsuccess="actualizar();" title="Eliminar registro.">
+                                                    <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro del Ciclo Escolar #{exaniResultados.cicloEscolar} del Programa Educativo #{exaniResultados.areasUniversidad.nombre}?" icon="ui-icon-alert" />
                                                 </p:commandButton>
-                                                <c:set var="evidencias" value="#{ingresosProp.consultarEvidencias(ingProp)}" />
-                                                <p:commandButton actionListener="#{ingresosProp.seleccionarRegistro(ingProp)}"
+                                                <c:set var="evidencias" value="#{exaniRes.consultarEvidencias(exaniResultados)}" />
+                                                <p:commandButton actionListener="#{exaniRes.seleccionarRegistro(exaniResultados)}"
                                                                  class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
                                                                  icon="fa fa-image"
                                                                  title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
-                                                <p:commandButton actionListener="#{ingresosPropPYE.abrirAlineacionPOA(ingProp)}"
-                                                                 class="btn btn-sm #{ingresosPropPYE.verificaAlineacion(ingPropReg)?'btn-info':'btn-warning'}"
+                                                <p:commandButton actionListener="#{exaniResPYE.abrirAlineacionPOA(exaniResultados)}"
+                                                                 class="btn btn-sm #{exaniResPYE.verificaAlineacion(exaniReg)?'btn-info':'btn-warning'}"
                                                                  icon="fa fa-cog"
                                                                  title="Alineación a POA." />
                                             </div>
                                         </p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{ingProp.cicloEscolar}"/></p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{ingProp.periodoEscolar}"/></p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{ingProp.ingresosPropiosCaptados.conceptoIngresosCaptados}"/></p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{ingProp.ingresosPropiosCaptados.fechaIngreso}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{ingProp.ingresosPropiosCaptados.monto}"><f:convertNumber pattern="¤#,##0.00" currencySymbol="$" /></h:outputText></p:column>
-                                        <p:column><h:outputText value="#{ingProp.ingresosPropiosCaptados.descripcion}"/></p:column>
-                                      
+                                        <p:column style="width:100px; text-align: center;"><h:outputText value="#{exaniResultados.cicloEscolar}"/></p:column> 
+                                        <p:column style="width:200px;"><h:outputText value="#{exaniResultados.areasUniversidad.nombre}"/></p:column>
+                                        <p:column style="width:200px; text-align: center;"><h:outputText value="#{exaniResultados.exaniResultadosCiclosEscolares.sustentantes}"/></p:column>
+                                        <p:column style="width:200px; text-align: center;"><h:outputText value="#{exaniResultados.exaniResultadosCiclosEscolares.ICNEalto}"/></p:column>
+                                        <p:column style="width:200px; text-align: center;"><h:outputText value="#{exaniResultados.exaniResultadosCiclosEscolares.ICNEmedio}"/></p:column>
+                                        <p:column style="width:200px; text-align: center;"><h:outputText value="#{exaniResultados.exaniResultadosCiclosEscolares.ICNEbajo}"/></p:column>
+                                        <p:column style="width:200px; text-align: center;"><h:outputText value="#{exaniResultados.exaniResultadosCiclosEscolares.susInscritos}"/></p:column>
+                                        <p:column style="width:200px; text-align: center;"><h:outputText value="#{exaniResultados.exaniResultadosCiclosEscolares.nosusInscritos}"/></p:column>
                                     </p:dataTable>
                                     <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
                                         <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
@@ -125,13 +125,13 @@
                              </center>
                         </div>
                     </div>
-                    <!-- Modal Evidencia Ingresos Propios -->
+                    <!-- Modal Evidencia EXANI -->
                     <p:dialog id="modalCargaEvidencia" 
                               widgetVar="modalCargaEvidencia" 
                               width="700" 
                               height="auto"  
                               closeOnEscape="true" 
-                              visible="#{ingresosProp.dto.forzarAperturaDialogo}"
+                              visible="#{exaniRes.dto.forzarAperturaDialogo}"
                               showEffect="fade" 
                               hideEffect="fade" 
                               modal="true" 
@@ -155,7 +155,7 @@
                                                 enctype="multipart/form-data" 
                                                 class="form-inline"  >
                                             <o:inputFile id="files" 
-                                                         value="#{ingresosProp.dto.archivos}"  
+                                                         value="#{exaniRes.dto.archivos}"  
                                                          multiple="true" 
                                                          class="form-control"
                                                          accept="image/png,image/jpg,image/jpeg,application/pdf" 
@@ -165,7 +165,7 @@
                                                          required="true" 
                                                          requiredMessage="Debe elegir al menos un archivo." >
                                             </o:inputFile>
-                                            <h:commandButton id="btnuploadFiles" value="Subir archivos" class="btn btn-primary" actionListener="#{ingresosProp.subirEvidencias()}" />
+                                            <h:commandButton id="btnuploadFiles" value="Subir archivos" class="btn btn-primary" actionListener="#{exaniRes.subirEvidencias()}" />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -174,18 +174,18 @@
                         <h:form id="frmEvidencias" >
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
-                                <div class="col-md-2"><p:outputLabel value="Ciclo: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{ingresosProp.dto.registro.periodoEscolar}" /></div>
+                                <div class="col-md-2"><p:outputLabel value="Ciclo Escolar: " /></div>
+                                <div class="col-md-10"><p:outputLabel value="#{exaniRes.dto.registro.cicloEscolar}" /></div>
                             </div>
                             <div class="row">
-                                <div class="col-md-2"><p:outputLabel value="Periodo: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{ingresosProp.dto.registro.cicloEscolar}" /></div>
+                                <div class="col-md-2"><p:outputLabel value="Programa Educativo: " /></div>
+                                <div class="col-md-10"><p:outputLabel value="#{exaniRes.dto.registro.areasUniversidad.nombre}" /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
                                 <div class="col-md-12">
                                     <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
-                                    <p:dataTable id="tblEvidencias" value="#{ingresosProp.dto.listaEvidencias}" var="evidencia"
+                                    <p:dataTable id="tblEvidencias" value="#{exaniRes.dto.listaEvidencias}" var="evidencia"
                                                  emptyMessage="No se han registrado evidencias de este registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
                                                  paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
                                                  >
@@ -199,17 +199,17 @@
                                         </p:columnGroup>
                                         <p:column style="text-align: center;">
                                             <div class="btn-group">
-                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{ingresosProp.eliminarEvidencia(evidencia)}" onsuccess="actualizar2();" title="Eliminar evidencia.">
+                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{exaniRes.eliminarEvidencia(evidencia)}" onsuccess="actualizar2();" title="Eliminar evidencia.">
                                                     <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
                                                 </p:commandButton>
-                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{ingresosProp.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{exaniRes.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
                                             </div>
                                         </p:column>
                                         <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
                                         <f:facet name="footer">
-                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(ingresosProp.dto.listaEvidencias)}.</span>
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(exaniRes.dto.listaEvidencias)}.</span>
                                         </f:facet>
                                     </p:dataTable>
                                 </div>
@@ -227,22 +227,22 @@
                                             
                                         </f:facet>
                                         <f:facet name="right">
-                                            <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{ingresosPropPYE.eliminarAlineacion()}" rendered="#{!empty ingresosPropPYE.dto.registro.actividadAlineada}" >
+                                            <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{exaniResPYE.eliminarAlineacion()}" rendered="#{!empty exaniResPYE.dto.registro.actividadAlineada}" >
                                                 <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de esta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
                                             </p:commandButton>
-                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{ingresosPropPYE.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
+                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{exaniResPYE.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
                                         </f:facet>
                                     </p:toolbar>
                                 </div>
                             </div>                            
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
-                           <div class="row">
-                                <div class="col-md-2"><p:outputLabel value="Ciclo: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{ingresosPropPYE.dto.registro.periodoEscolar}" /></div>
+                            <div class="row">
+                                <div class="col-md-2"><p:outputLabel value="Ciclo Escolar: " /></div>
+                                <div class="col-md-10"><p:outputLabel value="#{exaniRes.dto.registro.cicloEscolar}" /></div>
                             </div>
                             <div class="row">
-                                <div class="col-md-2"><p:outputLabel value="Periodo: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{ingresosPropPYE.dto.registro.cicloEscolar}" /></div>
+                                <div class="col-md-2"><p:outputLabel value="Programa Educativo: " /></div>
+                                <div class="col-md-10"><p:outputLabel value="#{exaniRes.dto.registro.areasUniversidad.nombre}" /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
@@ -251,10 +251,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="eje" value="#{ingresosPropPYE.dto.alineacionEje}" valueChangeListener="#{ingresosPropPYE.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="eje" value="#{exaniResPYE.dto.alineacionEje}" valueChangeListener="#{exaniResPYE.actualizarEstrategias}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{ingresosPropPYE.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <f:selectItems value="#{exaniResPYE.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
                                         <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="eje"><p:autoUpdate /></p:message>
@@ -263,10 +263,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="estrategia" value="#{ingresosPropPYE.dto.alineacionEstrategia}" valueChangeListener="#{ingresosPropPYE.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="estrategia" value="#{exaniResPYE.dto.alineacionEstrategia}" valueChangeListener="#{exaniResPYE.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{ingresosPropPYE.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <f:selectItems value="#{exaniResPYE.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
                                         <p:ajax process="estrategia" update="lineaAccion,actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="estrategia"><p:autoUpdate /></p:message>
@@ -275,10 +275,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="lineaAccion" value="#{ingresosPropPYE.dto.alineacionLinea}" valueChangeListener="#{ingresosPropPYE.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="lineaAccion" value="#{exaniResPYE.dto.alineacionLinea}" valueChangeListener="#{exaniResPYE.actualizarActividades}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{ingresosPropPYE.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <f:selectItems value="#{exaniResPYE.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
                                         <p:ajax process="lineaAccion" update="actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="lineaAccion"><p:autoUpdate /></p:message>
@@ -287,10 +287,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="actividad" value="#{ingresosPropPYE.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                    <p:selectOneMenu id="actividad" value="#{exaniResPYE.dto.alineacionActividad}" required="true" converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{ingresosPropPYE.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <f:selectItems value="#{exaniResPYE.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
                                         <p:ajax process="actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="actividad"><p:autoUpdate /></p:message>
@@ -300,7 +300,7 @@
                     </p:dialog>
                 </div>
             </div>
-                </div>
+        </div>
         </c:if>
     </ui:define>
 </ui:composition>

@@ -34,6 +34,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
+import mx.edu.utxj.pye.siip.controller.ca.ControladorBecasPeriodo;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.ca.DtoBecas;
 import mx.edu.utxj.pye.siip.entity.escolar.list.ListaBecasDto;
@@ -66,7 +67,7 @@ public class ControladorBecasPeriodoPYE implements Serializable{
     @EJB EjbEvidenciasAlineacion ejbEvidenciasAlineacion;
     @EJB EjbModulos ejbModulos;
     @EJB EjbPlantillasCAExcel ejbPlantillasCAExcel;
-     
+    @Inject ControladorBecasPeriodo controladorBecasPeriodo; 
     @Inject ControladorEmpleado controladorEmpleado;
     @Inject ControladorModulosRegistro controladorModulosRegistro;
     
@@ -79,29 +80,10 @@ public class ControladorBecasPeriodoPYE implements Serializable{
     public void init(){
         //        Variables que se obtendrán mediante un método
         dto = new DtoBecas();
-        dto.setRegistroTipo(new RegistrosTipo());
-        dto.getRegistroTipo().setRegistroTipo((short)9);
-        dto.setEjesRegistro(new EjesRegistro());
-        dto.getEjesRegistro().setEje(3);
+        
         dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        dto.setSelectItemEjercicioFiscal(ejbItems.itemEjercicioFiscalPorRegistro((short) 9));
-        
         dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short)11));
-        dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
-        if (dto.getSelectItemEjercicioFiscal() == null) {
-//            Messages.addGlobalInfo("No existen registros");
-        } else {
-            dto.setEjercicioFiscal((short) ejbItems.itemEjercicioFiscalPorRegistro((short) 9).get(0).getValue());
-            dto.setSelectItemMes(ejbItems.itemMesesPorRegistro((short) 9, dto.getEjercicioFiscal()));
-            filtroDeActividades(dto.getSelectItemMes().get(0).getLabel(), dto.getEjercicioFiscal());
-        }
-        
-        try {
-            dto.setEventoActual(ejbModulos.getEventoRegistro());
-        } catch (EventoRegistroNoExistenteException ex) {
-            Logger.getLogger(ControladorBecasPeriodoPYE.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+      
         clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
         claveRegistro = 78;
         consultarPermiso();
@@ -110,68 +92,7 @@ public class ControladorBecasPeriodoPYE implements Serializable{
     /*
      * se inizializan los filtrados
      */
-    public void seleccionarMes(Short ejercicioFiscal) {
-        dto.setSelectItemMes(ejbItems.itemMesesPorRegistro((short) 9, ejercicioFiscal));
-        filtroDeActividades(dto.getSelectItemMes().get(0).getLabel(), ejercicioFiscal);
-    }
-
-    public void filtroDeActividades(String mes, Short ejercicio) {
-        dto.setMes(mes);
-        dto.setEjercicioFiscal(ejercicio);
-        dto.setListaBecasDto(ejbBecasPeriodo.getRegistroBecas(mes, ejercicio));
-
-        if (dto.getListaBecasDto().isEmpty() || dto.getListaBecasDto() == null) {
-            Messages.addGlobalWarn("No se han registrado Becas en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
-        }
-    }
-    
-    public void cargarEvidenciasPorRegistro(){
-        dto.setListaEvidencias(ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(dto.getRegistro().getBecasPeriodosEscolares().getRegistro()));
-        Ajax.update("frmEvidencias");
-    }
-    
-    public List<EvidenciasDetalle> consultarEvidencias(ListaBecasDto registro){
-        return ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(registro.getBecasPeriodosEscolares().getRegistro());
-    }
-    
-    public void descargarEvidencia(EvidenciasDetalle evidencia) throws IOException{
-        File f = new File(evidencia.getRuta());
-        Faces.sendFile(f, false);
-    }
-  
-    public void eliminarEvidencia(EvidenciasDetalle evidencia){
-        Boolean eliminado = ejbEvidenciasAlineacion.eliminarEvidenciaEnRegistro(dto.getRegistro().getBecasPeriodosEscolares().getRegistro(), evidencia);
-        if(eliminado){ 
-            Messages.addGlobalInfo("El archivo se eliminó de forma correcta.");
-            cargarEvidenciasPorRegistro();
-            Ajax.update("frmEvidencias");
-        }else Messages.addGlobalError("El archivo no pudo eliminarse.");
-    }
-    
-     public void seleccionarRegistro(ListaBecasDto registro){
-        dto.setRegistro(registro);
-        cargarEvidenciasPorRegistro();
-        Ajax.oncomplete("skin();");
-        dto.setForzarAperturaDialogo(Boolean.TRUE);
-        forzarAperturaEvidenciasDialogo();
-    }
-    
-    public void subirEvidencias(){
-        Map.Entry<Boolean, Integer> res = ejbEvidenciasAlineacion.registrarEvidenciasARegistro(dto.getRegistro().getBecasPeriodosEscolares().getRegistro(), dto.getArchivos(), dto.getEventoActual(), dto.getRegistroTipo());
-        if(res.getKey()){ 
-            filtroDeActividades(dto.getMes(), dto.getEjercicioFiscal());
-            Messages.addGlobalInfo("Las evidencias se registraron correctamente.");
-        }else{ 
-            Messages.addGlobalError(String.format("Se registraron %s de %s evidencias, verifique e intente agregar las evidencias faltantes.", res.getValue().toString(),String.valueOf(dto.getArchivos().size())));
-        }
-    }
-    public void forzarAperturaEvidenciasDialogo(){
-        if(dto.getForzarAperturaDialogo()){
-            Ajax.oncomplete("PF('modalCargaEvidencia').show();");
-            dto.setForzarAperturaDialogo(Boolean.FALSE);
-        }
-    }
-  
+   
      public void consultarPermiso(){
         listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro);
         if(listaReg == null || listaReg.isEmpty()){
@@ -249,7 +170,7 @@ public class ControladorBecasPeriodoPYE implements Serializable{
     public void alinearRegistro(){
         Boolean alineado = ejbModulos.alinearRegistroActividad(dto.getAlineacionActividad(), dto.getRegistro().getBecasPeriodosEscolares().getRegistro());
         if(alineado){
-            filtroDeActividades(dto.getMes(), dto.getEjercicioFiscal());
+            controladorBecasPeriodo.filtroDeActividades(dto.getMes(), dto.getEjercicioFiscal());
             abrirAlineacionPOA(dto.getRegistro());
             Messages.addGlobalInfo("El registro se alineó de forma correcta.");
         }else Messages.addGlobalError("El registro no pudo alinearse.");
@@ -266,7 +187,7 @@ public class ControladorBecasPeriodoPYE implements Serializable{
                 cargarAlineacionXActividad();
                 Ajax.update("frmAlineacion");
             } catch (Throwable ex) {
-                Logger.getLogger(ControladorServiciosEnfermeriaPYE.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ControladorBecasPeriodoPYE.class.getName()).log(Level.SEVERE, null, ex);
             }
         }else Messages.addGlobalError("La alineación no pudo eliminarse.");
     }

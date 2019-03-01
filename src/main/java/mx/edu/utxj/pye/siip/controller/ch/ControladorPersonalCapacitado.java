@@ -82,9 +82,9 @@ public class ControladorPersonalCapacitado implements Serializable{
     public void init(){
         dto = new DtoPersonalCapacitado();  
         dtopart = new  DtoParticipantesPerCap();
-        dto.setArea((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
       
-        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
+        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea().getArea()));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());
@@ -189,8 +189,8 @@ public class ControladorPersonalCapacitado implements Serializable{
     }
     
     public void cargarListaPorEvento(){
-       dto.setLista(ejb.getListaRegistrosPorEventoAreaPeriodo(dto.getEventoSeleccionado(), dto.getArea(), dto.getPeriodo()));
-       dtopart.setLista(ejb.getListaRegistrosPorEventoAreaPeriodoPart(dto.getEventoSeleccionado(), dto.getArea(), dto.getPeriodo()));
+       dto.setLista(ejb.getListaRegistrosPorEventoAreaPeriodo(dto.getEventoSeleccionado(), dto.getAreaPOA().getArea(), dto.getPeriodo()));
+       dtopart.setLista(ejb.getListaRegistrosPorEventoAreaPeriodoPart(dto.getEventoSeleccionado(), dto.getAreaPOA().getArea(), dto.getPeriodo()));
     }
     
     public void cargarEvidenciasPorRegistro(){
@@ -279,7 +279,7 @@ public class ControladorPersonalCapacitado implements Serializable{
     public void guardaPersonalCapacitado() {
       if (dto.getLista() != null) {
             try {
-                ejb.guardaPersonalCapacitado(dto.getLista(), dto.getRegistroTipo(), dto.getEje(), dto.getArea(), controladorModulosRegistro.getEventosRegistros());
+                ejb.guardaPersonalCapacitado(dto.getLista(), dto.getRegistroTipo(), dto.getEje(), dto.getAreaPOA().getArea(), controladorModulosRegistro.getEventosRegistros());
                 Ajax.update("formMuestraDatosActivos");
                 Ajax.update("formMuestraDatosActivosPPC");
             } catch (Throwable ex) {
