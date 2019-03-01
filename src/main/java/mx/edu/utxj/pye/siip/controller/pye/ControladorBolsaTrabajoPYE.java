@@ -36,6 +36,7 @@ import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoExceptio
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
+import mx.edu.utxj.pye.siip.controller.vin.ControladorBolsaTrabajo;
 import mx.edu.utxj.pye.siip.dto.vin.DtoBolsaTrabajo;
 import mx.edu.utxj.pye.siip.dto.vin.DtoBolsaEntrevistas;
 import mx.edu.utxj.pye.siip.dto.vinculacion.DTOBolsa;
@@ -66,6 +67,7 @@ public class ControladorBolsaTrabajoPYE implements Serializable{
     @EJB EjbEvidenciasAlineacion ejbEvidenciasAlineacion;
     @EJB EjbModulos ejbModulos;
     @EJB EjbPlantillasVINExcel ejbPlantillasVINExcel;
+    @Inject ControladorBolsaTrabajo controladorBolsaTrabajo;
     @Inject ControladorEmpleado controladorEmpleado;
     @Inject ControladorModulosRegistro controladorModulosRegistro;
     
@@ -96,8 +98,15 @@ public class ControladorBolsaTrabajoPYE implements Serializable{
         consultarPermiso();
 
     }
-   
-   public void initFiltros(){
+    
+    public void consultarPermiso(){
+        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro);
+        if(listaReg == null || listaReg.isEmpty()){
+            Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
+        }
+    }
+    
+     public void initFiltros(){
         dto.setPeriodos(ejb.getPeriodosConregistro());
         dto.setEventosPorPeriodo(ejb.getEventosPorPeriodo(dto.getPeriodo()));
         try {
@@ -113,71 +122,15 @@ public class ControladorBolsaTrabajoPYE implements Serializable{
         cargarListaPorEvento();
     }
     
-    public void cargarListaPorEvento(){
-       dto.setLista(ejb.getListaRegistrosPorEventoAreaPeriodo(dto.getEventoSeleccionado(), dto.getArea().getArea(), dto.getPeriodo()));
-       dtopart.setLista(ejb.getListaRegistrosPorEventoAreaPeriodoPart(dto.getEventoSeleccionado(), dto.getArea().getArea(), dto.getPeriodo()));
-    }
-    
-    public void cargarEvidenciasPorRegistro(){
-        dto.setListaEvidencias(ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(dto.getRegistro().getBolsaTrabajo().getRegistro()));
-        Ajax.update("frmEvidencias");
-    }
-    
-    public List<EvidenciasDetalle> consultarEvidencias(DTOBolsa registro){
-        return ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(registro.getBolsaTrabajo().getRegistro());
-    }
-    
-    public void descargarEvidencia(EvidenciasDetalle evidencia) throws IOException{
-        File f = new File(evidencia.getRuta());
-        Faces.sendFile(f, false);
-    }
-  
-    public void eliminarEvidencia(EvidenciasDetalle evidencia){
-        Boolean eliminado = ejbEvidenciasAlineacion.eliminarEvidenciaEnRegistro(dto.getRegistro().getBolsaTrabajo().getRegistro(), evidencia);
-        if(eliminado){ 
-            Messages.addGlobalInfo("El archivo se eliminó de forma correcta.");
-            cargarEvidenciasPorRegistro();
-            Ajax.update("frmEvidencias");
-        }else Messages.addGlobalError("El archivo no pudo eliminarse.");
-    }
-    
-      
-    public void forzarAperturaEvidenciasDialogo(){
-        if(dto.getForzarAperturaDialogo()){
-            Ajax.oncomplete("PF('modalCargaEvidencia').show();");
-            dto.setForzarAperturaDialogo(Boolean.FALSE);
-        }
-    }
-    
-    public void seleccionarRegistro(DTOBolsa registro){
-        dto.setRegistro(registro);
-        cargarEvidenciasPorRegistro();
-        Ajax.oncomplete("skin();");
-        dto.setForzarAperturaDialogo(Boolean.TRUE);
-        forzarAperturaEvidenciasDialogo();
-    }
-    
-    public void subirEvidencias(){
-        Map.Entry<Boolean, Integer> res = ejbEvidenciasAlineacion.registrarEvidenciasARegistro(dto.getRegistro().getBolsaTrabajo().getRegistro(), dto.getArchivos(), dto.getEventoActual(), dto.getRegistroTipo());
-        if(res.getKey()){ 
-            cargarListaPorEvento();
-            Messages.addGlobalInfo("Las evidencias se registraron correctamente.");
-        }else{ 
-            Messages.addGlobalError(String.format("Se registraron %s de %s evidencias, verifique e intente agregar las evidencias faltantes.", res.getValue().toString(),String.valueOf(dto.getArchivos().size())));
-        }
-    }
-     
-    public void actualizarMeses(ValueChangeEvent e){
+     public void actualizarMeses(ValueChangeEvent e){
         dto.setPeriodo((PeriodosEscolares)e.getNewValue());
         dto.setEventosPorPeriodo(ejb.getEventosPorPeriodo(dto.getPeriodo()));
         cargarListaPorEvento();
     }
-  
-    public void consultarPermiso(){
-        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro);
-        if(listaReg == null || listaReg.isEmpty()){
-            Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
-        }
+    
+     public void cargarListaPorEvento(){
+       dto.setLista(ejb.getListaRegistrosPorEventoAreaPeriodo(dto.getEventoSeleccionado(), dto.getAreaPOA().getArea(), dto.getPeriodo()));
+       dtopart.setLista(ejb.getListaRegistrosPorEventoAreaPeriodoPart(dto.getEventoSeleccionado(), dto.getAreaPOA().getArea(), dto.getPeriodo()));
     }
     
     public Boolean verificaAlineacion(Integer registro) throws Throwable{
@@ -243,14 +196,14 @@ public class ControladorBolsaTrabajoPYE implements Serializable{
             Ajax.oncomplete("skin();");
             Ajax.oncomplete("PF('modalAlineacion').show();");
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorDesercionReprobacionPYE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorBolsaTrabajoPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public void alinearRegistro(){
         Boolean alineado = ejbModulos.alinearRegistroActividad(dto.getAlineacionActividad(), dto.getRegistro().getBolsaTrabajo().getRegistro());
         if(alineado){
-            cargarListaPorEvento();
+            controladorBolsaTrabajo.cargarListaPorEvento();
             abrirAlineacionPOA(dto.getRegistro());
             Messages.addGlobalInfo("El registro se alineó de forma correcta.");
         }else Messages.addGlobalError("El registro no pudo alinearse.");
@@ -267,7 +220,7 @@ public class ControladorBolsaTrabajoPYE implements Serializable{
                 cargarAlineacionXActividad();
                 Ajax.update("frmAlineacion");
             } catch (Throwable ex) {
-                Logger.getLogger(ControladorDesercionReprobacionPYE.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ControladorBolsaTrabajoPYE.class.getName()).log(Level.SEVERE, null, ex);
             }
         }else Messages.addGlobalError("La alineación no pudo eliminarse.");
     }

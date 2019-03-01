@@ -34,6 +34,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
+import mx.edu.utxj.pye.siip.controller.pye.ControladorFeriasParticipantesPYE;
 import mx.edu.utxj.pye.siip.dto.vin.DtoFeriasProfesiograficas;
 import mx.edu.utxj.pye.siip.entity.vinculacion.list.ListaFeriasDTO;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbEvidenciasAlineacion;

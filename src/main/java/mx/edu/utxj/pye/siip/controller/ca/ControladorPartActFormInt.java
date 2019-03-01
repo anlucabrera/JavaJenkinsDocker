@@ -32,6 +32,7 @@ import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
+import mx.edu.utxj.pye.siip.dto.eb.DTODatosEstudiante;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbActFormacionIntegral;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbPartFormInt;
 import mx.edu.utxj.pye.siip.dto.pye.DTOParticipantesActFormInt;
@@ -262,7 +263,7 @@ public class ControladorPartActFormInt implements Serializable{
         }else Messages.addGlobalError("El registro no pudo alinearse.");
     }
     
-    public List<DTOParticipantesActFormInt> consultarParticipantes(String actividad){
+    public List<DTODatosEstudiante> consultarParticipantes(String actividad){
          return ejb.getListaParticipantesPorActividad(actividad);
     }
     

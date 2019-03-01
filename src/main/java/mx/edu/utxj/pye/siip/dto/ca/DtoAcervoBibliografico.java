@@ -40,7 +40,7 @@ public class DtoAcervoBibliografico {
     @Getter private ActividadesPoa alineacionActividad; 
     
     @Getter Boolean tieneEvidencia, forzarAperturaDialogo;
-    @Getter private Short area;
+    @Getter private AreasUniversidad area;
     @Getter private String rutaArchivo;
     
     @Getter private List<EventosRegistros> eventosPorPeriodo;
@@ -83,7 +83,7 @@ public class DtoAcervoBibliografico {
         this.registroTipo = registroTipo;
     }
 
-    public void setArea(Short area) {
+    public void setArea(AreasUniversidad area) {
         this.area = area;
     }
 

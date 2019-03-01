@@ -34,7 +34,7 @@ public class DtoVisitasIndustriales {
     /*Propiedades orginales del controlador*/
     @Getter RegistrosTipo registroTipo;    
     @Getter EjesRegistro ejesRegistro;
-    @Getter Short area;
+    @Getter AreasUniversidad area;
     
     @Getter private ListaVisitasIndustriales listaVisitasIndustriales = new ListaVisitasIndustriales();
     /*Fin de la propiedades originales del controlador*/
@@ -93,7 +93,7 @@ public class DtoVisitasIndustriales {
         this.ejesRegistro = ejesRegistro;
     }
 
-    public void setArea(Short area) {
+    public void setArea(AreasUniversidad area) {
         this.area = area;
     }
 

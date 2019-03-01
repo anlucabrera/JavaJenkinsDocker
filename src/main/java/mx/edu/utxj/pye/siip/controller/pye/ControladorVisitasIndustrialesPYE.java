@@ -8,12 +8,12 @@ package mx.edu.utxj.pye.siip.controller.pye;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
@@ -22,22 +22,23 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
+import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
-import mx.edu.utxj.pye.sgi.facade.Facade;
-import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
-import mx.edu.utxj.pye.siip.dto.vinculacion.DTOMovilidadDocente;
-import mx.edu.utxj.pye.siip.dto.ca.DtoMovilidadDocente;
-import mx.edu.utxj.pye.siip.dto.ca.DtoRegistrosMovilidad;
+import mx.edu.utxj.pye.siip.controller.vin.ControladorVisitasIndustriales;
+import mx.edu.utxj.pye.siip.dto.vin.DtoVisitasIndustriales;
+import mx.edu.utxj.pye.siip.entity.pye.list.ListaDtoVisitasIndustriales;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbEvidenciasAlineacion;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
-import mx.edu.utxj.pye.siip.interfaces.vin.EjbRegistroMovilidad;
-import mx.edu.utxj.pye.siip.interfaces.vin.EjbMovilidadDocente;
+import mx.edu.utxj.pye.siip.interfaces.vin.EjbPlantillasVINExcel;
+import mx.edu.utxj.pye.siip.interfaces.vin.EjbVisitasIndustriales;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
@@ -47,98 +48,51 @@ import org.omnifaces.util.Messages;
  *
  * @author UTXJ
  */
-@Named(value = "movilidadDocentePYE")
+@Named(value = "visitasIndustrialesPYE")
+@ManagedBean
 @ViewScoped
-public class ControladorMovilidadDocentePYE implements Serializable{
+public class ControladorVisitasIndustrialesPYE implements Serializable {
 
-    private static final long serialVersionUID = 3563443106557324245L;
-    
-    @Getter @Setter DtoMovilidadDocente dto;
-    @Getter @Setter DtoRegistrosMovilidad dtoreg;
-   
-    @EJB EjbMovilidadDocente ejb;
-    @EJB EjbRegistroMovilidad ejbreg;
+    private static final long serialVersionUID = 7041317073822591839L;
+    /*Se importa el dto y el ejb que carga los combos*/
+    @Getter @Setter DtoVisitasIndustriales dto;
+    @EJB EJBSelectItems ejbItems;
     @EJB EjbFiscalizacion ejbFiscalizacion;
     @EJB EjbEvidenciasAlineacion ejbEvidenciasAlineacion;
     @EJB EjbModulos ejbModulos;
+    @EJB EjbVisitasIndustriales ejbVisitasIndustriales;
+    @EJB EjbPlantillasVINExcel ejbPlantillasVINExcel;
+    @Inject ControladorVisitasIndustriales controladorVisitasIndustriales;
     @Inject ControladorEmpleado controladorEmpleado;
     @Inject ControladorModulosRegistro controladorModulosRegistro;
-    @Inject ControladorRegistrosMovilidadPYE  controladorRegistrosMovilidad;
     
-     @EJB Facade f;
-    
+     //Variables para verificar permiso del usuario para visualizar apartado
+    @Getter @Setter private List<ModulosRegistrosUsuarios> listaReg;
+    @Getter @Setter private Integer clavePersonal;
+    @Getter @Setter private Short claveRegistro;
+
     @PostConstruct
-    public void init(){
-        dto = new DtoMovilidadDocente();        
-        dto.setArea((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+    public void init() {
+
+        dto = new DtoVisitasIndustriales();
         
-        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
+        dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short)17));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
-        try {
-            dto.setEventoActual(ejbModulos.getEventoRegistro());
-        } catch (EventoRegistroNoExistenteException ex) {
-            Logger.getLogger(ControladorRegistrosMovilidadPYE.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    
+        
+        clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
+        claveRegistro = 83;
+        consultarPermiso();
     }
-     
-     /* Se agregó para Evidencias por Participante  */
-    public void subirEvidencias(){
-       Map.Entry<Boolean, Integer> res = ejbEvidenciasAlineacion.registrarEvidenciasARegistro(dto.getRegistro().getRegistroMovilidadDocente().getRegistro(), dto.getArchivos(), dto.getEventoActual(), dto.getRegistroTipo());
-        if(res.getKey()){ 
-            controladorRegistrosMovilidad.cargarListaPorEvento();
-            Messages.addGlobalInfo("Las evidencias se registraron correctamente.");
-        }else{ 
-            Messages.addGlobalError(String.format("Se registraron %s de %s evidencias, verifique e intente agregar las evidencias faltantes.", res.getValue().toString(),String.valueOf(dto.getArchivos().size())));
-        }
-    }
-     public void cargarEvidenciasPorRegistro(){
-        dto.setListaEvidencias(ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(dto.getRegistro().getRegistroMovilidadDocente().getRegistro()));
-        Ajax.update("frmEvidenciasDoc");
-    }
-     
-    public void consultarEvidencias(){
-        dto.setListaEvidencias(ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(dto.getRegistro().getRegistroMovilidadDocente().getRegistro()));
-        Ajax.update("frmEvidenciasDoc");
-    }
-    
-    public List<EvidenciasDetalle> consultarEvidencias(DTOMovilidadDocente registro){
-         return ejbEvidenciasAlineacion.getListaEvidenciasPorRegistro(registro.getRegistroMovilidadDocente().getRegistro());
-    }
-    
-    public void eliminarEvidencia(EvidenciasDetalle evidencia){
-        Boolean eliminado = ejbEvidenciasAlineacion.eliminarEvidenciaEnRegistro(dto.getRegistro().getRegistroMovilidadDocente().getRegistro(), evidencia);
-        if(eliminado){ 
-            Messages.addGlobalInfo("El archivo se eliminó de forma correcta.");
-            cargarEvidenciasPorRegistro();
-            Ajax.update("frmEvidenciasDoc");
-        }else Messages.addGlobalError("El archivo no pudo eliminarse.");
-    }
-    
-    public void forzarAperturaEvidenciasDialogo(){
-        if(dto.getForzarAperturaDialogo()){
-            Ajax.oncomplete("PF('modalCargaEvidenciaDoc').show();");
-            dto.setForzarAperturaDialogo(Boolean.FALSE);
+   
+    public void consultarPermiso(){
+        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro);
+        if(listaReg == null || listaReg.isEmpty()){
+            Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
         }
     }
     
-    public void seleccionarRegistro(DTOMovilidadDocente registro){
-        dto.setRegistro(registro);
-        cargarEvidenciasPorRegistro();
-        Ajax.oncomplete("skin();");
-        dto.setForzarAperturaDialogo(Boolean.TRUE);
-        forzarAperturaEvidenciasDialogo();
-    }
-    
-    
-     public void descargarEvidencia(EvidenciasDetalle evidencia) throws IOException{
-        File f = new File(evidencia.getRuta());
-        Faces.sendFile(f, false);
-    }
-     
-     /* Se agregó para Alineación a Poa Participantes*/
-    
-    public Boolean verificaAlineacion(Integer registro) throws Throwable{
+     public Boolean verificaAlineacion(Integer registro) throws Throwable{
         return ejbModulos.verificaActividadAlineadaGeneral(registro);
     }
     
@@ -191,41 +145,41 @@ public class ControladorMovilidadDocentePYE implements Serializable{
         Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
     }
     
-    public void abrirAlineacionPOA(DTOMovilidadDocente registro){
+    public void abrirAlineacionPOA(ListaDtoVisitasIndustriales registro){
         try {
             dto.setRegistro(registro);
-            dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getRegistroMovilidadDocente().getRegistro()));
-            actualizarEjes(dto.getRegistro().getRegistroMovilidadDocente().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+            dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getVisitasIndustriales().getRegistro()));
+            actualizarEjes(dto.getRegistro().getVisitasIndustriales().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
             cargarAlineacionXActividad();
             Ajax.update("frmAlineacion");
             Ajax.oncomplete("skin();");
             Ajax.oncomplete("PF('modalAlineacion').show();");
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorMovilidadDocentePYE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorDifusionIemsPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public void alinearRegistro(){
-        Boolean alineado = ejbModulos.alinearRegistroActividad(dto.getAlineacionActividad(), dto.getRegistro().getRegistroMovilidadDocente().getRegistro());
+        Boolean alineado = ejbModulos.alinearRegistroActividad(dto.getAlineacionActividad(), dto.getRegistro().getVisitasIndustriales().getRegistro());
         if(alineado){
-            controladorRegistrosMovilidad.cargarListaPorEvento();
+            controladorVisitasIndustriales.filtroVisitas(dto.getMes(), dto.getEjercicioFiscal());
             abrirAlineacionPOA(dto.getRegistro());
             Messages.addGlobalInfo("El registro se alineó de forma correcta.");
         }else Messages.addGlobalError("El registro no pudo alinearse.");
     }
     
     public void eliminarAlineacion(){
-        Boolean eliminado = ejbModulos.eliminarAlineacion(dto.getRegistro().getRegistroMovilidadDocente().getRegistro());
+        Boolean eliminado = ejbModulos.eliminarAlineacion(dto.getRegistro().getVisitasIndustriales().getRegistro());
         if(eliminado){ 
             try {
                 Messages.addGlobalInfo("La alineación se eliminó de forma correcta.");
                 dto.getRegistro().setActividadAlineada(null);
-                dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getRegistroMovilidadDocente().getRegistro()));
-                actualizarEjes(dto.getRegistro().getRegistroMovilidadDocente().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+                dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getRegistro().getVisitasIndustriales().getRegistro()));
+                actualizarEjes(dto.getRegistro().getVisitasIndustriales().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
                 cargarAlineacionXActividad();
                 Ajax.update("frmAlineacion");
             } catch (Throwable ex) {
-                Logger.getLogger(ControladorMovilidadDocentePYE.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ControladorDifusionIemsPYE.class.getName()).log(Level.SEVERE, null, ex);
             }
         }else Messages.addGlobalError("La alineación no pudo eliminarse.");
     }

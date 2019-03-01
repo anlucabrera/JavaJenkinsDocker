@@ -36,6 +36,7 @@ import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoExceptio
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
+import mx.edu.utxj.pye.siip.controller.pye.ControladorBolsaTrabajoPYE;
 import mx.edu.utxj.pye.siip.dto.vin.DtoBolsaTrabajo;
 import mx.edu.utxj.pye.siip.dto.vin.DtoBolsaEntrevistas;
 import mx.edu.utxj.pye.siip.dto.vinculacion.DTOBolsa;
@@ -67,6 +68,7 @@ public class ControladorBolsaTrabajo implements Serializable{
     @EJB EjbModulos ejbModulos;
     @EJB EjbPlantillasVINExcel ejbPlantillasVINExcel;
     @Inject ControladorEmpleado controladorEmpleado;
+    @Inject ControladorBolsaTrabajoPYE controladorBolsaTrabajoPYE;
     @Inject ControladorModulosRegistro controladorModulosRegistro;
     
     @EJB Facade f;
@@ -318,6 +320,7 @@ public class ControladorBolsaTrabajo implements Serializable{
                    }
                    ejbModulos.eliminarRegistroParticipantes(registroParticipantes);
                    initFiltros();
+                   controladorBolsaTrabajoPYE.initFiltros();
                    Ajax.update("formMuestraDatosActivos");
                    Ajax.update("formMuestraDatosActivosEnt");
                }
@@ -326,11 +329,13 @@ public class ControladorBolsaTrabajo implements Serializable{
 
                    ejbModulos.eliminarRegistroEvidencias(registroEvidencias);
                    initFiltros();
+                   controladorBolsaTrabajoPYE.initFiltros();
                    Ajax.update("formMuestraDatosActivos");
                }
 
                ejbModulos.eliminarRegistro(registro);
                initFiltros();
+               controladorBolsaTrabajoPYE.initFiltros();
                Ajax.update("formMuestraDatosActivos");
 
            } catch (Throwable ex) {
@@ -352,7 +357,7 @@ public class ControladorBolsaTrabajo implements Serializable{
                 ejbModulos.eliminarRegistroEvidencias(registroEvidencias);
                 ejbModulos.eliminarRegistro(registro);
                 initFiltros();
-                Ajax.update("formMuestraDatosActivosPAFI");
+                Ajax.update("formMuestraDatosActivosEnt");
             }
             if(registroEvidencias.isEmpty()){
             

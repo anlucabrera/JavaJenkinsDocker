@@ -41,19 +41,13 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "MatriculaPeriodosEscolares.findByCurp", query = "SELECT m FROM MatriculaPeriodosEscolares m WHERE m.curp = :curp")})
 public class MatriculaPeriodosEscolares implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "registro")
-    private Integer registro;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 6)
     @Column(name = "matricula")
     private String matricula;
     @Basic(optional = false)
-    @NotNull
+    @NotNull()
     @Column(name = "periodo")
     private int periodo;
     @Basic(optional = false)
@@ -70,9 +64,32 @@ public class MatriculaPeriodosEscolares implements Serializable {
     @Size(min = 1, max = 2)
     @Column(name = "grupo")
     private String grupo;
-    @Size(max = 18)
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 18)
     @Column(name = "curp")
     private String curp;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "lenguaIndigena")
+    private String lenguaIndigena;
+    @Basic(optional = false)
+    @NotNull()
+    @Size(min = 1, max = 255)
+    @Column(name = "discapacidad")
+    private String discapacidad;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "comunidadIndigena")
+    private String comunidadIndigena;
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "registro")
+    private Integer registro;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Registros registros;
@@ -111,21 +128,6 @@ public class MatriculaPeriodosEscolares implements Serializable {
         this.registro = registro;
     }
 
-    public String getMatricula() {
-        return matricula;
-    }
-
-    public void setMatricula(String matricula) {
-        this.matricula = matricula;
-    }
-
-    public int getPeriodo() {
-        return periodo;
-    }
-
-    public void setPeriodo(int periodo) {
-        this.periodo = periodo;
-    }
 
     public short getProgramaEducativo() {
         return programaEducativo;
@@ -135,29 +137,6 @@ public class MatriculaPeriodosEscolares implements Serializable {
         this.programaEducativo = programaEducativo;
     }
 
-    public String getCuatrimestre() {
-        return cuatrimestre;
-    }
-
-    public void setCuatrimestre(String cuatrimestre) {
-        this.cuatrimestre = cuatrimestre;
-    }
-
-    public String getGrupo() {
-        return grupo;
-    }
-
-    public void setGrupo(String grupo) {
-        this.grupo = grupo;
-    }
-
-    public String getCurp() {
-        return curp;
-    }
-
-    public void setCurp(String curp) {
-        this.curp = curp;
-    }
 
     public Registros getRegistros() {
         return registros;
@@ -234,6 +213,70 @@ public class MatriculaPeriodosEscolares implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares[ registro=" + registro + " ]";
+    }
+
+    public String getMatricula() {
+        return matricula;
+    }
+
+    public void setMatricula(String matricula) {
+        this.matricula = matricula;
+    }
+
+    public int getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(int periodo) {
+        this.periodo = periodo;
+    }
+    
+    public String getCuatrimestre() {
+        return cuatrimestre;
+    }
+
+    public void setCuatrimestre(String cuatrimestre) {
+        this.cuatrimestre = cuatrimestre;
+    }
+
+    public String getGrupo() {
+        return grupo;
+    }
+
+    public void setGrupo(String grupo) {
+        this.grupo = grupo;
+    }
+
+    public String getCurp() {
+        return curp;
+    }
+
+    public void setCurp(String curp) {
+        this.curp = curp;
+    }
+
+    public String getLenguaIndigena() {
+        return lenguaIndigena;
+    }
+
+    public void setLenguaIndigena(String lenguaIndigena) {
+        this.lenguaIndigena = lenguaIndigena;
+    }
+
+    public String getDiscapacidad() {
+        return discapacidad;
+    }
+
+    public void setDiscapacidad(String discapacidad) {
+        this.discapacidad = discapacidad;
+    }
+
+    public String getComunidadIndigena() {
+        return comunidadIndigena;
+    }
+
+    public void setComunidadIndigena(String comunidadIndigena) {
+        this.comunidadIndigena = comunidadIndigena;
     }
     
 }

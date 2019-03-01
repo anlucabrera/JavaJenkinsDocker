@@ -47,10 +47,10 @@
                                         <p:outputLabel value="Ejercicio Fiscal" class="form-inline"/>
                                         <p:spacer width="15" class="form-inline"/>
                                         <div class="btn-group">                                        
-                                            <p:selectOneMenu value="#{presupuestosEjercicioPYE.dto.ejercicioFiscal}">
+                                            <p:selectOneMenu value="#{presupuestosEjercicio.dto.ejercicioFiscal}">
                                                 <!--<f:selectItem itemLabel="Ejercicio fiscal"/>-->
-                                                <f:selectItems value="#{presupuestosEjercicioPYE.dto.selectItemEjercicioFiscal}"/>
-                                                <p:ajax process="@this" update="somEjercicioF, formMuestraDatosActivos" listener="#{presupuestosEjercicioPYE.seleccionarMes(presupuestosEjercicioPYE.dto.ejercicioFiscal)}"/>
+                                                <f:selectItems value="#{presupuestosEjercicio.dto.selectItemEjercicioFiscal}"/>
+                                                <p:ajax process="@this" update="somEjercicioF, formMuestraDatosActivos" listener="#{presupuestosEjercicio.seleccionarMes(presupuestosEjercicio.dto.ejercicioFiscal)}"/>
                                             </p:selectOneMenu>
                                         </div>
                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
@@ -58,10 +58,10 @@
                                         <p:outputLabel value="Mes" class="form-inline"/>
                                         <p:spacer width="15" class="form-inline"/>
                                         <div class="btn-group">
-                                            <p:selectOneMenu id="somEjercicioF" value="#{presupuestosEjercicioPYE.dto.mes}" >
+                                            <p:selectOneMenu id="somEjercicioF" value="#{presupuestosEjercicio.dto.mes}" >
                                                 <!--<f:selectItem itemLabel="Mes"/>-->
-                                                <f:selectItems value="#{presupuestosEjercicioPYE.dto.selectItemMes}"/>
-                                                <p:ajax process="@this" update="formMuestraDatosActivos" listener="#{presupuestosEjercicioPYE.filtroPresupuestos(presupuestosEjercicioPYE.dto.mes, presupuestosEjercicioPYE.dto.ejercicioFiscal)}" />
+                                                <f:selectItems value="#{presupuestosEjercicio.dto.selectItemMes}"/>
+                                                <p:ajax process="@this" update="formMuestraDatosActivos" listener="#{presupuestosEjercicio.filtroPresupuestos(presupuestosEjercicio.dto.mes, presupuestosEjercicio.dto.ejercicioFiscal)}" />
                                             </p:selectOneMenu>
                                         </div>
                                 </f:facet>
@@ -85,12 +85,15 @@
                                                  resizeMode="expand"
                                                  tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
                                                  id="dtbPresupuestoAct"
-                                                 var="presupuesto" value="#{presupuestosEjercicioPYE.dto.lista}">
+                                                 var="presupuesto" value="#{presupuestosEjercicio.dto.lista}">
                                         <c:set var="presReg" value="#{presupuesto.presupuestos.registro}"/>
                                         <p:column headerText="Opciones" width="100" style="text-align: center;">
                                             <div class="btn-group">
-                                                <c:set var="evidencias" value="#{presupuestosEjercicioPYE.consultarEvidencias(presupuesto)}" />
-                                                <p:commandButton actionListener="#{presupuestosEjercicioPYE.seleccionarRegistro(presupuesto)}"
+                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{presupuestosEjercicio.eliminarRegistro(presReg)}" onsuccess="actualizarTabla();" title="Eliminar registro." disabled="#{presupuestosEjercicio.dto.eventoActual ne presupuesto.eventoSeleccionado}">
+                                                    <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <c:set var="evidencias" value="#{presupuestosEjercicio.consultarEvidencias(presupuesto)}" />
+                                                <p:commandButton actionListener="#{presupuestosEjercicio.seleccionarRegistro(presupuesto)}"
                                                                  class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" icon="fa fa-image"
                                                                  title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
                                                 <p:commandButton actionListener="#{presupuestosEjercicioPYE.abrirAlineacionPOA(presupuesto)}"
@@ -130,7 +133,7 @@
                             </h:form>
                         </div>
                     </div>
-                    <p:dialog id="modalCargaEvidencia" widgetVar="modalCargaEvidencia" width="700" height="auto"  closeOnEscape="true" visible="#{presupuestosEjercicioPYE.dto.forzarAperturaDialogo}"
+                    <p:dialog id="modalCargaEvidencia" widgetVar="modalCargaEvidencia" width="700" height="auto"  closeOnEscape="true" visible="#{presupuestosEjercicio.dto.forzarAperturaDialogo}"
                               showEffect="fade" hideEffect="fade" modal="true" draggable="true" header="Carga de evidencias" onHide="actualizarTabla();"
                               styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
                         <div class="row">
@@ -143,12 +146,12 @@
                                     </f:facet>
                                     <f:facet name="right">
                                         <o:form id="formularioEvidencia" enctype="multipart/form-data" class="form-inline"  >
-                                            <o:inputFile id="files" value="#{presupuestosEjercicioPYE.dto.archivos}"  multiple="true" class="form-control"
+                                            <o:inputFile id="files" value="#{presupuestosEjercicio.dto.archivos}"  multiple="true" class="form-control"
                                                          accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
                                                          maxsize="#{caster.evidenciasTamanioLimite}" maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true" requiredMessage="Debe elegir al menos un archivo." >
                                             </o:inputFile>
-                                            <h:commandButton id="btnuploadFiles" value="Subir archivos" class="btn btn-primary" actionListener="#{presupuestosEjercicioPYE.subirEvidencias()}" />
+                                            <h:commandButton id="btnuploadFiles" value="Subir archivos" class="btn btn-primary" actionListener="#{presupuestosEjercicio.subirEvidencias()}" />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -158,17 +161,17 @@
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
                                 <div class="col-md-2"><p:outputLabel value="Operación: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{presupuestosEjercicioPYE.dto.registro.presupuestos.presupuestoOperacion}" /></div>
+                                <div class="col-md-10"><p:outputLabel value="#{presupuestosEjercicio.dto.registro.presupuestos.presupuestoOperacion}" /></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-2"><p:outputLabel value="Tipo: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{presupuestosEjercicioPYE.dto.registro.presupuestos.presupuestoTipo}" /></div>
+                                <div class="col-md-10"><p:outputLabel value="#{presupuestosEjercicio.dto.registro.presupuestos.presupuestoTipo}" /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
                                 <div class="col-md-12">
                                     <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
-                                    <p:dataTable id="tblEvidencias" value="#{presupuestosEjercicioPYE.dto.listaEvidencias}" var="evidencia"
+                                    <p:dataTable id="tblEvidencias" value="#{presupuestosEjercicio.dto.listaEvidencias}" var="evidencia"
                                                  emptyMessage="No se han registrado evidencias de este registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
                                                  paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
                                                  >
@@ -182,7 +185,7 @@
                                         </p:columnGroup>
                                         <p:column style="text-align: center;">
                                             <div class="btn-group">
-                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{presupuestosEjercicioPYE.eliminarEvidencia(evidencia)}" onsuccess="actualizar2();" title="Eliminar evidencia.">
+                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{presupuestosEjercicio.eliminarEvidencia(evidencia)}" onsuccess="actualizar2();" title="Eliminar evidencia.">
                                                     <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
                                                 </p:commandButton>
                                                 <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{becasPeriodo.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
@@ -192,7 +195,7 @@
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
                                         <f:facet name="footer">
-                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{presupuestosEjercicioPYE.dto.listaEvidencias.size()}.</span>
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{presupuestosEjercicio.dto.listaEvidencias.size()}.</span>
                                         </f:facet>
                                     </p:dataTable>
                                 </div>
@@ -210,7 +213,7 @@
 
                                         </f:facet>
                                         <f:facet name="right">
-                                            <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{presupuestosEjercicioPYE.eliminarAlineacion()}" rendered="#{!empty presupuestosEjercicioPYE.dto.registro.actividadAlineada}" >
+                                            <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{presupuestosEjercicioPYE.eliminarAlineacion()}" rendered="#{!empty presupuestosEjercicio.dto.registro.actividadAlineada}" >
                                                 <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de esta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
                                             </p:commandButton>
                                             <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{presupuestosEjercicioPYE.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
@@ -221,11 +224,11 @@
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                            <div class="row">
                                 <div class="col-md-2"><p:outputLabel value="Operación: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{presupuestosEjercicioPYE.dto.registro.presupuestos.presupuestoOperacion}" /></div>
+                                <div class="col-md-10"><p:outputLabel value="#{presupuestosEjercicio.dto.registro.presupuestos.presupuestoOperacion}" /></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-2"><p:outputLabel value="Tipo: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{presupuestosEjercicioPYE.dto.registro.presupuestos.presupuestoTipo}" /></div>
+                                <div class="col-md-10"><p:outputLabel value="#{presupuestosEjercicio.dto.registro.presupuestos.presupuestoTipo}" /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <c:set var="fila" value="#{'padding-bottom: 5px;'}" />

@@ -449,7 +449,7 @@
                                                  emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
                                                  paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
                                                  >
-                                        <p:columnGroup type="header">
+                                       <p:columnGroup type="header">
                                             <p:row>
                                                 <p:column headerText="Matricula"  width="80" />
                                                 <p:column headerText="Programa Educativo"  width="200"/>
@@ -458,8 +458,8 @@
                                             </p:row>
                                         </p:columnGroup>
                                         <p:column style="text-align: center;"><h:outputText value="#{participanteAct.matriculaPeriodosEscolares.matricula}" /></p:column>
-                                        <p:column style="text-align: justify;"><h:outputText value="#{participanteAct.programaEducativo.nombre}" /></p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAct.genero}" /></p:column>
+                                        <p:column style="text-align: justify;"><h:outputText value="#{participanteAct.listaMatricula.carrera}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAct.listaMatricula.sexo}" /></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{participanteAct.matriculaPeriodosEscolares.cuatrimestre}° #{participanteAct.matriculaPeriodosEscolares.grupo}" /></p:column>
                                         <f:facet name="footer">
                                             <span style="font-size: smaller; font-weight: bold;">Total de participantes registrados: #{fn:length(partActFormInt.dto.listaParticipantes)}.</span>

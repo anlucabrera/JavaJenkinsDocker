@@ -40,6 +40,7 @@ import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.dto.finanzas.DTOIngPropios;
 import mx.edu.utxj.pye.siip.dto.finanzas.DtoIngresosPropios;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
+import mx.edu.utxj.pye.siip.controller.pye.ControladorIngPropiosPYE;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbEvidenciasAlineacion;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.pa.EjbIngPropios;
@@ -67,6 +68,7 @@ public class ControladorIngPropios implements Serializable{
     @EJB EjbEvidenciasAlineacion ejbEvidenciasAlineacion;
     @EJB EjbModulos ejbModulos;
     @EJB EjbPlantillasPAExcel ejbPlantillasPAExcel;
+    @Inject ControladorIngPropiosPYE controladorIngPropiosPYE;
     @Inject ControladorEmpleado controladorEmpleado;
     @Inject ControladorModulosRegistro controladorModulosRegistro;
     
@@ -177,11 +179,13 @@ public class ControladorIngPropios implements Serializable{
 
                    ejbModulos.eliminarRegistroEvidencias(registroEvidencias);
                    initFiltros();
+                   controladorIngPropiosPYE.initFiltros();
                    Ajax.update("formMuestraDatosActivos");
                }
 
                ejbModulos.eliminarRegistro(registro);
                initFiltros();
+               controladorIngPropiosPYE.initFiltros();
                Ajax.update("formMuestraDatosActivos");
 
            } catch (Throwable ex) {
