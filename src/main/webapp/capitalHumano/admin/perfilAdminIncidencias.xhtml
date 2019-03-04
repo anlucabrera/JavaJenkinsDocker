@@ -80,7 +80,7 @@
                                                          editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
 
                                                 <p:ajax event="rowEdit" listener="#{administracionControl.onRowEdit}"  process="@this" update="@this" oncomplete="actualizarTabla()"/>
-                                                <p:ajax event="rowEditCancel" listener="#{administracionControl.onRowCancel}" update="tblActividades" />
+                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblActividades" />
 
                                                 <p:headerRow>
                                                     <p:column colspan="8" style="background: #2796cb; color: #FFFFFF;">
@@ -147,9 +147,7 @@
                                                              editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
 
                                                     <p:ajax event="rowEdit" listener="#{administracionControl.onRowEditModulos}" update="tblReportes" process="@this"/>
-                                                    <p:ajax event="rowEditCancel" listener="#{administracionControl.onRowCancel}" update="tblReportes" />
-
-
+                                                    <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblReportes" />
 
                                                     <p:column headerText="Nombre" style="width: 20%;text-align: justify;"
                                                               sortBy="#{modulos.nombre}"

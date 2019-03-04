@@ -40,7 +40,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
     @Getter    @Setter    private List<AreasUniversidad> listaAreasUniversidads = new ArrayList<>();
     @Getter    @Setter    private AreasUniversidad au = new AreasUniversidad();
     @Getter    @Setter    private String[] nombreAr;
-    @Getter    @Setter    private String areaNombre = "";
+    @Getter    @Setter    private String areaNombre = "",mes="";
     @Getter    @Setter    private Short area = 0;
 
     @Getter    @Setter    private LocalDate fechaActual = LocalDate.now(), fechaI = LocalDate.now(), fechaF = LocalDate.now();
@@ -85,6 +85,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
 
     public void mostrarIncidencias(String mActual) {
         try {
+            mes = mActual;
             List<Incidencias> incidenciases = new ArrayList<>();
             incidenciases.clear();
             List<Incapacidad> incapacidads = new ArrayList<>();
@@ -103,11 +104,10 @@ public class ControladorIncidenciasGeneral implements Serializable {
                     fechaI = LocalDate.of(anioNumero, Integer.parseInt(mActual), 01);
                     fechaF = LocalDate.of(anioNumero, Integer.parseInt(mActual), 15);
                 } else {
-                    fechaI = LocalDate.of(anioNumero, Integer.parseInt(mActual), 01);
+                    fechaI = LocalDate.of(anioNumero, Integer.parseInt(mActual), 16);
                     fechaF = LocalDate.of(anioNumero, Integer.parseInt(mActual), LocalDate.of(anioNumero, Integer.parseInt(mActual), 01).lengthOfMonth());
                 }
             }
-            
             listaIncidencias = new ArrayList<>();
             listaIncidencias.clear();
             incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
@@ -173,13 +173,13 @@ public class ControladorIncidenciasGeneral implements Serializable {
     public void vistaMensualAsiganado(ValueChangeEvent event) {
         vistaMensual = true;
         vistaMensual = (Boolean) event.getNewValue();
-        mostrarIncidencias(String.valueOf(fechaActual.getMonthValue()));
+        mostrarIncidencias(mes);
     }
 
     public void numeroQuincenaAsiganado(ValueChangeEvent event) {
         numeroQuincena = "";
         numeroQuincena = event.getNewValue().toString();
-        mostrarIncidencias(String.valueOf(fechaActual.getMonthValue()));
+        mostrarIncidencias(mes);
     }
 
     public void numeroAreaAsiganado(ValueChangeEvent event) {
@@ -191,7 +191,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
         } else {
             areaNombre = buscarArea(area);
         }
-        mostrarIncidencias(String.valueOf(fechaActual.getMonthValue()));
+        mostrarIncidencias(mes);
     }
 
     public void eliminarIncidencia(Incidencias incidencias) {
@@ -200,7 +200,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
                 CargaArchivosCH.eliminarArchivo(incidencias.getEvidencia());
             }
             ejbNotificacionesIncidencias.eliminarIncidencias(incidencias);
-            mostrarIncidencias(String.valueOf(fechaActual.getMonthValue()));
+            mostrarIncidencias(mes);
             Ajax.update("frmInciGeneral");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -224,7 +224,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
     public void numeroAnioAsiganado(ValueChangeEvent event) {
         anioNumero = 0;
         anioNumero = Integer.parseInt(event.getNewValue().toString());
-        mostrarIncidencias(String.valueOf(fechaActual.getMonthValue()));
+        mostrarIncidencias(mes);
     }
 
     public String buscarArea(Short area) {
@@ -240,7 +240,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
     }
 
     public void novisible() {
-        mostrarIncidencias(String.valueOf(fechaActual.getMonthValue()));
+        mostrarIncidencias(mes);
     }
 
     public void imprimirValores() {

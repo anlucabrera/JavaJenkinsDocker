@@ -93,8 +93,7 @@
                                     </h:form>
                                 </div>
                                 <p:tabView>
-                                    <p:tab title="Funciones">
-                                        <!--c:if test="#{controladorEmpleado.fechaLimiteFunciones}"-->
+                                    <p:tab title="Registro de Funciones">
                                         <h:form id="frmInci"> 
                                             <p:outputPanel>
                                                 <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
@@ -203,11 +202,11 @@
 
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
-                                                            <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px" />
-                                                            <p:column rowspan="2" headerText="Categoría/Puesto" style="width: 100px;" />
-                                                            <p:column rowspan="2" headerText="Categoría/Puesto especifico" style="width: 100px;"/>
-                                                            <p:column rowspan="2" headerText="Descripción" style="width: 450px;"/>
-                                                            <p:column rowspan="2" headerText="Tipo" style="width: 250px;"/> 
+                                                            <p:column colspan="3" rowspan="2" headerText="Opciones" style="width:150px" />
+                                                            <p:column rowspan="2" headerText="Categoría/Puesto" style="width: 150px;" />
+                                                            <p:column rowspan="2" headerText="Categoría/Puesto especifico" style="width: 150px;"/>
+                                                            <p:column rowspan="2" headerText="Descripción" style="width: 600px;"/>
+                                                            <p:column rowspan="2" headerText="Tipo" style="width: 100px;"/> 
                                                         </p:row>
                                                     </p:columnGroup>
 
@@ -282,31 +281,10 @@
 
                                         </h:form>    
 
-                                        <!--/c:if-->
+                                        
+                                    </p:tab>
+                                    <p:tab title="Funciones">
                                         <c:if test="#{!controladorEmpleado.fechaLimiteFunciones}">
-                                            <!--div class="box box-solid">
-                                                <div class="box-header with-border">
-                                                    <h3 class="info-box-number">Fecha límite</h3>
-                                                    <div class="box-tools pull-right">
-                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div class="box-body">  
-                                                    <div class="row">
-                                                        <div class="col-md-12 col-sm-12 col-xs-12">
-                                                            <div class="info-box">
-                                                                <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
-
-                                                                <div class="info-box-content">
-                                                                    <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                                                    <span class="info-box-number">La fecha límite para la actualización de curriculum se ha vencido <p style="# {controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>                
-                                                </div>
-                                            </div>
                                             <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                 <div class="col-md-12">
                                                     <div class="box box-widget widget-user-2">
@@ -343,7 +321,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div-->
+                                            </div>
                                         </c:if>
                                     </p:tab>
                                     <p:tab title="Organigrama oficial">

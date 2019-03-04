@@ -2,6 +2,7 @@ package mx.edu.utxj.pye.sgi.controladores.ch;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -96,6 +97,7 @@ public class ControladorSubordinados implements Serializable {
     @Getter    @Setter    private String[] nombreAr;
 
     @Getter    @Setter    private LocalDate fechaNow;
+    @Getter    @Setter    private LocalDateTime fechaActual;
     @Getter    @Setter    private LocalDate fechaI ,fechaF,fechaIR, fechaFR;
     @Getter    @Setter    private Integer contactoDestino, anioNumero = 0;
     @Getter    @Setter    private Boolean visible = false, fechaReportesActiva=false;
@@ -141,6 +143,7 @@ public class ControladorSubordinados implements Serializable {
 
     public void reportesJustificacionAsistencias() {
         try {
+            fechaActual=LocalDateTime.now();
             fechaReportesActiva = false;
             List<Incidencias> incidenciases = new ArrayList<>();
             incidenciases.clear();
@@ -151,9 +154,10 @@ public class ControladorSubordinados implements Serializable {
             if (modulosRegistro == null) {
                 return;
             }
-            LocalDate fechaMi = utilidadesCH.castearDaLD(modulosRegistro.getFechaInicio());
-            LocalDate fechaMF = utilidadesCH.castearDaLD(modulosRegistro.getFechaFin());
-            if (fechaNow.isAfter(fechaMi) && fechaNow.isBefore(fechaMF)) {
+            LocalDateTime fechaMi = utilidadesCH.castearDaLDT(modulosRegistro.getFechaInicio());
+            LocalDateTime fechaMF = utilidadesCH.castearDaLDT(modulosRegistro.getFechaFin());
+            
+            if ((fechaActual.isAfter(fechaMi) || fechaActual.equals(fechaMi)) && (fechaActual.isBefore(fechaMF) || fechaActual.equals(fechaMF))) {
                 fechaReportesActiva = true;
                 if (fechaMF.getDayOfMonth() > 15) {
                     fechaIR = LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue(), 01);
