@@ -105,13 +105,14 @@
                                 <div class="progress">
                                     <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
                                          aria-valuenow="#{datosEncEgre.porcentaje}" aria-valuemin="0" aria-valuemax="100"
-                                         style="background-color: #337ab7; width:#{datosEncEgre.porcentaje}%">
-                                    </div>
+                                         style="background-color: #00a65a; width:#{datosEncEgre.porcentaje}%">
                                     <span class="progress-completed">
-                                                        <h:outputText value="#{datosEncEgre.porcentaje}">
+                                                        <h:outputText value="#{datosEncEgre.porcentaje}" style="color: #0E0000; font-weight: bold">
                                                             <f:convertNumber type="number" pattern="0.00"/>
                                                         </h:outputText>
                                                     </span>
+                                    </div>
+
                                 </div>
                             </p:column>
 

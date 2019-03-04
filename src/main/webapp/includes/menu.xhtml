@@ -106,6 +106,9 @@
                                 <c:if test="#{administracionAvanceEncuestaServicio.aperturado and administracionAvanceEncuestaServicio.esSecretario}">
                                     <li><p:link href="/encuestas/seguimiento/admEncuestaServicioSecretario.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta servicios</span></p:link></li>
                                 </c:if>
+                                <c:if test="#{administracionAvanceEstudioSocioeconomico.aperturado and administracionAvanceEstudioSocioeconomico.esSecretario}">
+                                    <li><p:link href="/encuestas/seguimiento/admEstudioSocieconomicoSecretario.xhtml"><i class="fa fa-list-ol"></i><span>Estudio Socioeconómico</span></p:link></li>
+                                </c:if>
                             </ul>
                         </li>
                     </c:if>
@@ -121,6 +124,9 @@
                     </c:if>
                     <c:if test="#{administracionEncuestaServicios.director and administracionAvanceEncuestaServicio.director and administracionEncuestaServicios.aperturas and administracionAvanceEncuestaServicio.aperturado}">
                         <li><p:link href="/encuestas/seguimiento/admEncuestaServicioDirectores.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta servicios</span></p:link></li>
+                    </c:if>
+                    <c:if test="#{administracionEstudioSocioeconomico.director and administracionAvanceEstudioSocioeconomico.director and administracionEstudioSocioeconomico.aperturas and administracionAvanceEstudioSocioeconomico.aperturado}">
+                        <li><p:link href="/encuestas/seguimiento/admEstudioSocieconomicoDirectores.xhtml"><i class="fa fa-list-ol"></i><span>Estudio SocioEconómico</span></p:link></li>
                     </c:if>
 
 
@@ -138,6 +144,13 @@
                         <li>
                             <p:link href="/encuestas/seguimiento/admTutoresporServicio.xhtml">
                                 <i class="fa fa-list-ol"></i><span>Encuesta servicios</span>
+                            </p:link>
+                        </li>
+                    </c:if>
+                    <c:if test="#{administracionEstudioSocioeconomico.tutor and administracionEstudioSocioeconomico.aperturas}">
+                        <li>
+                            <p:link href="/encuestas/seguimiento/admTutoresEstudioSocieconomico.xhtml">
+                                <i class="fa fa-list-ol"></i><span>Estudio Socioeconómico</span>
                             </p:link>
                         </li>
                     </c:if>
@@ -167,6 +180,13 @@
                         <li>
                             <p:link href="/encuestas/seguimiento/admEncuestaServicio.xhtml">
                                 <i class="fa fa-list-ol"></i><span>Encuesta servicios</span>
+                            </p:link>
+                        </li>
+                    </c:if>
+                    <c:if test="#{administracionEstudioSocioeconomico.esDeIyE and administracionAvanceEstudioSocioeconomico.esDeInformacionYEst and administracionEstudioSocioeconomico.aperturas and administracionAvanceEstudioSocioeconomico.aperturado}">
+                        <li>
+                            <p:link href="/encuestas/seguimiento/admEstudioSocieconomico.xhtml">
+                                <i class="fa fa-list-ol"></i><span>Estudio socioeconómico</span>
                             </p:link>
                         </li>
                     </c:if>
