@@ -268,9 +268,8 @@ public class ControladorPartActFormInt implements Serializable{
     }
     
     public void seleccionarParticipantes(String clave){
-        dto.setListaParticipantes(ejb.getListaParticipantesPorActividad(clave));
+        dto.setListaParticipantes(ejb.totalParticipantesAFIporNivel(clave));
         Ajax.update("frmModalParticipantes");
-        
         Ajax.oncomplete("skin();");
         dto.setForzarAperturaDialogo(Boolean.TRUE);
         forzarAperturaParticipantesDialogo();

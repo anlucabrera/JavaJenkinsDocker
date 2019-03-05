@@ -260,7 +260,7 @@ public class ServicioPresupuestos implements EjbPresupuestos{
         List<DTOPresupuestos> ldto = new ArrayList<>();
         List<Presupuestos> l = new ArrayList<>();
         
-         if (area == 6) {
+         if (area == 6 || area == 9) {
 
             l = f.getEntityManager().createQuery("SELECT p from Presupuestos p WHERE p.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND p.registros.eventoRegistro.mes = :mes", Presupuestos.class)
                      .setParameter("mes", mes)

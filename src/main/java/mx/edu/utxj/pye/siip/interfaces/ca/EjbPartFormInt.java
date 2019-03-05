@@ -13,6 +13,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.siip.dto.pye.DTOParticipantesActFormInt;
 import mx.edu.utxj.pye.siip.dto.eb.DTODatosEstudiante;
+import mx.edu.utxj.pye.siip.dto.pye.NumeroParticipantesAFI;
 /**
  *
  * @author UTXJ
@@ -50,4 +51,11 @@ public interface EjbPartFormInt {
      * @return Lista de participantes.
      */
    public List<DTODatosEstudiante> getListaParticipantesPorActividad(String actividad);
+//   
+//   public List<NumeroParticipantesAFI> totalParticipantesAFIporProgEduCuatrimestreInfEst (String actividadFormacionIntegral);
+//
+
+   public List<NumeroParticipantesAFI> totalParticipantesAFIporNivel(String actividadFormacionIntegral);
+
+
 }

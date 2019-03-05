@@ -297,7 +297,7 @@ public class ServicioIngPropios implements EjbIngPropios{
         List<IngresosPropiosCaptados> entities = new ArrayList<>();
         
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
-        if (claveArea == 6) {
+        if (claveArea == 6 || claveArea == 9) {
             entities = f.getEntityManager().createQuery("SELECT i FROM IngresosPropiosCaptados i INNER JOIN i.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND i.periodoEscolar =:periodoEscolar", IngresosPropiosCaptados.class)
                     .setParameter("evento", evento.getEventoRegistro())
                     .setParameter("periodoEscolar", periodo.getPeriodo())

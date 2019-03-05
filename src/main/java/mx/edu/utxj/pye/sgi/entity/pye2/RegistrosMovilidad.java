@@ -145,7 +145,6 @@ public class RegistrosMovilidad implements Serializable {
     @Column(name = "ing_extra")
     private BigDecimal ingExtra;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "descripcion_ing_ext")
     private String descripcionIngExt;
