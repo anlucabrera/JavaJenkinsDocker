@@ -84,12 +84,8 @@ public class ControladorFunciones implements Serializable {
             areasUniversidads = ejbAreasLogeo.mostrarAreasUniversidadSubordinadas(listaPersonalLogeado.getAreaOperativa());
             categoriasespecificasfuncioneses = ejbFunciones.mostrarCategoriasespecificasfuncionesArea(listaPersonalLogeado.getAreaOperativa());
             subordinadosListaPersonals = ejbPersonal.mostrarListaPersonalListSubordinados(listaPersonalLogeado);
-            subordinadosPersonals = ejbPersonal.mostrarListaPersonalSubordinados(listaPersonalLogeado.getAreaOperativa(), listaPersonalLogeado.getClave());
-            if (listaPersonalLogeado.getAreaOperativa() >= 23 && listaPersonalLogeado.getAreaOperativa() <= 29) {
-                funcioneses = ejbFunciones.mostrarFuncionesPorAreayPuesto(Short.parseShort("61"), listaPersonalLogeado.getCategoriaOperativa(), 1);
-            } else {
-                funcioneses = ejbFunciones.mostrarFuncionesPorAreayPuesto(listaPersonalLogeado.getAreaOperativa(), listaPersonalLogeado.getCategoriaOperativa(), 1);
-            }
+            subordinadosPersonals = ejbPersonal.mostrarListaPersonalSubordinados(listaPersonalLogeado.getAreaOperativa(), listaPersonalLogeado.getClave());            
+            funcioneses = ejbFunciones.mostrarListaFuncionesParaARAE(personalLogeado);
             comentariosfuncioneses = ejbFunciones.mostrarComentariosfunciones();
             if (!comentariosfuncioneses.isEmpty()) {
                 comentariosfuncioneses.forEach((t) -> {

@@ -185,9 +185,11 @@ public class ControladorIncidenciasPersonal implements Serializable {
                             }
                             break;
                         case "Retardo":
-                            if (actual.getMinute() < 6) {
-                                Messages.addGlobalWarn("¡El Retardo es desde de los 6 minutos!");
-                                return;
+                            if (actual.getHour() == 0) {
+                                if (actual.getMinute() < 6) {
+                                    Messages.addGlobalWarn("¡El Retardo es desde de los 6 minutos!");
+                                    return;
+                                }
                             }
                             if (actual.getHour() >= 8) {
                                 Messages.addGlobalWarn("¡El Retardo no puede ser igual o mayor a las 8 horas, en dado caso es una Inasistencia!");

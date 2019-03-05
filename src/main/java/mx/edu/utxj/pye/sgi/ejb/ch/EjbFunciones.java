@@ -5,11 +5,14 @@ import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.ch.Categoriasespecificasfunciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Comentariosfunciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Funciones;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 
 @Local
 public interface EjbFunciones {
 
 ////////////////////////////////////////////////////////////////////////////////Funciones
+    public List<Funciones>  mostrarListaFuncionesParaARAE(Personal p) throws Throwable;
+    
     public List<Funciones> mostrarFuncionesPorAreayPuesto(Short area, Short categoria, Integer tipo) throws Throwable;
 
     public List<Funciones> mostrarListaFuncionesPersonalLogeado(Short area, Short categoriaOperativa, Short categoriaEspecifica) throws Throwable;
