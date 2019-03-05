@@ -334,7 +334,7 @@ public class ServicioSelectItems implements EJBSelectItems {
             Short areaSeleccionada = listaAreasConPoa.get(0).getArea();
             List<Registros> qr = new ArrayList<>();
             
-            if (areaSeleccionada == 6) {
+            if (areaSeleccionada == 6 || areaSeleccionada == 9) {
                 qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo ORDER BY r.eventoRegistro.eventoRegistro DESC", Registros.class)
                 .setParameter("tipo", tipo)
                 .getResultList();
@@ -369,7 +369,7 @@ public class ServicioSelectItems implements EJBSelectItems {
             Short areaSeleccionada = listaAreasConPoa.get(0).getArea();
             List<Registros> qr = new ArrayList<>();
             
-            if (areaSeleccionada == 6) {
+            if (areaSeleccionada == 6 || areaSeleccionada == 9) {
                 qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio ORDER BY r.eventoRegistro.eventoRegistro DESC", Registros.class)
                         .setParameter("tipo", tipo)
                         .setParameter("ejercicio", ejercicio)
