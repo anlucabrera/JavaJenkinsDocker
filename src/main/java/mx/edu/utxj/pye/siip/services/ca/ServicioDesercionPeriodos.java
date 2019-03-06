@@ -276,7 +276,7 @@ public class ServicioDesercionPeriodos implements EjbDesercionPeriodos{
         Short area = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
         List<DesercionPeriodosEscolares> entities = new ArrayList<>();
         
-        if (area == 6) {
+        if (area == 6 || area == 9) {
             entities = f.getEntityManager().createQuery("SELECT v FROM DesercionPeriodosEscolares v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes", DesercionPeriodosEscolares.class)
                     .setParameter("mes", mes)
                     .setParameter("ejercicio", ejercicio)
@@ -301,7 +301,7 @@ public class ServicioDesercionPeriodos implements EjbDesercionPeriodos{
         Short area = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
         List<DesercionPeriodosEscolares> entities = new ArrayList<>();
         
-        if (area == 6) {
+        if (area == 6 || area == 9) {
             entities = f.getEntityManager().createQuery("SELECT v FROM DesercionPeriodosEscolares v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes", DesercionPeriodosEscolares.class)
                     .setParameter("mes", mes)
                     .setParameter("ejercicio", ejercicio)
@@ -345,7 +345,7 @@ public class ServicioDesercionPeriodos implements EjbDesercionPeriodos{
         Short area = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
         List<DesercionPeriodosEscolares> entities = new ArrayList<>();
         
-        if (area == 6) {
+        if (area == 6 || area == 9) {
             entities = f.getEntityManager().createQuery("SELECT v FROM DesercionPeriodosEscolares v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes", DesercionPeriodosEscolares.class)
                     .setParameter("mes", mes)
                     .setParameter("ejercicio", ejercicio)

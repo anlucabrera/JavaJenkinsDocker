@@ -221,7 +221,7 @@ public class ServicioDesercionReprobacion implements EjbDesercionReprobacion{
         Short area = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
         List<DesercionReprobacionMaterias> q = new ArrayList<>();
         
-        if (area == 6) {
+        if (area == 6 || area == 9) {
             q = f.getEntityManager().createQuery("SELECT v FROM DesercionReprobacionMaterias v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes", DesercionReprobacionMaterias.class)
             .setParameter("mes", mes)
             .setParameter("ejercicio", ejercicio)
@@ -247,7 +247,7 @@ public class ServicioDesercionReprobacion implements EjbDesercionReprobacion{
         Short area = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
         List<DesercionReprobacionMaterias> q = new ArrayList<>();
         
-        if (area == 6) {
+        if (area == 6 || area == 9) {
             q = f.getEntityManager().createQuery("SELECT v FROM DesercionReprobacionMaterias v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes", DesercionReprobacionMaterias.class)
             .setParameter("mes", mes)
             .setParameter("ejercicio", ejercicio)
@@ -286,7 +286,7 @@ public class ServicioDesercionReprobacion implements EjbDesercionReprobacion{
         Short area = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
         List<DesercionReprobacionMaterias> q = new ArrayList<>();
         
-        if (area == 6) {
+        if (area == 6 || area == 9) {
             q = f.getEntityManager().createQuery("SELECT v FROM DesercionReprobacionMaterias v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes", DesercionReprobacionMaterias.class)
             .setParameter("mes", mes)
             .setParameter("ejercicio", ejercicio)

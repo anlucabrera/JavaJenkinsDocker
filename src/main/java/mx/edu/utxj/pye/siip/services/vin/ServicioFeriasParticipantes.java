@@ -205,7 +205,7 @@ public class ServicioFeriasParticipantes implements EjbFeriasParticipantes{
         List<FeriasParticipantes> q = new ArrayList<>();
         List<ListaFeriasParticipantesDTO> ldto = new ArrayList<>();
         
-        if (area == 6) {
+        if (area == 6 || area == 9) {
             q = f.getEntityManager().createQuery("SELECT p from FeriasParticipantes p WHERE p.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND p.registros.eventoRegistro.mes = :mes", FeriasParticipantes.class)
                     .setParameter("mes", mes)
                     .setParameter("ejercicio", ejercicio)

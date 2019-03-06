@@ -216,7 +216,7 @@ public class ServicioDifusionIems implements EjbDifusionIems{
         List<DifusionIems> q = new ArrayList<>();
         List<ListaDifusionIemsDTO> ldto = new ArrayList<>();
         
-        if (area == 6) {
+        if (area == 6 || area == 9) {
 
             q = f.getEntityManager().createQuery("SELECT a from DifusionIems a WHERE a.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND a.registros.eventoRegistro.mes = :mes", DifusionIems.class)
                     .setParameter("mes", mes)

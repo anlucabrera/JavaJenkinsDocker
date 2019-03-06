@@ -281,7 +281,7 @@ public class ServicioFeriasProfesiograficas implements EjbFeriasProfesiograficas
         List<FeriasProfesiograficas> q = new ArrayList<>();
         List<ListaFeriasDTO> ldto = new ArrayList<>();
         
-        if (area == 6) {
+        if (area == 6 || area == 9) {
             q = f.getEntityManager().createQuery("SELECT a from FeriasProfesiograficas a WHERE a.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND a.registros.eventoRegistro.mes = :mes", FeriasProfesiograficas.class)
                     .setParameter("mes", mes)
                     .setParameter("ejercicio", ejercicio)
