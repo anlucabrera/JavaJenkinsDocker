@@ -48,7 +48,7 @@ public class administracionAvanceEncuestaServicio  implements Serializable{
     
     private static final long serialVersionUID = -7745875703360648941L;
     
-    @Getter @Setter private Boolean director,esSecretario,esDeInformacionYEst, aperturado;
+    @Getter @Setter private Boolean director,esSecretario,esDeInformacionYEst, aperturado, planeacion;
     @Getter @Setter private Integer claveTrabajador, cveMaestro;
     @Getter @Setter private Long total,total2;
     @Getter @Setter private String cveDirector, siglas,abreviatura;
@@ -88,12 +88,17 @@ public class administracionAvanceEncuestaServicio  implements Serializable{
                     if (!ejbAdmEncuesta.esSecretarioAcademico(1, Short.parseShort("2"), Short.parseShort("38"), Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
                         esSecretario = true;
                     }
+                    
+                    if(!ejbAdmEncuesta.esPlaneacion(1, Short.parseShort("2"), Short.parseShort("18"), Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()){
+                        planeacion = true;
+                    }
                 }
             }
         } catch (Throwable ex) {
             director = false;
             esDeInformacionYEst = false;
             esSecretario=false;
+            planeacion = false;
             aperturado = false;
             Logger.getLogger(administracionAvanceEncuestaServicio.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -44,7 +44,7 @@ public class AdministracionEncuestaIng implements Serializable{
 
     private static final long serialVersionUID = 4320030263170989982L;
     
-    @Getter @Setter private Boolean esDeIyE,director,aperturas, tutor;
+    @Getter @Setter private Boolean esDeIyE,director,aperturas, tutor, planeacion;
     @Getter @Setter Integer cveTrabajador,usuarioNomina;
     @Getter @Setter String cveDirector;
     @Getter @Setter private List<ListadoEvaluacionEgresados> listaEvaCompleta, listaEvaIncompleta, listaEvaNA, listaFiltrado;
@@ -83,6 +83,10 @@ public class AdministracionEncuestaIng implements Serializable{
                     if(!ejbAdmTutores.estTutordeGrupo(cveTrabajador).isEmpty()){
                         tutor = true;
                     }
+                    
+                    if(logonMB.getPersonal().getAreaOperativa() == 6 && logonMB.getPersonal().getCategoriaOperativa().getCategoria().equals(18) && logonMB.getPersonal().getActividad().getActividad().equals(2)){
+                        planeacion = true;
+                    }
                 }
             }
         } catch (Throwable e) {
@@ -90,6 +94,7 @@ public class AdministracionEncuestaIng implements Serializable{
             esDeIyE = false;
             aperturas = false;
             tutor = false;
+            planeacion = false;
             Logger.getLogger(AdministracionEncuestaIng.class.getName()).log(Level.SEVERE, null, e);
         }
         

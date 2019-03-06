@@ -1,6 +1,7 @@
 package mx.edu.utxj.pye.sgi.controlador;
 
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.io.IOException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.el.ELException;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
@@ -78,11 +80,18 @@ public class EncuestaServicios implements Serializable {
             System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaServicios.init() e: " + e.getMessage());
         }
     }  
-    public void guardarRespuesta(ValueChangeEvent e){
+    public void guardarRespuesta(ValueChangeEvent e) throws ELException{
         UIComponent origen = (UIComponent)e.getSource();
         String valor = e.getNewValue().toString();
-        ejb.actualizarRespuestaPorPregunta(resultado, origen.getId(), valor, respuestas);
-        finalizado = ejb.actualizarResultado(resultado);
+        if(valor == null){
+            valor = e.getOldValue().toString();
+            ejb.actualizarRespuestaPorPregunta(resultado, origen.getId(), valor, respuestas);
+            finalizado = ejb.actualizarResultado(resultado);
+        }else{
+            ejb.actualizarRespuestaPorPregunta(resultado, origen.getId(), valor, respuestas);
+            finalizado = ejb.actualizarResultado(resultado);
+        }
+        
     }
     
 }

@@ -59,4 +59,6 @@ public interface EjbAdministracionEncuesta {
     public List<AlumnosEncuestas> obtenerListaAlumnosNoAccedieron();
     
     public List<Personal> esSecretarioAcademico(Integer areaSup,Short actividad,Short catOp,Integer clave);
+    
+    public List<Personal> esPlaneacion(Integer areaSup, Short actividad, Short catOp, Integer clave);
 }
