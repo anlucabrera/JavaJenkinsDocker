@@ -351,7 +351,7 @@ public class ServicioVisitasIndustriales implements EjbVisitasIndustriales{
         List<VisitasIndustriales> q = new ArrayList<>();
         List<ListaDtoVisitasIndustriales> ldto = new ArrayList<>();
         
-        if (area == 6) {
+        if (area == 6 || area == 9) {
 
             q = f.getEntityManager().createQuery("SELECT v FROM VisitasIndustriales v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes", VisitasIndustriales.class)
                     .setParameter("mes", mes)

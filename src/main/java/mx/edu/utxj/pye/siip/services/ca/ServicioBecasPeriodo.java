@@ -208,9 +208,10 @@ public class ServicioBecasPeriodo implements EjbBecasPeriodo{
     @Override
     public BecasPeriodosEscolares getRegistroBecasPeriodosEscolares(BecasPeriodosEscolares becasPeriodosEscolares) {
         BecasPeriodosEscolares becasperescEncontrada = new BecasPeriodosEscolares();
-        TypedQuery<BecasPeriodosEscolares> query = f.getEntityManager().createQuery("SELECT b FROM BecasPeriodosEscolares b JOIN b.matriculaPeriodosEscolares m WHERE m.periodo = :periodoAsignacion AND m.matricula = :matricula", BecasPeriodosEscolares.class);
+        TypedQuery<BecasPeriodosEscolares> query = f.getEntityManager().createQuery("SELECT b FROM BecasPeriodosEscolares b JOIN b.matriculaPeriodosEscolares m WHERE m.periodo = :periodoAsignacion AND m.matricula = :matricula AND b.beca = :beca", BecasPeriodosEscolares.class);
         query.setParameter("periodoAsignacion", becasPeriodosEscolares.getMatriculaPeriodosEscolares().getPeriodo());
         query.setParameter("matricula", becasPeriodosEscolares.getMatriculaPeriodosEscolares().getMatricula());
+        query.setParameter("beca", becasPeriodosEscolares.getBeca());
         try {
             becasperescEncontrada = query.getSingleResult();
         } catch (NoResultException | NonUniqueResultException ex) {
@@ -230,7 +231,7 @@ public class ServicioBecasPeriodo implements EjbBecasPeriodo{
         List<BecasPeriodosEscolares> q = new ArrayList<>();
         List<ListaBecasDto> ldto = new ArrayList<>();
         
-        if (area == 6) {
+        if (area == 6 || area == 9) {
 
              q = f.getEntityManager().createQuery("SELECT a from BecasPeriodosEscolares a WHERE a.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND a.registros.eventoRegistro.mes = :mes", BecasPeriodosEscolares.class)
                     .setParameter("mes", mes)

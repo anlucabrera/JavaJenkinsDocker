@@ -236,10 +236,11 @@ public class ServicioPresupuestos implements EjbPresupuestos{
 
     @Override
     public Presupuestos getRegistroPresupuestos(Presupuestos presupuestos) {
-        TypedQuery<Presupuestos> query = f.getEntityManager().createQuery("SELECT p FROM Presupuestos p JOIN p.capituloTipo c WHERE p.presupuestoOperacion = :presupuestoOperacion AND p.presupuestoTipo = :presupuestoTipo AND c.capituloTipo = :capituloTipo", Presupuestos.class);
+        TypedQuery<Presupuestos> query = f.getEntityManager().createQuery("SELECT p FROM Presupuestos p JOIN p.capituloTipo c WHERE p.presupuestoOperacion = :presupuestoOperacion AND p.presupuestoTipo = :presupuestoTipo AND c.capituloTipo = :capituloTipo AND p.fechaAplicacion = :fechaAplicacion", Presupuestos.class);
         query.setParameter("presupuestoOperacion", presupuestos.getPresupuestoOperacion());
         query.setParameter("presupuestoTipo", presupuestos.getPresupuestoTipo());
         query.setParameter("capituloTipo", presupuestos.getCapituloTipo().getCapituloTipo());
+        query.setParameter("fechaAplicacion", presupuestos.getFechaAplicacion());
         try {
             presupuestos = query.getSingleResult();
         } catch (NoResultException | NonUniqueResultException ex) {
