@@ -204,6 +204,7 @@
                                                         <p:row class="success">
                                                             <p:column colspan="3" rowspan="2" headerText="Opciones" style="width:150px" />
                                                             <p:column rowspan="2" headerText="Categoría/Puesto" style="width: 150px;" />
+                                                            <p:column rowspan="2" headerText="Área" style="width: 150px;" />
                                                             <p:column rowspan="2" headerText="Categoría/Puesto especifico" style="width: 150px;"/>
                                                             <p:column rowspan="2" headerText="Descripción" style="width: 600px;"/>
                                                             <p:column rowspan="2" headerText="Tipo" style="width: 100px;"/> 
@@ -245,7 +246,11 @@
 
                                                     <p:column >
                                                         <h:outputText value="#{funciones.categoriaOperativa.nombre}" />
-                                                    </p:column>                                        
+                                                    </p:column>                                         
+                                                    <p:column >
+                                                        <h:outputText value="#{funciones.areaOperativa
+}" />
+                                                    </p:column>                                      
                                                     <p:column >
                                                         <h:outputText value="#{funciones.categoriaEspesifica.nombreCategoria}" />
                                                     </p:column> 

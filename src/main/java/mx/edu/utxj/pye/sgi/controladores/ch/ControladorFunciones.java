@@ -94,13 +94,6 @@ public class ControladorFunciones implements Serializable {
                     }
                 });
             }
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorFunciones.mostrarListaCatelogos(1)"+personalCategoriases.size());
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorFunciones.mostrarListaCatelogos(2)"+areasUniversidads.size());
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorFunciones.mostrarListaCatelogos(3)"+categoriasespecificasfuncioneses.size());
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorFunciones.mostrarListaCatelogos(4)"+subordinadosListaPersonals.size());
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorFunciones.mostrarListaCatelogos(5)"+subordinadosPersonals.size());
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorFunciones.mostrarListaCatelogos(6)"+funcioneses.size());
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorFunciones.mostrarListaCatelogos(7)"+comentariosfuncioneses.size());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);

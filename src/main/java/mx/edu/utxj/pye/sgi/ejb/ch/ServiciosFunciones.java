@@ -27,13 +27,16 @@ public class ServiciosFunciones implements EjbFunciones {
     @EJB
     Facade facade;
 
-    @Getter    @Setter    Integer i = 0;
-    @Getter    @Setter    List<Short> pDirA = new ArrayList<>();
+    @Getter
+    @Setter
+    Integer i = 0;
+    @Getter
+    @Setter
+    List<Short> pDirA = new ArrayList<>();
 
 ////////////////////////////////////////////////////////////////////////////////Funciones
     @Override
     public List<Funciones> mostrarListaFuncionesParaARAE(Personal p) throws Throwable {
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosFunciones.mostrarListaFuncionesParaARAE(1)");
         pDirA.clear();
         pDirA.add(Short.parseShort("30"));
         pDirA.add(Short.parseShort("32"));
@@ -41,42 +44,33 @@ public class ServiciosFunciones implements EjbFunciones {
         List<Funciones> listaFunciones = new ArrayList<>();
         TypedQuery<Personal> per = em.createQuery("SELECT p FROM Personal p", Personal.class);
         if (p.getAreaOperativa() >= 23 && p.getAreaOperativa() <= 29) {
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosFunciones.mostrarListaFuncionesParaARAE(2A)");
             per = em.createQuery("SELECT p FROM Personal p INNER JOIN p.categoriaOperativa co INNER JOIN p.categoriaEspecifica ce WHERE p.areaOperativa = :areaOperativa OR p.areaSuperior=:areaSuperior GROUP BY co.categoria,ce.categoriaEspecifica", Personal.class);
         } else {
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosFunciones.mostrarListaFuncionesParaARAE(2B)");
             per = em.createQuery("SELECT p FROM Personal p INNER JOIN p.categoriaOperativa co INNER JOIN p.categoriaEspecifica ce WHERE p.areaOperativa = :areaOperativa OR p.areaSuperior=:areaSuperior GROUP BY p.areaOperativa,co.categoria,ce.categoriaEspecifica", Personal.class);
         }
         per.setParameter("areaOperativa", p.getAreaOperativa());
         per.setParameter("areaSuperior", p.getAreaOperativa());
         List<Personal> personas = per.getResultList();
         if (!personas.isEmpty()) {
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosFunciones.mostrarListaFuncionesParaARAE(3)");
             personas.forEach((t) -> {
-                if (t.getAreaOperativa() != p.getAreaOperativa() && !Objects.equals(t.getCategoriaOperativa().getCategoria(), p.getCategoriaOperativa().getCategoria()) && !Objects.equals(t.getCategoriaEspecifica().getCategoriaEspecifica(), p.getCategoriaEspecifica().getCategoriaEspecifica())) {
-                    System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosFunciones.mostrarListaFuncionesParaARAE(4)");
+                if (t.getAreaOperativa() == p.getAreaOperativa() && Objects.equals(t.getCategoriaOperativa().getCategoria(), p.getCategoriaOperativa().getCategoria()) && Objects.equals(t.getCategoriaEspecifica().getCategoriaEspecifica(), p.getCategoriaEspecifica().getCategoriaEspecifica())) {
+
+                } else {
                     List<Funciones> f = new ArrayList<>();
                     try {
+                        f = mostrarListaFuncionesPersonalLogeado(t.getAreaOperativa(), t.getCategoriaOperativa().getCategoria(), t.getCategoriaEspecifica().getCategoriaEspecifica());
+
                         if (t.getAreaOperativa() >= 23 && t.getAreaOperativa() <= 29) {
-                            System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosFunciones.mostrarListaFuncionesParaARAE(5A)");
-                            if (i != 1) {
-                                System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosFunciones.mostrarListaFuncionesParaARAE(6A)");
+                            if (i == 0) {
                                 f = mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), t.getCategoriaOperativa().getCategoria(), t.getCategoriaEspecifica().getCategoriaEspecifica());
                                 i++;
                             }
-                        } else {
-                            System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosFunciones.mostrarListaFuncionesParaARAE(5B)");
-                            f = mostrarListaFuncionesPersonalLogeado(t.getAreaOperativa(), t.getCategoriaOperativa().getCategoria(), t.getCategoriaEspecifica().getCategoriaEspecifica());
                         }
-                        
-                        if (t.getAreaSuperior()>= 23 && t.getAreaSuperior() <= 29) {
-                            System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosFunciones.mostrarListaFuncionesParaARAE(5C)");
+
+                        if (t.getAreaSuperior() >= 23 && t.getAreaSuperior() <= 29) {
                             f = mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), t.getCategoriaOperativa().getCategoria(), t.getCategoriaEspecifica().getCategoriaEspecifica());
-                        }else {
-                            System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosFunciones.mostrarListaFuncionesParaARAE(6B)");
-                            f = mostrarListaFuncionesPersonalLogeado(t.getAreaOperativa(), t.getCategoriaOperativa().getCategoria(), t.getCategoriaEspecifica().getCategoriaEspecifica());
                         }
-                        
+
                     } catch (Throwable ex) {
                         Logger.getLogger(ServiciosFunciones.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -84,11 +78,8 @@ public class ServiciosFunciones implements EjbFunciones {
                 }
             });
         }
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosFunciones.mostrarListaFuncionesParaARAE(7)"+listaFunciones.size());
         if (p.getAreaOperativa() == 2) {
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosFunciones.mostrarListaFuncionesParaARAE(8B)");
             pDirA.forEach((t) -> {
-                System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosFunciones.mostrarListaFuncionesParaARAE(8.1)");
                 List<Funciones> f = new ArrayList<>();
                 try {
                     f = mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), t, Short.parseShort("1"));
@@ -98,12 +89,9 @@ public class ServiciosFunciones implements EjbFunciones {
                 listaFunciones.addAll(f);
             });
         }
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosFunciones.mostrarListaFuncionesParaARAE(8)"+listaFunciones.size());
         if (listaFunciones.isEmpty()) {
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosFunciones.mostrarListaFuncionesParaARAE(9A)");
             return new ArrayList<>();
         } else {
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosFunciones.mostrarListaFuncionesParaARAE(9B)");
             return listaFunciones;
         }
     }
