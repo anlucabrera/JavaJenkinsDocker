@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.annotation.ManagedBean;
+import javax.faces.event.ValueChangeEvent;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -38,11 +39,13 @@ public class ControladorFunciones implements Serializable {
     @Getter    @Setter    private List<Categoriasespecificasfunciones> categoriasespecificasfuncioneses = new ArrayList<>();  
     @Getter    @Setter    private List<Personal> subordinadosPersonals = new ArrayList<>();
     @Getter    @Setter    private List<ListaPersonal> subordinadosListaPersonals = new ArrayList<>();
+    @Getter    @Setter    private List<Personal> categoriasOyEporArea = new ArrayList<>();
     @Getter    @Setter    private List<Funciones> funcioneses = new ArrayList<>();
     @Getter    @Setter    private List<Comentariosfunciones> comentariosfuncioneses = new ArrayList<>();
 ////////////////////////////////////////////////////////////////////////////////Objetos entytis
     @Getter    @Setter    private ListaPersonal listaPersonalLogeado = new ListaPersonal();
-    @Getter    @Setter    private Personal personalLogeado = new Personal();
+    @Getter    @Setter    private Personal personalLogeado = new Personal();    
+    @Getter    @Setter    private Personal perosnalCategoriasFunciones = new Personal();
 
 ////////////////////////////////////////////////////////////////////////////////Listas 
     @Getter    @Setter    private List<String> listaClavesEmpleados = new ArrayList<>();
@@ -87,6 +90,7 @@ public class ControladorFunciones implements Serializable {
             subordinadosPersonals = ejbPersonal.mostrarListaPersonalSubordinados(listaPersonalLogeado.getAreaOperativa(), listaPersonalLogeado.getClave());            
             funcioneses = ejbFunciones.mostrarListaFuncionesParaARAE(personalLogeado);
             comentariosfuncioneses = ejbFunciones.mostrarComentariosfunciones();
+            categoriasOyEporArea=ejbFunciones.mostrarCategoriasOyEporArea(personalLogeado);
             if (!comentariosfuncioneses.isEmpty()) {
                 comentariosfuncioneses.forEach((t) -> {
                     if (t.getEsatus() == 0) {
@@ -102,7 +106,17 @@ public class ControladorFunciones implements Serializable {
     
     public void agregarFuncion() {
         try {
-
+            nuevoOBJFunciones.setCategoriaOperativa(new PersonalCategorias());
+            nuevoOBJFunciones.setCategoriaEspesifica(new Categoriasespecificasfunciones());
+            if ((perosnalCategoriasFunciones.getAreaOperativa() >= 23 && perosnalCategoriasFunciones.getAreaOperativa() <= 29) || (perosnalCategoriasFunciones.getAreaSuperior()>= 23 && perosnalCategoriasFunciones.getAreaSuperior() <= 29)) {
+                nuevoOBJFunciones.setAreaOperativa(Short.parseShort("61"));
+            } else {
+                nuevoOBJFunciones.setAreaOperativa(perosnalCategoriasFunciones.getAreaOperativa());
+            }
+            nuevoOBJFunciones.setCategoriaOperativa(perosnalCategoriasFunciones.getCategoriaOperativa());
+            nuevoOBJFunciones.setCategoriaEspesifica(perosnalCategoriasFunciones.getCategoriaEspecifica());
+            nuevoOBJFunciones = ejbFunciones.agregarFuncion(nuevoOBJFunciones);
+            nuevoOBJFunciones = new Funciones();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
@@ -112,7 +126,7 @@ public class ControladorFunciones implements Serializable {
     public void actualizarFuncion(RowEditEvent event) {
         try {
             Funciones f = (Funciones) event.getObject();
-            
+            ejbFunciones.actualizarFunciones(f);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
@@ -182,6 +196,22 @@ public class ControladorFunciones implements Serializable {
         return tipo;
     }
 
+    public void consultarFunciones(ValueChangeEvent event) {
+        try {
+            perosnalCategoriasFunciones = new Personal();
+            perosnalCategoriasFunciones = ejbPersonal.mostrarPersonalLogeado(Integer.parseInt(event.getNewValue().toString()));
+            funcioneses = new ArrayList<>();
+            funcioneses.clear();
+            if (perosnalCategoriasFunciones.getAreaSuperior() >= 23 && perosnalCategoriasFunciones.getAreaSuperior() <= 29) {
+                funcioneses = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), perosnalCategoriasFunciones.getCategoriaOperativa().getCategoria(), perosnalCategoriasFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
+            }else{
+                funcioneses = ejbFunciones.mostrarListaFuncionesPersonalLogeado(perosnalCategoriasFunciones.getAreaOperativa(), perosnalCategoriasFunciones.getCategoriaOperativa().getCategoria(), perosnalCategoriasFunciones.getCategoriaEspecifica().getCategoriaEspecifica());
+            }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     public void metodoBase() {
 
     }

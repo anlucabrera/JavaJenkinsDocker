@@ -27,30 +27,59 @@ public class ServiciosFunciones implements EjbFunciones {
     @EJB
     Facade facade;
 
-    @Getter
-    @Setter
-    Integer i = 0;
-    @Getter
-    @Setter
-    List<Short> pDirA = new ArrayList<>();
+    @Getter    @Setter    Integer i = 0;
+    @Getter    @Setter    List<Short> pDirA = new ArrayList<>();
 
 ////////////////////////////////////////////////////////////////////////////////Funciones
     @Override
-    public List<Funciones> mostrarListaFuncionesParaARAE(Personal p) throws Throwable {
-        pDirA.clear();
-        pDirA.add(Short.parseShort("30"));
-        pDirA.add(Short.parseShort("32"));
-        pDirA.add(Short.parseShort("41"));
-        List<Funciones> listaFunciones = new ArrayList<>();
+    public List<Personal> mostrarCategoriasOyEporArea(Personal p) throws Throwable {
+        i = 0;
+        List<Personal> listaPersonas = new ArrayList<>();
         TypedQuery<Personal> per = em.createQuery("SELECT p FROM Personal p", Personal.class);
         if (p.getAreaOperativa() >= 23 && p.getAreaOperativa() <= 29) {
-            per = em.createQuery("SELECT p FROM Personal p INNER JOIN p.categoriaOperativa co INNER JOIN p.categoriaEspecifica ce WHERE p.areaOperativa = :areaOperativa OR p.areaSuperior=:areaSuperior GROUP BY co.categoria,ce.categoriaEspecifica", Personal.class);
+            per = em.createQuery("SELECT p FROM Personal p INNER JOIN p.categoriaOperativa co INNER JOIN p.categoriaEspecifica ce WHERE p.areaOperativa = :areaOperativa OR p.areaSuperior=:areaSuperior GROUP BY co.categoria,ce.categoriaEspecifica ORDER BY p.areaOperativa", Personal.class);
         } else {
-            per = em.createQuery("SELECT p FROM Personal p INNER JOIN p.categoriaOperativa co INNER JOIN p.categoriaEspecifica ce WHERE p.areaOperativa = :areaOperativa OR p.areaSuperior=:areaSuperior GROUP BY p.areaOperativa,co.categoria,ce.categoriaEspecifica", Personal.class);
+            per = em.createQuery("SELECT p FROM Personal p INNER JOIN p.categoriaOperativa co INNER JOIN p.categoriaEspecifica ce WHERE p.areaOperativa = :areaOperativa OR p.areaSuperior=:areaSuperior GROUP BY p.areaOperativa,co.categoria,ce.categoriaEspecifica ORDER BY p.areaOperativa", Personal.class);
         }
         per.setParameter("areaOperativa", p.getAreaOperativa());
         per.setParameter("areaSuperior", p.getAreaOperativa());
         List<Personal> personas = per.getResultList();
+        personas.forEach((t) -> {
+            if (t.getAreaOperativa() >= 23 && t.getAreaOperativa() <= 29) {
+                if (i == 0) {
+                    listaPersonas.add(t);
+                    i++;
+                }
+            } else {
+                listaPersonas.add(t);
+            }
+        });
+
+        if (p.getAreaOperativa() == 2) {
+            per = em.createQuery("SELECT p FROM Personal p INNER JOIN p.categoriaOperativa co INNER JOIN p.categoriaEspecifica ce WHERE p.areaOperativa = :areaOperativa OR p.areaSuperior=:areaSuperior GROUP BY co.categoria,ce.categoriaEspecifica", Personal.class);
+            per.setParameter("areaOperativa", Short.parseShort("25"));
+            per.setParameter("areaSuperior", Short.parseShort("25"));
+            List<Personal> persona = per.getResultList();
+            if (!persona.isEmpty()) {
+                persona.forEach((t) -> {
+                    if (t.getCategoriaOperativa().getCategoria() == 30 || t.getCategoriaOperativa().getCategoria() == 32 || t.getCategoriaOperativa().getCategoria() == 41) {
+                        listaPersonas.add(t);
+                    }
+                });
+            }
+        }
+        if (listaPersonas.isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            return listaPersonas;
+        }
+    }
+
+    @Override
+    public List<Funciones> mostrarListaFuncionesParaARAE(Personal p) throws Throwable {
+        List<Funciones> listaFunciones = new ArrayList<>();
+        List<Personal> personas = mostrarCategoriasOyEporArea(p);
+        i = 0;
         if (!personas.isEmpty()) {
             personas.forEach((t) -> {
                 if (t.getAreaOperativa() == p.getAreaOperativa() && Objects.equals(t.getCategoriaOperativa().getCategoria(), p.getCategoriaOperativa().getCategoria()) && Objects.equals(t.getCategoriaEspecifica().getCategoriaEspecifica(), p.getCategoriaEspecifica().getCategoriaEspecifica())) {
@@ -59,34 +88,20 @@ public class ServiciosFunciones implements EjbFunciones {
                     List<Funciones> f = new ArrayList<>();
                     try {
                         f = mostrarListaFuncionesPersonalLogeado(t.getAreaOperativa(), t.getCategoriaOperativa().getCategoria(), t.getCategoriaEspecifica().getCategoriaEspecifica());
-
                         if (t.getAreaOperativa() >= 23 && t.getAreaOperativa() <= 29) {
                             if (i == 0) {
                                 f = mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), t.getCategoriaOperativa().getCategoria(), t.getCategoriaEspecifica().getCategoriaEspecifica());
                                 i++;
                             }
                         }
-
                         if (t.getAreaSuperior() >= 23 && t.getAreaSuperior() <= 29) {
                             f = mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), t.getCategoriaOperativa().getCategoria(), t.getCategoriaEspecifica().getCategoriaEspecifica());
                         }
-
                     } catch (Throwable ex) {
                         Logger.getLogger(ServiciosFunciones.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     listaFunciones.addAll(f);
                 }
-            });
-        }
-        if (p.getAreaOperativa() == 2) {
-            pDirA.forEach((t) -> {
-                List<Funciones> f = new ArrayList<>();
-                try {
-                    f = mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), t, Short.parseShort("1"));
-                } catch (Throwable ex) {
-                    Logger.getLogger(ServiciosFunciones.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                listaFunciones.addAll(f);
             });
         }
         if (listaFunciones.isEmpty()) {

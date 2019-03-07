@@ -11,6 +11,8 @@ import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 public interface EjbFunciones {
 
 ////////////////////////////////////////////////////////////////////////////////Funciones
+    public List<Personal>  mostrarCategoriasOyEporArea(Personal p) throws Throwable;
+    
     public List<Funciones>  mostrarListaFuncionesParaARAE(Personal p) throws Throwable;
     
     public List<Funciones> mostrarFuncionesPorAreayPuesto(Short area, Short categoria, Integer tipo) throws Throwable;

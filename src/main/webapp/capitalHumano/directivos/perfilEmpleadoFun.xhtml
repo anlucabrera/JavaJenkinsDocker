@@ -105,48 +105,12 @@
                                                                         <div class="row">
                                                                             <div class="form-group">
                                                                                 <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                                    <p:outputLabel for="catP" style="font-size: large" value="Categoría/Puesto"/>                                
-                                                                                    <p:selectOneMenu id="catP" widgetVar="catP" value="#{controladorFunciones.claveCategoria}" filter="true" filterMatchMode="contains" style = "height:100%; width: 100%; object-fit: contain;" class="control-label">
-                                                                                        <f:selectItem itemValue="0" itemLabel="Todas las categorías"/>
-                                                                                        <f:selectItems value="#{controladorFunciones.personalCategoriases}" var="categorias" itemValue="#{categorias.categoria}" itemLabel="#{categorias.nombre}" />
-                                                                                        <c:if test="#{controladorFunciones.listaPersonalLogeado.areaOperativa==2}">
-                                                                                            <f:selectItem itemValue="30" itemLabel="Profesor/a de asignatura"/>    
-                                                                                            <f:selectItem itemValue="32" itemLabel="Profesor/a tiempo completo"/>    
-                                                                                            <f:selectItem itemValue="41" itemLabel="Técnico/a Laboratorista"/>   
-                                                                                        </c:if>                                                                                    
-                                                                                        <p:ajax listener="#{controladorFunciones.consultarFuncnPorAyC()}" process="catP" update="@form area"/>
-                                                                                    </p:selectOneMenu>
-                                                                                    <p:message for="catP" display="tooltip" />                                                                                
-                                                                                    <hr/>                                                                         
-                                                                                    <p:outputPanel>            
-                                                                                        <p:autoUpdate/>
-                                                                                        <p:outputLabel for="area" style="font-size: large" value="Área específica"/>                                
-                                                                                        <p:selectOneRadio id="area" columns="2" widgetVar="area" value="#{controladorFunciones.claveArea}" style = "height:100%; width: 100%; object-fit: contain;" class="control-label" disabled="#{
-                                                                                                                                                          controladorFunciones.claveCategoria eq 1?false:
-                                                                                                                                                          controladorFunciones.claveCategoria eq 13?false:
-                                                                                                                                                          controladorFunciones.claveCategoria eq 14?false:
-                                                                                                                                                          controladorFunciones.claveCategoria eq 18?false:
-                                                                                                                                                          controladorFunciones.claveCategoria eq 24?false:
-                                                                                                                                                          controladorFunciones.claveCategoria eq 33?false:
-                                                                                                                                                          controladorFunciones.claveCategoria eq 38?false:
-                                                                                                                                                          controladorFunciones.claveCategoria eq 39?false:
-                                                                                                                                                          controladorFunciones.claveCategoria eq 111?false:
-                                                                                                                                                          controladorFunciones.claveCategoria eq 112?false:true}">
-                                                                                            <f:selectItems value="#{controladorFunciones.areasUniversidads}" var="areaU" itemValue="#{areaU.area}" itemLabel="#{areaU.nombre}" />
-                                                                                            <p:ajax listener="#{controladorFunciones.consultarFuncnPorAC()}" process="area" update="@form"/>
-                                                                                        </p:selectOneRadio>
-                                                                                        <p:message for="area" display="tooltip" />   
-                                                                                        <hr/>
-                                                                                    </p:outputPanel>
-                                                                                    <p:outputPanel autoUpdate="true" >
-                                                                                        <p:outputLabel for="puestosEspe" style="font-size: large" rendered="#{controladorFunciones.categoriasespecificasfuncioneses.size() eq 0?false:true}" value="Categoría específica"/>                                
-                                                                                        <p:selectOneRadio id="puestosEspe" columns="2" widgetVar="puestosEspe" value="#{controladorFunciones.claveCategoria2}" style = "height:100%; width: 100%; object-fit: contain;" class="control-label" disabled="#{controladorFunciones.puestoTipo eq 'Administrativo'?false:true}">
-                                                                                            <f:selectItems value="#{controladorFunciones.categoriasespecificasfuncioneses}" var="categoriasEs" itemValue="#{categoriasEs.categoriaEspecifica}" itemLabel="#{categoriasEs.nombreCategoria}" />
-                                                                                            <p:ajax listener="#{controladorFunciones.consultarFuncnesAC()}" process="puestosEspe" update="@form"/>
-                                                                                        </p:selectOneRadio>
-                                                                                        <p:message for="puestosEspe" display="tooltip" />
-                                                                                        <hr/>       
-                                                                                    </p:outputPanel>
+                                                                                    <p:outputLabel value="Categoria" />
+                                                                                    <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorFunciones.consultarFunciones}">
+                                                                                        <f:selectItems value="#{controladorFunciones.categoriasOyEporArea}" var="personal" itemValue="#{personal.clave}" itemLabel="#{personal.areaOperativa} -- #{personal.categoriaOperativa.nombre} -- #{personal.categoriaEspecifica.nombreCategoria}" />
+                                                                                        <p:ajax update="@form" listener="#{controladorFunciones.metodoBase()}"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="eje" display="tooltip" />
                                                                                     <p:outputLabel for="funcion" style="font-size: large" value="Función"/>                                
                                                                                     <p:inputTextarea id="funcion" class="form-control" placeholder="Función" value="#{controladorFunciones.nuevoOBJFunciones.nombre}"/>
                                                                                     <p:message for="funcion" display="tooltip" />
@@ -168,15 +132,7 @@
                                                                                     <p:outputPanel>            
                                                                                         <p:autoUpdate/>
                                                                                         <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{controladorFunciones.crearFuncion()}" icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form" process="@form" 
-                                                                                                         disabled="#{controladorFunciones.claveCategoria eq 1?true:
-                                                                                                                     controladorFunciones.claveCategoria eq 18?true:
-                                                                                                                     controladorFunciones.claveCategoria eq 33?true:
-                                                                                                                     controladorFunciones.claveCategoria eq 38?true:
-                                                                                                                     controladorFunciones.claveCategoria eq 111?true:
-                                                                                                                     controladorFunciones.listaPersonalLogeado.areaOperativa != 28?(
-                                                                                                                     controladorFunciones.claveCategoria eq 30?true:(
-                                                                                                                     controladorFunciones.claveCategoria eq 32?true:(
-                                                                                                                     controladorFunciones.claveCategoria eq 41?true:false))):false}"/>
+                                                                                                         disabled="#{controladorFunciones.delateDisable(controladorFunciones.perosnalCategoriasFunciones.categoriaOperativa.categoria)}"/>
                                                                                     </p:outputPanel>                                                                                    
                                                                                 </div>
                                                                             </div>
@@ -248,8 +204,7 @@
                                                         <h:outputText value="#{funciones.categoriaOperativa.nombre}" />
                                                     </p:column>                                         
                                                     <p:column >
-                                                        <h:outputText value="#{funciones.areaOperativa
-}" />
+                                                        <h:outputText value="#{funciones.areaOperativa}" />
                                                     </p:column>                                      
                                                     <p:column >
                                                         <h:outputText value="#{funciones.categoriaEspesifica.nombreCategoria}" />
@@ -286,7 +241,7 @@
 
                                         </h:form>    
 
-                                        
+
                                     </p:tab>
                                     <p:tab title="Funciones">
                                         <c:if test="#{!controladorEmpleado.fechaLimiteFunciones}">

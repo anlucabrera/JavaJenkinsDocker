@@ -244,12 +244,12 @@ public class ControladorEmpleado implements Serializable {
                                     Integer diasR = (int) ((t.getFechaFin().getTime() - uch.castearLDaD(fechaActual).getTime()) / 86400000);
                                     Integer diasI = (int) ((uch.castearLDaD(fechaActual).getTime() - t.getFechaInicio().getTime()) / 86400000);
                                     if (diasI <= 2) {
-                                        mensajeIndex1 = "Inicio del periodo para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + uch.castearDaLD(t.getFechaInicio()).getMonth().getDisplayName(TextStyle.FULL, Locale.ROOT);
+                                        mensajeIndex1 = "Inicio del periodo para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + uch.castearDaLD(t.getFechaInicio()).getMonth().getDisplayName(TextStyle.FULL, new Locale("es","MX"));
                                         estiloInfo = true;
                                         mensajeGeneral = true;
                                     }
                                     if (diasR <= 5) {
-                                        mensajeIndex1 = "La fecha límite para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + uch.castearDaLD(t.getFechaInicio()).getMonth().getDisplayName(TextStyle.FULL, Locale.GERMANY) + " ¡Está por vencer!";
+                                        mensajeIndex1 = "La fecha límite para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + uch.castearDaLD(t.getFechaInicio()).getMonth().getDisplayName(TextStyle.FULL, new Locale("es","MX")) + " ¡Está por vencer!";
                                         mensajeIndex2 = "Restan " + diasR + " días";
                                         estiloInfo = false;
                                         mensajeGeneral = true;
