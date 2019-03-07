@@ -75,7 +75,7 @@ public class AdministracionEncuestaServicios implements Serializable{
                     if (logonMB.getPersonal().getAreaOperativa() == 9 || usuarioNomina.equals(579)) {
                         esDeIyE = true;
                     }
-                    if(!ejbAdmTutor.estTutordeGrupo(cveTrabajador).isEmpty()){
+                    if(!ejbAdmTutor.estTutordeGrupo(cveTrabajador).isEmpty() && ejbAdmTutor.estTutordeGrupo(cveTrabajador).get(0).getGrado() == 11){
                         tutor = true;
                     }
                 }

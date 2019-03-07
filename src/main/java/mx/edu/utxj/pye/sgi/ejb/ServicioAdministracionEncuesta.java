@@ -201,4 +201,14 @@ public class ServicioAdministracionEncuesta implements EjbAdministracionEncuesta
         q.setParameter("clave", clave);
         return q.getResultList();
     }
+    
+    @Override
+    public List<Personal> esPlaneacion(Integer areaSup, Short actividad, Short catOp, Integer clave){
+        TypedQuery<Personal> q = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE  p.areaSuperior = :areaSuperior and p.actividad.actividad = :actividad and  p.categoriaOperativa.categoria= :categoria AND p.clave = :clave", Personal.class);
+        q.setParameter("areaSuperior", areaSup);
+        q.setParameter("actividad", actividad);
+        q.setParameter("categoria", catOp);
+        q.setParameter("clave", clave);
+        return q.getResultList();
+    }
 }

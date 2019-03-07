@@ -110,6 +110,29 @@
                                     <li><p:link href="/encuestas/seguimiento/admEstudioSocieconomicoSecretario.xhtml"><i class="fa fa-list-ol"></i><span>Estudio Socioeconómico</span></p:link></li>
                                 </c:if>
                             </ul>
+
+                        </li>
+                    </c:if>
+
+                    <c:if test="#{(administracionAvanceEncSatTsu.aperturado and administracionAvanceEncSatTsu.planeacion) or
+                    (administracionAvanceEncuestaSatIng.aperturado and administracionAvanceEncuestaSatIng.planeacion) or
+                    (administracionAvanceEncuestaServicio.aperturado and administracionAvanceEncuestaServicio.planeacion) or
+                    (administracionAvanceEstudioSocioeconomico.aperturado and administracionAvanceEstudioSocioeconomico.planeacion)}">
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-check-square-o"></i> <span>Seguimiento encuestas</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                                <c:if test="#{administracionAvanceEncSatTsu.aperturado and administracionAvanceEncSatTsu.planeacion}">
+                                    <li><p:link href="/encuestas/seguimiento/admEncuestaEgresTsuPlaneacion.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción TSU</span></p:link></li>
+                                </c:if>
+                                <li><p:link href="/encuestas/seguimiento/admEncuestaEgresPlaneacion.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción ING</span></p:link></li>
+                                <li><p:link href="/encuestas/seguimiento/admEncuestaServicioPlaneacion.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta servicios</span></p:link></li>
+                                <li><p:link href="/encuestas/seguimiento/admEstudioSocieconomicoPlaneacion.xhtml"><i class="fa fa-list-ol"></i><span>Estudio Socioeconómico</span></p:link></li>
+                            </ul>
                         </li>
                     </c:if>
                     <!--Directivos/Directores de carrera-->
