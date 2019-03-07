@@ -98,10 +98,12 @@ public class ServicioAdministracionTutores implements EjbAdministracionTutores {
                 System.out.println("Periodo:"+ periodo);
             }
         });
-        List<Grupos> tutor = f2.getEntityManager().createQuery("SELECT g FROM Grupos as g WHERE g.gruposPK.cvePeriodo = :periodo AND g.cveMaestro = :cvePersona AND g.grado = :grado",Grupos.class)
+        //.setParameter("grado", grado) AND g.grado = :grado
+        List<Grupos> tutor = f2.getEntityManager().createQuery("SELECT g FROM Grupos as g WHERE g.gruposPK.cvePeriodo = :periodo "
+                + "AND g.cveMaestro = :cvePersona",Grupos.class)
                 .setParameter("periodo",periodo)
                 .setParameter("cvePersona", cvePersona)
-                .setParameter("grado", grado)
+                
                 .getResultStream().collect(Collectors.toList());
         return tutor;
     }

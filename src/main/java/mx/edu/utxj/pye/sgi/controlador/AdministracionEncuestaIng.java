@@ -80,7 +80,7 @@ public class AdministracionEncuestaIng implements Serializable{
                         esDeIyE = true;
                         //seguimientoEncuestaIyE();
                     }
-                    if(!ejbAdmTutores.estTutordeGrupo(cveTrabajador).isEmpty()){
+                    if(!ejbAdmTutores.estTutordeGrupo(cveTrabajador).isEmpty() && ejbAdmTutores.estTutordeGrupo(cveTrabajador).get(0).getGrado() == 11){
                         tutor = true;
                     }
                     
