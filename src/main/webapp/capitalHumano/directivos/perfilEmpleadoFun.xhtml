@@ -106,9 +106,10 @@
                                                                             <div class="form-group">
                                                                                 <div class="col-sm-12 col-md-12 col-lg-12">
                                                                                     <p:outputLabel value="Categoria" />
-                                                                                    <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorFunciones.consultarFunciones}">
+                                                                                    <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorFunciones.asignarPerosnalFunciones}">
+                                                                                         <f:selectItem itemValue="0" itemLabel="Todos las funciones"/>
                                                                                         <f:selectItems value="#{controladorFunciones.categoriasOyEporArea}" var="personal" itemValue="#{personal.clave}" itemLabel="#{personal.areaOperativa} -- #{personal.categoriaOperativa.nombre} -- #{personal.categoriaEspecifica.nombreCategoria}" />
-                                                                                        <p:ajax update="@form" listener="#{controladorFunciones.metodoBase()}"/>
+                                                                                        <p:ajax update="@form" oncomplete="actualizarTabla()" listener="#{controladorFunciones.metodoBase()}"/>
                                                                                     </p:selectOneMenu> 
                                                                                     <p:message for="eje" display="tooltip" />
                                                                                     <p:outputLabel for="funcion" style="font-size: large" value="Función"/>                                
@@ -131,7 +132,8 @@
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputPanel>            
                                                                                         <p:autoUpdate/>
-                                                                                        <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{controladorFunciones.crearFuncion()}" icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form" process="@form" 
+                                                                                        <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{controladorFunciones.agregarFuncion()}"
+                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form" process="@form"
                                                                                                          disabled="#{controladorFunciones.delateDisable(controladorFunciones.perosnalCategoriasFunciones.categoriaOperativa.categoria)}"/>
                                                                                     </p:outputPanel>                                                                                    
                                                                                 </div>
@@ -150,7 +152,7 @@
                                         <h:form id="frmListaDistinciones">
                                             <p:outputPanel >
                                                 <p:remoteCommand name="actualizarTabla" actionListener="#{controladorFunciones.metodoBase()}" update="tblDistinciones" />
-                                                <p:dataTable id="tblDistinciones" value="#{controladorFunciones.funcioneses}" var="funciones" 
+                                                <p:dataTable id="tblDistinciones" value="#{controladorFunciones.funcioneses}" var="funciones" rendered="true"
                                                              emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
                                                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                              rowsPerPageTemplate="5,10,15,20,25,30"
@@ -231,17 +233,12 @@
                                                         </p:cellEditor>
                                                     </p:column> 
                                                 </p:dataTable>
-
                                             </p:outputPanel>                                 
-
                                             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
                                                 <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
                                                 <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
                                             </p:confirmDialog>   
-
                                         </h:form>    
-
-
                                     </p:tab>
                                     <p:tab title="Funciones">
                                         <c:if test="#{!controladorEmpleado.fechaLimiteFunciones}">
@@ -431,7 +428,8 @@
                         <p:commandButton id="btncancelar" value="Cancelar" class="btn btn-primary" icon="fa fa-times" process="@form" update="@form" onsuccess="PF('dlgNewP').hide();"/>
                         <p:commandButton id="btnAceptar" value="Guarda puesto específico" class="btn btn-primary" actionListener="#{controladorFunciones.agregarYactualizarCategoriasEspecificas()}" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgNewP').hide();"/>
                     </f:facet>
-                    <p:outputPanel autoUpdate="true" style="max-width: 650px; max-height: 600px">
+                    <p:outputPanel style="max-width: 650px; max-height: 600px">
+                        <p:autoUpdate/>
                         <p:scrollPanel style="width:600px">
                             <h:panelGrid columns="1"  class="col-md-12">
                                 <p:outputLabel value="Nombre del puesto específico" for="nomPE"/>
@@ -455,7 +453,8 @@
                         <p:commandButton id="btncancelar" value="Cancelar" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" onsuccess="PF('dlgcoment').hide();"/>
                         <p:commandButton id="btnAceptar" value="Guardar comentario" class="btn btn-primary" actionListener="#{controladorFunciones.crearComentariosfunciones()}" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgcoment').hide();"/>
                     </f:facet>
-                    <p:outputPanel autoUpdate="true" style="max-width: 250px">
+                    <p:outputPanel style="max-width: 250px">
+                        <p:autoUpdate/>
                         <h:panelGrid columns="1"  class="col-md-12">
                             <p:outputLabel value="Función" for="numc"/>
                             <h:outputText id="numc" value="#{controladorFunciones.nuevoOBJFuncionesSelect.nombre}" style="text-align: justify" class="col-md-12"/>
