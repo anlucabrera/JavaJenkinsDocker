@@ -43,7 +43,7 @@ public class EncuestaSatisfaccionEgresados implements Serializable {
     
     @Getter private Evaluaciones evaluacion;
     @Getter private Boolean estOnceavo;
-    @Getter private String evaluador;
+    @Getter private String evaluador, valor;
     @Getter private Integer evaluadorr;
     @Getter @Setter Map<String, String> respuestas;
     @Getter private List<SelectItem> respuestasPosibles;
@@ -95,7 +95,12 @@ public class EncuestaSatisfaccionEgresados implements Serializable {
     }
     public void guardarRespuesta(ValueChangeEvent e) {
         UIComponent origen = (UIComponent) e.getSource();
-        String valor = e.getNewValue().toString();
+        if(e.getNewValue() != null){
+           valor = e.getNewValue().toString();
+        }else{
+           valor = e.getOldValue().toString();
+        }
+        
         ejb.actualizarRespuestaPorPregunta(resultado, origen.getId(), valor, respuestas);
         finalizado = ejb.actualizarResultado(resultado);
     }

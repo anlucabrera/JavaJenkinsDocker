@@ -21,22 +21,27 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.faces.component.UIComponent;
 
 @Named
 @ViewScoped
 public class EstudioSocioeconomicoOperativo extends Evaluacion<AlumnosEncuestas> implements Guardable {
 
     @Getter protected EvaluacionesEstudioSocioeconomicoResultados resultado;
-    @Getter
+    @Getter private String valor;
     Comparador<EvaluacionesEstudioSocioeconomicoResultados> comparador;
     @Inject EjbEvaluacionEstudioSocioeconomico ejb;
 
     @Override
     public void guardar(ValueChangeEvent event) {
         String id = event.getComponent().getId().trim();
-        String valor = event.getNewValue().toString();
+        if(event.getNewValue()!=null){
+            valor = event.getNewValue().toString();
+        }else{
+            valor = event.getOldValue().toString();
+        }
         ResultadoEJB<EvaluacionesEstudioSocioeconomicoResultados> actualizar = ejb.actualizar(id, valor, resultado);
-//        System.out.println("actualizar.getMensaje() = " + actualizar.getMensaje());
+    //        System.out.println("actualizar.getMensaje() = " + actualizar.getMensaje());
         ResultadoEJB<EvaluacionesEstudioSocioeconomicoResultados> guardar = ejb.guardar(resultado);
 //        System.out.println("guardar.getMensaje() = " + guardar.getMensaje());
         comprobar();

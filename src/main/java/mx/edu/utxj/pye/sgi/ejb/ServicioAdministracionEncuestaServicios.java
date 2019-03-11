@@ -56,7 +56,8 @@ public class ServicioAdministracionEncuestaServicios implements EjbAdministracio
      */
     @Override
     public List<AlumnosEncuestas> obtenerAlumnosNoAccedieron() {
-        List<AlumnosEncuestas> ae = f2.getEntityManager().createQuery("select a from AlumnosEncuestas as a",AlumnosEncuestas.class).getResultStream().collect(Collectors.toList());
+        Short grado = 11;
+        List<AlumnosEncuestas> ae = f2.getEntityManager().createQuery("select a from AlumnosEncuestas as a where a.grado = :grado",AlumnosEncuestas.class).setParameter("grado", grado).getResultStream().collect(Collectors.toList());
         return ae;
     }
     
