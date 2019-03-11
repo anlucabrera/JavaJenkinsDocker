@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.ejb.Stateful;
 import javax.persistence.Cache;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -41,7 +42,7 @@ public class FacadeService<T> implements Facade {
 
     @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
     private EntityManager em;
-
+    
     @Override
     public EntityManager getEntityManager() {
         Cache c=em.getEntityManagerFactory().getCache();

@@ -91,16 +91,16 @@ public class ServicioPartPerCap implements EjbPartPerCap{
 //                        break;
 //                }
                 switch (fila.getCell(4).getCellTypeEnum()) {
-                    case STRING:
-                        personal.setNombre(fila.getCell(4).getStringCellValue());
+                    case NUMERIC:
+                        personal.setClave((int) fila.getCell(4).getNumericCellValue());
+                        participantesPersonalCapacitado.setPersonal(personal.getClave());
                         break;
                     default:
                         break;
                 }
                 switch (fila.getCell(5).getCellTypeEnum()) {
                     case FORMULA: 
-                        personal.setClave((int) fila.getCell(5).getNumericCellValue());
-                        participantesPersonalCapacitado.setPersonal(personal.getClave());
+                        personal.setNombre(fila.getCell(5).getStringCellValue());
                         break;
                     default:
                         break;

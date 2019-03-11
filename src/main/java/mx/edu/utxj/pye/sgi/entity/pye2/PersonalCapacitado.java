@@ -50,20 +50,14 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "PersonalCapacitado.findByPeriodo", query = "SELECT p FROM PersonalCapacitado p WHERE p.periodo = :periodo")})
 public class PersonalCapacitado implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "registro")
-    private Integer registro;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 15)
     @Column(name = "curso")
     private String curso;
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 50)
+    @NotNull()
+    @Size(min = 1, max = 500)
     @Column(name = "nombre")
     private String nombre;
     @Basic(optional = false)
@@ -88,12 +82,12 @@ public class PersonalCapacitado implements Serializable {
     private String empresaImpartidora;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 255)
+    @Size(min = 1, max = 500)
     @Column(name = "objetivo")
     private String objetivo;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 100)
+    @Size(min = 1, max = 500)
     @Column(name = "lugar_imparticion")
     private String lugarImparticion;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -105,6 +99,12 @@ public class PersonalCapacitado implements Serializable {
     @NotNull
     @Column(name = "periodo")
     private int periodo;
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "registro")
+    private Integer registro;
     @JoinColumn(name = "modalidad", referencedColumnName = "percap_mod")
     @ManyToOne(optional = false)
     private PercapModalidad modalidad;
@@ -146,21 +146,6 @@ public class PersonalCapacitado implements Serializable {
         this.registro = registro;
     }
 
-    public String getCurso() {
-        return curso;
-    }
-
-    public void setCurso(String curso) {
-        this.curso = curso;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
 
     public Date getFechaInicial() {
         return fechaInicial;
@@ -178,13 +163,6 @@ public class PersonalCapacitado implements Serializable {
         this.fechaFinal = fechaFinal;
     }
 
-    public String getDuracion() {
-        return duracion;
-    }
-
-    public void setDuracion(String duracion) {
-        this.duracion = duracion;
-    }
 
     public String getEmpresaImpartidora() {
         return empresaImpartidora;
@@ -194,13 +172,6 @@ public class PersonalCapacitado implements Serializable {
         this.empresaImpartidora = empresaImpartidora;
     }
 
-    public String getObjetivo() {
-        return objetivo;
-    }
-
-    public void setObjetivo(String objetivo) {
-        this.objetivo = objetivo;
-    }
 
     public String getLugarImparticion() {
         return lugarImparticion;
@@ -218,13 +189,6 @@ public class PersonalCapacitado implements Serializable {
         this.montoInvertido = montoInvertido;
     }
 
-    public int getPeriodo() {
-        return periodo;
-    }
-
-    public void setPeriodo(int periodo) {
-        this.periodo = periodo;
-    }
 
     public PercapModalidad getModalidad() {
         return modalidad;
@@ -282,6 +246,46 @@ public class PersonalCapacitado implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.pye2.PersonalCapacitado[ registro=" + registro + " ]";
+    }
+
+    public String getCurso() {
+        return curso;
+    }
+
+    public void setCurso(String curso) {
+        this.curso = curso;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getDuracion() {
+        return duracion;
+    }
+
+    public void setDuracion(String duracion) {
+        this.duracion = duracion;
+    }
+
+    public String getObjetivo() {
+        return objetivo;
+    }
+
+    public void setObjetivo(String objetivo) {
+        this.objetivo = objetivo;
+    }
+
+    public int getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(int periodo) {
+        this.periodo = periodo;
     }
     
 }
