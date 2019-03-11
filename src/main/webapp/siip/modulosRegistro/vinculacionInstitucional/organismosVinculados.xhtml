@@ -258,6 +258,10 @@
                                         <p:column>
                                             <h:outputText value="#{organismoVinculado.convenio}"/>
                                         </p:column>
+
+                                        <f:facet name="footer">
+                                            En el mes de: #{organismosVinculadosC.dtoOrganismosVinculado.mesConsulta} hay un total de: #{fn:length(organismosVinculadosC.dtoOrganismosVinculado.lstOrganismosVinculados)} registros de Organismos Vinculados.
+                                        </f:facet>
                                     </p:dataTable>
                                     <p:confirmDialog global="true" 
                                                      showEffect="fade" 
@@ -1023,6 +1027,10 @@
                                                 <p:column>
                                                     <h:outputText value="#{organismoVinculado.convenio}"/>
                                                 </p:column>
+                                                
+                                                <f:facet name="footer">
+                                                   Su archivo de excel contiene un total de: #{fn:length(organismosVinculadosC.dtoOrganismosVinculado.lstOrganismosVinculados)} registros de Organismos Vinculados.
+                                                </f:facet>
                                             </p:dataTable>
                                         </div>
                                         <p></p>

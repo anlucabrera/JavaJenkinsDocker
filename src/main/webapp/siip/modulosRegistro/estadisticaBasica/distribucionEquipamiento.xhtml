@@ -193,6 +193,9 @@
                                                     <p:column>
                                                         <h:outputText value="#{equipoComputo.equiposComputoCicloPeriodoEscolar.mmsPort}"/>
                                                     </p:column>
+                                                    <f:facet name="footer">
+                                                        En el mes de: #{controladorDistribucionEquipamiento.dto.eventoSeleccionado.mes} hay un total de: #{fn:length(controladorDistribucionEquipamiento.dto.listaEquiposComputo)} registros de Distribución de Equipo de Cómputo.
+                                                    </f:facet>
                                                 </p:dataTable>
                                                 <p:confirmDialog global="true" 
                                                                  showEffect="fade" 
@@ -316,6 +319,9 @@
                                                     <p:column>
                                                         <h:outputText value="#{equipoComputoInternet.equiposComputoInternetCicloPeriodoEscolar.mmsPort}"/>
                                                     </p:column>
+                                                    <f:facet name="footer">
+                                                        En el mes de: #{controladorDistribucionEquipamiento.dto.eventoSeleccionado.mes} hay un total de: #{fn:length(controladorDistribucionEquipamiento.dto.listaEquiposComputoInternet)} registros de Distribución de Equipo de Cómputo con Internet.
+                                                    </f:facet>
                                                 </p:dataTable>
                                             </div>
                                         </p:tab>
@@ -573,7 +579,7 @@
                         <h:form id="frmAlineacion">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorDistribucionEquipamiento.dto.periodoEscolarActivo.periodo eq controladorDistribucionEquipamiento.dto.registroEquiposComputoCPE.equiposComputoCicloPeriodoEscolar.periodoEscolar}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -678,7 +684,7 @@
                         <h:form id="frmAlineacionECI">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorDistribucionEquipamiento.dto.periodoEscolarActivo.periodo eq controladorDistribucionEquipamiento.dto.registroEquiposInternetCPE.equiposComputoInternetCicloPeriodoEscolar.periodoEscolar}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -857,6 +863,9 @@
                                                         <p:column>
                                                             <h:outputText value="#{equipoComputo.equiposComputoCicloPeriodoEscolar.mmsPort}"/>
                                                         </p:column>
+                                                        <f:facet name="footer">
+                                                            Su archivo de excel contiene un total de: #{fn:length(controladorDistribucionEquipamiento.dto.listaEquiposComputo)} registros de Distribución de Equipo de Cómputo.
+                                                        </f:facet>
                                                     </p:dataTable>
                                                 </div>
                                             </p:tab>
@@ -947,6 +956,9 @@
                                                         <p:column>
                                                             <h:outputText value="#{equipoComputoInternet.equiposComputoInternetCicloPeriodoEscolar.mmsPort}"/>
                                                         </p:column>
+                                                        <f:facet name="footer">
+                                                            Su archivo de excel contiene un total de: #{fn:length(controladorDistribucionEquipamiento.dto.listaEquiposComputoInternet)} registros de Distribución de Equipo de Cómputo con Internet.
+                                                        </f:facet>
                                                     </p:dataTable>
                                                 </div>
                                             </p:tab>

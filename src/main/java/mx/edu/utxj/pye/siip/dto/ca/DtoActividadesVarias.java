@@ -27,14 +27,16 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
  * @author Planeacion
  */
 public final class DtoActividadesVarias {
+    
+    @Getter @Setter private List<AreasUniversidad> listaAreasConRegistroMensualGeneral;
+    @Getter private Boolean tipoConsulta;
+    
      /************************** Lista áreas ****************************************/
     @Getter private List<Categorias> listaCategoriasPOA;
     @Getter private List<AreasUniversidad> listaAreasPOA; 
     
     @Getter private Categorias categoria;
     @Getter private AreasUniversidad areaUniversidadPOA;
-    
-    @Getter private List<String> listaArchivosSudidosByMes = new ArrayList<>();
     
     /************************** Evidencias *************************************/
     @Getter private DTOActividadVaria registro;
@@ -70,6 +72,7 @@ public final class DtoActividadesVarias {
     @Getter @Setter String rutaArchivo;
     
     @Getter @Setter private List<ActividadesVariasRegistro> lstActividadesVarias;
+    @Getter @Setter private List<DTOActividadVaria> lstDtoActividadesVarias;
 
     public DtoActividadesVarias() { 
         setRegistroTipoAV(new RegistrosTipo((short)8));
@@ -77,6 +80,7 @@ public final class DtoActividadesVarias {
         setRegistros(new ArrayList<>(Arrays.asList(registroTipoAV.getRegistroTipo())));
         tieneEvidencia = false;
         forzarAperturaDialogo = false;
+        tipoConsulta = true;
     }
 
     public void setRegistro(DTOActividadVaria registro) {

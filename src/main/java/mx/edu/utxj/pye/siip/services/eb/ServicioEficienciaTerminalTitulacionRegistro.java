@@ -15,10 +15,8 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -56,9 +54,6 @@ public class ServicioEficienciaTerminalTitulacionRegistro implements EjbEficienc
 
     @Inject Caster  caster;
     
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
-
     @Override
     public List<DTOEficienciaTerminalTitulacionRegistro> getListaEficienciaTerminalTitulacionRegistros(String rutaArchivo) throws Throwable {
         if (Files.exists(Paths.get(rutaArchivo))) {
@@ -410,7 +405,7 @@ public class ServicioEficienciaTerminalTitulacionRegistro implements EjbEficienc
     @Override
     public EficienciaTerminalTitulacionRegistro getEficienciaTerminalTitulacionRegistro(EficienciaTerminalTitulacionRegistro eficienciaTerminalTitulacionRegistro) {
         EficienciaTerminalTitulacionRegistro eficienciaTerminalEncontrado = new EficienciaTerminalTitulacionRegistro();
-        TypedQuery<EficienciaTerminalTitulacionRegistro> query = em.createQuery("SELECT e FROM EficienciaTerminalTitulacionRegistro e WHERE e.programaEducativo = :programaEducativo AND e.generacion = :generacion", EficienciaTerminalTitulacionRegistro.class);
+        TypedQuery<EficienciaTerminalTitulacionRegistro> query = facadeEscolar.getEntityManager().createQuery("SELECT e FROM EficienciaTerminalTitulacionRegistro e WHERE e.programaEducativo = :programaEducativo AND e.generacion = :generacion", EficienciaTerminalTitulacionRegistro.class);
         query.setParameter("programaEducativo", eficienciaTerminalTitulacionRegistro.getProgramaEducativo());
         query.setParameter("generacion", eficienciaTerminalTitulacionRegistro.getGeneracion());
         try {
@@ -427,29 +422,29 @@ public class ServicioEficienciaTerminalTitulacionRegistro implements EjbEficienc
     public List<DTOEficienciaTerminalTitulacionRegistro> getFiltroEficienciaTerminalEjercicioMesArea(Short ejercicio, String mes, Short area) {
         try {
             List<DTOEficienciaTerminalTitulacionRegistro> dtoEficienciaTerminal = new ArrayList<>();
-            List<EficienciaTerminalTitulacionRegistro> eficienciaTerminal = em.createQuery("SELECT e FROM EficienciaTerminalTitulacionRegistro e JOIN e.registros r JOIN r.eventoRegistro er JOIN er.ejercicioFiscal f WHERE f.anio = :anio AND er.mes = :mes AND r.area = :area", EficienciaTerminalTitulacionRegistro.class)
+            List<EficienciaTerminalTitulacionRegistro> eficienciaTerminal = facadeEscolar.getEntityManager().createQuery("SELECT e FROM EficienciaTerminalTitulacionRegistro e JOIN e.registros r JOIN r.eventoRegistro er JOIN er.ejercicioFiscal f WHERE f.anio = :anio AND er.mes = :mes AND r.area = :area", EficienciaTerminalTitulacionRegistro.class)
                     .setParameter("anio", ejercicio)
                     .setParameter("mes", mes)
                     .setParameter("area", area)
                     .getResultList();
             eficienciaTerminal.forEach((et) -> {
-                em.refresh(et);
+                facadeEscolar.getEntityManager().refresh(et);
                 ActividadesPoa a = et.getRegistros().getActividadesPoaList().isEmpty() ? null : et.getRegistros().getActividadesPoaList().get(0);
                 if (a != null) {
                     dtoEficienciaTerminal.add(new DTOEficienciaTerminalTitulacionRegistro(
-                            em.find(AreasUniversidad.class, et.getProgramaEducativo()),
-                            caster.generacionToString(em.find(Generaciones.class, et.getGeneracion())),
-                            caster.periodoToStringAnio(em.find(PeriodosEscolares.class, et.getPeriodoInicio())),
-                            caster.periodoToStringAnio(em.find(PeriodosEscolares.class, et.getPeriodoFin())),
+                            facadeEscolar.getEntityManager().find(AreasUniversidad.class, et.getProgramaEducativo()),
+                            caster.generacionToString(facadeEscolar.getEntityManager().find(Generaciones.class, et.getGeneracion())),
+                            caster.periodoToStringAnio(facadeEscolar.getEntityManager().find(PeriodosEscolares.class, et.getPeriodoInicio())),
+                            caster.periodoToStringAnio(facadeEscolar.getEntityManager().find(PeriodosEscolares.class, et.getPeriodoFin())),
                             et,
                             a
                     ));
                 } else {
                     dtoEficienciaTerminal.add(new DTOEficienciaTerminalTitulacionRegistro(
-                            em.find(AreasUniversidad.class, et.getProgramaEducativo()),
-                            caster.generacionToString(em.find(Generaciones.class, et.getGeneracion())),
-                            caster.periodoToStringAnio(em.find(PeriodosEscolares.class, et.getPeriodoInicio())),
-                            caster.periodoToStringAnio(em.find(PeriodosEscolares.class, et.getPeriodoFin())),
+                            facadeEscolar.getEntityManager().find(AreasUniversidad.class, et.getProgramaEducativo()),
+                            caster.generacionToString(facadeEscolar.getEntityManager().find(Generaciones.class, et.getGeneracion())),
+                            caster.periodoToStringAnio(facadeEscolar.getEntityManager().find(PeriodosEscolares.class, et.getPeriodoInicio())),
+                            caster.periodoToStringAnio(facadeEscolar.getEntityManager().find(PeriodosEscolares.class, et.getPeriodoFin())),
                             et
                     ));
                 }

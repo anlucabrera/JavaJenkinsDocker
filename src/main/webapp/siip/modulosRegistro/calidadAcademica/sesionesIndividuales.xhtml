@@ -17,15 +17,15 @@
         <h:outputScript library="js" name="dialogs.js" />
     </ui:define>
     <ui:define name="title">
-        Convenios        
+        Actividades Varias
     </ui:define>
 
     <ui:define name="description">
-        Vinculación Institucional
+        Asegurar la Calidad Académica
     </ui:define>
 
     <ui:define name="body">
-        <adm:breadcrumb title="Vinculación Institucional - Convenios"/>
+        <adm:breadcrumb title="Asegurar la Calidad Académica - Actividades Varias"/>
         <adm:sidebar collapsed="true"/>
         <p:importEnum type="mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa" var="etapa" allSuffix="ETAPAS" />
         <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
@@ -43,33 +43,33 @@
                             <p:toolbar id="tb"> 
                                 <f:facet name="left">
                                     <p:spacer width="10" />
-                                    <c:if test="#{controladorArchivoConvenios.etapa eq etapa.MOSTRAR}">
-                                        <!--Criterio de búsqueda dependiendo la naturaleza del registro--> 
+                                    <c:if test="#{controladorArchivoActividadVaria.etapa eq etapa.MOSTRAR}">
+                                        <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
                                         <p:outputLabel value="Ejercicio: " for="anioConsulta" />
                                         <p:spacer width="5" />
                                         <p:selectOneMenu id="anioConsulta"
-                                                         value="#{conveniosC.dtoConvenios.anioConsulta}"
-                                                         valueChangeListener="#{conveniosC.actualizarMeses}"
+                                                         value="#{actividadesVarias.dto.anioConsulta}"
+                                                         valueChangeListener="#{actividadesVarias.actualizarMeses}"
                                                          class="form-control"
                                                          style="padding-top: 0px">
-                                            <f:selectItems value="#{conveniosC.dtoConvenios.aniosConsulta}" 
+                                            <f:selectItems value="#{actividadesVarias.dto.aniosConsulta}" 
                                                            var="anio" 
                                                            itemValue="#{anio}" 
                                                            itemLabel="#{anio}" />
-                                            <p:ajax process="@this" listener="#{conveniosC.buscaConvenios()}" update="@(form)" />
+                                            <p:ajax process="@this" listener="#{actividadesVarias.buscaActividadesVarias()}" update="@(form)" />
                                         </p:selectOneMenu>
                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                         <p:outputLabel value="Mes: " for="mesConsulta" />
                                         <p:spacer width="5" />
                                         <p:selectOneMenu id="mesConsulta"
-                                                         value="#{conveniosC.dtoConvenios.mesConsulta}"
+                                                         value="#{actividadesVarias.dto.mesConsulta}"
                                                          class="form-control"
                                                          style="padding-top:  0px">
-                                            <f:selectItems value="#{conveniosC.dtoConvenios.mesesConsulta}" 
+                                            <f:selectItems value="#{actividadesVarias.dto.mesesConsulta}" 
                                                            var="mes" 
                                                            itemValue="#{mes}" 
                                                            itemLabel="#{mes}" />
-                                            <p:ajax process="@this" listener="#{conveniosC.buscaConvenios()}" update="@(form)" />
+                                            <p:ajax process="@this" listener="#{actividadesVarias.buscaActividadesVarias()}" update="@(form)" />
                                         </p:selectOneMenu>
                                     </c:if>
                                 </f:facet>
@@ -80,14 +80,12 @@
                                                          onclick="PF('modalCargaArchivo').show()" 
                                                          class="btn btn-primary btn-sm"/>
                                     </div>
-                                    <span class="ui-separator">
-                                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                                    </span>
-                                    <c:if test="#{controladorArchivoConvenios.etapa eq etapa.CARGAR}">
-                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="convenios?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <c:if test="#{controladorArchivoActividadVaria.etapa eq etapa.CARGAR}">
+                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="actividadesVarias?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
                                         <p:spacer width="3" />
                                     </c:if>
-                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="#{controladorPlantillasVIN.descargarPlantillaConvenios()}" target="_blank" title="Descargar Plantilla Convenios"><i class="fa fa-download" /></p:commandLink>
+                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="#{controladorPlantillasCA.descargarPlantillaActVar()}" target="_blank" title="Descargar Plantilla Actividades Varias"><i class="fa fa-download" /></p:commandLink>
                                     <p:spacer width="3" />
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
                                 </f:facet>
@@ -103,113 +101,105 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12">
                             <h:form id="formMuestraDatosActivos">
-                                <c:if test="#{controladorArchivoConvenios.etapa eq etapa.MOSTRAR}">
-                                    <p:remoteCommand name="actualizar" update="@form:formMuestraDatosActivos"/>
-                                    <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parámetros seleccionados: Ejercicio: #{conveniosC.dtoConvenios.anioConsulta} y Mes: #{conveniosC.dtoConvenios.mesConsulta}"
-                                                 paginator="true" 
-                                                 rows="10" 
+                                <c:if test="#{controladorArchivoActividadVaria.etapa eq etapa.MOSTRAR}">
+                                    <p:remoteCommand update="@form:formMuestraDatosActivos"  name="actualizar"/>
+                                    <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parámetros seleccionados: Ejercicio: #{actividadesVarias.dto.anioConsulta} y Mes: #{actividadesVarias.dto.mesConsulta}" 
+                                                 paginator="true"
+                                                 rows="10"
                                                  rowsPerPageTemplate="10,20,30,40,50"
-                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
                                                  resizeMode="expand"
-                                                 id="dtbConvenios"
-                                                 var="convenio" 
-                                                 value="#{conveniosC.dtoConvenios.lstConvenios}"
+                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                 id="dtbActividadesPrevias"
+                                                 var="actVar" value="#{actividadesVarias.dto.lstActividadesVarias}"
                                                  tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                         <p:columnGroup type="header">
-                                            <p:column headerText="Opciones" width="120" />
-                                            <p:column headerText="Empresa" width="500"/>
-                                            <p:column headerText="Fecha de firma" width="100"/>
-                                            <p:column headerText="Vigencia" width="100"/>
-                                            <p:column headerText="Estudiantes Beneficiados Hombres" width="100"/>
-                                            <p:column headerText="Estudiantes Beneficiados Mujeres" width="100"/>
-                                            <p:column headerText="Docentes Beneficiados Hombres" width="100"/>
-                                            <p:column headerText="Docentes Beneficiados Mujeres" width="100"/>
-                                            <p:column headerText="Recursos obtenidos" width="150"/>
-                                            <p:column headerText="Objetivo" width="800"/>
-                                            <p:column headerText="Descripción" width="800"/>
-                                            <p:column headerText="Impacto" width="800"/>
+                                            <p:row>
+                                                <p:column headerText="Opciones" width="110"/>
+                                                <p:column headerText="Fecha inicial" width="100"/>
+                                                <p:column headerText="Fecha final" width="100"/>
+                                                <p:column headerText="Nombre de actividad" width="300"/>
+                                                <p:column headerText="Objetivo" width="300"/>
+                                                <p:column headerText="Lugar de realización" width="300"/>
+                                                <p:column headerText="Impacto beneficio" width="300"/>
+                                                <p:column headerText="Total de mujeres" width="120"/>
+                                                <p:column headerText="Total de hombres" width="120"/>
+                                                <p:column headerText="Personalidades" width="300"/>
+                                            </p:row>
                                         </p:columnGroup>
-                                        <c:set var="convenioEliminado" value="#{convenio.registro}"/>
+                                        <c:set var="actVarEliminado" value="#{actVar.registro}" />
                                         <p:column style="text-align: center;">
                                             <div class="btn-group">
                                                 <p:commandButton class="btn btn-info btn-sm"
                                                                  icon="fa fa-trash"
-                                                                 actionListener="#{conveniosC.eliminarRegistro(convenioEliminado, convenio)}"
+                                                                 actionListener="#{actividadesVarias.eliminarRegistro(actVarEliminado, actVar)}"
                                                                  onsuccess="actualizar();"
-                                                                 title="Eliminar convenio"
-                                                                 rendered="#{conveniosC.dtoConvenios.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and conveniosC.dtoConvenios.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                                 title="Eliminar registro"
+                                                                 rendered="#{actividadesVarias.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and actividadesVarias.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
                                                     <p:confirm header="Eliminar registro" 
-                                                               message="¿Está seguro de eliminar el convenio: #{convenio.empresa.nombre} ?" 
+                                                               message="¿Está seguro de eliminar la actividad #{actVar.nombre}?" 
                                                                icon="ui-icon-alert" />
                                                 </p:commandButton>
-                                                <c:set var="evidencias" value="#{conveniosC.consultarEvidencias(convenio.registro)}" />
-                                                <p:commandButton actionListener="#{conveniosC.seleccionarRegistro(convenio)}"
+                                                <p:spacer width="3" />
+                                                <c:set var="evidencias" value="#{actividadesVarias.consultarEvidencias(actVar.registro)}" />
+                                                <p:commandButton actionListener="#{actividadesVarias.seleccionarRegistro(actVar)}"
                                                                  class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
                                                                  icon="fa fa-image"
                                                                  title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
-                                                <p:commandButton actionListener="#{conveniosC.abrirAlineacionPOA(convenio)}"
-                                                                 class="btn btn-sm #{conveniosC.verificaAlineacion(convenio.registro)?'btn-info':'btn-warning'}"
-                                                                 icon="fa fa-cog"
+                                                <p:spacer width="3" />
+                                                <p:commandButton actionListener="#{actividadesVarias.abrirAlineacionPOA(actVar)}"
+                                                                 class="btn btn-sm #{actividadesVarias.verificaAlineacion(actVar.registro)?'btn-info':'btn-warning'}" icon="fa fa-cog"
                                                                  title="Alineación a POA." />
                                             </div>
-                                        </p:column>    
-
+                                        </p:column>                                                 
                                         <p:column>
-                                            <h:outputText value="#{convenio.empresa.nombre}"/>
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{convenio.fechaFirma}">
+                                            <h:outputText value="#{actVar.fechaInicio}">
                                                 <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
                                             </h:outputText>
                                         </p:column>
 
                                         <p:column>
-                                            <h:outputText value="#{convenio.vigencia}">
+                                            <h:outputText value="#{actVar.fechaFin}">
                                                 <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
                                             </h:outputText>
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{actVar.nombre}"/>
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{actVar.objetivo}"/>
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{actVar.lugar}"/>
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{actVar.impactoBeneficio}"/>
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{actVar.totalMujeres}"/>
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{actVar.totalHombres}"/>
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{actVar.personalidades}"/>
                                         </p:column>
                                         
-                                        <p:column>
-                                            <h:outputText value="#{convenio.ebh}"/>
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{convenio.ebm}"/>
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{convenio.dbh}"/>
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{convenio.dbm}"/>
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="$ #{convenio.recursosObtenidos}"/>
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{convenio.objetivo}"/>
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{convenio.descripcion}"/>
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{convenio.impacto}"/>
-                                        </p:column>
-
                                         <f:facet name="footer">
-                                            En el mes de: #{conveniosC.dtoConvenios.mesConsulta} hay un total de: #{fn:length(conveniosC.dtoConvenios.lstConvenios)} registros de Convenios.
+                                            En el mes de: #{actividadesVarias.dto.mesConsulta} hay un total de: #{fn:length(actividadesVarias.dto.lstActividadesVarias)} registros de Actividades Varías.
                                         </f:facet>
                                     </p:dataTable>
+
                                     <p:confirmDialog global="true" 
                                                      showEffect="fade" 
                                                      hideEffect="fade" 
-                                                     styleClass="panel panel-primary"
+                                                     styleClass="panel panel-primary" 
                                                      width="500" 
                                                      closeOnEscape="true">
                                         <p:commandButton value="Si" 
@@ -226,14 +216,13 @@
                         </div>
                     </div>
 
-                    <!-- Evidencias -->
-                    
+                    <!-- Sección de evidencias -->
                     <p:dialog id="modalCargaEvidencia" 
                               widgetVar="modalCargaEvidencia" 
                               width="700" 
                               height="auto"  
                               closeOnEscape="true" 
-                              visible="#{conveniosC.dtoConvenios.forzarAperturaDialogo}"
+                              visible="#{actividadesVarias.dto.forzarAperturaDialogo}"
                               showEffect="fade" 
                               hideEffect="fade" 
                               modal="true" 
@@ -255,9 +244,9 @@
                                     <f:facet name="right">
                                         <o:form id="formularioEvidencia" 
                                                 enctype="multipart/form-data" 
-                                                class="form-inline"  >
+                                                class="form-inline">
                                             <o:inputFile id="files" 
-                                                         value="#{conveniosC.dtoConvenios.archivos}"  
+                                                         value="#{actividadesVarias.dto.archivos}" 
                                                          multiple="true" 
                                                          class="form-control"
                                                          accept="image/png,image/jpg,image/jpeg,application/pdf" 
@@ -266,10 +255,13 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true" 
                                                          requiredMessage="Debe elegir al menos un archivo." 
-                                                         >
+                                                         rendered="#{actividadesVarias.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and actividadesVarias.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
                                             </o:inputFile>
-                                            <h:commandButton id="btnuploadFiles" value="Subir archivos" class="btn btn-primary" actionListener="#{conveniosC.subirEvidencias()}" 
-                                                             />
+                                            <h:commandButton id="btnuploadFiles" 
+                                                             value="Subir archivos" 
+                                                             class="btn btn-primary" 
+                                                             actionListener="#{actividadesVarias.subirEvidencias()}" 
+                                                             rendered="#{actividadesVarias.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and actividadesVarias.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -278,20 +270,20 @@
                         <h:form id="frmEvidencias" >
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
-                                <div class="col-md-12"><p:outputLabel value="Convenio: #{conveniosC.dtoConvenios.registro.convenio.empresa.nombre}" /></div>
+                                <div class="col-md-12"><p:outputLabel value="Actividad Varia: #{actividadesVarias.dto.registro.actividadVaria.nombre}" /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px" />
                             <div class="row">
                                 <div class="col-md-12">
                                     <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
                                     <p:dataTable id="tblEvidencias" 
-                                                 value="#{conveniosC.dtoConvenios.listaEvidencias}" 
+                                                 value="#{actividadesVarias.dto.listaEvidencias}" 
                                                  var="evidencia"
                                                  emptyMessage="No se han registrado evidencias de este registro." 
                                                  tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
                                                  paginator="true" 
                                                  rows="10" 
-                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
                                                  paginatorAlwaysVisible="false" 
                                                  paginatorPosition="bottom"
                                                  >
@@ -307,17 +299,17 @@
                                             <div class="btn-group">
                                                 <p:commandButton class="btn btn-info btn-sm" 
                                                                  icon="fa fa-trash" 
-                                                                 actionListener="#{conveniosC.eliminarEvidencia(evidencia)}" 
+                                                                 actionListener="#{actividadesVarias.eliminarEvidencia(evidencia)}" 
                                                                  onsuccess="actualizar2();" 
-                                                                 title="Eliminar evidencia.">
+                                                                 title="Eliminar evidencia."
+                                                                 rendered="#{actividadesVarias.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and actividadesVarias.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
                                                     <p:confirm header="Eliminar evidencia" 
                                                                message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" 
                                                                icon="ui-icon-alert" />
                                                 </p:commandButton>
-                                                <p:spacer width="5" />
-                                                <p:commandLink class="btn btn-info btn-sm"
+                                                <p:commandLink class="btn btn-info btn-sm" 
                                                                ajax="false" 
-                                                               action="#{conveniosC.descargarEvidencia(evidencia)}" 
+                                                               action="#{actividadesVarias.descargarEvidencia(evidencia)}" 
                                                                target="_blank" 
                                                                title="Descargar evidencia.">
                                                     <i class="fa fa-download" />
@@ -328,25 +320,24 @@
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
                                         <f:facet name="footer">
-                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(conveniosC.dtoConvenios.listaEvidencias)}.</span>
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(actividadesVarias.dto.listaEvidencias)}.</span>
                                         </f:facet>
                                     </p:dataTable>
                                 </div>
                             </div>
                         </h:form>
                     </p:dialog>
-                    
-                    <!-- Alineación -->
-                    
+
+                    <!-- Sección de alineación a POA -->
                     <p:dialog id="modalAlineacion" 
                               widgetVar="modalAlineacion" 
                               width="900" 
-                              height="auto"  
+                              height="auto" 
                               closeOnEscape="true"
-                              showEffect="fade"
+                              showEffect="fade" 
                               hideEffect="fade" 
                               modal="true" 
-                              draggable="true"
+                              draggable="true" 
                               header="Alineación a POA." 
                               onHide="actualizar();"
                               styleClass="panel panel-primary" 
@@ -356,25 +347,25 @@
                         <h:form id="frmAlineacion" >
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar>
+                                    <p:toolbar rendered="#{actividadesVarias.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and actividadesVarias.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
                                             <p:commandButton class="btn btn-primary" 
                                                              value="Eliminar alineación" 
                                                              icon="fa fa-trash" 
-                                                             actionListener="#{conveniosC.eliminarAlineacion()}" 
-                                                             rendered="#{conveniosC.verificaAlineacion(conveniosC.dtoConvenios.registro.convenio.registro)}" >
+                                                             actionListener="#{actividadesVarias.eliminarAlineacion()}" 
+                                                             rendered="#{actividadesVarias.verificaAlineacion(actividadesVarias.dto.registro.actividadVaria.registro)}" >
                                                 <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
                                             </p:commandButton>
-                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{conveniosC.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
+                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{actividadesVarias.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
                                         </f:facet>
                                     </p:toolbar>
                                 </div>
-                            </div>                            
+                            </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
-                                <div class="col-md-12"><p:outputLabel value="Convenio: #{conveniosC.dtoConvenios.registro.convenio.empresa.nombre} " /></div>
+                                <div class="col-md-12"><p:outputLabel value="Actividad Varia: #{actividadesVarias.dto.registro.actividadVaria.nombre} " /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
@@ -383,10 +374,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="eje" value="#{conveniosC.dtoConvenios.alineacionEje}" valueChangeListener="#{conveniosC.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="eje" value="#{actividadesVarias.dto.alineacionEje}" valueChangeListener="#{actividadesVarias.actualizarEstrategias}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{conveniosC.dtoConvenios.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <f:selectItems value="#{actividadesVarias.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
                                         <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="eje"><p:autoUpdate /></p:message>
@@ -395,10 +386,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="estrategia" value="#{conveniosC.dtoConvenios.alineacionEstrategia}" valueChangeListener="#{conveniosC.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="estrategia" value="#{actividadesVarias.dto.alineacionEstrategia}" valueChangeListener="#{actividadesVarias.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{conveniosC.dtoConvenios.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <f:selectItems value="#{actividadesVarias.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
                                         <p:ajax process="estrategia" update="lineaAccion,actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="estrategia"><p:autoUpdate /></p:message>
@@ -407,10 +398,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="lineaAccion" value="#{conveniosC.dtoConvenios.alineacionLinea}" valueChangeListener="#{conveniosC.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="lineaAccion" value="#{actividadesVarias.dto.alineacionLinea}" valueChangeListener="#{actividadesVarias.actualizarActividades}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{conveniosC.dtoConvenios.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <f:selectItems value="#{actividadesVarias.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
                                         <p:ajax process="lineaAccion" update="actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="lineaAccion"><p:autoUpdate /></p:message>
@@ -419,10 +410,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="actividad" value="#{conveniosC.dtoConvenios.alineacionActividad}" required="true" converter="entidadConverter2">
+                                    <p:selectOneMenu id="actividad" value="#{actividadesVarias.dto.alineacionActividad}" required="true" converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{conveniosC.dtoConvenios.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <f:selectItems value="#{actividadesVarias.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
                                         <p:ajax process="actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="actividad"><p:autoUpdate /></p:message>
@@ -435,98 +426,86 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12">
                             <h:form id="formPrevisualizacionDatos" prependId="false">
-                                <c:if test="#{controladorArchivoConvenios.etapa eq etapa.CARGAR}">
+                                <c:if test="#{controladorArchivoActividadVaria.etapa eq etapa.CARGAR}">
                                     <center>
-                                        <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente"
+                                        <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
                                                      paginator="true"
                                                      rows="10" 
                                                      rowsPerPageTemplate="5,10,20,30,40,50"
-                                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
                                                      resizeMode="expand"
-                                                     id="dtbConvenios"
-                                                     var="conveniosLista" 
-                                                     value="#{conveniosC.dtoConvenios.lstConvenios}"
+                                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                     id="dtbActividadesPrevias"
+                                                     var="actVar" value="#{actividadesVarias.dto.lstActividadesVarias}" 
                                                      tableStyleClass="table-bordered table-hover table-condensed table-responsive">
                                             <f:facet name="header">
                                                 Previsualización de datos
                                             </f:facet>
                                             <p:columnGroup type="header">
                                                 <p:row>
-                                                    <p:column headerText="Empresa"                          width="400"/>
-                                                    <p:column headerText="Fecha de firma"                   width="100"/>
-                                                    <p:column headerText="Vigencia"                         width="100"/>
-                                                    <p:column headerText="Objetivo"                         width="400"/>
-                                                    <p:column headerText="Descripción"                      width="400"/>
-                                                    <p:column headerText="Impacto"                          width="400"/>
-                                                    <p:column headerText="Estudiantes Beneficiados Hombres" width="200"/>
-                                                    <p:column headerText="Estudiantes Beneficiados Mujeres" width="200"/>
-                                                    <p:column headerText="Docentes Beneficiados Hombres"    width="200"/>
-                                                    <p:column headerText="Docentes Beneficiados Mujeres"    width="200"/>
-                                                    <p:column headerText="Recursos obtenidos"               width="100"/>
+                                                    <p:column headerText="Fecha inicial" width="100"/>
+                                                    <p:column headerText="Fecha final" width="100"/>
+                                                    <p:column headerText="Nombre de actividad" width="300"/>
+                                                    <p:column headerText="Objetivo" width="300"/>
+                                                    <p:column headerText="Lugar de realización" width="300"/>
+                                                    <p:column headerText="Impacto beneficio" width="300"/>
+                                                    <p:column headerText="Total de mujeres" width="100"/>
+                                                    <p:column headerText="Total de hombres" width="120"/>
+                                                    <p:column headerText="Personalidades" width="300"/>
                                                 </p:row>
                                             </p:columnGroup>
-                                            <p:column>
-                                                <h:outputText value="#{conveniosLista.empresa.nombre}"/>
-                                            </p:column>
 
                                             <p:column>
-                                                <h:outputText value="#{conveniosLista.fechaFirma}">
+                                                <h:outputText value="#{actVar.fechaInicio}">
                                                     <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
                                                 </h:outputText>
                                             </p:column>
 
                                             <p:column>
-                                                <h:outputText value="#{conveniosLista.vigencia}">
+                                                <h:outputText value="#{actVar.fechaFin}">
                                                     <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
                                                 </h:outputText>
                                             </p:column>
 
                                             <p:column>
-                                                <h:outputText value="#{conveniosLista.objetivo}"/>
+                                                <h:outputText value="#{actVar.nombre}"/>
                                             </p:column>
 
                                             <p:column>
-                                                <h:outputText value="#{conveniosLista.descripcion}"/>
+                                                <h:outputText value="#{actVar.objetivo}"/>
                                             </p:column>
 
                                             <p:column>
-                                                <h:outputText value="#{conveniosLista.impacto}"/>
+                                                <h:outputText value="#{actVar.lugar}"/>
                                             </p:column>
 
                                             <p:column>
-                                                <h:outputText value="#{conveniosLista.ebh}"/>
+                                                <h:outputText value="#{actVar.impactoBeneficio}"/>
                                             </p:column>
 
                                             <p:column>
-                                                <h:outputText value="#{conveniosLista.ebm}"/>
+                                                <h:outputText value="#{actVar.totalMujeres}"/>
                                             </p:column>
 
                                             <p:column>
-                                                <h:outputText value="#{conveniosLista.dbh}"/>
+                                                <h:outputText value="#{actVar.totalHombres}"/>
                                             </p:column>
 
                                             <p:column>
-                                                <h:outputText value="#{conveniosLista.dbm}"/>
+                                                <h:outputText value="#{actVar.personalidades}"/>
                                             </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="$ #{conveniosLista.recursosObtenidos}"/>
-                                            </p:column>
-
                                             <f:facet name="footer">
-                                                Su archivo de excel contiene un total de: #{fn:length(conveniosC.dtoConvenios.lstConvenios)} registros de Convenios.
+                                                Su archivo de excel contiene un total de: #{fn:length(actividadesVarias.dto.lstActividadesVarias)} registros de Actividades Varías.
                                             </f:facet>
                                         </p:dataTable>
                                         <p></p>
-                                        <p:commandButton id="btnGuardarConvenios" value="Guardar Datos" actionListener="#{conveniosC.guardaConvenios}" icon="fa fa-pencil-square-o" class="btn-primary" update=":formPrevisualizacionDatos"/>
+                                        <p:commandButton id="btnGuardarActividadesVarias" value="Guardar Datos" actionListener="#{actividadesVarias.guardarActividadVaria()}" icon="fa fa-pencil-square-o" class="btn-primary" update=":formPrevisualizacionDatos"/>
                                         <p:spacer width="5" />
-                                        <p:commandButton id="btnCancelar" value="Cancelar" actionListener="#{conveniosC.cancelarArchivo()}" icon="fa fa-times-circle" class="btn-danger" update=":formPrevisualizacionDatos,:formMuestraDatosActivos"/>
+                                        <p:commandButton id="btnCancelar" value="Cancelar" actionListener="#{actividadesVarias.cancelarArchivo()}" icon="fa fa-times-circle" class="btn-danger" update=":formMuestraDatosActivos,:formPrevisualizacionDatos"/>
                                     </center>
                                 </c:if>
                             </h:form>
                         </div>
                     </div>
-
                 </div>
 
                 <p:dialog widgetVar="modalCargaArchivo" 
@@ -543,19 +522,14 @@
                     <center>
                         <h:form id="formularioContenedor" enctype="multipart/form-data">
                             <o:inputFile id="file" 
-                                         value="#{controladorArchivoConvenios.file}" 
+                                         value="#{controladorArchivoActividadVaria.file}" 
                                          acceptMessage="Solo se permiten archivos XLSX." 
                                          maxsize="#{100*1024*1024}" 
                                          maxsizeMessage="El tamaño máximo permitido son 100MB." />
                             <p></p>
                             <h:message id="messageForFile" for="file" />
-                            <h:commandButton id="btnuploadFile" 
-                                             value="Subir archivo" 
-                                             class="btn-primary btn-info" 
-                                             action="#{controladorArchivoConvenios.subirExcelConvenios}"/>
-                            <p:blockUI block="@form:formularioContenedor" 
-                                       widgetVar="bloqueoCargaFile"
-                                       trigger="formularioContenedor:btnuploadFile">
+                            <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-primary" action="#{controladorArchivoActividadVaria.subirExcelActividadesVarias}"/>
+                            <p:blockUI block="@form:formularioContenedor" widgetVar="bloqueoCargaFile">
                                 Cargando archivo espere por favor.<br />
                             </p:blockUI>
                         </h:form>

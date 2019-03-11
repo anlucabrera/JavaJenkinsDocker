@@ -65,10 +65,7 @@ import org.omnifaces.util.Messages;
  */
 @Stateful
 public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosEscolares {
-
-    @EJB
-    Facade facadeProntuario;
-
+    
     @EJB
     EjbModulos ejbModulos;
 
@@ -82,9 +79,6 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
     LogonMB logonMB;
     @EJB
     EjbFiscalizacion ejbFiscalizacion;
-    
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
 
     @Override
     public List<DTOMatriculaPeriodosEscolares> getListaMatriculaPeriodosEscolares(String rutaArchivo) throws Throwable {
@@ -290,7 +284,7 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
         List<String> listaCondicional = new ArrayList<>();
         listaMatriculaPeriodosEscolares.forEach((matriculaPeriodoEscolar) -> {
             if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActivo(), matriculaPeriodoEscolar.getMatricula().getPeriodo())) {
-                facadeProntuario.setEntityClass(MatriculaPeriodosEscolares.class);
+                f.setEntityClass(MatriculaPeriodosEscolares.class);
                 MatriculaPeriodosEscolares matriculaPE = getRegistroMatriculaPeriodoEscolar(matriculaPeriodoEscolar.getMatricula().getMatricula(), matriculaPeriodoEscolar.getMatricula().getPeriodo());
                 Boolean registroAlmacenado = false;
                 if (matriculaPE != null) {
@@ -300,16 +294,16 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
                 if (registroAlmacenado) {
                     if (ejbModulos.getPeriodoEscolarActivo().getPeriodo().equals(matriculaPE.getPeriodo())) {
                         matriculaPeriodoEscolar.getMatricula().setRegistro(matriculaPE.getRegistro());
-                        facadeProntuario.edit(matriculaPeriodoEscolar.getMatricula());
+                        f.edit(matriculaPeriodoEscolar.getMatricula());
                     } else {
                         listaCondicional.remove(matriculaPeriodoEscolar.getMatricula().getMatricula());
                     }
                 } else {
                     Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                     matriculaPeriodoEscolar.getMatricula().setRegistro(registro.getRegistro());
-                    facadeProntuario.create(matriculaPeriodoEscolar.getMatricula());
+                    f.create(matriculaPeriodoEscolar.getMatricula());
                 }
-                facadeProntuario.flush();
+                f.flush();
 
             }
         });
@@ -318,7 +312,7 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
 
     @Override
     public Integer getRegistroMatriculaEspecifico(String matricula, Integer periodo) {
-        TypedQuery<MatriculaPeriodosEscolares> query = em.createQuery("SELECT m FROM MatriculaPeriodosEscolares m WHERE m.matricula = :matricula AND m.periodo = :periodo", MatriculaPeriodosEscolares.class);
+        TypedQuery<MatriculaPeriodosEscolares> query = f.getEntityManager().createQuery("SELECT m FROM MatriculaPeriodosEscolares m WHERE m.matricula = :matricula AND m.periodo = :periodo", MatriculaPeriodosEscolares.class);
         query.setParameter("matricula", matricula);
         query.setParameter("periodo", periodo);
         Integer registro = 0;
@@ -335,7 +329,7 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
     @Override
     public MatriculaPeriodosEscolares getRegistroMatriculaPeriodoEscolar(String matricula, Integer periodo) {
         MatriculaPeriodosEscolares matriculaPeriodoEscolar = new MatriculaPeriodosEscolares();
-        TypedQuery<MatriculaPeriodosEscolares> query = em.createQuery("SELECT m FROM MatriculaPeriodosEscolares m WHERE m.matricula = :matricula AND m.periodo = :periodo", MatriculaPeriodosEscolares.class);
+        TypedQuery<MatriculaPeriodosEscolares> query = f.getEntityManager().createQuery("SELECT m FROM MatriculaPeriodosEscolares m WHERE m.matricula = :matricula AND m.periodo = :periodo", MatriculaPeriodosEscolares.class);
         query.setParameter("matricula", matricula);
         query.setParameter("periodo", periodo);
         try {
@@ -350,7 +344,7 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
     @Override
     public List<MatriculaPeriodosEscolares> getMatriculasVigentes() {
         List<MatriculaPeriodosEscolares> matPerEscLst = new ArrayList<>();
-        TypedQuery<MatriculaPeriodosEscolares> query = em.createQuery("SELECT m FROM MatriculaPeriodosEscolares m WHERE m.periodo = :periodo ORDER BY m.matricula ASC", MatriculaPeriodosEscolares.class);
+        TypedQuery<MatriculaPeriodosEscolares> query = f.getEntityManager().createQuery("SELECT m FROM MatriculaPeriodosEscolares m WHERE m.periodo = :periodo ORDER BY m.matricula ASC", MatriculaPeriodosEscolares.class);
         query.setParameter("periodo", ejbModulos.getPeriodoEscolarActivo().getPeriodo());
         try {
             matPerEscLst = query.getResultList();
@@ -427,7 +421,7 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
 
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
-            em.refresh(e);
+            f.getEntityManager().refresh(e);
             ActividadesPoa a = e.getRegistros().getActividadesPoaList().isEmpty() ? null : e.getRegistros().getActividadesPoaList().get(0);
                 if(a != null){
                     l.add(new DTOMatriculaPeriodosEscolares(
@@ -520,7 +514,7 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
         f.create(evidencias);
         f.flush();
         f.refresh(evidencias);
-        AreasUniversidad areaPOA = em.find(AreasUniversidad.class, registro.getMatricula().getRegistros().getArea());
+        AreasUniversidad areaPOA = f.getEntityManager().find(AreasUniversidad.class, registro.getMatricula().getRegistros().getArea());
         archivos.forEach(archivo -> {
             try{
                 String rutaAbsoluta = ServicioArchivos.almacenarEvidenciaRegistroGeneral(areaPOA, registro.getMatricula().getRegistros(), archivo);

@@ -130,7 +130,7 @@
                                                             <p:column rowspan="2" headerText="Municipio" width="300" />
                                                             <p:column rowspan="2" headerText="Lugar" width="300" />
                                                             <p:column rowspan="2" headerText="Descripción" width="300" />
-                                                            <p:column rowspan="2" headerText="ISSSN" width="300" />
+                                                            <p:column rowspan="2" headerText="ISSN ó ISBN" width="300" />
                                                             <p:column rowspan="2" headerText="Arbitrado / Indexado" width="300" />
                                                         </p:row>
                                                         <p:row>
@@ -211,6 +211,7 @@
                                                         <h:outputText value="#{prodAcad.productosAcademicos.arbitradoIndexado}"/>
                                                     </p:column>
                                                     <f:facet name="footer">
+                                                        En el mes de: #{controladorProductosAcademicos.dtoProductoAcademico.mesConsulta} hay un total de: #{fn:length(controladorProductosAcademicos.dtoProductoAcademico.lstDtoProductosAcademicos)} registros de Productos Académicos.
                                                     </f:facet>
                                                 </p:dataTable>
                                                 <p:confirmDialog global="true"
@@ -279,6 +280,7 @@
                                                         <h:outputText value="#{productoAcademicoPersonal.personal.nombre}"/>
                                                     </p:column>
                                                     <f:facet name="footer">
+                                                        En el mes de: #{controladorProductosAcademicos.dtoProductoAcademico.mesConsulta} hay un total de: #{fn:length(controladorProductosAcademicos.dtoProductoAcademico.lstDtoProductosAcademicosPersonal)} registros de Personal en Productos Académicos.
                                                     </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
@@ -328,10 +330,10 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
                                                          requiredMessage="Debe elegir al menos un archivo" 
-                                                         rendered="#{controladorProductosAcademicos.dtoProductoAcademico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorProductosAcademicos.dtoProductoAcademico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFilesProdAcad" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorProductosAcademicos.subirEvidenciasProdAcad()}"
-                                                             rendered="#{controladorProductosAcademicos.dtoProductoAcademico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorProductosAcademicos.dtoProductoAcademico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -425,13 +427,13 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
                                                          requiredMessage="Debe elegir al menos un archivo"
-                                                         rendered="#{controladorProductosAcademicos.dtoProductoAcademico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorProductosAcademicos.dtoProductoAcademico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFilesProdAcadPersonal" 
                                                              value="Subir Archivos" 
                                                              class="btn btn-primary" 
                                                              actionListener="#{controladorProductosAcademicos.subirEvidenciasProdAcadPersonal()}"
-                                                             rendered="#{controladorProductosAcademicos.dtoProductoAcademico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorProductosAcademicos.dtoProductoAcademico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -506,7 +508,7 @@
                         <h:form id="frmAlineacionProdAcad">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorProductosAcademicos.dtoProductoAcademico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorProductosAcademicos.dtoProductoAcademico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -595,7 +597,7 @@
                         <h:form id="frmAlineacionProdAcadPersonal">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorProductosAcademicos.dtoProductoAcademico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorProductosAcademicos.dtoProductoAcademico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -752,6 +754,7 @@
                                                             <h:outputText value="#{prodAcad.productosAcademicos.arbitradoIndexado}"/>
                                                         </p:column>
                                                         <f:facet name="footer">
+                                                            Su archivo de excel contiene un total de: #{fn:length(controladorProductosAcademicos.dtoProductoAcademico.lstDtoProductosAcademicos)} registros de Productos Académicos.
                                                         </f:facet>
                                                     </p:dataTable>
                                                 </div>
@@ -780,6 +783,7 @@
                                                         <h:outputText value="#{productoAcademicoPersonal.personal.nombre}"/>
                                                     </p:column>
                                                     <f:facet name="footer">
+                                                        Su archivo de excel contiene un total de: #{fn:length(controladorProductosAcademicos.dtoProductoAcademico.lstDtoProductosAcademicosPersonal)} registros de Personal en Productos Académicos.
                                                     </f:facet>
                                                 </p:dataTable>
                                             </p:tab>

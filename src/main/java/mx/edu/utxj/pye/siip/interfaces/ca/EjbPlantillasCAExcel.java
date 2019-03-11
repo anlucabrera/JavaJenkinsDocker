@@ -126,4 +126,7 @@ public interface EjbPlantillasCAExcel {
      */
     public String getPlantillaDesercion() throws Throwable;
     
+    
+    public String getReporteCuerposAcademicos() throws Throwable;
+    
 }

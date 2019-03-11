@@ -153,7 +153,7 @@
                                                                              icon="fa fa-trash" 
                                                                              actionListener="#{controladorDistribucionInstalacionesPYE.eliminarRegistro(capacidadInstalada)}"
                                                                              title="Eliminar registro."
-                                                                             rendered="#{controladorDistribucionInstalacionesPYE.dto.periodoEscolarActivo eq controladorDistribucionInstalacionesPYE.dto.periodo}">
+                                                                             >
                                                                 <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro del ciclo escolar: #{capacidadInstalada.cicloEscolar}" icon="ui-icon-alert" />
                                                             </p:commandButton>
                                                             <c:set var="evidencias" value="#{controladorDistribucionInstalacionesPYE.consultarEvidencias(capacidadInstalada)}" />
@@ -214,7 +214,7 @@
                                                                              icon="fa fa-trash" 
                                                                              actionListener="#{controladorDistribucionInstalacionesPYE.eliminarRegistroDA(distribucionAula)}"
                                                                              title="Eliminar registro."
-                                                                             rendered="#{controladorDistribucionInstalacionesPYE.dto.periodoEscolarActivo.periodo eq distribucionAula.distribucionAulasCicloPeriodosEscolares.periodoEscolar}">
+                                                                             >
                                                                 <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro del periodo: #{distribucionAula.periodoEscolar}" icon="ui-icon-alert" />
                                                             </p:commandButton>
                                                             <c:set var="evidencias" value="#{controladorDistribucionInstalacionesPYE.consultarEvidenciasDA(distribucionAula)}" />
@@ -278,7 +278,7 @@
                                                                              icon="fa fa-trash" 
                                                                              actionListener="#{controladorDistribucionInstalacionesPYE.eliminarRegistroDLT(distribucionLabTall)}"
                                                                              title="Eliminar registro."
-                                                                             rendered="#{controladorDistribucionInstalacionesPYE.dto.periodoEscolarActivo.periodo eq distribucionLabTall.distribucionLabtallCicloPeriodosEscolares.periodoEscolar}">
+                                                                             >
                                                                 <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro del periodo: #{distribucionLabTall.periodoEscolar}" icon="ui-icon-alert" />
                                                             </p:commandButton>
                                                             <c:set var="evidencias" value="#{controladorDistribucionInstalacionesPYE.consultarEvidenciasDLT(distribucionLabTall)}" />
@@ -698,7 +698,7 @@
                         <h:form id="frmAlineacion">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorDistribucionInstalacionesPYE.dto.periodoEscolarActivo.ciclo.ciclo eq controladorDistribucionInstalacionesPYE.dto.periodo.ciclo.ciclo}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -799,7 +799,7 @@
                         <h:form id="frmAlineacionDA">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorDistribucionInstalacionesPYE.dto.periodoEscolarActivo.periodo eq controladorDistribucionInstalacionesPYE.dto.registroDistribucionAulas.distribucionAulasCicloPeriodosEscolares.periodoEscolar}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -904,7 +904,7 @@
                         <h:form id="frmAlineacionDLT">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorDistribucionInstalacionesPYE.dto.periodoEscolarActivo.periodo eq controladorDistribucionInstalacionesPYE.dto.registroDistribucionLabTall.distribucionLabtallCicloPeriodosEscolares.periodoEscolar}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">

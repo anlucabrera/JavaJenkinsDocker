@@ -17,10 +17,8 @@ import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.servlet.annotation.MultipartConfig;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
@@ -65,9 +63,6 @@ public class ServicioServiciosTecnologicosAnioMes implements EjbServiciosTecnolo
     @EJB    EjbOrganismosVinculados ejbOrganismosVinculados;
     
     @Inject Caster caster;
-
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
 
     @Override
     public List<ServiciosTecnologicosAnioMes> getListaServiciosTecnologicosAnioMes(String rutaArchivo) throws Throwable {
@@ -576,7 +571,7 @@ public class ServicioServiciosTecnologicosAnioMes implements EjbServiciosTecnolo
 
     @Override
     public Integer getRegistroServicioTecnologicoEspecifico(String servicio) {
-        TypedQuery<ServiciosTecnologicosAnioMes> query = em.createNamedQuery("ServiciosTecnologicosAnioMes.findByServicio", ServiciosTecnologicosAnioMes.class);
+        TypedQuery<ServiciosTecnologicosAnioMes> query = facadeVinculacion.getEntityManager().createNamedQuery("ServiciosTecnologicosAnioMes.findByServicio", ServiciosTecnologicosAnioMes.class);
         query.setParameter("servicio", servicio);
         Integer registro = query.getSingleResult().getRegistro();
         return registro;
@@ -584,7 +579,7 @@ public class ServicioServiciosTecnologicosAnioMes implements EjbServiciosTecnolo
 
     @Override
     public ServiciosTecnologicosAnioMes getServiciosTecnologicosAnioMes(ServiciosTecnologicosAnioMes serviciosTecnologicosAnioMes) {
-        TypedQuery<ServiciosTecnologicosAnioMes> query = em.createQuery("SELECT s FROM ServiciosTecnologicosAnioMes s WHERE s.servicio = :servicio", ServiciosTecnologicosAnioMes.class);
+        TypedQuery<ServiciosTecnologicosAnioMes> query = facadeVinculacion.getEntityManager().createQuery("SELECT s FROM ServiciosTecnologicosAnioMes s WHERE s.servicio = :servicio", ServiciosTecnologicosAnioMes.class);
         query.setParameter("servicio", serviciosTecnologicosAnioMes.getServicio());
         try {
             serviciosTecnologicosAnioMes = query.getSingleResult();
@@ -597,7 +592,7 @@ public class ServicioServiciosTecnologicosAnioMes implements EjbServiciosTecnolo
 
     @Override
     public ServiciosTecnologicosParticipantes getServiciosTecnologicosParticipantes(ServiciosTecnologicosParticipantes serviciosTecnologicosParticipantes) {
-        TypedQuery<ServiciosTecnologicosParticipantes> query = em.createQuery("SELECT s FROM ServiciosTecnologicosParticipantes s JOIN s.servicioTecnologico st WHERE st.servicio = :servicioTecnologico AND s.nombre = :nombre", ServiciosTecnologicosParticipantes.class);
+        TypedQuery<ServiciosTecnologicosParticipantes> query = facadeVinculacion.getEntityManager().createQuery("SELECT s FROM ServiciosTecnologicosParticipantes s JOIN s.servicioTecnologico st WHERE st.servicio = :servicioTecnologico AND s.nombre = :nombre", ServiciosTecnologicosParticipantes.class);
         query.setParameter("servicioTecnologico", serviciosTecnologicosParticipantes.getServicioTecnologico().getServicio());
         query.setParameter("nombre", serviciosTecnologicosParticipantes.getNombre());
         try {
@@ -612,7 +607,7 @@ public class ServicioServiciosTecnologicosAnioMes implements EjbServiciosTecnolo
     @Override
     public List<ServiciosTecnologicosAnioMes> getFiltroServiciosTecnologicosEjercicioMesArea(Short ejercicio, String mes, Short area) {
         try {
-            return em.createQuery("SELECT s FROM ServiciosTecnologicosAnioMes s JOIN s.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes AND r.area = :area", ServiciosTecnologicosAnioMes.class)
+            return facadeVinculacion.getEntityManager().createQuery("SELECT s FROM ServiciosTecnologicosAnioMes s JOIN s.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes AND r.area = :area", ServiciosTecnologicosAnioMes.class)
                     .setParameter("anio", ejercicio)
                     .setParameter("mes", mes)
                     .setParameter("area", area)
@@ -627,7 +622,7 @@ public class ServicioServiciosTecnologicosAnioMes implements EjbServiciosTecnolo
         try {
             List<DTOServiciosTecnologicosParticipantes> dtoServTec = new ArrayList<>();
             List<ServiciosTecnologicosParticipantes> dtoServTecPart = new ArrayList<>();
-            dtoServTecPart = em.createQuery("SELECT s FROM ServiciosTecnologicosParticipantes s JOIN s.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes AND r.area = :area", ServiciosTecnologicosParticipantes.class)
+            dtoServTecPart = facadeVinculacion.getEntityManager().createQuery("SELECT s FROM ServiciosTecnologicosParticipantes s JOIN s.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes AND r.area = :area", ServiciosTecnologicosParticipantes.class)
                     .setParameter("anio", ejercicio)
                     .setParameter("mes", mes)
                     .setParameter("area", area)
@@ -648,7 +643,7 @@ public class ServicioServiciosTecnologicosAnioMes implements EjbServiciosTecnolo
     public String validaGeneracion(Short generacion) {
         String generacionString = "";
         if (generacion != null) {
-            generacionString = caster.generacionToString(em.find(Generaciones.class, generacion));
+            generacionString = caster.generacionToString(facadeVinculacion.getEntityManager().find(Generaciones.class, generacion));
         }
         return generacionString;
     }
@@ -656,7 +651,7 @@ public class ServicioServiciosTecnologicosAnioMes implements EjbServiciosTecnolo
     public AreasUniversidad validaAreaUniversidad(Short programaEducativo) {
         AreasUniversidad areaUniversidad = null;
         if (programaEducativo != null) {
-            areaUniversidad = em.find(AreasUniversidad.class, programaEducativo);
+            areaUniversidad = facadeVinculacion.getEntityManager().find(AreasUniversidad.class, programaEducativo);
         }
         return areaUniversidad;
     }
@@ -665,7 +660,7 @@ public class ServicioServiciosTecnologicosAnioMes implements EjbServiciosTecnolo
     public List<Integer> buscaRegistroParticipantesServiciosTecnologicos(ServiciosTecnologicosAnioMes servicioTecnologico) throws Throwable {
         List<Integer> registros = new ArrayList<>();
         try {
-            return registros = em.createQuery("SELECT s FROM ServiciosTecnologicosParticipantes s WHERE s.servicioTecnologico.servicio = :servicioTecnologico", ServiciosTecnologicosParticipantes.class)
+            return registros = facadeVinculacion.getEntityManager().createQuery("SELECT s FROM ServiciosTecnologicosParticipantes s WHERE s.servicioTecnologico.servicio = :servicioTecnologico", ServiciosTecnologicosParticipantes.class)
                     .setParameter("servicioTecnologico", servicioTecnologico.getServicio())
                     .getResultStream()
                     .map(s -> s.getRegistro())
@@ -678,7 +673,7 @@ public class ServicioServiciosTecnologicosAnioMes implements EjbServiciosTecnolo
     @Override
     public List<ServiciosTipos> getListaServiciosTipo() throws Throwable {
         try {
-            return em.createQuery("SELECT s FROM ServiciosTipos s ORDER BY s.descripcion", ServiciosTipos.class)
+            return facadeVinculacion.getEntityManager().createQuery("SELECT s FROM ServiciosTipos s ORDER BY s.descripcion", ServiciosTipos.class)
                     .getResultList();
         } catch (NoResultException ex) {
             return Collections.EMPTY_LIST;

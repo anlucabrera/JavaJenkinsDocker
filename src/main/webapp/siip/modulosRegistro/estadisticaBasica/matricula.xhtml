@@ -150,6 +150,9 @@
                                             <p:column>
                                                 <h:outputText value="#{matricula.matricula.curp}"/>
                                             </p:column>
+                                            <f:facet name="footer">
+                                                En el mes de: #{controladorMatriculaPeriodosEscolares.dto.eventoSeleccionado.mes} hay un total de: #{fn:length(controladorMatriculaPeriodosEscolares.dto.lista)} registros de Matricula Inicial.
+                                            </f:facet>
                                         </p:dataTable>
                                         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
                                             <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
@@ -292,7 +295,7 @@
                         <h:form id="frmAlineacion" >
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarActivo.periodo eq controladorMatriculaPeriodosEscolares.dto.registro.matricula.periodo}">
+                                    <p:toolbar>
                                         <f:facet name="left">
 
                                         </f:facet>
@@ -431,6 +434,10 @@
                                             <p:column>
                                                 <h:outputText value="#{matricula.matricula.curp}"/>
                                             </p:column>
+                                            
+                                            <f:facet name="footer">
+                                                Su archivo de excel contiene un total de: #{fn:length(controladorMatriculaPeriodosEscolares.dto.lista)} registros de Matricula Inicial.
+                                            </f:facet>
                                         </p:dataTable>
                                         <p></p>
                                         <p:commandButton id="btnGuardarMatriculaInicial" 

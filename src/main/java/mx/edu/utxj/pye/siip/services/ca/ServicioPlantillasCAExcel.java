@@ -12,10 +12,8 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -885,5 +883,10 @@ public class ServicioPlantillasCAExcel implements EjbPlantillasCAExcel {
         transformer.transformXLS(plantilla, beans, plantillaC);
 
         return plantillaC;
+    }
+
+    @Override
+    public String getReporteCuerposAcademicos() throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -190,7 +190,7 @@
                                                                  actionListener="#{controladorServiciosEnfermeriaPYE.eliminarRegistro(servicioEnfermeriaEliminar)}"
                                                                  onsuccess="actualizar();" 
                                                                  title="Eliminar registro."
-                                                                 rendered="#{controladorServiciosEnfermeriaPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosEnfermeriaPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                                 >
                                                     <p:confirm header="Eliminar registro"
                                                                message="¿Está seguro de eliminar el registro de #{servicioEnfermeria.serviciosEnfermeriaCicloPeriodos.servicio.descripcion}?"
                                                                icon="ui-icon-alert" />
@@ -302,10 +302,10 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
                                                          requiredMessage="Debe elegir al menos un archivo" 
-                                                         rendered="#{controladorServiciosEnfermeriaPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosEnfermeriaPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFileEvidencia" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorServiciosEnfermeriaPYE.subirEvidencias()}"
-                                                             rendered="#{controladorServiciosEnfermeriaPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosEnfermeriaPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -384,7 +384,7 @@
                         <h:form id="frmAlineacion">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorServiciosEnfermeriaPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosEnfermeriaPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">

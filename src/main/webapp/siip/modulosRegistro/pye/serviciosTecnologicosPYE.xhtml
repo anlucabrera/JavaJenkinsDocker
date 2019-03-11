@@ -189,7 +189,7 @@
                                                                              actionListener="#{controladorServiciosTecnologicosAnioMesPYE.eliminarRegistro(servTecEliminado,servicioTecnologico)}"
                                                                              onsuccess="actualizar();" 
                                                                              title="Eliminar registro."
-                                                                             rendered="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                                             >
                                                                 <p:confirm header="Eliminar registro"
                                                                            message="¿Está seguro de eliminar el registro de #{servicioTecnologico.servicio}?"
                                                                            icon="ui-icon-alert" />
@@ -292,7 +292,7 @@
                                                                              actionListener="#{controladorServiciosTecnologicosAnioMesPYE.eliminarRegistroParticipante(servTecEliminadoPart)}"
                                                                              onsuccess="actualizar();" 
                                                                              title="Eliminar registro."
-                                                                             rendered="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                                             >
                                                                 <p:confirm header="Eliminar registro"
                                                                            message="¿Está seguro de eliminar el registro de #{servicioTecnologicoPart.serviciosTecnologicosParticipantes.servicioTecnologico.servicio}?"
                                                                            icon="ui-icon-alert" />
@@ -393,10 +393,10 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
                                                          requiredMessage="Debe elegir al menos un archivo" 
-                                                         rendered="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFiles" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorServiciosTecnologicosAnioMesPYE.subirEvidencias()}"
-                                                             rendered="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -490,13 +490,13 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
                                                          requiredMessage="Debe elegir al menos un archivo" 
-                                                         rendered="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFilesParticipantes"
                                                              value="Subir Archivos" 
                                                              class="btn btn-primary" 
                                                              actionListener="#{controladorServiciosTecnologicosAnioMesPYE.subirEvidenciasParticipantes()}"
-                                                             rendered="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -571,7 +571,7 @@
                         <h:form id="frmAlineacion">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -660,7 +660,7 @@
                         <h:form id="frmAlineacionParticipantes">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">

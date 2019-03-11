@@ -142,6 +142,9 @@
                                                     <p:column>
                                                         <h:outputText value="#{capacidadInstalada.totalEspaciosDocentes}"/>
                                                     </p:column>
+                                                    <f:facet name="footer">
+                                                        En el mes de: #{controladorDistribucionInstalaciones.dto.eventoSeleccionado.mes} hay un total de: #{fn:length(controladorDistribucionInstalaciones.dto.listaCapIns)} registros de Capacidad Instalada.
+                                                    </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
 
@@ -204,6 +207,7 @@
                                                         <h:outputText value="#{distribucionAula.distribucionAulasCicloPeriodosEscolares.acondicionadas}"/>
                                                     </p:column>
                                                     <f:facet name="footer">
+                                                        En el mes de: #{controladorDistribucionInstalaciones.dto.eventoSeleccionado.mes} hay un total de: #{fn:length(controladorDistribucionInstalaciones.dto.listaDisAulas)} registros de Distribución de aulas.
                                                     </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
@@ -271,6 +275,9 @@
                                                             <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
                                                         </h:outputText>
                                                     </p:column>
+                                                    <f:facet name="footer">
+                                                        En el mes de: #{controladorDistribucionInstalaciones.dto.eventoSeleccionado.mes} hay un total de: #{fn:length(controladorDistribucionInstalaciones.dto.listaDisLabTall)} registros de Distribución de Laboratorio y Talleres.
+                                                    </f:facet>
                                                 </p:dataTable>
                                                 <p:confirmDialog global="true" 
                                                                  showEffect="fade" 
@@ -653,7 +660,7 @@
                         <h:form id="frmAlineacion">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorDistribucionInstalaciones.dto.periodoEscolarActivo.ciclo.ciclo eq controladorDistribucionInstalaciones.dto.periodo.ciclo.ciclo}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -754,7 +761,7 @@
                         <h:form id="frmAlineacionDA">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorDistribucionInstalaciones.dto.periodoEscolarActivo.periodo eq controladorDistribucionInstalaciones.dto.registroDistribucionAulas.distribucionAulasCicloPeriodosEscolares.periodoEscolar}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -859,7 +866,7 @@
                         <h:form id="frmAlineacionDLT">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorDistribucionInstalaciones.dto.periodoEscolarActivo.periodo eq controladorDistribucionInstalaciones.dto.registroDistribucionLabTall.distribucionLabtallCicloPeriodosEscolares.periodoEscolar}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -991,6 +998,7 @@
                                                         <h:outputText value="#{capacidadInstalada.totalEspaciosDocentes}"/>
                                                     </p:column>
                                                     <f:facet name="footer">
+                                                        Su archivo de excel contiene un total de: #{fn:length(controladorDistribucionInstalaciones.dto.listaCapIns)} registros de Capacidad Instalada.
                                                     </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
@@ -1036,6 +1044,9 @@
                                                     <p:column>
                                                         <h:outputText value="#{distribucionAula.distribucionAulasCicloPeriodosEscolares.acondicionadas}"/>
                                                     </p:column>
+                                                    <f:facet name="footer">
+                                                        Su archivo de excel contiene un total de: #{fn:length(controladorDistribucionInstalaciones.dto.listaDisAulas)} registros de Distribución de Aulas.
+                                                    </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
                                             <p:tab id="tabDistribucionLabTall" title="Distribución de Laboratorios y Talleres">
@@ -1086,6 +1097,9 @@
                                                             <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
                                                         </h:outputText>
                                                     </p:column>
+                                                    <f:facet name="footer">
+                                                        Su archivo de excel contiene un total de: #{fn:length(controladorDistribucionInstalaciones.dto.listaDisLabTall)} registros de Distribución de Laboratorios y Talleres.
+                                                    </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
 

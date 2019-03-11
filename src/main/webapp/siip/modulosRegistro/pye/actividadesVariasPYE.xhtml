@@ -185,7 +185,7 @@
                                                                  actionListener="#{controladorActividadesVariasPYE.eliminarRegistro(actVarEliminado, actVar)}"
                                                                  onsuccess="actualizar();"
                                                                  title="Eliminar registro"
-                                                                 rendered="#{controladorActividadesVariasPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorActividadesVariasPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                                 >
                                                     <p:confirm header="Eliminar registro" 
                                                                message="¿Está seguro de eliminar la actividad #{actVar.nombre}?" 
                                                                icon="ui-icon-alert" />
@@ -241,7 +241,7 @@
                                         <p:column>
                                             <h:outputText value="#{actVar.personalidades}"/>
                                         </p:column>
-                                        
+
                                         <f:facet name="footer">
                                             En el mes de: #{controladorActividadesVariasPYE.dto.mesConsulta} hay un total de: #{fn:length(controladorActividadesVariasPYE.dto.lstActividadesVarias)} registros de Actividades Varías.
                                         </f:facet>
@@ -263,6 +263,28 @@
                                                          icon="ui-icon-close" />
                                     </p:confirmDialog>
                                 </c:if>
+                            </h:form>
+                        </div>
+                    </div>
+
+                    <p:separator/>
+                    <br></br>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <h:form id="frmAreasConRegistros">
+                                <p:dataGrid var="arearegistro" value="#{controladorActividadesVariasPYE.dto.listaAreasConRegistroMensualGeneral}" columns="10" layout="grid"
+                                            id="areasregistros">
+                                    <f:facet name="header" >
+                                        Áreas que actualmente tienen registros
+                                    </f:facet>
+                                    <p:panel style="text-align:center;" >
+                                        <h:panelGrid columns="1">
+                                            <h:outputText value="#{arearegistro.siglas}" />
+                                            <h:outputText value="#{arearegistro.categoria.descripcion}" />
+                                            <h:outputText value="#{arearegistro.nombre}"/>
+                                        </h:panelGrid>
+                                    </p:panel>
+                                </p:dataGrid>
                             </h:form>
                         </div>
                     </div>
@@ -306,13 +328,13 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true" 
                                                          requiredMessage="Debe elegir al menos un archivo." 
-                                                         rendered="#{controladorActividadesVariasPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorActividadesVariasPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFiles" 
                                                              value="Subir archivos" 
                                                              class="btn btn-primary" 
                                                              actionListener="#{controladorActividadesVariasPYE.subirEvidencias()}" 
-                                                             rendered="#{controladorActividadesVariasPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorActividadesVariasPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -398,7 +420,7 @@
                         <h:form id="frmAlineacion" >
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorActividadesVariasPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorActividadesVariasPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar >
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
