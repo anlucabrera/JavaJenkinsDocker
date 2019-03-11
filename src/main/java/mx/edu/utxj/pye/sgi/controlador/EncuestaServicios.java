@@ -38,7 +38,7 @@ public class EncuestaServicios implements Serializable {
     @Getter private Boolean cargada,finalizado;
     @Getter @Setter Short grado = 2;
     @Getter private Evaluaciones evaluacion;
-    @Getter private String evaluador;
+    @Getter private String evaluador, valor;
     @Getter private Integer evaluadorr;
     @Getter @Setter private EncuestaServiciosResultados resultado;
     
@@ -82,15 +82,14 @@ public class EncuestaServicios implements Serializable {
     }  
     public void guardarRespuesta(ValueChangeEvent e) throws ELException{
         UIComponent origen = (UIComponent)e.getSource();
-        String valor = e.getNewValue().toString();
-        if(valor == null){
-            valor = e.getOldValue().toString();
-            ejb.actualizarRespuestaPorPregunta(resultado, origen.getId(), valor, respuestas);
-            finalizado = ejb.actualizarResultado(resultado);
+        
+        if(e.getNewValue() != null){
+            valor = e.getNewValue().toString();
         }else{
-            ejb.actualizarRespuestaPorPregunta(resultado, origen.getId(), valor, respuestas);
-            finalizado = ejb.actualizarResultado(resultado);
+            valor = e.getOldValue().toString();
         }
+        ejb.actualizarRespuestaPorPregunta(resultado, origen.getId(), valor, respuestas);
+            finalizado = ejb.actualizarResultado(resultado);
         
     }
     
