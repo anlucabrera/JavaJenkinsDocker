@@ -187,7 +187,7 @@
                                                                          icon="#{cuerpoAcademico.cuerposAcademicosRegistro.estatus?'fa fa-thumbs-down':'fa fa-thumbs-up'}"
                                                                          actionListener="#{controladorCuerposAcademicosPYE.bajaCuerpoAcademico(cuerpoAcademico.cuerposAcademicosRegistro)}"
                                                                          title="#{cuerpoAcademico.cuerposAcademicosRegistro.estatus?'Dar de baja':'Dar de alta'}"
-                                                                         rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                                         >
                                                             <p:confirm header="Cuerpo académico"
                                                                        message="¿Está seguro de #{cuerpoAcademico.cuerposAcademicosRegistro.estatus?'dar de baja':'dar de alta'} el registro de #{cuerpoAcademico.cuerposAcademicosRegistro.cuerpoAcademico}?"
                                                                        icon="ui-icon-alert" />
@@ -279,7 +279,7 @@
                                                                          icon="#{caIntegrantes.cuerpoAcademicoIntegrantes.estatus?'fa fa-thumbs-down':'fa fa-thumbs-up'}"
                                                                          actionListener="#{controladorCuerposAcademicosPYE.bajaIntegrante(caIntegrantes.cuerpoAcademicoIntegrantes)}"
                                                                          title="#{caIntegrantes.cuerpoAcademicoIntegrantes.estatus?'Dar de baja':'Dar de alta'}"
-                                                                         rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                                         >
                                                             <p:confirm header="Integrante"
                                                                        message="¿Está seguro de #{caIntegrantes.cuerpoAcademicoIntegrantes.estatus?'dar de baja':'dar de alta'} al integrante: #{caIntegrantes.cuerpoAcademicoIntegrantes.cuerpoAcademico.nombre}?"
                                                                        icon="ui-icon-alert" />
@@ -333,7 +333,7 @@
                                                                          icon="#{lineasInvestigacion.estatus?'fa fa-thumbs-down':'fa fa-thumbs-up'}"
                                                                          actionListener="#{controladorCuerposAcademicosPYE.bajaLineaInvestigacion(lineasInvestigacion)}"
                                                                          title="#{lineasInvestigacion.estatus?'Dar de baja':'Dar de alta'}"
-                                                                         rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                                         >
                                                             <p:confirm header="Línea de Investigación"
                                                                        message="¿Está seguro de #{lineasInvestigacion.estatus?'dar de baja':'dar de alta'} la línea de investigación: #{lineasInvestigacion.nombre}?"
                                                                        icon="ui-icon-alert" />
@@ -409,10 +409,10 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
                                                          requiredMessage="Debe elegir al menos un archivo"
-                                                         rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFilesCuerpAcad" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorCuerposAcademicosPYE.subirEvidenciasCuerpAcad()}"
-                                                             rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -511,10 +511,10 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
                                                          requiredMessage="Debe elegir al menos un archivo"
-                                                         rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFilesCuerpAcadIntegrantes" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorCuerposAcademicosPYE.subirEvidenciasCuerpAcadIntegrantes()}"
-                                                             rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -613,10 +613,10 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
                                                          requiredMessage="Debe elegir al menos un archivo"
-                                                         rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFilesCuerpAcadLineas" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorCuerposAcademicosPYE.subirEvidenciasCuerpAcadLineas()}"
-                                                             rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -700,7 +700,7 @@
                         <h:form id="frmAlineacionCuerpAcad">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar >
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -789,7 +789,7 @@
                         <h:form id="frmAlineacionCuerpAcadIntegrantes">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar >
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -878,7 +878,7 @@
                         <h:form id="frmAlineacionCuerpAcadLineas">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar >
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">

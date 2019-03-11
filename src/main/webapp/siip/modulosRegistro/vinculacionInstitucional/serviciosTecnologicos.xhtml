@@ -191,6 +191,7 @@
                                                         <h:outputText value="#{servicioTecnologico.servicioDemandado}"/>
                                                     </p:column>
                                                     <f:facet name="footer">
+                                                        En el mes de: #{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.mesConsulta} hay un total de: #{fn:length(controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.lstServiciosTecnologicosAnioMes)} registros de Servicios Tecnológicos.
                                                     </f:facet>
                                                 </p:dataTable>
                                                 <p:confirmDialog global="true"
@@ -295,6 +296,7 @@
                                                         <h:outputText value="#{servicioTecnologicoPart.programaEducativo.nombre}"/>
                                                     </p:column>
                                                     <f:facet name="footer">
+                                                        En el mes de: #{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.mesConsulta} hay un total de: #{fn:length(controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.lstDtoServiciosTecnologicosParticipantes)} registros de Participantes en Servicios Tecnológicos.
                                                     </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
@@ -345,10 +347,10 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
                                                          requiredMessage="Debe elegir al menos un archivo" 
-                                                         rendered="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFiles" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorServiciosTecnologicosAnioMes.subirEvidencias()}"
-                                                             rendered="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -442,13 +444,13 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
                                                          requiredMessage="Debe elegir al menos un archivo" 
-                                                         rendered="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFilesParticipantes"
                                                              value="Subir Archivos" 
                                                              class="btn btn-primary" 
                                                              actionListener="#{controladorServiciosTecnologicosAnioMes.subirEvidenciasParticipantes()}"
-                                                             rendered="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -523,7 +525,7 @@
                         <h:form id="frmAlineacion">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -612,7 +614,7 @@
                         <h:form id="frmAlineacionParticipantes">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -752,6 +754,7 @@
                                                     </p:column>
 
                                                     <f:facet name="footer">
+                                                        Su archivo de excel contiene un total de: #{fn:length(controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.lstServiciosTecnologicosAnioMes)} registros de Servicios Tecnológicos.
                                                     </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
@@ -817,6 +820,10 @@
                                                     <p:column>
                                                         <h:outputText value="#{serviciosTecnologicosPart.programaEducativo.nombre}"/>
                                                     </p:column>
+                                                    
+                                                    <f:facet name="footer">
+                                                        Su archivo de excel contiene un total de: #{fn:length(controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.lstDtoServiciosTecnologicosParticipantes)} registros de Participantes en Servicios Tecnológicos.
+                                                    </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
                                         </p:tabView>

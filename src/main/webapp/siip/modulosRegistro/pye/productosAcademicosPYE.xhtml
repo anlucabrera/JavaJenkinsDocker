@@ -194,7 +194,7 @@
                                                                          actionListener="#{controladorProductosAcademicosPYE.eliminarRegistro(productoAcademicoEliminar, prodAcad.productosAcademicos)}"
                                                                          onsuccess="actualizar();" 
                                                                          title="Eliminar registro."
-                                                                         rendered="#{controladorProductosAcademicosPYE.dtoProductoAcademico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorProductosAcademicosPYE.dtoProductoAcademico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                                         >
                                                             <p:confirm header="Eliminar registro"
                                                                        message="¿Está seguro de eliminar el registro de #{prodAcad.productosAcademicos.productoAcademico}?"
                                                                        icon="ui-icon-alert" />
@@ -302,7 +302,7 @@
                                                                          actionListener="#{controladorProductosAcademicosPYE.eliminarRegistroParticipante(productoAcademicoPart)}"
                                                                          onsuccess="actualizar();" 
                                                                          title="Eliminar registro."
-                                                                         rendered="#{controladorProductosAcademicosPYE.dtoProductoAcademico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorProductosAcademicosPYE.dtoProductoAcademico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                                         >
                                                             <p:confirm header="Eliminar registro"
                                                                        message="¿Está seguro de eliminar el registro de #{productoAcademicoPersonal.productoAcademicoPersonal.productoAcademico.productoAcademico}?"
                                                                        icon="ui-icon-alert" />
@@ -375,10 +375,10 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
                                                          requiredMessage="Debe elegir al menos un archivo" 
-                                                         rendered="#{controladorProductosAcademicosPYE.dtoProductoAcademico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorProductosAcademicosPYE.dtoProductoAcademico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFilesProdAcad" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorProductosAcademicosPYE.subirEvidenciasProdAcad()}"
-                                                             rendered="#{controladorProductosAcademicosPYE.dtoProductoAcademico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorProductosAcademicosPYE.dtoProductoAcademico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -472,13 +472,13 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
                                                          requiredMessage="Debe elegir al menos un archivo"
-                                                         rendered="#{controladorProductosAcademicosPYE.dtoProductoAcademico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorProductosAcademicosPYE.dtoProductoAcademico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFilesProdAcadPersonal" 
                                                              value="Subir Archivos" 
                                                              class="btn btn-primary" 
                                                              actionListener="#{controladorProductosAcademicosPYE.subirEvidenciasProdAcadPersonal()}"
-                                                             rendered="#{controladorProductosAcademicosPYE.dtoProductoAcademico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorProductosAcademicosPYE.dtoProductoAcademico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -553,7 +553,7 @@
                         <h:form id="frmAlineacionProdAcad">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorProductosAcademicosPYE.dtoProductoAcademico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorProductosAcademicosPYE.dtoProductoAcademico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar >
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -642,7 +642,7 @@
                         <h:form id="frmAlineacionProdAcadPersonal">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorProductosAcademicosPYE.dtoProductoAcademico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorProductosAcademicosPYE.dtoProductoAcademico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar >
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">

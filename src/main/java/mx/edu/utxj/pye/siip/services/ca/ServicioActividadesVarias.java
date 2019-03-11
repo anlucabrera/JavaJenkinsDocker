@@ -10,18 +10,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesVariasRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
@@ -50,9 +47,6 @@ public class ServicioActividadesVarias implements EjbActividadesVarias {
     @EJB    Facade f;
     @EJB    EjbModulos ejbModulos;
     @EJB    EjbFiscalizacion ejbFiscalizacion;
-    
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
     
     public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -268,7 +262,7 @@ public class ServicioActividadesVarias implements EjbActividadesVarias {
     @Override
     public ActividadesVariasRegistro buscaActividadVariaRegistroEspecifico(ActividadesVariasRegistro avr) {
         try {
-            ActividadesVariasRegistro actVar = em.createQuery("SELECT a FROM ActividadesVariasRegistro a WHERE a.fechaInicio = :fechaInicio AND a.nombre = :nombre", ActividadesVariasRegistro.class)
+            ActividadesVariasRegistro actVar = f.getEntityManager().createQuery("SELECT a FROM ActividadesVariasRegistro a WHERE a.fechaInicio = :fechaInicio AND a.nombre = :nombre", ActividadesVariasRegistro.class)
                     .setParameter("fechaInicio", avr.getFechaInicio())
                     .setParameter("nombre", avr.getNombre())
                     .getSingleResult();
@@ -282,18 +276,59 @@ public class ServicioActividadesVarias implements EjbActividadesVarias {
     @Override
     public List<ActividadesVariasRegistro> getFiltroActividadesVariasEjercicioMesArea(Short ejercicio, String mes, Short area) {
         try {
-            List<ActividadesVariasRegistro> actividadesVarias = em.createQuery("SELECT a FROM ActividadesVariasRegistro a JOIN a.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes AND r.area = :area", ActividadesVariasRegistro.class)
+            List<ActividadesVariasRegistro> actividadesVarias = f.getEntityManager().createQuery("SELECT a FROM ActividadesVariasRegistro a JOIN a.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes AND r.area = :area", ActividadesVariasRegistro.class)
                     .setParameter("anio", ejercicio)
                     .setParameter("mes", mes)
                     .setParameter("area", area)
                     .getResultList();
             actividadesVarias.forEach((t) -> {
-                em.refresh(t);
+                f.getEntityManager().refresh(t);
             });
             return actividadesVarias;
         } catch (NoResultException ex) {
             return Collections.EMPTY_LIST;
         }
     }
-    
+
+    @Override
+    public List<ActividadesVariasRegistro> getFiltroActividadesVariasEjercicioMes(Short ejercicio, String mes) {
+        try {
+            List<ActividadesVariasRegistro> actividadesVarias = f.getEntityManager().createQuery("SELECT a FROM ActividadesVariasRegistro a JOIN a.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes", ActividadesVariasRegistro.class)
+                    .setParameter("anio", ejercicio)
+                    .setParameter("mes", mes)
+                    .getResultList();
+            actividadesVarias.forEach((t) -> {
+                f.getEntityManager().refresh(t);
+            });
+            return actividadesVarias;
+        } catch (NoResultException ex) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<AreasUniversidad> getAreasConRegistroMensualGeneral(Boolean tipoConsulta, String mes) {
+        try {
+//            tipoConsulta = true (mensual) , tipoConsulta = false (anual o general)
+            List<Short> areas = new ArrayList<>();
+            if (tipoConsulta) {
+                areas = f.getEntityManager().createQuery("SELECT r.area FROM ActividadesVariasRegistro a INNER JOIN a.registros r INNER JOIN r.eventoRegistro e WHERE e.mes = :mes GROUP BY r.area", Short.class)
+                        .setParameter("mes", mes)
+                        .getResultList();
+            } else {
+                areas = f.getEntityManager().createQuery("SELECT r.area FROM ActividadesVariasRegistro a INNER JOIN a.registros r GROUP BY r.area", Short.class)
+                        .getResultList();
+            }
+            if (!areas.isEmpty()) {
+                return f.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a WHERE a.area IN :areas", AreasUniversidad.class)
+                        .setParameter("areas", areas)
+                        .getResultList();
+            } else {
+                return Collections.EMPTY_LIST;
+            }
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
 }

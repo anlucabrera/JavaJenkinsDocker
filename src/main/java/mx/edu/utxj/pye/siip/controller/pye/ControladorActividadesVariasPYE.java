@@ -65,6 +65,7 @@ public class ControladorActividadesVariasPYE implements Serializable {
     public void init() {
         dto = new DtoActividadesVarias();
         dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        dto.setListaAreasConRegistroMensualGeneral(ejbActividadesVarias.getAreasConRegistroMensualGeneral(Boolean.FALSE, ejbModulos.getEventoRegistro().getMes()));
         filtros();
     }
     

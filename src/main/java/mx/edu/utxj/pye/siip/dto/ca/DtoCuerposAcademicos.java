@@ -75,9 +75,10 @@ public final class DtoCuerposAcademicos {
     @Getter @Setter private AreasUniversidad area;
     @Getter @Setter String rutaArchivo;
     
-    @Getter @Setter private List<DTOCuerposAcademicosR> lstDtoCuerposAcademicosR;
+    @Getter @Setter private List<DTOCuerposAcademicosR> lstDtoCuerposAcademicosR, lstFiltrosCuerposAcademicos;
     @Getter @Setter private List<DTOCuerpAcadIntegrantes> lstDtoCuerpAcadIntegrantes;
     @Getter @Setter private List<CuerpacadLineas> lstCuerpAcadLineas;
+    
     
     public DtoCuerposAcademicos(){
         setRegistrosTipoCA(new RegistrosTipo((short)38));

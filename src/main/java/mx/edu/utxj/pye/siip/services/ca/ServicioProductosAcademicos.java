@@ -16,10 +16,8 @@ import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.servlet.annotation.MultipartConfig;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
@@ -61,10 +59,7 @@ public class ServicioProductosAcademicos implements EjbProductosAcademicos {
     @EJB    Facade facadeCapitalHumano;
     @EJB    EjbModulos ejbModulos;
 
-    @Inject Caster  caster;
-    
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager em;
+    @Inject Caster  caster;    
 
     @Override
     public List<DTOProductosAcademicos> getListaProductosAcademicos(String rutaArchivo) throws Throwable {
@@ -512,7 +507,7 @@ public class ServicioProductosAcademicos implements EjbProductosAcademicos {
 
     @Override
     public Integer getRegistroProductoAcademicoEspecifico(String productoAcademico) {
-        TypedQuery<ProductosAcademicos> query = em.createNamedQuery("ProductosAcademicos.findByProductoAcademico", ProductosAcademicos.class);
+        TypedQuery<ProductosAcademicos> query = facadeCapitalHumano.getEntityManager().createNamedQuery("ProductosAcademicos.findByProductoAcademico", ProductosAcademicos.class);
         query.setParameter("productoAcademico", productoAcademico);
         Integer registro = query.getSingleResult().getRegistro();
         return registro;
@@ -520,7 +515,7 @@ public class ServicioProductosAcademicos implements EjbProductosAcademicos {
 
     @Override
     public ProductosAcademicos getProductoAcademico(ProductosAcademicos productoAcademico) {
-        TypedQuery<ProductosAcademicos> query = em.createNamedQuery("ProductosAcademicos.findByProductoAcademico", ProductosAcademicos.class);
+        TypedQuery<ProductosAcademicos> query = facadeCapitalHumano.getEntityManager().createNamedQuery("ProductosAcademicos.findByProductoAcademico", ProductosAcademicos.class);
         query.setParameter("productoAcademico", productoAcademico.getProductoAcademico());
         try {
             productoAcademico = query.getSingleResult();
@@ -533,7 +528,7 @@ public class ServicioProductosAcademicos implements EjbProductosAcademicos {
 
     @Override
     public ProductosAcademicosPersonal getProductoAcademicoPersonal(ProductosAcademicosPersonal productoAcademicoPersonal) {
-        TypedQuery<ProductosAcademicosPersonal> query = em.createQuery("SELECT p FROM ProductosAcademicosPersonal p JOIN p.productoAcademico pa WHERE pa.productoAcademico = :productoAcademico AND p.personal = :personal", ProductosAcademicosPersonal.class);
+        TypedQuery<ProductosAcademicosPersonal> query = facadeCapitalHumano.getEntityManager().createQuery("SELECT p FROM ProductosAcademicosPersonal p JOIN p.productoAcademico pa WHERE pa.productoAcademico = :productoAcademico AND p.personal = :personal", ProductosAcademicosPersonal.class);
         query.setParameter("productoAcademico", productoAcademicoPersonal.getProductoAcademico().getProductoAcademico());
         query.setParameter("personal", productoAcademicoPersonal.getPersonal());
         try {
@@ -549,16 +544,16 @@ public class ServicioProductosAcademicos implements EjbProductosAcademicos {
         List<DTOProductosAcademicos> listaDtoPA = new ArrayList<>();
         List<ProductosAcademicos> productosAcademicos = new ArrayList<>();
         try {
-            productosAcademicos = em.createQuery("SELECT p FROM ProductosAcademicos p JOIN p.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes AND r.area = :area", ProductosAcademicos.class)
+            productosAcademicos = facadeCapitalHumano.getEntityManager().createQuery("SELECT p FROM ProductosAcademicos p JOIN p.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes AND r.area = :area", ProductosAcademicos.class)
                     .setParameter("anio", ejercicio)
                     .setParameter("mes", mes)
                     .setParameter("area", area)
                     .getResultList();
             productosAcademicos.forEach((t) -> {
-                em.refresh(t);
+                facadeCapitalHumano.getEntityManager().refresh(t);
                 listaDtoPA.add(new DTOProductosAcademicos(
                         t,
-                        em.find(AreasUniversidad.class, t.getAreaAcademica())
+                        facadeCapitalHumano.getEntityManager().find(AreasUniversidad.class, t.getAreaAcademica())
                 ));
             });
             return listaDtoPA;
@@ -572,16 +567,16 @@ public class ServicioProductosAcademicos implements EjbProductosAcademicos {
         List<DTOProductosAcademicosPersonal> listaDtoPAP = new ArrayList<>();
         List<ProductosAcademicosPersonal> productosAcademicosPersonal = new ArrayList<>();
         try {
-            productosAcademicosPersonal = em.createQuery("SELECT p FROM ProductosAcademicosPersonal p JOIN p.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes AND r.area = :area", ProductosAcademicosPersonal.class)
+            productosAcademicosPersonal = facadeCapitalHumano.getEntityManager().createQuery("SELECT p FROM ProductosAcademicosPersonal p JOIN p.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes AND r.area = :area", ProductosAcademicosPersonal.class)
                     .setParameter("anio", ejercicio)
                     .setParameter("mes", mes)
                     .setParameter("area", area)
                     .getResultList();
             productosAcademicosPersonal.forEach((t) -> {
-                em.refresh(t);
+                facadeCapitalHumano.getEntityManager().refresh(t);
                 listaDtoPAP.add(new DTOProductosAcademicosPersonal(
                         t,
-                        em.find(Personal.class, t.getPersonal())
+                        facadeCapitalHumano.getEntityManager().find(Personal.class, t.getPersonal())
                 ));
             });
             return listaDtoPAP;
@@ -594,7 +589,7 @@ public class ServicioProductosAcademicos implements EjbProductosAcademicos {
     public List<Integer> buscaRegistrosPersonalProductosAcademicos(ProductosAcademicos productoAcademico) throws Throwable {
         List<Integer> registros = new ArrayList<>();
         try {
-            return registros = em.createQuery("SELECT p FROM ProductosAcademicosPersonal p WHERE p.productoAcademico = :productoAcademico", ProductosAcademicosPersonal.class)
+            return registros = facadeCapitalHumano.getEntityManager().createQuery("SELECT p FROM ProductosAcademicosPersonal p WHERE p.productoAcademico = :productoAcademico", ProductosAcademicosPersonal.class)
                     .setParameter("productoAcademico", productoAcademico)
                     .getResultStream()
                     .map(p -> p.getRegistro())

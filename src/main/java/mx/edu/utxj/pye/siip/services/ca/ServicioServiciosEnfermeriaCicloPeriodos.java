@@ -191,7 +191,9 @@ public class ServicioServiciosEnfermeriaCicloPeriodos implements EjbServiciosEnf
                             servicioEnfermeriaCicloPeriodo.setServicio(servicioEnfermeriaTipo);
                             dtoServicioEnfermeriaCicloPeriodo.setServiciosEnfermeriaCicloPeriodos(servicioEnfermeriaCicloPeriodo);
 
-                            listaDtoServiciosEnfemeriaCicloPeriodos.add(dtoServicioEnfermeriaCicloPeriodo);
+                            if (ejbModulos.getEventoRegistro().getMes().equals(servicioEnfermeriaCicloPeriodo.getMes())) {
+                                listaDtoServiciosEnfemeriaCicloPeriodos.add(dtoServicioEnfermeriaCicloPeriodo);
+                            }
                         }
                     }
                     libroRegistro.close();

@@ -189,6 +189,9 @@
                                             <p:column>
                                                 <h:outputText value="#{servicioEnfermeria.serviciosEnfermeriaCicloPeriodos.mes}"/>
                                             </p:column>
+                                            <f:facet name="footer">
+                                                En el mes de: #{controladorServiciosEnfermeriaCicloPeriodos.dto.mesConsulta} hay un total de: #{fn:length(controladorServiciosEnfermeriaCicloPeriodos.dto.lista)} registros de Servicios de Enfermería.
+                                            </f:facet>
                                         </p:dataTable>
                                         <p:confirmDialog global="true"
                                                          showEffect="fade"
@@ -250,10 +253,10 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
                                                          requiredMessage="Debe elegir al menos un archivo" 
-                                                         rendered="#{controladorServiciosEnfermeriaCicloPeriodos.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosEnfermeriaCicloPeriodos.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFileEvidencia" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorServiciosEnfermeriaCicloPeriodos.subirEvidencias()}"
-                                                             rendered="#{controladorServiciosEnfermeriaCicloPeriodos.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosEnfermeriaCicloPeriodos.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -332,7 +335,7 @@
                         <h:form id="frmAlineacion">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorServiciosEnfermeriaCicloPeriodos.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosEnfermeriaCicloPeriodos.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -469,6 +472,9 @@
                                             <p:column>
                                                 <h:outputText value="#{serviciosEnfermeria.serviciosEnfermeriaCicloPeriodos.mes}"/>
                                             </p:column>
+                                            <f:facet name="footer">
+                                                Su archivo de excel contiene un total de: #{fn:length(controladorServiciosEnfermeriaCicloPeriodos.dto.lista)} registros de Servicios de Enfermería.
+                                            </f:facet>
                                         </p:dataTable>
                                         <p></p>
                                         <p:commandButton id="btnGuardar" value="Guardar Datos" actionListener="#{controladorServiciosEnfermeriaCicloPeriodos.guardaServiciosEnfermeriaCicloPeriodo()}" icon="fa fa-pencil-square-o" class="btn-primary" update="formPrevisualizacionDatos"/>

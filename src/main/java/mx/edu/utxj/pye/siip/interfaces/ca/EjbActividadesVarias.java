@@ -6,17 +6,12 @@
 package mx.edu.utxj.pye.siip.interfaces.ca;
 
 import java.util.List;
-import java.util.Map;
 import javax.ejb.Local;
-import javax.servlet.http.Part;
-import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesVariasRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
-import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
-import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
-import mx.edu.utxj.pye.siip.dto.ca.DTOActividadVaria;
 
 /**
  *
@@ -38,4 +33,8 @@ public interface EjbActividadesVarias {
      * @return Regresa una lista de registros de ActividadesVariasRegistro que serán ocupados para consulta o eliminación
      */
     public List<ActividadesVariasRegistro> getFiltroActividadesVariasEjercicioMesArea(Short ejercicio, String mes, Short area);
+    
+    public List<ActividadesVariasRegistro> getFiltroActividadesVariasEjercicioMes(Short ejercicio, String mes);
+    
+    public List<AreasUniversidad> getAreasConRegistroMensualGeneral(Boolean tipoConsulta, String mes);
 }

@@ -173,7 +173,7 @@
                                                                              icon="fa fa-trash" 
                                                                              actionListener="#{controladorDistribucionEquipamientoPYE.eliminarRegistro(equipoComputo)}"
                                                                              title="Eliminar registro."
-                                                                             rendered="#{controladorDistribucionEquipamientoPYE.dto.periodoEscolarActivo.periodo eq equipoComputo.equiposComputoCicloPeriodoEscolar.periodoEscolar}">
+                                                                             >
                                                                 <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de #{equipoComputo.periodoEscolar}" icon="ui-icon-alert" />
                                                             </p:commandButton>
                                                             <c:set var="evidencias" value="#{controladorDistribucionEquipamientoPYE.consultarEvidencias(equipoComputo)}" />
@@ -299,7 +299,7 @@
                                                                              icon="fa fa-trash" 
                                                                              actionListener="#{controladorDistribucionEquipamientoPYE.eliminarRegistroECI(equipoComputoInternet)}"
                                                                              title="Eliminar registro."
-                                                                             rendered="#{controladorDistribucionEquipamientoPYE.dto.periodoEscolarActivo.periodo eq equipoComputoInternet.equiposComputoInternetCicloPeriodoEscolar.periodoEscolar}">
+                                                                             >
                                                                 <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de #{equipoComputoInternet.periodoEscolar}" icon="ui-icon-alert" />
                                                             </p:commandButton>
                                                             <c:set var="evidencias" value="#{controladorDistribucionEquipamientoPYE.consultarEvidenciasECI(equipoComputoInternet)}" />
@@ -615,7 +615,7 @@
                         <h:form id="frmAlineacion">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorDistribucionEquipamientoPYE.dto.periodoEscolarActivo.periodo eq controladorDistribucionEquipamientoPYE.dto.registroEquiposComputoCPE.equiposComputoCicloPeriodoEscolar.periodoEscolar}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -720,7 +720,7 @@
                         <h:form id="frmAlineacionECI">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorDistribucionEquipamientoPYE.dto.periodoEscolarActivo.periodo eq controladorDistribucionEquipamientoPYE.dto.registroEquiposInternetCPE.equiposComputoInternetCicloPeriodoEscolar.periodoEscolar}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">

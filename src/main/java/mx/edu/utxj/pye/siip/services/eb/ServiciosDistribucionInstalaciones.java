@@ -728,7 +728,6 @@ public class ServiciosDistribucionInstalaciones implements EjbDistribucionInstal
                     .setParameter("anio", eventoRegistro.getEjercicioFiscal().getAnio())
                     .getResultList();
         }else{
-            System.out.println("mx.edu.utxj.pye.siip.services.eb.ServiciosDistribucionInstalaciones.getPeriodosConregistro() Claves: " + claves.toString());
             l = facadeServGen.getEntityManager().createQuery("SELECT periodo FROM PeriodosEscolares periodo WHERE periodo.periodo IN :claves ORDER BY periodo.periodo desc", PeriodosEscolares.class)
                     .setParameter("claves", claves)
                     .getResultList();

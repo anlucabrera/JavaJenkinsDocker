@@ -177,6 +177,10 @@
                                                     <p:column>
                                                         <h:outputText value="#{actividadEgresado.total}"/>
                                                     </p:column>
+
+                                                    <f:facet name="footer">
+                                                        En el mes de: #{controladorEgresados.dto.mesConsulta} hay un total de: #{fn:length(controladorEgresados.dto.listaActividadEgresado)} registros de Actividad del Egresado/a.
+                                                    </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
 
@@ -251,6 +255,9 @@
                                                     <p:column>
                                                         <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.cantGiro}"/>
                                                     </p:column>
+                                                    <f:facet name="footer">
+                                                        En el mes de: #{controladorEgresados.dto.mesConsulta} hay un total de: #{fn:length(controladorEgresados.dto.listaActividadEconomicaEgresado)} registros de Actividad Económica del Egresado/a.
+                                                    </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
 
@@ -326,6 +333,7 @@
                                                         <h:outputText value="#{nivelOcupacionEG.total}"/>
                                                     </p:column>
                                                     <f:facet name="footer">
+                                                        En el mes de: #{controladorEgresados.dto.mesConsulta} hay un total de: #{fn:length(controladorEgresados.dto.listaNivelOcupacionEgresado)} registros de Nivel de Ocupación.
                                                     </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
@@ -402,6 +410,7 @@
                                                         <h:outputText value="#{nivelIngresoEG.total}"/>
                                                     </p:column>
                                                     <f:facet name="footer">
+                                                        En el mes de: #{controladorEgresados.dto.mesConsulta} hay un total de: #{fn:length(controladorEgresados.dto.listaNivelIngresoEgresado)} registros de Nivel de Ingresos.
                                                     </f:facet>
                                                 </p:dataTable>
                                                 <p:confirmDialog global="true"
@@ -466,10 +475,10 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
                                                          requiredMessage="Debe elegir al menos un archivo" 
-                                                         rendered="#{controladorEgresados.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresados.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFileEvidencia" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorEgresados.subirEvidencias()}"
-                                                             rendered="#{controladorEgresados.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresados.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -568,10 +577,10 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
                                                          requiredMessage="Debe elegir al menos un archivo" 
-                                                         rendered="#{controladorEgresados.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresados.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFileEvidenciaAEE" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorEgresados.subirEvidenciasAEE()}"
-                                                             rendered="#{controladorEgresados.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresados.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -670,10 +679,10 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
                                                          requiredMessage="Debe elegir al menos un archivo" 
-                                                         rendered="#{controladorEgresados.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresados.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFileEvidenciaNOE" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorEgresados.subirEvidenciasNOE()}"
-                                                             rendered="#{controladorEgresados.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresados.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -772,10 +781,10 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
                                                          requiredMessage="Debe elegir al menos un archivo" 
-                                                         rendered="#{controladorEgresados.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresados.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFileEvidenciaNIE" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorEgresados.subirEvidenciasNIE()}"
-                                                             rendered="#{controladorEgresados.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresados.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -854,7 +863,7 @@
                         <h:form id="frmAlineacion">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorEgresados.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresados.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -944,7 +953,7 @@
                         <h:form id="frmAlineacionAEE">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorEgresados.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresados.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar >
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -1034,7 +1043,7 @@
                         <h:form id="frmAlineacionNOE">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorEgresados.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresados.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -1124,7 +1133,7 @@
                         <h:form id="frmAlineacionNIE">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorEgresados.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresados.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -1250,6 +1259,10 @@
                                                     <p:column>
                                                         <h:outputText value="#{actividadEgresado.total}"/>
                                                     </p:column>
+                                                    
+                                                    <f:facet name="footer">
+                                                        Su archivo de excel contiene un total de: #{fn:length(controladorEgresados.dto.listaActividadEgresado)} registros de Actividad del Egresado/a.
+                                                    </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
 
@@ -1300,6 +1313,10 @@
                                                     <p:column>
                                                         <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.cantGiro}"/>
                                                     </p:column>
+                                                    
+                                                    <f:facet name="footer">
+                                                        Su archivo de excel contiene un total de: #{fn:length(controladorEgresados.dto.listaActividadEconomicaEgresado)} registros de Actividad Económica del Egresado/a.
+                                                    </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
 
@@ -1351,6 +1368,10 @@
                                                     <p:column>
                                                         <h:outputText value="#{nivelOcupacionEG.total}"/>
                                                     </p:column>
+                                                    
+                                                    <f:facet name="footer">
+                                                        Su archivo de excel contiene un total de: #{fn:length(controladorEgresados.dto.listaNivelOcupacionEgresado)} registros de Nivel de Ocupación.
+                                                    </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
 
@@ -1402,6 +1423,9 @@
                                                     <p:column>
                                                         <h:outputText value="#{nivelIngresoEG.total}"/>
                                                     </p:column>
+                                                    <f:facet name="footer">
+                                                        Su archivo de excel contiene un total de: #{fn:length(controladorEgresados.dto.listaNivelIngresoEgresado)} registros de Nivel de Ingresos.
+                                                    </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
 

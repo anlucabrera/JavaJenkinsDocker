@@ -142,6 +142,9 @@
                                         <p:column><h:outputText value="#{asesoriaTutoria.asesoriasTutoriasCicloPeriodos.tipoActividad}"/></p:column>
                                         <p:column><h:outputText value="#{asesoriaTutoria.asesoriasTutoriasCicloPeriodos.tipo}"/></p:column>
                                         <!--<p:column><h:outputText value="#{asesoriaTutoria.asesoriasTutoriasCicloPeriodos.asunto}"/></p:column>-->
+                                        <f:facet name="footer">
+                                            En el mes de: #{asesoriasTutoriasCicloEscolar.dto.eventoSeleccionado.mes} hay un total de: #{fn:length(asesoriasTutoriasCicloEscolar.dto.lista)} registros de Asesorías y Tutorías.
+                                        </f:facet>
                                     </p:dataTable>
                                     <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
                                         <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
@@ -418,6 +421,9 @@
                                             <p:column><h:outputText value="#{asesoriaTutoria.asesoriasTutoriasCicloPeriodos.tipoActividad}"/></p:column>
                                             <p:column><h:outputText value="#{asesoriaTutoria.asesoriasTutoriasCicloPeriodos.tipo}"/></p:column>
                                             <!--<p:column><h:outputText value="#{asesoriaTutoria.asesoriasTutoriasCicloPeriodos.asunto}"/></p:column>-->
+                                            <f:facet name="footer">
+                                                Su archivo de excel contiene un total de: #{fn:length(asesoriasTutoriasCicloEscolar.dto.lista)} registros de Asesorías y Tutorías.
+                                            </f:facet>
                                         </p:dataTable>
                                         <p></p>
                                         <p:commandButton id="btnGuardarAsesoriasTutorias" 

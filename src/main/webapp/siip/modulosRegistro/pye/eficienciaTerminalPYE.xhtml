@@ -215,7 +215,7 @@
                                                              actionListener="#{controladorEficienciaTerminalTitulacionRegistroPYE.eliminarRegistro(eficienciaEliminada)}"
                                                              onsuccess="actualizar();"
                                                              title="Eliminar eficiencia terminal"
-                                                             rendered="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEficienciaTerminalTitulacionRegistroPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                             >
                                                 <p:confirm header="Eliminar registro" 
                                                            message="¿Está seguro de eliminar el corte de: #{eficienciaTerminal.eficienciaTerminalTitulacionRegistro.fechaCorte} ?" 
                                                            icon="ui-icon-alert" />
@@ -363,7 +363,7 @@
                               maximizable="false">
                         <div class="row">
                             <div class="col-md-12">
-                                <p:toolbar rendered="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEficienciaTerminalTitulacionRegistroPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                <p:toolbar>
                                     <f:facet name="left">
                                         <p:spacer width="10" />
                                         <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px;" />
@@ -477,7 +477,7 @@
                         <h:form id="frmAlineacion" >
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorEficienciaTerminalTitulacionRegistroPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEficienciaTerminalTitulacionRegistroPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">

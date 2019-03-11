@@ -274,6 +274,9 @@
                                         <p:column>
                                             <h:outputText value="#{controladorEficienciaTerminalTitulacionRegistro.calculaRegistroDGP((eficienciaTerminal.eficienciaTerminalTitulacionRegistro.registradosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.registradosm), (eficienciaTerminal.eficienciaTerminalTitulacionRegistro.tituladosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.tituladosm))} %"/>
                                         </p:column>
+                                        <f:facet name="footer">
+                                            En el mes de: #{controladorEficienciaTerminalTitulacionRegistro.dto.mesConsulta} hay un total de: #{fn:length(controladorEficienciaTerminalTitulacionRegistro.dto.listaEficienciaTerminal)} registros de Eficiencia Terminal.
+                                        </f:facet>
                                     </p:dataTable>
                                     <p:confirmDialog global="true" 
                                                      showEffect="fade" 
@@ -315,7 +318,7 @@
                               maximizable="false">
                         <div class="row">
                             <div class="col-md-12">
-                                <p:toolbar rendered="#{controladorEficienciaTerminalTitulacionRegistro.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEficienciaTerminalTitulacionRegistro.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                <p:toolbar>
                                     <f:facet name="left">
                                         <p:spacer width="10" />
                                         <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px;" />
@@ -429,7 +432,7 @@
                         <h:form id="frmAlineacion" >
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorEficienciaTerminalTitulacionRegistro.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEficienciaTerminalTitulacionRegistro.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -657,6 +660,9 @@
                                             <p:column>
                                                 <h:outputText value="#{controladorEficienciaTerminalTitulacionRegistro.calculaRegistroDGP((eficienciaTerminal.eficienciaTerminalTitulacionRegistro.registradosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.registradosm), (eficienciaTerminal.eficienciaTerminalTitulacionRegistro.tituladosh + eficienciaTerminal.eficienciaTerminalTitulacionRegistro.tituladosm))} %"/>
                                             </p:column>
+                                            <f:facet name="footer">
+                                                Su archivo de excel contiene un total de: #{fn:length(controladorEficienciaTerminalTitulacionRegistro.dto.listaEficienciaTerminal)} registros de Eficiencia Terminal.
+                                            </f:facet>
                                         </p:dataTable>
                                         <p></p>
                                         <p:commandButton id="btnGuardarEficienciaTerminalTitulacion" value="Guardar Datos" actionListener="#{controladorEficienciaTerminalTitulacionRegistro.guardaEficienciaTerminalTitulacion()}" icon="fa fa-pencil-square-o" class="btn-primary" update=":formPrevisualizacionDatos"/>

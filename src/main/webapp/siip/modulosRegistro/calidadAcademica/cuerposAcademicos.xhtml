@@ -116,16 +116,18 @@
                                                              id="dtbECCuerposAcademicos"
                                                              var="cuerpoAcademico" value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.lstDtoCuerposAcademicosR}"
                                                              tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
-                                                             lazy="true">
+                                                             lazy="true"
+                                                             widgetVar="catable"
+                                                             filteredValue="#{controladorCuerposAcademicos.dtoCuerposAcademicos.lstFiltrosCuerposAcademicos}">
                                                     <p:columnGroup type="header">
                                                         <p:row>
-                                                            <p:column rowspan="2" headerText="Opciones" width="150"/>
-                                                            <p:column rowspan="2" headerText="Clave Registro" width="200" />
-                                                            <p:column colspan="2" headerText="Duración" width="400" />
-                                                            <p:column rowspan="2" headerText="Cuerpo Académico" width="400" />
-                                                            <p:column rowspan="2" headerText="Nivel de Reconocimiento por PRODEP" width="200" />
-                                                            <p:column rowspan="2" headerText="Área de Estudio" width="400" />
-                                                            <p:column rowspan="2" headerText="Disciplina" width="400" />
+                                                            <p:column rowspan="2" headerText="Opciones"                             width="150"/>
+                                                            <p:column rowspan="2" headerText="Clave Registro"                       width="200"/>
+                                                            <p:column colspan="2" headerText="Duración"                             width="400"/>
+                                                            <p:column rowspan="2" headerText="Cuerpo Académico"                     width="400"/>
+                                                            <p:column rowspan="2" headerText="Nivel de Reconocimiento por PRODEP"   width="200"/>
+                                                            <p:column rowspan="2" headerText="Área de Estudio"                      width="400"/>
+                                                            <p:column rowspan="2" headerText="Disciplina"                           width="400"/>
                                                         </p:row>
                                                         <p:row>
                                                             <p:column headerText="Fecha de Inicio" />
@@ -187,6 +189,7 @@
                                                         <h:outputText value="#{cuerpoAcademico.cuerposAcademicosRegistro.disciplina.nombre}"/>
                                                     </p:column>
                                                     <f:facet name="footer">
+                                                        En el mes de: #{controladorCuerposAcademicos.dtoCuerposAcademicos.mesConsulta} hay un total de: #{fn:length(controladorCuerposAcademicos.dtoCuerposAcademicos.lstDtoCuerposAcademicosR)} registros de Cuerpos Académicos.
                                                     </f:facet>
                                                 </p:dataTable>
                                                 <p:confirmDialog global="true"
@@ -256,6 +259,7 @@
                                                         <h:outputText value="#{caIntegrantes.personal.nombre}"/>
                                                     </p:column>
                                                     <f:facet name="footer">
+                                                        En el mes de: #{controladorCuerposAcademicos.dtoCuerposAcademicos.mesConsulta} hay un total de: #{fn:length(controladorCuerposAcademicos.dtoCuerposAcademicos.lstDtoCuerpAcadIntegrantes)} registros de Participantes en Cuerpos Académicos.
                                                     </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
@@ -311,6 +315,7 @@
                                                     </p:column>
 
                                                     <f:facet name="footer">
+                                                        En el mes de: #{controladorCuerposAcademicos.dtoCuerposAcademicos.mesConsulta} hay un total de: #{fn:length(controladorCuerposAcademicos.dtoCuerposAcademicos.lstCuerpAcadLineas)} registros de Lineas de Investigación en Cuerpos Académicos.
                                                     </f:facet>
                                                 </p:dataTable>
                                             </p:tab>
@@ -362,10 +367,10 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
                                                          requiredMessage="Debe elegir al menos un archivo"
-                                                         rendered="#{controladorCuerposAcademicos.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicos.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFilesCuerpAcad" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorCuerposAcademicos.subirEvidenciasCuerpAcad()}"
-                                                             rendered="#{controladorCuerposAcademicos.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicos.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -464,10 +469,10 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
                                                          requiredMessage="Debe elegir al menos un archivo"
-                                                         rendered="#{controladorCuerposAcademicos.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicos.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFilesCuerpAcadIntegrantes" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorCuerposAcademicos.subirEvidenciasCuerpAcadIntegrantes()}"
-                                                             rendered="#{controladorCuerposAcademicos.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicos.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -566,10 +571,10 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true"
                                                          requiredMessage="Debe elegir al menos un archivo"
-                                                         rendered="#{controladorCuerposAcademicos.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicos.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFilesCuerpAcadLineas" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorCuerposAcademicos.subirEvidenciasCuerpAcadLineas()}"
-                                                             rendered="#{controladorCuerposAcademicos.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicos.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -653,7 +658,7 @@
                         <h:form id="frmAlineacionCuerpAcad">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorCuerposAcademicos.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicos.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -742,7 +747,7 @@
                         <h:form id="frmAlineacionCuerpAcadIntegrantes">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorCuerposAcademicos.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicos.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -831,7 +836,7 @@
                         <h:form id="frmAlineacionCuerpAcadLineas">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{controladorCuerposAcademicos.dtoCuerposAcademicos.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorCuerposAcademicos.dtoCuerposAcademicos.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -1008,6 +1013,7 @@
                                                             <h:outputText value="#{cuerpoAcademico.cuerposAcademicosRegistro.disciplina.nombre}"/>
                                                         </p:column>
                                                         <f:facet name="footer">
+                                                            Su archivo de excel contiene un total de: #{fn:length(controladorCuerposAcademicos.dtoCuerposAcademicos.lstDtoCuerposAcademicosR)} registros de Cuerpos Académicos.
                                                         </f:facet>
                                                     </p:dataTable>
                                                 </div>
@@ -1038,6 +1044,7 @@
                                                         </p:column>
 
                                                         <f:facet name="footer">
+                                                            Su archivo de excel contiene un total de: #{fn:length(controladorCuerposAcademicos.dtoCuerposAcademicos.lstDtoCuerpAcadIntegrantes)} registros de Participantes en Cuerpos Académicos.
                                                         </f:facet>
                                                     </p:dataTable>
                                                 </div>
@@ -1068,6 +1075,7 @@
                                                         </p:column>
 
                                                         <f:facet name="footer">
+                                                            Su archivo de excel contiene un total de: #{fn:length(controladorCuerposAcademicos.dtoCuerposAcademicos.lstCuerpAcadLineas)} registros de Lineas de Investigación en Cuerpos Académicos.
                                                         </f:facet>
                                                     </p:dataTable>
                                                 </div>

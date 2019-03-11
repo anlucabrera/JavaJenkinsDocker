@@ -12,6 +12,7 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.Normalizer;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -120,26 +121,126 @@ public class Ejemplo {
         
         
         System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() Método de ejemplo de la clase LocalDate");
-        Date fechaInicioActividadCorrecta = new Date(2019, 02, 23);
+//        Fechas de la actividad x
+        Date fechaInicioActividadCorrecta = new Date(2019,02,20);
+        Date fechaInicioActividadIgual = new Date(2019, 02, 16);
         Date fechaInicioActividadIncorrecta = new Date(2019, 01, 15);
         
 //        Fechas de evento
-        Date fechaInicioEventoBD = new Date(2019-02-16);
+        Date fechaInicioEventoBD = new Date(2019,02,16);
         Date fechaFinEventoBD = new Date(2019,03,05);
+//        
+////        Getting the default zone id
+//        ZoneId defaultZoneId = ZoneId.systemDefault();
+//        
+////        Converting the date to Instant
+//        Instant ifiac = fechaInicioActividadCorrecta.toInstant();
+//        Instant ifiai = fechaInicioActividadIgual.toInstant();
+//        Instant ifiainc = fechaInicioActividadIncorrecta.toInstant();
+//        
+//        Instant ifechaInicioEvento = fechaInicioEventoBD.toInstant();
+//        Instant ifechaFinEvento = fechaFinEventoBD.toInstant();
+//        
+////        Converting the Date to LocalDate
+//        LocalDate fechaInicioActividad = ifiac.atZone(defaultZoneId).toLocalDate();
+//        LocalDate fechaInicioActividadI = ifiai.atZone(defaultZoneId).toLocalDate();
+//        LocalDate fechaInicioActividadInc = ifiainc.atZone(defaultZoneId).toLocalDate();
+//        
+//        LocalDate fechaInicioEvento = ifechaInicioEvento.atZone(defaultZoneId).toLocalDate();
+//        LocalDate fechaFinEvento = ifechaFinEvento.atZone(defaultZoneId).toLocalDate();
+//        
+//        
+//        Segundo Método
+
+        LocalDate ejemplo = fechaInicioActividadCorrecta.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        LocalDate fechaInicioActividad = Instant.ofEpochMilli(fechaInicioActividadCorrecta.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate fechaInicioActividadI = Instant.ofEpochMilli(fechaInicioActividadIgual.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate fechaInicioActividadInc = Instant.ofEpochMilli(fechaInicioActividadIncorrecta.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
         
-        LocalDate fechaInicioActividad = fechaInicioActividadCorrecta.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate fechaInicioActividadInc = fechaInicioActividadIncorrecta.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate fechaInicioEvento = fechaInicioEventoBD.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate fechaFinEvento = fechaFinEventoBD.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate fechaInicioEvento = Instant.ofEpochMilli(fechaInicioEventoBD.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate fechaFinEvento = Instant.ofEpochMilli(fechaFinEventoBD.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+        
+        
+//        LocalDate fechaFinEvento = fechaFinEventoBD.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         
 //        Fechas correctas
         System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() fechas correctas: ");
-        System.out.println("Fecha InicioEvento: " + fechaInicioActividad.compareTo(fechaInicioEvento));
-        System.out.println("Fecha FinEvento:    " + fechaInicioActividad.compareTo(fechaFinEvento));
         
-        System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() fechas incorrectas: ");
-        System.out.println("Fecha InicioEvento:     " + fechaInicioActividadInc.compareTo(fechaInicioEvento));
-        System.out.println("Fecha FinEvento;        " + fechaInicioActividadInc.compareTo(fechaFinEvento));
+        System.out.println("--");
+        System.out.println("--");
+        System.out.println("--");
+        
+        System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main()Fecha de ejemplo: " + ejemplo.getYear());
+        System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main()Fecha Inicio Evento: " + fechaInicioEvento.getYear() + " mes: " + fechaInicioEvento.getMonth() + " día: " + fechaInicioEvento.getDayOfMonth());
+        System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main()Fecha Fin Evento: " + fechaFinEvento);
+        System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main()Fecha Actividad: " + fechaInicioActividad);
+        System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main()Fecha Actividad Igual: " + fechaInicioActividadI);
+        System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main()Fecha Actividad Inorrecta: " + fechaInicioActividadInc);
+        
+        System.out.println("--");
+        System.out.println("--");
+        System.out.println("--");
+        
+        System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main()Fecha igual a fechainicio: " + fechaInicioActividadI.isEqual(fechaInicioEvento));
+        System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main()Fecha igual a fechafin: " + fechaInicioActividadI.isEqual(fechaFinEvento));
+        System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main()Fecha antes de: " + fechaInicioActividadI.isBefore(fechaInicioEvento));
+        System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main()Fecha despues de: " + fechaInicioActividadI.isAfter(fechaFinEvento));
+        
+        System.out.println("--");
+        System.out.println("--");
+        System.out.println("--");
+        System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main()Caso 1: " + validaFechas(fechaInicioActividad, fechaInicioEvento, fechaFinEvento));
+         System.out.println("--");
+        System.out.println("--");
+        System.out.println("--");
+        System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main()Caso 2: " + validaFechas(fechaInicioActividadI, fechaInicioEvento, fechaFinEvento));
+         System.out.println("--");
+        System.out.println("--");
+        System.out.println("--");
+        System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main()Caso 3: " + validaFechas(fechaInicioActividadInc, fechaInicioEvento, fechaFinEvento));
+        
+    }
+    
+    public static Boolean validaFechas(LocalDate fechaInicioActividad, LocalDate fechaInicioEvento, LocalDate fechaFinEvento) {
+        Boolean r1 = false;
+        Boolean r2 = false;
+
+        if (fechaInicioActividad.isEqual(fechaInicioEvento)) {
+            System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.validaFechas() Es igual a la fecha de inicio: " + fechaInicioActividad.isEqual(fechaInicioEvento));
+            r1 = true;
+            return true;
+        } else {
+            if (fechaInicioActividad.isEqual(fechaFinEvento)) {
+                System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.validaFechas() Es igual a la fecha fin: " + fechaInicioActividad.isEqual(fechaFinEvento));
+                r2 = true;
+                return true;
+            } else {
+                return validaEntreFechas(fechaInicioActividad, fechaInicioEvento, fechaFinEvento);
+            }
+        }
+//        if (r1 == true || r2 == true) {
+//            System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.validaFechas() Resultado Final: true");
+//            return true;
+//        } else {
+//            return validaEntreFechas(fechaInicioActividad, fechaInicioEvento, fechaFinEvento);
+//        }
+    }
+    
+    public static Boolean validaEntreFechas(LocalDate fechaInicioActividad, LocalDate fechaInicioEvento, LocalDate fechaFinEvento){
+        Boolean r1 = false;
+        Boolean r2 = false;
+        
+        if (fechaInicioActividad.isAfter(fechaInicioEvento)) {
+            System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.validaEntreFechas() Es mayor que la fecha de inicio: " + fechaInicioActividad.isAfter(fechaInicioEvento));
+            r1 = true;
+        }
+        if (fechaInicioActividad.isBefore(fechaFinEvento)) {
+            System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.validaEntreFechas() Es menor que la fecha fin: " + fechaInicioActividad.isBefore(fechaFinEvento));
+            r2 = true;
+        }
+        
+        return r1 && r2;
     }
 
     public static String quitarEspaciosTelefono(String cadena) {

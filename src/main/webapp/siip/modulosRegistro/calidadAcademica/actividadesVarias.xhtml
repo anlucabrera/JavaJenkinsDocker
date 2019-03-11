@@ -190,6 +190,10 @@
                                         <p:column>
                                             <h:outputText value="#{actVar.personalidades}"/>
                                         </p:column>
+                                        
+                                        <f:facet name="footer">
+                                            En el mes de: #{actividadesVarias.dto.mesConsulta} hay un total de: #{fn:length(actividadesVarias.dto.lstActividadesVarias)} registros de Actividades Varías.
+                                        </f:facet>
                                     </p:dataTable>
 
                                     <p:confirmDialog global="true" 
@@ -251,13 +255,13 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true" 
                                                          requiredMessage="Debe elegir al menos un archivo." 
-                                                         rendered="#{actividadesVarias.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and actividadesVarias.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFiles" 
                                                              value="Subir archivos" 
                                                              class="btn btn-primary" 
                                                              actionListener="#{actividadesVarias.subirEvidencias()}" 
-                                                             rendered="#{actividadesVarias.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and actividadesVarias.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -343,7 +347,7 @@
                         <h:form id="frmAlineacion" >
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{actividadesVarias.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and actividadesVarias.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -489,6 +493,9 @@
                                             <p:column>
                                                 <h:outputText value="#{actVar.personalidades}"/>
                                             </p:column>
+                                            <f:facet name="footer">
+                                                Su archivo de excel contiene un total de: #{fn:length(actividadesVarias.dto.lstActividadesVarias)} registros de Actividades Varías.
+                                            </f:facet>
                                         </p:dataTable>
                                         <p></p>
                                         <p:commandButton id="btnGuardarActividadesVarias" value="Guardar Datos" actionListener="#{actividadesVarias.guardarActividadVaria()}" icon="fa fa-pencil-square-o" class="btn-primary" update=":formPrevisualizacionDatos"/>

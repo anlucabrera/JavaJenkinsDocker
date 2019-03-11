@@ -120,14 +120,14 @@
                                             <p:column headerText="Empresa" width="500"/>
                                             <p:column headerText="Fecha de firma" width="100"/>
                                             <p:column headerText="Vigencia" width="100"/>
-                                            <p:column headerText="Objetivo" width="400"/>
-                                            <p:column headerText="Descripción" width="400"/>
-                                            <p:column headerText="Impacto" width="400"/>
                                             <p:column headerText="Estudiantes Beneficiados Hombres" width="100"/>
                                             <p:column headerText="Estudiantes Beneficiados Mujeres" width="100"/>
                                             <p:column headerText="Docentes Beneficiados Hombres" width="100"/>
                                             <p:column headerText="Docentes Beneficiados Mujeres" width="100"/>
                                             <p:column headerText="Recursos obtenidos" width="150"/>
+                                            <p:column headerText="Objetivo" width="800"/>
+                                            <p:column headerText="Descripción" width="800"/>
+                                            <p:column headerText="Impacto" width="800"/>
                                         </p:columnGroup>
                                         <c:set var="convenioEliminado" value="#{convenio.registro}"/>
                                         <p:column style="text-align: center;">
@@ -169,19 +169,7 @@
                                                 <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
                                             </h:outputText>
                                         </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{convenio.objetivo}"/>
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{convenio.descripcion}"/>
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{convenio.impacto}"/>
-                                        </p:column>
-
+                                        
                                         <p:column>
                                             <h:outputText value="#{convenio.ebh}"/>
                                         </p:column>
@@ -201,6 +189,22 @@
                                         <p:column>
                                             <h:outputText value="$ #{convenio.recursosObtenidos}"/>
                                         </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{convenio.objetivo}"/>
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{convenio.descripcion}"/>
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{convenio.impacto}"/>
+                                        </p:column>
+
+                                        <f:facet name="footer">
+                                            En el mes de: #{conveniosC.dtoConvenios.mesConsulta} hay un total de: #{fn:length(conveniosC.dtoConvenios.lstConvenios)} registros de Convenios.
+                                        </f:facet>
                                     </p:dataTable>
                                     <p:confirmDialog global="true" 
                                                      showEffect="fade" 
@@ -262,10 +266,10 @@
                                                          maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
                                                          required="true" 
                                                          requiredMessage="Debe elegir al menos un archivo." 
-                                                         rendered="#{conveniosC.dtoConvenios.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and conveniosC.dtoConvenios.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                         >
                                             </o:inputFile>
                                             <h:commandButton id="btnuploadFiles" value="Subir archivos" class="btn btn-primary" actionListener="#{conveniosC.subirEvidencias()}" 
-                                                             rendered="#{conveniosC.dtoConvenios.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and conveniosC.dtoConvenios.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"/>
+                                                             />
                                         </o:form>
                                     </f:facet>
                                 </p:toolbar>
@@ -352,7 +356,7 @@
                         <h:form id="frmAlineacion" >
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar rendered="#{conveniosC.dtoConvenios.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and conveniosC.dtoConvenios.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                    <p:toolbar>
                                         <f:facet name="left">
                                         </f:facet>
                                         <f:facet name="right">
@@ -508,6 +512,10 @@
                                             <p:column>
                                                 <h:outputText value="$ #{conveniosLista.recursosObtenidos}"/>
                                             </p:column>
+
+                                            <f:facet name="footer">
+                                                Su archivo de excel contiene un total de: #{fn:length(conveniosC.dtoConvenios.lstConvenios)} registros de Convenios.
+                                            </f:facet>
                                         </p:dataTable>
                                         <p></p>
                                         <p:commandButton id="btnGuardarConvenios" value="Guardar Datos" actionListener="#{conveniosC.guardaConvenios}" icon="fa fa-pencil-square-o" class="btn-primary" update=":formPrevisualizacionDatos"/>
