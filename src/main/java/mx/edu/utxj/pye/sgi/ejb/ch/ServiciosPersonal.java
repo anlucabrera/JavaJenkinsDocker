@@ -29,7 +29,7 @@ public class ServiciosPersonal implements EjbPersonal {
 ////////////////////////////////////////////////////////////////////////////////Lista Personal
     @Override
     public List<ListaPersonal> mostrarListaDeEmpleados() throws Throwable {
-        TypedQuery<ListaPersonal> q = em.createQuery("SELECT l FROM ListaPersonal l", ListaPersonal.class);
+        TypedQuery<ListaPersonal> q = em.createQuery("SELECT l FROM ListaPersonal l ORDER BY l.clave ASC", ListaPersonal.class);
         List<ListaPersonal> pr = q.getResultList();
         return pr;
     }

@@ -18,7 +18,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
-import mx.edu.utxj.pye.siip.dto.pye.NumeroParticipantesAFI;
+import mx.edu.utxj.pye.siip.dto.pye.participantesAFIporNivel;
 /**
  *
  * @author UTXJ
@@ -54,7 +54,7 @@ public class DtoParticipantesFormInt {
     
     @Getter private List<Short> clavesAreasSubordinadas;//claves de areas subordinas que no tienes poa
     
-    @Getter private List<NumeroParticipantesAFI> listaParticipantes;
+    @Getter private List<participantesAFIporNivel> listaParticipantes;
 
     public DtoParticipantesFormInt() {
         setRegistroTipo(new RegistrosTipo((short)17));
@@ -213,8 +213,9 @@ public class DtoParticipantesFormInt {
         this.clavesAreasSubordinadas = clavesAreasSubordinadas;
     }
     
-    public void setListaParticipantes(List<NumeroParticipantesAFI> listaParticipantes) {
+    public void setListaParticipantes(List<participantesAFIporNivel> listaParticipantes) {
         this.listaParticipantes = listaParticipantes;
+        System.err.println("setListaParticipantes " + listaParticipantes.toString());
         setTieneParticipante(!listaParticipantes.isEmpty());
     }
 

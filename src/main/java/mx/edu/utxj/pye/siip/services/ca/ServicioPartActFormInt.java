@@ -5,18 +5,14 @@
  */
 package mx.edu.utxj.pye.siip.services.ca;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.inject.Inject;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.ParameterMode;
@@ -24,13 +20,9 @@ import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
-import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuestas;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesFormacionIntegral;
-import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.ParticipantesActividadesFormacionIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
@@ -42,7 +34,7 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.ViewMatriculaF911;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.dto.eb.DTODatosEstudiante;
 import mx.edu.utxj.pye.siip.dto.pye.DTOParticipantesActFormInt;
-import mx.edu.utxj.pye.siip.dto.pye.NumeroParticipantesAFI;
+import mx.edu.utxj.pye.siip.dto.pye.participantesAFIporNivel;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbActFormacionIntegral;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbPartFormInt;
@@ -247,49 +239,43 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
         return l;
     }
 
-//    @Override
-//    public List<NumeroParticipantesAFI> totalParticipantesAFIporProgEduCuatrimestreInfEst(String actividadFormacionIntegral) {
-////         try {
-////            List<NumeroParticipantesAFI> l = new ArrayList<>();
-////            StoredProcedureQuery numeroParticipante = f.getEntityManager().createStoredProcedureQuery("pye2.(?,?,?,?)", PeriodosEscolares.class)
-////                    .setParameter("afi", actividadFormacionIntegral)
-////                    .registerStoredProcedureParameter("conteo", Integer.class, ParameterMode.OUT);
-////            numeroParticipante.execute();
-////            numeroTotalParticipantes = (Integer) numeroParticipante.getOutputParameterValue("conteo");
-////            return l;
-////        } catch (Exception e) {
-////            return 0;
-////        }
-//    }
 
     @Override
-    public List<NumeroParticipantesAFI> totalParticipantesAFIporNivel(String actividadFormacionIntegral) {
-        if (actividadFormacionIntegral == null) {
-            return Collections.EMPTY_LIST;
-        }
-        System.err.println("totalParticipantesAFIporNivel - claveAct " + actividadFormacionIntegral);
+    public List<participantesAFIporNivel> totalParticipantesAFIporNivel(String actividadFormacionIntegral) {
 
-        List<NumeroParticipantesAFI> l = new ArrayList<>();
-      
-        StoredProcedureQuery totalPart = f.getEntityManager().createStoredProcedureQuery("pye2.totalParticipantesAFIporNivel")
-                .registerStoredProcedureParameter("actFormInt", String.class, ParameterMode.IN)
-                .registerStoredProcedureParameter("nivel", String.class, ParameterMode.OUT)
-                .registerStoredProcedureParameter("eph", Integer.class, ParameterMode.OUT)
-                .registerStoredProcedureParameter("epm", Integer.class, ParameterMode.OUT)
-                .setParameter("actFormInt", actividadFormacionIntegral);
-        totalPart.execute();
+//        StoredProcedureQuery q = (StoredProcedureQuery) f.getEntityManager().createStoredProcedureQuery("pye2.totalParticipantesAFIporNivel", participantesAFIporNivel.class).
+//                registerStoredProcedureParameter("actFormInt", String.class, ParameterMode.IN).setParameter("actFormInt", actividadFormacionIntegral).
+//                registerStoredProcedureParameter("nivel", String.class, ParameterMode.OUT).
+//                registerStoredProcedureParameter("eph", Integer.class, ParameterMode.OUT).
+//                registerStoredProcedureParameter("epm", Integer.class, ParameterMode.OUT);
+//        
+//        String n = (String) q.getOutputParameterValue("nivel");
+//        System.err.println("totalParticipantesAFIporNivel " + q.toString());
+//        System.err.println("n " + n);
+//        
+//        List<participantesAFIporNivel> lista = new ArrayList<>(); 
+//        
+//        lista.add(new participantesAFIporNivel(n, Integer.SIZE, Integer.SIZE));
+//       
+//        System.err.println("lista " + lista);
+//        return lista;
+	// define the stored procedure
+	StoredProcedureQuery query = f.getEntityManager().createStoredProcedureQuery("pye2.totalParticipantesAFIporNivel");
+	query.registerStoredProcedureParameter("actFormInt", String.class, ParameterMode.IN);
+	query.registerStoredProcedureParameter("nivel", String.class, ParameterMode.OUT);
+        query.registerStoredProcedureParameter("eph", Integer.class, ParameterMode.OUT);
+	query.registerStoredProcedureParameter("epm", Integer.class, ParameterMode.OUT);
+	
+	// set input parameter
+	query.setParameter("actFormInt", actividadFormacionIntegral);
+	
+	// call the stored procedure and get the result
+	query.execute();
+	String n = (String) query.getOutputParameterValue("nivel");
+        System.err.println("Query "+ query);
+        System.err.println("Nivel "+ n);
+       List<participantesAFIporNivel> l = new ArrayList<>(); 
        
-        String nivelP = (String) totalPart.getOutputParameterValue("nivel");
-        Integer totalh = (Integer) totalPart.getOutputParameterValue("eph");
-        Integer totalm = (Integer) totalPart.getOutputParameterValue("epm");
-         
-        System.err.println("totalParticipantesAFIporNivel - nivelP/totalH/totalM " + nivelP + " / " + totalh + " / " + totalm);
-        
-        
-        l.add(new NumeroParticipantesAFI(nivelP, "", "", totalh, totalm, 0, 0, 0, 0));
-
-        System.err.println("totalParticipantesAFIporNivel - lista " + l.toString());
-        return l;
-       
+       return l;
     }
 }
