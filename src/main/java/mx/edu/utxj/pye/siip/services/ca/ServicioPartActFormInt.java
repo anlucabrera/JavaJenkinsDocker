@@ -12,15 +12,13 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.inject.Inject;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.ParameterMode;
-import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesFormacionIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
@@ -35,6 +33,7 @@ import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.dto.eb.DTODatosEstudiante;
 import mx.edu.utxj.pye.siip.dto.pye.DTOParticipantesActFormInt;
 import mx.edu.utxj.pye.siip.dto.pye.participantesAFIporNivel;
+import mx.edu.utxj.pye.siip.dto.pye.participantesAFIporPECuat;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbActFormacionIntegral;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbPartFormInt;
@@ -239,43 +238,117 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
         return l;
     }
 
-
     @Override
     public List<participantesAFIporNivel> totalParticipantesAFIporNivel(String actividadFormacionIntegral) {
-
-//        StoredProcedureQuery q = (StoredProcedureQuery) f.getEntityManager().createStoredProcedureQuery("pye2.totalParticipantesAFIporNivel", participantesAFIporNivel.class).
-//                registerStoredProcedureParameter("actFormInt", String.class, ParameterMode.IN).setParameter("actFormInt", actividadFormacionIntegral).
-//                registerStoredProcedureParameter("nivel", String.class, ParameterMode.OUT).
-//                registerStoredProcedureParameter("eph", Integer.class, ParameterMode.OUT).
-//                registerStoredProcedureParameter("epm", Integer.class, ParameterMode.OUT);
-//        
-//        String n = (String) q.getOutputParameterValue("nivel");
-//        System.err.println("totalParticipantesAFIporNivel " + q.toString());
-//        System.err.println("n " + n);
-//        
-//        List<participantesAFIporNivel> lista = new ArrayList<>(); 
-//        
-//        lista.add(new participantesAFIporNivel(n, Integer.SIZE, Integer.SIZE));
-//       
-//        System.err.println("lista " + lista);
-//        return lista;
-	// define the stored procedure
-	StoredProcedureQuery query = f.getEntityManager().createStoredProcedureQuery("pye2.totalParticipantesAFIporNivel");
-	query.registerStoredProcedureParameter("actFormInt", String.class, ParameterMode.IN);
-	query.registerStoredProcedureParameter("nivel", String.class, ParameterMode.OUT);
-        query.registerStoredProcedureParameter("eph", Integer.class, ParameterMode.OUT);
-	query.registerStoredProcedureParameter("epm", Integer.class, ParameterMode.OUT);
-	
-	// set input parameter
-	query.setParameter("actFormInt", actividadFormacionIntegral);
-	
-	// call the stored procedure and get the result
-	query.execute();
-	String n = (String) query.getOutputParameterValue("nivel");
-        System.err.println("Query "+ query);
-        System.err.println("Nivel "+ n);
-       List<participantesAFIporNivel> l = new ArrayList<>(); 
+        if(actividadFormacionIntegral == null){
+            return Collections.EMPTY_LIST;
+        }
+        
+        List<participantesAFIporNivel> lista = new ArrayList<>();
+        List<String> listaNivel = new ArrayList<>();
        
-       return l;
+        listaNivel= f.getEntityManager().createQuery("SELECT p.nivel FROM Viewparticipantesactformintegral p WHERE p.actividadFormacionIntegral =:actividadFormacionIntegral GROUP BY p.actividadFormacionIntegral, p.nivel ORDER BY p.nivel DESC")
+                .setParameter("actividadFormacionIntegral", actividadFormacionIntegral)
+                .getResultList();
+      
+        listaNivel.forEach(e -> {
+            
+               TypedQuery<Long> partHom= f.getEntityManager().createQuery("SELECT COUNT(p) FROM Viewparticipantesactformintegral p WHERE p.genero ='H' AND p.actividadFormacionIntegral =:actividadFormacionIntegral AND p.nivel= :nivel", Long.class);               
+                partHom.setParameter("actividadFormacionIntegral", actividadFormacionIntegral);
+                partHom.setParameter("nivel", e);
+              Long partH = partHom.getSingleResult();
+             
+               TypedQuery<Long> partMuj= f.getEntityManager().createQuery("SELECT COUNT(p) FROM Viewparticipantesactformintegral p WHERE p.genero ='M' AND p.actividadFormacionIntegral =:actividadFormacionIntegral AND p.nivel= :nivel", Long.class);             
+                partMuj.setParameter("actividadFormacionIntegral", actividadFormacionIntegral);
+                partMuj.setParameter("nivel", e);
+              Long partM = partMuj.getSingleResult();
+              
+            lista.add(new participantesAFIporNivel(
+                   e,
+                   partH,
+                   partM));
+        });
+        
+        return lista;
+       
+    }
+
+    @Override
+    public List<participantesAFIporPECuat> totalParticipantesAFIporPECuat(Short area, String actividadFormacionIntegral) {
+        if(actividadFormacionIntegral == null){
+            return Collections.EMPTY_LIST;
+        }
+        
+        List<participantesAFIporPECuat> lista = new ArrayList<>();
+
+            AreasUniversidad areaUni = f.getEntityManager().find(AreasUniversidad.class, area);
+            
+            List<String> listaPE = new ArrayList<>();
+            listaPE = f.getEntityManager().createQuery("SELECT DISTINCT(p.programa) FROM Viewparticipantesactformintegral p WHERE p.actividadFormacionIntegral =:actividadFormacionIntegral AND p.cveArea=:area GROUP BY p.programa, p.cuatrimestre ORDER BY p.programa, p.cuatrimestre DESC")
+                    .setParameter("actividadFormacionIntegral", actividadFormacionIntegral)
+                    .setParameter("area", area)
+                    .getResultList();
+           
+            listaPE.forEach(p -> {
+                List<String> listaCuat = new ArrayList<>();
+                listaCuat = f.getEntityManager().createQuery("SELECT DISTINCT(p.cuatrimestre) FROM Viewparticipantesactformintegral p WHERE p.actividadFormacionIntegral =:actividadFormacionIntegral AND p.cveArea=:area AND p.programa=:programa GROUP BY p.programa, p.cuatrimestre ORDER BY p.cuatrimestre ASC")
+                        .setParameter("actividadFormacionIntegral", actividadFormacionIntegral)
+                        .setParameter("area", area)
+                        .setParameter("programa", p)
+                        .getResultList();
+                
+                
+                listaCuat.forEach(c -> {
+             
+                    TypedQuery<Long> partHom = f.getEntityManager().createQuery("SELECT COUNT(p) FROM Viewparticipantesactformintegral p WHERE p.genero ='H' AND p.actividadFormacionIntegral =:actividadFormacionIntegral AND p.programa=:programa AND p.cuatrimestre=:cuatrimestre", Long.class);
+                    partHom.setParameter("actividadFormacionIntegral", actividadFormacionIntegral);
+                    partHom.setParameter("programa", p);
+                    partHom.setParameter("cuatrimestre", c);
+                    Long partH = partHom.getSingleResult();
+                    
+                    TypedQuery<Long> partMuj = f.getEntityManager().createQuery("SELECT COUNT(p) FROM Viewparticipantesactformintegral p WHERE p.genero ='M' AND p.actividadFormacionIntegral =:actividadFormacionIntegral AND p.programa=:programa AND p.cuatrimestre=:cuatrimestre", Long.class);
+                    partMuj.setParameter("actividadFormacionIntegral", actividadFormacionIntegral);
+                    partMuj.setParameter("programa", p);
+                    partMuj.setParameter("cuatrimestre", c);
+                    Long partM = partMuj.getSingleResult();
+                   
+                    TypedQuery<Long> partHomLI = f.getEntityManager().createQuery("SELECT COUNT(p) FROM Viewparticipantesactformintegral p WHERE p.genero ='H' AND p.lenguaIndigena<>'N/A' AND p.actividadFormacionIntegral =:actividadFormacionIntegral AND p.programa=:programa AND p.cuatrimestre=:cuatrimestre", Long.class);
+                    partHomLI.setParameter("actividadFormacionIntegral", actividadFormacionIntegral);
+                    partHomLI.setParameter("programa", p);
+                    partHomLI.setParameter("cuatrimestre", c);
+                    Long partHLI = partHomLI.getSingleResult();
+                    
+                    TypedQuery<Long> partMujLI = f.getEntityManager().createQuery("SELECT COUNT(p) FROM Viewparticipantesactformintegral p WHERE p.genero ='M' AND p.lenguaIndigena<>'N/A' AND p.actividadFormacionIntegral =:actividadFormacionIntegral AND p.programa=:programa AND p.cuatrimestre=:cuatrimestre", Long.class);
+                    partMujLI.setParameter("actividadFormacionIntegral", actividadFormacionIntegral);
+                    partMujLI.setParameter("programa", p);
+                    partMujLI.setParameter("cuatrimestre", c);
+                    Long partMLI = partMujLI.getSingleResult();
+                   
+                    TypedQuery<Long> partHomD = f.getEntityManager().createQuery("SELECT COUNT(p) FROM Viewparticipantesactformintegral p WHERE p.genero ='H' AND p.discapacidad<>'N/A' AND p.actividadFormacionIntegral =:actividadFormacionIntegral AND p.programa=:programa AND p.cuatrimestre=:cuatrimestre", Long.class);
+                    partHomD.setParameter("actividadFormacionIntegral", actividadFormacionIntegral);
+                    partHomD.setParameter("programa", p);
+                    partHomD.setParameter("cuatrimestre", c);
+                    Long partHD = partHomD.getSingleResult();
+                   
+                    TypedQuery<Long> partMujD = f.getEntityManager().createQuery("SELECT COUNT(p) FROM Viewparticipantesactformintegral p WHERE p.genero ='M' AND p.discapacidad<>'N/A' AND p.actividadFormacionIntegral =:actividadFormacionIntegral AND p.programa=:programa AND p.cuatrimestre=:cuatrimestre", Long.class);
+                    partMujD.setParameter("actividadFormacionIntegral", actividadFormacionIntegral);
+                    partMujD.setParameter("programa", p);
+                    partMujD.setParameter("cuatrimestre", c);
+                    Long partMD = partMujD.getSingleResult();
+                    
+                lista.add(new participantesAFIporPECuat(
+                        areaUni,
+                        p,
+                        c,
+                        partH,
+                        partM,
+                        partHLI,
+                        partMLI,
+                        partHD,
+                        partMD));
+                });
+            });
+        
+        return lista;
     }
 }

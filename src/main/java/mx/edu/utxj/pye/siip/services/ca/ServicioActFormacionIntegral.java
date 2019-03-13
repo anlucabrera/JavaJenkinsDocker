@@ -596,4 +596,25 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
             return null;
         }
     }
+
+    @Override
+    public List<AreasUniversidad> getAFIAreasConRegistroMensualGeneral(String mes) {
+         try {
+            List<Short> areas = new ArrayList<>();
+
+            areas = f.getEntityManager().createQuery("SELECT r.area FROM ActividadesFormacionIntegral a INNER JOIN a.registros r INNER JOIN r.eventoRegistro e WHERE e.mes = :mes GROUP BY r.area", Short.class)
+                    .setParameter("mes", mes)
+                    .getResultList();
+
+            if (!areas.isEmpty()) {
+                return f.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a WHERE a.area IN :areas", AreasUniversidad.class)
+                        .setParameter("areas", areas)
+                        .getResultList();
+            } else {
+                return Collections.EMPTY_LIST;
+            }
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
 }

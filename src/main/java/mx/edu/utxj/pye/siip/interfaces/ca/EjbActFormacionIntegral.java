@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.siip.interfaces.ca;
 import javax.ejb.Local;
 import java.util.Map;
 import java.util.List;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesFormacionIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesTipos;
@@ -119,4 +120,11 @@ public interface EjbActFormacionIntegral {
      * @throws Throwable 
      */
     public List<Integer> buscaRegistroEvidenciasPartActFormInt(String clave) throws Throwable;
+    
+     /**
+     * Método que devuelve la lista de Áreas que tienen registros en el mes seleccionado
+     * @param mes Nombre del mes para realizar la búsqueda en el registro de Actividades de Formación Integral
+     * @return Devuelve una lista de entities de AreasUniversidad que tienen registros en el mes correspondiente
+     */
+    public List<AreasUniversidad> getAFIAreasConRegistroMensualGeneral(String mes);
 }

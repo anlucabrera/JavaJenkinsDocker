@@ -5,16 +5,12 @@
  */
 package mx.edu.utxj.pye.siip.controller.pye;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
@@ -32,10 +28,8 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
-import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
-import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -85,6 +79,7 @@ public class ControladorActFormacionIntegralPYE implements Serializable{
         dto = new DtoActividadesFormInt();  
         dtopart = new DtoParticipantesFormInt();
         dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        dto.setListaAFIAreasConRegistroMensualGeneral(ejb.getAFIAreasConRegistroMensualGeneral(ejbModulos.getEventoRegistro().getMes()));
 
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());
@@ -160,7 +155,9 @@ public class ControladorActFormacionIntegralPYE implements Serializable{
         if(dto.getEventoSeleccionado()== null)
        {
             dto.setEventoSeleccionado(dto.getEventosPorPeriodo().get(0));
+            dto.setListaAFIAreasConRegistroMensualGeneral(ejb.getAFIAreasConRegistroMensualGeneral(dto.getEventoSeleccionado().getMes()));
        }
+       dto.setListaAFIAreasConRegistroMensualGeneral(ejb.getAFIAreasConRegistroMensualGeneral(dto.getEventoSeleccionado().getMes()));
        dto.setLista(ejb.getListaRegistrosPorEventoAreaPeriodo(dto.getEventoSeleccionado(), dto.getAreaPOA().getArea(), dto.getPeriodo()));
        dtopart.setLista(ejb.getListaRegistrosPorEventoAreaPeriodoPart(dto.getEventoSeleccionado(), dto.getAreaPOA().getArea(), dto.getPeriodo()));
     }

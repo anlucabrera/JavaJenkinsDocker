@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.servlet.http.Part;
 import lombok.Getter;
+import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -59,6 +60,8 @@ public class DtoRegistrosMovilidad {
     @Getter private List<LineasAccion> lineasAccion;
     
     @Getter private List<Short> clavesAreasSubordinadas;//claves de areas subordinas que no tienes poa
+    
+    @Getter @Setter private List<AreasUniversidad> listaMovAreasConRegistroMensualGeneral;
 
     public DtoRegistrosMovilidad() {
         setRegistroTipo(new RegistrosTipo((short)31));

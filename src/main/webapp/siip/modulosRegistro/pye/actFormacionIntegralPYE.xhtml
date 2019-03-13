@@ -398,7 +398,7 @@
                     <!-- Modal Participantes Actividad de Formación Integral -->
                     <p:dialog id="modalParticipantes" 
                               widgetVar="modalParticipantes" 
-                              width="700" 
+                              width="1200" 
                               height="auto"  
                               closeOnEscape="true" 
                               visible="#{partAFI.dto.forzarAperturaDialogo}"
@@ -407,34 +407,243 @@
                               modal="true" 
                               draggable="true" 
                               header="Participantes por Actividad" 
-                              onHide="actualizarModPart();"
                               styleClass="panel panel-primary" 
                               responsive="true" 
                               resizable="false" 
                               maximizable="false">
                         
                         <h:form id="frmModalParticipantes" >
-                            <p:remoteCommand name="actualizarModPart" update="@form:tblModalPart" />
+                            <h4 style="text-align: center; text-decoration: underline;">Participantes por Área, Programa Educativo y Cuatrimestre</h4>
+                            <c:if test="#{partActFormInt.dto.listaParticipantesAEA.size() >0}">
+                                <h5 style="text-align: center; font-weight: bold;">Área Económico Administrativa</h5>
+                                <p:dataTable id="tblPartAEA" value="#{partActFormInt.dto.listaParticipantesAEA}" var="participanteAEA"
+                                             emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                    <p:columnGroup type="header">
+                                        <p:row>
+                                            <p:column rowspan="3" headerText="Programa Educativo" style="width: 300px;"/>
+                                            <p:column rowspan="3" headerText="Cuatrimestre" style="width: 100px;"/>
+                                            <p:column colspan="2" headerText="Total Participantes" style="width: 200px;"/>
+                                            <p:column colspan="2" headerText="Lengua Indígena" style="width: 200px;"/>
+                                            <p:column colspan="2" headerText="Discapacidad" style="width: 200px;"/>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column headerText="Hombres" style="width: 100px;"/>
+                                            <p:column headerText="Mujeres" style="width: 100px;"/>
+                                            <p:column headerText="Hombres" style="width: 100px;"/>
+                                            <p:column headerText="Mujeres" style="width: 100px;"/> 
+                                            <p:column headerText="Hombres" style="width: 100px;"/>
+                                            <p:column headerText="Mujeres" style="width: 100px;"/>
+                                        </p:row>
+                                    </p:columnGroup>
+                                    <p:column style="text-align: justify;"><h:outputText value="#{participanteAEA.progEdu}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAEA.cuat}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAEA.partH}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAEA.partM}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAEA.partHLI}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAEA.partMLI}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAEA.partHD}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAEA.partMD}" /></p:column> 
+
+                                </p:dataTable> 
+                            </c:if>
+                            <c:if test="#{partActFormInt.dto.listaParticipantesAAA.size() >0}">
+                                <h5 style="text-align: center; font-weight: bold;">Área Agro-Industrial Alimentaria</h5>
+                                <p:dataTable id="tblPartAAA" value="#{partActFormInt.dto.listaParticipantesAAA}" var="participanteAAA"
+                                             emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                    <p:columnGroup type="header">
+                                         <p:row>
+                                            <p:column rowspan="3" headerText="Programa Educativo" style="width: 300px;"/>
+                                            <p:column rowspan="3" headerText="Cuatrimestre" style="width: 100px;"/>
+                                            <p:column colspan="2" headerText="Total Participantes" style="width: 200px;"/>
+                                            <p:column colspan="2" headerText="Lengua Indígena" style="width: 200px;"/>
+                                            <p:column colspan="2" headerText="Discapacidad" style="width: 200px;"/>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column headerText="Hombres" style="width: 100px;"/>
+                                            <p:column headerText="Mujeres" style="width: 100px;"/>
+                                            <p:column headerText="Hombres" style="width: 100px;"/>
+                                            <p:column headerText="Mujeres" style="width: 100px;"/> 
+                                            <p:column headerText="Hombres" style="width: 100px;"/>
+                                            <p:column headerText="Mujeres" style="width: 100px;"/>
+                                        </p:row>
+                                    </p:columnGroup>
+                                    <p:column style="text-align: justify;"><h:outputText value="#{participanteAAA.progEdu}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAAA.cuat}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAAA.partH}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAAA.partM}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAAA.partHLI}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAAA.partMLI}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAAA.partHD}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAAA.partMD}" /></p:column> 
+
+                                </p:dataTable> 
+                                 </c:if>
+                                <c:if test="#{partActFormInt.dto.listaParticipantesAMI.size() >0}">
+                                <h5 style="text-align: center; font-weight: bold;">Área Mantenimiento Industrial</h5>
+                                <p:dataTable id="tblPartAMI" value="#{partActFormInt.dto.listaParticipantesAMI}" var="participanteAMI"
+                                             emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                    <p:columnGroup type="header">
+                                         <p:row>
+                                            <p:column rowspan="3" headerText="Programa Educativo" style="width: 300px;"/>
+                                            <p:column rowspan="3" headerText="Cuatrimestre" style="width: 100px;"/>
+                                            <p:column colspan="2" headerText="Total Participantes" style="width: 200px;"/>
+                                            <p:column colspan="2" headerText="Lengua Indígena" style="width: 200px;"/>
+                                            <p:column colspan="2" headerText="Discapacidad" style="width: 200px;"/>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column headerText="Hombres" style="width: 100px;"/>
+                                            <p:column headerText="Mujeres" style="width: 100px;"/>
+                                            <p:column headerText="Hombres" style="width: 100px;"/>
+                                            <p:column headerText="Mujeres" style="width: 100px;"/> 
+                                            <p:column headerText="Hombres" style="width: 100px;"/>
+                                            <p:column headerText="Mujeres" style="width: 100px;"/>
+                                        </p:row>
+                                    </p:columnGroup>
+                                    <p:column style="text-align: justify;"><h:outputText value="#{participanteAMI.progEdu}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMI.cuat}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMI.partH}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMI.partM}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMI.partHLI}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMI.partMLI}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMI.partHD}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMI.partMD}" /></p:column> 
+
+                                </p:dataTable> 
+                                     </c:if>
+                                    <c:if test="#{partActFormInt.dto.listaParticipantesAMA.size() >0}">
+                                <h5 style="text-align: center; font-weight: bold;">Área Mecatrónica Automatización</h5>
+                                <p:dataTable id="tblPartAMA" value="#{partActFormInt.dto.listaParticipantesAMA}" var="participanteAMA"
+                                             emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                    <p:columnGroup type="header">
+                                         <p:row>
+                                            <p:column rowspan="3" headerText="Programa Educativo" style="width: 300px;"/>
+                                            <p:column rowspan="3" headerText="Cuatrimestre" style="width: 100px;"/>
+                                            <p:column colspan="2" headerText="Total Participantes" style="width: 200px;"/>
+                                            <p:column colspan="2" headerText="Lengua Indígena" style="width: 200px;"/>
+                                            <p:column colspan="2" headerText="Discapacidad" style="width: 200px;"/>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column headerText="Hombres" style="width: 100px;"/>
+                                            <p:column headerText="Mujeres" style="width: 100px;"/>
+                                            <p:column headerText="Hombres" style="width: 100px;"/>
+                                            <p:column headerText="Mujeres" style="width: 100px;"/> 
+                                            <p:column headerText="Hombres" style="width: 100px;"/>
+                                            <p:column headerText="Mujeres" style="width: 100px;"/>
+                                        </p:row>
+                                    </p:columnGroup>
+                                    <p:column style="text-align: justify;"><h:outputText value="#{participanteAMA.progEdu}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMA.cuat}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMA.partH}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMA.partM}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMA.partHLI}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMA.partMLI}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMA.partHD}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMA.partMD}" /></p:column> 
+
+                                </p:dataTable> 
+                                         </c:if>
+                                        <c:if test="#{partActFormInt.dto.listaParticipantesATIC.size() >0}">
+                                <h5 style="text-align: center; font-weight: bold;">Área Tecnologías de la Información y Comunicación</h5>
+                                <p:dataTable id="tblPartATIC" value="#{partActFormInt.dto.listaParticipantesATIC}" var="participanteATIC"
+                                             emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                    <p:columnGroup type="header">
+                                         <p:row>
+                                            <p:column rowspan="3" headerText="Programa Educativo" style="width: 300px;"/>
+                                            <p:column rowspan="3" headerText="Cuatrimestre" style="width: 100px;"/>
+                                            <p:column colspan="2" headerText="Total Participantes" style="width: 200px;"/>
+                                            <p:column colspan="2" headerText="Lengua Indígena" style="width: 200px;"/>
+                                            <p:column colspan="2" headerText="Discapacidad" style="width: 200px;"/>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column headerText="Hombres" style="width: 100px;"/>
+                                            <p:column headerText="Mujeres" style="width: 100px;"/>
+                                            <p:column headerText="Hombres" style="width: 100px;"/>
+                                            <p:column headerText="Mujeres" style="width: 100px;"/> 
+                                            <p:column headerText="Hombres" style="width: 100px;"/>
+                                            <p:column headerText="Mujeres" style="width: 100px;"/>
+                                        </p:row>
+                                    </p:columnGroup>
+                                    <p:column style="text-align: justify;"><h:outputText value="#{participanteATIC.progEdu}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteATIC.cuat}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteATIC.partH}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteATIC.partM}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteATIC.partHLI}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteATIC.partMLI}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteATIC.partHD}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteATIC.partMD}" /></p:column> 
+
+                                </p:dataTable> 
+                                             </c:if>
+                                            <c:if test="#{partActFormInt.dto.listaParticipantesAS.size() >0}">
+                                <h5 style="text-align: center; font-weight: bold;">Área Salud</h5>
+                                <p:dataTable id="tblPartAS" value="#{partActFormInt.dto.listaParticipantesAS}" var="participanteAS"
+                                             emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                    <p:columnGroup type="header">
+                                         <p:row>
+                                            <p:column rowspan="3" headerText="Programa Educativo" style="width: 300px;"/>
+                                            <p:column rowspan="3" headerText="Cuatrimestre" style="width: 100px;"/>
+                                            <p:column colspan="2" headerText="Total Participantes" style="width: 200px;"/>
+                                            <p:column colspan="2" headerText="Lengua Indígena" style="width: 200px;"/>
+                                            <p:column colspan="2" headerText="Discapacidad" style="width: 200px;"/>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column headerText="Hombres" style="width: 100px;"/>
+                                            <p:column headerText="Mujeres" style="width: 100px;"/>
+                                            <p:column headerText="Hombres" style="width: 100px;"/>
+                                            <p:column headerText="Mujeres" style="width: 100px;"/> 
+                                            <p:column headerText="Hombres" style="width: 100px;"/>
+                                            <p:column headerText="Mujeres" style="width: 100px;"/>
+                                        </p:row>
+                                    </p:columnGroup>
+                                    <p:column style="text-align: justify;"><h:outputText value="#{participanteAS.progEdu}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAS.cuat}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAS.partH}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAS.partM}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAS.partHLI}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAS.partMLI}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAS.partHD}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAS.partMD}" /></p:column> 
+
+                                </p:dataTable> 
+                            </c:if>
+                            <h4 style="text-align: center; text-decoration: underline;">Participantes por Nivel</h4>
                             <p:dataTable id="tblModalPart" value="#{partActFormInt.dto.listaParticipantes}" var="participanteAct"
-                                                 emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
-                                                 paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
-                                                 >
+                                                 emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive" >
                                         <p:columnGroup type="header">
                                              <p:row>
-                                                <p:column headerText="Nivel" style="width: 100px;"/>
-                                                <p:column headerText="Hombres" style="width: 100px;"/>
-                                                <p:column headerText="Mujeres" style="width: 100px;"/>
+                                                <p:column rowspan="2" headerText="Nivel" style="width: 300px;"/>
+                                                <p:column colspan="2" headerText="Total Participantes" style="width: 400px;"/>
+                                             </p:row>
+                                             <p:row>
+                                                <p:column headerText="Hombres" style="width: 200px;"/>
+                                                <p:column headerText="Mujeres" style="width: 200px;"/>
                                              </p:row>
                                         </p:columnGroup>
                                         <p:column style="text-align: center;"><h:outputText value="#{participanteAct.nivel}" /></p:column>
-                                        <p:column style="text-align: justify;"><h:outputText value="#{participanteAct.EPH}" /></p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAct.EPM}" /></p:column>
-                                        <f:facet name="footer">
-                                            <span style="font-size: smaller; font-weight: bold;">Total de participantes registrados: #{fn:length(partActFormInt.dto.listaParticipantes)}.</span>
-                                        </f:facet>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAct.partH}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAct.partM}" /></p:column>
                                     </p:dataTable>
                         </h:form>
                     </p:dialog>
+                    <br></br>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <h:form id="frmAreasConRegistros">
+                                <p:dataGrid var="areasRegistro" value="#{actFormIntegralPYE.dto.listaAFIAreasConRegistroMensualGeneral}" columns="10" layout="grid"
+                                            id="areasRegistro">
+                                    <f:facet name="header" >
+                                        <span style="font-size: medium;"> Áreas que actualmente tienen registros en el mes: <strong>#{actFormIntegralPYE.dto.eventoSeleccionado.mes} </strong></span>
+                                    </f:facet>
+                                     <p:panel style="text-align:center;" >
+                                        <h:panelGrid columns="1">
+                                            <h:outputText value="#{areasRegistro.categoria.descripcion}" style="font-weight: bold;"/>
+                                            <h:outputText value="#{areasRegistro.nombre}"/>
+                                        </h:panelGrid>
+                                    </p:panel>
+                                </p:dataGrid>
+                            </h:form>
+                        </div>
+                    </div>
                 </div>
                
             </div>

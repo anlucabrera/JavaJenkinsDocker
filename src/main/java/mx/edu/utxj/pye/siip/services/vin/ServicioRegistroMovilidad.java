@@ -5,7 +5,6 @@
  */
 package mx.edu.utxj.pye.siip.services.vin;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -15,7 +14,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.ejb.EJB;
@@ -739,6 +737,27 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
             
         } catch (NoResultException ex) {
             return null;
+        }
+    }
+
+    @Override
+    public List<AreasUniversidad> getMovAreasConRegistroMensualGeneral(String mes) {
+         try {
+            List<Short> areas = new ArrayList<>();
+
+            areas = f.getEntityManager().createQuery("SELECT r.area FROM RegistrosMovilidad m INNER JOIN m.registros r INNER JOIN r.eventoRegistro e WHERE e.mes = :mes GROUP BY r.area", Short.class)
+                    .setParameter("mes", mes)
+                    .getResultList();
+
+            if (!areas.isEmpty()) {
+                return f.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a WHERE a.area IN :areas", AreasUniversidad.class)
+                        .setParameter("areas", areas)
+                        .getResultList();
+            } else {
+                return Collections.EMPTY_LIST;
+            }
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
         }
     }
 

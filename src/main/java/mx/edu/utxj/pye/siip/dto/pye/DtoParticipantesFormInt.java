@@ -18,7 +18,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
-import mx.edu.utxj.pye.siip.dto.pye.participantesAFIporNivel;
+import mx.edu.utxj.pye.siip.dto.eb.DTODatosEstudiante;
 /**
  *
  * @author UTXJ
@@ -54,7 +54,14 @@ public class DtoParticipantesFormInt {
     
     @Getter private List<Short> clavesAreasSubordinadas;//claves de areas subordinas que no tienes poa
     
+    @Getter private List<DTODatosEstudiante> listaParticipantesAFI;
     @Getter private List<participantesAFIporNivel> listaParticipantes;
+    @Getter private List<participantesAFIporPECuat> listaParticipantesAEA;
+    @Getter private List<participantesAFIporPECuat> listaParticipantesAAA;
+    @Getter private List<participantesAFIporPECuat> listaParticipantesAMI;
+    @Getter private List<participantesAFIporPECuat> listaParticipantesAMA;
+    @Getter private List<participantesAFIporPECuat> listaParticipantesATIC;
+    @Getter private List<participantesAFIporPECuat> listaParticipantesAS;
 
     public DtoParticipantesFormInt() {
         setRegistroTipo(new RegistrosTipo((short)17));
@@ -213,12 +220,41 @@ public class DtoParticipantesFormInt {
         this.clavesAreasSubordinadas = clavesAreasSubordinadas;
     }
     
+    public void setListaParticipantesAFI(List<DTODatosEstudiante> listaParticipantesAFI) {
+        this.listaParticipantesAFI = listaParticipantesAFI;
+        setTieneParticipante(!listaParticipantesAFI.isEmpty());
+    }
+    
     public void setListaParticipantes(List<participantesAFIporNivel> listaParticipantes) {
         this.listaParticipantes = listaParticipantes;
-        System.err.println("setListaParticipantes " + listaParticipantes.toString());
         setTieneParticipante(!listaParticipantes.isEmpty());
     }
 
+    public void setListaParticipantesAEA(List<participantesAFIporPECuat> listaParticipantesAEA) {
+        this.listaParticipantesAEA = listaParticipantesAEA;
+    }
+
+    public void setListaParticipantesAAA(List<participantesAFIporPECuat> listaParticipantesAAA) {
+        this.listaParticipantesAAA = listaParticipantesAAA;
+    }
+
+    public void setListaParticipantesAMI(List<participantesAFIporPECuat> listaParticipantesAMI) {
+        this.listaParticipantesAMI = listaParticipantesAMI;
+    }
+
+    public void setListaParticipantesAMA(List<participantesAFIporPECuat> listaParticipantesAMA) {
+        this.listaParticipantesAMA = listaParticipantesAMA;
+    }
+
+    public void setListaParticipantesATIC(List<participantesAFIporPECuat> listaParticipantesATIC) {
+        this.listaParticipantesATIC = listaParticipantesATIC;
+    }
+
+    public void setListaParticipantesAS(List<participantesAFIporPECuat> listaParticipantesAS) {
+        this.listaParticipantesAS = listaParticipantesAS;
+    }
+    
+   
     public void setTieneParticipante(Boolean tieneParticipante) {
         this.tieneParticipante = tieneParticipante;
     }
