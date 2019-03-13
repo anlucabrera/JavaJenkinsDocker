@@ -72,13 +72,14 @@ public class ControladorFunciones implements Serializable {
 
     @PostConstruct
     public void init() {
+        personalLogeado = new Personal();
         claveArea = 0;
         listaClavesEmpleados.clear();
         listaPersonalLogeado = controladorEmpleado.getNuevoOBJListaPersonal();
         claveCategoria2 = 1;
         mostrarListaCatelogos();
     }
-    
+
     public void mostrarListaCatelogos() {
         try {
             personalLogeado = ejbPersonal.mostrarPersonalLogeado(listaPersonalLogeado.getClave());
@@ -86,10 +87,9 @@ public class ControladorFunciones implements Serializable {
             areasUniversidads = ejbAreasLogeo.mostrarAreasUniversidadSubordinadas(listaPersonalLogeado.getAreaOperativa());
             categoriasespecificasfuncioneses = ejbFunciones.mostrarCategoriasespecificasfuncionesArea(listaPersonalLogeado.getAreaOperativa());
             subordinadosListaPersonals = ejbPersonal.mostrarListaPersonalListSubordinados(listaPersonalLogeado);
-            subordinadosPersonals = ejbPersonal.mostrarListaPersonalSubordinados(listaPersonalLogeado.getAreaOperativa(), listaPersonalLogeado.getClave());            
+            subordinadosPersonals = ejbPersonal.mostrarListaPersonalSubordinados(listaPersonalLogeado.getAreaOperativa(), listaPersonalLogeado.getClave());
             funcioneses = ejbFunciones.mostrarListaFuncionesParaARAE(personalLogeado);
-            comentariosfuncioneses = ejbFunciones.mostrarComentariosfunciones();
-            categoriasOyEporArea=ejbFunciones.mostrarCategoriasOyEporArea(personalLogeado);
+            categoriasOyEporArea = ejbFunciones.mostrarCategoriasOyEporArea(personalLogeado);
             if (!comentariosfuncioneses.isEmpty()) {
                 comentariosfuncioneses.forEach((t) -> {
                     if (t.getEsatus() == 0) {
@@ -103,12 +103,35 @@ public class ControladorFunciones implements Serializable {
         }
     }
     
+    ////////////////////////////////////////////////////////////////////////////Funciones
+    public void consultarFunciones(Personal persona) {
+        try {
+            System.out.println("Fin del metodo de registro de fuciones" + persona);
+            funcioneses = new ArrayList<>();
+            funcioneses.clear();
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorFunciones.consultarFunciones()" + persona);
+            if (persona.getClave() == null) {
+                funcioneses = ejbFunciones.mostrarListaFuncionesParaARAE(personalLogeado);
+            } else {
+                if (persona.getAreaSuperior() >= 23 && persona.getAreaSuperior() <= 29) {
+                    funcioneses = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), persona.getCategoriaOperativa().getCategoria(), persona.getCategoriaEspecifica().getCategoriaEspecifica());
+                } else {
+                    funcioneses = ejbFunciones.mostrarListaFuncionesPersonalLogeado(persona.getAreaOperativa(), persona.getCategoriaOperativa().getCategoria(), persona.getCategoriaEspecifica().getCategoriaEspecifica());
+                }
+            }
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorFunciones.consultarFunciones()" + funcioneses.size());
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause());
+            Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public void agregarFuncion() {
         try {
             System.out.println("Inicio del metodo de registro de fuciones");
             nuevoOBJFunciones.setCategoriaOperativa(new PersonalCategorias());
             nuevoOBJFunciones.setCategoriaEspesifica(new Categoriasespecificasfunciones());
-            if ((perosnalCategoriasFunciones.getAreaOperativa() >= 23 && perosnalCategoriasFunciones.getAreaOperativa() <= 29) || (perosnalCategoriasFunciones.getAreaSuperior()>= 23 && perosnalCategoriasFunciones.getAreaSuperior() <= 29)) {
+            if ((perosnalCategoriasFunciones.getAreaOperativa() >= 23 && perosnalCategoriasFunciones.getAreaOperativa() <= 29) || (perosnalCategoriasFunciones.getAreaSuperior() >= 23 && perosnalCategoriasFunciones.getAreaSuperior() <= 29)) {
                 nuevoOBJFunciones.setAreaOperativa(Short.parseShort("61"));
             } else {
                 nuevoOBJFunciones.setAreaOperativa(perosnalCategoriasFunciones.getAreaOperativa());
@@ -138,182 +161,22 @@ public class ControladorFunciones implements Serializable {
     public void eliminarFuncion(Funciones f) {
         try {
             ejbFunciones.eliminaFunciones(f);
-            consultarFuncnPorAyC();
+            consultarFunciones(perosnalCategoriasFunciones);
             Messages.addGlobalInfo("¡¡Operación exitosa!!");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public Boolean comentDisable(Short cat) {
-        Boolean tipo = true;
-        if (listaPersonalLogeado.getAreaOperativa() >= 23 && listaPersonalLogeado.getAreaOperativa() <= 29) {
-            if (cat == 30 || cat == 32 || cat == 41) {
-                tipo = false;
-            }
-        }
-        return tipo;
-    }
-     
-    public Boolean editVisible(Short cat) {
-        Boolean tipo = true;
-        if (cat == 30 || cat == 32 || cat == 41) {
-            if(listaPersonalLogeado.getAreaOperativa() >= 23 && listaPersonalLogeado.getAreaOperativa() <= 29) {
-                tipo = false;
-            } else if (listaPersonalLogeado.getAreaOperativa() == 2) {
-                tipo = true;
-            }
-        }
 
-        if (cat == 1 || cat == 18 || cat == 33 || cat == 38) {
-            if(listaPersonalLogeado.getAreaOperativa() == 1) {
-                tipo = true;
-            } else {
-                tipo = false;
-            }
-        }
-
-        return tipo;
-    }
-    
-    public Boolean delateDisable(Short cat) {
-        if(cat==null){
-            return false;
-        }
-        Boolean tipo = false;
-        if (cat == 30 || cat == 32 || cat == 41) {
-            if(listaPersonalLogeado.getAreaOperativa() >= 23 && listaPersonalLogeado.getAreaOperativa() <= 29) {
-                tipo = true;
-            } else if (listaPersonalLogeado.getAreaOperativa() == 2) {
-                tipo = false;
-            }
-        }
-
-        if (cat == 1 || cat == 18 || cat == 33 || cat == 38) {
-            if(listaPersonalLogeado.getAreaOperativa() == 1) {
-                tipo = false;
-            } else {
-                tipo = true;
-            }
-        }
-
-
-        return tipo;
-    }
-
-    public void asignarPerosnalFunciones(ValueChangeEvent event) {
+    ////////////////////////////////////////////////////////////////////////////Comentarios
+    public void consultarComentariosFunciones(Funciones funciones) {
         try {
-            perosnalCategoriasFunciones = new Personal();
-            if (Integer.parseInt(event.getNewValue().toString()) == 0) {
-                funcioneses = ejbFunciones.mostrarListaFuncionesParaARAE(personalLogeado);
-            } else {
-                perosnalCategoriasFunciones = ejbPersonal.mostrarPersonalLogeado(Integer.parseInt(event.getNewValue().toString()));
-                consultarFunciones(perosnalCategoriasFunciones);
-            }
-       } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause());
-            Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void consultarFunciones(Personal persona) {
-        try {
-            System.out.println("Fin del metodo de registro de fuciones"+persona);
-            funcioneses = new ArrayList<>();
-            funcioneses.clear();
-
-                if (persona.getAreaSuperior() >= 23 && persona.getAreaSuperior() <= 29) {
-                    funcioneses = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), persona.getCategoriaOperativa().getCategoria(), persona.getCategoriaEspecifica().getCategoriaEspecifica());
-                } else {
-                    funcioneses = ejbFunciones.mostrarListaFuncionesPersonalLogeado(persona.getAreaOperativa(), persona.getCategoriaOperativa().getCategoria(), persona.getCategoriaEspecifica().getCategoriaEspecifica());
-                }
-
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause());
-            Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    public void metodoBase() {
-
-    }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public void mostrarListaCategorias() {
-        try {
-
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void consultarFuncnPorAyC() {
-        try {
-            funcioneses.clear();
-            if (listaPersonalLogeado.getCategoriaOperativa() == 30
-                    || listaPersonalLogeado.getCategoriaOperativa() == 32
-                    || listaPersonalLogeado.getCategoriaOperativa() == 41
-                    || (listaPersonalLogeado.getCategoriaOperativa() == 34 && (listaPersonalLogeado.getAreaSuperior() >= 23 && listaPersonalLogeado.getAreaSuperior() <= 29))) {
-                funcioneses = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), listaPersonalLogeado.getCategoriaOperativa(), personalLogeado.getCategoriaEspecifica().getCategoriaEspecifica());
-            } else {
-                funcioneses = ejbFunciones.mostrarListaFuncionesPersonalLogeado(listaPersonalLogeado.getAreaOperativa(), listaPersonalLogeado.getCategoriaOperativa(), personalLogeado.getCategoriaEspecifica().getCategoriaEspecifica());
-            }
-            claveArea = 0;
-            claveCategoria2 = 1;
-            filtradoPuestosadministrativos();
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void filtradoPuestosadministrativos() {
-        switch (claveCategoria) {
-            case 1:                puestoTipo = "Directivo";                break;
-            case 13:                puestoTipo = "Directivo";                break;
-            case 14:                puestoTipo = "Directivo";                break;
-            case 18:                puestoTipo = "Directivo";                break;
-            case 24:                puestoTipo = "Directivo";                break;
-            case 30:                puestoTipo = "Docente";                break;
-            case 31:                puestoTipo = "Directivo";                break;
-            case 32:                puestoTipo = "Docente";                break;
-            case 33:                puestoTipo = "Directivo";                break;
-            case 38:                puestoTipo = "Directivo";                break;
-            case 39:                puestoTipo = "Directivo";                break;
-            case 40:                puestoTipo = "Directivo";                break;
-            case 41:                puestoTipo = "Docente";                break;
-            case 111:                puestoTipo = "Directivo";                break;
-            case 112:                puestoTipo = "Directivo";                break;
-            default:                puestoTipo = "Administrativo";                break;
-        }
-    }
-
-    public void consultarFuncnPorAC() {
-        try {
-            funcioneses.clear();
-            if (claveCategoria == 0) {
-                if (listaPersonalLogeado.getAreaOperativa() >= 24 && listaPersonalLogeado.getAreaOperativa() <= 56) {
-                    funcioneses = ejbFunciones.mostrarFuncionesPorAreayPuesto(Short.parseShort("61"), listaPersonalLogeado.getCategoriaOperativa(), 1);
-                } else {
-                    funcioneses = ejbFunciones.mostrarFuncionesPorAreayPuesto(listaPersonalLogeado.getAreaOperativa(), listaPersonalLogeado.getCategoriaOperativa(), 1);
-                }
-            } else {
-                if ((listaPersonalLogeado.getAreaOperativa() >= 24 && listaPersonalLogeado.getAreaOperativa() <= 56) || (claveArea >= 24 && claveArea <= 56)) {
-                    funcioneses = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), claveCategoria, claveCategoria2);
-                } else {
-                    funcioneses = ejbFunciones.mostrarListaFuncionesPersonalLogeado(claveArea, claveCategoria, claveCategoria2);
-                }
-            }
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void consultarFuncnesAC() {
-        try {
-            funcioneses.clear();
-            funcioneses = ejbFunciones.mostrarFuncionesPorAreayPuesto(listaPersonalLogeado.getAreaOperativa(), claveCategoria2, 2);
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorFunciones.consultarComentariosFunciones(1)"+funciones);
+            comentariosfuncioneses=new ArrayList<>();
+            comentariosfuncioneses.clear();
+            comentariosfuncioneses = ejbFunciones.mostrarComentariosfuncionesPorFuncion(funciones);
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorFunciones.consultarComentariosFunciones(2)"+comentariosfuncioneses.size());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
@@ -340,141 +203,134 @@ public class ControladorFunciones implements Serializable {
         }
     }
 
-    public void agregarYactualizarCategoriasEspecificas() {
+    public void editarComentariosfunciones(RowEditEvent event) {
         try {
-            listaCategoriasespecificasConsulta.clear();
-            nuveOBJCategoriasespecificasfunciones.setArea(listaPersonalLogeado.getAreaOperativa());
-            nuveOBJCategoriasespecificasfunciones.setNombreCategoria(nombreCategoriaEspecifica);
-            nuveOBJCategoriasespecificasfunciones = ejbFunciones.agregarCategoriasespecificasfunciones(nuveOBJCategoriasespecificasfunciones);
-
-            listaCategoriasespecificasConsulta = ejbFunciones.mostrarCategoriasespecificasfunciones(nombreCategoriaEspecifica, listaPersonalLogeado.getAreaOperativa());
-            nuveOBJCategoriasespecificasfuncionesValorAg = listaCategoriasespecificasConsulta.get(0);
-            listaClavesEmpleados.stream().forEach(l -> {
-                try {
-                    Integer clave = Integer.parseInt(l);
-                    nuveOBJPersonalActualizacion = ejbPersonal.mostrarPersonalLogeado(clave);
-                    nuveOBJPersonalActualizacion.setCategoriaEspecifica(nuveOBJCategoriasespecificasfuncionesValorAg);
-                    nuveOBJPersonalActualizacion = ejbPersonal.actualizarPersonal(nuveOBJPersonalActualizacion);
-                } catch (Throwable ex) {
-                    Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            });
-            mostrarListaCatelogos();
+            Comentariosfunciones f = (Comentariosfunciones) event.getObject();
+            ejbFunciones.actualizarComentariosfunciones(f);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void crearFuncion() {
+    public void eliminarComentariosfunciones(Comentariosfunciones comentariosfunciones) {
         try {
-            if (claveArea != 0) {
-                if (claveArea >= 24 && claveArea <= 56) {
-                    nuevoOBJFunciones.setAreaOperativa(Short.parseShort("61"));
-                } else {
-                    nuevoOBJFunciones.setAreaOperativa(claveArea);
-                }
-            } else {
-                if (listaPersonalLogeado.getAreaOperativa() >= 24 && listaPersonalLogeado.getAreaOperativa() <= 56) {
-                    nuevoOBJFunciones.setAreaOperativa(Short.parseShort("61"));
-                } else {
-                    if (listaPersonalLogeado.getAreaOperativa() != 28) {
-                        nuevoOBJFunciones.setAreaOperativa(listaPersonalLogeado.getAreaOperativa());
-                    } else {
-                        switch (claveCategoria) {
-                            case 30:
-                                nuevoOBJFunciones.setAreaOperativa(Short.parseShort("61"));
-                                break;
-                            case 32:
-                                nuevoOBJFunciones.setAreaOperativa(Short.parseShort("61"));
-                                break;
-                            case 41:
-                                nuevoOBJFunciones.setAreaOperativa(Short.parseShort("61"));
-                                break;
-                        }
-                    }
-                }
+            ejbFunciones.eliminarComentariosfunciones(comentariosfunciones);
+            consultarComentariosFunciones(nuevoOBJFuncionesSelect);
+            Messages.addGlobalInfo("¡¡Operación exitosa!!");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause());
+            Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////Categorias Especificas
+    public void consultarCategoriasEspesificas() {
+        try {
+            categoriasespecificasfuncioneses = ejbFunciones.mostrarCategoriasespecificasfuncionesArea(listaPersonalLogeado.getAreaOperativa());
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void crearCategoriasEspesificas(Categoriasespecificasfunciones categoriasespecificasfunciones) {
+        try {
+            ejbFunciones.eliminarCategoriasespecificasfunciones(categoriasespecificasfunciones);
+            consultarCategoriasEspesificas();
+            Messages.addGlobalInfo("¡¡Operación exitosa!!");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause());
+            Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void editarCategoriasEspesificas(RowEditEvent event) {
+        try {
+            Categoriasespecificasfunciones f = (Categoriasespecificasfunciones) event.getObject();
+            ejbFunciones.actualizarCategoriasespecificasfunciones(f);
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void eliminarCategoriasEspesificas() {
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////Herramientas administrativas
+    public Boolean comentDisable(Short cat) {
+        Boolean tipo = true;
+        if (listaPersonalLogeado.getAreaOperativa() >= 23 && listaPersonalLogeado.getAreaOperativa() <= 29) {
+            if (cat == 30 || cat == 32 || cat == 41) {
+                tipo = false;
             }
+        }
+        return tipo;
+    }
 
-            nuevoOBJFunciones.setCategoriaEspesifica(new Categoriasespecificasfunciones());
-            nuevoOBJFunciones.setCategoriaOperativa(new PersonalCategorias());
-            nuevoOBJFunciones.getCategoriaOperativa().setCategoria(claveCategoria);
-            nuevoOBJFunciones.getCategoriaEspesifica().setCategoriaEspecifica(claveCategoria2);
-            nuevoOBJFunciones = ejbFunciones.agregarFuncion(nuevoOBJFunciones);
-            nuevoOBJFunciones = new Funciones();
-            Messages.addGlobalInfo("¡¡Operación exitosa!!");
+    public Boolean editVisible(Short cat) {
+        Boolean tipo = true;
+        if (cat == 30 || cat == 32 || cat == 41) {
+            if (listaPersonalLogeado.getAreaOperativa() >= 23 && listaPersonalLogeado.getAreaOperativa() <= 29) {
+                tipo = false;
+            } else if (listaPersonalLogeado.getAreaOperativa() == 2) {
+                tipo = true;
+            }
+        }
 
-            if (claveCategoria2 != 1) {
-                consultarFuncnesAC();
+        if (cat == 1 || cat == 18 || cat == 33 || cat == 38) {
+            if (listaPersonalLogeado.getAreaOperativa() == 1) {
+                tipo = true;
             } else {
-                if (claveArea != 0) {
-                    consultarFuncnPorAC();
-                } else {
-                    consultarFuncnPorAyC();
-                }
+                tipo = false;
+            }
+        }
+
+        return tipo;
+    }
+
+    public Boolean delateDisable(Short cat) {
+        if (cat == null) {
+            return false;
+        }
+        Boolean tipo = false;
+        if (cat == 30 || cat == 32 || cat == 41) {
+            if (listaPersonalLogeado.getAreaOperativa() >= 23 && listaPersonalLogeado.getAreaOperativa() <= 29) {
+                tipo = true;
+            } else if (listaPersonalLogeado.getAreaOperativa() == 2) {
+                tipo = false;
+            }
+        }
+
+        if (cat == 1 || cat == 18 || cat == 33 || cat == 38) {
+            if (listaPersonalLogeado.getAreaOperativa() == 1) {
+                tipo = false;
+            } else {
+                tipo = true;
+            }
+        }
+
+        return tipo;
+    }
+
+    public void asignarPerosnalFunciones(ValueChangeEvent event) {
+        try {
+            perosnalCategoriasFunciones = new Personal();
+            if (Integer.parseInt(event.getNewValue().toString()) == 0) {
+                funcioneses = ejbFunciones.mostrarListaFuncionesParaARAE(personalLogeado);
+            } else {
+                perosnalCategoriasFunciones = ejbPersonal.mostrarPersonalLogeado(Integer.parseInt(event.getNewValue().toString()));
+                consultarFunciones(perosnalCategoriasFunciones);
             }
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause());
             Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    public void metodoBase() {
 
-    public void onRowEditPersonal(RowEditEvent event) {
-        try {
-            ejbPersonal.actualizarPersonal((Personal) event.getObject());
-            mostrarListaCatelogos();
-            Messages.addGlobalInfo("¡¡Operación exitosa!!");
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void onRowEdit(RowEditEvent event) {
-        try {
-            ejbFunciones.actualizarFunciones((Funciones) event.getObject());
-            Messages.addGlobalInfo("¡¡Operación exitosa!!");
-            if (claveCategoria2 != 1) {
-                consultarFuncnesAC();
-            } else {
-                if (claveArea != 0) {
-                    consultarFuncnPorAC();
-                } else {
-                    consultarFuncnPorAyC();
-                }
-            }
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void onRowEditComent(RowEditEvent event) {
-        try {
-            ejbFunciones.actualizarComentariosfunciones((Comentariosfunciones) event.getObject());
-            mostrarListaCatelogos();
-            Messages.addGlobalInfo("¡¡Operación exitosa!!");
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void onRowCancel(RowEditEvent event) {
-        Messages.addGlobalWarn("¡¡Operación cancelada!!");
-    }
-
-    public static class listaCategorias {
-
-        @Getter        @Setter        private Integer areaOperatova;
-        @Getter        @Setter        private Short categoriaOperativa;
-        @Getter        @Setter        private Short categoriaEspecifica;
-
-        private listaCategorias(Integer _areaOperatova, Short _categoriaOperativa, Short _categoriaEspecifica) {
-            areaOperatova = _areaOperatova;
-            categoriaOperativa = _categoriaOperativa;
-            categoriaEspecifica = _categoriaEspecifica;
-        }
     }
 }

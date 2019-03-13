@@ -182,8 +182,26 @@ public class ServiciosFunciones implements EjbFunciones {
     }
 
     @Override
+    public Comentariosfunciones eliminarComentariosfunciones(Comentariosfunciones nuevoComentariosfunciones) throws Throwable {
+        facade.setEntityClass(Comentariosfunciones.class);
+        facade.remove(nuevoComentariosfunciones);
+        return nuevoComentariosfunciones;
+    }
+
+    @Override
     public List<Comentariosfunciones> mostrarComentariosfunciones() throws Throwable {
         TypedQuery<Comentariosfunciones> q = em.createQuery("SELECT c FROM Comentariosfunciones c", Comentariosfunciones.class);
+        List<Comentariosfunciones> pr = q.getResultList();
+        if (pr.isEmpty()) {
+            pr = new ArrayList<>();
+        }
+        return pr;
+    }
+
+    @Override
+    public List<Comentariosfunciones> mostrarComentariosfuncionesPorFuncion(Funciones f) throws Throwable {
+        TypedQuery<Comentariosfunciones> q = em.createQuery("SELECT c FROM Comentariosfunciones c INNER JOIN c.idFuncion f WHERE f.funcion=:funcion ", Comentariosfunciones.class);
+        q.setParameter("funcion", f.getFuncion());
         List<Comentariosfunciones> pr = q.getResultList();
         if (pr.isEmpty()) {
             pr = new ArrayList<>();
@@ -196,6 +214,22 @@ public class ServiciosFunciones implements EjbFunciones {
     public Categoriasespecificasfunciones agregarCategoriasespecificasfunciones(Categoriasespecificasfunciones nuevaCategoriasespecificasfunciones) throws Throwable {
         facade.setEntityClass(Categoriasespecificasfunciones.class);
         facade.create(nuevaCategoriasespecificasfunciones);
+        facade.flush();
+        return nuevaCategoriasespecificasfunciones;
+    }
+
+    @Override
+    public Categoriasespecificasfunciones actualizarCategoriasespecificasfunciones(Categoriasespecificasfunciones nuevaCategoriasespecificasfunciones) throws Throwable {
+        facade.setEntityClass(Categoriasespecificasfunciones.class);
+        facade.edit(nuevaCategoriasespecificasfunciones);
+        facade.flush();
+        return nuevaCategoriasespecificasfunciones;
+    }
+
+    @Override
+    public Categoriasespecificasfunciones eliminarCategoriasespecificasfunciones(Categoriasespecificasfunciones nuevaCategoriasespecificasfunciones) throws Throwable {
+        facade.setEntityClass(Categoriasespecificasfunciones.class);
+        facade.remove(nuevaCategoriasespecificasfunciones);
         facade.flush();
         return nuevaCategoriasespecificasfunciones;
     }
