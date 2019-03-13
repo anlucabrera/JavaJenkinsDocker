@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.siip.interfaces.ca;
 
 import javax.ejb.Local;
 import java.util.List;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ParticipantesActividadesFormacionIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
@@ -14,6 +15,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.siip.dto.pye.DTOParticipantesActFormInt;
 import mx.edu.utxj.pye.siip.dto.eb.DTODatosEstudiante;
 import mx.edu.utxj.pye.siip.dto.pye.participantesAFIporNivel;
+import mx.edu.utxj.pye.siip.dto.pye.participantesAFIporPECuat;
 /**
  *
  * @author UTXJ
@@ -51,6 +53,11 @@ public interface EjbPartFormInt {
      * @return Lista de participantes.
      */
    public List<DTODatosEstudiante> getListaParticipantesPorActividad(String actividad);
+//   
+//   public List<NumeroParticipantesAFI> totalParticipantesAFIporProgEduCuatrimestreInfEst (String actividadFormacionIntegral);
+//
 
    public List<participantesAFIporNivel> totalParticipantesAFIporNivel(String actividadFormacionIntegral);
+
+   public List<participantesAFIporPECuat> totalParticipantesAFIporPECuat(Short area, String actividadFormacionIntegral);
 }

@@ -661,6 +661,25 @@
                             </div>
                         </h:form>
                     </p:dialog>
+                    <br></br>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <h:form id="frmAreasConRegistros">
+                                <p:dataGrid var="areasRegistro" value="#{registrosMovilidadPYE.dto.listaMovAreasConRegistroMensualGeneral}" columns="10" layout="grid"
+                                            id="areasRegistro" emptyMessage="No se ha registrado información de Movilidad en el mes correspondiente">
+                                    <f:facet name="header" >
+                                        <span style="font-size: medium;"> Áreas que actualmente tienen registros en el mes: <strong>#{registrosMovilidadPYE.dto.eventoSeleccionado.mes} </strong></span>
+                                    </f:facet>
+                                     <p:panel style="text-align:center;" >
+                                        <h:panelGrid columns="1">
+                                            <h:outputText value="#{areasRegistro.categoria.descripcion}" style="font-weight: bold;"/>
+                                            <h:outputText value="#{areasRegistro.nombre}"/>
+                                        </h:panelGrid>
+                                    </p:panel>
+                                </p:dataGrid>
+                            </h:form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

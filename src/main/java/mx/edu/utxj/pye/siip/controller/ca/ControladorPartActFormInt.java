@@ -27,7 +27,6 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
-import mx.edu.utxj.pye.sgi.entity.pye2.ParticipantesActividadesFormacionIntegral;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
@@ -268,7 +267,14 @@ public class ControladorPartActFormInt implements Serializable{
     }
     
     public void seleccionarParticipantes(String clave){
+        dto.setListaParticipantesAFI(ejb.getListaParticipantesPorActividad(clave));
         dto.setListaParticipantes(ejb.totalParticipantesAFIporNivel(clave));
+        dto.setListaParticipantesAEA(ejb.totalParticipantesAFIporPECuat((short) 24, clave));
+        dto.setListaParticipantesAAA(ejb.totalParticipantesAFIporPECuat((short) 25, clave));
+        dto.setListaParticipantesAMI(ejb.totalParticipantesAFIporPECuat((short) 26, clave));
+        dto.setListaParticipantesAMA(ejb.totalParticipantesAFIporPECuat((short) 27, clave));
+        dto.setListaParticipantesATIC(ejb.totalParticipantesAFIporPECuat((short) 28, clave));
+        dto.setListaParticipantesAS(ejb.totalParticipantesAFIporPECuat((short) 29, clave));
         Ajax.update("frmModalParticipantes");
         Ajax.oncomplete("skin();");
         dto.setForzarAperturaDialogo(Boolean.TRUE);

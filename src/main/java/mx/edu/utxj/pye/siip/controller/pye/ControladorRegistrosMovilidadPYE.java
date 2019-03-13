@@ -5,20 +5,15 @@
  */
 package mx.edu.utxj.pye.siip.controller.pye;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
@@ -29,19 +24,14 @@ import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosMovilidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
-import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
-import mx.edu.utxj.pye.sgi.entity.pye2.EjerciciosFiscales;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
-import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
 import mx.edu.utxj.pye.sgi.facade.Facade;
-import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.ca.DtoRegistrosMovilidad;
 import mx.edu.utxj.pye.siip.dto.ca.DtoMovilidadDocente;
@@ -91,6 +81,7 @@ public class ControladorRegistrosMovilidadPYE implements Serializable{
         dtodoc = new DtoMovilidadDocente();
         dtoest = new DtoMovilidadEstudiantil();
         dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        dto.setListaMovAreasConRegistroMensualGeneral(ejb.getMovAreasConRegistroMensualGeneral(ejbModulos.getEventoRegistro().getMes()));
         
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());
@@ -162,6 +153,13 @@ public class ControladorRegistrosMovilidadPYE implements Serializable{
     }
     
     public void cargarListaPorEvento(){
+         if(dto.getEventoSeleccionado()== null)
+       {
+            dto.setEventoSeleccionado(dto.getEventosPorPeriodo().get(0));
+            dto.setListaMovAreasConRegistroMensualGeneral(ejb.getMovAreasConRegistroMensualGeneral(dto.getEventoSeleccionado().getMes()));
+       } 
+        
+       dto.setListaMovAreasConRegistroMensualGeneral(ejb.getMovAreasConRegistroMensualGeneral(dto.getEventoSeleccionado().getMes()));
        dto.setLista(ejb.getListaRegistrosPorEventoAreaPeriodo(dto.getEventoSeleccionado(), dto.getAreaPOA().getArea(), dto.getPeriodo()));
        dtodoc.setLista(ejb.getListaRegistrosPorEventoAreaPeriodoDoc(dto.getEventoSeleccionado(), dto.getAreaPOA().getArea(), dto.getPeriodo()));
        dtoest.setLista(ejb.getListaRegistrosPorEventoAreaPeriodoEst(dto.getEventoSeleccionado(), dto.getAreaPOA().getArea(), dto.getPeriodo()));
