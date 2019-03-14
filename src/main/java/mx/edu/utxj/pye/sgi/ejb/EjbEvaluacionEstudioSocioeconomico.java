@@ -37,7 +37,7 @@ public class EjbEvaluacionEstudioSocioeconomico implements Serializable {
 
         List<Evaluaciones> l = q.getResultList();
         if(l.isEmpty()){
-            return null;
+            return new Evaluaciones();
         }else{
             return l.get(0);
         }

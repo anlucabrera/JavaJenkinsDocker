@@ -46,21 +46,13 @@ public class ControladorFunciones implements Serializable {
     @Getter    @Setter    private ListaPersonal listaPersonalLogeado = new ListaPersonal();
     @Getter    @Setter    private Personal personalLogeado = new Personal();    
     @Getter    @Setter    private Personal perosnalCategoriasFunciones = new Personal();
-
-////////////////////////////////////////////////////////////////////////////////Listas 
-    @Getter    @Setter    private List<String> listaClavesEmpleados = new ArrayList<>();
-    @Getter    @Setter    private List<Categoriasespecificasfunciones> listaCategoriasespecificasConsulta = new ArrayList<>();
-////////////////////////////////////////////////////////////////////////////////Objetos 
     @Getter    @Setter    private Comentariosfunciones nuevoOBJComentariosfunciones = new Comentariosfunciones();
-    @Getter    @Setter    private Categoriasespecificasfunciones nuveOBJCategoriasespecificasfunciones = new Categoriasespecificasfunciones(), nuveOBJCategoriasespecificasfuncionesValorAg = new Categoriasespecificasfunciones();
     @Getter    @Setter    private Funciones nuevoOBJFunciones = new Funciones(), nuevoOBJFuncionesSelect;
-    @Getter    @Setter    private Personal nuveOBJPersonalActualizacion, nuveOBJPersonal;
 ////////////////////////////////////////////////////////////////////////////////Variables 
-    @Getter    @Setter    private String puestoTipo = "", nombreCategoriaEspecifica = "";
-    @Getter    @Setter    private Short claveCategoria = 0, claveCategoria2 = 1, claveArea = 0;
-    @Getter    @Setter    private Integer totalC = 0, claveEmpleado = 0;
-///////////////////////////////////////////////////////////////////////////////
-    @Getter    @Setter    private Iterator<Personal> empleadoActual;
+    @Getter    @Setter    private Short claveCategoria = 0;
+    @Getter    @Setter    private Integer totalC = 0;
+    @Getter    @Setter    private Boolean visibleComentarios = false,visibleCcategoriasEspesificas = false;
+    
     
 //@EJB   
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
@@ -73,10 +65,8 @@ public class ControladorFunciones implements Serializable {
     @PostConstruct
     public void init() {
         personalLogeado = new Personal();
-        claveArea = 0;
-        listaClavesEmpleados.clear();
+        nuevoOBJComentariosfunciones = new Comentariosfunciones();
         listaPersonalLogeado = controladorEmpleado.getNuevoOBJListaPersonal();
-        claveCategoria2 = 1;
         mostrarListaCatelogos();
     }
 
@@ -102,14 +92,12 @@ public class ControladorFunciones implements Serializable {
             Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////Funciones
     public void consultarFunciones(Personal persona) {
         try {
-            System.out.println("Fin del metodo de registro de fuciones" + persona);
             funcioneses = new ArrayList<>();
             funcioneses.clear();
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorFunciones.consultarFunciones()" + persona);
             if (persona.getClave() == null) {
                 funcioneses = ejbFunciones.mostrarListaFuncionesParaARAE(personalLogeado);
             } else {
@@ -119,7 +107,6 @@ public class ControladorFunciones implements Serializable {
                     funcioneses = ejbFunciones.mostrarListaFuncionesPersonalLogeado(persona.getAreaOperativa(), persona.getCategoriaOperativa().getCategoria(), persona.getCategoriaEspecifica().getCategoriaEspecifica());
                 }
             }
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorFunciones.consultarFunciones()" + funcioneses.size());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause());
             Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
@@ -128,7 +115,6 @@ public class ControladorFunciones implements Serializable {
 
     public void agregarFuncion() {
         try {
-            System.out.println("Inicio del metodo de registro de fuciones");
             nuevoOBJFunciones.setCategoriaOperativa(new PersonalCategorias());
             nuevoOBJFunciones.setCategoriaEspesifica(new Categoriasespecificasfunciones());
             if ((perosnalCategoriasFunciones.getAreaOperativa() >= 23 && perosnalCategoriasFunciones.getAreaOperativa() <= 29) || (perosnalCategoriasFunciones.getAreaSuperior() >= 23 && perosnalCategoriasFunciones.getAreaSuperior() <= 29)) {
@@ -141,7 +127,6 @@ public class ControladorFunciones implements Serializable {
             nuevoOBJFunciones = ejbFunciones.agregarFuncion(nuevoOBJFunciones);
             nuevoOBJFunciones = new Funciones();
             consultarFunciones(perosnalCategoriasFunciones);
-            System.out.println("Fin del metodo de registro de fuciones");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
@@ -172,11 +157,10 @@ public class ControladorFunciones implements Serializable {
     ////////////////////////////////////////////////////////////////////////////Comentarios
     public void consultarComentariosFunciones(Funciones funciones) {
         try {
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorFunciones.consultarComentariosFunciones(1)"+funciones);
-            comentariosfuncioneses=new ArrayList<>();
+            visibleComentarios = true;
+            comentariosfuncioneses = new ArrayList<>();
             comentariosfuncioneses.clear();
             comentariosfuncioneses = ejbFunciones.mostrarComentariosfuncionesPorFuncion(funciones);
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorFunciones.consultarComentariosFunciones(2)"+comentariosfuncioneses.size());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
@@ -185,15 +169,14 @@ public class ControladorFunciones implements Serializable {
 
     public void crearComentariosfunciones() {
         try {
+            visibleComentarios = true;
             nuevoOBJComentariosfunciones.setIdPersonal(new Personal());
             nuevoOBJComentariosfunciones.setIdFuncion(new Funciones());
             nuevoOBJComentariosfunciones.getIdPersonal().setClave(listaPersonalLogeado.getClave());
             nuevoOBJComentariosfunciones.getIdFuncion().setFuncion(nuevoOBJFuncionesSelect.getFuncion());
             nuevoOBJComentariosfunciones.setEsatus(0);
             nuevoOBJComentariosfunciones.setFechaHoraC(new Date());
-
             nuevoOBJComentariosfunciones = ejbFunciones.agregarComentariosfunciones(nuevoOBJComentariosfunciones);
-
             nuevoOBJComentariosfunciones = new Comentariosfunciones();
             nuevoOBJFuncionesSelect = new Funciones();
             Messages.addGlobalInfo("¡¡Operación exitosa!!");
@@ -205,6 +188,7 @@ public class ControladorFunciones implements Serializable {
 
     public void editarComentariosfunciones(RowEditEvent event) {
         try {
+            visibleComentarios = true;
             Comentariosfunciones f = (Comentariosfunciones) event.getObject();
             ejbFunciones.actualizarComentariosfunciones(f);
         } catch (Throwable ex) {
@@ -215,6 +199,7 @@ public class ControladorFunciones implements Serializable {
 
     public void eliminarComentariosfunciones(Comentariosfunciones comentariosfunciones) {
         try {
+            visibleComentarios = true;
             ejbFunciones.eliminarComentariosfunciones(comentariosfunciones);
             consultarComentariosFunciones(nuevoOBJFuncionesSelect);
             Messages.addGlobalInfo("¡¡Operación exitosa!!");
@@ -227,15 +212,17 @@ public class ControladorFunciones implements Serializable {
     ////////////////////////////////////////////////////////////////////////////Categorias Especificas
     public void consultarCategoriasEspesificas() {
         try {
+            visibleCcategoriasEspesificas = true;
             categoriasespecificasfuncioneses = ejbFunciones.mostrarCategoriasespecificasfuncionesArea(listaPersonalLogeado.getAreaOperativa());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void crearCategoriasEspesificas(Categoriasespecificasfunciones categoriasespecificasfunciones) {
         try {
+            visibleCcategoriasEspesificas = true;
             ejbFunciones.eliminarCategoriasespecificasfunciones(categoriasespecificasfunciones);
             consultarCategoriasEspesificas();
             Messages.addGlobalInfo("¡¡Operación exitosa!!");
@@ -247,6 +234,7 @@ public class ControladorFunciones implements Serializable {
 
     public void editarCategoriasEspesificas(RowEditEvent event) {
         try {
+            visibleCcategoriasEspesificas = true;
             Categoriasespecificasfunciones f = (Categoriasespecificasfunciones) event.getObject();
             ejbFunciones.actualizarCategoriasespecificasfunciones(f);
         } catch (Throwable ex) {
@@ -256,7 +244,7 @@ public class ControladorFunciones implements Serializable {
     }
 
     public void eliminarCategoriasEspesificas() {
-
+        visibleCcategoriasEspesificas = true;
     }
 
     ////////////////////////////////////////////////////////////////////////////Herramientas administrativas

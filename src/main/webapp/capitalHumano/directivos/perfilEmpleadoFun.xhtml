@@ -196,7 +196,7 @@
                                                         </div>
                                                     </p:column >
                                                     <p:column >
-                                                        <p:commandButton id="btnRecurso" process="@this" update="@form" oncomplete="PF('dlgcoment').show()" icon="fa fa-comments" 
+                                                        <p:commandButton id="btnRecurso" process="@this" update=":frmComent:pnlAgregarComentario" oncomplete="PF('dlgcoment').show()" icon="fa fa-comments" 
                                                                          actionListener="#{controladorFunciones.consultarComentariosFunciones(funciones)}"
                                                                          styleClass="#{funciones.comentariosfuncionesList.size() eq 0?'btn-primary':'btn-success'}"
                                                                          disabled="#{controladorFunciones.comentDisable(funciones.categoriaOperativa.categoria)}"
@@ -411,6 +411,107 @@
                 </section>
             </p:panel>
 
+            <h:form id="frmComent" >
+                <p:dialog header="Comentarios para: #{controladorFunciones.nuevoOBJFuncionesSelect.nombre}" widgetVar="dlgcoment" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true"
+                          visible="#{controladorFunciones.visibleComentarios}">
+                    <p:panelGrid id="pnlAgregarComentario" style="text-align:justify;" columns="1">
+                        <p:outputPanel >
+                            <p:autoUpdate/>
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <p:outputLabel value="Comentario" for="ct"/>
+                                <p:inputTextarea id="ct" value="#{controladorFunciones.nuevoOBJComentariosfunciones.comentario}" required="true" requiredMessage="El comentario es obligatorio." class="col-md-12"/>
+                                <p:message for="ct"/>  
+                            </div>
+                            <p:commandButton id="btnAceptar" value="Guardar comentario" class="btn btn-primary" actionListener="#{controladorFunciones.crearComentariosfunciones()}" 
+                                             process="@this" icon="fa fa-plus" styleClass="btn-primary" update="tblDistinciones"/>                                                 
+
+                        </p:outputPanel>
+                        <p:outputPanel id="actividadesVarias">
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <p:remoteCommand name="actualizarTabla2" actionListener="#{controladorFunciones.metodoBase()}" update="tblDistinciones" />
+                                <p:dataTable id="tblDistinciones" value="#{controladorFunciones.comentariosfuncioneses}" var="comentario" rendered="true"
+                                             emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="5,10,15,20,25,30"
+                                             editable="true" editMode="row">
+
+                                    <p:columnGroup type="header">
+                                        <p:row class="success">
+                                            <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px" />
+                                            <p:column rowspan="2" headerText="Director" style="width: 150px;" />
+                                            <p:column rowspan="2" headerText="Funcion" style="width: 300px;" />
+                                            <p:column rowspan="2" headerText="Fecha" style="width: 100px;"/> 
+                                            <p:column rowspan="2" headerText="Estatus" style="width: 100px;"/>
+                                        </p:row>
+                                    </p:columnGroup>
+
+                                    <p:ajax event="rowEdit" listener="#{controladorFunciones.editarComentariosfunciones}" update="@this" oncomplete="actualizarTabla2()"/>
+                                    <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla2()"/>
+
+                                    <p:column>
+                                        <p:commandButton actionListener="#{controladorFunciones.eliminarFuncion(comentario)}" update="tblDistinciones" oncomplete="actualizarTabla2()" 
+                                                         icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación"
+                                                         disabled="#{comentario.idPersonal.clave ne controladorFunciones.listaPersonalLogeado.clave}">
+                                            <p:confirm header="Confirmación" message="¿Confirma la eliminación del comentario de #{comentario.idPersonal.nombre}?" icon="ui-icon-alert" />
+                                        </p:commandButton>
+                                    </p:column>
+
+                                    <p:column >
+                                        <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" 
+                                             style="align-content: center; visibility:#{comentario.idPersonal.clave eq controladorFunciones.listaPersonalLogeado.clave eq false?'hidden':'visible'};">
+                                            <a href="#" class="ui-row-editor-pencil">
+                                                <span class="ui-icon ui-icon-pencil"></span>
+                                            </a>
+                                            <a href="#" class="ui-row-editor-check">
+                                                <span class="ui-icon ui-icon-check ui-c"></span>
+                                            </a>
+                                            <p:spacer width="20px"/>
+                                            <a href="#" class="ui-row-editor-close">
+                                                <span class="ui-icon ui-icon-close ui-c"></span>
+                                            </a>
+                                        </div>
+                                    </p:column >                        
+
+                                    <p:column >
+                                        <h:outputText value="#{comentario.idPersonal.nombre}" />
+                                    </p:column>    
+                                    <p:column>
+                                        <p:cellEditor>
+                                            <f:facet name="output">
+                                                <h:outputText value="#{comentario.comentario}" />
+                                            </f:facet>
+                                            <f:facet name="input">
+                                                <p:inputTextarea value="#{comentario.comentario}"/>
+                                            </f:facet>
+                                        </p:cellEditor>
+                                    </p:column>                                      
+                                    <p:column >
+                                        <h:outputText value="#{comentario.fechaHoraC}" />
+                                    </p:column> 
+
+                                    <p:column >
+                                        <p:cellEditor>
+                                            <f:facet name="output"><h:outputText value="#{comentario.esatus eq 0?'Pendiente':'Realizada'}" /></f:facet>
+                                            <f:facet name="input">
+                                                <h:selectOneMenu value="#{comentario.esatus}">
+                                                    <f:selectItem itemValue="#{0}" itemLabel="#{'Pendiente'}"/>
+                                                    <f:selectItem itemValue="#{1}" itemLabel="#{'Realizada'}"/>
+                                                </h:selectOneMenu>
+                                            </f:facet>
+                                        </p:cellEditor>
+                                    </p:column> 
+                                </p:dataTable>
+
+                            </div>
+                        </p:outputPanel>
+                    </p:panelGrid>
+                </p:dialog> 
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog> 
+            </h:form>
+
             <h:form id="frmayuda" >
                 <p:dialog id="dlgAyuda" header="Ayuda" widgetVar="dlgAyuda" minimizable="true" maximizable="true" position="center">
                     <f:facet name="footer">
@@ -448,110 +549,6 @@
                         </p:scrollPanel>
                     </p:outputPanel>
                 </p:dialog>                
-            </h:form>
-
-            <h:form id="frmComent" >
-                <p:dialog id="dlgcoment" header="Comentarios" widgetVar="dlgcoment" minimizable="true" maximizable="true" position="center">
-                    <p:outputPanel style="max-width: 250px">
-                        <p:autoUpdate/>
-                        <h:panelGrid columns="1"  class="col-md-12">
-                            <p:outputLabel value="Función" for="numc"/>
-                            <h:outputText id="numc" value="#{controladorFunciones.nuevoOBJFuncionesSelect.nombre}" style="text-align: justify" class="col-md-12"/>
-                            <p:message for="numc"/>
-
-                            <p:outputLabel value="Comentario" for="ct"/>
-                            <p:inputTextarea id="ct" value="#{controladorFunciones.nuevoOBJComentariosfunciones.comentario}" required="true" requiredMessage="El comentario es obligatorio." class="col-md-12"/>
-                            <p:message for="ct"/>  
-
-                            <p:commandButton id="btncancelar" value="Cancelar" class="btn btn-primary" icon="fa fa-check" process="@form" update="@form" onsuccess="PF('dlgcoment').hide();"/>
-                            <p:commandButton id="btnAceptar" value="Guardar comentario" class="btn btn-primary" actionListener="#{controladorFunciones.crearComentariosfunciones()}" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgcoment').hide();"/>
-
-                        </h:panelGrid>
-                    </p:outputPanel>
-                    <p:outputPanel >
-                        <p:remoteCommand name="actualizarTabla2" actionListener="#{controladorFunciones.metodoBase()}" update="tblDistinciones" />
-                        <p:dataTable id="tblDistinciones" value="#{controladorFunciones.comentariosfuncioneses}" var="comentario" rendered="true"
-                                     emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
-                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                     rowsPerPageTemplate="5,10,15,20,25,30"
-                                     editable="true" editMode="row">
-
-                            <p:columnGroup type="header">
-                                <p:row class="success">
-                                    <p:column colspan="3" rowspan="2" headerText="Opciones" style="width:150px" />
-                                    <p:column rowspan="2" headerText="Director" style="width: 150px;" />
-                                    <p:column rowspan="2" headerText="Funcion" style="width: 150px;" />
-                                    <p:column rowspan="2" headerText="Comentario" style="width: 150px;"/>
-                                    <p:column rowspan="2" headerText="Estatus" style="width: 600px;"/>
-                                    <p:column rowspan="2" headerText="Fecha" style="width: 100px;"/> 
-                                </p:row>
-                            </p:columnGroup>
-
-                            <p:ajax event="rowEdit" listener="#{controladorFunciones.editarComentariosfunciones}" update="@this" oncomplete="actualizarTabla2()"/>
-                            <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla2()"/>
-
-                            <p:column>
-                                <p:commandButton actionListener="#{controladorFunciones.eliminarFuncion(comentario)}" update="tblDistinciones" oncomplete="actualizarTabla2()" 
-                                                 icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación"
-                                                 disabled="#{comentario.idPersonal.clave ne controladorFunciones.listaPersonalLogeado.clave}">
-                                    <p:confirm header="Confirmación" message="¿Confirma la eliminación del comentario de #{comentario.idPersonal.nombre}?" icon="ui-icon-alert" />
-                                </p:commandButton>
-                            </p:column>
-
-                            <p:column >
-                                <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" 
-                                     style="align-content: center; visibility:#{comentario.idPersonal.clave eq controladorFunciones.listaPersonalLogeado.clave eq false?'hidden':'visible'};">
-                                    <a href="#" class="ui-row-editor-pencil">
-                                        <span class="ui-icon ui-icon-pencil"></span>
-                                    </a>
-                                    <a href="#" class="ui-row-editor-check">
-                                        <span class="ui-icon ui-icon-check ui-c"></span>
-                                    </a>
-                                    <p:spacer width="20px"/>
-                                    <a href="#" class="ui-row-editor-close">
-                                        <span class="ui-icon ui-icon-close ui-c"></span>
-                                    </a>
-                                </div>
-                            </p:column >                        
-
-                            <p:column >
-                                <h:outputText value="#{comentario.idPersonal.nombre}" />
-                            </p:column>                                         
-                            <p:column >
-                                <h:outputText value="#{comentario.idFuncion.nombre}" />
-                            </p:column>
-                            <p:column>
-                                <p:cellEditor>
-                                    <f:facet name="output">
-                                        <h:outputText value="#{comentario.comentario}" />
-                                    </f:facet>
-                                    <f:facet name="input">
-                                        <p:inputTextarea value="#{comentario.comentario}"/>
-                                    </f:facet>
-                                </p:cellEditor>
-                            </p:column>                                      
-                            <p:column >
-                                <h:outputText value="#{comentario.fechaHoraC}" />
-                            </p:column> 
-
-                            <p:column >
-                                <p:cellEditor>
-                                    <f:facet name="output"><h:outputText value="#{comentario.esatus}" /></f:facet>
-                                    <f:facet name="input">
-                                        <h:selectOneMenu value="#{comentario.esatus}">
-                                            <f:selectItem itemValue="#{0}" itemLabel="#{'Pendiente'}"/>
-                                            <f:selectItem itemValue="#{1}" itemLabel="#{'Realizada'}"/>
-                                        </h:selectOneMenu>
-                                    </f:facet>
-                                </p:cellEditor>
-                            </p:column> 
-                        </p:dataTable>
-                    </p:outputPanel>                                 
-                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                    </p:confirmDialog>  
-                </p:dialog> 
             </h:form>
 
             <h:form id="frmObser" >
