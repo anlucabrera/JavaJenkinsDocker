@@ -78,7 +78,7 @@
                                         <p:outputPanel>            
                                             <p:autoUpdate/>
                                             <div class="col-lg-3 col-xs-3">
-                                                <p:commandButton id="puestosEspecificos" rendered="#{controladorFunciones.puestoTipo eq 'Administrativo'?true:false}" value="Nuevo puesto específico" icon="fa fa-id-card-o" class="btn btn-info" oncomplete="PF('dlgNewP').show();"/>                                                                    
+                                                <p:commandButton id="puestosEspecificos" rendered="# {controladorFunciones. puestoTipo eq 'Administrativo'?true:false}" value="Nuevo puesto específico" icon="fa fa-id-card-o" class="btn btn-info" oncomplete="PF('dlgNewP').show();"/>                                                                    
                                             </div> 
                                         </p:outputPanel>
                                         <div class="col-lg-2 col-xs-2">
@@ -412,7 +412,8 @@
             </p:panel>
 
             <h:form id="frmComent" >
-                <p:dialog header="Comentarios para: #{controladorFunciones.nuevoOBJFuncionesSelect.nombre}" widgetVar="dlgcoment" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true"
+                <p:dialog header="Comentarios para: #{controladorFunciones.nuevoOBJFuncionesSelect.nombre}" widgetVar="dlgcoment" modal="true" showEffect="fade" 
+                          hideEffect="fade" resizable="false" width="650" closeOnEscape="true" height="650px"
                           visible="#{controladorFunciones.visibleComentarios}">
                     <p:panelGrid id="pnlAgregarComentario" style="text-align:justify;" columns="1">
                         <p:outputPanel >
@@ -429,79 +430,17 @@
                         <p:outputPanel id="actividadesVarias">
                             <div class="col-sm-12 col-md-12 col-lg-12">
                                 <p:remoteCommand name="actualizarTabla2" actionListener="#{controladorFunciones.metodoBase()}" update="tblDistinciones" />
-                                <p:dataTable id="tblDistinciones" value="#{controladorFunciones.comentariosfuncioneses}" var="comentario" rendered="true"
-                                             emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
-                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                             rowsPerPageTemplate="5,10,15,20,25,30"
-                                             editable="true" editMode="row">
 
-                                    <p:columnGroup type="header">
-                                        <p:row class="success">
-                                            <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px" />
-                                            <p:column rowspan="2" headerText="Director" style="width: 150px;" />
-                                            <p:column rowspan="2" headerText="Funcion" style="width: 300px;" />
-                                            <p:column rowspan="2" headerText="Fecha" style="width: 100px;"/> 
-                                            <p:column rowspan="2" headerText="Estatus" style="width: 100px;"/>
-                                        </p:row>
-                                    </p:columnGroup>
-
-                                    <p:ajax event="rowEdit" listener="#{controladorFunciones.editarComentariosfunciones}" update="@this" oncomplete="actualizarTabla2()"/>
-                                    <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla2()"/>
-
-                                    <p:column>
-                                        <p:commandButton actionListener="#{controladorFunciones.eliminarFuncion(comentario)}" update="tblDistinciones" oncomplete="actualizarTabla2()" 
-                                                         icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación"
-                                                         disabled="#{comentario.idPersonal.clave ne controladorFunciones.listaPersonalLogeado.clave}">
-                                            <p:confirm header="Confirmación" message="¿Confirma la eliminación del comentario de #{comentario.idPersonal.nombre}?" icon="ui-icon-alert" />
-                                        </p:commandButton>
-                                    </p:column>
-
-                                    <p:column >
-                                        <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" 
-                                             style="align-content: center; visibility:#{comentario.idPersonal.clave eq controladorFunciones.listaPersonalLogeado.clave eq false?'hidden':'visible'};">
-                                            <a href="#" class="ui-row-editor-pencil">
-                                                <span class="ui-icon ui-icon-pencil"></span>
-                                            </a>
-                                            <a href="#" class="ui-row-editor-check">
-                                                <span class="ui-icon ui-icon-check ui-c"></span>
-                                            </a>
-                                            <p:spacer width="20px"/>
-                                            <a href="#" class="ui-row-editor-close">
-                                                <span class="ui-icon ui-icon-close ui-c"></span>
-                                            </a>
-                                        </div>
-                                    </p:column >                        
-
-                                    <p:column >
-                                        <h:outputText value="#{comentario.idPersonal.nombre}" />
-                                    </p:column>    
-                                    <p:column>
-                                        <p:cellEditor>
-                                            <f:facet name="output">
-                                                <h:outputText value="#{comentario.comentario}" />
-                                            </f:facet>
-                                            <f:facet name="input">
-                                                <p:inputTextarea value="#{comentario.comentario}"/>
-                                            </f:facet>
-                                        </p:cellEditor>
-                                    </p:column>                                      
-                                    <p:column >
-                                        <h:outputText value="#{comentario.fechaHoraC}" />
-                                    </p:column> 
-
-                                    <p:column >
-                                        <p:cellEditor>
-                                            <f:facet name="output"><h:outputText value="#{comentario.esatus eq 0?'Pendiente':'Realizada'}" /></f:facet>
-                                            <f:facet name="input">
-                                                <h:selectOneMenu value="#{comentario.esatus}">
-                                                    <f:selectItem itemValue="#{0}" itemLabel="#{'Pendiente'}"/>
-                                                    <f:selectItem itemValue="#{1}" itemLabel="#{'Realizada'}"/>
-                                                </h:selectOneMenu>
-                                            </f:facet>
-                                        </p:cellEditor>
-                                    </p:column> 
-                                </p:dataTable>
-
+                                <p:dataList id="tblDistinciones" value="#{controladorFunciones.comentariosfuncioneses}" var="comentario" type="unordered" 
+                                            itemType="none" paginator="true" rows="5" styleClass="paginated">
+                                    <f:facet name="header">
+                                        Comentarios
+                                    </f:facet>    
+                                    <h:outputText value="#{comentario.idPersonal.nombre}:" style="display:inline-block; font-style: oblique"/>
+                                    <br/>
+                                    <h:outputText value="#{comentario.comentario}" style="display:inline-block"/>                                
+                                    <hr/>
+                                </p:dataList>                               
                             </div>
                         </p:outputPanel>
                     </p:panelGrid>
@@ -537,14 +476,14 @@
                         <p:scrollPanel style="width:600px">
                             <h:panelGrid columns="1"  class="col-md-12">
                                 <p:outputLabel value="Nombre del puesto específico" for="nomPE"/>
-                                <p:inputText id="nomPE" value="#{controladorFunciones.nombreCategoriaEspecifica}" style="text-align: justify" class="col-md-12"/>
+                                <p:inputText id="nomPE" value="# {controladorFunciones.nombreCategoriaEspecifica}" style="text-align: justify" class="col-md-12"/>
                                 <p:message for="nomPE"/>
 
-                                <p:outputLabel value="Empleados para nuevo puesto específico" for="empleNP"/>
-                                <p:selectManyCheckbox id="empleNP" value="#{controladorFunciones.listaClavesEmpleados}" layout="responsive" columns="1">
-                                    <f:selectItems value="#{controladorFunciones.subordinadosListaPersonals}" var="subordinado" itemLabel="#{subordinado.nombre} - #{subordinado.categoriaOperativaNombre}" itemValue="#{subordinado.clave}" />
+                                <!--p:outputLabel value="Empleados para nuevo puesto específico" for="empleNP"/>
+                                <p:selectManyCheckbox id="empleNP" value="# {controladorFunciones.listaClavesEmpleados}" layout="responsive" columns="1">
+                                    <f:selectItems value="# {controladorFunciones.subordinadosListaPersonals}" var="subordinado" itemLabel="# {subordinado.nombre} - # {subordinado.categoriaOperativaNombre}" itemValue="# {subordinado.clave}" />
                                 </p:selectManyCheckbox>
-                                <p:message for="empleNP"/>
+                                <p:message for="empleNP"/-->
                             </h:panelGrid>
                         </p:scrollPanel>
                     </p:outputPanel>

@@ -3,9 +3,7 @@ package mx.edu.utxj.pye.sgi.controladores.ch;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -108,7 +106,7 @@ public class ControladorFunciones implements Serializable {
                 }
             }
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -204,7 +202,7 @@ public class ControladorFunciones implements Serializable {
             consultarComentariosFunciones(nuevoOBJFuncionesSelect);
             Messages.addGlobalInfo("¡¡Operación exitosa!!");
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -227,7 +225,7 @@ public class ControladorFunciones implements Serializable {
             consultarCategoriasEspesificas();
             Messages.addGlobalInfo("¡¡Operación exitosa!!");
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause());
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
