@@ -623,6 +623,49 @@
                     </li>
                 </ul>
             </li>
+             <c:if test="#{controladorEmpleado.tienePOA}">
+                <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-file-text-o"></i> <span>Formatos SGI</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu" style="display: none;">
+                    <li>
+                       
+                        <p:link href="/sgi/AccionesCorrectivas.docx">
+                            <span>Acciones Correctivas</span>
+                        </p:link>
+                    </li>      
+                    <li>
+                        <p:link href="/sgi/ListadoRegistros.xls">
+                            <span>Listado de Registros</span>
+                        </p:link>
+                    </li>   
+                    <li>
+                        <p:link href="/sgi/ListaMaestraDocumentosExternos.xls">
+                            <span>Lista Maestra Docs. Externos</span>
+                        </p:link>
+                    </li>
+                    <li>
+                        <p:link href="/sgi/ListaMaestraDocumentosInternos.xls">
+                            <span>Lista Maestra Docs. Internos</span>
+                        </p:link>
+                    </li>      
+                    <li>
+                        <p:link href="/sgi/RegistroSalidaNoConforme.docx">
+                            <span>Registro de Salida No Conforme</span>
+                        </p:link>
+                    </li>   
+                    <li>
+                        <p:link href="/sgi/RevisionAprobacionDocumentos.xlsx">
+                            <span>Revisión y Aprobación de Docs</span>
+                        </p:link>
+                    </li>
+                </ul>
+            </li>
+            </c:if>
 
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
 
@@ -639,7 +682,7 @@
             <li>
                 <p:link href="/capitalHumano/contactoE.xhtml">
                     <i class="fa fa-book"></i>
-                    <span>Contacto de mergencias</span>
+                    <span>Contacto de emergencias</span>
                 </p:link>
             </li>
             <li>

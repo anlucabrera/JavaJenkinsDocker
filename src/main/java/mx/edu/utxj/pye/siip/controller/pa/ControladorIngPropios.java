@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
@@ -30,9 +29,9 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
+import mx.edu.utxj.pye.sgi.entity.pye2.IngresosPropiosCaptados;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
-import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -80,6 +79,8 @@ public class ControladorIngPropios implements Serializable{
     @Getter @Setter private Short claveRegistroPA;
     @Getter @Setter private Short claveRegistroEB;
     
+    @Getter @Setter private IngresosPropiosCaptados nuevoIngPropios;
+    
     @PostConstruct
     public void init(){
         //        Variables que se obtendrán mediante un método
@@ -99,7 +100,7 @@ public class ControladorIngPropios implements Serializable{
         claveRegistroPA = 4;
         claveRegistroEB = 50;
         consultarPermiso();
-
+       
     }
     public void initFiltros(){
         dto.setPeriodos(ejb.getPeriodosConregistro());
@@ -333,4 +334,32 @@ public class ControladorIngPropios implements Serializable{
         dto.setEventosPorPeriodo(ejb.getEventosPorPeriodo(dto.getPeriodo()));
         cargarListaPorEvento();
     }
+    
+    public void editarRegistro(DTOIngPropios registro){
+        dto.setRegistro(registro);
+        nuevoIngPropios = dto.getRegistro().getIngresosPropiosCaptados();
+        cargarListaPorEvento();
+        Ajax.update("frmModalEdicion");
+        Ajax.oncomplete("skin();");
+        dto.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionDialogo();
+    }
+    
+    public void forzarAperturaEdicionDialogo(){
+        if(dto.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEdicion').show();");
+            dto.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void guardarEdicion() {
+         try {
+            nuevoIngPropios = ejb.actualizarIngPropios(nuevoIngPropios);
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorIngPropios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+   
 }

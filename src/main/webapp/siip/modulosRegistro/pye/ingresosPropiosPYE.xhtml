@@ -107,6 +107,10 @@
                                                                  class="btn btn-sm #{ingresosPropPYE.verificaAlineacion(ingPropReg)?'btn-info':'btn-warning'}"
                                                                  icon="fa fa-cog"
                                                                  title="Alineación a POA." />
+                                                <p:commandButton actionListener="#{ingresosProp.editarRegistro(ingProp)}"
+                                                            class="btn btn-sm btn-info" 
+                                                            icon="fa fa-edit"
+                                                            title="Editar registro" />
                                             </div>
                                         </p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{ingProp.cicloEscolar}"/></p:column>
@@ -114,8 +118,7 @@
                                         <p:column style="text-align: center;"><h:outputText value="#{ingProp.ingresosPropiosCaptados.conceptoIngresosCaptados}"/></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{ingProp.ingresosPropiosCaptados.fechaIngreso}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{ingProp.ingresosPropiosCaptados.monto}"><f:convertNumber pattern="¤#,##0.00" currencySymbol="$" /></h:outputText></p:column>
-                                        <p:column><h:outputText value="#{ingProp.ingresosPropiosCaptados.descripcion}"/></p:column>
-                                      
+                                        <p:column style="text-align: justify;"><h:outputText value="#{ingProp.ingresosPropiosCaptados.descripcion}"/></p:column>
                                     </p:dataTable>
                                     <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
                                         <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
@@ -297,6 +300,84 @@
                                 </div>
                             </div>
                         </h:form>
+                    </p:dialog>
+                     <!-- Modal para editar registro seleccionado -->
+                    <p:dialog id="modalEdicion" 
+                              widgetVar="modalEdicion" 
+                              width="1200" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{ingresosProp.dto.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Editar registro" 
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        
+                             <o:form id="frmModalEdicion" enctype="multipart/form-data"> 
+                                        <p:outputPanel>
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-md-12">
+                                                    <div class="box box-widget widget-user-2">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <p:outputLabel for="ciclo" value="Ciclo Escolar:" style="text-align: center;"/>                                
+                                                                    <p:inputText id="ciclo" class="form-control" disabled="true" value="#{ingresosProp.dto.registro.cicloEscolar}"/>
+                                                                    <p:message for="ciclo" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <p:outputLabel for="periodo" value="Periodo Escolar:" style="text-align: center;"/>
+                                                                    <p:inputText id="periodo" class="form-control" disabled="true" value="#{ingresosProp.dto.registro.periodoEscolar}"/>
+                                                                    <p:message for="periodo" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-4 col-lg-3">
+                                                                    <p:outputLabel value="Concepto Ingresos Captados" for="ingCap" style="text-align: center;"/>
+                                                                    <p:inputText id="ingCap" disabled="true" class="form-control" value="#{ingresosProp.dto.registro.ingresosPropiosCaptados.conceptoIngresosCaptados}"/>
+                                                                    <p:message for="ingCap" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-4 col-lg-3">
+                                                                    <p:outputLabel for="fecha" value="Fecha de Ingreso" style="text-align: center;"/>
+                                                                    <p:inputText id="fecha" class="form-control" disabled="true" value="#{ingresosProp.dto.registro.ingresosPropiosCaptados.fechaIngreso}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:inputText>
+                                                                    <p:message for="fecha" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <p:outputLabel for="monto" value="Monto" style="text-align: center;"/>
+                                                                    <p:inputText id="monto" class="form-control" placeholder="Monto" size="12" value="#{ingresosProp.dto.registro.ingresosPropiosCaptados.monto}"><f:convertNumber pattern="¤#,##0.00" currencySymbol="$" /></p:inputText> 
+                                                                    <p:message for="monto" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-9">
+                                                                    <p:outputLabel for="descripcion" value="Descripción" style="text-align: center;"/>
+                                                                    <p:inputText id="descripcion" class="form-control" placeholder="Descripción" size="120" value="#{ingresosProp.dto.registro.ingresosPropiosCaptados.descripcion}"/> 
+                                                                    <p:message for="descripcion" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>  
+                                                                 <div class="col-sm-12 col-md-4 col-lg-3">
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                    <p:commandButton id="btnGuardarEdicion" value="Guardar" actionListener="#{ingresosProp.guardarEdicion()}" 
+                                                                                     icon="fa fa-save" class="btn-primary btn-block col-md-3" oncomplete="PF('frmModalEdicion')update();"
+                                                                                     update="@form"  process="@form" />
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-3 col-lg-3">
+                                                                </div>  
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </p:outputPanel>
+                                    </o:form>
                     </p:dialog>
                 </div>
             </div>

@@ -31,6 +31,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
+import mx.edu.utxj.pye.sgi.entity.pye2.PersonalCapacitado;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -77,6 +78,8 @@ public class ControladorPersonalCapacitado implements Serializable{
     @Getter @Setter private List<ModulosRegistrosUsuarios> listaReg;
     @Getter @Setter private Integer clavePersonal;
     @Getter @Setter private Short claveRegistro;
+    
+    @Getter @Setter private PersonalCapacitado nuevoPerCap;
     
     @PostConstruct
     public void init(){
@@ -378,5 +381,31 @@ public class ControladorPersonalCapacitado implements Serializable{
         if(listaReg == null || listaReg.isEmpty()){
             Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
         }
+    }
+    
+    public void editarRegistro(DTOPersonalCapacitado registro) {
+        dto.setRegistro(registro);
+        nuevoPerCap = dto.getRegistro().getPersonalCapacitado();
+        Ajax.update("frmModalEdicion");
+        Ajax.oncomplete("skin();");
+        dto.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionDialogo();
+    }
+
+    public void forzarAperturaEdicionDialogo() {
+        if (dto.getForzarAperturaDialogo()) {
+            Ajax.oncomplete("PF('modalEdicion').show();");
+            dto.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+
+    public void guardarEdicion() {
+        try {
+            nuevoPerCap = ejb.actualizarPerCap(nuevoPerCap);
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorPersonalCapacitado.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 }

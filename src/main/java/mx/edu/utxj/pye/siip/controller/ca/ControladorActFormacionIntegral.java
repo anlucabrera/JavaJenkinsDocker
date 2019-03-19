@@ -33,6 +33,7 @@ import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesFormacionIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
@@ -79,6 +80,8 @@ public class ControladorActFormacionIntegral implements Serializable{
     @Getter @Setter private List<ModulosRegistrosUsuarios> listaReg;
     @Getter @Setter private Integer clavePersonal;
     @Getter @Setter private Short claveRegistro;
+    
+    @Getter @Setter private ActividadesFormacionIntegral nuevaActFormInt;
     
     @PostConstruct
     public void init(){
@@ -392,6 +395,32 @@ public class ControladorActFormacionIntegral implements Serializable{
         if(listaReg == null || listaReg.isEmpty()){
             Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
         }
+    }
+    
+    public void editarRegistro(DTOActFormacionIntegral registro) {
+        dto.setRegistro(registro);
+        nuevaActFormInt = dto.getRegistro().getActividadesFormacionIntegral();
+        Ajax.update("frmModalEdicion");
+        Ajax.oncomplete("skin();");
+        dto.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionDialogo();
+    }
+
+    public void forzarAperturaEdicionDialogo() {
+        if (dto.getForzarAperturaDialogo()) {
+            Ajax.oncomplete("PF('modalEdicion').show();");
+            dto.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+
+    public void guardarEdicion() {
+        try {
+            nuevaActFormInt = ejb.actualizarActFormInt(nuevaActFormInt);
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorActFormacionIntegral.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
     
 }

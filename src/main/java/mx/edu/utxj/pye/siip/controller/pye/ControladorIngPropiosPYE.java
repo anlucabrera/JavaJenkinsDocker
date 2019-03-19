@@ -13,6 +13,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,6 +31,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.dto.finanzas.DTOIngPropios;
 import mx.edu.utxj.pye.siip.dto.finanzas.DtoIngresosPropios;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
@@ -40,6 +43,7 @@ import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
+import org.primefaces.event.RowEditEvent;
 
 
 /**
@@ -211,5 +215,5 @@ public class ControladorIngPropiosPYE implements Serializable{
             }
         }else Messages.addGlobalError("La alineación no pudo eliminarse.");
     }
-    
+   
 }

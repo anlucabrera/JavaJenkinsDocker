@@ -125,4 +125,12 @@ public interface EjbPersonalCapacitado {
      * @throws Throwable 
      */
     public List<Integer> buscaRegistroEvidenciasPartPersonalCap(String clave) throws Throwable;
+    
+    /**
+     * Método que actualiza el registro seleccionado 
+     * @param nuevoPerCap
+     * @return entity.
+     * @throws java.lang.Throwable
+     */
+    public PersonalCapacitado actualizarPerCap(PersonalCapacitado nuevoPerCap) throws Throwable;
 }

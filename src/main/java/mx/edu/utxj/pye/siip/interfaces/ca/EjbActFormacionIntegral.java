@@ -127,4 +127,12 @@ public interface EjbActFormacionIntegral {
      * @return Devuelve una lista de entities de AreasUniversidad que tienen registros en el mes correspondiente
      */
     public List<AreasUniversidad> getAFIAreasConRegistroMensualGeneral(String mes);
+    
+     /**
+     * Método que actualiza el registro seleccionado 
+     * @param nuevaActFormInt
+     * @return entity.
+     * @throws java.lang.Throwable
+     */
+    public ActividadesFormacionIntegral actualizarActFormInt(ActividadesFormacionIntegral nuevaActFormInt) throws Throwable;
 }

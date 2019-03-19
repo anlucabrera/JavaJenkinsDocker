@@ -31,6 +31,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
+import mx.edu.utxj.pye.sgi.entity.pye2.Presupuestos;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.siip.dto.finanzas.DtoPresupuesto;
@@ -73,6 +74,8 @@ public class ControladorPresupuestos implements Serializable{
     @Getter @Setter private Integer clavePersonal;
     @Getter @Setter private Short claveRegistroPA;
     @Getter @Setter private Short claveRegistroEB;
+    
+    @Getter @Setter private Presupuestos nuevoPresupuesto;
     
     @PostConstruct
     public void init(){
@@ -317,5 +320,31 @@ public class ControladorPresupuestos implements Serializable{
             Ajax.oncomplete("PF('modalCargaEvidencia').show();");
             dto.setForzarAperturaDialogo(Boolean.FALSE);
         }
+    }
+    
+    public void editarRegistro(DTOPresupuestos registro){
+        dto.setRegistro(registro);
+        nuevoPresupuesto = dto.getRegistro().getPresupuestos();
+        Ajax.update("frmModalEdicion");
+        Ajax.oncomplete("skin();");
+        dto.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionDialogo();
+    }
+    
+    public void forzarAperturaEdicionDialogo(){
+        if(dto.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEdicion').show();");
+            dto.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void guardarEdicion() {
+         try {
+            nuevoPresupuesto = ejbPresupuestos.actualizarPresupuesto(nuevoPresupuesto);
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorPresupuestos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 }

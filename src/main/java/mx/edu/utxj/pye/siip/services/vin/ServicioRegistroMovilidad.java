@@ -761,4 +761,13 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
         }
     }
 
+    @Override
+    public RegistrosMovilidad actualizarRegMov(RegistrosMovilidad nuevoRegMov) throws Throwable {
+        f.setEntityClass(RegistrosMovilidad.class);
+        f.edit(nuevoRegMov);
+        f.flush();
+        Messages.addGlobalInfo("El registro se ha actualizado correctamente");
+        return nuevoRegMov;
+    }
+
 }

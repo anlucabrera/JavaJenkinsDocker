@@ -129,8 +129,8 @@
                                                  tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                         <p:columnGroup type="header">
                                             <p:row>
-                                                <p:column rowspan="2" headerText="Opciones" width="100" />
-                                                <p:column rowspan="2" headerText="Clave" footerText="Clave" style="width: 100px;"/>
+                                                <p:column rowspan="2" headerText="Opciones" style="width: 150px;"/>
+                                                <p:column rowspan="2" headerText="Clave" style="width: 100px;"/>
                                                 <p:column rowspan="2" headerText="Programa de Movilidad" style="width: 150px;"/>
                                                 <p:column rowspan="2" headerText="Tipo de Participante" style="width: 150px;"/>
                                                 <p:column rowspan="2" headerText="Tipo de Movilidad" style="width: 150px;"/>
@@ -138,13 +138,13 @@
                                                 <p:column rowspan="2" headerText="Fecha de Término" style="width: 120px;"/>
                                                 <p:column rowspan="2" headerText="Participante" style="width: 200px;"/>
                                                 <p:column rowspan="2" headerText="Programa Educativo" style="width: 350px;"/>
-                                                <p:column rowspan="2" headerText="Periodo Escolar" style="width: 200px;"/>
+                                                <p:column rowspan="2" headerText="Periodo Escolar" style="width: 150px;"/>
                                                 <p:column rowspan="2" headerText="Cuatrimestre Cursado" style="width: 150px;"/>
-                                                <p:column rowspan="2" headerText="Institución u Organización"  style="width: 220px;"/>
+                                                <p:column rowspan="2" headerText="Institución u Organización"  style="width: 300px;"/>
                                                 <p:column rowspan="2" headerText="País" style="width: 100px;"/>
                                                 <p:column rowspan="2" headerText="Ciudad" style="width: 100px;"/>
-                                                <p:column rowspan="2" headerText="Proyecto" style="width: 200px;"/>
-                                                <p:column rowspan="2" headerText="Descripción del Proyecto" style="width: 300px;"/>
+                                                <p:column rowspan="2" headerText="Proyecto" style="width: 250px;"/>
+                                                <p:column rowspan="2" headerText="Descripción del Proyecto" style="width: 350px;"/>
                                                 <p:column colspan="5" headerText="Inversión" style="width: 600px;"/>
                                                 <p:column rowspan="2" headerText="Descripción de Ingresos Extraordinarios" style="width: 300px;"/>
                                             </p:row>
@@ -158,7 +158,7 @@
                                         </p:columnGroup>
                                         <c:set var="regMovEliminado" value="#{regMov.registrosMovilidad.registro}"/>
                                         <c:set var="regMovClave" value="#{regMov.registrosMovilidad.registroMovilidad}"/>
-                                        <p:column style="width: 100px;">
+                                        <p:column style="width: 150px; text-align: center;">
                                             <div class="btn-group">
                                                 <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{registrosMovilidad.eliminarRegistro(regMovEliminado,regMovClave)}" onsuccess="actualizar(); actualizar1(); actualizar2();" title="Eliminar registro." disabled="#{registrosMovilidadPYE.dto.eventoActual ne registrosMovilidadPYE.dto.eventoSeleccionado}">
                                                     <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de Movilidad #{regMov.registrosMovilidad.registroMovilidad}?" icon="ui-icon-alert" />
@@ -172,6 +172,10 @@
                                                                  class="btn btn-sm #{registrosMovilidadPYE.verificaAlineacion(regMovEliminado)?'btn-info':'btn-warning'}"
                                                                  icon="fa fa-cog"
                                                                  title="Alineación a POA." />
+                                                 <p:commandButton actionListener="#{registrosMovilidad.editarRegistro(regMov)}"
+                                                            class="btn btn-sm btn-info" 
+                                                            icon="fa fa-edit"
+                                                            title="Editar registro" />
                                             </div>
                                         </p:column>
                                         <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.registroMovilidad}"/></p:column> 
@@ -182,13 +186,13 @@
                                         <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
                                         <p:column style="width: 200px;"><h:outputText value="#{regMov.registrosMovilidad.participante}"/></p:column>
                                         <p:column style="width: 350px;"><h:outputText value="#{regMov.areasUniversidad.nombre}"/></p:column>
-                                        <p:column style="width: 200px; text-align: center;"><h:outputText value="#{regMov.periodosEscolares.mesInicio.mes} - #{regMov.periodosEscolares.mesFin.mes}"/></p:column>
+                                        <p:column style="width: 150px; text-align: center;"><h:outputText value="#{regMov.periodosEscolares.mesInicio.mes} - #{regMov.periodosEscolares.mesFin.mes}"/></p:column>
                                         <p:column style="width: 150px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.cuatrimestreCursado}"/></p:column>
-                                        <p:column style="width: 220px;"><h:outputText value="#{regMov.registrosMovilidad.institucionOrganizacion}"/></p:column>
+                                        <p:column style="width: 300px;"><h:outputText value="#{regMov.registrosMovilidad.institucionOrganizacion}"/></p:column>
                                         <p:column style="width: 100px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.estado.idpais.nombre}"/></p:column>
                                         <p:column style="width: 100px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.estado.nombre}"/></p:column>
-                                        <p:column style="width: 200px;"><h:outputText value="#{regMov.registrosMovilidad.proyecto}"/></p:column>
-                                        <p:column style="width: 300px;"><h:outputText value="#{regMov.registrosMovilidad.descripcion}"/></p:column>
+                                        <p:column style="width: 250px;"><h:outputText value="#{regMov.registrosMovilidad.proyecto}"/></p:column>
+                                        <p:column style="width: 350px;"><h:outputText value="#{regMov.registrosMovilidad.descripcion}"/></p:column>
                                         <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.presEst}"/></p:column>
                                         <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.presFed}"/></p:column>
                                         <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.capDer}"/></p:column>
@@ -680,6 +684,132 @@
                             </h:form>
                         </div>
                     </div>
+                       <!-- Modal para editar registro seleccionado -->
+                    <p:dialog id="modalEdicion" 
+                              widgetVar="modalEdicion" 
+                              width="1200" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{registrosMovilidad.dto.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Editar registro" 
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        
+                             <o:form id="frmModalEdicion" enctype="multipart/form-data"> 
+                                        <p:outputPanel>
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-md-12">
+                                                    <div class="box box-widget widget-user-2">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <p:outputLabel for="clave" value="Clave"/>                                
+                                                                    <p:inputText id="clave" class="form-control" disabled="true" value="#{registrosMovilidad.dto.registro.registrosMovilidad.registroMovilidad}"/>
+                                                                    <p:message for="clave" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <p:outputLabel for="progMov" value="Programa de Movilidad"/>
+                                                                    <p:inputText id="progMov" class="form-control" disabled="true" value="#{registrosMovilidad.dto.registro.registrosMovilidad.programaMovilidad.nombre}"/>
+                                                                    <p:message for="progMov" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <p:outputLabel value="Tipo de Participante" for="tipoPart"/>
+                                                                    <p:inputText id="tipoPart" disabled="true" class="form-control" value="#{registrosMovilidad.dto.registro.registrosMovilidad.tipoParticipante}"/>
+                                                                    <p:message for="tipoPart" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <p:outputLabel for="tipoMov" value="Tipo de Movilidad"/>
+                                                                    <p:inputText id="tipoMov" class="form-control" disabled="true" value="#{registrosMovilidad.dto.registro.registrosMovilidad.tipoMovilidad}"/>
+                                                                    <p:message for="tipoMov" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                 <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="participacion" value="Participante"/>
+                                                                    <p:inputText id="participacion" class="form-control" placeholder="Participante" size="250" value="#{registrosMovilidad.dto.registro.registrosMovilidad.participante}"/> 
+                                                                    <p:message for="participacion" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>  
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="instOrg" value="Institución u Organización"/>
+                                                                    <p:inputText id="instOrg" class="form-control" placeholder="Institución u Organización" size="150" value="#{registrosMovilidad.dto.registro.registrosMovilidad.institucionOrganizacion}"/> 
+                                                                    <p:message for="instOrg" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="proyecto" value="Proyecto"/>
+                                                                    <p:inputText id="proyecto" class="form-control" placeholder="Proyecto" size="50" value="#{registrosMovilidad.dto.registro.registrosMovilidad.proyecto}"/> 
+                                                                    <p:message for="proyecto" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>  
+                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                    <p:outputLabel for="descripcion" value="Descripción"/>
+                                                                    <p:inputTextarea id="descripcion" class="form-control" placeholder="Descripción" maxlength="250" value="#{registrosMovilidad.dto.registro.registrosMovilidad.descripcion}"/> 
+                                                                    <p:message for="descripcion" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <p:outputLabel for="presEst" value="Presupuesto Estatal"/>
+                                                                    <p:inputText id="presEst" class="form-control" placeholder="Presupuesto Estatal" size="12" value="#{registrosMovilidad.dto.registro.registrosMovilidad.presEst}"/> 
+                                                                    <p:message for="presEst" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>  
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <p:outputLabel for="presFed" value="Presupuesto Federal"/>
+                                                                    <p:inputText id="presFed" class="form-control" placeholder="Presupuesto Federal" size="12" value="#{registrosMovilidad.dto.registro.registrosMovilidad.presFed}"/> 
+                                                                    <p:message for="presFed" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>  
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <p:outputLabel for="capDer" value="Captación de Derechos"/>
+                                                                    <p:inputText id="capDer" class="form-control" placeholder="Captación de Derechos" size="12" value="#{registrosMovilidad.dto.registro.registrosMovilidad.capDer}"/> 
+                                                                    <p:message for="capDer" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>  
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <p:outputLabel for="ingProp" value="Ingresos Propios"/>
+                                                                    <p:inputText id="ingProp" class="form-control" placeholder="Ingresos Propios" size="12" value="#{registrosMovilidad.dto.registro.registrosMovilidad.ingPropios}"/> 
+                                                                    <p:message for="ingProp" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>  
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <p:outputLabel for="ingExtra" value="Ingresos Extraordinarios"/>
+                                                                    <p:inputText id="ingExtra" class="form-control" placeholder="Ingresos Extraordinarios" size="12" value="#{registrosMovilidad.dto.registro.registrosMovilidad.ingExtra}"/> 
+                                                                    <p:message for="ingExtra" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>  
+                                                                <div class="col-sm-12 col-md-12 col-lg-9">
+                                                                    <p:outputLabel for="desExtra" value="Descripción Extraordinarios"/>
+                                                                    <p:inputText id="desExtra" class="form-control" placeholder="Descripción Extraordinarios" maxlength="255" value="#{registrosMovilidad.dto.registro.registrosMovilidad.descripcionIngExt}"/> 
+                                                                    <p:message for="desExtra" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>  
+                                                                 <div class="col-sm-12 col-md-4 col-lg-3">
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                    <p:commandButton id="btnGuardarEdicion" value="Guardar" actionListener="#{registrosMovilidad.guardarEdicion()}" 
+                                                                                     icon="fa fa-save" class="btn-primary btn-block col-md-3" oncomplete="PF('frmModalEdicion')update();"
+                                                                                     update="@form"  process="@form" />
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-3 col-lg-3">
+                                                                </div>  
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </p:outputPanel>
+                                    </o:form>
+                    </p:dialog>
                 </div>
             </div>
         </div>

@@ -14,6 +14,7 @@
         <ui:param name="renderBreadCrumb" value="true"/>        
         <h:outputStylesheet library="css" name="tablaDatos.css" />
         <h:outputScript library="js" name="dialogs.js" />
+        <h:outputScript library="js" name="calendario.js" />
     </ui:define>
     <ui:define name="title">
         Presupuesto
@@ -100,6 +101,10 @@
                                                                  class="btn btn-sm #{presupuestosEjercicioPYE.verificaAlineacion(presReg)?'btn-info':'btn-warning'}"
                                                                  icon="fa fa-cog"
                                                                  title="Alineación a POA." />
+                                                <p:commandButton actionListener="#{presupuestosEjercicio.editarRegistro(presupuesto)}"
+                                                            class="btn btn-sm btn-info" 
+                                                            icon="fa fa-edit"
+                                                            title="Editar registro" />
 
                                             </div>
                                         </p:column>
@@ -284,7 +289,85 @@
                             </div>
                         </h:form>
                     </p:dialog>
-
+                     <!-- Modal para editar registro seleccionado -->
+                    <p:dialog id="modalEdicion" 
+                              widgetVar="modalEdicion" 
+                              width="1200" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{presupuestosEjercicio.dto.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Editar registro" 
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        
+                             <o:form id="frmModalEdicion" enctype="multipart/form-data"> 
+                                        <p:outputPanel>
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-md-12">
+                                                    <div class="box box-widget widget-user-2">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <p:outputLabel for="operacion" value="Operación de Presupuesto"/>                                
+                                                                    <p:inputText id="operacion" class="form-control" disabled="true" value="#{presupuestosEjercicio.dto.registro.presupuestos.presupuestoOperacion}"/>
+                                                                    <p:message for="operacion" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <p:outputLabel for="presupuesto" value="Tipo de Presupuesto"/>
+                                                                    <p:inputText id="presupuesto" class="form-control" disabled="true" value="#{presupuestosEjercicio.dto.registro.presupuestos.presupuestoTipo}"/>
+                                                                    <p:message for="presupuesto" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-4 col-lg-3">
+                                                                    <p:outputLabel value="Tipo de Capítulo" for="capitulo"/>
+                                                                    <p:inputText id="capitulo" disabled="true" class="form-control" value="#{presupuestosEjercicio.dto.registro.presupuestos.capituloTipo.nombre}"/>
+                                                                    <p:message for="capitulo" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-4 col-lg-3">
+                                                                    <p:outputLabel value="Fecha de Aplicación" for="fecha"/>
+                                                                    <p:inputText disabled="true" value="#{presupuestosEjercicio.dto.registro.presupuestos.fechaAplicacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:inputText>
+<!--                                                                    <p:calendar locale="es" id="fecha" value="# {presupuestosEjercicio.dto.registro.presupuestos.fechaAplicacion}" pattern="yyyy-MM-dd" mask="true"/>-->
+                                                                    <p:message for="fecha" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <p:outputLabel for="monto" value="Monto"/>
+                                                                    <p:inputText id="monto" class="form-control" placeholder="Monto" size="12" value="#{presupuestosEjercicio.dto.registro.presupuestos.monto}"><f:convertNumber pattern="¤#,##0.00" currencySymbol="$" /></p:inputText> 
+                                                                    <p:message for="monto" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-9">
+                                                                    <p:outputLabel for="observaciones" value="Observaciones"/>
+                                                                    <p:inputText id="observaciones" class="form-control" placeholder="Observaciones" size="255" value="#{presupuestosEjercicio.dto.registro.presupuestos.observaciones}"/> 
+                                                                    <p:message for="observaciones" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>  
+                                                                 <div class="col-sm-12 col-md-4 col-lg-3">
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                    <p:commandButton id="btnGuardarEdicion" value="Guardar" actionListener="#{presupuestosEjercicio.guardarEdicion()}" 
+                                                                                     icon="fa fa-save" class="btn-primary btn-block col-md-3" oncomplete="PF('frmModalEdicion')update();"
+                                                                                     update="@form"  process="@form" />
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-3 col-lg-3">
+                                                                </div>  
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </p:outputPanel>
+                                    </o:form>
+                    </p:dialog>
                 </div>
             </div>
         </div>
