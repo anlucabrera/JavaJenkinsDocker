@@ -568,4 +568,13 @@ public class ServicioPersonalCapacitado implements EjbPersonalCapacitado{
         }
     }
 
+    @Override
+    public PersonalCapacitado actualizarPerCap(PersonalCapacitado nuevoPerCap) throws Throwable {
+        f.setEntityClass(PersonalCapacitado.class);
+        f.edit(nuevoPerCap);
+        f.flush();
+        Messages.addGlobalInfo("El registro se ha actualizado correctamente");
+        return nuevoPerCap;
+    }
+
 }

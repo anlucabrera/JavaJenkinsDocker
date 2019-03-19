@@ -57,4 +57,12 @@ public interface EjbPresupuestos {
      * @return Lista de registros.
      */
    public List<DTOPresupuestos> getRegistroDTOPresupuestos(String mes, Short ejercicio);
+   
+    /**
+     * Método que actualiza el registro seleccionado 
+     * @param nuevoPresupuesto
+     * @return entity.
+     * @throws java.lang.Throwable
+     */
+    public Presupuestos actualizarPresupuesto(Presupuestos nuevoPresupuesto) throws Throwable;
 }

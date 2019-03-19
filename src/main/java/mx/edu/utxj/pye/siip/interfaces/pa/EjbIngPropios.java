@@ -78,4 +78,11 @@ public interface EjbIngPropios {
      */
     public Map.Entry<List<PeriodosEscolares>,List<EventosRegistros>> comprobarEventoActual(List<PeriodosEscolares> periodos, List<EventosRegistros> eventos, EventosRegistros eventoActual) throws PeriodoEscolarNecesarioNoRegistradoException;
     
+    /**
+     * Método que actualiza el registro seleccionado 
+     * @param nuevoIngPropios
+     * @return entity.
+     * @throws java.lang.Throwable
+     */
+    public IngresosPropiosCaptados actualizarIngPropios(IngresosPropiosCaptados nuevoIngPropios) throws Throwable;
 }

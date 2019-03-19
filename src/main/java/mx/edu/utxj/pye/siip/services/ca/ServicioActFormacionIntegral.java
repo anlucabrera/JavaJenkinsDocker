@@ -617,4 +617,13 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
             return Collections.EMPTY_LIST;
         }
     }
+
+    @Override
+    public ActividadesFormacionIntegral actualizarActFormInt(ActividadesFormacionIntegral nuevaActFormInt) throws Throwable {
+        f.setEntityClass(ActividadesFormacionIntegral.class);
+        f.edit(nuevaActFormInt);
+        f.flush();
+        Messages.addGlobalInfo("El registro se ha actualizado correctamente");
+        return nuevaActFormInt;
+    }
 }

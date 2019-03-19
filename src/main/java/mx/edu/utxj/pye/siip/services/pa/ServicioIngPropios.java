@@ -364,4 +364,13 @@ public class ServicioIngPropios implements EjbIngPropios{
         return map.entrySet().iterator().next();
     }
 
+    @Override
+    public IngresosPropiosCaptados actualizarIngPropios(IngresosPropiosCaptados nuevoIngPropios) throws Throwable {
+        f.setEntityClass(IngresosPropiosCaptados.class);
+        f.edit(nuevoIngPropios);
+        f.flush();
+        Messages.addGlobalInfo("El registro se ha actualizado correctamente");
+        return nuevoIngPropios;
+    }
+
 }

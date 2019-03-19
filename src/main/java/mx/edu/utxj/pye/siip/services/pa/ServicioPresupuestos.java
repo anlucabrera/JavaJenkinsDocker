@@ -316,5 +316,14 @@ public class ServicioPresupuestos implements EjbPresupuestos{
         }
           return genLst;
     }
+    
+    @Override
+    public Presupuestos actualizarPresupuesto(Presupuestos nuevoPresupuesto) throws Throwable {
+        f.setEntityClass(Presupuestos.class);
+        f.edit(nuevoPresupuesto);
+        f.flush();
+        Messages.addGlobalInfo("El registro se ha actualizado correctamente");
+        return nuevoPresupuesto;
+    }
 
 }
