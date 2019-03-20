@@ -10,7 +10,6 @@ import javax.ejb.Local;
 import javax.faces.model.SelectItem;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMaterias;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.saiiut.entity.VistaEvaluacionDocenteMateriaPye;
@@ -68,9 +67,9 @@ public interface EJBEvaluacionDocenteMateria {
      *
      * @return
      */
-    public EvaluacionDocentesMaterias evaluacionActiva();
+    public Evaluaciones evaluacionActiva();
     
-    public EvaluacionDocentesMaterias ultimaEvaluacionDocenteMaterias(); 
+    public Evaluaciones ultimaEvaluacionDocenteMaterias();
 
     /**
      * obtiene los datos del docente y la materia que se evaluara
@@ -115,7 +114,7 @@ public interface EJBEvaluacionDocenteMateria {
      * @param datosEvaluador
      * @param docentesEvaluados
      */
-    public void cargarResultadosAlmacenados(EvaluacionDocentesMaterias evaluacion, VistaEvaluacionDocenteMateriaPye datosEvaluador, List<VistaEvaluacionDocenteMateriaPye> docentesEvaluados);
+    public void cargarResultadosAlmacenados(Evaluaciones evaluacion, VistaEvaluacionDocenteMateriaPye datosEvaluador, List<VistaEvaluacionDocenteMateriaPye> docentesEvaluados);
 
     /**
      * obtiene los resultado de la evaluacion por evaluador
@@ -124,9 +123,9 @@ public interface EJBEvaluacionDocenteMateria {
      * @param docentes
      * @return
      */
-    public List<EvaluacionDocentesMateriaResultados> obtenerListaResultadosPorEvaluacionEvaluador(EvaluacionDocentesMaterias evaluaciones, VistaEvaluacionDocenteMateriaPye docentes);
+    public List<EvaluacionDocentesMateriaResultados> obtenerListaResultadosPorEvaluacionEvaluador(Evaluaciones evaluaciones, VistaEvaluacionDocenteMateriaPye docentes);
 
-    public List<EvaluacionDocentesMateriaResultados> obtenerListaResultadosPorEvaluacionEvaluador(EvaluacionDocentesMaterias evaluaciones, Integer matricula);
+    public List<EvaluacionDocentesMateriaResultados> obtenerListaResultadosPorEvaluacionEvaluador(Evaluaciones evaluaciones, Integer matricula);
 
     /**
      *Comprueba si el resultado de la evaluacion es satisfactoria

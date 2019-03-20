@@ -16,9 +16,10 @@ import javax.faces.model.SelectItem;
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
+
+import mx.edu.utxj.pye.sgi.controlador.Evaluacion;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.dto.TipoCuestionario;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMaterias;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultadosPK;
@@ -129,7 +130,7 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
 
     @Override
     public EvaluacionDocentesMateriaResultados getResultados(Evaluaciones evaluacion, VistaEvaluacionDocenteMateriaPye docenteMateriaPye) {
-        TypedQuery<EvaluacionDocentesMateriaResultados> q = f.getEntityManager().createQuery("SELECT e FROM EvaluacionDocentesMateriaResultados e WHERE e.pk.evaluacion=:evaluacion AND e.pk.evaluador=:evaluador AND e.pk.evaluado=:evaluado", EvaluacionDocentesMateriaResultados.class);
+        TypedQuery<EvaluacionDocentesMateriaResultados> q = f.getEntityManager().createQuery("SELECT e FROM EvaluacionDocentesMateriaResultados e WHERE e.evaluacionDocentesMateriaResultadosPK.evaluacion=:evaluacion AND e.evaluacionDocentesMateriaResultadosPK.evaluador=:evaluador AND e.evaluacionDocentesMateriaResultadosPK.evaluado=:evaluado", EvaluacionDocentesMateriaResultados.class);
         q.setParameter("evaluacion", evaluacion.getEvaluacion());
         q.setParameter("evaluador", Integer.parseInt(docenteMateriaPye.getMatricula()));
         q.setParameter("evaluador", Integer.parseInt(docenteMateriaPye.getNumeroNomina()));
@@ -145,12 +146,12 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
     }
 
     @Override
-    public EvaluacionDocentesMaterias evaluacionActiva() {
-        StoredProcedureQuery spq = f.getEntityManager().createStoredProcedureQuery("buscar_evaluacion_docentes_materia_activa", EvaluacionDocentesMaterias.class);
-        List<EvaluacionDocentesMaterias> l = spq.getResultList();
+    public Evaluaciones evaluacionActiva() {
+        StoredProcedureQuery spq = f.getEntityManager().createStoredProcedureQuery("buscar_evaluacion_docentes_materia_activa", Evaluaciones.class);
+        List<Evaluaciones> l = spq.getResultList();
         if (l == null || l.isEmpty()) {
 //            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDocenteMateria.evaluacionActiva() la evaluacion es nula");
-            return new EvaluacionDocentesMaterias();
+            return new Evaluaciones();
         } else {
 //            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDocenteMateria.evaluacionActiva() la evaluacion activa es : " + l.get(0).getEvaluacion());
 
@@ -159,9 +160,9 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
     }
 
     @Override
-    public EvaluacionDocentesMaterias ultimaEvaluacionDocenteMaterias() {
-        TypedQuery<EvaluacionDocentesMaterias> q = f.getEntityManager().createQuery("SELECT e FROM EvaluacionDocentesMaterias e ORDER BY e.evaluacion DESC", EvaluacionDocentesMaterias.class);
-        List<EvaluacionDocentesMaterias> l = q.getResultList();
+    public Evaluaciones ultimaEvaluacionDocenteMaterias() {
+        TypedQuery<Evaluaciones> q = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones e ORDER BY e.evaluacion DESC", Evaluaciones.class);
+        List<Evaluaciones> l = q.getResultList();
         return l.get(0);
     }
 
@@ -373,7 +374,7 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
     }
 
     @Override
-    public void cargarResultadosAlmacenados(EvaluacionDocentesMaterias evaluacion, VistaEvaluacionDocenteMateriaPye datosEvaluador, List<VistaEvaluacionDocenteMateriaPye> docentesEvaluados) {
+    public void cargarResultadosAlmacenados(Evaluaciones evaluacion, VistaEvaluacionDocenteMateriaPye datosEvaluador, List<VistaEvaluacionDocenteMateriaPye> docentesEvaluados) {
         try {
 //            System.out.println("entra al try");
             List<String> claves = new SerializableArrayList<>();
@@ -382,7 +383,7 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
                 claves.add(lr.getNumeroNomina());
                 materias.add(lr.getCveMateria());
             });
-            TypedQuery<EvaluacionDocentesMateriaResultados> q = f.getEntityManager().createQuery("SELECT e FROM EvaluacionDocentesMateriaResultados e WHERE e.pk.evaluacion=:evaluacion and e.pk.evaluador=:evaluador and e.pk.cveMateria in :cveMateria ", EvaluacionDocentesMateriaResultados.class);
+            TypedQuery<EvaluacionDocentesMateriaResultados> q = f.getEntityManager().createQuery("SELECT e FROM EvaluacionDocentesMateriaResultados e WHERE e.evaluacionDocentesMateriaResultadosPK.evaluacion=:evaluacion and e.evaluacionDocentesMateriaResultadosPK.evaluador=:evaluador and e.evaluacionDocentesMateriaResultadosPK.cveMateria in :cveMateria ", EvaluacionDocentesMateriaResultados.class);
             q.setParameter("evaluacion", evaluacion.getEvaluacion());
             q.setParameter("cveMateria", materias);
             q.setParameter("evaluador", Integer.parseInt(datosEvaluador.getMatricula()));
@@ -405,12 +406,13 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
                 evaluacion.getEvaluacionDocentesMateriaResultadosList().add(der);
             });
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDocenteMateria.cargarResultadosAlmacenados() no se cargaron los resultados");
         }
     }
 
     @Override
-    public List<EvaluacionDocentesMateriaResultados> obtenerListaResultadosPorEvaluacionEvaluador(EvaluacionDocentesMaterias evaluaciones, VistaEvaluacionDocenteMateriaPye docentes) {
+    public List<EvaluacionDocentesMateriaResultados> obtenerListaResultadosPorEvaluacionEvaluador(Evaluaciones evaluaciones, VistaEvaluacionDocenteMateriaPye docentes) {
         StoredProcedureQuery q = f.getEntityManager().createStoredProcedureQuery("obtener_lista_resultados_evaluacion_docentes_materia", EvaluacionDocentesMateriaResultados.class).
                 registerStoredProcedureParameter("par_evaluacion", Integer.class, ParameterMode.IN).setParameter("par_evaluacion", evaluaciones.getEvaluacion()).
                 registerStoredProcedureParameter("par_evaluador", Integer.class, ParameterMode.IN).setParameter("par_evaluador", Integer.parseInt(docentes.getMatricula()));
@@ -471,7 +473,7 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
     }
 
     @Override
-    public List<EvaluacionDocentesMateriaResultados> obtenerListaResultadosPorEvaluacionEvaluador(EvaluacionDocentesMaterias evaluaciones, Integer matricula) {
+    public List<EvaluacionDocentesMateriaResultados> obtenerListaResultadosPorEvaluacionEvaluador(Evaluaciones evaluaciones, Integer matricula) {
         StoredProcedureQuery q = f.getEntityManager().createStoredProcedureQuery("obtener_lista_resultados_evaluacion_docentes_materia", EvaluacionDocentesMateriaResultados.class).
                 registerStoredProcedureParameter("par_evaluacion", Integer.class, ParameterMode.IN).setParameter("par_evaluacion", evaluaciones.getEvaluacion()).
                 registerStoredProcedureParameter("par_evaluador", Integer.class, ParameterMode.IN).setParameter("par_evaluador", matricula);

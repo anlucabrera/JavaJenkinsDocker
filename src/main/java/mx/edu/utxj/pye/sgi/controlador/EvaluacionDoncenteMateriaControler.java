@@ -29,8 +29,8 @@ import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.ejb.EJBEvaluacionDocenteMateria;
 import mx.edu.utxj.pye.sgi.ejb.EjbEstudioEgresados;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultadosPK;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMaterias;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados;
+import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
@@ -55,7 +55,7 @@ public class EvaluacionDoncenteMateriaControler implements Serializable {
     @Getter private Integer evaluando = 0;
     @Getter private Boolean cargada = false;
 
-    @Getter private EvaluacionDocentesMaterias evaluacion;
+    @Getter private Evaluaciones evaluacion;
     @Getter private PeriodosEscolares periodoEscolar;
     @Getter private Alumnos estudiante;
     @Getter @Setter private VistaEvaluacionDocenteMateriaPye evaluador, docenteEvaluado, datosEvaluacion, opcionesDocentesEvaluados;
@@ -105,18 +105,18 @@ public class EvaluacionDoncenteMateriaControler implements Serializable {
                     } else {
                         //paso 2 eligir a un estudiante como evaluador
                         evaluador = listaDatosEvaluacion.get(0);
-//         System.out.println("estudiante que evalua : "+evaluador.getNombre() +" "+ evaluador.getApellidoPat()+ " "+ evaluador.getApellidoMat());
+//                        System.out.println("estudiante que evalua : "+evaluador.getNombre() +" "+ evaluador.getApellidoPat()+ " "+ evaluador.getApellidoMat());
 
                         if (listaDatosEvaluacion != null || listaDatosEvaluacion.isEmpty()) {
                             //paso 3 obtener la lista de docentes a evaluar
                             ListaDatosEvaluados = eJBEvaluacionDocenteMateria.getDocenteMAteria(logonMB.getCurrentUser(), eJBEvaluacionDocenteMateria.evaluacionActiva().getPeriodo());
-//            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDoncenteMateriaControler.init() lista de docentes evaluados : " + ListaDatosEvaluados);
+//                            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDoncenteMateriaControler.init() lista de docentes evaluados : " + ListaDatosEvaluados);
 
                             //paso 4 obtener las fotos de los subordinados
                             //se convierte en paso 11 debido a que la lista de docente debe decidirse segun las opciones en pantalla
                             //paso 5 obtener la evaluacion activa
                             evaluacion = eJBEvaluacionDocenteMateria.evaluacionActiva();
-//            System.out.println("obtener la evaluacion activa : " + evaluacion);
+//                            System.out.println("obtener la evaluacion activa : " + evaluacion);
                             if (evaluacion != null) {
                                 //paso 6 obtener periodo activo
                                 facade.setEntityClass(PeriodosEscolares.class);
@@ -128,12 +128,12 @@ public class EvaluacionDoncenteMateriaControler implements Serializable {
                                 clavesOpciones.clear();
                                 for (int i = 0; (i < maxEvaluando && i < ListaDatosEvaluados.size()); i++) {
                                     clavesOpciones.add(Integer.parseInt(ListaDatosEvaluados.get(i).getNumeroNomina()));
-//                System.out.println("Numero de nomina de las primeras cuatro personas evaluadas: " + clavesOpciones);
+//                                    System.out.println("Numero de nomina de las primeras cuatro personas evaluadas: " + clavesOpciones);
                                 }
                                 clavesOpcionesMateria.clear();
                                 for (int i = 0; (i < maxEvaluando && i < ListaDatosEvaluados.size()); i++) {
                                     clavesOpcionesMateria.add(ListaDatosEvaluados.get(i).getCveMateria());
-//                System.out.println("Numero de nomina de las primeras cuatro materias evaluadas: " + clavesOpcionesMateria);
+//                                    System.out.println("Numero de nomina de las primeras cuatro materias evaluadas: " + clavesOpcionesMateria);
                                 }
                                 //paso 9 inicializar las siguientes opciociones
                                 initOpciones();
@@ -176,17 +176,22 @@ public class EvaluacionDoncenteMateriaControler implements Serializable {
     }
 
     private void initRespuestas() {
+//        System.out.println("ListaDatosEvaluados = " + ListaDatosEvaluados);
+//        System.out.println("getEvaluacionDocentesMateriaResultadosList = " + evaluacion.getEvaluacionDocentesMateriaResultadosList());
         ListaDatosEvaluados.stream().map((docenteAEvaluar) -> {
             respuestas.put(docenteAEvaluar.getCveMateria(), new HashMap<>());
 //            System.out.println("impresion de las respuestas : " + respuestas);
             return docenteAEvaluar;
         }).forEachOrdered((docenteAEvaluar) -> {
+//            System.out.println("docenteAEvaluar = " + docenteAEvaluar);
             Integer index = evaluacion.getEvaluacionDocentesMateriaResultadosList().indexOf(new EvaluacionDocentesMateriaResultados(evaluacion.getEvaluacion(), Integer.parseInt(evaluador.getMatricula()), docenteAEvaluar.getCveMateria(), Integer.parseInt(docenteAEvaluar.getNumeroNomina())));
 //            System.out.println("impresion de el index del metodo respuestas : " + index);
-            EvaluacionDocentesMateriaResultados resultado = evaluacion.getEvaluacionDocentesMateriaResultadosList().get(index);
-            for (float fi = 1.0f; fi <= 32.0f; fi++) {
-                respuestas.get(docenteAEvaluar.getCveMateria()).put(fi, eJBEvaluacionDocenteMateria.obtenerRespuestaPorPregunta(resultado, fi));
+            if(index >= 0){
+                EvaluacionDocentesMateriaResultados resultado = evaluacion.getEvaluacionDocentesMateriaResultadosList().get(index);
+                for (float fi = 1.0f; fi <= 32.0f; fi++) {
+                    respuestas.get(docenteAEvaluar.getCveMateria()).put(fi, eJBEvaluacionDocenteMateria.obtenerRespuestaPorPregunta(resultado, fi));
 //                System.out.println("respuestas por docente : " + respuestas);
+                }
             }
         });
     }
@@ -204,7 +209,10 @@ public class EvaluacionDoncenteMateriaControler implements Serializable {
             EvaluacionDocentesMateriaResultados led = new EvaluacionDocentesMateriaResultados(new EvaluacionDocentesMateriaResultadosPK(evaluacion.getEvaluacion(), Integer.parseInt(datosEvaluacion.getMatricula()), datosEvaluacion.getCveMateria(), Integer.parseInt(datosEvaluacion.getNumeroNomina())));
 //            ListaEvaluacionDocentes led = new ListaEvaluacionDocentes(new EvaluacionDocentesMateriaResultadosPK(evaluacion.getEvaluacion(), Integer.parseInt(logonMB.getCurrentUser()), clave, Integer.parseInt(datosEvaluacion.getNumeroNomina())));
 //            System.out.println("impresion antes de agregar el siguiente" + listaDocentesEvaluados.indexOf(led));
-            listaDocentesEvaluando.add(listaDocentesEvaluados.get(listaDocentesEvaluados.indexOf(led)));
+            Integer index = listaDocentesEvaluados.indexOf(led);
+            if(index>=0){
+                listaDocentesEvaluando.add(listaDocentesEvaluados.get(index));
+            }
         });
     }
 
@@ -275,7 +283,7 @@ public class EvaluacionDoncenteMateriaControler implements Serializable {
         clavesOpcionesMateria.clear();
         int total = 0;
         for (EvaluacionDocentesMateriaResultados lpde : listaDocentesEvaluados.stream().filter(personal -> !personal.getCompleto()).collect(Collectors.toList())) {
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.continuarEvaluando() incompleto: " + lpde);
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.continuarEvaluando() incompleto: " + lpde);
             if (total < 4) {
                 clavesOpcionesMateria.add(lpde.getEvaluacionDocentesMateriaResultadosPK().getCveMateria());
                 total++;
@@ -286,7 +294,7 @@ public class EvaluacionDoncenteMateriaControler implements Serializable {
 
         if (clavesOpcionesMateria.size() < 4) {
             for (EvaluacionDocentesMateriaResultados lpde : listaDocentesEvaluados.stream().filter(personal -> personal.getCompleto()).collect(Collectors.toList())) {
-                System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.continuarEvaluando() completo: " + lpde);
+//                System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.continuarEvaluando() completo: " + lpde);
                 if (total < 4) {
                     clavesOpcionesMateria.add(lpde.getEvaluacionDocentesMateriaResultadosPK().getCveMateria());
                     total++;
