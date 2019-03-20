@@ -108,7 +108,7 @@
                                                                                     <p:outputLabel value="Categoria" />
                                                                                     <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorFunciones.asignarPerosnalFunciones}">
                                                                                         <f:selectItem itemValue="0" itemLabel="Todos las funciones"/>
-                                                                                        <f:selectItems value="#{controladorFunciones.categoriasOyEporArea}" var="personal" itemValue="#{personal.clave}" itemLabel="#{personal.areaOperativa} -- #{personal.categoriaOperativa.nombre} -- #{personal.categoriaEspecifica.nombreCategoria}" />
+                                                                                        <f:selectItems value="#{controladorFunciones.categoriasOyEporArea}" var="personal" itemValue="#{personal.clave}" itemLabel="#{controladorFunciones.nombreArea(personal.areaOperativa)} -- #{personal.categoriaOperativa.nombre} -- #{personal.categoriaEspecifica.nombreCategoria}" />
                                                                                         <p:ajax update="@form" oncomplete="actualizarTabla()" listener="#{controladorFunciones.metodoBase()}"/>
                                                                                     </p:selectOneMenu> 
                                                                                     <p:message for="eje" display="tooltip" />
@@ -132,8 +132,8 @@
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputPanel>            
                                                                                         <p:autoUpdate/>
-                                                                                        <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{controladorFunciones.agregarFuncion()}" 
-                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmListaDistinciones')update();" update="@form"  process="@form"
+                                                                                        <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{controladorFunciones.agregarFuncion()}" process="@form"
+                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmListaDistinciones')update();" update="@form"
                                                                                                          disabled="#{controladorFunciones.delateDisable(controladorFunciones.perosnalCategoriasFunciones.categoriaOperativa.categoria)}"/>                                                                                        
                                                                                     </p:outputPanel>                                                                                    
                                                                                 </div>
@@ -209,7 +209,7 @@
                                                         <h:outputText value="#{funciones.categoriaOperativa.nombre}" />
                                                     </p:column>                                         
                                                     <p:column >
-                                                        <h:outputText value="#{funciones.areaOperativa}" />
+                                                        <h:outputText value="#{controladorFunciones.nombreArea(funciones.areaOperativa)}" />
                                                     </p:column>                                      
                                                     <p:column >
                                                         <h:outputText value="#{funciones.categoriaEspesifica.nombreCategoria}" />
@@ -416,7 +416,7 @@
                           hideEffect="fade" resizable="false" width="650" closeOnEscape="true" height="650px"
                           visible="#{controladorFunciones.visibleComentarios}">
                     <p:panelGrid id="pnlAgregarComentario" style="text-align:justify;" columns="1">
-                        <p:outputPanel >
+                        <p:outputPanel rendered="#{controladorFunciones.listaPersonalLogeado.areaOperativa eq 2?false:true}" style="visibility:#{controladorFunciones.listaPersonalLogeado.areaOperativa eq 2?'hidden':'visible'};">
                             <p:autoUpdate/>
                             <div class="col-sm-12 col-md-12 col-lg-12">
                                 <p:outputLabel value="Comentario" for="ct"/>

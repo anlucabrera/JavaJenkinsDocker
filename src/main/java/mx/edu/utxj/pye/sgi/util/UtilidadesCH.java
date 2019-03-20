@@ -23,31 +23,61 @@ import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
 @ViewScoped
 public class UtilidadesCH implements Serializable {
 
-    @EJB    EjbCarga carga;
-    @EJB    private EjbUtilidadesCH ejbDatosUsuarioLogeado;
+    @EJB
+    EjbCarga carga;
+    @EJB
+    private EjbUtilidadesCH ejbDatosUsuarioLogeado;
 
     public LocalDate castearDaLD(Date fecha) {
         return fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    } 
-    
+    }
+
     public Date castearLDaD(LocalDate fecha) {
         return Date.from(fecha.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
-    
+
     public LocalDateTime castearDaLDT(Date fecha) {
         return LocalDateTime.ofInstant(fecha.toInstant(), ZoneId.systemDefault());
-    } 
-    
+    }
+
     public Date castearLDTaD(LocalDateTime fecha) {
         return Date.from(fecha.atZone(ZoneId.systemDefault()).toInstant());
-    } 
-    
+    }
+
+    public Boolean editarIncidencias(LocalDate fechaActual, Date fechaComparacion, Integer tipo) {
+        Integer dias = (int) ((castearLDaD(fechaActual).getTime() - fechaComparacion.getTime()) / 86400000);
+        Integer maximoDirector = 0;
+        Integer maximoEmpleado = 0;
+        switch (castearDaLD(fechaComparacion).getDayOfWeek()) {
+            case MONDAY:                maximoDirector = 3;                maximoEmpleado = 1;                break;
+            case TUESDAY:                maximoDirector = 3;                maximoEmpleado = 1;                break;
+            case WEDNESDAY:                maximoDirector = 5;                maximoEmpleado = 1;                break;
+            case THURSDAY:                maximoDirector = 5;                maximoEmpleado = 1;                break;
+            case FRIDAY:                maximoDirector = 5;                maximoEmpleado = 3;                break;
+            case SATURDAY:                maximoDirector = 4;                maximoEmpleado = 2;                break;
+        }
+                
+        if (tipo == 1) {
+            if (dias <= maximoDirector) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            if (dias <= maximoEmpleado){
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
     public String calculaMinutos(Date time) {
-        LocalDateTime tiempo =castearDaLDT(time);
-        Integer total=(tiempo.getHour()*60)+tiempo.getMinute();  
+        LocalDateTime tiempo = castearDaLDT(time);
+        Integer total = (tiempo.getHour() * 60) + tiempo.getMinute();
         return total.toString();
     }
-    
+
     public Integer obtenerEdad(Date fechaNa) {
         try {
             LocalDate fechaActual = LocalDate.now();

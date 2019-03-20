@@ -115,9 +115,9 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
         q.setParameter("areaOperativa", area);
         q.setParameter("areaSuperior", area);
         List<PersonalCategorias> pr = q.getResultList();
-       if (pr.isEmpty() ) {
-          pr=new ArrayList<>();
-        } 
+        if (pr.isEmpty()) {
+            pr = new ArrayList<>();
+        }
         return pr;
     }
 
@@ -130,6 +130,17 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
     }
 
 ////////////////////////////////////////////////////////////////////////////////Bitacora Accesos
+    @Override
+    public List<Bitacoraacceso> mostrarBitacoraacceso(String tabla) throws Throwable {
+        TypedQuery<Bitacoraacceso> q = em.createQuery("SELECT b FROM Bitacoraacceso b WHERE b.tabla=:tabla", Bitacoraacceso.class);
+        q.setParameter("tabla", tabla);
+        List<Bitacoraacceso> pr = q.getResultList();
+        if (pr.isEmpty()) {
+            pr = new ArrayList<>();
+        }
+        return pr;
+    }
+
     @Override
     public Bitacoraacceso crearBitacoraacceso(Bitacoraacceso nuevoBitacoraacceso) throws Throwable {
         facade.setEntityClass(Bitacoraacceso.class);

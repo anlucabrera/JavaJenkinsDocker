@@ -248,7 +248,7 @@ public class ControladorFunciones implements Serializable {
     ////////////////////////////////////////////////////////////////////////////Herramientas administrativas
     public Boolean comentDisable(Short cat) {
         Boolean tipo = true;
-        if (listaPersonalLogeado.getAreaOperativa() >= 23 && listaPersonalLogeado.getAreaOperativa() <= 29) {
+        if ((listaPersonalLogeado.getAreaOperativa() >= 23 && listaPersonalLogeado.getAreaOperativa() <= 29) || listaPersonalLogeado.getAreaOperativa() == 2) {
             if (cat == 30 || cat == 32 || cat == 41) {
                 tipo = false;
             }
@@ -313,6 +313,22 @@ public class ControladorFunciones implements Serializable {
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause());
             Logger.getLogger(ControladorFunciones.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public String nombreArea(Short clave) {
+        try {
+            AreasUniversidad areasUniversidad = new AreasUniversidad();
+            areasUniversidad = ejbAreasLogeo.mostrarAreasUniversidad(clave);
+            if(areasUniversidad.getCategoria().getCategoria()==9 || areasUniversidad.getArea()==61){
+                return "Áreas Academicas";
+            }else{
+            return areasUniversidad.getNombre();
+            }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
         }
     }
 

@@ -108,20 +108,33 @@ public class ControladorIncidenciasPersonal implements Serializable {
             } else {
                 fechaI = LocalDate.of(fechaActual.getYear(), fechaActual.getMonthValue(), 16);
                 fechaF = LocalDate.of(fechaActual.getYear(), fechaActual.getMonthValue(), LocalDate.of(fechaActual.getYear(), fechaActual.getMonthValue(), 01).lengthOfMonth());
-            }         
-            
+            }
+
             if (!listaIncidencias.isEmpty()) {
                 listaIncidencias.forEach((i) -> {
                     if ((utilidadesCH.castearDaLD(i.getFecha()).isAfter(fechaI) || utilidadesCH.castearDaLD(i.getFecha()).equals(fechaI)) && (utilidadesCH.castearDaLD(i.getFecha()).isBefore(fechaF) || utilidadesCH.castearDaLD(i.getFecha()).equals(fechaF))) {
                         incidenciases.add(i);
                     }
+                    if (!utilidadesCH.editarIncidencias(fechaActual, i.getFecha(), 1)) {
+                        if (i.getEstatus().equals("Pendiente")) {
+                            try {
+                                i.setEstatus("Denegado");
+                                ejbNotificacionesIncidencias.actualizarIncidencias(i);
+                                utilidadesCH.agregaBitacora(0, i.getIncidenciaID().toString(), "Incidencias", "Update");
+                            } catch (Throwable ex) {
+                                Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+                                Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    }
                 });
             }
+
             if (!incidenciases.isEmpty()) {
                 if (incidenciases.size() >= 2) {
                     registro = false;
                 }
-            }
+            } 
             List<Incidencias> list1 = new ArrayList<>();
             List<Incidencias> list2 = new ArrayList<>();
             numeroCU = ejbNotificacionesIncidencias.mostrarCuidadosTotales().size() + 1;
@@ -196,7 +209,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
                                 return;
                             }
                             break;
-                            case "Salida anticipada":
+                        case "Salida anticipada":
                             if (actual.getHour() >= 8) {
                                 Messages.addGlobalWarn("¡La Salida anticipada no puede ser igual o mayor a las 8 horas, en dado caso es una Inasistencia!");
                                 return;
@@ -204,17 +217,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
                             break;
                     }
                     nuevOBJIncidencias.setTiempo(utilidadesCH.castearLDTaD(actual));
-                    Integer dias = (int) ((utilidadesCH.castearLDaD(fechaActual).getTime() - nuevOBJIncidencias.getFecha().getTime()) / 86400000);
-                    Integer maximo = 0;
-                    switch (utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getDayOfWeek()) {
-                        case MONDAY:                    maximo = 1;                    break;
-                        case TUESDAY:                    maximo = 1;                    break;
-                        case WEDNESDAY:                    maximo = 1;                    break;
-                        case THURSDAY:                    maximo = 1;                    break;
-                        case FRIDAY:                    maximo = 3;                    break;
-                        case SATURDAY:                    maximo = 2;                    break;
-            }
-                    if (dias <= maximo) {
+                    if (utilidadesCH.editarIncidencias(fechaActual, nuevOBJIncidencias.getFecha(), 2)) {
                         nuevOBJIncidencias = ejbNotificacionesIncidencias.agregarIncidencias(nuevOBJIncidencias);
                         utilidadesCH.agregaBitacora(usuario, nuevOBJIncidencias.getIncidenciaID().toString(), "Incidencias", "Insert");
                         nuevOBJIncidencias = new Incidencias();
@@ -283,17 +286,7 @@ public class ControladorIncidenciasPersonal implements Serializable {
                 Messages.addGlobalWarn("¡No se puede registrar una incidencia cuyo tiempo sea mayor a la jornada laboral (8 horas)!");
                 return;
             }
-            Integer dias = (int) ((utilidadesCH.castearLDaD(fechaActual).getTime() - incidencias.getFecha().getTime()) / 86400000);
-            Integer maximo = 0;
-            switch (utilidadesCH.castearDaLD(incidencias.getFecha()).getDayOfWeek()) {
-                case MONDAY:                    maximo = 1;                    break;
-                case TUESDAY:                    maximo = 1;                    break;
-                case WEDNESDAY:                    maximo = 1;                    break;
-                case THURSDAY:                    maximo = 1;                    break;
-                case FRIDAY:                    maximo = 3;                    break;
-                case SATURDAY:                    maximo = 2;                    break;
-            }
-            if (dias <= maximo) {
+            if (utilidadesCH.editarIncidencias(fechaActual, incidencias.getFecha(), 2)) {
                 ejbNotificacionesIncidencias.actualizarIncidencias(incidencias);
                 Messages.addGlobalInfo("¡Operación exitosa!");
             } else {

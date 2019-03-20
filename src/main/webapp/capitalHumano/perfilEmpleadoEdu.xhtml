@@ -173,7 +173,8 @@
                                                                                     <br/>
                                                                                     <p:outputPanel >
                                                                                         <p:autoUpdate/>
-                                                                                        <p:selectOneRadio id="rutas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvEducacion.evidencia}" layout="responsive" columns="2"> 
+                                                                                        <p:selectOneRadio id="rutas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvEducacion.evidencia}" 
+                                                                                                          layout="responsive" columns="2" required="true" requiredMessage="El tipo de evidencia es necesrio para acargar la evidencia"> 
                                                                                             <f:selectItem itemValue = "Cedula" itemDisabled="#{!cvEducacion.formaTyC}" itemLabel = "Cedula #{cvEducacion.nuevoOBJFormacionAcademica.evidenciaCedula eq null?'':'(ya cuenta con el archivo cargado)'}" /> 
                                                                                             <f:selectItem itemValue = "EvidenciaTitulacion" itemLabel = "Evidencia titulacion / culminacion #{cvEducacion.nuevoOBJFormacionAcademica.evidenciaTitulo eq null?'':'(ya cuenta con el archivo cargado)'}" />
                                                                                         </p:selectOneRadio> 

@@ -19,9 +19,12 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
+import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
 import mx.edu.utxj.pye.sgi.entity.ch.Cuidados;
 import mx.edu.utxj.pye.sgi.entity.ch.Incapacidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
+import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Ajax;
@@ -37,6 +40,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
     @Getter    @Setter    private List<Incidencias> listaIncidencias = new ArrayList<>();
     @Getter    @Setter    private List<Incapacidad> listaIncapacidads = new ArrayList<>();
     @Getter    @Setter    private List<Cuidados> listaCuidadoses = new ArrayList<>();
+    @Getter    @Setter    private List<Bitacoraacceso> listaBitacoraaccesos = new ArrayList<>();
     @Getter    @Setter    private List<AreasUniversidad> listaAreasUniversidads = new ArrayList<>();
     @Getter    @Setter    private AreasUniversidad au = new AreasUniversidad();
     @Getter    @Setter    private String[] nombreAr;
@@ -50,6 +54,8 @@ public class ControladorIncidenciasGeneral implements Serializable {
 
 //@EJB    
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbUtilidadesCH;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private EjbAreasLogeo areasLogeo;
 //@Inject
     @Inject    ControladorEmpleado controladorEmpleado;
@@ -124,9 +130,23 @@ public class ControladorIncidenciasGeneral implements Serializable {
                     } else {
                         listaIncidencias.add(t);
                     }
+
+                    if (!utilidadesCH.editarIncidencias(fechaActual, t.getFecha(), 1)) {
+                        if (t.getEstatus().equals("Pendiente")) {
+                            try {
+                                t.setEstatus("Denegado");
+                                ejbNotificacionesIncidencias.actualizarIncidencias(t);
+                                utilidadesCH.agregaBitacora(0,t.getIncidenciaID().toString(), "Incidencias", "Update");
+                            } catch (Throwable ex) {
+                                Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+                                Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    }
+
                 });
             }
-            
+
             listaIncapacidads = new ArrayList<>();
             listaIncapacidads.clear();
             incapacidads = ejbNotificacionesIncidencias.mostrarIncapacidadReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
@@ -161,6 +181,9 @@ public class ControladorIncidenciasGeneral implements Serializable {
                     }
                 });
             }
+            listaBitacoraaccesos=ejbUtilidadesCH.mostrarBitacoraacceso("Incidencias");
+            
+            
             Ajax.update("frmInciGeneral");
             Ajax.update("frmIncaGeneral");
             Ajax.update("frmCuidGeneral");
@@ -239,6 +262,22 @@ public class ControladorIncidenciasGeneral implements Serializable {
         }
     }
 
+    public ListaPersonal buscarPerosnal(Integer clave) {
+        try {
+            ListaPersonal p = new ListaPersonal();
+            if (clave == 0) {
+                p=new ListaPersonal(0, "Sistema", new Date(), 'A', Short.parseShort("0"), 'S', "Sistema", Short.parseShort("6"), "Planeación y Evaluación", Short.parseShort("6"), "Sistema", Short.parseShort("6"), "Planeación y Evaluación", Short.parseShort("6"), "Planeación y Evaluación", Short.parseShort("0"), "Sistema", Short.parseShort("6"), "Sistema", Short.parseShort("6"), "", "", Short.parseShort("0"), Short.parseShort("0"), new Date(), "Sistema", "Sistema", "Sistema", "Sistema", false, false, "Sistema", "Sistema", Short.parseShort("0"), "Sistema");
+            } else {
+            p = ejbPersonal.mostrarListaPersonal(empleadoLogeado);                
+            }
+            return p;
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
     public void novisible() {
         mostrarIncidencias(mes);
     }

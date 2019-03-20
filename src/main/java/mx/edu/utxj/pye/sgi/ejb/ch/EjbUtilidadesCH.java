@@ -41,6 +41,8 @@ public interface EjbUtilidadesCH {
     public PersonalCategorias crearNuevoPersonalCategorias(PersonalCategorias nuevoPersonalCategorias) throws Throwable;
 
 ////////////////////////////////////////////////////////////////////////////////Bitacora Accesos
+    public List<Bitacoraacceso> mostrarBitacoraacceso(String tabla) throws Throwable;
+
     public Bitacoraacceso crearBitacoraacceso(Bitacoraacceso nuevoBitacoraacceso) throws Throwable;
 
 ////////////////////////////////////////////////////////////////////////////////Modulos registro

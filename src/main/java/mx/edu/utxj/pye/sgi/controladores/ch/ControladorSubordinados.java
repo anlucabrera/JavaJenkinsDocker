@@ -208,7 +208,7 @@ public class ControladorSubordinados implements Serializable {
             cuidadoses.clear();
             fechaI = LocalDate.of(anioNumero, Integer.parseInt(mActual), 01);
             fechaF = LocalDate.of(anioNumero, Integer.parseInt(mActual), LocalDate.of(anioNumero, Integer.parseInt(mActual), 01).lengthOfMonth());
-                incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
+            incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
             if (!incidenciases.isEmpty()) {
                 incidenciases.forEach((t) -> {
                     if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
@@ -218,6 +218,18 @@ public class ControladorSubordinados implements Serializable {
                             }
                         } else {
                             listaIncidencias.add(t);
+                        }
+                    }
+                    if (!utilidadesCH.editarIncidencias(fechaNow, t.getFecha(), 1)) {
+                        if (t.getEstatus().equals("Pendiente")) {
+                            try {
+                                t.setEstatus("Denegado");
+                                ejbNotificacionesIncidencias.actualizarIncidencias(t);
+                                utilidadesCH.agregaBitacora(0,t.getIncidenciaID().toString(), "Incidencias", "Update");
+                            } catch (Throwable ex) {
+                                Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+                                Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                         }
                     }
                 });
