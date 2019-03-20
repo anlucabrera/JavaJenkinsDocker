@@ -9,7 +9,7 @@
 
     <ui:define name="head-end">
         <!-- Inicio estilos par proceso electoral -->
-        <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        <!--<link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />-->
         <!-- Fin estilos par proceso electoral -->
         <style type="text/css">
             .ui-datatable .ui-datatable-header {
@@ -114,7 +114,7 @@
                                 </f:ajax>
                                 <p:spacer width="10"/>
                                 <p:remoteCommand name="rc" update="@form" actionListener="#{administrativoEvaluacion.utilAdmin.reload()}"  />
-                                <p:commandButton value="Resultados" id="btnResultado" actionListener="#{administrativoEvaluacion.utilAdmin.renderizarEncuestas()}" process="@this" icon="fa fa-refresh" styleClass="btn-primary"  update="@form" rendered="#{administrativoEvaluacion.utilAdmin.periodoSeleccionado > 0}" oncomplete="rc()"/>
+                                <p:commandButton value="Mostrar resultados" id="btnResultado" actionListener="#{administrativoEvaluacion.utilAdmin.renderizarEncuestas()}" process="@this" icon="fa fa-refresh" styleClass="btn-primary"  update="@form" rendered="#{administrativoEvaluacion.utilAdmin.periodoSeleccionado > 0}" oncomplete="rc()"/>
                             </h:panelGrid> 
 
                         </f:facet>
