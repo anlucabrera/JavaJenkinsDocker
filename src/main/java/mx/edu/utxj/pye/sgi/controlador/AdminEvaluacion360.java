@@ -109,14 +109,14 @@ public class AdminEvaluacion360 implements Serializable {
     }
 
     public void generaEvaluacion360() {
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.generaEvaluacion360() entra a la generacion de combinaciones");
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.generaEvaluacion360() entra a la generacion de combinaciones");
         evaluacionActiva = ejbEvaluacion3601.evaluacionActiva();
         if (evaluacionActiva != null) {
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.generaEvaluacion360() la evaluacion esta activa");
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.generaEvaluacion360() la evaluacion esta activa");
         }
         resultados = ejbEvaluacion360Combinaciones.generar(nuevaEvaluacion);
         configurado = ejbEvaluacion360Combinaciones.detectarConfiguracion(nuevaEvaluacion);
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.init() hay configuracion: " + configurado);
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.init() hay configuracion: " + configurado);
 
         if (!configurado) {
             ejbEvaluacion360Combinaciones.guardarCombinaciones(resultados);
@@ -134,17 +134,17 @@ public class AdminEvaluacion360 implements Serializable {
     }
 
     public void genera360() {
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.genera360() entra al metodo antes del if");
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.genera360() entra al metodo antes del if");
         if (periodoEvaluacion == null || fechaA == null || fechaB == null) {
             Messages.addGlobalWarn("Asegurese de completar los campos antes de crear la encuesta");
         } else {
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.genera360() entra al metodo para insertar");
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.genera360() entra al metodo para insertar");
             nueva360 = new Evaluaciones360();
             nueva360.setEvaluacion(0);
             nueva360.setPeriodo(periodoEvaluacion);
             nueva360.setFechaInicio(fechaA);
             nueva360.setFechaFin(fechaB);
-            System.out.println("datos de evaluacion periodo, fecha a, fecha b... " + periodoEvaluacion + " f " + fechaA + " fb " + fechaB);
+//            System.out.println("datos de evaluacion periodo, fecha a, fecha b... " + periodoEvaluacion + " f " + fechaA + " fb " + fechaB);
             nuevaEvaluacion = ejbAdministracionEncuestas.nuevaEvaluacion360(nueva360);
             generaEvaluacion360();
         }
@@ -156,7 +156,7 @@ public class AdminEvaluacion360 implements Serializable {
         nuevaDesempenio.setPeriodo(periodoEvaluacion);
         nuevaDesempenio.setFechaInicio(fechaA);
         nuevaDesempenio.setFechaFin(fechaB);
-        System.out.println("datos de evaluacion periodo, fecha a, fecha b... " + periodoEvaluacion + " f " + fechaA + " fb " + fechaB);
+//        System.out.println("datos de evaluacion periodo, fecha a, fecha b... " + periodoEvaluacion + " f " + fechaA + " fb " + fechaB);
         ejbAdministracionEncuestas.nuevaEvaluacionDesempenio(nuevaDesempenio);
     }
 
@@ -217,7 +217,7 @@ public class AdminEvaluacion360 implements Serializable {
     }
 
     public void getListaCombinaciones(Integer evaluacion) {
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.getListaCombinaciones() la evaluacion que entra es: " + evaluacion); 
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.getListaCombinaciones() la evaluacion que entra es: " + evaluacion);
         Integer evaluaciionN = evaluacion;
         if (e360b && eDesempenio) {
             Messages.addGlobalWarn("solo debe seleccionar una evlaución al mismo tiempo.");
@@ -230,14 +230,14 @@ public class AdminEvaluacion360 implements Serializable {
             listaEvaluacionDesempeñoFiltro = new ArrayList<>();
             personalActivo = ejbEvaluacion360Combinaciones.getPersonalActivo();
             personalActivo.forEach(p -> {
-                System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.getListaCombinaciones() persona en cuestion : " + p.getNombre() + " nomina: " + p.getClave());
+//                System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.getListaCombinaciones() persona en cuestion : " + p.getNombre() + " nomina: " + p.getClave());
                 List<Evaluaciones360Resultados> lr = ejbEvaluacion360Combinaciones.getResultados360(evaluaciionN, p.getClave());
                 if (lr == null || lr.isEmpty()) {
-                    System.out.println("Persona inactiva durante el periodo : " + p.getNombre());
+//                    System.out.println("Persona inactiva durante el periodo : " + p.getNombre());
                 } else {
                     //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.getListaCombinaciones() si tiene datos como evaluador " + lr.get(0).getPersonalEvaluado().getNombre());
                     lr.forEach(lr360 -> {
-                        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.getListaCombinaciones() busca resultados para llenar el dto");
+//                        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.getListaCombinaciones() busca resultados para llenar el dto");
                         Personal evaluador = ejbEvaluacion360Combinaciones.getPersonalEvaluador(lr360.getPersonal1().getClave());
                         String claveLista = evaluacion + "" + evaluador.getClave() + "" + p.getClave();
                         listaCombinacion360.add(new ListaEvaluacion360Combinaciones(Integer.parseInt(claveLista), evaluacion, lr360.getTipo(),
@@ -256,7 +256,7 @@ public class AdminEvaluacion360 implements Serializable {
             personalActivo.forEach(p -> {
                 List<DesempenioEvaluacionResultados> lr = ejbAdministracionEncuestas.getEvaluacionesDesempenioSubordinados(evaluaciionN, p.getClave());
                 if (lr == null || lr.isEmpty()) {
-                    System.out.println("Persona no evaluada en desempeño este periodo : " + p.getNombre());
+//                    System.out.println("Persona no evaluada en desempeño este periodo : " + p.getNombre());
                 } else {
                     lr.forEach(rd -> {
                         Personal evaluador = ejbEvaluacion360Combinaciones.getPersonalEvaluador(rd.getPersonal1().getClave());
@@ -282,7 +282,7 @@ public class AdminEvaluacion360 implements Serializable {
     }
 
     public void editaEvaluacion(Integer evaluacion) {
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.editaEvaluacion() evaluacion = " + evaluacion);
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.editaEvaluacion() evaluacion = " + evaluacion);
         if (e360b) {
             Evaluaciones360 e3 = ejbEvaluacion360Combinaciones.getEvaluaciones360().stream().filter(e -> e.getEvaluacion().equals(evaluacion)).collect(Collectors.toList()).get(0);
             ejbEvaluacion360Combinaciones.editaEvaluacion360(e3, fechaA, fechaB);
@@ -295,18 +295,18 @@ public class AdminEvaluacion360 implements Serializable {
     public void validaEdicionCombinaciones360(ListaEvaluacion360Combinaciones combinacion) {
         if (combinacion != null) {
             resultado360 = ejbEvaluacion360Combinaciones.getCombinacion(combinacion.getEvaluacion(), combinacion.getNominaEvaluado(), combinacion.getNominaEvaluador());
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.validaEdicionCombinaciones360() la combinacion -->> " + resultado360);
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.validaEdicionCombinaciones360() la combinacion -->> " + resultado360);
         }
     }
 
     public void validaEdicionCombinacionesDes(ListaEvaluacionDesempenio combinacion) {
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.validaEdicionCombinacionesDes() pasa ala combinacion : " + combinacion);
-        System.out.println("Evaluacion: " + combinacion.getEvaluacion());
-        System.out.println("Evaluador: " + combinacion.getEvaluador());
-        System.out.println("Evaluado: " + combinacion.getEvaluado());
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.validaEdicionCombinacionesDes() pasa ala combinacion : " + combinacion);
+//        System.out.println("Evaluacion: " + combinacion.getEvaluacion());
+//        System.out.println("Evaluador: " + combinacion.getEvaluador());
+//        System.out.println("Evaluado: " + combinacion.getEvaluado());
         
         resultadosDesempeño = ejbEvaluacion360Combinaciones.getCombinacionDesempenio(combinacion.getEvaluacion(), combinacion.getEvaluado(), combinacion.getEvaluador());
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.validaEdicionCombinacionesDes() la combinacion es -->> " + resultadosDesempeño);
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.validaEdicionCombinacionesDes() la combinacion es -->> " + resultadosDesempeño);
     }
 
     public void agregaCombinacion360() {
@@ -332,12 +332,12 @@ public class AdminEvaluacion360 implements Serializable {
     }
     
     public void eliminaCombinacion360(ListaEvaluacion360Combinaciones combinacion) {
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.eliminaCombinacion360() la combinacion que entra es : " + combinacion);
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.eliminaCombinacion360() la combinacion que entra es : " + combinacion);
         ejbEvaluacion360Combinaciones.eliminaCombinacion360(combinacion);
     }
 
     public void eliminaCombinacionDes(ListaEvaluacionDesempenio combinacion) {
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.eliminaCombinacionDes() la combinacion que entra es : " + combinacion);
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.eliminaCombinacionDes() la combinacion que entra es : " + combinacion);
         ejbEvaluacion360Combinaciones.eliminaCombinacionDes(combinacion);
     }
 

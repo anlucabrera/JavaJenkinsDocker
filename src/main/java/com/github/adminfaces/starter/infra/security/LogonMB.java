@@ -88,7 +88,7 @@ public class LogonMB extends AdminSession implements Serializable {
         usuario
     */   
     public void login() throws IOException {
-        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()");
+//        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()");
 
         if ("estudioEgresad@s".equals(email) && password.equals("248163264")) {
             currentUser = email;
@@ -126,7 +126,7 @@ public class LogonMB extends AdminSession implements Serializable {
 //                    agregaBitacora();
 //                    getPermisosAcceso();
                     }
-                    System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login() tipo: " + usuarioTipo);
+//                    System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login() tipo: " + usuarioTipo);
 //                    addDetailMessage("Bienvenido <b>" + usuario.getPersonas().getNombre() + "</b>");
                     addDetailMessage("Bienvenido");
                     Faces.getExternalContext().getFlash().setKeepMessages(true);

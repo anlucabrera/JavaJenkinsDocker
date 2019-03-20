@@ -149,10 +149,10 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
         StoredProcedureQuery spq = f.getEntityManager().createStoredProcedureQuery("buscar_evaluacion_docentes_materia_activa", EvaluacionDocentesMaterias.class);
         List<EvaluacionDocentesMaterias> l = spq.getResultList();
         if (l == null || l.isEmpty()) {
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDocenteMateria.evaluacionActiva() la evaluacion es nula");
+//            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDocenteMateria.evaluacionActiva() la evaluacion es nula");
             return new EvaluacionDocentesMaterias();
         } else {
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDocenteMateria.evaluacionActiva() la evaluacion activa es : " + l.get(0).getEvaluacion());
+//            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDocenteMateria.evaluacionActiva() la evaluacion activa es : " + l.get(0).getEvaluacion());
 
             return l.get(0);
         }
@@ -456,12 +456,12 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
 
     @Override
     public VistaEvaluacionDocenteMateriaPye getDatosDocente(String matricula, String materia, Integer periodo) {
-        System.out.println("impresion de los parametros : matricula : " + matricula + " materia : " + materia + " periodo : " + periodo);
+//        System.out.println("impresion de los parametros : matricula : " + matricula + " materia : " + materia + " periodo : " + periodo);
         TypedQuery<VistaEvaluacionDocenteMateriaPye> q = f2.getEntityManager().createQuery("select v from VistaEvaluacionDocenteMateriaPye v where v.matricula = :matricula and v.cveMateria = :cveMateria and v.periodo = :periodo ORDER BY v.periodo DESC", VistaEvaluacionDocenteMateriaPye.class);
         q.setParameter("matricula", matricula);
         q.setParameter("cveMateria", materia);
         q.setParameter("periodo", periodo);
-        System.out.println("resultado de la busqueda : " + q.getSingleResult());
+//        System.out.println("resultado de la busqueda : " + q.getSingleResult());
         List<VistaEvaluacionDocenteMateriaPye> l = q.getResultList();
         if (l.isEmpty() || l == null) {
             return null;

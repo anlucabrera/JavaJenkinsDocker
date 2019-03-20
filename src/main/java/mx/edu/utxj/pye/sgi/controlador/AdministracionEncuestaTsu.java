@@ -56,7 +56,7 @@ public class AdministracionEncuestaTsu implements Serializable{
     public void init() {
         try {
             Long inicio = System.currentTimeMillis();
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuestaTsu.init() inicio de componentes:" + inicio);
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuestaTsu.init() inicio de componentes:" + inicio);
             String verdadero = "Verdadero";
             try {
                 if (logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
@@ -64,7 +64,7 @@ public class AdministracionEncuestaTsu implements Serializable{
                     cveTrabajador = logonMB.getListaUsuarioClaveNomina().getCvePersona();
                     cveDirector = cveTrabajador.toString();
                     if (!ejbAdmEncuesta.esDirectorDeCarrera(2, 2, 18, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
-                        System.out.println("Es director de carrera:" + verdadero);
+//                        System.out.println("Es director de carrera:" + verdadero);
                         director = true;
                         seguimientoEncuestaDirectores();
                     }
@@ -81,13 +81,13 @@ public class AdministracionEncuestaTsu implements Serializable{
             }
 
             Long fin = System.currentTimeMillis();
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuestaTsu.init() Fin de los componentes" + fin);
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuestaTsu.init() Fin de los componentes" + fin);
 
             Long retardo = inicio - fin;
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuestaTsu.init() El retardo de carga de componentes es:" + retardo);
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuestaTsu.init() El retardo de carga de componentes es:" + retardo);
 
         } catch (Exception e) {
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionControlInterno.init() e: " + e.getMessage());
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionControlInterno.init() e: " + e.getMessage());
         }
     }
     
@@ -97,7 +97,7 @@ public class AdministracionEncuestaTsu implements Serializable{
             listaEvaIncompleta = new ArrayList<>();
             listaEvaNA = new ArrayList<>();
             listAlumnos = ejbAdminEncTsu.obtenerListaAlumnosNoAccedieron().stream().filter(x -> x.getGrado()==6).collect(Collectors.toList());
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuestaTsu.seguimientoEncuestaIyE()"+ listAlumnos);
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministracionEncuestaTsu.seguimientoEncuestaIyE()"+ listAlumnos);
             Comparador<ResultadosEncuestaSatisfaccionTsu> comparador = new ComparadorEncuestaSatisfaccionEgresadosTsu();
             listAlumnos.forEach(x -> {
                 try {
