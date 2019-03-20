@@ -62,7 +62,7 @@ public class administracionAvanceEncSatTsu  implements Serializable{
     public void init(){
         
         Long inicio=System.currentTimeMillis();
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.administracionAvanceEncSatTsu.init()"+ inicio);
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.administracionAvanceEncSatTsu.init()"+ inicio);
         try {
             if (logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
                 claveTrabajador = Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
@@ -80,7 +80,7 @@ public class administracionAvanceEncSatTsu  implements Serializable{
                     if (logonMB.getPersonal().getAreaOperativa() == 9 || claveTrabajador.equals(579)) {
                         //|| claveTrabajador.equals(579) esta parte va dentro del if de arriba
                         esDeInformacionYEst = true;
-                        System.out.println("mx.edu.utxj.pye.sgi.controlador.administracionAvanceEncSatTsu.init() es de estadistica e informacion");
+//                        System.out.println("mx.edu.utxj.pye.sgi.controlador.administracionAvanceEncSatTsu.init() es de estadistica e informacion");
                         //mostrarAvanceEncSatTsu();
                     }
                     if (!ejbAdmEncuesta.esSecretarioAcademico(1, Short.parseShort("2"), Short.parseShort("38"), Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
@@ -103,10 +103,10 @@ public class administracionAvanceEncSatTsu  implements Serializable{
             Logger.getLogger(administracionAvanceEncSatTsu.class.getName()).log(Level.SEVERE, null, ex);
         }
         Long fin=System.currentTimeMillis();
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.administracionAvanceEncSatTsu.init()"+ fin);
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.administracionAvanceEncSatTsu.init()"+ fin);
         
         Long retardo=inicio-fin;
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.administracionAvanceEncSatTsu.init() EL retardo del init es:" + retardo);
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.administracionAvanceEncSatTsu.init() EL retardo del init es:" + retardo);
     }   
  
         //Este es el bueno :)
@@ -118,7 +118,7 @@ public class administracionAvanceEncSatTsu  implements Serializable{
             listDatosGraf = new ArrayList<>();
             avanceEncServ = new ArrayList<>();
             List<AlumnosEncuestasTsu> streamDeAlumnos = ejbAdmEncTsu.obtenerListaAlumnosNoAccedieron().stream().filter(x -> x.getGrado() == 6).collect(Collectors.toList());           
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.administracionAvanceEncSatTsu.mostrarAvanceEncSatTsu() Total de alumnos"+ streamDeAlumnos.size());    
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.administracionAvanceEncSatTsu.mostrarAvanceEncSatTsu() Total de alumnos"+ streamDeAlumnos.size());
             Comparador<ResultadosEncuestaSatisfaccionTsu> comparador = new ComparadorEncuestaSatisfaccionEgresadosTsu();
             streamDeAlumnos.forEach(x -> {
                 try {
@@ -134,9 +134,9 @@ public class administracionAvanceEncSatTsu  implements Serializable{
                     Logger.getLogger(administracionAvanceEncSatTsu.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.administracionAvanceEncSatTsu.mostrarAvanceEncSatTsu()Total:"+listGrafEncServ.size());
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.administracionAvanceEncSatTsu.mostrarAvanceEncSatTsu()Total:"+listGrafEncServ.size());
             collect2 = listGrafEncServ.stream().collect(Collectors.groupingBy(ListadoGraficaEncuestaServicios::getSiglas, Collectors.counting()));
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.administracionAvanceEncSatTsu.mostrarAvanceEncSatTsu() Encuestas completas"+ collect2);
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.administracionAvanceEncSatTsu.mostrarAvanceEncSatTsu() Encuestas completas"+ collect2);
             collect2.forEach((k2, v2) -> {
                 abreviatura = k2;
                 total2 = v2;

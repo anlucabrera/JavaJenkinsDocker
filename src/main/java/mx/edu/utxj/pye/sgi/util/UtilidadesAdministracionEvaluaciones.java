@@ -123,7 +123,7 @@ try {
                 listaCarreras = eJBAdministracionEncuestas.obtenerAreasDirector(desempenioAdmin.getDirectivoSeleccionado().getAreaOperativa(), "Vigente");
                //System.out.println("Lista de carreras del directivo" + listaCarreras);
                //System.out.println("lista de carreras");
-                listaCarreras.forEach(System.err::println);
+//                listaCarreras.forEach(System.err::println);
                 selectItemEvaluacionesDirectorCarrera = eJBSelectItems.itemsEvaluacionDirectores();
                 ListaSubordinadosAdmin = desempenioAdmin.getListaSubordinados();
             } else if (/*!directorDeCarrera &&*/logonMB.getPersonal().getActividad().getActividad() == 4 || logonMB.getPersonal().getActividad().getActividad() == 2) {
@@ -413,7 +413,7 @@ try {
                 Collectors.groupingBy(VistaEvaluacionDocenteMateriaPye::getCveMateria, Collectors.counting()));
         List<String> rLM = lm.keySet().stream().collect(Collectors.toList());
        //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerResultadoEvaluacionDocentePorMateria() ,aterias");
-        rLM.forEach(System.err::println);
+//        rLM.forEach(System.err::println);
         rLM.forEach(mat -> {
            //System.out.println("la materia en cuestion");
             List<EvaluacionDocentesMateriaResultados> lpm = eJBAdministracionEncuestas.getEvaluacionDocentesResultadosPromedioMateria(evaluacion, clave.getClave(), mat);
@@ -422,7 +422,7 @@ try {
             List<VistaEvaluacionDocenteMateriaPye> listaMateriaSeleccionada = listaMaterias.stream().filter(m -> m.getCveMateria().equals(mat)).collect(Collectors.toList());
             VistaEvaluacionDocenteMateriaPye materiaSeleccionada = listaMateriaSeleccionada.get(0);
            //System.out.println("La lista de materias es : # ");            
-            listaMateriaSeleccionada.forEach(System.err::println);
+//            listaMateriaSeleccionada.forEach(System.err::println);
             listaCarreras.forEach(c -> {
                //System.out.println("las siglas de c son: " +c.getSiglas());
                //System.out.println("las siglas de materia seleccionada son : "+ materiaSeleccionada.getSiglas());
@@ -438,7 +438,7 @@ try {
         });
        //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerResultadoEvaluacionDocentePorMateria() las evaluaciones son ");
        //System.out.println("---");
-        ListaDocentesPromedioMateria.forEach(System.err::println);
+//        ListaDocentesPromedioMateria.forEach(System.err::println);
 
     }
 
@@ -659,7 +659,7 @@ try {
                //System.out.println("El empleado -> : " + personal.getNombre() + ", no fue evaluado en ese periodo");
             }
         });
-        lista360PromediosPersonal.forEach(System.out::println);
+//        lista360PromediosPersonal.forEach(System.out::println);
     }
 
     public void resultadoEvaluacionDesempenioPersonal() {
