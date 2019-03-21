@@ -96,6 +96,12 @@ public class LogonMB extends AdminSession implements Serializable {
             addDetailMessage("Bienvenido <b>" + "Usuario invitado" + "</b>");
             Faces.getExternalContext().getFlash().setKeepMessages(true);
             Faces.redirect("estudioEgresadosDestiempo.xhtml");
+        }else if("aspirante".equals(email) && password.equals("aspirante")){
+            currentUser = email;
+            usuarioTipo = UsuarioTipo.ASPIRANTE;
+            addDetailMessage("Bienvenido y bienvenida <b>" + "Aspirante" + "</b>");
+            Faces.getExternalContext().getFlash().setKeepMessages(true);
+            Faces.redirect("controlEscolar/fichaAdmision.xhtml");
         } else {
             Usuarios res = ejbLogin.getUsuarioPorLogin(email);
             Usuarios usuario = ejbLogin.autenticar(email, password);

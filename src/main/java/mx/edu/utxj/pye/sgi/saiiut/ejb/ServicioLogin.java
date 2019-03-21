@@ -98,6 +98,7 @@ public class ServicioLogin implements EjbLogin {
         if (q.getResultList().isEmpty() || q.getResultList() == null) {
             return null;
         } else {
+            System.out.println(q.getResultList().size());
             return q.getResultList();
         }
     }

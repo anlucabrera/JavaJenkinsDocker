@@ -41,7 +41,7 @@
     display: none;
     font-weight: bold;
 }
-button, input, optgroup, select, textarea{
+button, input, optgroup, select{
     color: black;
 }
 .ui-tabs .ui-tabs-navscroller-btn-right{
