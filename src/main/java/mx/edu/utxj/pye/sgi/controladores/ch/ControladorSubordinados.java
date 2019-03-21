@@ -350,7 +350,7 @@ public class ControladorSubordinados implements Serializable {
                 case SATURDAY:                    maximo = 4;                    break;
             }
             if (dias <= maximo) {
-                utilidadesCH.agregaBitacora(controladorEmpleado.getEmpleadoLogeado(), incidencias.getIncidenciaID().toString(), "Incidencia", "Justificación " + incidencias.getEstatus());
+                utilidadesCH.agregaBitacora(controladorEmpleado.getEmpleadoLogeado(), incidencias.getIncidenciaID().toString(), "Incidencias", "Justificación " + incidencias.getEstatus());
                 ejbNotificacionesIncidencias.actualizarIncidencias(incidencias);
                 Messages.addGlobalInfo("¡Operación exitosa!");
             } else {

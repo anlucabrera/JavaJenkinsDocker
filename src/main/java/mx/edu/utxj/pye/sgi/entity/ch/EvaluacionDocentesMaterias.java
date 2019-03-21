@@ -60,8 +60,8 @@ public class EvaluacionDocentesMaterias implements Serializable {
     @Column(name = "fecha_fin")
     @Temporal(TemporalType.DATE)
     private Date fechaFin;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluacionDocentesMaterias")
-    private List<EvaluacionDocentesMateriaResultados> evaluacionDocentesMateriaResultadosList;
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluacionDocentesMaterias")
+//    private List<EvaluacionDocentesMateriaResultados> evaluacionDocentesMateriaResultadosList;
 
     public EvaluacionDocentesMaterias() {
     }
@@ -109,14 +109,14 @@ public class EvaluacionDocentesMaterias implements Serializable {
         this.fechaFin = fechaFin;
     }
 
-    @XmlTransient
-    public List<EvaluacionDocentesMateriaResultados> getEvaluacionDocentesMateriaResultadosList() {
-        return evaluacionDocentesMateriaResultadosList;
-    }
-
-    public void setEvaluacionDocentesMateriaResultadosList(List<EvaluacionDocentesMateriaResultados> evaluacionDocentesMateriaResultadosList) {
-        this.evaluacionDocentesMateriaResultadosList = evaluacionDocentesMateriaResultadosList;
-    }
+//    @XmlTransient
+//    public List<EvaluacionDocentesMateriaResultados> getEvaluacionDocentesMateriaResultadosList() {
+//        return evaluacionDocentesMateriaResultadosList;
+//    }
+//
+//    public void setEvaluacionDocentesMateriaResultadosList(List<EvaluacionDocentesMateriaResultados> evaluacionDocentesMateriaResultadosList) {
+//        this.evaluacionDocentesMateriaResultadosList = evaluacionDocentesMateriaResultadosList;
+//    }
 
     @Override
     public int hashCode() {

@@ -94,7 +94,7 @@ public class EncuestaSatisfaccionEgresadosTsu implements Serializable {
             }
         } catch (Exception e) {
             cargada = false;
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaSatisfaccionEgresadosTsu.init() e: " + e.getMessage());
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaSatisfaccionEgresadosTsu.init() e: " + e.getMessage());
         }
     }
     public void guardarRespuesta(ValueChangeEvent e) {

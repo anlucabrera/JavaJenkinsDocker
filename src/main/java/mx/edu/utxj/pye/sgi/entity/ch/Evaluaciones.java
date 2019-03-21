@@ -69,6 +69,8 @@ public class Evaluaciones implements Serializable {
     private List<EvaluacionesPremiosResultados> evaluacionesPremiosResultadosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
     private List<EvaluacionesTutoresResultados> evaluacionesTutoresResultadosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    private List<EvaluacionDocentesMateriaResultados> evaluacionDocentesMateriaResultadosList;
 
     public Evaluaciones() {
     }
@@ -186,6 +188,15 @@ public class Evaluaciones implements Serializable {
 
     public void setEvaluacionesTutoresResultadosList(List<EvaluacionesTutoresResultados> evaluacionesTutoresResultadosList) {
         this.evaluacionesTutoresResultadosList = evaluacionesTutoresResultadosList;
+    }
+
+    @XmlTransient
+    public List<EvaluacionDocentesMateriaResultados> getEvaluacionDocentesMateriaResultadosList() {
+        return evaluacionDocentesMateriaResultadosList;
+    }
+
+    public void setEvaluacionDocentesMateriaResultadosList(List<EvaluacionDocentesMateriaResultados> evaluacionDocentesMateriaResultadosList) {
+        this.evaluacionDocentesMateriaResultadosList = evaluacionDocentesMateriaResultadosList;
     }
 
     @Override

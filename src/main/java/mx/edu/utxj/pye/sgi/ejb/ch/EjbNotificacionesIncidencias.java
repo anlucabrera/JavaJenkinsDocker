@@ -29,10 +29,12 @@ public interface EjbNotificacionesIncidencias {
     public List<Incidencias> mostrarIncidenciasArea(Short area) throws Throwable;
 
     public List<Incidencias> mostrarIncidenciasReporte(Date fechaI, Date fechaF) throws Throwable;
-    
-     public List<Incidencias> mostrarIncidenciasReportePendientes(Date fechaI, Date fechaF,Short area, Integer claveP) throws Throwable;
+
+    public List<Incidencias> mostrarIncidenciasReportePendientes(Date fechaI, Date fechaF, Short area, Integer claveP) throws Throwable;
 
     public List<Incidencias> mostrarIncidencias(Integer clave) throws Throwable;
+
+    public Incidencias buscarIncidencias(Integer clave) throws Throwable;
 
     public Incidencias agregarIncidencias(Incidencias nuevaIncidencias) throws Throwable;
 

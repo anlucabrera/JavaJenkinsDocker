@@ -42,14 +42,15 @@ public class ControladorIncidenciasGeneral implements Serializable {
     @Getter    @Setter    private List<Cuidados> listaCuidadoses = new ArrayList<>();
     @Getter    @Setter    private List<Bitacoraacceso> listaBitacoraaccesos = new ArrayList<>();
     @Getter    @Setter    private List<AreasUniversidad> listaAreasUniversidads = new ArrayList<>();
+    @Getter    @Setter    private List<ListaBitacoraIncidencias> bitacoraIncidenciases = new ArrayList<>();
+    
     @Getter    @Setter    private AreasUniversidad au = new AreasUniversidad();
-    @Getter    @Setter    private String[] nombreAr;
     @Getter    @Setter    private String areaNombre = "",mes="";
     @Getter    @Setter    private Short area = 0;
 
     @Getter    @Setter    private LocalDate fechaActual = LocalDate.now(), fechaI = LocalDate.now(), fechaF = LocalDate.now();
-    @Getter    @Setter    private Integer empleadoLogeado, contactoDestino, anioNumero = 0;
-    @Getter    @Setter    private String mensajeDNotificacion = "", numeroQuincena = "1";
+    @Getter    @Setter    private Integer anioNumero = 0;
+    @Getter    @Setter    private String numeroQuincena = "1";
     @Getter    @Setter    private Boolean vistaMensual = true;
 
 //@EJB    
@@ -181,8 +182,14 @@ public class ControladorIncidenciasGeneral implements Serializable {
                     }
                 });
             }
+            listaBitacoraaccesos=new ArrayList<>();
+            listaBitacoraaccesos.clear();
             listaBitacoraaccesos=ejbUtilidadesCH.mostrarBitacoraacceso("Incidencias");
-            
+            bitacoraIncidenciases=new ArrayList<>();
+            bitacoraIncidenciases.clear();
+            listaBitacoraaccesos.forEach((t) -> {
+                bitacoraIncidenciases.add(new ListaBitacoraIncidencias(buscarPerosnal(t.getClavePersonal()), buscarIncidencias(t.getNumeroRegistro(),t.getAccion()), t));
+            });
             
             Ajax.update("frmInciGeneral");
             Ajax.update("frmIncaGeneral");
@@ -266,9 +273,9 @@ public class ControladorIncidenciasGeneral implements Serializable {
         try {
             ListaPersonal p = new ListaPersonal();
             if (clave == 0) {
-                p=new ListaPersonal(0, "Sistema", new Date(), 'A', Short.parseShort("0"), 'S', "Sistema", Short.parseShort("6"), "Planeación y Evaluación", Short.parseShort("6"), "Sistema", Short.parseShort("6"), "Planeación y Evaluación", Short.parseShort("6"), "Planeación y Evaluación", Short.parseShort("0"), "Sistema", Short.parseShort("6"), "Sistema", Short.parseShort("6"), "", "", Short.parseShort("0"), Short.parseShort("0"), new Date(), "Sistema", "Sistema", "Sistema", "Sistema", false, false, "Sistema", "Sistema", Short.parseShort("0"), "Sistema");
+                p = new ListaPersonal(0, "Sistema", new Date(), 'A', Short.parseShort("0"), 'S', "Sistema", Short.parseShort("0"), "Sistema", Short.parseShort("6"), "Sistema", Short.parseShort("0"), "Sistema", Short.parseShort("0"), "Sistema", Short.parseShort("0"), "Sistema", Short.parseShort("0"), "Sistema", Short.parseShort("0"), "", "", Short.parseShort("0"), Short.parseShort("0"), new Date(), "Sistema", "Sistema", "Sistema", "Sistema", false, false, "Sistema", "Sistema", Short.parseShort("0"), "Sistema");
             } else {
-            p = ejbPersonal.mostrarListaPersonal(empleadoLogeado);                
+                p = ejbPersonal.mostrarListaPersonal(clave);
             }
             return p;
         } catch (Throwable ex) {
@@ -278,10 +285,42 @@ public class ControladorIncidenciasGeneral implements Serializable {
         }
     }
     
+    public Incidencias buscarIncidencias(String clave, String accion) {
+        try {
+            Incidencias inc = new Incidencias();
+            if (accion.equals("Delate")) {
+                inc = new Incidencias(0, 0, "Eliminada", new Date(), new Date(), "Eliminada", "Eliminada");
+            } else {
+                inc = ejbNotificacionesIncidencias.buscarIncidencias(Integer.parseInt(clave));
+            }
+            if (inc == null) {
+                inc = new Incidencias(0, 0, "Eliminada", null, null, "Eliminada", "Eliminada");
+            }
+            return inc;
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
     public void novisible() {
         mostrarIncidencias(mes);
     }
 
     public void imprimirValores() {
+    }
+    
+    public static class ListaBitacoraIncidencias {
+
+        @Getter        @Setter        private ListaPersonal lp;
+        @Getter        @Setter        private Incidencias i;
+        @Getter        @Setter        private Bitacoraacceso b;
+
+        public ListaBitacoraIncidencias(ListaPersonal lp, Incidencias i, Bitacoraacceso b) {
+            this.lp = lp;
+            this.i = i;
+            this.b = b;
+        }
     }
 }

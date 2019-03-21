@@ -112,6 +112,17 @@ public class ServiciosNotificacionesIncidencias implements EjbNotificacionesInci
         List<Incidencias> pr = q.getResultList();
         return pr;
     }
+    
+    @Override
+    public Incidencias buscarIncidencias(Integer clave) throws Throwable {
+        facade.setEntityClass(Incidencias.class);
+        Incidencias pr = facade.getEntityManager().find(Incidencias.class, clave);
+        if (pr == null) {
+            return null;
+        } else {
+            return pr;
+        }
+    }
 
     @Override
     public Incidencias agregarIncidencias(Incidencias nuevaIncidencias) throws Throwable {

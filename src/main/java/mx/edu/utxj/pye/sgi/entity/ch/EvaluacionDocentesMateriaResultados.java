@@ -151,7 +151,7 @@ public class EvaluacionDocentesMateriaResultados implements Serializable {
     private double promedio;
     @JoinColumn(name = "evaluacion", referencedColumnName = "evaluacion", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    private EvaluacionDocentesMaterias evaluacionDocentesMaterias;
+    private Evaluaciones evaluaciones;
     @JoinColumn(name = "evaluado", referencedColumnName = "clave", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Personal personal;
@@ -462,12 +462,12 @@ public class EvaluacionDocentesMateriaResultados implements Serializable {
         this.promedio = promedio;
     }
 
-    public EvaluacionDocentesMaterias getEvaluacionDocentesMaterias() {
-        return evaluacionDocentesMaterias;
+    public Evaluaciones getEvaluaciones() {
+        return evaluaciones;
     }
 
-    public void setEvaluacionDocentesMaterias(EvaluacionDocentesMaterias evaluacionDocentesMaterias) {
-        this.evaluacionDocentesMaterias = evaluacionDocentesMaterias;
+    public void setEvaluaciones(Evaluaciones evaluaciones) {
+        this.evaluaciones = evaluaciones;
     }
 
     public Personal getPersonal() {

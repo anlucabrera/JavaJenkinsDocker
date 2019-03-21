@@ -418,15 +418,59 @@
                                         <h:form id="frmbitacora">                                     
                                             <p:outputPanel>
                                                 <p:outputPanel id="incidenciasReporteIncapacidaddes">
-                                                    <p:dataTable id="tblActividades"  value="#{controladorIncidenciasGeneral.listaBitacoraaccesos}"  var="bitacora"
+                                                    <p:dataTable id="tblActividades"  value="#{controladorIncidenciasGeneral.bitacoraIncidenciases}"  var="bitacora"
+                                                                 sortBy="#{bitacora.lp.areaOperativa}" expandableRowGroups="true"
                                                                  emptyMessage="No se encontraron Registros." rendered="true">
-                                                       
-                                                        <p:column headerText="Nomina" style="width: 9%;text-align: center;">
-                                                            <h:outputText value="#{bitacora.clavePersonal}" />
+                                                        <p:headerRow>
+                                                            <p:column colspan="8" style="background: #2796cb; color: #FFFFFF;">
+                                                                <h:outputText value="#{bitacora.lp.actividad eq 1?bitacora.lp.areaOperativaNombre:bitacora.lp.areaSuperiorNombre}" />
+                                                            </p:column>
+                                                        </p:headerRow>
+
+                                                        <p:columnGroup type="header">
+                                                            <p:row class="success">
+                                                                <p:column colspan="3" headerText="Bitacora" style="width: 400px;" />
+                                                                <p:column colspan="3" headerText="Personal" style="width: 500px;"/>
+                                                                <p:column colspan="2" headerText="Incidencia" style="width: 400px;"/>
+                                                            </p:row>
+                                                            <p:row class="success">
+                                                                <p:column headerText="Perosnal de Cambio"/>
+                                                                <p:column headerText="Accion"/>
+                                                                <p:column headerText="Fecha"/>
+                                                                <p:column headerText="Clave"/>
+                                                                <p:column headerText="Nombre"/>
+                                                                <p:column headerText="Tipo"/>
+                                                                <p:column headerText="Fecha"/>
+                                                                <p:column headerText="Estatus"/>
+                                                            </p:row>
+                                                        </p:columnGroup>
+
+                                                        <p:column>
+                                                            <h:outputText value="#{bitacora.lp.nombre}" />
+                                                        </p:column>  
+                                                        <p:column>
+                                                            <h:outputText value="#{bitacora.b.accion}" />
                                                         </p:column>
-                                                        <p:column headerText="Nombre" style="width: 30%;text-align: justify;">
-                                                            <h:outputText value="#{controladorIncidenciasGeneral.buscarPerosnal(bitacora.clavePersonal).nombre}" />
-                                                        </p:column>                                                                                                                    
+                                                        <p:column>
+                                                            <h:outputText value="#{bitacora.b.fechaHora}" />
+                                                        </p:column>  
+
+                                                        <p:column>
+                                                            <h:outputText value="#{bitacora.i.clavePersonal.clave}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{bitacora.i.clavePersonal.nombre}" />
+                                                        </p:column>  
+                                                        <p:column>
+                                                            <h:outputText value="#{bitacora.i.tipo}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{bitacora.i.fecha}" />
+                                                        </p:column>  
+                                                        <p:column>
+                                                            <h:outputText value="#{bitacora.i.estatus}" />
+                                                        </p:column>
+
                                                     </p:dataTable>  
                                                 </p:outputPanel>    
                                             </p:outputPanel>                                           
