@@ -5,6 +5,8 @@
  */
 package mx.edu.utxj.pye.sgi.ejb;
 
+import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
+
 import java.util.List;
 import javax.ejb.Local;
 import javax.faces.model.SelectItem;
@@ -39,14 +41,27 @@ public interface EJBSelectItems {
     ////////////////////////////////////////// Codigo agregado para la selección de estados o municipios para el filtrado de los Módulos de registro ////////////////////////////////////////////////////////
     
     public List<SelectItem> itemEstados();
+
+    public List<SelectItem> itemEstadoByClave(Integer pais);
         
     public List<SelectItem> itemMunicipiosByClave(Integer estado);
         
-    public List<SelectItem> itemLocalidadesByClave(Integer estado, Integer municipio); 
+    public List<SelectItem> itemLocalidadesByClave(Integer estado, Integer municipio);
+
+    public List<Asentamiento> itemAsentamiento();
+
+    public List<SelectItem> itemAsentamientoByClave(Integer Estado, Integer munipio);
+
+    public List<SelectItem> itemPaises();
+
+    public List<SelectItem> itemPaisMexico();
+
+    public Integer itemCvePais(Integer idEstado);
     
     public List<SelectItem> itemCiclos();
     
     public List<SelectItem> itemPeriodosByClave(Integer ciclo);
+
     
      /*Se agregan los select item que obtienen los datos para el filtrado de los ejercicios y meses */
     /**

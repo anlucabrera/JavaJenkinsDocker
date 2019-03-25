@@ -10,7 +10,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -20,10 +19,6 @@ import javax.ejb.Stateful;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
-import lombok.Getter;
-import lombok.Setter;
-import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
-import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMaterias;
@@ -33,11 +28,8 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 //import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Listaperiodosescolares;
-import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
-import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
-import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
+import mx.edu.utxj.pye.sgi.entity.pye2.*;
 import mx.edu.utxj.pye.sgi.facade.Facade;
-import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 
 /**
  *
@@ -51,11 +43,6 @@ public class ServicioSelectItems implements EJBSelectItems {
     
     @Inject
     LogonMB logonMB;
-    
-    @EJB EjbPropiedades ep;
-    @EJB EjbModulos ejbModulos;
-    
-    @Getter @Setter List<Short> areas;
 
     @Override
     public List<SelectItem> itemsEvaluacionesDirectivos() {
@@ -233,6 +220,30 @@ public class ServicioSelectItems implements EJBSelectItems {
         return lse;
     }
 
+    public List<Estado> getEstadoPorPais(Integer pais){
+        TypedQuery<Estado> q = f.getEntityManager().createQuery("SELECT e from Estado e WHERE e.idpais.idpais = :pais", Estado.class);
+        q.setParameter("pais", pais);
+        List<Estado> le = q.getResultList();
+        if (le.isEmpty() || le == null) {
+            System.err.println("no se encontraron estados ligados a este pais");
+            return null;
+        } else {
+            return le;
+        }
+    }
+
+    @Override
+    public List<SelectItem> itemEstadoByClave(Integer pais) {
+        List<SelectItem> lse = new ArrayList<>();
+        getEstadoPorPais(pais).stream()
+                .map((e)-> new SelectItem(e.getIdestado(),e.getNombre()))
+                .forEachOrdered((selectItem -> {
+                    lse.add(selectItem);
+                }));
+
+        return  lse;
+    }
+
     public List<Municipio> getMunicipiosPorEstado(Integer estado) {
         TypedQuery<Municipio> q = f.getEntityManager().createQuery("SELECT m FROM Municipio m  WHERE m.municipioPK.claveEstado = :estado", Municipio.class);
         q.setParameter("estado", estado);
@@ -254,12 +265,110 @@ public class ServicioSelectItems implements EJBSelectItems {
         return lsm;
     }
 
-    
+    public List<Localidad> getLocalidadPorMunicipio(Integer estado, Integer municipio){
+        TypedQuery<Localidad> q = f.getEntityManager().createQuery("SELECT l FROM Localidad l WHERE l.localidadPK.claveEstado = :estado AND l.localidadPK.claveMunicipio = :municipio",Localidad.class);
+        q.setParameter("estado",estado);
+        q.setParameter("municipio",municipio);
+        List<Localidad> ll = q.getResultList();
+        if (ll.isEmpty() || ll == null) {
+            System.err.println("no se encontraron localidades ligados a este municipio");
+            return null;
+        }else{
+            return  ll;
+        }
+    }
+
     @Override
     public List<SelectItem> itemLocalidadesByClave(Integer estado, Integer municipio) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<SelectItem> lsl = new ArrayList<>();
+        getLocalidadPorMunicipio(estado,municipio).stream()
+                .map((l)-> new SelectItem(l.getLocalidadPK().getClaveLocalidad(),l.getNombre()))
+                .forEachOrdered((selectItem -> {
+                    lsl.add(selectItem);
+                }));
+
+        return lsl;
     }
-    
+
+    @Override
+    public List<Asentamiento> itemAsentamiento() {
+        return f.getEntityManager().createQuery("SELECT a FROM Asentamiento a",Asentamiento.class)
+                .getResultList();
+    }
+
+    public List<Asentamiento> getAsentamientoPorEstadoMunicipio(Integer Estado, Integer munipio){
+        return f.getEntityManager().createQuery("SELECT a FROM Asentamiento a WHERE a.asentamientoPK.estado = :cveEstado AND a.asentamientoPK.municipio = :cveMunicipio")
+                .setParameter("cveEstado", Estado)
+                .setParameter("cveMunicipio", munipio)
+                .getResultList();
+    }
+
+    @Override
+    public List<SelectItem> itemAsentamientoByClave(Integer Estado, Integer munipio) {
+        List<SelectItem> lsa = new ArrayList<>();
+        getAsentamientoPorEstadoMunicipio(Estado,munipio).stream()
+                .map(asentamiento -> new SelectItem(asentamiento.getAsentamientoPK().getAsentamiento(),asentamiento.getCodigoPostal().concat("-").concat(asentamiento.getNombreAsentamiento())))
+                .forEachOrdered(selectItem -> lsa.add(selectItem));
+        return lsa;
+    }
+
+    public List<Pais> getPaises(){
+        TypedQuery<Pais> q = f.getEntityManager().createQuery("SELECT  p FROM Pais p  WHERE p.idpais <> 42 ORDER BY p.nombre ASC", Pais.class);
+        List<Pais> lp = q.getResultList();
+        if(lp.isEmpty() || lp == null){
+            System.err.println("no se encontraron paises");
+            return  null;
+        }else{
+            return  lp;
+        }
+    }
+
+    @Override
+    public List<SelectItem> itemPaises() {
+        List<SelectItem> lsp = new ArrayList<>();
+        getPaises().stream()
+                .map((p)-> new SelectItem(p.getIdpais(), p.getNombre()))
+                .forEachOrdered((selectItem -> {
+                    lsp.add(selectItem);
+                }));
+
+        return lsp;
+    }
+
+    public List<Pais> getPaisMexico(){
+        TypedQuery<Pais> q = f.getEntityManager().createQuery("SELECT  p FROM Pais p  WHERE p.idpais = 42", Pais.class);
+        List<Pais> lpm = q.getResultList();
+        if(lpm.isEmpty() || lpm == null){
+            System.err.println("no se encontraron paises");
+            return  null;
+        }else{
+            return lpm;
+        }
+    }
+
+    @Override
+    public List<SelectItem> itemPaisMexico() {
+        List<SelectItem> lspm = new ArrayList<>();
+        getPaisMexico().stream()
+                .map((p)-> new SelectItem(p.getIdpais(), p.getNombre(),p.getNombre()))
+                .forEachOrdered((selectItem -> {
+                    lspm.add(selectItem);
+                }));
+
+        return lspm;
+    }
+
+    @Override
+    public Integer itemCvePais(Integer idEstado) {
+        Estado estado = new Estado();
+        estado = f.getEntityManager().createQuery("SELECT e FROM Estado e WHERE e.idestado = :estado", Estado.class)
+                .setParameter("estado", idEstado)
+                .getSingleResult();
+        
+        return  estado.getIdpais().getIdpais();
+    }
+
+
     public List<CiclosEscolares> getCiclos() {
         TypedQuery<CiclosEscolares> q = f.getEntityManager().createQuery("SELECT c FROM CiclosEscolares c ORDER BY c.ciclo DESC", CiclosEscolares.class);
         List<CiclosEscolares> le = q.getResultList();
@@ -302,8 +411,8 @@ public class ServicioSelectItems implements EJBSelectItems {
         }
         return lsp;
     }
-    
-     static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+
+    static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
         Map<Object, Boolean> seen = new ConcurrentHashMap<>();
         return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
@@ -332,24 +441,15 @@ public class ServicioSelectItems implements EJBSelectItems {
                 //System.err.println("El personal es --->" + x);
             });
             Short areaSeleccionada = listaAreasConPoa.get(0).getArea();
-            List<Registros> qr = new ArrayList<>();
-            
-            if (areaSeleccionada == 6 || areaSeleccionada == 9) {
-                qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo ORDER BY r.eventoRegistro.eventoRegistro DESC", Registros.class)
-                .setParameter("tipo", tipo)
-                .getResultList();
-                        
-            } else {
-                areas = ejbModulos.getAreasDependientes(areaSeleccionada);
-                qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.area IN :areas ORDER BY r.eventoRegistro.eventoRegistro DESC", Registros.class)
-                .setParameter("tipo", tipo)
-                .setParameter("areas", areas)
-                .getResultList();
-            }
-            if (qr == null || qr.isEmpty()) {
+            TypedQuery<Registros> qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.area = :area ORDER BY r.registro DESC", Registros.class);
+            qr.setParameter("tipo", tipo);
+            qr.setParameter("area", areaSeleccionada);
+//            System.err.println("La lista de registros es : " + qr.getResultList() + " y su tamaño es : " + qr.getResultList().size());
+            List<Registros> lr = qr.getResultList();
+            if (lr == null || lr.isEmpty()) {
                 return null;
             } else {
-                return qr;
+                return lr;
             }
         }
     }
@@ -367,27 +467,16 @@ public class ServicioSelectItems implements EJBSelectItems {
                 //System.err.println("El personal es --->" + x);
             });
             Short areaSeleccionada = listaAreasConPoa.get(0).getArea();
-            List<Registros> qr = new ArrayList<>();
-            
-            if (areaSeleccionada == 6 || areaSeleccionada == 9) {
-                qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio ORDER BY r.eventoRegistro.eventoRegistro DESC", Registros.class)
-                        .setParameter("tipo", tipo)
-                        .setParameter("ejercicio", ejercicio)
-                        .getResultList();
-
-            } else {
-                areas = ejbModulos.getAreasDependientes(areaSeleccionada);
-
-                qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.area IN :areas AND r.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio ORDER BY r.eventoRegistro.eventoRegistro DESC", Registros.class)
-                        .setParameter("tipo", tipo)
-                        .setParameter("areas", areas)
-                        .setParameter("ejercicio", ejercicio)
-                        .getResultList();
-            }
-            if (qr == null || qr.isEmpty()) {
+            TypedQuery<Registros> qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.area = :area AND r.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio ORDER BY r.registro DESC", Registros.class);
+            qr.setParameter("tipo", tipo);
+            qr.setParameter("area", areaSeleccionada);
+            qr.setParameter("ejercicio", ejercicio);
+            //System.err.println("La lista de registros es : " + qr.getResultList() + " y su tamaño es : " + qr.getResultList().size());
+            List<Registros> lr = qr.getResultList();
+            if (lr == null || lr.isEmpty()) {
                 return null;
             } else {
-                return qr;
+                return lr;
             }
         }
     }

@@ -13,6 +13,20 @@
                 </p:link>
             </li>
         </c:if>
+        <c:if test="#{logonMB.usuarioTipo == 'ASPIRANTE'}">
+            <li>
+                <p:link href="/controlEscolar/fichaAdmision.xhtml">
+                    <i class="fa fa-graduation-cap"></i>
+                    <span>Registro Ficha AdmisiÃ³n</span>
+                </p:link>
+            </li>
+            <li>
+                <p:link href="/controlEscolar/estatusFicha.xhtml">
+                    <i class="fa fa-check-circle"></i>
+                    <span>Estatus Ficha de AdmisiÃ³n</span>
+                </p:link>
+            </li>
+        </c:if>
         <c:if test="#{logonMB.usuarioTipo eq 'ESTUDIANTE'}">
             <h4>Menú estudiante</h4>
             <li class="treeview ">
@@ -115,9 +129,9 @@
                     </c:if>
 
                     <c:if test="#{(administracionAvanceEncSatTsu.aperturado and administracionAvanceEncSatTsu.planeacion) or
-                    (administracionAvanceEncuestaSatIng.aperturado and administracionAvanceEncuestaSatIng.planeacion) or
-                    (administracionAvanceEncuestaServicio.aperturado and administracionAvanceEncuestaServicio.planeacion) or
-                    (administracionAvanceEstudioSocioeconomico.aperturado and administracionAvanceEstudioSocioeconomico.planeacion)}">
+                                  (administracionAvanceEncuestaSatIng.aperturado and administracionAvanceEncuestaSatIng.planeacion) or
+                                  (administracionAvanceEncuestaServicio.aperturado and administracionAvanceEncuestaServicio.planeacion) or
+                                  (administracionAvanceEstudioSocioeconomico.aperturado and administracionAvanceEstudioSocioeconomico.planeacion)}">
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-check-square-o"></i> <span>Seguimiento encuestas</span>
@@ -457,7 +471,7 @@
                 <li class="treeview">
 
                     <a href="#">
-                        <i class="fa fa-clipboard"></i> <span>POA Áreas</span>
+                        <i class="fa fa-clipboard"></i> <span>POA �?reas</span>
                         <!--span class="pull-right-container">
                             <i class="fa fa-angle-left pull-right"></i>
                         </span>
@@ -502,7 +516,7 @@
                         </li> 
                         <li>
                             <p:link href="/poa/areas/areaCMI.xhtml"><i class="fa fa-bar-chart"></i>
-                                <span>CMI Área</span>
+                                <span>CMI �?rea</span>
                             </p:link>
                         </li> 
                         <li>
@@ -623,48 +637,48 @@
                     </li>
                 </ul>
             </li>
-             <c:if test="#{controladorEmpleado.tienePOA}">
+            <c:if test="#{controladorEmpleado.tienePOA}">
                 <li class="treeview">
-                <a href="#">
-                    <i class="fa fa-file-text-o"></i> <span>Formatos SGI</span>
-                    <span class="pull-right-container">
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </span>
-                </a>
-                <ul class="treeview-menu" style="display: none;">
-                    <li>
-                       
-                        <p:link href="/sgi/AccionesCorrectivas.docx">
-                            <span>Acciones Correctivas</span>
-                        </p:link>
-                    </li>      
-                    <li>
-                        <p:link href="/sgi/ListadoRegistros.xls">
-                            <span>Listado de Registros</span>
-                        </p:link>
-                    </li>   
-                    <li>
-                        <p:link href="/sgi/ListaMaestraDocumentosExternos.xls">
-                            <span>Lista Maestra Docs. Externos</span>
-                        </p:link>
-                    </li>
-                    <li>
-                        <p:link href="/sgi/ListaMaestraDocumentosInternos.xls">
-                            <span>Lista Maestra Docs. Internos</span>
-                        </p:link>
-                    </li>      
-                    <li>
-                        <p:link href="/sgi/RegistroSalidaNoConforme.docx">
-                            <span>Registro de Salida No Conforme</span>
-                        </p:link>
-                    </li>   
-                    <li>
-                        <p:link href="/sgi/RevisionAprobacionDocumentos.xlsx">
-                            <span>Revisión y Aprobación de Docs</span>
-                        </p:link>
-                    </li>
-                </ul>
-            </li>
+                    <a href="#">
+                        <i class="fa fa-file-text-o"></i> <span>Formatos SGI</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <li>
+
+                            <p:link href="/sgi/AccionesCorrectivas.docx">
+                                <span>Acciones Correctivas</span>
+                            </p:link>
+                        </li>      
+                        <li>
+                            <p:link href="/sgi/ListadoRegistros.xls">
+                                <span>Listado de Registros</span>
+                            </p:link>
+                        </li>   
+                        <li>
+                            <p:link href="/sgi/ListaMaestraDocumentosExternos.xls">
+                                <span>Lista Maestra Docs. Externos</span>
+                            </p:link>
+                        </li>
+                        <li>
+                            <p:link href="/sgi/ListaMaestraDocumentosInternos.xls">
+                                <span>Lista Maestra Docs. Internos</span>
+                            </p:link>
+                        </li>      
+                        <li>
+                            <p:link href="/sgi/RegistroSalidaNoConforme.docx">
+                                <span>Registro de Salida No Conforme</span>
+                            </p:link>
+                        </li>   
+                        <li>
+                            <p:link href="/sgi/RevisionAprobacionDocumentos.xlsx">
+                                <span>Revisión y Aprobación de Docs</span>
+                            </p:link>
+                        </li>
+                    </ul>
+                </li>
             </c:if>
 
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">

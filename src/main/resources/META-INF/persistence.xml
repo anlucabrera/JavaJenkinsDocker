@@ -3,10 +3,7 @@
     <persistence-unit name="mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU" transaction-type="JTA">
         <jta-data-source>java:app/jdbc/capital_humano</jta-data-source>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
-        <properties>
-            <!--<property name="eclipselink.logging.level" value="FINE"/>
-            <property name="eclipselink.logging.level.sql" value="FINE"/>
-            <property name="eclipselink.logging.parameters" value="true"/>-->
+        <properties>            
         </properties>
     </persistence-unit>
     <!-- Comentar la siguiente Unidad de persistencia cuando falle saiiut -->
@@ -34,6 +31,12 @@
     </persistence-unit>
     <persistence-unit name="mx.edu.utxj.pye_sgi-ejb-shiro.0PU" transaction-type="JTA">
         <jta-data-source>java:app/jdbc/shiro</jta-data-source>
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
+        <properties>
+        </properties>
+    </persistence-unit>
+    <persistence-unit name="mx.edu.utxj.pye_sgi-ejb-control_escolar.0PU" transaction-type="JTA">
+        <jta-data-source>java:app/jdbc/control_escolar</jta-data-source>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <properties>
         </properties>

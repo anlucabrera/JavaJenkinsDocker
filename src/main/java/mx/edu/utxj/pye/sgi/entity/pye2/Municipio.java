@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author UTXJ
  */
 @Entity
-@Table(name = "municipio", catalog = "pye2", schema = "")
+@Table(name = "municipio",catalog = "pye2", schema = "")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Municipio.findAll", query = "SELECT m FROM Municipio m")
@@ -49,6 +49,8 @@ public class Municipio implements Serializable {
     private List<ServiciosTecnologicosParticipantes> serviciosTecnologicosParticipantesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "municipio")
     private List<ProductosAcademicos> productosAcademicosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "municipio1")
+    private List<Asentamiento> asentamientoList;
     @JoinColumn(name = "claveEstado", referencedColumnName = "idestado", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Estado estado;
@@ -90,21 +92,12 @@ public class Municipio implements Serializable {
     }
 
     @XmlTransient
-    public List<ServiciosTecnologicosParticipantes> getServiciosTecnologicosParticipantesList() {
-        return serviciosTecnologicosParticipantesList;
+    public List<Asentamiento> getAsentamientoList() {
+        return asentamientoList;
     }
 
-    public void setServiciosTecnologicosParticipantesList(List<ServiciosTecnologicosParticipantes> serviciosTecnologicosParticipantesList) {
-        this.serviciosTecnologicosParticipantesList = serviciosTecnologicosParticipantesList;
-    }
-
-    @XmlTransient
-    public List<ProductosAcademicos> getProductosAcademicosList() {
-        return productosAcademicosList;
-    }
-
-    public void setProductosAcademicosList(List<ProductosAcademicos> productosAcademicosList) {
-        this.productosAcademicosList = productosAcademicosList;
+    public void setAsentamientoList(List<Asentamiento> asentamientoList) {
+        this.asentamientoList = asentamientoList;
     }
 
     public Estado getEstado() {
@@ -113,24 +106,6 @@ public class Municipio implements Serializable {
 
     public void setEstado(Estado estado) {
         this.estado = estado;
-    }
-
-    @XmlTransient
-    public List<Localidad> getLocalidadList() {
-        return localidadList;
-    }
-
-    public void setLocalidadList(List<Localidad> localidadList) {
-        this.localidadList = localidadList;
-    }
-
-    @XmlTransient
-    public List<Codigopostal> getCodigopostalList() {
-        return codigopostalList;
-    }
-
-    public void setCodigopostalList(List<Codigopostal> codigopostalList) {
-        this.codigopostalList = codigopostalList;
     }
 
     @Override

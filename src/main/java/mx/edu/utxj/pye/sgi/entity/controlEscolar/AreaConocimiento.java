@@ -3,26 +3,30 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mx.edu.utxj.pye.sgi.entity.ch;
+package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author jonny
+ * @author UTXJ
  */
 @Entity
-@Table(name = "area_conocimiento", catalog = "capital_humano", schema = "")
+@Table(name = "area_conocimiento")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "AreaConocimiento.findAll", query = "SELECT a FROM AreaConocimiento a")
@@ -46,6 +50,8 @@ public class AreaConocimiento implements Serializable {
     @NotNull
     @Column(name = "estatus")
     private boolean estatus;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idAreaConocimiento")
+    private List<Materia> materiaList;
 
     public AreaConocimiento() {
     }
@@ -84,6 +90,15 @@ public class AreaConocimiento implements Serializable {
         this.estatus = estatus;
     }
 
+    @XmlTransient
+    public List<Materia> getMateriaList() {
+        return materiaList;
+    }
+
+    public void setMateriaList(List<Materia> materiaList) {
+        this.materiaList = materiaList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -106,7 +121,7 @@ public class AreaConocimiento implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.ch.AreaConocimiento[ idAreaConocimiento=" + idAreaConocimiento + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.controlEscolar.AreaConocimiento[ idAreaConocimiento=" + idAreaConocimiento + " ]";
     }
     
 }

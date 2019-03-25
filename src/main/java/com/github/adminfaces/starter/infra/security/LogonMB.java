@@ -74,7 +74,7 @@ public class LogonMB extends AdminSession implements Serializable {
 
     @EJB private EjbLogin ejbLogin;
     @EJB private Facade f;    
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbDatosUsuarioLogeado;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbUtilidadesCH;
  //accede al controlador que da permisos a los usuarios
     @Inject permisosUsuarios pUsuarios;
     /*Cuando saiiut falle hacer
@@ -88,7 +88,7 @@ public class LogonMB extends AdminSession implements Serializable {
         usuario
     */   
     public void login() throws IOException {
-//        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()");
+        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()");
 
         if ("estudioEgresad@s".equals(email) && password.equals("248163264")) {
             currentUser = email;
@@ -96,6 +96,12 @@ public class LogonMB extends AdminSession implements Serializable {
             addDetailMessage("Bienvenido <b>" + "Usuario invitado" + "</b>");
             Faces.getExternalContext().getFlash().setKeepMessages(true);
             Faces.redirect("estudioEgresadosDestiempo.xhtml");
+        }else if("aspirante".equals(email) && password.equals("aspirante")){
+            currentUser = email;
+            usuarioTipo = UsuarioTipo.ASPIRANTE;
+            addDetailMessage("Bienvenido y bienvenida <b>" + "Aspirante" + "</b>");
+            Faces.getExternalContext().getFlash().setKeepMessages(true);
+            Faces.redirect("controlEscolar/fichaAdmision.xhtml");
         } else {
             Usuarios res = ejbLogin.getUsuarioPorLogin(email);
             Usuarios usuario = ejbLogin.autenticar(email, password);
@@ -126,7 +132,7 @@ public class LogonMB extends AdminSession implements Serializable {
 //                    agregaBitacora();
 //                    getPermisosAcceso();
                     }
-//                    System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login() tipo: " + usuarioTipo);
+                    System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login() tipo: " + usuarioTipo);
 //                    addDetailMessage("Bienvenido <b>" + usuario.getPersonas().getNombre() + "</b>");
                     addDetailMessage("Bienvenido");
                     Faces.getExternalContext().getFlash().setKeepMessages(true);
@@ -170,7 +176,7 @@ public class LogonMB extends AdminSession implements Serializable {
             nuevaBitacoraacceso.setTabla(nombreTabla);
             nuevaBitacoraacceso.setAccion(accion);
             nuevaBitacoraacceso.setFechaHora(fechaActual);
-            nuevaBitacoraacceso = ejbDatosUsuarioLogeado.crearBitacoraacceso(nuevaBitacoraacceso);
+            nuevaBitacoraacceso = ejbUtilidadesCH.crearBitacoraacceso(nuevaBitacoraacceso);
             nombreTabla = "";
             numeroRegistro = "";
             accion = "";
