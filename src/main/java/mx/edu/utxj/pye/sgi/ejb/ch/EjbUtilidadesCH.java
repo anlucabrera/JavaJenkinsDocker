@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.sgi.ejb.ch;
 
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
@@ -41,7 +42,7 @@ public interface EjbUtilidadesCH {
     public PersonalCategorias crearNuevoPersonalCategorias(PersonalCategorias nuevoPersonalCategorias) throws Throwable;
 
 ////////////////////////////////////////////////////////////////////////////////Bitacora Accesos
-    public List<Bitacoraacceso> mostrarBitacoraacceso(String tabla) throws Throwable;
+    public List<Bitacoraacceso> mostrarBitacoraacceso(String tabla,Date fechaI,Date fechaF) throws Throwable;
 
     public Bitacoraacceso crearBitacoraacceso(Bitacoraacceso nuevoBitacoraacceso) throws Throwable;
 

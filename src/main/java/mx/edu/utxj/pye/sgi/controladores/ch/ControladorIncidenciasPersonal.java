@@ -115,18 +115,6 @@ public class ControladorIncidenciasPersonal implements Serializable {
                     if ((utilidadesCH.castearDaLD(i.getFecha()).isAfter(fechaI) || utilidadesCH.castearDaLD(i.getFecha()).equals(fechaI)) && (utilidadesCH.castearDaLD(i.getFecha()).isBefore(fechaF) || utilidadesCH.castearDaLD(i.getFecha()).equals(fechaF))) {
                         incidenciases.add(i);
                     }
-                    if (!utilidadesCH.editarIncidencias(fechaActual, i.getFecha(), 1)) {
-                        if (i.getEstatus().equals("Pendiente")) {
-                            try {
-                                i.setEstatus("Denegado");
-                                ejbNotificacionesIncidencias.actualizarIncidencias(i);
-                                utilidadesCH.agregaBitacora(0, i.getIncidenciaID().toString(), "Incidencias", "Update");
-                            } catch (Throwable ex) {
-                                Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-                                Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        }
-                    }
                 });
             }
 

@@ -109,8 +109,7 @@ public class UtilidadesCH implements Serializable {
             nuevaBitacoraacceso.setTabla(nombreT);
             nuevaBitacoraacceso.setAccion(evento);
             nuevaBitacoraacceso.setFechaHora(fechaActual);
-            ejbDatosUsuarioLogeado.crearBitacoraacceso(nuevaBitacoraacceso);
-
+            ejbDatosUsuarioLogeado.crearBitacoraacceso(nuevaBitacoraacceso);         
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(CvEducacion.class.getName()).log(Level.SEVERE, null, ex);
