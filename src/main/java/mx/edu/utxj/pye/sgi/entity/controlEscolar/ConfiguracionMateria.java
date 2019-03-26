@@ -32,13 +32,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "configuracion_materia")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "ConfiguracionMateria.findAll", query = "SELECT c FROM ConfiguracionMateria c")
-    , @NamedQuery(name = "ConfiguracionMateria.findByIdConfiguracionMateria", query = "SELECT c FROM ConfiguracionMateria c WHERE c.idConfiguracionMateria = :idConfiguracionMateria")
-    , @NamedQuery(name = "ConfiguracionMateria.findByCargaAcademica", query = "SELECT c FROM ConfiguracionMateria c WHERE c.cargaAcademica = :cargaAcademica")
-    , @NamedQuery(name = "ConfiguracionMateria.findByFechaInicio", query = "SELECT c FROM ConfiguracionMateria c WHERE c.fechaInicio = :fechaInicio")
-    , @NamedQuery(name = "ConfiguracionMateria.findByFechaFin", query = "SELECT c FROM ConfiguracionMateria c WHERE c.fechaFin = :fechaFin")
-    , @NamedQuery(name = "ConfiguracionMateria.findByPorcentaje", query = "SELECT c FROM ConfiguracionMateria c WHERE c.porcentaje = :porcentaje")
-    , @NamedQuery(name = "ConfiguracionMateria.findByValidoDireccion", query = "SELECT c FROM ConfiguracionMateria c WHERE c.validoDireccion = :validoDireccion")})
+    @NamedQuery(name = "ConfiguracionMateria.findAll", query = "SELECT c FROM ConfiguracionMateria c"),
+    @NamedQuery(name = "ConfiguracionMateria.findByIdConfiguracionMateria", query = "SELECT c FROM ConfiguracionMateria c WHERE c.idConfiguracionMateria = :idConfiguracionMateria"),
+    @NamedQuery(name = "ConfiguracionMateria.findByCargaAcademica", query = "SELECT c FROM ConfiguracionMateria c WHERE c.cargaAcademica = :cargaAcademica"),
+    @NamedQuery(name = "ConfiguracionMateria.findByFechaInicio", query = "SELECT c FROM ConfiguracionMateria c WHERE c.fechaInicio = :fechaInicio"),
+    @NamedQuery(name = "ConfiguracionMateria.findByFechaFin", query = "SELECT c FROM ConfiguracionMateria c WHERE c.fechaFin = :fechaFin"),
+    @NamedQuery(name = "ConfiguracionMateria.findByPorcentaje", query = "SELECT c FROM ConfiguracionMateria c WHERE c.porcentaje = :porcentaje"),
+    @NamedQuery(name = "ConfiguracionMateria.findByValidoDireccion", query = "SELECT c FROM ConfiguracionMateria c WHERE c.validoDireccion = :validoDireccion")})
 public class ConfiguracionMateria implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -75,9 +75,9 @@ public class ConfiguracionMateria implements Serializable {
     @ManyToOne(optional = false)
     private UnidadMateria idUnidadMateria;
     @JoinColumns({
-        @JoinColumn(name = "grupo", referencedColumnName = "cve_grupo")
-        , @JoinColumn(name = "materia", referencedColumnName = "cve_materia")
-        , @JoinColumn(name = "id_configuracion_materia", referencedColumnName = "id_carga_academica", insertable = false, updatable = false)})
+        @JoinColumn(name = "grupo", referencedColumnName = "cve_grupo"),
+        @JoinColumn(name = "materia", referencedColumnName = "cve_materia"),
+        @JoinColumn(name = "id_configuracion_materia", referencedColumnName = "id_carga_academica", insertable = false, updatable = false)})
     @ManyToOne(optional = false)
     private CargaAcademica cargaAcademica1;
 

@@ -33,12 +33,12 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "materia")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Materia.findAll", query = "SELECT m FROM Materia m")
-    , @NamedQuery(name = "Materia.findByIdMateria", query = "SELECT m FROM Materia m WHERE m.idMateria = :idMateria")
-    , @NamedQuery(name = "Materia.findByClaveMateria", query = "SELECT m FROM Materia m WHERE m.claveMateria = :claveMateria")
-    , @NamedQuery(name = "Materia.findByNombre", query = "SELECT m FROM Materia m WHERE m.nombre = :nombre")
-    , @NamedQuery(name = "Materia.findByGrado", query = "SELECT m FROM Materia m WHERE m.grado = :grado")
-    , @NamedQuery(name = "Materia.findByEstatus", query = "SELECT m FROM Materia m WHERE m.estatus = :estatus")})
+    @NamedQuery(name = "Materia.findAll", query = "SELECT m FROM Materia m"),
+    @NamedQuery(name = "Materia.findByIdMateria", query = "SELECT m FROM Materia m WHERE m.idMateria = :idMateria"),
+    @NamedQuery(name = "Materia.findByClaveMateria", query = "SELECT m FROM Materia m WHERE m.claveMateria = :claveMateria"),
+    @NamedQuery(name = "Materia.findByNombre", query = "SELECT m FROM Materia m WHERE m.nombre = :nombre"),
+    @NamedQuery(name = "Materia.findByGrado", query = "SELECT m FROM Materia m WHERE m.grado = :grado"),
+    @NamedQuery(name = "Materia.findByEstatus", query = "SELECT m FROM Materia m WHERE m.estatus = :estatus")})
 public class Materia implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "carga_academica")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "CargaAcademica.findAll", query = "SELECT c FROM CargaAcademica c")
-    , @NamedQuery(name = "CargaAcademica.findByIdCargaAcademica", query = "SELECT c FROM CargaAcademica c WHERE c.cargaAcademicaPK.idCargaAcademica = :idCargaAcademica")
-    , @NamedQuery(name = "CargaAcademica.findByCveGrupo", query = "SELECT c FROM CargaAcademica c WHERE c.cargaAcademicaPK.cveGrupo = :cveGrupo")
-    , @NamedQuery(name = "CargaAcademica.findByCveMateria", query = "SELECT c FROM CargaAcademica c WHERE c.cargaAcademicaPK.cveMateria = :cveMateria")
-    , @NamedQuery(name = "CargaAcademica.findByDocente", query = "SELECT c FROM CargaAcademica c WHERE c.docente = :docente")})
+    @NamedQuery(name = "CargaAcademica.findAll", query = "SELECT c FROM CargaAcademica c"),
+    @NamedQuery(name = "CargaAcademica.findByIdCargaAcademica", query = "SELECT c FROM CargaAcademica c WHERE c.cargaAcademicaPK.idCargaAcademica = :idCargaAcademica"),
+    @NamedQuery(name = "CargaAcademica.findByCveGrupo", query = "SELECT c FROM CargaAcademica c WHERE c.cargaAcademicaPK.cveGrupo = :cveGrupo"),
+    @NamedQuery(name = "CargaAcademica.findByCveMateria", query = "SELECT c FROM CargaAcademica c WHERE c.cargaAcademicaPK.cveMateria = :cveMateria"),
+    @NamedQuery(name = "CargaAcademica.findByDocente", query = "SELECT c FROM CargaAcademica c WHERE c.docente = :docente")})
 public class CargaAcademica implements Serializable {
 
     private static final long serialVersionUID = 1L;

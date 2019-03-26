@@ -31,11 +31,11 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "causa_baja")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "CausaBaja.findAll", query = "SELECT c FROM CausaBaja c")
-    , @NamedQuery(name = "CausaBaja.findByIdCausaBaja", query = "SELECT c FROM CausaBaja c WHERE c.idCausaBaja = :idCausaBaja")
-    , @NamedQuery(name = "CausaBaja.findByNombre", query = "SELECT c FROM CausaBaja c WHERE c.nombre = :nombre")
-    , @NamedQuery(name = "CausaBaja.findByDescripcion", query = "SELECT c FROM CausaBaja c WHERE c.descripcion = :descripcion")
-    , @NamedQuery(name = "CausaBaja.findByEstatus", query = "SELECT c FROM CausaBaja c WHERE c.estatus = :estatus")})
+    @NamedQuery(name = "CausaBaja.findAll", query = "SELECT c FROM CausaBaja c"),
+    @NamedQuery(name = "CausaBaja.findByIdCausaBaja", query = "SELECT c FROM CausaBaja c WHERE c.idCausaBaja = :idCausaBaja"),
+    @NamedQuery(name = "CausaBaja.findByNombre", query = "SELECT c FROM CausaBaja c WHERE c.nombre = :nombre"),
+    @NamedQuery(name = "CausaBaja.findByDescripcion", query = "SELECT c FROM CausaBaja c WHERE c.descripcion = :descripcion"),
+    @NamedQuery(name = "CausaBaja.findByEstatus", query = "SELECT c FROM CausaBaja c WHERE c.estatus = :estatus")})
 public class CausaBaja implements Serializable {
 
     private static final long serialVersionUID = 1L;

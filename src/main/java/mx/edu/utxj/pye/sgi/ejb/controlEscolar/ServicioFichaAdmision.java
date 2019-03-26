@@ -6,6 +6,15 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.google.zxing.NotFoundException;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.pdf.AcroFields;
+import com.itextpdf.text.pdf.BarcodeQRCode;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbDatosUsuarioLogeado;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
@@ -30,6 +39,7 @@ import javax.persistence.TypedQuery;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.Part;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,6 +49,14 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.faces.context.FacesContext;
+import javax.mail.util.ByteArrayDataSource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import mx.edu.utxj.pye.sgi.entity.ch.Generos;
+import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
 
 /**
  *
@@ -437,5 +455,168 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
         facadeCE.setEntityClass(DocumentoAspirante.class);
         facadeCE.edit(documentoAspirante);
         facadeCE.flush();
+    }
+    
+    @Override
+    public void generaFichaAdmin(Persona persona, DatosAcademicos academicos,Domicilio domicilio,Aspirante aspirante,MedioComunicacion medioComunicacion) throws IOException, DocumentException{
+        String ruta = "C://archivos//plantillas//formato_ficha_admision.pdf";
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        SimpleDateFormat sm = new SimpleDateFormat("dd-MM-yyyy");
+        
+        Generos generos = new Generos();
+        generos = facadeCE.getEntityManager().find(Generos.class, persona.getGenero());
+        Iems iems = new Iems();
+        iems = facadeCE.getEntityManager().find(Iems.class,academicos.getInstitucionAcademica());
+        Asentamiento asentamiento = new Asentamiento();
+        asentamiento = facadeCE.getEntityManager().createQuery("SELECT a FROM Asentamiento a WHERE a.asentamientoPK.asentamiento = :idA AND a.asentamientoPK.municipio = :idMun AND a.asentamientoPK.estado = :idEst", Asentamiento.class)
+                .setParameter("idA", domicilio.getIdAsentamiento())
+                .setParameter("idMun", domicilio.getIdMunicipio())
+                .setParameter("idEst", domicilio.getIdEstado())
+                .getSingleResult();
+        
+        InputStream is = new FileInputStream(ruta);
+        PdfReader pdfReader = new PdfReader(is,null);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfStamper pdfStamper = new PdfStamper(pdfReader, baos);
+        
+        BarcodeQRCode qrcode = new BarcodeQRCode(String.valueOf(aspirante.getFolioAspirante()), 60, 60, null);
+        Image image = qrcode.getImage();
+        image.setAbsolutePosition(465f, 92f);
+        PdfContentByte  content = pdfStamper.getOverContent(pdfReader.getNumberOfPages());
+        content.addImage(image);
+
+        BarcodeQRCode qrcode2 = new BarcodeQRCode(String.valueOf(aspirante.getFolioAspirante()), 60, 60, null);
+        Image image2 = qrcode2.getImage();
+        image2.setAbsolutePosition(465f, 442f);
+        content.addImage(image2);
+        
+        AcroFields fields = pdfStamper.getAcroFields();
+        fields.setField("folio", String.valueOf(aspirante.getFolioAspirante()));
+        fields.setField("fechaA", sm.format(aspirante.getFechaRegistro()));
+        fields.setField("carreraA", academicos.getPrimeraOpcion());
+        fields.setField("apellidoPatA", persona.getApellidoPaterno());
+        fields.setField("apellidoMatA", persona.getApellidoMaterno());
+        fields.setField("nombreAlumnoA", persona.getNombre());
+        fields.setField("fechaNacimientoA", sm.format(persona.getFechaNacimiento()));
+        fields.setField("generoA",generos.getNombre());
+        fields.setField("estadoCivilA", persona.getEstadoCivil());
+        fields.setField("emailA", medioComunicacion.getEmail());
+        fields.setField("iemsA",iems.getNombre());
+        fields.setField("estadoIemsA", iems.getLocalidad().getMunicipio().getEstado().getNombre());
+        fields.setField("municipioIemsA", iems.getLocalidad().getMunicipio().getNombre());
+        fields.setField("localidadIemsA", iems.getLocalidad().getNombre());
+        fields.setField("calleA", domicilio.getCalle());
+        fields.setField("numeroA", domicilio.getNumero());
+        fields.setField("coloniaA", asentamiento.getNombreAsentamiento());
+        fields.setField("localidadA", asentamiento.getNombreAsentamiento());
+        fields.setField("municipioA", asentamiento.getMunicipio1().getNombre());
+        fields.setField("estadoA", asentamiento.getMunicipio1().getEstado().getNombre());
+        fields.setField("movilA", medioComunicacion.getTelefonoMovil());
+        fields.setField("fijoA", medioComunicacion.getTelefonoFijo());
+        fields.setField("folioA", String.valueOf(aspirante.getFolioAspirante()));
+        fields.setField("usuarioA", String.valueOf(aspirante.getFolioAspirante()));
+        fields.setField("passA", persona.getCurp());
+        fields.setField("turnoA", academicos.getSistemaPrimeraOpcion().getNombre());
+
+        fields.setField("fechaC", sm.format(aspirante.getFechaRegistro()));
+        fields.setField("carreraC",academicos.getSegundaOpcion());
+        fields.setField("apellidoPatC", persona.getApellidoPaterno());
+        fields.setField("apellidoMatC", persona.getApellidoMaterno());
+        fields.setField("nombreAlumnoC", persona.getNombre());
+        fields.setField("fechaNacimientoC", sm.format(persona.getFechaNacimiento()));
+        fields.setField("generoC", generos.getNombre());
+        fields.setField("estadoCivilC",  persona.getEstadoCivil());
+        fields.setField("emailC", medioComunicacion.getEmail());
+        fields.setField("iemsC", iems.getNombre());
+        fields.setField("estadoIemsC", iems.getLocalidad().getMunicipio().getEstado().getNombre());
+        fields.setField("municipioIemsC", iems.getLocalidad().getMunicipio().getNombre());
+        fields.setField("localidadIemsC", iems.getLocalidad().getNombre());
+        fields.setField("calleC", domicilio.getCalle());
+        fields.setField("numeroC", domicilio.getNumero());
+        fields.setField("coloniaC", asentamiento.getNombreAsentamiento());
+        fields.setField("localidadC", asentamiento.getNombreAsentamiento());
+        fields.setField("municipioC", asentamiento.getMunicipio1().getNombre());
+        fields.setField("estadoC", asentamiento.getMunicipio1().getEstado().getNombre());
+        fields.setField("movilC", medioComunicacion.getTelefonoMovil());
+        fields.setField("fijoC", medioComunicacion.getTelefonoFijo());
+        fields.setField("folioC", String.valueOf(aspirante.getFolioAspirante()));
+        fields.setField("usuarioC", String.valueOf(aspirante.getFolioAspirante()));
+        fields.setField("passC", persona.getCurp());
+        fields.setField("turnoC", academicos.getSistemaSegundaOpcion().getNombre());
+        
+        pdfStamper.close();
+        pdfStamper.close();
+        
+        Object response = facesContext.getExternalContext().getResponse();
+        if (response instanceof HttpServletResponse) {
+              HttpServletResponse hsr = (HttpServletResponse) response;
+              hsr.setContentType("application/pdf");
+              hsr.setHeader("Content-disposition", "attachment; filename=\""+aspirante.getFolioAspirante()+".pdf\"");
+              hsr.setContentLength(baos.size());
+              try {
+                    ServletOutputStream out = hsr.getOutputStream();
+                    baos.writeTo(out);
+                    out.flush();
+                    out.close();
+              } catch (IOException ex) {
+                    System.out.println("Error:  " + ex.getMessage());
+              }
+              facesContext.responseComplete();
+        }
+        
+        // El correo gmail de envío
+        String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";
+        String claveCorreo = "Serv.Escolares";
+        Properties properties = new Properties();
+
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.port", "587");
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.user", correoEnvia);
+        properties.put("mail.password", claveCorreo);
+
+        if(medioComunicacion.getEmail() != null){
+            Session session = Session.getInstance(properties,null);
+            try {
+                MimeMessage mimeMessage = new MimeMessage(session);
+                mimeMessage.setFrom(new InternetAddress(correoEnvia,"Registro de Ficha de Admisión 2019 UTXJ"));
+
+                InternetAddress internetAddress = new InternetAddress(medioComunicacion.getEmail());
+
+                mimeMessage.setRecipient(Message.RecipientType.TO,internetAddress);
+                mimeMessage.setSubject("Registro Exitoso");
+
+                MimeBodyPart mimeBodyPart = new MimeBodyPart();
+                MimeBodyPart mimeBodyPart1 = new MimeBodyPart();
+                mimeBodyPart1.setText("Estimado(a) "+persona.getNombre()+"\n\n Gracias por elegir a la Universidad Tecnologica de Xicotepec de Juárez como opción para continuar con tus estudios de nivel superior." +
+                        "\n\n Para continuar descarga la ficha la admisión y asiste a las instalaciones de la UTXJ y entregar la documentación necesaria\n\n"
+                        + "* Formato de Ficha de Admisión.\n"
+                        + "* Copia de CURP (nuevo formato).\n"
+                        + "* Copia de Acta de Nacimiento.\n"
+                        + "* Copia de Certificado de Nivel Medio Superior o Constancia de Estudios Original reciente con tira de materias y calificaciones (aprobatorias) del 1o. al 5o. semestre; indicando el promedio general y firmado por el titular de la Institución\n"
+                        + "* Referencia bancaria del pago de ficha y examen de admisión.\n\n" +
+                        "ATENTAMENTE \n" +
+                        "Departamento de Servicios Escolares");
+
+                Multipart multipart = new MimeMultipart();
+                
+                DataSource source = new ByteArrayDataSource(baos.toByteArray(), "application/pdf");
+                mimeBodyPart.setDataHandler(new DataHandler(source));
+                mimeBodyPart.setFileName(aspirante.getFolioAspirante()+".pdf");
+                
+                multipart.addBodyPart(mimeBodyPart);
+                multipart.addBodyPart(mimeBodyPart1);
+                
+                mimeMessage.setContent(multipart);
+
+                Transport transport = session.getTransport("smtp");
+                transport.connect(correoEnvia,claveCorreo);
+                transport.sendMessage(mimeMessage,mimeMessage.getAllRecipients());
+                transport.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
     }
 }

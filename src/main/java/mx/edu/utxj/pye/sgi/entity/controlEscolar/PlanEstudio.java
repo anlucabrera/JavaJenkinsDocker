@@ -34,12 +34,12 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "plan_estudio")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "PlanEstudio.findAll", query = "SELECT p FROM PlanEstudio p")
-    , @NamedQuery(name = "PlanEstudio.findByIdPlanEstudio", query = "SELECT p FROM PlanEstudio p WHERE p.idPlanEstudio = :idPlanEstudio")
-    , @NamedQuery(name = "PlanEstudio.findByDescripcion", query = "SELECT p FROM PlanEstudio p WHERE p.descripcion = :descripcion")
-    , @NamedQuery(name = "PlanEstudio.findByAnio", query = "SELECT p FROM PlanEstudio p WHERE p.anio = :anio")
-    , @NamedQuery(name = "PlanEstudio.findByEstatus", query = "SELECT p FROM PlanEstudio p WHERE p.estatus = :estatus")
-    , @NamedQuery(name = "PlanEstudio.findByIdPe", query = "SELECT p FROM PlanEstudio p WHERE p.idPe = :idPe")})
+    @NamedQuery(name = "PlanEstudio.findAll", query = "SELECT p FROM PlanEstudio p"),
+    @NamedQuery(name = "PlanEstudio.findByIdPlanEstudio", query = "SELECT p FROM PlanEstudio p WHERE p.idPlanEstudio = :idPlanEstudio"),
+    @NamedQuery(name = "PlanEstudio.findByDescripcion", query = "SELECT p FROM PlanEstudio p WHERE p.descripcion = :descripcion"),
+    @NamedQuery(name = "PlanEstudio.findByAnio", query = "SELECT p FROM PlanEstudio p WHERE p.anio = :anio"),
+    @NamedQuery(name = "PlanEstudio.findByEstatus", query = "SELECT p FROM PlanEstudio p WHERE p.estatus = :estatus"),
+    @NamedQuery(name = "PlanEstudio.findByIdPe", query = "SELECT p FROM PlanEstudio p WHERE p.idPe = :idPe")})
 public class PlanEstudio implements Serializable {
 
     private static final long serialVersionUID = 1L;

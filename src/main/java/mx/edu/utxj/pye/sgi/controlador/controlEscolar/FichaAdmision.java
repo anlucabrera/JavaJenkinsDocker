@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
+import com.itextpdf.text.DocumentException;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
@@ -19,6 +20,7 @@ import javax.servlet.http.Part;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -56,7 +58,6 @@ public class FichaAdmision implements Serializable {
     @Getter @Setter private TutorFamiliar tutorFamiliar;
     @Getter @Setter private DatosFamiliares datosFamiliares;
     @Getter @Setter private DatosAcademicos datosAcademicos;
-    @Getter @Setter private DocumentoAspirante documentoAspirante;
     @Getter @Setter private Part file, fileR;
     @Getter @Setter private String doc;
     @Getter @Setter private Boolean dm = true,com = true,df = true,da = true,evif = true, estatusFicha = null;
@@ -75,7 +76,6 @@ public class FichaAdmision implements Serializable {
         tutorFamiliar = new TutorFamiliar();
         datosFamiliares = new DatosFamiliares();
         datosAcademicos = new DatosAcademicos();
-        documentoAspirante = new DocumentoAspirante();
         listaGenero = ejbFichaAdmision.listaGeneros();
         listaTipoSangre = ejbItemCE.itemTipoSangre();
         listaTipoDiscapacidad = ejbItemCE.itemDiscapcidad();
@@ -202,11 +202,15 @@ public class FichaAdmision implements Serializable {
 
         if(ejbFichaAdmision.buscaPersonaByCurp(persona.getCurp()) != null){
             persona = ejbFichaAdmision.actualizaPersona(persona);
+            dm = false;
+            index = 1;
         } else {
             ejbFichaAdmision.GuardaPersona(persona);
+            index = 0;
+            dm = false;
+            index = 1;
         }
-        dm = false;
-        index = 1;
+        
     }
 
     public void guardaDatosMedicos(){
@@ -230,6 +234,8 @@ public class FichaAdmision implements Serializable {
                     });
             datosMedicos.setCvePersona(persona.getIdpersona());
             ejbFichaAdmision.guardaDatosMedicos(datosMedicos);
+            com = false;
+            index =2;
         }else{
             selectAM.stream()
                     .forEach(s -> {
@@ -249,9 +255,9 @@ public class FichaAdmision implements Serializable {
                         }
                     });
             ejbFichaAdmision.actualizaDatosMedicos(datosMedicos);
+            com = false;
+            index =2;
         }
-        com = false;
-        index =2;
     }
 
     public void usoMismaDireccion(){
@@ -271,15 +277,18 @@ public class FichaAdmision implements Serializable {
             aspirante.setIdPersona(persona);
             aspirante.setIdProcesoInscripcion(procesosInscripcion);
             aspirante.setEstatus(false);
+            aspirante.setFechaRegistro(new Date());
             ejbFichaAdmision.guardaAspirante(aspirante);
             domicilio.setAspirante(aspirante.getIdAspirante());
             ejbFichaAdmision.guardaDomicilo(domicilio);
+            df = false;
+            index = 3;
         }else{
             ejbFichaAdmision.actualizaCamunicacion(medioComunicacion);
             ejbFichaAdmision.actualizaDomicilio(domicilio);
+            df = false;
+            index = 3;
         }
-        df = false;
-        index = 3;
     }
 
     public void guardaDatosFamiliares(){
@@ -290,12 +299,15 @@ public class FichaAdmision implements Serializable {
                 datosFamiliares.setTutor(tutorFamiliar);
                 ejbFichaAdmision.guardaDatosFamiliares(datosFamiliares);
             }
+            da = false;
+            index = 4;
         }else{
             ejbFichaAdmision.actualizaTutorFamiliar(tutorFamiliar);
             ejbFichaAdmision.actualizaDatosFamiliares(datosFamiliares);
+            da = false;
+            index = 4;
         }
-        da = false;
-        index = 4;
+        
     }
     
     public void selectIems(){
@@ -316,12 +328,10 @@ public class FichaAdmision implements Serializable {
                 datosAcademicos.setSegundaOpcion(null);
                 Messages.addGlobalWarn("La carrera principal y opcional deben de ser diferentes!");
                 index = 4;
-            }else if(areaAcademicaPO == 2 || areaAcademicaSO == 2){
-                Messages.addGlobalWarn("Para esta carrera no hay sistema sabatino, debe de modificar el turno!");
-                index = 4;
             }else{
                 ejbFichaAdmision.verificarFolio(procesosInscripcion);
                 aspirante.setFolioAspirante(ejbFichaAdmision.verificarFolio(procesosInscripcion));
+                aspirante.setFechaRegistro(new Date());
                 ejbFichaAdmision.actualizaAspirante(aspirante);
                 datosAcademicos.setAspirante(aspirante.getIdAspirante());
                 ejbFichaAdmision.guardaDatosAcademicos(datosAcademicos);
@@ -333,9 +343,6 @@ public class FichaAdmision implements Serializable {
             if(datosAcademicos.getPrimeraOpcion().equals(datosAcademicos.getSegundaOpcion())){
                 datosAcademicos.setSegundaOpcion(null);
                 Messages.addGlobalWarn("La carrera principal y opcional deben de ser diferentes!");
-                index = 4;
-            }else if(areaAcademicaPO == 2 || areaAcademicaSO == 2){
-                Messages.addGlobalWarn("Para esta carrera no hay sistema sabatino, debe de modificar el turno!");
                 index = 4;
             }else{
                 ejbFichaAdmision.actualizaDatosAcademicos(datosAcademicos);
@@ -405,14 +412,7 @@ public class FichaAdmision implements Serializable {
             selectPEOpcional();
             da = false;
             evif = false;
-            documentoAspirante = aspirante.getDocumentoAspirante();
         }
-    }
-
-    public void guardaRequisitos() throws IOException {
-        documentoAspirante = ejbFichaAdmision.guardaRequiitos(fileR, aspirante, doc);
-        aspirante = ejbFichaAdmision.buscaAspiranteByClave(persona.getIdpersona());
-        index = 6;
     }
 
     public  void clearInformacion(){
@@ -434,18 +434,19 @@ public class FichaAdmision implements Serializable {
         persona = ejbFichaAdmision.buscaPersonaByCurp(curp);
         if(persona != null){
             aspirante = ejbFichaAdmision.buscaAspiranteByClave(persona.getIdpersona());
-            if(aspirante.getDocumentoAspirante() != null){
-                if(aspirante.getDocumentoAspirante().getEvidenciaActaNacimiento() != null && aspirante.getDocumentoAspirante().getEvidenciaHistorialAcademico() != null){
-                    estatusFicha = aspirante.getEstatus();
-                }else{
-                    estatusFicha = false;
-                }
+            if(aspirante.getDatosAcademicos() != null){
+                estatusFicha = aspirante.getEstatus();
+            }else{
+                estatusFicha = false;
             }
         }else{
             Messages.addGlobalWarn("No existe registro o si esta incompleto, favor de verificarlo!");
         }
         curp = null;
     }
-
+    
+    public void downloadFichaAdmin() throws IOException, DocumentException{
+        ejbFichaAdmision.generaFichaAdmin(persona,datosAcademicos,domicilio,aspirante,medioComunicacion);
+    }
     private static final Logger LOG = Logger.getLogger(FichaAdmision.class.getName());
 }

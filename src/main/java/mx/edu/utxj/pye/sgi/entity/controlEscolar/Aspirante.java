@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -21,6 +22,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -33,10 +36,11 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "aspirante")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Aspirante.findAll", query = "SELECT a FROM Aspirante a")
-    , @NamedQuery(name = "Aspirante.findByIdAspirante", query = "SELECT a FROM Aspirante a WHERE a.idAspirante = :idAspirante")
-    , @NamedQuery(name = "Aspirante.findByFolioAspirante", query = "SELECT a FROM Aspirante a WHERE a.folioAspirante = :folioAspirante")
-    , @NamedQuery(name = "Aspirante.findByEstatus", query = "SELECT a FROM Aspirante a WHERE a.estatus = :estatus")})
+    @NamedQuery(name = "Aspirante.findAll", query = "SELECT a FROM Aspirante a"),
+    @NamedQuery(name = "Aspirante.findByIdAspirante", query = "SELECT a FROM Aspirante a WHERE a.idAspirante = :idAspirante"),
+    @NamedQuery(name = "Aspirante.findByFolioAspirante", query = "SELECT a FROM Aspirante a WHERE a.folioAspirante = :folioAspirante"),
+    @NamedQuery(name = "Aspirante.findByEstatus", query = "SELECT a FROM Aspirante a WHERE a.estatus = :estatus"),
+    @NamedQuery(name = "Aspirante.findByFechaRegistro", query = "SELECT a FROM Aspirante a WHERE a.fechaRegistro = :fechaRegistro")})
 public class Aspirante implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -51,6 +55,9 @@ public class Aspirante implements Serializable {
     @NotNull
     @Column(name = "estatus")
     private boolean estatus;
+    @Column(name = "fechaRegistro")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaRegistro;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
     private DatosAcademicos datosAcademicos;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "aspirante")
@@ -107,6 +114,14 @@ public class Aspirante implements Serializable {
 
     public void setEstatus(boolean estatus) {
         this.estatus = estatus;
+    }
+
+    public Date getFechaRegistro() {
+        return fechaRegistro;
+    }
+
+    public void setFechaRegistro(Date fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
     }
 
     public DatosAcademicos getDatosAcademicos() {

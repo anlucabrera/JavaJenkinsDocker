@@ -31,10 +31,10 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "especialidad_centro")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "EspecialidadCentro.findAll", query = "SELECT e FROM EspecialidadCentro e")
-    , @NamedQuery(name = "EspecialidadCentro.findByIdEspecialidadCentro", query = "SELECT e FROM EspecialidadCentro e WHERE e.idEspecialidadCentro = :idEspecialidadCentro")
-    , @NamedQuery(name = "EspecialidadCentro.findByNombre", query = "SELECT e FROM EspecialidadCentro e WHERE e.nombre = :nombre")
-    , @NamedQuery(name = "EspecialidadCentro.findByEstatus", query = "SELECT e FROM EspecialidadCentro e WHERE e.estatus = :estatus")})
+    @NamedQuery(name = "EspecialidadCentro.findAll", query = "SELECT e FROM EspecialidadCentro e"),
+    @NamedQuery(name = "EspecialidadCentro.findByIdEspecialidadCentro", query = "SELECT e FROM EspecialidadCentro e WHERE e.idEspecialidadCentro = :idEspecialidadCentro"),
+    @NamedQuery(name = "EspecialidadCentro.findByNombre", query = "SELECT e FROM EspecialidadCentro e WHERE e.nombre = :nombre"),
+    @NamedQuery(name = "EspecialidadCentro.findByEstatus", query = "SELECT e FROM EspecialidadCentro e WHERE e.estatus = :estatus")})
 public class EspecialidadCentro implements Serializable {
 
     private static final long serialVersionUID = 1L;
