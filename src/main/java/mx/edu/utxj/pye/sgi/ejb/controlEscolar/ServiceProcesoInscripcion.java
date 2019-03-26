@@ -35,4 +35,12 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                 .setParameter("po", pe)
                 .getResultList();
     }
+
+    @Override
+    public Aspirante buscaAspiranteByFolio(Integer folio) {
+        return facadeCE.getEntityManager().createNamedQuery("Aspirante.findByFolioAspirante", Aspirante.class)
+                .setParameter("folioAspirante", folio)
+                .getResultList()
+                .stream().findFirst().orElse(null);
+    }
 }

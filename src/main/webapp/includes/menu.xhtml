@@ -601,6 +601,24 @@
                     <li><p:link href="/finanzas/tramites_comisionar.xhtml"><i class="fa fa-shopping-bag"></i> <span>Comisionar personal</span></p:link></li>
                 </ul>
             </li-->
+            <!-- Menú procesos de inscripción -->
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave  eq 56 || controladorEmpleado.nuevoOBJListaPersonal.clave  eq 444 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 551}">
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-id-card"></i> <span>Proceso Inscripción</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <li>
+                            <p:link href="/controlEscolar/se/procesoInscripcion.xhtml"><i class="fa fa-check"></i>
+                                <span>Validación Ficha</span>
+                            </p:link>
+                        </li>
+                    </ul>
+                </li>
+            </c:if>
         </c:if>
         <c:if test="#{logonMB.usuarioTipo == 'ASPIRANTE'}">
             <li>

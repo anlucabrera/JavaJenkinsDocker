@@ -25,6 +25,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -40,6 +41,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Aspirante.findByIdAspirante", query = "SELECT a FROM Aspirante a WHERE a.idAspirante = :idAspirante"),
     @NamedQuery(name = "Aspirante.findByFolioAspirante", query = "SELECT a FROM Aspirante a WHERE a.folioAspirante = :folioAspirante"),
     @NamedQuery(name = "Aspirante.findByEstatus", query = "SELECT a FROM Aspirante a WHERE a.estatus = :estatus"),
+    @NamedQuery(name = "Aspirante.findByFolioCeneval", query = "SELECT a FROM Aspirante a WHERE a.folioCeneval = :folioCeneval"),
     @NamedQuery(name = "Aspirante.findByFechaRegistro", query = "SELECT a FROM Aspirante a WHERE a.fechaRegistro = :fechaRegistro")})
 public class Aspirante implements Serializable {
 
@@ -55,6 +57,9 @@ public class Aspirante implements Serializable {
     @NotNull
     @Column(name = "estatus")
     private boolean estatus;
+    @Size(max = 15)
+    @Column(name = "folioCeneval")
+    private String folioCeneval;
     @Column(name = "fechaRegistro")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaRegistro;
@@ -114,6 +119,14 @@ public class Aspirante implements Serializable {
 
     public void setEstatus(boolean estatus) {
         this.estatus = estatus;
+    }
+
+    public String getFolioCeneval() {
+        return folioCeneval;
+    }
+
+    public void setFolioCeneval(String folioCeneval) {
+        this.folioCeneval = folioCeneval;
     }
 
     public Date getFechaRegistro() {
