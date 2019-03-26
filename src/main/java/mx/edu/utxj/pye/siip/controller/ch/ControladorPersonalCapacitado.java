@@ -402,6 +402,7 @@ public class ControladorPersonalCapacitado implements Serializable{
     public void guardarEdicion() {
         try {
             nuevoPerCap = ejb.actualizarPerCap(nuevoPerCap);
+            Ajax.update("formMuestraDatosActivos");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorPersonalCapacitado.class.getName()).log(Level.SEVERE, null, ex);

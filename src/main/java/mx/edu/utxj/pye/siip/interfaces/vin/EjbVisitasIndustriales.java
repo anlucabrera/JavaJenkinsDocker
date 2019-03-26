@@ -62,4 +62,11 @@ public interface EjbVisitasIndustriales {
      */
     public List<ListaDtoVisitasIndustriales> getListaVisitasIndutrialesDTO(String mes, Short ejercicio);
     
+     /**
+     * Método que actualiza el registro seleccionado 
+     * @param nuevaVisita
+     * @return entity.
+     * @throws java.lang.Throwable
+     */
+    public VisitasIndustriales actualizarVisita(VisitasIndustriales nuevaVisita) throws Throwable;
 }

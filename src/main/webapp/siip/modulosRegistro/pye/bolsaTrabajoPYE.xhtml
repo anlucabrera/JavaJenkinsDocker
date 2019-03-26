@@ -108,6 +108,10 @@
                                                                  class="btn btn-sm #{bolTrabPYE.verificaAlineacion(bolTrabReg)?'btn-info':'btn-warning'}"
                                                                  icon="fa fa-cog"
                                                                  title="Alineación a POA." />
+                                                <p:commandButton actionListener="#{bolTrab.editarRegistro(BolTrab)}"
+                                                            class="btn btn-sm btn-primary" 
+                                                            icon="fa fa-edit"
+                                                            title="Editar registro" />
                                             </div>
                                        </p:column>
                                        <p:column style="width: 80px; text-align: center;"><h:outputText value="#{BolTrab.bolsaTrabajo.bolsatrab}"/></p:column> 
@@ -350,6 +354,84 @@
                                         </f:facet>
                                     </p:dataTable>
                         </h:form>
+                    </p:dialog>
+                      <!-- Modal para editar registro seleccionado -->
+                    <p:dialog id="modalEdicion" 
+                              widgetVar="modalEdicion" 
+                              width="1200" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{bolTrab.dto.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Editar registro" 
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        
+                             <o:form id="frmModalEdicion" enctype="multipart/form-data"> 
+                                        <p:outputPanel>
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-md-12">
+                                                    <div class="box box-widget widget-user-2">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="clave" value="Clave"/>                                
+                                                                    <p:inputText id="clave" class="form-control" disabled="true" value="#{bolTrab.dto.registro.bolsaTrabajo.bolsatrab}"/>
+                                                                    <p:message for="clave" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="fecha" value="Fecha"/>
+                                                                    <p:inputText id="fecha" class="form-control" disabled="true" value="#{bolTrab.dto.registro.bolsaTrabajo.fecha}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:inputText>
+                                                                    <p:message for="fecha" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="plazas" value="Plazas"/>
+                                                                    <p:inputNumber id="plazas" class="form-control" style="border: none;" size="52" minValue="1" maxValue="100" value="#{bolTrab.dto.registro.bolsaTrabajo.plazas}"/>
+                                                                    <p:message for="plazas" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="empresa" value="Empresa"/>
+                                                                    <p:inputText id="empresa" class="form-control" disabled="true" value="#{bolTrab.dto.registro.bolsaTrabajo.empresa.nombre}"/>
+                                                                    <p:message for="empresa" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="claveEmp" value="Clave Empresa"/>
+                                                                    <p:inputText id="claveEmp" class="form-control" disabled="true" value="#{bolTrab.dto.registro.bolsaTrabajo.empresa.empresa}"/>
+                                                                    <p:message for="claveEmp" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                 <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="puesto" value="Puesto Ofertado"/>
+                                                                    <p:inputText id="puesto" class="form-control" placeholder="Puesto" size="100" value="#{bolTrab.dto.registro.bolsaTrabajo.puestoOfertado}"/> 
+                                                                    <p:message for="puesto" display="tooltip" />
+                                                                    <hr/>
+                                                                </div> 
+                                                                 <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                    <p:commandButton id="btnGuardarEdicion" value="Guardar" actionListener="#{bolTrab.guardarEdicion()}" 
+                                                                                     icon="fa fa-save" class="btn-primary btn-block col-md-3" oncomplete="PF('frmModalEdicion')update();"
+                                                                                     update="@form"  process="@form" />
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                </div>  
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </p:outputPanel>
+                                    </o:form>
                     </p:dialog>
                 </div>
             </div>

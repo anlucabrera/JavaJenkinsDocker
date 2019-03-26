@@ -94,6 +94,11 @@ public interface EjbIems {
     */
     public List<Iems> getListaStatusPorRegistro(Integer iemsID);
     
-    
-    
+     /**
+     * Método que actualiza el IEMS seleccionado 
+     * @param nuevoIems
+     * @return entity.
+     * @throws java.lang.Throwable
+     */
+    public Iems actualizarIems(Iems nuevoIems) throws Throwable;    
 }

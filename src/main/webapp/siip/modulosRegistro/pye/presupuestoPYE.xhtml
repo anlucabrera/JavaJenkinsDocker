@@ -102,7 +102,7 @@
                                                                  icon="fa fa-cog"
                                                                  title="Alineación a POA." />
                                                 <p:commandButton actionListener="#{presupuestosEjercicio.editarRegistro(presupuesto)}"
-                                                            class="btn btn-sm btn-info" 
+                                                            class="btn btn-sm btn-primary" 
                                                             icon="fa fa-edit"
                                                             title="Editar registro" />
 
@@ -333,14 +333,14 @@
                                                                 </div>
                                                                 <div class="col-sm-12 col-md-4 col-lg-3">
                                                                     <p:outputLabel value="Fecha de Aplicación" for="fecha"/>
-                                                                    <p:inputText disabled="true" value="#{presupuestosEjercicio.dto.registro.presupuestos.fechaAplicacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:inputText>
+                                                                    <p:inputText id="fecha" disabled="true" value="#{presupuestosEjercicio.dto.registro.presupuestos.fechaAplicacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:inputText>
 <!--                                                                    <p:calendar locale="es" id="fecha" value="# {presupuestosEjercicio.dto.registro.presupuestos.fechaAplicacion}" pattern="yyyy-MM-dd" mask="true"/>-->
                                                                     <p:message for="fecha" display="tooltip" />
                                                                     <hr/>
                                                                 </div>
                                                                 <div class="col-sm-12 col-md-12 col-lg-3">
                                                                     <p:outputLabel for="monto" value="Monto"/>
-                                                                    <p:inputText id="monto" class="form-control" placeholder="Monto" size="12" value="#{presupuestosEjercicio.dto.registro.presupuestos.monto}"><f:convertNumber pattern="¤#,##0.00" currencySymbol="$" /></p:inputText> 
+                                                                    <p:inputNumber id="monto" class="form-control" size="35" style="border: none;" decimalPlaces="2" decimalSeparator="." value="#{presupuestosEjercicio.dto.registro.presupuestos.monto}"/> 
                                                                     <p:message for="monto" display="tooltip" />
                                                                     <hr/>
                                                                 </div>

@@ -355,6 +355,8 @@ public class ControladorIngPropios implements Serializable{
     public void guardarEdicion() {
          try {
             nuevoIngPropios = ejb.actualizarIngPropios(nuevoIngPropios);
+            cargarListaPorEvento();
+            Ajax.update("formMuestraDatosActivos");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorIngPropios.class.getName()).log(Level.SEVERE, null, ex);

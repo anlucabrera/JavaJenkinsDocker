@@ -398,4 +398,13 @@ public class ServicioVisitasIndustriales implements EjbVisitasIndustriales{
             return ldto;
         }
     }
+
+    @Override
+    public VisitasIndustriales actualizarVisita(VisitasIndustriales nuevaVisita) throws Throwable {
+        f.setEntityClass(VisitasIndustriales.class);
+        f.edit(nuevaVisita);
+        f.flush();
+        Messages.addGlobalInfo("El registro se ha actualizado correctamente");
+        return nuevaVisita;
+    }
 }

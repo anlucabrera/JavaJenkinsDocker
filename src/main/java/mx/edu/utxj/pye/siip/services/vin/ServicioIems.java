@@ -475,4 +475,13 @@ public class ServicioIems implements EjbIems {
         return l;
     }
 
+    @Override
+    public Iems actualizarIems(Iems nuevoIems) throws Throwable {
+        f.setEntityClass(Iems.class);
+        f.edit(nuevoIems);
+        f.flush();
+        Messages.addGlobalInfo("El registro se ha actualizado correctamente");
+        return nuevoIems;
+    }
+
 }

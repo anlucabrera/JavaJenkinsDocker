@@ -173,7 +173,7 @@
                                                                  icon="fa fa-cog"
                                                                  title="Alineación a POA." />
                                                  <p:commandButton actionListener="#{registrosMovilidad.editarRegistro(regMov)}"
-                                                            class="btn btn-sm btn-info" 
+                                                            class="btn btn-sm btn-primary" 
                                                             icon="fa fa-edit"
                                                             title="Editar registro" />
                                             </div>
@@ -758,31 +758,31 @@
                                                                 </div>
                                                                 <div class="col-sm-12 col-md-12 col-lg-3">
                                                                     <p:outputLabel for="presEst" value="Presupuesto Estatal"/>
-                                                                    <p:inputText id="presEst" class="form-control" placeholder="Presupuesto Estatal" size="12" value="#{registrosMovilidad.dto.registro.registrosMovilidad.presEst}"/> 
+                                                                    <p:inputNumber id="presEst" class="form-control" style="border: none;" size="35" decimalPlaces="2" decimalSeparator="." value="#{registrosMovilidad.dto.registro.registrosMovilidad.presEst}"/> 
                                                                     <p:message for="presEst" display="tooltip" />
                                                                     <hr/>
                                                                 </div>  
                                                                 <div class="col-sm-12 col-md-12 col-lg-3">
                                                                     <p:outputLabel for="presFed" value="Presupuesto Federal"/>
-                                                                    <p:inputText id="presFed" class="form-control" placeholder="Presupuesto Federal" size="12" value="#{registrosMovilidad.dto.registro.registrosMovilidad.presFed}"/> 
+                                                                    <p:inputNumber id="presFed" class="form-control" style="border: none;" size="35" decimalPlaces="2" decimalSeparator="." value="#{registrosMovilidad.dto.registro.registrosMovilidad.presFed}"/> 
                                                                     <p:message for="presFed" display="tooltip" />
                                                                     <hr/>
                                                                 </div>  
                                                                 <div class="col-sm-12 col-md-12 col-lg-3">
                                                                     <p:outputLabel for="capDer" value="Captación de Derechos"/>
-                                                                    <p:inputText id="capDer" class="form-control" placeholder="Captación de Derechos" size="12" value="#{registrosMovilidad.dto.registro.registrosMovilidad.capDer}"/> 
+                                                                    <p:inputNumber id="capDer" class="form-control" style="border: none;" size="35" decimalPlaces="2" decimalSeparator="." value="#{registrosMovilidad.dto.registro.registrosMovilidad.capDer}"/> 
                                                                     <p:message for="capDer" display="tooltip" />
                                                                     <hr/>
                                                                 </div>  
                                                                 <div class="col-sm-12 col-md-12 col-lg-3">
                                                                     <p:outputLabel for="ingProp" value="Ingresos Propios"/>
-                                                                    <p:inputText id="ingProp" class="form-control" placeholder="Ingresos Propios" size="12" value="#{registrosMovilidad.dto.registro.registrosMovilidad.ingPropios}"/> 
+                                                                    <p:inputNumber id="ingProp" class="form-control" style="border: none;" size="35" decimalPlaces="2" decimalSeparator="." value="#{registrosMovilidad.dto.registro.registrosMovilidad.ingPropios}"/> 
                                                                     <p:message for="ingProp" display="tooltip" />
                                                                     <hr/>
                                                                 </div>  
                                                                 <div class="col-sm-12 col-md-12 col-lg-3">
                                                                     <p:outputLabel for="ingExtra" value="Ingresos Extraordinarios"/>
-                                                                    <p:inputText id="ingExtra" class="form-control" placeholder="Ingresos Extraordinarios" size="12" value="#{registrosMovilidad.dto.registro.registrosMovilidad.ingExtra}"/> 
+                                                                    <p:inputNumber id="ingExtra" class="form-control" style="border: none;" size="35" decimalPlaces="2" decimalSeparator="." value="#{registrosMovilidad.dto.registro.registrosMovilidad.ingExtra}"/> 
                                                                     <p:message for="ingExtra" display="tooltip" />
                                                                     <hr/>
                                                                 </div>  

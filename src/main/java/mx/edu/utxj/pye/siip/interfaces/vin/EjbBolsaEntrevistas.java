@@ -49,4 +49,12 @@ public interface EjbBolsaEntrevistas {
      * @return Lista de entrevistas.
      */
    public List<DTOBolsaEntrevistas> getListaEntrevistaBolsaTrabajo(String bolsaTrab);
+   
+    /**
+     * Método que actualiza el registro seleccionado 
+     * @param nuevaEntBolTrab
+     * @return entity.
+     * @throws java.lang.Throwable
+     */
+    public BolsaTrabajoEntrevistas actualizarEntBolTrab(BolsaTrabajoEntrevistas nuevaEntBolTrab) throws Throwable;
 }

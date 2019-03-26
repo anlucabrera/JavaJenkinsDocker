@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -27,7 +26,7 @@ import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.siip.entity.prontuario.list.ListaIemsPrevia;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
-import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
+import mx.edu.utxj.pye.siip.dto.vin.DtoIems;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbIems;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbPlantillasVINExcel;
@@ -47,8 +46,7 @@ public class ControladorIems implements Serializable{
 
     private static final long serialVersionUID = 1785268843955234056L;
     
-    
-    @Getter @Setter private Iems iemsSeleccionada;
+    @Getter @Setter DtoIems dto;
     @Getter @Setter private Integer estado = 0, municipio = 0;
     @Getter @Setter private List<SelectItem> selectEstados, SelectMunicipio;
     @Getter @Setter private List<Iems> listaIems, listaIemsFiltro;
@@ -64,9 +62,12 @@ public class ControladorIems implements Serializable{
     @Inject ControladorEmpleado controladorEmpleado;
     
     @Getter @Setter private ListaIemsPrevia listaIemsPrevia = new ListaIemsPrevia();
+    
+    @Getter @Setter private Iems nuevoIems;
   
     @PostConstruct
     public void init() {
+        dto = new DtoIems();
         selectEstados = eJBSelectItems.itemEstados();
 //        registroIems = ejbIems.getRegistroIemsMensual();
 //                        listaIems = new ArrayList<>();
@@ -145,6 +146,31 @@ public class ControladorIems implements Serializable{
             Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
         }
     }
+     
+    public void editarRegistro(Iems registro){
+        dto.setIemsSeleccionada(registro);
+        nuevoIems = dto.getIemsSeleccionada();
+        Ajax.update("frmModalEdicion");
+        Ajax.oncomplete("skin();");
+        dto.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionDialogo();
+    }
     
-   
+    public void forzarAperturaEdicionDialogo(){
+        if(dto.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEdicion').show();");
+            dto.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void guardarEdicion() {
+         try {
+            nuevoIems = ejbIems.actualizarIems(nuevoIems);
+            Ajax.update("formIEMSMesActual");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorIems.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
 }

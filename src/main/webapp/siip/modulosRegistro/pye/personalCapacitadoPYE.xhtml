@@ -115,7 +115,7 @@
                                                                  icon="fa fa-cog"
                                                                  title="Alineación a POA." />
                                                 <p:commandButton actionListener="#{personalCap.editarRegistro(perCap)}"
-                                                            class="btn btn-sm btn-info" 
+                                                            class="btn btn-sm btn-primary" 
                                                             icon="fa fa-edit"
                                                             title="Editar registro" />
                                             </div>
@@ -580,7 +580,7 @@
                                                                 </div>
                                                                 <div class="col-sm-12 col-md-12 col-lg-4">
                                                                     <p:outputLabel value="Duración" for="duracion"/>
-                                                                    <p:inputText id="duracion" class="form-control" value="#{personalCap.dto.registro.personalCapacitado.duracion}"/>
+                                                                    <p:inputMask id="duracion" class="form-control" mask="99:99" value="#{personalCap.dto.registro.personalCapacitado.duracion}"/>
                                                                     <p:message for="duracion" display="tooltip" />
                                                                     <hr/>
                                                                 </div>
@@ -592,13 +592,13 @@
                                                                 </div>
                                                                  <div class="col-sm-12 col-md-12 col-lg-4">
                                                                     <p:outputLabel for="modalidad" value="Modalidad"/>
-                                                                    <p:inputText id="modalidad" class="form-control" disabled="true" value="#{personalCap.dto.registro.personalCapacitado.modalidad.modalidad}"/> 
+                                                                    <p:inputText id="modalidad" class="form-control" disabled="true" value="#{personalCap.dto.registro.personalCapacitado.modalidad.modalidad}"/>
                                                                     <p:message for="modalidad" display="tooltip" />
                                                                     <hr/>
                                                                 </div>  
                                                                 <div class="col-sm-12 col-md-12 col-lg-4">
                                                                     <p:outputLabel for="monto" value="Monto Invertido"/>
-                                                                    <p:inputText id="monto" class="form-control" placeholder="Monto" value="#{personalCap.dto.registro.personalCapacitado.montoInvertido}"/> 
+                                                                    <p:inputNumber id="monto" class="form-control" style="border: none;" size="52" decimalPlaces="2" decimalSeparator="." value="#{personalCap.dto.registro.personalCapacitado.montoInvertido}"/> 
                                                                     <p:message for="monto" display="tooltip" />
                                                                     <hr/>
                                                                 </div>

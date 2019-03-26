@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.pye2.BolsaTrabajoEntrevistas;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
@@ -66,6 +67,8 @@ public class ControladorBolsaEntrevistas implements Serializable{
     @Inject ControladorBolsaTrabajo controladorBolsaTrabajo;
     
     @EJB Facade f;
+    
+    @Getter @Setter private BolsaTrabajoEntrevistas nuevaEntBolTrab;
     
     @PostConstruct
     public void init(){
@@ -278,4 +281,30 @@ public class ControladorBolsaEntrevistas implements Serializable{
         }
     }
     
+      public void editarRegistro(DTOBolsaEntrevistas registro) {
+        dto.setRegistro(registro);
+        nuevaEntBolTrab = dto.getRegistro().getBolsaTrabajoEntrevistas();
+        Ajax.update("frmModalEdicionEnt");
+        Ajax.oncomplete("skin();");
+        dto.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionDialogo();
+    }
+
+    public void forzarAperturaEdicionDialogo() {
+        if (dto.getForzarAperturaDialogo()) {
+            Ajax.oncomplete("PF('modalEdicionEnt').show();");
+            dto.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+
+    public void guardarEdicion() {
+        try {
+             nuevaEntBolTrab = ejb.actualizarEntBolTrab(nuevaEntBolTrab);
+             Ajax.update("formMuestraDatosActivosEnt");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorBolsaEntrevistas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
 }

@@ -21,6 +21,8 @@ public class DtoIems {
     @Getter  private List<SelectItem> selectEstados, SelectMunicipio;
     @Getter  private List<Iems> listaIems, listaIemsFiltro;    
     @Getter  private ListaIemsPrevia listaIemsPrevia = new ListaIemsPrevia();
+    
+    @Getter Boolean forzarAperturaDialogo;
 
     public void setIemsSeleccionada(Iems iemsSeleccionada) {
         this.iemsSeleccionada = iemsSeleccionada;
@@ -53,5 +55,8 @@ public class DtoIems {
     public void setListaIemsPrevia(ListaIemsPrevia listaIemsPrevia) {
         this.listaIemsPrevia = listaIemsPrevia;
     }
-       
+    
+      public void setForzarAperturaDialogo(Boolean forzarAperturaDialogo) {
+        this.forzarAperturaDialogo = forzarAperturaDialogo;
+    }
 }

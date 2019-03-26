@@ -14,7 +14,6 @@ import javax.servlet.http.Part;
 import lombok.Getter;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
-import mx.edu.utxj.pye.sgi.entity.pye2.Convenios;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
@@ -22,7 +21,6 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.VisitasIndustriales;
-import mx.edu.utxj.pye.siip.dto.vinculacion.DTOVisitas;
 import mx.edu.utxj.pye.siip.entity.pye.list.ListaDtoVisitasIndustriales;
 import mx.edu.utxj.pye.siip.entity.vinculacion.list.ListaVisitasIndustriales;
 

@@ -25,6 +25,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.pye2.BolsaTrabajo;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
@@ -77,6 +78,8 @@ public class ControladorBolsaTrabajo implements Serializable{
     @Getter @Setter private List<ModulosRegistrosUsuarios> listaReg;
     @Getter @Setter private Integer clavePersonal;
     @Getter @Setter private Short claveRegistro;
+    
+    @Getter @Setter private BolsaTrabajo nuevaBolTrab;
     
     @PostConstruct
     public void init(){
@@ -378,5 +381,33 @@ public class ControladorBolsaTrabajo implements Serializable{
         if(listaReg == null || listaReg.isEmpty()){
             Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
         }
+    }
+      
+      public void editarRegistro(DTOBolsa registro) {
+        dto.setRegistro(registro);
+//        dto.setEmpresa(registro.getBolsaTrabajo().getEmpresa().getNombre());
+        nuevaBolTrab = dto.getRegistro().getBolsaTrabajo();
+        Ajax.update("frmModalEdicion");
+        Ajax.oncomplete("skin();");
+        dto.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionDialogo();
+    }
+
+    public void forzarAperturaEdicionDialogo() {
+        if (dto.getForzarAperturaDialogo()) {
+            Ajax.oncomplete("PF('modalEdicion').show();");
+            dto.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+
+    public void guardarEdicion() {
+        try {
+             nuevaBolTrab = ejb.actualizarBolTrab(nuevaBolTrab);
+             Ajax.update("formMuestraDatosActivos");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorBolsaTrabajo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 }

@@ -255,4 +255,13 @@ public class ServicioDifusionIems implements EjbDifusionIems{
             return ldto;
         }
     }
+
+    @Override
+    public DifusionIems actualizarDifusion(DifusionIems nuevaDifusion) throws Throwable {
+        f.setEntityClass(DifusionIems.class);
+        f.edit(nuevaDifusion);
+        f.flush();
+        Messages.addGlobalInfo("El registro se ha actualizado correctamente");
+        return nuevaDifusion;
+    }
 }

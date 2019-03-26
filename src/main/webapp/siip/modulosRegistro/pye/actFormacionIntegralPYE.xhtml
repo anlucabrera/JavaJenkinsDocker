@@ -146,7 +146,7 @@
                                                                  icon="fa fa-cog"
                                                                  title="Alineación a POA." />
                                                  <p:commandButton actionListener="#{actFormIntegral.editarRegistro(ActFormInt)}"
-                                                            class="btn btn-sm btn-info" 
+                                                            class="btn btn-sm btn-primary" 
                                                             icon="fa fa-edit"
                                                             title="Editar registro" />
                                             </div>
@@ -698,7 +698,7 @@
                                                                 </div>
                                                                  <div class="col-sm-12 col-md-12 col-lg-4">
                                                                     <p:outputLabel for="duracion" value="Duración"/>
-                                                                    <p:inputText id="duracion" class="form-control" placeholder="Duración" size="100" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.duracion}"/> 
+                                                                    <p:inputMask id="duracion" class="form-control" mask="99:99:99" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.duracion}"/>
                                                                     <p:message for="duracion" display="tooltip" />
                                                                     <hr/>
                                                                 </div>  

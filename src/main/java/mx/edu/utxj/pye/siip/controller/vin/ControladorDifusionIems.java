@@ -26,6 +26,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.pye2.DifusionIems;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
@@ -69,6 +70,8 @@ public class ControladorDifusionIems implements Serializable{
     @Getter @Setter private List<ModulosRegistrosUsuarios> listaReg;
     @Getter @Setter private Integer clavePersonal;
     @Getter @Setter private Short claveRegistroVIN, claveRegistroPYE;
+    
+    @Getter @Setter private DifusionIems nuevaDifusion;
     
     @PostConstruct
     public void init(){
@@ -306,6 +309,33 @@ public class ControladorDifusionIems implements Serializable{
         if(listaReg == null || listaReg.isEmpty()){
             Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
         }
+    }
+     
+     public void editarRegistro(ListaDifusionIemsDTO registro){
+        dto.setRegistro(registro);
+        nuevaDifusion = dto.getRegistro().getDifusion();
+        Ajax.update("frmModalEdicion");
+        Ajax.oncomplete("skin();");
+        dto.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionDialogo();
+    }
+    
+    public void forzarAperturaEdicionDialogo(){
+        if(dto.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEdicion').show();");
+            dto.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void guardarEdicion() {
+         try {
+            nuevaDifusion = ejbDifusionIems.actualizarDifusion(nuevaDifusion);
+            Ajax.update("formMuestraDatosActivos");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorDifusionIems.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
    
 }

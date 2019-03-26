@@ -96,7 +96,7 @@
                                                  rendered="true">
                                         <p:columnGroup type="header">
                                             <p:row>
-                                                <p:column headerText="Opciones" style="text-align: center;" width="100"/>
+                                                <p:column headerText="Opciones" style="text-align: center;" width="120"/>
                                                 <p:column headerText="Clave" style="width: 80px; text-align: center;"/>
                                                 <p:column headerText="Nombre del Curso" style="width: 150px; text-align: center;"/>
                                                 <p:column headerText="Fecha Inicio" style="width: 80px; text-align: center;"/>
@@ -112,7 +112,7 @@
                                         </p:columnGroup>
                                         <c:set var="perCapReg" value="#{perCap.personalCapacitado.registro}"/>
                                         <c:set var="perCapClave" value="#{perCap.personalCapacitado.curso}"/>
-                                        <p:column style="width: 100px; text-align: center;">
+                                        <p:column style="width: 120px; text-align: center;">
                                             <div class="btn-group">
                                                 <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{personalCap.eliminarRegistro(perCapReg, perCapClave)}" onsuccess="actualizar(); actualizar1();" title="Eliminar registro." disabled="#{personalCap.dto.eventoActual ne personalCap.dto.eventoSeleccionado}">
                                                     <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro del curso #{perCap.personalCapacitado.nombre}?" icon="ui-icon-alert" />
@@ -125,6 +125,10 @@
                                                 <p:commandButton actionListener="#{personalCap.abrirAlineacionPOA(perCap)}"
                                                                  class="btn btn-sm #{!empty perCap.actividadAlineada?'btn-info':'btn-warning'}" icon="fa fa-cog"
                                                                  title="Alineación a POA." />
+                                                 <p:commandButton actionListener="#{personalCap.editarRegistro(perCap)}"
+                                                            class="btn btn-sm btn-primary" 
+                                                            icon="fa fa-edit"
+                                                            title="Editar registro" disabled="#{personalCap.dto.eventoActual ne personalCap.dto.eventoSeleccionado}"/>
                                             </div>
                                         </p:column>
                                         <p:column style="width: 80px; text-align: center;"><h:outputText value="#{perCap.personalCapacitado.curso}"/></p:column> 
@@ -675,6 +679,102 @@
                        </p:blockUI>
                    </center>
                 </p:dialog>
+                    <!-- Modal para editar registro seleccionado -->
+                    <p:dialog id="modalEdicion" 
+                              widgetVar="modalEdicion" 
+                              width="1200" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{personalCap.dto.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Editar registro" 
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        
+                             <o:form id="frmModalEdicion" enctype="multipart/form-data"> 
+                                        <p:outputPanel>
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-md-12">
+                                                    <div class="box box-widget widget-user-2">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="clave" value="Clave"/>                                
+                                                                    <p:inputText id="clave" class="form-control" disabled="true" value="#{personalCap.dto.registro.personalCapacitado.curso}"/>
+                                                                    <p:message for="clave" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="nombre" value="Nombre del Curso"/>
+                                                                    <p:inputText id="nombre" class="form-control" disabled="true" size="300" value="#{personalCap.dto.registro.personalCapacitado.nombre}"/>
+                                                                    <p:message for="nombre" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel value="Duración" for="duracion"/>
+                                                                    <p:inputMask id="duracion" class="form-control" mask="99:99" value="#{personalCap.dto.registro.personalCapacitado.duracion}"/>
+                                                                    <p:message for="duracion" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="tipo" value="Tipo"/>
+                                                                    <p:inputText id="tipo" class="form-control" disabled="true" value="#{personalCap.dto.registro.personalCapacitado.tipo.tipo}"/>
+                                                                    <p:message for="tipo" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                 <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="modalidad" value="Modalidad"/>
+                                                                    <p:inputText id="modalidad" class="form-control" disabled="true" value="#{personalCap.dto.registro.personalCapacitado.modalidad.modalidad}"/>
+                                                                    <p:message for="modalidad" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>  
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="monto" value="Monto Invertido"/>
+                                                                    <p:inputNumber id="monto" class="form-control" style="border: none;" size="52" decimalPlaces="2" decimalSeparator="." value="#{personalCap.dto.registro.personalCapacitado.montoInvertido}"/> 
+                                                                    <p:message for="monto" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                    <p:outputLabel for="empresa" value="Empresa impartidora del Curso"/>
+                                                                    <p:inputText id="empresa" class="form-control" placeholder="Empresa impartidora del Curso" size="150" value="#{personalCap.dto.registro.personalCapacitado.empresaImpartidora}"/> 
+                                                                    <p:message for="empresa" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>  
+                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                    <p:outputLabel for="lugar" value="Lugar de realización"/>
+                                                                    <p:inputText id="lugar" class="form-control" placeholder="Lugar de realización" size="500" value="#{personalCap.dto.registro.personalCapacitado.lugarImparticion}"/> 
+                                                                    <p:message for="lugar" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                    <p:outputLabel for="objetivo" value="Objetivo"/>
+                                                                    <p:inputTextarea id="objetivo" class="form-control" placeholder="Objetivo" maxlength="500" value="#{personalCap.dto.registro.personalCapacitado.objetivo}"/> 
+                                                                    <p:message for="objetivo" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>  
+                                                                 <div class="col-sm-12 col-md-4 col-lg-3">
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                    <p:commandButton id="btnGuardarEdicion" value="Guardar" actionListener="#{personalCap.guardarEdicion()}" 
+                                                                                     icon="fa fa-save" class="btn-primary btn-block col-md-3" oncomplete="PF('frmModalEdicion')update();"
+                                                                                     update="@form"  process="@form" />
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-3 col-lg-3">
+                                                                </div>  
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </p:outputPanel>
+                                    </o:form>
+                    </p:dialog>
             </div>
         </div>
         </c:if>

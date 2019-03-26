@@ -452,4 +452,13 @@ public class ServicioBolsaTrabajo implements EjbBolsaTrabajo{
             return null;
         }
     }
+
+    @Override
+    public BolsaTrabajo actualizarBolTrab(BolsaTrabajo nuevaBolTrab) throws Throwable {
+        f.setEntityClass(BolsaTrabajo.class);
+        f.edit(nuevaBolTrab);
+        f.flush();
+        Messages.addGlobalInfo("El registro se ha actualizado correctamente");
+        return nuevaBolTrab;
+    }
 }
