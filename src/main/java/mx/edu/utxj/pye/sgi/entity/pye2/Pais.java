@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author UTXJ
  */
 @Entity
-@Table(name = "pais", catalog = "pye2", schema = "")
+@Table(name = "pais",catalog = "pye2", schema = "")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Pais.findAll", query = "SELECT p FROM Pais p")
@@ -83,30 +83,12 @@ public class Pais implements Serializable {
     }
 
     @XmlTransient
-    public List<ProductosAcademicos> getProductosAcademicosList() {
-        return productosAcademicosList;
-    }
-
-    public void setProductosAcademicosList(List<ProductosAcademicos> productosAcademicosList) {
-        this.productosAcademicosList = productosAcademicosList;
-    }
-
-    @XmlTransient
     public List<Estado> getEstadoList() {
         return estadoList;
     }
 
     public void setEstadoList(List<Estado> estadoList) {
         this.estadoList = estadoList;
-    }
-
-    @XmlTransient
-    public List<OrganismosVinculados> getOrganismosVinculadosList() {
-        return organismosVinculadosList;
-    }
-
-    public void setOrganismosVinculadosList(List<OrganismosVinculados> organismosVinculadosList) {
-        this.organismosVinculadosList = organismosVinculadosList;
     }
 
     @Override

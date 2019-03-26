@@ -220,18 +220,6 @@ public class ControladorSubordinados implements Serializable {
                             listaIncidencias.add(t);
                         }
                     }
-                    if (!utilidadesCH.editarIncidencias(fechaNow, t.getFecha(), 1)) {
-                        if (t.getEstatus().equals("Pendiente")) {
-                            try {
-                                t.setEstatus("Denegado");
-                                ejbNotificacionesIncidencias.actualizarIncidencias(t);
-                                utilidadesCH.agregaBitacora(0,t.getIncidenciaID().toString(), "Incidencias", "Update");
-                            } catch (Throwable ex) {
-                                Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-                                Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        }
-                    }
                 });
             }
 
@@ -350,7 +338,7 @@ public class ControladorSubordinados implements Serializable {
                 case SATURDAY:                    maximo = 4;                    break;
             }
             if (dias <= maximo) {
-                utilidadesCH.agregaBitacora(controladorEmpleado.getEmpleadoLogeado(), incidencias.getIncidenciaID().toString(), "Incidencias", "Justificación " + incidencias.getEstatus());
+                utilidadesCH.agregaBitacora(controladorEmpleado.getEmpleadoLogeado(), incidencias.getIncidenciaID().toString(), "Incidencias", "Update");                
                 ejbNotificacionesIncidencias.actualizarIncidencias(incidencias);
                 Messages.addGlobalInfo("¡Operación exitosa!");
             } else {

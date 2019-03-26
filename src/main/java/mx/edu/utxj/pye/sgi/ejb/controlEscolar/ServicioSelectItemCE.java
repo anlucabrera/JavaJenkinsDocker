@@ -1,0 +1,156 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
+
+import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
+import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosAreas;
+import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
+import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
+
+import java.util.ArrayList;
+import java.util.List;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.faces.model.SelectItem;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Escolaridad;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EspecialidadCentro;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Ocupacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoDiscapacidad;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoSangre;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Turno;
+
+/**
+ *
+ * @author UTXJ
+ */
+@Stateless
+public class ServicioSelectItemCE implements EjbSelectItemCE {
+
+    @EJB FacadeCE facadeCE;
+
+    public List<TipoSangre> getTipoSangre(){
+        return  facadeCE.getEntityManager().createQuery("SELECT ts FROM  TipoSangre ts",TipoSangre.class)
+                .getResultList();
+    }
+
+    @Override
+    public List<SelectItem> itemTipoSangre() {
+        List<SelectItem> slts = new ArrayList<>();
+        getTipoSangre().stream()
+                .map((ts)-> new SelectItem(ts, ts.getNombre()))
+                .forEachOrdered((selectItem -> slts.add(selectItem)));
+        return slts;
+    }
+
+    public List<TipoDiscapacidad> getTipoDiscapacidad() {
+        return facadeCE.getEntityManager().createNamedQuery("TipoDiscapacidad.findAll", TipoDiscapacidad.class)
+                .getResultList();
+    }
+
+    @Override
+    public List<SelectItem> itemDiscapcidad() {
+        List<SelectItem> sltd = new ArrayList<>();
+        getTipoDiscapacidad().stream()
+                .map((td)-> new SelectItem(td,td.getNombre(),td.getDescripcion()))
+                .forEachOrdered((selectItem -> sltd.add(selectItem)));
+
+        return sltd;
+    }
+
+
+    @Override
+    public List<Ocupacion> itemOcupacion() {
+        return facadeCE.getEntityManager().createNamedQuery("Ocupacion.findAll", Ocupacion.class)
+                .getResultList();
+    }
+
+    @Override
+    public List<Escolaridad> itemEscolaridad() {
+        return facadeCE.getEntityManager().createNamedQuery("Escolaridad.findAll",Escolaridad.class)
+                .getResultList();
+    }
+
+    public List<Iems> getIemsByEstadoMunicipioLocalidad(Integer estado, Integer municipio, Integer localidad){
+        return facadeCE.getEntityManager().createQuery("SELECT i FROM Iems i WHERE i.localidad.localidadPK.claveEstado = :estado AND i.localidad.localidadPK.claveMunicipio = :municipio AND i.localidad.localidadPK.claveLocalidad = :localidad", Iems.class)
+                .setParameter("estado", estado)
+                .setParameter("municipio", municipio)
+                .setParameter("localidad", localidad)
+                .getResultList();
+    }
+
+    @Override
+    public List<SelectItem> itemIems(Integer estado, Integer municipio, Integer localidad) {
+        List<SelectItem> lsi = new ArrayList<>();
+        getIemsByEstadoMunicipioLocalidad(estado, municipio, localidad).stream()
+                .map(iem -> new SelectItem(iem.getIems(), iem.getTurno().concat("-").concat(iem.getNombre())))
+                .forEachOrdered(selectItem -> {
+                    lsi.add(selectItem);
+                });
+        return lsi;
+    }
+
+    @Override
+    public List<EspecialidadCentro> itemEspecialidadCentro() {
+        return facadeCE.getEntityManager().createQuery("SELECT e FROM EspecialidadCentro e",EspecialidadCentro.class)
+                .getResultList();
+    }
+
+    public List<ProgramasEducativosAreas> getProgramasEducativos(){
+        return facadeCE.getEntityManager().createQuery("SELECT a FROM ProgramasEducativosAreas a",ProgramasEducativosAreas.class)
+                .getResultList();
+    }
+
+    @Override
+    public List<SelectItem> itemAreaAcademica() {
+        List<SelectItem> lsaa = new ArrayList<>();
+        getProgramasEducativos().stream()
+                .map(a -> new SelectItem(a.getArea(),a.getNombre()))
+                .forEachOrdered(selectItem -> {
+                    lsaa.add(selectItem);
+                });
+        return lsaa;
+    }
+
+    public List<ProgramasEducativos> getProgramasEducativosByArea(Short area){
+        return facadeCE.getEntityManager().createQuery("SELECT pe FROM ProgramasEducativos pe WHERE pe.area.area = :idArea AND pe.nivel.nivel = 'TSU' AND pe.activo = 1",ProgramasEducativos.class)
+                .setParameter("idArea", area)
+                .getResultList();
+    }
+
+    @Override
+    public List<SelectItem> itemProgramEducativoPorArea(Short area) {
+        List<SelectItem> slpe = new ArrayList<>();
+        getProgramasEducativosByArea(area).stream()
+                .map(programasEducativos -> new SelectItem(programasEducativos.getSiglas(),programasEducativos.getNivel().getNombre().concat(" en ").concat(programasEducativos.getNombre())))
+                .forEachOrdered(selectItem -> {
+                    slpe.add(selectItem);
+                });
+        return slpe;
+    }
+
+    public List<ProgramasEducativos> getProgramasEducativoAll(){
+        return facadeCE.getEntityManager().createQuery("SELECT pe FROM ProgramasEducativos pe WHERE pe.nivel.nivel = 'TSU' AND pe.activo = 1",ProgramasEducativos.class)
+                .getResultList();
+    }
+
+    @Override
+    public List<SelectItem> itemProgramaEducativoAll() {
+        List<SelectItem> slpea = new ArrayList<>();
+        getProgramasEducativoAll().stream()
+                .map(programasEducativos -> new SelectItem(programasEducativos.getSiglas(),programasEducativos.getNivel().getNombre().concat(" en ").concat(programasEducativos.getNombre())))
+                .forEachOrdered(selectItem -> {
+                    slpea.add(selectItem);
+                });
+
+        return  slpea;
+    }
+
+    @Override
+    public List<Turno> itemTurno() {
+        return facadeCE.getEntityManager().createQuery("SELECT t FROM Turno t",Turno.class)
+                .getResultList();
+    }
+}

@@ -422,23 +422,21 @@
                                                                  sortBy="#{bitacora.lp.areaOperativa}" expandableRowGroups="true"
                                                                  emptyMessage="No se encontraron Registros." rendered="true">
                                                         <p:headerRow>
-                                                            <p:column colspan="8" style="background: #2796cb; color: #FFFFFF;">
+                                                            <p:column colspan="7" style="background: #2796cb; color: #FFFFFF;">
                                                                 <h:outputText value="#{bitacora.lp.actividad eq 1?bitacora.lp.areaOperativaNombre:bitacora.lp.areaSuperiorNombre}" />
                                                             </p:column>
                                                         </p:headerRow>
 
                                                         <p:columnGroup type="header">
                                                             <p:row class="success">
-                                                                <p:column colspan="3" headerText="Bitacora" style="width: 400px;" />
-                                                                <p:column colspan="3" headerText="Personal" style="width: 500px;"/>
-                                                                <p:column colspan="2" headerText="Incidencia" style="width: 400px;"/>
+                                                                <p:column colspan="3" headerText="Bitacora" style="width: 300px;" />
+                                                                <p:column colspan="4" headerText="Incidencia" style="width: 500px;"/>
                                                             </p:row>
                                                             <p:row class="success">
-                                                                <p:column headerText="Perosnal de Cambio"/>
+                                                                <p:column headerText="Personal de Cambio"/>
                                                                 <p:column headerText="Accion"/>
                                                                 <p:column headerText="Fecha"/>
-                                                                <p:column headerText="Clave"/>
-                                                                <p:column headerText="Nombre"/>
+                                                                <p:column headerText="Personal"/>
                                                                 <p:column headerText="Tipo"/>
                                                                 <p:column headerText="Fecha"/>
                                                                 <p:column headerText="Estatus"/>
@@ -452,20 +450,16 @@
                                                             <h:outputText value="#{bitacora.b.accion}" />
                                                         </p:column>
                                                         <p:column>
-                                                            <h:outputText value="#{bitacora.b.fechaHora}" />
+                                                            <h:outputText value="#{bitacora.b.fechaHora}"><f:convertDateTime pattern="EEEE d MMMM yyyy HH:mm" locale="es"/></h:outputText>
                                                         </p:column>  
-
                                                         <p:column>
-                                                            <h:outputText value="#{bitacora.i.clavePersonal.clave}" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <h:outputText value="#{bitacora.i.clavePersonal.nombre}" />
+                                                            <h:outputText value="#{bitacora.i.clavePersonal.clave} -- #{bitacora.i.clavePersonal.nombre}" />
                                                         </p:column>  
                                                         <p:column>
                                                             <h:outputText value="#{bitacora.i.tipo}" />
                                                         </p:column>
                                                         <p:column>
-                                                            <h:outputText value="#{bitacora.i.fecha}" />
+                                                            <h:outputText value="#{bitacora.i.fecha}"><f:convertDateTime pattern="EEEE d MMMM yyyy HH:mm" locale="es"/></h:outputText>
                                                         </p:column>  
                                                         <p:column>
                                                             <h:outputText value="#{bitacora.i.estatus}" />

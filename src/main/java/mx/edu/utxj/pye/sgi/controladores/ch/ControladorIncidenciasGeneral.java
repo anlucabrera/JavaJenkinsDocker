@@ -131,23 +131,31 @@ public class ControladorIncidenciasGeneral implements Serializable {
                     } else {
                         listaIncidencias.add(t);
                     }
-
-                    if (!utilidadesCH.editarIncidencias(fechaActual, t.getFecha(), 1)) {
-                        if (t.getEstatus().equals("Pendiente")) {
-                            try {
-                                t.setEstatus("Denegado");
-                                ejbNotificacionesIncidencias.actualizarIncidencias(t);
-                                utilidadesCH.agregaBitacora(0,t.getIncidenciaID().toString(), "Incidencias", "Update");
-                            } catch (Throwable ex) {
-                                Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-                                Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        }
-                    }
-
                 });
             }
-
+         
+            listaBitacoraaccesos = new ArrayList<>();
+            listaBitacoraaccesos.clear();
+            listaBitacoraaccesos = ejbUtilidadesCH.mostrarBitacoraacceso("Incidencias", utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
+            bitacoraIncidenciases = new ArrayList<>();
+            bitacoraIncidenciases.clear();
+            listaBitacoraaccesos.forEach((t) -> {
+                ListaPersonal lp = buscarPerosnal(t.getClavePersonal());
+                if (lp.getClave() != null) {
+                    if (area != 0) {
+                        if (lp.getAreaOperativa() == area) {
+                            if (lp.getActividad() == 1 || lp.getActividad() == 3) {
+                                bitacoraIncidenciases.add(new ListaBitacoraIncidencias(buscarPerosnal(t.getClavePersonal()), buscarIncidencias(t.getNumeroRegistro(), t.getAccion(), t), t));
+                            }
+                        } else if (lp.getAreaSuperior() == area) {
+                            bitacoraIncidenciases.add(new ListaBitacoraIncidencias(buscarPerosnal(t.getClavePersonal()), buscarIncidencias(t.getNumeroRegistro(), t.getAccion(), t), t));
+                        }
+                    } else {
+                        bitacoraIncidenciases.add(new ListaBitacoraIncidencias(buscarPerosnal(t.getClavePersonal()), buscarIncidencias(t.getNumeroRegistro(), t.getAccion(), t), t));
+                    }
+                }
+            });
+            
             listaIncapacidads = new ArrayList<>();
             listaIncapacidads.clear();
             incapacidads = ejbNotificacionesIncidencias.mostrarIncapacidadReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
@@ -181,19 +189,12 @@ public class ControladorIncidenciasGeneral implements Serializable {
                         listaCuidadoses.add(t);
                     }
                 });
-            }
-            listaBitacoraaccesos=new ArrayList<>();
-            listaBitacoraaccesos.clear();
-            listaBitacoraaccesos=ejbUtilidadesCH.mostrarBitacoraacceso("Incidencias");
-            bitacoraIncidenciases=new ArrayList<>();
-            bitacoraIncidenciases.clear();
-            listaBitacoraaccesos.forEach((t) -> {
-                bitacoraIncidenciases.add(new ListaBitacoraIncidencias(buscarPerosnal(t.getClavePersonal()), buscarIncidencias(t.getNumeroRegistro(),t.getAccion()), t));
-            });
+            }            
             
             Ajax.update("frmInciGeneral");
             Ajax.update("frmIncaGeneral");
             Ajax.update("frmCuidGeneral");
+            Ajax.update("frmbitacora");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
@@ -285,11 +286,11 @@ public class ControladorIncidenciasGeneral implements Serializable {
         }
     }
     
-    public Incidencias buscarIncidencias(String clave, String accion) {
+    public Incidencias buscarIncidencias(String clave, String accion,Bitacoraacceso b) {
         try {
             Incidencias inc = new Incidencias();
             if (accion.equals("Delate")) {
-                inc = new Incidencias(0, 0, "Eliminada", new Date(), new Date(), "Eliminada", "Eliminada");
+                inc = new Incidencias(0, 0, "Eliminada", null, null, "Eliminada", "Eliminada");
             } else {
                 inc = ejbNotificacionesIncidencias.buscarIncidencias(Integer.parseInt(clave));
             }

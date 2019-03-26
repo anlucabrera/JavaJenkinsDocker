@@ -1,6 +1,7 @@
 package mx.edu.utxj.pye.sgi.ejb.ch;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
@@ -131,9 +132,11 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
 
 ////////////////////////////////////////////////////////////////////////////////Bitacora Accesos
     @Override
-    public List<Bitacoraacceso> mostrarBitacoraacceso(String tabla) throws Throwable {
-        TypedQuery<Bitacoraacceso> q = em.createQuery("SELECT b FROM Bitacoraacceso b WHERE b.tabla=:tabla", Bitacoraacceso.class);
+    public List<Bitacoraacceso> mostrarBitacoraacceso(String tabla,Date fechaI,Date fechaF) throws Throwable {
+        TypedQuery<Bitacoraacceso> q = em.createQuery("SELECT b FROM Bitacoraacceso b WHERE b.tabla=:tabla AND b.fechaHora BETWEEN :fechaI AND :frchaF", Bitacoraacceso.class);
         q.setParameter("tabla", tabla);
+        q.setParameter("fechaI", fechaI);
+        q.setParameter("frchaF", fechaF);
         List<Bitacoraacceso> pr = q.getResultList();
         if (pr.isEmpty()) {
             pr = new ArrayList<>();

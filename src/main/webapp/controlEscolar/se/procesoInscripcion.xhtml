@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
+    </ui:define>
+
+    <ui:define name="title">
+        Validación de Ficha de Admisión
+    </ui:define>
+    
+    <ui:define name="description">
+        Validación de fichas de admisión por el Departamento de Servicios Escolares
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:sidebar collapsed="true"/> 
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm" styleClass="box box-primary">
+            <section class="content">
+                <h:form>
+                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                        <div class="col-md-12">
+                            <div class="box box-widget widget-user-2">
+                                <div class="row">
+                                    <div class="col-sm-12 border-right">
+                                        <div class="description-block">
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-sm-3 col-md-3 col-lg-3">
+                                                        <p:outputLabel for="peall" style="font-size: large;text-align: right;" value="Selecciona una Carrera" />
+                                                        <p:selectOneMenu id="peall" value="#{procesoInscripcion.pe}">
+                                                            <f:selectItem value="#{null}"/>
+                                                            <f:selectItems value="#{procesoInscripcion.listaPEAll}"/>
+                                                            <p:ajax listener="#{procesoInscripcion.selectAspirantesByPE()}" update=":frmListaA"/>
+                                                        </p:selectOneMenu>
+                                                        <p:message for="peall"><p:autoUpdate/></p:message>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <h:form id="frmListaA">
+                    <p:dataTable var="a" value="#{procesoInscripcion.listaAspirantesTSU}" sortBy="#{a.datosAcademicos.primeraOpcion}" expandableRowGroups="true" emptyMessage="No existen aspirantes registrados para esta carrera" paginator="true"
+                                 rows="15" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="60,90,120" lazy="true">
+                        <p:headerRow>
+                            <p:column colspan="14" style="background-color: #00b5ad;">
+                                <h:outputText value="#{a.datosAcademicos.primeraOpcion}" />
+                            </p:column>
+                        </p:headerRow>
+                        <p:column headerText="Folio Ficha de Admisión">
+                            <h:outputText value="#{a.folioAspirante}"/>
+                        </p:column>
+                        <p:column headerText="Apellido Paterno">
+                            <h:outputText value="#{a.idPersona.apellidoPaterno}"/>
+                        </p:column>
+                        <p:column headerText="Apellido Materno">
+                            <h:outputText value="#{a.idPersona.apellidoMaterno}"/>
+                        </p:column>
+                        <p:column headerText="Nombre">
+                            <h:outputText value="#{a.idPersona.nombre}"/>
+                        </p:column>
+                        <p:column headerText="CURP">
+                            <h:outputText value="#{a.idPersona.curp}"/>
+                        </p:column>
+                        <p:column headerText="Turno">
+                            <h:outputText value="#{a.datosAcademicos.sistemaPrimeraOpcion.nombre}"/>
+                        </p:column>
+                        <p:column headerText="Carrera Segunda Opcion">
+                            <h:outputText value="#{a.datosAcademicos.segundaOpcion}"/>
+                        </p:column>
+                        <p:column headerText="Turno Segunda Opcion">
+                            <h:outputText value="#{a.datosAcademicos.sistemaSegundaOpcion.nombre}"/>
+                        </p:column>
+                        <p:column headerText="Pago" style="text-align: center;width: 90px;">
+                            <p:selectBooleanButton id="pago" onLabel="Si" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:65px" disabled="true"/>
+                        </p:column>
+                        <p:column headerText="Evidencia CURP" style="width:85px;text-align: center;">
+                            <p:commandLink class="btn btn-info" ajax="false" action="#{procesoInscripcion.descargarEvidenciaCURP(a.documentoAspirante)}" target="_blank" style=" visibility:#{a.documentoAspirante.evidenciaCurp eq null?'hidden':'visible'};"><i class="fa fa-search" /></p:commandLink>
+                        </p:column>
+                        <p:column headerText="Evidencia Acta de Nacimiento" style="width:85px;text-align: center;">
+                            <p:commandLink class="btn btn-info" ajax="false" action="#{procesoInscripcion.descargarEvidenciaActaN(a.documentoAspirante)}" target="_blank" style=" visibility:#{a.documentoAspirante.evidenciaActaNacimiento eq null?'hidden':'visible'};"><i class="fa fa-search" /></p:commandLink>
+                        </p:column>
+                        <p:column headerText="Evidencia Historial Académicos"  style="width:85px;text-align: center;">
+                            <p:commandLink class="btn btn-info" ajax="false" action="#{procesoInscripcion.descargarEvidenciaHistorial(a.documentoAspirante)}" target="_blank" style=" visibility:#{a.documentoAspirante.evidenciaHistorialAcademico eq null?'hidden':'visible'};"><i class="fa fa-search" /></p:commandLink>
+                        </p:column>
+                        <p:column headerText="Comentarios para el/la aspirante">
+                            <p:inputTextarea  style="width: 125px"  placeholder="Comentarios para el/la aspirante" value="#{a.documentoAspirante.comentarios}">
+                                <p:ajax listener="#{procesoInscripcion.enviarComentario(a)}"/>
+                            </p:inputTextarea>
+                        </p:column>
+                        <p:column headerText="Validar" style="text-align: center;width: 85px;">
+                            <p:selectBooleanButton id="value2" onLabel="Si" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px" value="#{a.estatus}">
+                                <p:ajax listener="#{procesoInscripcion.validarFichaAdmision(a)}" />
+                            </p:selectBooleanButton>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </section>
+        </p:panel>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
+    </ui:define>
+
+    <ui:define name="title">
+        Estatus de Ficha de Admisión
+    </ui:define>
+    
+    <ui:define name="description">
+        Verificar el estatus tu ficha de admisión
+    </ui:define>
+
+    <ui:define name="body">
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" header="Verifica el estatus de tu ficha" class="hidden-xs hidden-sm" styleClass="box box-primary">
+            <section class="content">
+                <h:form>
+                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                        <div class="col-md-12">
+                            <div class="box box-widget widget-user-2">
+                                <div class="row">
+                                    <div class="col-sm-12 border-right">
+                                        <div class="description-block">
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-sm-3 col-md-3 col-lg-3">
+                                                        <p:outputLabel for="curp" style="font-size: large;text-align: right;" value="Ingresa tu CURP" />
+                                                        <p:inputText id="curp" class="form-control" placeholder="Ingresa tu CURP,para buscar tu registro" value="#{fichaAdm.curp}" required="true" requiredMessage="Es necesario que ingrese su CURP"/>
+                                                        <p:message for="curp"><p:autoUpdate/></p:message>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr/>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                    <div class="col-sm-4 col-md-4 col-lg-4">
+                                                        <p:commandButton id="btnBuscaFichaA" value="Buscar Registro" icon="fa fa-search"
+                                                                         class="btn-primary btn-block col-md-3" update="@form" process="@form" actionListener="#{fichaAdm.estatusRegistroFicha()}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <c:if test="#{fichaAdm.estatusFicha == true}">
+                        <p:panel id="aviso"  widgetVar="panel-solid" styleClass="box-danger box-info">
+                            <div class="box-header">
+                                <div class="well well-md">
+                                    <p style="text-align: justify; font-size: larger;">
+                                        Estimado(a) #{fichaAdm.persona.nombre}
+                                        <br/>
+                                        <br/>
+                                        Se le informa que su ficha de admisión ha sido validada, es importante que realice su cuestionario de contexto para aplicación de examen EXANI II y su examen institucional:
+                                        <br/>
+                                        <br/>
+                                        Datos de acceso a EXANI II:
+                                        <br/>
+                                        Usuario: #{fichaAdm.aspirante.folioAspirante}
+                                        <br/>
+                                        Password: #{fichaAdm.aspirante.folioAspirante}
+                                        <br/>
+                                        <br/>
+                                        Datos de acceso a exámen Institucional
+                                        <br/>
+                                        Url: <a href="http://escolar.utxj.edu.mx/utxj" target="_blank">Ir a Examen Institucional</a> 
+                                        <br/>
+                                        Usuario: #{fichaAdm.aspirante.folioAspirante}
+                                        <br/>
+                                        Password: #{fichaAdm.persona.curp} 
+                                        <br/>
+                                        <br/>
+                                        En cuanto estemos en fechas para inscripción deberá de ingresar al apartado Inscripción para poder realizar su trámite.
+                                        <br/>
+                                        <br/>
+                                        ATENTAMENTE
+                                        <br/>
+                                        Departamento de Servicios Escolares.
+                                    </p>
+                                </div>
+                            </div>
+                        </p:panel>
+                    </c:if>
+                    <c:if test="#{fichaAdm.estatusFicha == false}">
+                        <p:panel id="aviso"  widgetVar="panel-solid" styleClass="box-danger box-info">
+                            <div class="box-header">
+                                <div class="well well-md">
+                                    <p style="text-align: justify; font-size: larger;">
+                                        Estimado(a) #{fichaAdm.persona.nombre}
+                                        <br/>
+                                        <br/>
+                                        Se le informa que su ficha de admisión aún no ha sido validada, espere el correo de confirmación de validación o en su caso intente más tarde realizar la consulta.                                        <br/>
+                                        <br/>
+                                        ATENTAMENTE
+                                        <br/>
+                                        Departamento de Servicios Escolares.
+                                    </p>
+                                </div>
+                            </div>
+                        </p:panel>
+                    </c:if>
+                </h:form>
+            </section>
+        </p:panel>
+    </ui:define>
+</ui:composition>
