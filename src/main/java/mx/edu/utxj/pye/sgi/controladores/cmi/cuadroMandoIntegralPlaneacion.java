@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -26,12 +27,13 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.Proyectos;
 import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Ajax;
+import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.primefaces.model.chart.MeterGaugeChartModel;
 
 @Named
-@ManagedBean
-@ViewScoped
+@SessionScoped
 public class cuadroMandoIntegralPlaneacion implements Serializable {
 
     @Getter    @Setter    private MeterGaugeChartModel meterGaugeModel1;
@@ -398,7 +400,7 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
     }
     
     public void areaSeleccionada(ValueChangeEvent event) {
-        try {
+        /*try {
             au = new AreasUniversidad();
             Short claveArea = Short.parseShort(event.getNewValue().toString());
             if (claveArea != 0) {
@@ -412,7 +414,7 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(cuadroMandoIntegralPlaneacion.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
     }
    
     public String datosGraica(List<Grafica> er){        
@@ -477,5 +479,23 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
     }
 
     public void imprimirValores() {
+        try {
+            /*au = new AreasUniversidad();
+            Short claveArea = Short.parseShort(event.getNewValue().toString());
+            if (claveArea != 0) {
+                au = areasLogeo.mostrarAreasUniversidad(claveArea);
+            } else {
+                au = new AreasUniversidad(Short.parseShort("0"), "Institucional", "Institucional", "1", false);
+            }*/
+//            System.out.println("au = " + au);
+            reseteador();
+            cmiEnGeneral();
+            cmiPorEje();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(cuadroMandoIntegralPlaneacion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Faces.refresh();
+//        Ajax.update("frmGraficasCMI");
     }
 }

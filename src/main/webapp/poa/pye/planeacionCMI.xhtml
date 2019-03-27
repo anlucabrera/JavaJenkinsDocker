@@ -81,9 +81,9 @@
                                 <p:autoUpdate/>
                                 <p:outputLabel value="Área:" />
 
-                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{cuadroMandoIntegralPlaneacion.areaSeleccionada}">
-                                    <f:selectItems value="#{cuadroMandoIntegralPlaneacion.areasUniversidads}" var="area" itemValue="#{area.area}" itemLabel="#{area.area} -- #{area.nombre}" />
-                                    <p:ajax update=":frmGraficasCMI" listener="#{cuadroMandoIntegralPlaneacion.imprimirValores()}"/>
+                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" value="#{cuadroMandoIntegralPlaneacion.au}" converter="entityConverter">
+                                    <f:selectItems value="#{cuadroMandoIntegralPlaneacion.areasUniversidads}" var="area" itemValue="#{area}" itemLabel="#{area.area} -- #{area.nombre}" />
+                                    <p:ajax process="@this" listener="#{cuadroMandoIntegralPlaneacion.imprimirValores()}"/>
                                 </p:selectOneMenu> 
                                 <p:message for="eje" display="tooltip" />
                             </div>
@@ -94,6 +94,7 @@
         </h:form>
 
         <h:form id="frmGraficasCMI" prependId="false" class="form-inline">
+            <p:growl><p:autoUpdate/></p:growl>
             <div class="box box-primary">
                 <div id="main-buttons" class="hidden-sm hidden-xs" >                    
                     <div class="row">
