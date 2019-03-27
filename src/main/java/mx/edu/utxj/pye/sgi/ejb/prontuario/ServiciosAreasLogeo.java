@@ -1,16 +1,18 @@
 package mx.edu.utxj.pye.sgi.ejb.prontuario;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import org.omnifaces.util.Messages;
 
 @Stateful
 public class ServiciosAreasLogeo implements EjbAreasLogeo {
@@ -35,24 +37,39 @@ public class ServiciosAreasLogeo implements EjbAreasLogeo {
         List<AreasUniversidad> pr = q.getResultList();
         return pr;
     }
+
     @Override
     public List<AreasUniversidad> mostrarAreasUniversidadSubordinadas(Short area) throws Throwable {
         TypedQuery<AreasUniversidad> q = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.areaSuperior = :areaSuperior AND a.vigente = :vigente", AreasUniversidad.class);
         q.setParameter("areaSuperior", area);
         q.setParameter("vigente", "1");
         List<AreasUniversidad> pr = q.getResultList();
-        if (pr.isEmpty() ) {
-          pr=new ArrayList<>();
-        } 
+        if (pr.isEmpty()) {
+            pr = new ArrayList<>();
+        }
         return pr;
     }
-    
+
+    @Override
+    public List<AreasUniversidad> getAreasUniversidadConPoa() {
+        try {
+            return em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.vigente = :vigente AND a.tienePoa = :tienePOA", AreasUniversidad.class)
+                    .setParameter("vigente", "1")
+                    .setParameter("tienePOA", true)
+                    .getResultList();
+        } catch (NoResultException e) {
+            Messages.addGlobalWarn("<b>No se han encontrado Áreas para el filtrado de CMI </b>");
+            return Collections.EMPTY_LIST;
+        }
+    }
+
     @Override
     public List<AreasUniversidad> mostrarAllAreasUniversidad() throws Throwable {
         TypedQuery<AreasUniversidad> q = em.createQuery("SELECT a FROM AreasUniversidad a", AreasUniversidad.class);
         List<AreasUniversidad> pr = q.getResultList();
         return pr;
     }
+
     @Override
     public AreasUniversidad mostrarAreasUniversidad(Short areaId) throws Throwable {
         facade.setEntityClass(AreasUniversidad.class);

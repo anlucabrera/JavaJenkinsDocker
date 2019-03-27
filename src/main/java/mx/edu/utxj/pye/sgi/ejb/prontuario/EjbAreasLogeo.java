@@ -17,6 +17,8 @@ public interface EjbAreasLogeo {
 
     public List<AreasUniversidad> mostrarAllAreasUniversidad() throws Throwable;
 
+    public List<AreasUniversidad> getAreasUniversidadConPoa();
+
     public AreasUniversidad mostrarAreasUniversidad(Short areaId) throws Throwable;
 
     public AreasUniversidad agregarAreasUniversidad(AreasUniversidad au) throws Throwable;

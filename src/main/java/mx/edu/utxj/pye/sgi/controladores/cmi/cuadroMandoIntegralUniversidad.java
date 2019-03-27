@@ -160,7 +160,9 @@ public class cuadroMandoIntegralUniversidad implements Serializable {
                             tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre() + t.getNPOctubre() + t.getNPNoviembre() + t.getNPDiciembre();
                             break;
                     }
-                    programadas++;
+                    if(tP!=0){                        
+                    programadas=programadas+1;
+                    }
                     if (tR != 0 && Objects.equals(tR, tP)) {
                         realizadas++;
                     }
@@ -237,7 +239,9 @@ public class cuadroMandoIntegralUniversidad implements Serializable {
                                 tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre() + t.getNPOctubre() + t.getNPNoviembre() + t.getNPDiciembre();
                                 break;
                         }
-                        progra++;
+                        if (tP != 0) {
+                            progra=progra+1;
+                        }
                         if (tR != 0 && Objects.equals(tR, tP)) {
                             alca++;
                         }
