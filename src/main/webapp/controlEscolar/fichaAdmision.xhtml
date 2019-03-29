@@ -10,8 +10,9 @@
 
     <ui:define name="head-end">
         <ui:param name="renderBreadCrumb" value="false"/>
-        <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
-        <!-- Inicio estilos par proceso electoral -->
+        <!--<link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
+         Inicio estilos par proceso electoral -->
+        <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
     </ui:define>
 
     <ui:define name="title">
@@ -103,11 +104,11 @@
                                                                     <div class="row">
                                                                         <div class="form-group">
                                                                             <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large; color: #dd4b39" value="* De de ingresar la CURP, en formato mas reciente, la liga de descarga es la siguiente" />
+                                                                                <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large; color: #dd4b39" value="* Debe de adjuntar su CURP en formato mas reciente para que sea precargado su Nombre, Fecha de nacimiento, CURP, Genero,Estado de Nacimiento; la liga de descarga es la siguiente" />
                                                                                 <hr/>
                                                                                 <p:link value="Link para Descargar tu CURP" href="https://www.gob.mx/curp/" target="_blank"/>
                                                                                 <hr/>
-                                                                                <o:inputFile id="file" value="#{fichaAdm.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF" maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                                <o:inputFile id="file" value="#{fichaAdm.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF" maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB."/>
                                                                                 <br/>
                                                                                 <h:message id="messageForFile" for="file" />
                                                                                 <br/>
@@ -182,7 +183,7 @@
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="paisN" style="font-size: large" value="País Nacimiento*"/>
-                                                                                <p:selectOneMenu id="paisN" value="#{fichaAdm.pais}" required="true" requiredMessage="El País de nacimiento es requerido">
+                                                                                <p:selectOneMenu id="paisN" value="#{fichaAdm.pais}" required="true" requiredMessage="El País de nacimiento es requerido" disabled="#{fichaAdm.estado}">
                                                                                     <p:ajax listener="#{fichaAdm.selectEstado()}" update=":tabw1:frmDP:estadoN"/>
                                                                                     <f:selectItem itemValue="" itemLabel=""/>
                                                                                     <f:selectItems value="#{fichaAdm.listaPaises}"/>
@@ -191,7 +192,7 @@
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="estadoN" style="font-size: large" value="Estado Nacimiento*"/>
-                                                                                <p:selectOneMenu id="estadoN" value="#{fichaAdm.persona.estado}" required="true" requiredMessage="El estado de nacimiento es requerido">
+                                                                                <p:selectOneMenu id="estadoN" value="#{fichaAdm.persona.estado}" required="true" requiredMessage="El estado de nacimiento es requerido" disabled="#{fichaAdm.estado}">
                                                                                     <f:selectItem itemValue="" itemLabel=""/>
                                                                                     <f:selectItems value="#{fichaAdm.listaEstados}"/>
                                                                                 </p:selectOneMenu>
@@ -199,7 +200,7 @@
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="municipioN" style="font-size: large" value="Municipio Nacimiento*"/>
-                                                                                <p:selectOneMenu id="municipioN" value="#{fichaAdm.persona.municipio}" disabled="#{fichaAdm.estado}" required="true" requiredMessage="El municipio de nacimiento es requerido">
+                                                                                <p:selectOneMenu id="municipioN" value="#{fichaAdm.persona.municipio}" disabled="#{fichaAdm.estadoExtr}" required="true" requiredMessage="El municipio de nacimiento es requerido">
                                                                                     <p:ajax listener="#{fichaAdm.selectLocalidad()}" update=":tabw1:frmDP:localidadN"/>
                                                                                     <f:selectItem itemValue="" itemLabel=""/>
                                                                                     <f:selectItems value="#{fichaAdm.listaMunicipios}"/>
@@ -208,7 +209,7 @@
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="localidadN" style="font-size: large" value="Localidad Nacimiento*"/>
-                                                                                <p:selectOneMenu id="localidadN" value="#{fichaAdm.persona.localidad}" disabled="#{fichaAdm.estado}" required="true" requiredMessage="La localidad de nacimiento es requerido">
+                                                                                <p:selectOneMenu id="localidadN" value="#{fichaAdm.persona.localidad}" disabled="#{fichaAdm.estadoExtr}" required="true" requiredMessage="La localidad de nacimiento es requerido">
                                                                                     <f:selectItem itemValue="" itemLabel=""/>
                                                                                     <f:selectItems value="#{fichaAdm.listaLocalidad}"/>
                                                                                 </p:selectOneMenu>
@@ -908,10 +909,11 @@
                                                             <li>Referencia bancaria del pago de ficha y examen de admisión.</li>
                                                         </ul>
                                                         <br/>
-                                                        <p:commandButton id="btnDatosAca" value="Descargar Formato de Ficha " icon="fa fa-download"
+                                                        <p style="text-align:  justify">Se enviará su ficha de admisión al correo <strong>#{fichaAdm.medioComunicacion.email}</strong> al dar clic en el botón Descargar Formato de Ficha</p>
+                                                        <p:commandButton id="btnDatosAca" value="Descargar Formato de Ficha" icon="fa fa-download"
                                                                          class="btn-primary btn-block col-md-3" update=":tabw1" action="#{fichaAdm.downloadFichaAdmin()}" ajax="false"/>
                                                         <p:commandButton id="btnDatoClear" value="Nuevo Registro" icon="fa fa-address-card"
-                                                                         class="btn-primary btn-block col-md-3" update=":tabw1" action="#{fichaAdm.clearInformacion()}"/>
+                                                                         class="btn-primary btn-block col-md-3" update=":tabw1" action="#{fichaAdm.nuevoRegistro()}"/>
                                                     </div>
                                                 </div>
                                             </div>

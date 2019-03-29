@@ -19,9 +19,11 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbFichaAdmision;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbProcesoInscripcion;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSelectItemCE;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import org.omnifaces.util.Messages;
 
 @Named(value = "procesoInscripcion")
@@ -32,10 +34,14 @@ public class ProcesoInscripcion implements Serializable{
     @Getter @Setter private Aspirante aspirante;
     @Getter @Setter private Persona persona;
     @Getter @Setter private List<Aspirante> listaAspirantesTSU;
+    @Getter @Setter private List<Aspirante> listaAspirantesTSUXPE;
+    @Getter @Setter private List<ProgramasEducativos> listaPe;
     @Getter @Setter private Integer folioFicha;
+    @Getter @Setter private long totalRegistroSemanal,totalRegistroSabatino,totalRegistroSemanalValido,totalRegistroSabatinoValido;
     
     @EJB EjbFichaAdmision ejbFichaAdmision;
     @EJB EjbProcesoInscripcion ejbProcesoInscripcion;
+    @EJB EjbSelectItemCE ejbSelectItemCE;
     
     @PostConstruct
     public void init(){
@@ -43,15 +49,17 @@ public class ProcesoInscripcion implements Serializable{
         persona = new Persona();
         procesosInscripcion = ejbFichaAdmision.getProcesoIncripcionTSU();
         listaAspirantesTSU = ejbProcesoInscripcion.listaAspirantesTSU(procesosInscripcion.getIdProcesosInscripcion());
+        listaPe = ejbSelectItemCE.itemPEAll();
     }
     
     public void buscarFichaAdmision(){
         aspirante = ejbProcesoInscripcion.buscaAspiranteByFolio(folioFicha);
-        persona = aspirante.getIdPersona();
         if(aspirante != null){
+            persona = aspirante.getIdPersona();
             Messages.addGlobalInfo("Registro encontrado exitosamente de "+persona.getNombre()+" !");
         }else{
             Messages.addGlobalError("No se encuentra registro de ficha de admisión con este folio !");
+            folioFicha = null;
         }
     }
     
@@ -82,7 +90,7 @@ public class ProcesoInscripcion implements Serializable{
         properties.put("mail.user", correoEnvia);
         properties.put("mail.password", claveCorreo);
 
-        if(aspirante.getIdPersona().getMedioComunicacion().getEmail() != null){
+        if(aspirante.getIdPersona().getMedioComunicacion().getEmail() != null && aspirante.getEstatus() == true){
             Session session = Session.getInstance(properties,null);
             try {
                 MimeMessage mimeMessage = new MimeMessage(session);
@@ -109,5 +117,32 @@ public class ProcesoInscripcion implements Serializable{
                 e.printStackTrace();
             }
         }
+    }
+    
+    public void resetInput(){
+        init();
+        folioFicha = null;
+    }
+    
+    public Long carlcularTotales(String clavePe){
+        listaAspirantesTSUXPE = ejbProcesoInscripcion.lisAspirantesByPE(clavePe, procesosInscripcion.getIdProcesosInscripcion());
+        
+        totalRegistroSemanal = listaAspirantesTSUXPE.stream()
+                .filter(x -> x.getDatosAcademicos().getSistemaPrimeraOpcion().getNombre().equals("Semanal"))
+                .count();
+        
+        totalRegistroSabatino = listaAspirantesTSUXPE.stream()
+                .filter(x -> x.getDatosAcademicos().getSistemaPrimeraOpcion().getNombre().equals("Sabatino"))
+                .count();
+        
+        totalRegistroSemanalValido = listaAspirantesTSUXPE.stream()
+                .filter(x -> x.getDatosAcademicos().getSistemaPrimeraOpcion().getNombre().equals("Semanal") && x.getEstatus() == true)
+                .count();
+        
+        totalRegistroSabatinoValido = listaAspirantesTSUXPE.stream()
+                .filter(x -> x.getDatosAcademicos().getSistemaPrimeraOpcion().getNombre().equals("Sabatino") && x.getEstatus() == true)
+                .count();
+        
+        return totalRegistroSemanal;
     }
 }

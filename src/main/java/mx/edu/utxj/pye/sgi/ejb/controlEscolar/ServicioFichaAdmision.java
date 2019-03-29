@@ -57,6 +57,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
+import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 
 /**
  *
@@ -104,40 +105,43 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
             QrPdf pdf = new QrPdf(Paths.get(rutaR.concat(file.getSubmittedFileName())));
             String qrCode = pdf.getQRCode(1, true, true);
             String fecha_nacimiento = "";
-            String[] parts = qrCode.split("\\|\\|");
-            String continuacion = "";
-            String[] parts1 = null;
+            String[] parts = qrCode.split("\\|");
 
-            if(buscaPersonaByCurp(parts[0]) != null && parts.length > 1){
+            if(buscaPersonaByCurp(parts[0]) != null){
                 p = buscaPersonaByCurp(parts[0]);
             }else{
-                if((parts != null && parts.length > 1) || parts1 != null) {
-                    continuacion = parts[1];
-                    parts1 = continuacion.split("\\|");
-                    if(parts1.length == 7){
+                if((parts != null && (parts.length == 8 || parts.length == 9))) {
+                    if(parts.length == 9){
                         p.setCurp(parts[0]);
-                        p.setApellidoPaterno(ucFirst(parts1[0]).trim());
-                        p.setApellidoMaterno(ucFirst(parts1[1]).trim());
-                        p.setNombre(ucFirst(parts1[2]));
-                        if(parts1[3].equals("HOMBRE"))
+                        p.setApellidoPaterno(ucFirst(parts[2]).trim());
+                        p.setApellidoMaterno(ucFirst(parts[3]).trim());
+                        p.setNombre(ucFirst(parts[4]));
+                        if(parts[5].equals("HOMBRE"))
                             p.setGenero((short) 2);
-                        if(parts1[3].equals("MUJER"))
+                        if(parts.equals("MUJER"))
                             p.setGenero((short) 1);
-                        fecha_nacimiento = parts1[4].replace("/","-");
+                        fecha_nacimiento = parts[6].replace("/","-");
                         p.setFechaNacimiento(sm.parse(fecha_nacimiento));
-                        p.setEstado(Integer.valueOf(parts1[6]));
+                        String claveEstado = parts[0].substring(11, 13);
+                        
+                        Estado estado = facadeCE.getEntityManager().createNamedQuery("Estado.findByClave", Estado.class)
+                                .setParameter("clave",claveEstado)
+                                .getResultList()
+                                .stream().findFirst().orElse(null);
+                        
+                        p.setEstado(estado.getIdestado());
                         p.setUrlCurp(rutaRelativa);
-                    }else if(parts1.length == 6){
+                    }else if(parts.length == 8){
                         p.setCurp(parts[0]);
-                        p.setApellidoPaterno(ucFirst(parts1[0]));
-                        p.setApellidoMaterno(ucFirst(parts1[1]));
-                        p.setNombre(ucFirst(parts1[2]));
+                        p.setApellidoPaterno(ucFirst(parts[2]));
+                        p.setApellidoMaterno(ucFirst(parts[3]));
+                        p.setNombre(ucFirst(parts[4]));
                         p.setGenero((short) 1);
-                        if(parts1[3].equals("HOMBRE"))
+                        if(parts[5].equals("HOMBRE"))
                             p.setGenero((short) 2);
-                        if(parts1[3].equals("MUJER"))
+                        if(parts[5].equals("MUJER"))
                             p.setGenero((short) 1);
-                        fecha_nacimiento = parts1[4].replace("/","-");
+                        fecha_nacimiento = parts[6].replace("/","-");
                         p.setFechaNacimiento(sm.parse(fecha_nacimiento));
                         p.setUrlCurp(rutaRelativa);
                     }else{
@@ -295,6 +299,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
         tutorFamiliar.setApellidoPaterno(ucFirst(tutorFamiliar.getApellidoPaterno()));
         tutorFamiliar.setApellidoMaterno(ucFirst(tutorFamiliar.getApellidoMaterno()));
         tutorFamiliar.setCalle(ucFirst(tutorFamiliar.getCalle()));
+        tutorFamiliar.setParentesco(ucFirst(tutorFamiliar.getParentesco()));
         facadeCE.setEntityClass(TutorFamiliar.class);
         facadeCE.edit(tutorFamiliar);
         facadeCE.flush();

@@ -23,7 +23,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
 
     @Override
     public List<Aspirante> listaAspirantesTSU(Integer procesoInscripcion) {
-        return  facadeCE.getEntityManager().createQuery("SELECT a FROM Aspirante a WHERE a.idProcesoInscripcion.idProcesosInscripcion = :idpi AND a.tipoAspirante.idTipoAspirante = 1 ORDER BY a.folioAspirante ",Aspirante.class)
+        return  facadeCE.getEntityManager().createQuery("SELECT a FROM Aspirante a WHERE a.idProcesoInscripcion.idProcesosInscripcion = :idpi AND a.tipoAspirante.idTipoAspirante = 1 AND a.folioAspirante <> null ORDER BY a.folioAspirante ",Aspirante.class)
                 .setParameter("idpi", procesoInscripcion)
                 .getResultList();
     }

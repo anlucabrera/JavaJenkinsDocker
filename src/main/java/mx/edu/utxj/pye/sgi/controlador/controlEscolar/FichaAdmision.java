@@ -33,6 +33,7 @@ public class FichaAdmision implements Serializable {
     private static final long serialVersionUID = -7745875703360648941L;
 
     @Getter @Setter private String estado;
+    @Getter @Setter private String estadoExtr;
     @Getter @Setter private Integer index = 0;
     @Getter @Setter private Integer pais;
     @Getter @Setter private Integer estado_iems;
@@ -61,6 +62,7 @@ public class FichaAdmision implements Serializable {
     @Getter @Setter private Part file, fileR;
     @Getter @Setter private String doc;
     @Getter @Setter private Boolean dm = true,com = true,df = true,da = true,evif = true, estatusFicha = null;
+    
 
     @EJB EJBSelectItems eJBSelectItems;
     @EJB EjbFichaAdmision ejbFichaAdmision;
@@ -104,14 +106,16 @@ public class FichaAdmision implements Serializable {
                     if(persona.getEstado() == null){
                         listaPaises = eJBSelectItems.itemPaises();
                         clearInformacion();
-                        estado = "true";
+                        estado = "false";
+                        estadoExtr = "true";
                     }else if(persona.getEstado() <= 32){
                         pais = eJBSelectItems.itemCvePais(persona.getEstado());
                         listaMunicipios = eJBSelectItems.itemMunicipiosByClave(persona.getEstado());
                         listaEstados = eJBSelectItems.itemEstados();
                         listaPaises = eJBSelectItems.itemPaisMexico();
                         clearInformacion();
-                        estado = "false";
+                        estado = "true";
+                        estadoExtr = "false";
                     }
                 }else{
                     if(persona.getEstado() > 32){
@@ -119,7 +123,8 @@ public class FichaAdmision implements Serializable {
                         listaPaises = eJBSelectItems.itemPaises();
                         listaEstados = eJBSelectItems.itemEstadoByClave(pais);
                         verificarRegistros(persona);
-                        estado = "true";
+                        estado = "false";
+                        estadoExtr = "true";
                     }else if(persona.getEstado() <= 32){
                         pais = eJBSelectItems.itemCvePais(persona.getEstado());
                         listaMunicipios = eJBSelectItems.itemMunicipiosByClave(persona.getEstado());
@@ -127,7 +132,8 @@ public class FichaAdmision implements Serializable {
                         listaPaises = eJBSelectItems.itemPaisMexico();
                         listaLocalidad = eJBSelectItems.itemLocalidadesByClave(persona.getEstado(),persona.getMunicipio());
                         verificarRegistros(persona);
-                        estado = "false";
+                        estado = "true";
+                        estadoExtr = "false";
                     }
                 }
             }else{
@@ -447,6 +453,11 @@ public class FichaAdmision implements Serializable {
     
     public void downloadFichaAdmin() throws IOException, DocumentException{
         ejbFichaAdmision.generaFichaAdmin(persona,datosAcademicos,domicilio,aspirante,medioComunicacion);
+    }
+    
+    public void nuevoRegistro(){
+        clearInformacion();
+        persona = new Persona();
     }
     private static final Logger LOG = Logger.getLogger(FichaAdmision.class.getName());
 }
