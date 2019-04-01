@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.sgi.saiiut.facade;
 
 import java.util.List;
 import javax.ejb.Stateful;
+import javax.persistence.Cache;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import lombok.Getter;
@@ -36,6 +37,8 @@ public class FacadeService2<T> implements Facade2 {
 
     @Override
     public EntityManager getEntityManager() {
+        Cache c=em.getEntityManagerFactory().getCache();
+        c.evictAll();
         return em;
     }
 

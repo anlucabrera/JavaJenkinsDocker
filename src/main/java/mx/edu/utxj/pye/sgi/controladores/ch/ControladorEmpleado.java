@@ -154,8 +154,8 @@ public class ControladorEmpleado implements Serializable {
             nuevaListaEventos = ejbUtilidadesCH.mostrarEventosRegistro("Periodo electoral", "Periodo electoral");
             if (!nuevaListaEventos.isEmpty()) {
                 nuevaEventos = nuevaListaEventos.get(0);
-                if ((fechaActual.isBefore(uch.castearDaLD(nuevaEventos.getFechaFin())) || fechaActual.equals(nuevaEventos.getFechaFin()))
-                        && (fechaActual.isAfter(uch.castearDaLD(nuevaEventos.getFechaInicio())) || fechaActual.equals(nuevaEventos.getFechaInicio()))) {
+                if((fechaActual.isBefore(uch.castearDaLD(nuevaEventos.getFechaFin())) || fechaActual.equals(uch.castearDaLD(nuevaEventos.getFechaFin())))
+                        && (fechaActual.isAfter(uch.castearDaLD(nuevaEventos.getFechaInicio())) || fechaActual.equals(uch.castearDaLD(nuevaEventos.getFechaInicio())))) {
                     procesoElectoralActivo = true;
                 } else {
                     procesoElectoralActivo = false;
@@ -199,7 +199,7 @@ public class ControladorEmpleado implements Serializable {
             nuevaAreasUniversidad = ejbAreasLogeo.mostrarAreasUniversidad(nuevoOBJListaPersonal.getAreaOperativa());
             if (nuevaAreasUniversidad != null) {
                 if (nuevaAreasUniversidad.getTienePoa()) {
-                    if (Objects.equals(nuevaAreasUniversidad.getResponsable(), empleadoLogeado)) {
+                    if(Objects.equals(nuevaAreasUniversidad.getResponsable(), empleadoLogeado)) {
                         tienePOA = true;
                     } else {
                         tienePOA = false;
@@ -284,7 +284,7 @@ public class ControladorEmpleado implements Serializable {
          } else {
              nuevaEventosAreas = new EventosAreas();
              nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
-             if (nuevaEventosAreas != null) {
+             if(nuevaEventosAreas != null) {
                  return true;
              }else{
                  return false;

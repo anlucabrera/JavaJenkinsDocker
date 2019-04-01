@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -26,12 +27,13 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.Proyectos;
 import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Ajax;
+import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.primefaces.model.chart.MeterGaugeChartModel;
 
 @Named
-@ManagedBean
-@ViewScoped
+@SessionScoped
 public class cuadroMandoIntegralPlaneacion implements Serializable {
 
     @Getter    @Setter    private MeterGaugeChartModel meterGaugeModel1;
@@ -41,7 +43,6 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
     
     @Getter    @Setter    private AreasUniversidad au = new AreasUniversidad();
     @Getter    @Setter    private ResultadosCMI cmiGeneral;
-    @Getter    @Setter    private ResultadosCMI cmiEjesRegistro;
     @Getter    @Setter    private ResultadosCMI cmiEJe1;
     @Getter    @Setter    private ResultadosCMI cmiEJe2;
     @Getter    @Setter    private ResultadosCMI cmiEJe3;
@@ -68,8 +69,7 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
 
     @PostConstruct
     public void init() {
-        System.out.println("cuadroMandoIntegralUniversidad Inicio: " + System.currentTimeMillis());
-        au = new AreasUniversidad(Short.parseShort("0"), "Institucional", "Institucional", "1", false);
+    au = new AreasUniversidad(Short.parseShort("0"), "Institucional", "Institucional", "1", false);
         
         numeroMes = fechaActual.getMonth();
 //        numeroMes=0;
@@ -95,22 +95,17 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
             case 11:                mes = "Avance al mes de: Diciembre del 20" + (fechaActual.getYear() - 101);                break;
         }
         reseteador();
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralPlaneacion.init(1)");
         buscarAreasPOA();
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralPlaneacion.init(2)");
         cmiEnGeneral();
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralPlaneacion.init(3)");
         cmiPorEje();
-        System.out.println("cuadroMandoIntegralUniversidad Fin: " + System.currentTimeMillis());
-        System.out.println("---------------------------------------------------------------------------------------------------");
     }
 
     public void reseteador() {
-         cmiGeneral = new ResultadosCMI(au.getNombre(), 0, 0, 0.0, graf, new MeterGaugeChartModel());
-        cmiEJe1 = new ResultadosCMI(au.getNombre(), 0, 0, 0.0, graf, new MeterGaugeChartModel());
-        cmiEJe2 = new ResultadosCMI(au.getNombre(), 0, 0, 0.0, graf, new MeterGaugeChartModel());
-        cmiEJe3 = new ResultadosCMI(au.getNombre(), 0, 0, 0.0, graf, new MeterGaugeChartModel());
-        cmiEJe4 = new ResultadosCMI(au.getNombre(), 0, 0, 0.0, graf, new MeterGaugeChartModel());
+        cmiGeneral = new ResultadosCMI("", 0, 0, 0.0, new ArrayList<>(), new MeterGaugeChartModel(),false);
+        cmiEJe1 = new ResultadosCMI("", 0, 0, 0.0, new ArrayList<>(), new MeterGaugeChartModel(),false);
+        cmiEJe2 = new ResultadosCMI("", 0, 0, 0.0, new ArrayList<>(), new MeterGaugeChartModel(),false);
+        cmiEJe3 = new ResultadosCMI("", 0, 0, 0.0, new ArrayList<>(), new MeterGaugeChartModel(),false);
+        cmiEJe4 = new ResultadosCMI("", 0, 0, 0.0, new ArrayList<>(), new MeterGaugeChartModel(),false);
     }
     
     public void buscarAreasPOA() {
@@ -127,7 +122,7 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
         } else {
             actividadesPoas = poaSelectec.mostrarActividadesPoasUniversidadaEjercicioFiscal(ejercicioFiscal);
         }
-        cmiGeneral = new ResultadosCMI(au.getNombre(), 0, 0, 0.0, graf, new MeterGaugeChartModel());
+        cmiGeneral = new ResultadosCMI(au.getNombre(), 0, 0, 0.0, graf, new MeterGaugeChartModel(),false);
         if (!actividadesPoas.isEmpty()) {
             List<ActividadesPoa> actividadesPoasFiltradas = new ArrayList<>();
             actividadesPoasFiltradas.clear();
@@ -136,13 +131,13 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
                 calculosCMI(actividadesPoasFiltradas);
                 grafRA = initMeterGaugeModel();
                 grafRA.setTitle(mes);
-                grafRA.setSeriesColors("FF0000,ffff00,66ff33");
+                grafRA.setSeriesColors("666666,808080,a0a0a0");
                 grafRA.setGaugeLabel(df.format((realizadas.doubleValue() / programadas.doubleValue()) * 100D) + " % avance");
                 grafRA.setGaugeLabelPosition("bottom");
                 grafRA.setShowTickLabels(true);
                 grafRA.setLabelHeightAdjust(10);
                 grafRA.setIntervalOuterRadius(100);
-                cmiGeneral = new ResultadosCMI(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativaNombre(), programadas, realizadas, avance, graf, grafRA);
+                cmiGeneral = new ResultadosCMI(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativaNombre(), programadas, realizadas, avance, graf, grafRA,true);
             }
         }
     }
@@ -155,35 +150,27 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
         } else {
             ejesRegistros = poaSelectec.mostrarEjesRegistros();
         }
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralPlaneacion.cmiPorEje()" + ejesRegistros.size());
         if (!ejesRegistros.isEmpty()) {
             ejesRegistros.forEach((t) -> {
                 numeroEje = t.getEje();
-                System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralPlaneacion.cmiPorEje(numeroEje)"+numeroEje);
                 switch (numeroEje) {
                     case 1:
-                        System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralPlaneacion.cmiPorEje(EJE 1)");
                         cmiEJe1 = cmiEje(t);
                         break;
                     case 2:
-                        System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralPlaneacion.cmiPorEje(EJE 2)");
                         cmiEJe2 = cmiEje(t);
                         break;
                     case 3:
-                        System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralPlaneacion.cmiPorEje(EJE 3)");
                         cmiEJe3 = cmiEje(t);
                         break;
                     case 4:
-                        System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralPlaneacion.cmiPorEje(EJE 4)");
                         cmiEJe4 = cmiEje(t);
                         break;
-
                 }
             });
         }
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralPlaneacion.cmiPorEje(Fin)");
     }
-    
+
     public ResultadosCMI cmiEje(EjesRegistro er) {
         actividadesPoas = new ArrayList<>();
         actividadesPoas.clear();
@@ -192,29 +179,27 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
         } else {
             actividadesPoas = poaSelectec.mostrarActividadesPoasUniversidadaEjeyEjercicioFiscal(ejercicioFiscal, er);
         }
-        if (!actividadesPoas.isEmpty()) {
-            List<ActividadesPoa> actividadesPoasFiltradas = new ArrayList<>();
-            actividadesPoasFiltradas.clear();
-            actividadesPoasFiltradas = actividadesFiltradas(actividadesPoas);
-            if (!actividadesPoasFiltradas.isEmpty()) {
-                calculosCMI(actividadesPoasFiltradas);
-                if (programadas != 0) {
-                    grafRA = initMeterGaugeModel();
-                    grafRA.setTitle(mes);
-                    grafRA.setSeriesColors("FF0000,ffff00,66ff33");
-                    grafRA.setGaugeLabel(df.format((realizadas.doubleValue() / programadas.doubleValue()) * 100D) + " % avance");
-                    grafRA.setGaugeLabelPosition("bottom");
-                    grafRA.setShowTickLabels(true);
-                    grafRA.setLabelHeightAdjust(10);
-                    grafRA.setIntervalOuterRadius(100);
-                    cmiEjesRegistro = new ResultadosCMI(er.getNombre(), programadas, realizadas, avance, graf, grafRA);
-                }
-            }
+        List<ActividadesPoa> actividadesPoasFiltradas = new ArrayList<>();
+        actividadesPoasFiltradas.clear();
+        actividadesPoasFiltradas = actividadesFiltradas(actividadesPoas);
+        calculosCMI(actividadesPoasFiltradas);
+        grafRA = initMeterGaugeModel();
+        grafRA.setTitle(mes);
+        grafRA.setSeriesColors("666666,808080,a0a0a0");
+        grafRA.setGaugeLabelPosition("bottom");
+        grafRA.setShowTickLabels(true);
+        grafRA.setLabelHeightAdjust(10);
+        grafRA.setIntervalOuterRadius(100);
+        if (programadas != 0) {
+            grafRA.setGaugeLabel(df.format(0D) + " % avance");
         } else {
-            cmiEjesRegistro = new ResultadosCMI(au.getNombre(), 0, 0, 0.0, graf, new MeterGaugeChartModel());
+            grafRA.setGaugeLabel(df.format((realizadas.doubleValue() / programadas.doubleValue()) * 100D) + " % avance");
         }
-        return cmiEjesRegistro;
-    }    
+        if (er.getNombre() == null) {
+            er.setNombre("Na");
+        }
+        return  new ResultadosCMI(er.getNombre(), programadas, realizadas, avance, graf, grafRA,true); 
+    }
 
     public void calculosCMI(List<ActividadesPoa> actividadesPoa) {
         programadas = 0;
@@ -222,61 +207,46 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
         avance = 0D;
         graf = new ArrayList<>();
         graf.clear();
-        if (!actividadesPoa.isEmpty()) {
+
+
+        if (actividadesPoa.isEmpty()) {
+            for (incremento = 0; incremento <= numeroMes; incremento++) {
+                switch (incremento) {
+                    case 11:                        mesNombre = "Enero";                        break;
+                    case 10:                        mesNombre = "Enero";                        break;
+                    case 9:                        mesNombre = "Enero";                        break;
+                    case 8:                        mesNombre = "Enero";                        break;
+                    case 7:                        mesNombre = "Enero";                        break;
+                    case 6:                        mesNombre = "Enero";                        break;
+                    case 5:                        mesNombre = "Enero";                        break;
+                    case 4:                        mesNombre = "Enero";                        break;
+                    case 3:                        mesNombre = "Enero";                        break;
+                    case 2:                        mesNombre = "Enero";                        break;
+                    case 1:                        mesNombre = "Enero";                        break;
+                    case 0:                        mesNombre = "Enero";                        break;
+                }
+                graf.add(new Grafica(mesNombre, 0D));
+            }
+        }else{
             actividadesPoa.forEach((t) -> {
                 if (t.getBandera().equals("y")) {
                     Integer tP = 0;
                     Integer tR = 0;
                     switch (numeroMes) {
-                        case 0:
-                            tR = 0 + t.getNAEnero();
-                            tP = 0 + t.getNPEnero();
+                        case 11:                           tR = tR + t.getNADiciembre();                            tP = tP + t.getNPDiciembre();
+                        case 10:                           tR = tR + t.getNANoviembre();                            tP = tP + t.getNPNoviembre();
+                        case 9:                            tR = tR + t.getNAOctubre();                            tP = tP + t.getNPOctubre();
+                        case 8:                            tR = tR + t.getNASeptiembre();                            tP = tP + t.getNPSeptiembre();
+                        case 7:                            tR = tR + t.getNAAgosto();                            tP = tP + t.getNPAgosto();
+                        case 6:                            tR = tR + t.getNAJulio();                            tP = tP + t.getNPJulio();
+                        case 5:                            tR = tR + t.getNAJunio();                            tP = tP + t.getNPJunio();
+                        case 4:                            tR = tR + t.getNAMayo();                            tP = tP + t.getNPMayo();
+                        case 3:                            tR = tR + t.getNAAbril();                            tP = tP + t.getNPAbril();
+                        case 2:                            tR = tR + t.getNAMarzo();                            tP = tP + t.getNPMarzo();
+                        case 1:                            tR = tR + t.getNAFebrero();                            tP = tP + t.getNPFebrero();
+                        case 0:                            tR = tR + t.getNAEnero();                            tP = tP + t.getNPEnero();
                             break;
-                        case 1:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero();
-                            break;
-                        case 2:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo();
-                            break;
-                        case 3:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril();
-                            break;
-                        case 4:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo();
-                            break;
-                        case 5:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio();
-                            break;
-                        case 6:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio();
-                            break;
-                        case 7:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto();
-                            break;
-                        case 8:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto() + t.getNASeptiembre();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre();
-                            break;
-                        case 9:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto() + t.getNASeptiembre() + t.getNAOctubre();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre() + t.getNPOctubre();
-                            break;
-                        case 10:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto() + t.getNASeptiembre() + t.getNAOctubre() + t.getNANoviembre();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre() + t.getNPOctubre() + t.getNPNoviembre();
-                            break;
-                        case 11:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto() + t.getNASeptiembre() + t.getNAOctubre() + t.getNANoviembre() + t.getNADiciembre();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre() + t.getNPOctubre() + t.getNPNoviembre() + t.getNPDiciembre();
-                            break;
-                    }
+                    }                    
                     if(tP!=0){                        
                     programadas=programadas+1;
                     }
@@ -285,9 +255,8 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
                     }
                 }
             });
-
             for (incremento = 0; incremento <= numeroMes; incremento++) {
-                mesNombre = "";
+                                mesNombre = "";
                 alca = 0;
                 progra = 0;
                 actividadesPoa.forEach((t) -> {
@@ -361,13 +330,21 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
                         }
 
                         if (tR != 0 && Objects.equals(tR, tP)) {
-                            alca=alca+1;
+                            alca = alca + 1;
                         }
                     }
                 });
-                graf.add(new Grafica(mesNombre, (alca.doubleValue() / progra.doubleValue()) * 100D));
+                if (progra != 0) {
+                    graf.add(new Grafica(mesNombre, (alca.doubleValue() / progra.doubleValue()) * 100D));
+                } else {
+                    graf.add(new Grafica(mesNombre, 0D));
+                }
             }
+        }
+        if (programadas != 0) {
             avance = (Double.parseDouble(realizadas.toString()) / Double.parseDouble(programadas.toString()) * 100D);
+        } else {
+            avance = 0D;
         }
     }
 
@@ -397,15 +374,8 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
         return new MeterGaugeChartModel((realizadas.doubleValue() / programadas.doubleValue()) * 100D, intervals);
     }
     
-    public void areaSeleccionada(ValueChangeEvent event) {
-        try {
-            au = new AreasUniversidad();
-            Short claveArea = Short.parseShort(event.getNewValue().toString());
-            if (claveArea != 0) {
-                au = areasLogeo.mostrarAreasUniversidad(claveArea);
-            } else {
-                au = new AreasUniversidad(Short.parseShort("0"), "Institucional", "Institucional", "1", false);
-            }
+    public void areaSeleccionada() {
+       try {
             reseteador();
             cmiEnGeneral();
             cmiPorEje();
@@ -413,12 +383,13 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(cuadroMandoIntegralPlaneacion.class.getName()).log(Level.SEVERE, null, ex);
         }
+        Faces.refresh();
     }
    
     public String datosGraica(List<Grafica> er){        
         valores="";
         er.forEach((t) -> {
-            valores=valores+"---- mes:v"+t.getMes()+" avance: "+t.getAvance()+"----";
+            valores=valores+"---- mes: "+t.getMes()+" avance: "+t.getAvance()+"----";
         });
         return valores;
     }
@@ -426,32 +397,26 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
 
     public static class ResultadosCMI {
 
-        @Getter
-        @Setter
-        private String ejesRegistro;
-        @Getter
-        @Setter
-        private Integer programadas;
-        @Getter
-        @Setter
-        private Integer realizadas;
-        @Getter
-        @Setter
-        private Double avance;
-        @Getter
-        @Setter
-        private List<Grafica> avanceGraf;
-        @Getter
-        @Setter
-        private MeterGaugeChartModel gaugeChartModel;
+        @Getter        @Setter        private String ejesRegistro;
+        @Getter        @Setter        private Integer programadas;
+        @Getter        @Setter        private Integer realizadas;
+        @Getter        @Setter        private Double avance;
+        @Getter        @Setter        private List<Grafica> avanceGraf;
+        @Getter        @Setter        private MeterGaugeChartModel gaugeChartModel;
+        @Getter        @Setter        private Boolean renderizar;
 
-        public ResultadosCMI(String ejesRegistro, Integer programadas, Integer realizadas, Double avance, List<Grafica> avanceGraf, MeterGaugeChartModel gaugeChartModel) {
+        public ResultadosCMI(String ejesRegistro, Integer programadas, Integer realizadas, Double avance, List<Grafica> avanceGraf, MeterGaugeChartModel gaugeChartModel, Boolean renderizar) {
             this.ejesRegistro = ejesRegistro;
             this.programadas = programadas;
             this.realizadas = realizadas;
             this.avance = avance;
             this.avanceGraf = avanceGraf;
             this.gaugeChartModel = gaugeChartModel;
+            this.renderizar = renderizar;
+        }
+        
+        private ResultadosCMI() {
+            
         }
     }
 
@@ -476,6 +441,6 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
     
     }
 
-    public void imprimirValores() {
+    public void imprimirValores() {        
     }
 }

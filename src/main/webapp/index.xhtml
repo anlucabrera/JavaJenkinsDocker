@@ -14,11 +14,8 @@
         <ui:param name="renderBreadCrumb" value="false"/>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css"/>
         <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
-            <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            
                 <link rel="stylesheet" type="text/css" href="resources/css/procesoElectoral.css" media="screen" />
-            </c:if>
-        </c:if>
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
@@ -32,6 +29,41 @@
         <c:set var="claseResumen" value="#{'col-lg-4 col-md-6 col-sm-12'}" />
 
         <c:if test="#{logonMB.usuarioTipo eq 'ESTUDIANTE'}">
+            <div class="box box-primary">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Avisos</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">  
+                        <div class="row">
+                            <c:if test="#{true}">
+                                <div class="col-lg-6 col-md-12 col-sm-12" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="window.open('https://www.becaseducacionsuperior.sep.gob.mx/files/Comunicacion/Convocatorias/2019/Resultados_PDF/RESULTADOS_Manutencion_Federal_2019.pdf', '_blank');">
+                                            <h3>
+                                                <h:outputLabel value="Beca de Manutención Puebla 2019" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p><br/>No olviden tener a la mano su número de folio generado en su acuse de SUBES o visiten la plataforma en el apartado de mensajes donde recibirán una notificación si fueron aceptados o no.</p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa  fa-graduation-cap "></i>
+                                        </div>
+                                        <p:link href="https://www.becaseducacionsuperior.sep.gob.mx/files/Comunicacion/Convocatorias/2019/Resultados_PDF/RESULTADOS_Manutencion_Federal_2019.pdf" target="_blank" class="small-box-footer">
+                                            Consulta resultados <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="estudioEgr" action="evaluaciones/evaluacion/estudioEgresados" /></h:form>
+                                    </div>
+                                </div>                                
+                            </c:if>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="box box-primary">
                 <div class="box box-solid">
                     <div class="box-header with-border">
@@ -227,7 +259,7 @@
                                     <div class="inner">
                                         <h3>Contacto</h3>
                                         <p>Registro</p>
-                                        <p>Contacto de mergencias</p>
+                                        <p>Contacto de emergencia</p>
                                     </div>
                                     <div class="icon">
                                         <i class="fa fa-user-plus"/>

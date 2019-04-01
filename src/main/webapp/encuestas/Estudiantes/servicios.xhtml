@@ -6,8 +6,9 @@
                 xmlns:jsf="http://xmlns.jcp.org/jsf"
                 template="#{layoutMB.template}"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
-    <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+
     <ui:define name="head-end">
+        <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
         <style type="text/css">
             .ui-datatable .ui-datatable-header {
                 text-align: right !important;
@@ -15,7 +16,6 @@
             .description-block{
                 text-align: justify;
             }
-
             .description-header{
                 text-align: center;
             }
@@ -24,11 +24,14 @@
                 width: 100%;
             }
             .aceptado {
-                background-color: #00a7d0  !important;
+                background-color: #5C5C5C  !important;
                 text-align: left !important;
             }
             .denegado{
-                background-color: #f39c12 !important;
+                background-color: #808080 !important;
+            }
+            .ui-state-active{
+                background-color: #5C5C5C !important;
             }
             .ui-progressbar{
                 position: relative;
@@ -72,7 +75,7 @@
                             <p:toolbar id="tb">
                                 <f:facet name="left">
                                     <h4>
-                                        <span class="label label-primary"><i class="fa fa-info-circle" />
+                                        <span class="label label-default"><i class="fa fa-info-circle" />
                                             Escala de valores de satisfacción: Muy Bien = MB, Bien = B, Regular = R, Mal = M y Pésimo = P; o bien No Aplica NA=0.
                                         </span>
                                     </h4>
