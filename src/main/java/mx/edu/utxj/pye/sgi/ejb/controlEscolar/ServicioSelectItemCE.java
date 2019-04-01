@@ -153,4 +153,10 @@ public class ServicioSelectItemCE implements EjbSelectItemCE {
         return facadeCE.getEntityManager().createQuery("SELECT t FROM Turno t",Turno.class)
                 .getResultList();
     }
+
+    @Override
+    public List<ProgramasEducativos> itemPEAll() {
+        return facadeCE.getEntityManager().createQuery("SELECT pe FROM ProgramasEducativos pe WHERE pe.nivel.nivel = 'TSU' AND pe.activo = 1",ProgramasEducativos.class)
+                .getResultList();
+    }
 }

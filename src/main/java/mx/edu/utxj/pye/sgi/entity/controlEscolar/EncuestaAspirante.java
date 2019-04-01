@@ -27,20 +27,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "encuesta_aspirante")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "EncuestaAspirante.findAll", query = "SELECT e FROM EncuestaAspirante e")
-    , @NamedQuery(name = "EncuestaAspirante.findByIdEncuestaAspirante", query = "SELECT e FROM EncuestaAspirante e WHERE e.encuestaAspirantePK.idEncuestaAspirante = :idEncuestaAspirante")
-    , @NamedQuery(name = "EncuestaAspirante.findByCveAspirante", query = "SELECT e FROM EncuestaAspirante e WHERE e.encuestaAspirantePK.cveAspirante = :cveAspirante")
-    , @NamedQuery(name = "EncuestaAspirante.findByR2", query = "SELECT e FROM EncuestaAspirante e WHERE e.r2 = :r2")
-    , @NamedQuery(name = "EncuestaAspirante.findByR3", query = "SELECT e FROM EncuestaAspirante e WHERE e.r3 = :r3")
-    , @NamedQuery(name = "EncuestaAspirante.findByR4", query = "SELECT e FROM EncuestaAspirante e WHERE e.r4 = :r4")
-    , @NamedQuery(name = "EncuestaAspirante.findByR5", query = "SELECT e FROM EncuestaAspirante e WHERE e.r5 = :r5")
-    , @NamedQuery(name = "EncuestaAspirante.findByR6", query = "SELECT e FROM EncuestaAspirante e WHERE e.r6 = :r6")
-    , @NamedQuery(name = "EncuestaAspirante.findByR7", query = "SELECT e FROM EncuestaAspirante e WHERE e.r7 = :r7")
-    , @NamedQuery(name = "EncuestaAspirante.findByR8", query = "SELECT e FROM EncuestaAspirante e WHERE e.r8 = :r8")
-    , @NamedQuery(name = "EncuestaAspirante.findByR9", query = "SELECT e FROM EncuestaAspirante e WHERE e.r9 = :r9")
-    , @NamedQuery(name = "EncuestaAspirante.findByR10", query = "SELECT e FROM EncuestaAspirante e WHERE e.r10 = :r10")
-    , @NamedQuery(name = "EncuestaAspirante.findByR11", query = "SELECT e FROM EncuestaAspirante e WHERE e.r11 = :r11")
-    , @NamedQuery(name = "EncuestaAspirante.findByR12", query = "SELECT e FROM EncuestaAspirante e WHERE e.r12 = :r12")})
+    @NamedQuery(name = "EncuestaAspirante.findAll", query = "SELECT e FROM EncuestaAspirante e"),
+    @NamedQuery(name = "EncuestaAspirante.findByIdEncuestaAspirante", query = "SELECT e FROM EncuestaAspirante e WHERE e.encuestaAspirantePK.idEncuestaAspirante = :idEncuestaAspirante"),
+    @NamedQuery(name = "EncuestaAspirante.findByCveAspirante", query = "SELECT e FROM EncuestaAspirante e WHERE e.encuestaAspirantePK.cveAspirante = :cveAspirante"),
+    @NamedQuery(name = "EncuestaAspirante.findByR2", query = "SELECT e FROM EncuestaAspirante e WHERE e.r2 = :r2"),
+    @NamedQuery(name = "EncuestaAspirante.findByR3", query = "SELECT e FROM EncuestaAspirante e WHERE e.r3 = :r3"),
+    @NamedQuery(name = "EncuestaAspirante.findByR4", query = "SELECT e FROM EncuestaAspirante e WHERE e.r4 = :r4"),
+    @NamedQuery(name = "EncuestaAspirante.findByR5", query = "SELECT e FROM EncuestaAspirante e WHERE e.r5 = :r5"),
+    @NamedQuery(name = "EncuestaAspirante.findByR6", query = "SELECT e FROM EncuestaAspirante e WHERE e.r6 = :r6"),
+    @NamedQuery(name = "EncuestaAspirante.findByR7", query = "SELECT e FROM EncuestaAspirante e WHERE e.r7 = :r7"),
+    @NamedQuery(name = "EncuestaAspirante.findByR8", query = "SELECT e FROM EncuestaAspirante e WHERE e.r8 = :r8"),
+    @NamedQuery(name = "EncuestaAspirante.findByR9", query = "SELECT e FROM EncuestaAspirante e WHERE e.r9 = :r9"),
+    @NamedQuery(name = "EncuestaAspirante.findByR10", query = "SELECT e FROM EncuestaAspirante e WHERE e.r10 = :r10"),
+    @NamedQuery(name = "EncuestaAspirante.findByR11", query = "SELECT e FROM EncuestaAspirante e WHERE e.r11 = :r11"),
+    @NamedQuery(name = "EncuestaAspirante.findByR12", query = "SELECT e FROM EncuestaAspirante e WHERE e.r12 = :r12")})
 public class EncuestaAspirante implements Serializable {
 
     private static final long serialVersionUID = 1L;

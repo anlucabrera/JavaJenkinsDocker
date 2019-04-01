@@ -23,7 +23,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
 
     @Override
     public List<Aspirante> listaAspirantesTSU(Integer procesoInscripcion) {
-        return  facadeCE.getEntityManager().createQuery("SELECT a FROM Aspirante a WHERE a.idProcesoInscripcion.idProcesosInscripcion = :idpi AND a.tipoAspirante.idTipoAspirante = 1 ORDER BY a.folioAspirante ",Aspirante.class)
+        return  facadeCE.getEntityManager().createQuery("SELECT a FROM Aspirante a WHERE a.idProcesoInscripcion.idProcesosInscripcion = :idpi AND a.tipoAspirante.idTipoAspirante = 1 AND a.folioAspirante <> null ORDER BY a.folioAspirante ",Aspirante.class)
                 .setParameter("idpi", procesoInscripcion)
                 .getResultList();
     }
@@ -34,5 +34,13 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                 .setParameter("idpi", procesoInscripcion)
                 .setParameter("po", pe)
                 .getResultList();
+    }
+
+    @Override
+    public Aspirante buscaAspiranteByFolio(Integer folio) {
+        return facadeCE.getEntityManager().createNamedQuery("Aspirante.findByFolioAspirante", Aspirante.class)
+                .setParameter("folioAspirante", folio)
+                .getResultList()
+                .stream().findFirst().orElse(null);
     }
 }

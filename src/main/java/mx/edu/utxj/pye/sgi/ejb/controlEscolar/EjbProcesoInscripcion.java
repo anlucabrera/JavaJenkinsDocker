@@ -17,4 +17,5 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 public interface EjbProcesoInscripcion {
     public List<Aspirante> listaAspirantesTSU(Integer procesoInscripcion);
     public List<Aspirante> lisAspirantesByPE(String pe,Integer procesoInscripcion);
+    public Aspirante buscaAspiranteByFolio(Integer folio);
 }

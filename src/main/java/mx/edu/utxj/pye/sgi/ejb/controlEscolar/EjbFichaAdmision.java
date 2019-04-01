@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 
 
+import com.itextpdf.text.DocumentException;
 import javax.ejb.Local;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.Part;
@@ -176,5 +177,7 @@ public interface EjbFichaAdmision {
      * @param documentoAspirante parámetro mediante el cual se realiza la actualización del registro de requisitos
      */
     public void actualizaDocumentosAspirante(DocumentoAspirante documentoAspirante);
+    
+    public void generaFichaAdmin(Persona persona,DatosAcademicos academicos,Domicilio domicilio,Aspirante aspirante,MedioComunicacion medioComunicacion) throws IOException, DocumentException;
 
 }
