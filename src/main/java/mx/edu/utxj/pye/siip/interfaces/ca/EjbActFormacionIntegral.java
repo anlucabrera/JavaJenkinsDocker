@@ -92,7 +92,13 @@ public interface EjbActFormacionIntegral {
      */
     public List<DTOActFormacionIntegral> getListaRegistrosPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo);
     
-    
+    /**
+     * Obtiene la lista de registros correspondientes al evento seleccionado.
+     * @param evento Evento seleccionado.
+     * @param claveArea Área a la que pertenece el usuario y que servirá como filtro.
+     * @param periodo Periodo del evento y que servirá como filtro
+     * @return Lista de registros mensuales.
+     */
     public List<DTOParticipantesActFormInt> getListaRegistrosPorEventoAreaPeriodoPart(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo);
    
     /**
@@ -135,4 +141,18 @@ public interface EjbActFormacionIntegral {
      * @throws java.lang.Throwable
      */
     public ActividadesFormacionIntegral actualizarActFormInt(ActividadesFormacionIntegral nuevaActFormInt) throws Throwable;
+    
+     /**
+     * Obtiene la lista de registros actuales del registro
+     * @param claveArea Área a la que pertenece el usuario y que servirá como filtro.
+     * @return Lista de registros
+     */
+    public List<DTOActFormacionIntegral> getListaRegistrosAFI(Short claveArea);
+    
+    /**
+     * Obtiene la lista de registros actuales del registro
+     * @param claveArea Área a la que pertenece el usuario y que servirá como filtro.
+     * @return Lista de registros
+     */
+    public List<DTOParticipantesActFormInt> getListaRegistrosPAFI(Short claveArea);
 }

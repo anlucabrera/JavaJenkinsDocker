@@ -19,6 +19,8 @@ import javax.ejb.Stateful;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
+import lombok.Getter;
+import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMaterias;
@@ -30,6 +32,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Listaperiodosescolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.*;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 
 /**
  *
@@ -43,6 +46,10 @@ public class ServicioSelectItems implements EJBSelectItems {
     
     @Inject
     LogonMB logonMB;
+    
+    @EJB EjbModulos ejbModulos;
+    
+    @Getter @Setter List<Short> areas;
 
     @Override
     public List<SelectItem> itemsEvaluacionesDirectivos() {
@@ -441,15 +448,24 @@ public class ServicioSelectItems implements EJBSelectItems {
                 //System.err.println("El personal es --->" + x);
             });
             Short areaSeleccionada = listaAreasConPoa.get(0).getArea();
-            TypedQuery<Registros> qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.area = :area ORDER BY r.registro DESC", Registros.class);
-            qr.setParameter("tipo", tipo);
-            qr.setParameter("area", areaSeleccionada);
-//            System.err.println("La lista de registros es : " + qr.getResultList() + " y su tamaño es : " + qr.getResultList().size());
-            List<Registros> lr = qr.getResultList();
-            if (lr == null || lr.isEmpty()) {
+            List<Registros> qr = new ArrayList<>();
+            
+            if (areaSeleccionada == 6 || areaSeleccionada == 9) {
+                qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo ORDER BY r.eventoRegistro.eventoRegistro DESC", Registros.class)
+                .setParameter("tipo", tipo)
+                .getResultList();
+                        
+            } else {
+                areas = ejbModulos.getAreasDependientes(areaSeleccionada);
+                qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.area IN :areas ORDER BY r.eventoRegistro.eventoRegistro DESC", Registros.class)
+                .setParameter("tipo", tipo)
+                .setParameter("areas", areas)
+                .getResultList();
+            }
+            if (qr == null || qr.isEmpty()) {
                 return null;
             } else {
-                return lr;
+                return qr;
             }
         }
     }
@@ -467,16 +483,27 @@ public class ServicioSelectItems implements EJBSelectItems {
                 //System.err.println("El personal es --->" + x);
             });
             Short areaSeleccionada = listaAreasConPoa.get(0).getArea();
-            TypedQuery<Registros> qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.area = :area AND r.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio ORDER BY r.registro DESC", Registros.class);
-            qr.setParameter("tipo", tipo);
-            qr.setParameter("area", areaSeleccionada);
-            qr.setParameter("ejercicio", ejercicio);
-            //System.err.println("La lista de registros es : " + qr.getResultList() + " y su tamaño es : " + qr.getResultList().size());
-            List<Registros> lr = qr.getResultList();
-            if (lr == null || lr.isEmpty()) {
+            List<Registros> qr = new ArrayList<>();
+            
+            if (areaSeleccionada == 6 || areaSeleccionada == 9) {
+                qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio ORDER BY r.eventoRegistro.eventoRegistro DESC", Registros.class)
+                        .setParameter("tipo", tipo)
+                        .setParameter("ejercicio", ejercicio)
+                        .getResultList();
+
+            } else {
+                areas = ejbModulos.getAreasDependientes(areaSeleccionada);
+
+                qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.area IN :areas AND r.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio ORDER BY r.eventoRegistro.eventoRegistro DESC", Registros.class)
+                        .setParameter("tipo", tipo)
+                        .setParameter("areas", areas)
+                        .setParameter("ejercicio", ejercicio)
+                        .getResultList();
+            }
+            if (qr == null || qr.isEmpty()) {
                 return null;
             } else {
-                return lr;
+                return qr;
             }
         }
     }

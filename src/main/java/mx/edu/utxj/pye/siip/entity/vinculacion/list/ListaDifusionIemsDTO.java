@@ -24,7 +24,6 @@ import mx.edu.utxj.pye.sgi.entity.pye2.DifusionIems;
 public class ListaDifusionIemsDTO implements Serializable{
     @Getter @Setter private Boolean activo;
     @Getter @Setter private DifusionIems difusion;
-    
     @Getter @Setter private AreasUniversidad areasUniversidad;
     @Getter @Setter private ActividadesPoa actividadAlineada;
     

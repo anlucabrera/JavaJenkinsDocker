@@ -243,7 +243,45 @@ public class ServicioExaniResultados implements EjbExaniResultados{
                     f.getEntityManager().find(CiclosEscolares.class, e.getCicloEscolar()),
                     f.getEntityManager().find(AreasUniversidad.class, e.getProgramaEducativo()),
                     a,
-                    cicloe));
+                    cicloe,
+                    0,
+                    0.00,
+                    0.00,
+                    0.00));
+        });
+        return l;
+    }
+
+    @Override
+    public List<DTOExani> getRegistroReporteExani() {
+        //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+        List<DTOExani> l = new ArrayList<>();
+        List<ExaniResultadosCiclosEscolares> entities = f.getEntityManager().createQuery("SELECT e FROM ExaniResultadosCiclosEscolares e",  ExaniResultadosCiclosEscolares.class)
+                .getResultList();
+      
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            
+            CiclosEscolares c = f.getEntityManager().find(CiclosEscolares.class, e.getCicloEscolar());
+            String strDateFormat = "yyyy";
+            SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+            String cicloe = sdf.format(c.getInicio()) + " - " + sdf.format(c.getFin());
+            
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            Double porICNEalto = (double)e.getICNEalto()/e.getSustentantes();
+            Double porICNEmedio = (double)e.getICNEmedio()/e.getSustentantes();
+            Double porICNEbajo = (double)e.getICNEbajo()/e.getSustentantes();
+            l.add(new DTOExani(
+                    e,
+                    f.getEntityManager().find(CiclosEscolares.class, e.getCicloEscolar()),
+                    f.getEntityManager().find(AreasUniversidad.class, e.getProgramaEducativo()),
+                    a,
+                    cicloe,
+                    e.getSusInscritos()+e.getNosusInscritos(),
+                    porICNEalto, 
+                    porICNEmedio, 
+                    porICNEbajo));
         });
         return l;
     }

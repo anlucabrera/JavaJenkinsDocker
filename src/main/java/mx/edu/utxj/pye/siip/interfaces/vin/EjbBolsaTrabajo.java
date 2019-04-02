@@ -119,4 +119,17 @@ public interface EjbBolsaTrabajo {
      * @throws java.lang.Throwable
      */
     public BolsaTrabajo actualizarBolTrab(BolsaTrabajo nuevaBolTrab) throws Throwable;
+    
+    /**
+     * Obtiene la lista de registros actuales del registro
+     * @return Lista de registros
+     */
+    public List<DTOBolsa> getRegistroReporteBolTrab();
+    
+    /**
+     * Obtiene la lista de registros actuales del registro
+     * @return Lista de registros
+     */
+    public List<DTOBolsaEntrevistas> getRegistroReporteEntBolTrab();
+    
 }

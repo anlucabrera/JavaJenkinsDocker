@@ -30,5 +30,6 @@ public class DTOPersonalCapacitado implements Serializable{
     @Getter @Setter  @NonNull private PersonalCapacitado personalCapacitado; //se declara como llave primaria para interacturar con sus evidencias
     @Getter @Setter private PeriodosEscolares periodosEscolares;
     @Getter @Setter private ActividadesPoa actividadAlineada;
+    @Getter @Setter private String cicloEscolar;
     
 }

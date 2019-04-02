@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.siip.services.vin;
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -308,11 +309,6 @@ public class ServicioBolsaTrabajo implements EjbBolsaTrabajo{
         if(evento == null || claveArea == null || periodo == null){
             return null;
         }
-        
-        
-        
-        
-        
         areas = ejbModulos.getAreasDependientes(claveArea);
         
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
@@ -325,18 +321,19 @@ public class ServicioBolsaTrabajo implements EjbBolsaTrabajo{
       
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
-            
             Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
-//            ActividadesPoa a = e.getRegistros().getActividadesPoaList().isEmpty()?null:e.getRegistros().getActividadesPoaList().get(0);
             ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            PeriodosEscolares p = f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodo());
+            String strDateFormat = "yyyy";
+            SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+            String cicloe = sdf.format(p.getCiclo().getInicio()) + " - " + sdf.format(p.getCiclo().getFin());
             l.add(new DTOBolsa(
                     e,
                     f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodo()),
-                    a));
+                    a,
+                    cicloe));
         });
         
-
-
         return l;
     }
 
@@ -361,8 +358,6 @@ public class ServicioBolsaTrabajo implements EjbBolsaTrabajo{
         entities.forEach(e -> {
             Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
             ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
-
-
             l.add(new DTOBolsaEntrevistas(
                     e,
                     f.getEntityManager().find(AreasUniversidad.class, e.getProgramaEducativo()),
@@ -372,8 +367,6 @@ public class ServicioBolsaTrabajo implements EjbBolsaTrabajo{
                     ""));
         });
         
-
-
         return l;
     }
 
@@ -460,5 +453,53 @@ public class ServicioBolsaTrabajo implements EjbBolsaTrabajo{
         f.flush();
         Messages.addGlobalInfo("El registro se ha actualizado correctamente");
         return nuevaBolTrab;
+    }
+
+    @Override
+    public List<DTOBolsa> getRegistroReporteBolTrab() {
+        //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+        List<DTOBolsa> l = new ArrayList<>();
+        List<BolsaTrabajo> entities = f.getEntityManager().createQuery("SELECT b FROM BolsaTrabajo b INNER JOIN b.registros reg INNER JOIN reg.eventoRegistro er", BolsaTrabajo.class)
+                .getResultList();
+      
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            PeriodosEscolares p = f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodo());
+            String strDateFormat = "yyyy";
+            SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+            String cicloe = sdf.format(p.getCiclo().getInicio()) + " - " + sdf.format(p.getCiclo().getFin());
+            l.add(new DTOBolsa(
+                    e,
+                    f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodo()),
+                    a,
+                    cicloe));
+        });
+        
+        return l;
+    }
+
+    @Override
+    public List<DTOBolsaEntrevistas> getRegistroReporteEntBolTrab() {
+        //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+        List<DTOBolsaEntrevistas> l = new ArrayList<>();
+        List<BolsaTrabajoEntrevistas> entities = f.getEntityManager().createQuery("SELECT e FROM BolsaTrabajoEntrevistas e INNER JOIN e.bolsatrabent b INNER JOIN e.registros reg INNER JOIN reg.eventoRegistro er", BolsaTrabajoEntrevistas.class)
+                .getResultList();
+        
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            l.add(new DTOBolsaEntrevistas(
+                    e,
+                    f.getEntityManager().find(AreasUniversidad.class, e.getProgramaEducativo()),
+                    f.getEntityManager().find(Generaciones.class, e.getGeneracion()),
+                    a,
+                    "",
+                    ""));
+        });
+        
+        return l;
     }
 }

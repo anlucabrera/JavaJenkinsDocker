@@ -14,6 +14,11 @@
         <ui:param name="renderBreadCrumb" value="true"/>
         <h:outputStylesheet library="css" name="tablaDatos.css" />
         <h:outputScript library="js" name="dialogs.js" />
+        <!-- Inicio estilos par proceso electoral -->
+            <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+                <h:outputStylesheet library="css" name="procesoElectoral.css" />
+            </c:if>
+        <!-- Fin estilos par proceso electoral -->
     </ui:define>
     <ui:define name="title">
         Bolsa de Trabajo
@@ -69,6 +74,7 @@
                                         <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="bolsaTrabajo?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
                                     </c:if>
                                     <p:commandLink class="btn btn-info" ajax="false" target="_blank" action="#{bolTrab.descargarPlantilla()}" title="Descargar Plantilla Bolsa de Trabajo"><i class="fa fa-download" /></p:commandLink>
+                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reporteRegistros.descargarReporteBolTrab()}" target="_blank" title="Descargar Reporte Excel"><i class="fa fa-file-excel-o" /></p:commandLink>
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
 
                                 </f:facet>

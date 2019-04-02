@@ -122,7 +122,7 @@ public class ControladorIngPropios implements Serializable{
         File f = new File(ejbPlantillasPAExcel.getPlantillaIngPropios());
         Faces.sendFile(f, true);
     }
-    
+   
     public void listaIngPropiosPrevia(String rutaArchivo) {
       try {
             if(rutaArchivo != null){
@@ -353,7 +353,7 @@ public class ControladorIngPropios implements Serializable{
     }
     
     public void guardarEdicion() {
-         try {
+        try {
             nuevoIngPropios = ejb.actualizarIngPropios(nuevoIngPropios);
             cargarListaPorEvento();
             Ajax.update("formMuestraDatosActivos");
@@ -363,5 +363,17 @@ public class ControladorIngPropios implements Serializable{
         }
         
     }
+    
+//     public void generarReporte() {
+//            try {
+//                String excelFilePath = "C:\\archivos\\IngresosPropiosActual.xlsx";
+////                cargarListaPorEvento();
+//                ejb.writeExcel(dto.getLista(), excelFilePath);
+//            } catch (Throwable ex) {
+//                Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause()!=null?ex.getCause().getMessage():ex.getMessage());
+//                Logger.getLogger(ControladorIngPropios.class.getName()).log(Level.SEVERE, null, ex);
+//                
+//            } 
+//    }
    
 }

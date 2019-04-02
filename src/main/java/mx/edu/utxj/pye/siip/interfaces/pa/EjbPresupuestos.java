@@ -65,4 +65,10 @@ public interface EjbPresupuestos {
      * @throws java.lang.Throwable
      */
     public Presupuestos actualizarPresupuesto(Presupuestos nuevoPresupuesto) throws Throwable;
+    
+   /**
+     * Obtiene la lista de registros actuales del registro
+     * @return Lista de registros
+     */
+   public List<DTOPresupuestos> getRegistroPresupuestos();
 }

@@ -51,4 +51,10 @@ public interface EjbExaniResultados {
      */
     public List<DTOExani> filtroExani(Integer cicloEsc);
     
+   /**
+     * Obtiene la lista de registros actuales del registro
+     * @return Lista de registros
+     */
+    public List<DTOExani> getRegistroReporteExani();
+    
 }

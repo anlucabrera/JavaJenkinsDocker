@@ -74,4 +74,24 @@ public interface EjbCarga extends Serializable {
      * @return Retorna la ruta del directorio
      */
     public String crearDirectorioPlantillaCompleto(String eje);
+    
+     /**
+     * Método que crea o comprueba si el directorio de las plantillas de los Reportes
+     * Módulos de registro se encuentra disponible
+     *
+     * @param eje Es ocupado para crear o comprobar de que eje es la plantilla
+     * que se esta generando
+     * @return Retorna la ruta del directorio
+     */
+    public String crearDirectorioReporte(String eje);
+
+    /**
+     * Método que crea o comprueba si el directorio de las plantillas de los Reportes
+     * actualizadas de los Módulos de registro se encuentra disponible
+     *
+     * @param eje Es ocupado para crear o comprobar de que eje es la plantilla
+     * que se esta generando
+     * @return Retorna la ruta del directorio
+     */
+    public String crearDirectorioReporteCompleto(String eje);
 }

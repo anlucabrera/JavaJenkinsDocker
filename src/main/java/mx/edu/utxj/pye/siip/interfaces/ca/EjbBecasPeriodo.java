@@ -52,4 +52,10 @@ public interface EjbBecasPeriodo {
      * @return Lista de registros.
      */
     public List<ListaBecasDto> getRegistroBecas( String mes, Short ejercicio);
+    
+     /**
+     * Obtiene la lista de registros actuales del registro
+     * @return Lista de registros
+     */
+    public List<ListaBecasDto> getRegistroReporteBecas();
 }

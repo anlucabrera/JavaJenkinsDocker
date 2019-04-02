@@ -34,4 +34,8 @@ public class DTOExani implements Serializable{
     @Getter @Setter private AreasUniversidad areasUniversidad;
     @Getter @Setter private ActividadesPoa actividadAlineada;
     @Getter @Setter private String cicloEscolar;
+    @Getter @Setter private Integer nuevoIngreso;
+    @Getter @Setter private Double porICNEalto;
+    @Getter @Setter private Double porICNEmedio;
+    @Getter @Setter private Double porICNEbajo;
 }

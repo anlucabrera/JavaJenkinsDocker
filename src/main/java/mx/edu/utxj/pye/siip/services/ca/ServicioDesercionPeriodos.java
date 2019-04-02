@@ -5,7 +5,6 @@
  */
 package mx.edu.utxj.pye.siip.services.ca;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -444,6 +443,51 @@ public class ServicioDesercionPeriodos implements EjbDesercionPeriodos{
             
         } catch (NoResultException ex) {
             return null;
+        }
+    }
+
+    @Override
+    public List<ListaDtoDesercion> getRegistroDesercion() {
+        List<DesercionPeriodosEscolares> entities = new ArrayList<>();
+       
+        entities = f.getEntityManager().createQuery("SELECT v FROM DesercionPeriodosEscolares v", DesercionPeriodosEscolares.class)
+        .getResultList();
+       
+        if (entities.isEmpty() || entities == null) {
+            return null;
+        } else {
+            List<ListaDtoDesercion> ldto = new ArrayList<>();
+             TypedQuery<EventosRegistros> query = f.getEntityManager().createQuery("SELECT er FROM EventosRegistros er WHERE :fecha BETWEEN er.fechaInicio AND er.fechaFin", EventosRegistros.class);
+            query.setParameter("fecha", new Date());
+            EventosRegistros eventoRegistro = query.getSingleResult();
+            
+            entities.forEach(x -> {
+                PeriodosEscolares p = f.getEntityManager().find(PeriodosEscolares.class, x.getMatriculaPeriodosEscolares().getPeriodo());
+                BajasCausa bc = f.getEntityManager().find(BajasCausa.class, x.getCausaBaja());
+                BajasTipo bt = f.getEntityManager().find(BajasTipo.class, x.getTipoBaja());
+                Generaciones g = f.getEntityManager().find(Generaciones.class, x.getGeneracion());
+                Short inicio = g.getInicio();
+                Short fin = g.getFin();
+                Caster caster = new Caster();
+                String periodo = caster.periodoToString(p);
+                String strDateFormat = "yyyy";
+                SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+                String generacion = String.valueOf(inicio) + "-"+ String.valueOf(fin);
+                String cicloe = sdf.format(p.getCiclo().getInicio()) + " - " + sdf.format(p.getCiclo().getFin());
+                Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());
+                MatriculaPeriodosEscolares mat = f.getEntityManager().find(MatriculaPeriodosEscolares.class, x.getMatriculaPeriodosEscolares().getRegistro());
+                genero = mat.getCurp().substring(10, 11);
+                AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class,  mat.getProgramaEducativo());
+                ActividadesPoa a =  registro.getActividadesPoaList().isEmpty()?null: registro.getActividadesPoaList().get(0);
+                if (eventoRegistro.equals(registro.getEventoRegistro())) {
+                    ListaDtoDesercion dto = new ListaDtoDesercion(true, cicloe, periodo, generacion, bc, bt, x, mat, genero, au, a);
+                    ldto.add(dto);
+                } else {
+                    ListaDtoDesercion dto = new ListaDtoDesercion(false, cicloe, periodo, generacion, bc, bt, x, mat, genero, au, a);
+                    ldto.add(dto);
+                }   
+            });
+            return ldto;
         }
     }
 }

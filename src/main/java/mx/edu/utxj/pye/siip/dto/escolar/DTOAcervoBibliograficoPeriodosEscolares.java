@@ -34,5 +34,6 @@ public class DTOAcervoBibliograficoPeriodosEscolares implements Serializable{
     @Getter @Setter private PeriodosEscolares periodosEscolares;
     @Getter @Setter private AreasUniversidad areasUniversidad;
     @Getter @Setter private ActividadesPoa actividadAlineada;
+    @Getter @Setter private String cicloEscolar;
     
 }

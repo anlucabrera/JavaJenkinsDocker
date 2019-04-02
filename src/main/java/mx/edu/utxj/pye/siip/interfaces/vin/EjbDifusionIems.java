@@ -61,4 +61,10 @@ public interface EjbDifusionIems {
      * @throws java.lang.Throwable
      */
     public DifusionIems actualizarDifusion(DifusionIems nuevaDifusion) throws Throwable;
+    
+     /**
+     * Obtiene la lista de registros actuales del registro
+     * @return Lista de registros
+     */
+    public List<ListaDifusionIemsDTO> getRegistroDifusion();
 }

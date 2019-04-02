@@ -5,7 +5,6 @@
  */
 package mx.edu.utxj.pye.siip.services.pa;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,7 +18,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.ejb.EJB;
@@ -33,7 +31,6 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Meses;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -372,5 +369,36 @@ public class ServicioIngPropios implements EjbIngPropios{
         Messages.addGlobalInfo("El registro se ha actualizado correctamente");
         return nuevoIngPropios;
     }
-
+    
+    @Override
+    public List<DTOIngPropios> getListaRegistrosParaReporte() {
+        List<DTOIngPropios> l = new ArrayList<>();
+        List<IngresosPropiosCaptados> entities = new ArrayList<>();
+        
+        //obtener la lista de registros mensuales
+        entities = f.getEntityManager().createQuery("SELECT i FROM IngresosPropiosCaptados i", IngresosPropiosCaptados.class)
+                    .getResultList();
+        
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            PeriodosEscolares p = f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodoEscolar());
+            CiclosEscolares c = f.getEntityManager().find(CiclosEscolares.class, p.getCiclo().getCiclo());
+            String strDateFormat = "yyyy";
+            SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+            String cicloe = sdf.format(c.getInicio()) + " - " + sdf.format(c.getFin());
+            String periodoe = p.getMesInicio().getMes()+ " - " + p.getMesFin().getMes();
+            
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+//            ActividadesPoa a = e.getRegistros().getActividadesPoaList().isEmpty()?null:e.getRegistros().getActividadesPoaList().get(0);
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            l.add(new DTOIngPropios(
+                    e,
+                    f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodoEscolar()),
+                    a,
+                    cicloe,
+                    periodoe));
+        });
+        return l;
+    }
+   
 }

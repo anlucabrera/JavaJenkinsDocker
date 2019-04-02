@@ -5,7 +5,6 @@
  */
 package mx.edu.utxj.pye.siip.services.ch;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -295,7 +294,7 @@ public class ServicioComisionesAcademicas implements EjbComisionesAcademicas{
 
     @Override
     public List<DTOComisionesAcademicas> getRegistroDTOComAcad(String mes, Short ejercicio) {
-         List<DTOComisionesAcademicas> ldto = new ArrayList<>();
+        List<DTOComisionesAcademicas> ldto = new ArrayList<>();
         TypedQuery<ComisionesAcademicas> q = f.getEntityManager()
                 .createQuery("SELECT c from ComisionesAcademicas c WHERE c.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND c.registros.eventoRegistro.mes = :mes AND c.registros.area = :area", ComisionesAcademicas.class);
         q.setParameter("mes", mes);
@@ -408,5 +407,65 @@ public class ServicioComisionesAcademicas implements EjbComisionesAcademicas{
         } catch (NoResultException ex) {
             return null;
         }
+    }
+
+    @Override
+    public List<DTOComisionesAcademicas> getRegistroReporteComAcad() {
+        List<DTOComisionesAcademicas> ldto = new ArrayList<>();
+        TypedQuery<ComisionesAcademicas> q = f.getEntityManager()
+                .createQuery("SELECT c from ComisionesAcademicas c", ComisionesAcademicas.class);
+        List<ComisionesAcademicas> l = q.getResultList();
+        if (l.isEmpty() || l == null) {
+            return null;
+        } else {
+            TypedQuery<EventosRegistros> query = f.getEntityManager().createQuery("SELECT er FROM EventosRegistros er WHERE :fecha BETWEEN er.fechaInicio AND er.fechaFin", EventosRegistros.class);
+            query.setParameter("fecha", new Date());
+            EventosRegistros eventoRegistro = query.getSingleResult();
+            l.forEach(x -> {
+                Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());
+                EventosRegistros eventos = f.getEntityManager().find(EventosRegistros.class,registro.getEventoRegistro().getEventoRegistro());
+                ComisionesAcademicasTipos comisionesAcademicasTipos = f.getEntityManager().find(ComisionesAcademicasTipos.class, x.getTipoComision().getTipoComision());
+                AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, registro.getArea());
+                ActividadesPoa a = registro.getActividadesPoaList().isEmpty() ? null :registro.getActividadesPoaList().get(0);
+                DTOComisionesAcademicas dto;
+                if (eventoRegistro.equals(registro.getEventoRegistro())) {
+                    dto = new DTOComisionesAcademicas(x, comisionesAcademicasTipos, a, eventos, comisionesAcademicasTipos.getDescripcion());
+                } else {
+                    dto = new DTOComisionesAcademicas(x, comisionesAcademicasTipos, a, eventos, comisionesAcademicasTipos.getDescripcion());
+                }
+                ldto.add(dto);
+            });
+            return ldto;
+    }
+    }
+
+    @Override
+    public List<DTOComAcadParticipantes> getRegistroReportePartCA() {
+        List<DTOComAcadParticipantes> ldto = new ArrayList<>();
+        TypedQuery<ComisionesAcademicasParticipantes> q = f.getEntityManager()
+                .createQuery("SELECT c from ComisionesAcademicasParticipantes c", ComisionesAcademicasParticipantes.class);
+        List<ComisionesAcademicasParticipantes> l = q.getResultList();
+        if (l.isEmpty() || l == null) {
+            return null;
+        } else {
+            TypedQuery<EventosRegistros> query = f.getEntityManager().createQuery("SELECT er FROM EventosRegistros er WHERE :fecha BETWEEN er.fechaInicio AND er.fechaFin", EventosRegistros.class);
+            query.setParameter("fecha", new Date());
+            EventosRegistros eventoRegistro = query.getSingleResult();
+            l.forEach(x -> {
+                Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());
+                EventosRegistros eventos = f.getEntityManager().find(EventosRegistros.class,registro.getEventoRegistro().getEventoRegistro());
+                Personal personal = f.getEntityManager().find(Personal.class, x.getParticipante());
+                AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, personal.getAreaOperativa());
+                ActividadesPoa a = registro.getActividadesPoaList().isEmpty() ? null :registro.getActividadesPoaList().get(0);
+                DTOComAcadParticipantes dto;
+                if (eventoRegistro.equals(registro.getEventoRegistro())) {
+                    dto = new DTOComAcadParticipantes(x, personal, au, a, eventos, au.getNombre());
+                } else {
+                    dto = new DTOComAcadParticipantes(x, personal, au, a, eventos, au.getNombre());
+                }
+                ldto.add(dto);
+            });
+            return ldto;
+    }
     }
 }

@@ -69,4 +69,10 @@ public interface EjbVisitasIndustriales {
      * @throws java.lang.Throwable
      */
     public VisitasIndustriales actualizarVisita(VisitasIndustriales nuevaVisita) throws Throwable;
+    
+     /**
+     * Obtiene la lista de registros actuales del registro
+     * @return Lista de registros
+     */
+    public List<ListaDtoVisitasIndustriales> getRegistroVisitas();
 }

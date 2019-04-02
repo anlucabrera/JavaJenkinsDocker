@@ -30,8 +30,9 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosMovilidad;
 public class DTORegistroMovilidad implements Serializable{
 
     private static final long serialVersionUID = -5019382998968081784L;
-   @Getter @Setter @NonNull private RegistrosMovilidad registrosMovilidad; //se declara como llave primaria para interacturar con sus eviedencias
+    @Getter @Setter @NonNull private RegistrosMovilidad registrosMovilidad; //se declara como llave primaria para interacturar con sus eviedencias
     @Getter @Setter private AreasUniversidad areasUniversidad;
     @Getter @Setter private PeriodosEscolares periodosEscolares;
     @Getter @Setter private ActividadesPoa actividadAlineada;
+    @Getter @Setter private String cicloEscolar;
 }

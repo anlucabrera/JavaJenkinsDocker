@@ -129,4 +129,25 @@ public interface EjbRegistroMovilidad {
      * @throws java.lang.Throwable
      */
     public RegistrosMovilidad actualizarRegMov(RegistrosMovilidad nuevoRegMov) throws Throwable;
+    
+    /**
+     * Obtiene la lista de registros actuales del registro
+     * @param claveArea Área a la que pertenece el usuario y que servirá como filtro.
+     * @return Lista de registros
+     */
+    public List<DTORegistroMovilidad> getRegistroReporteMov(Short claveArea);
+    
+    /**
+     * Obtiene la lista de registros actuales del registro
+     * @param claveArea Área a la que pertenece el usuario y que servirá como filtro.
+     * @return Lista de registros
+     */
+    public List<DTOMovilidadDocente> getRegistroReporteMovDoc(Short claveArea);
+    
+    /**
+     * Obtiene la lista de registros actuales del registro
+     * @param claveArea Área a la que pertenece el usuario y que servirá como filtro.
+     * @return Lista de registros
+     */
+    public List<DTOMovilidadEstudiante> getRegistroReporteMovEst(Short claveArea);
 }

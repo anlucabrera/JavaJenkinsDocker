@@ -281,4 +281,45 @@ public class ServicioBecasPeriodo implements EjbBecasPeriodo{
         }
     }
 
+    @Override
+    public List<ListaBecasDto> getRegistroReporteBecas() {
+        List<BecasPeriodosEscolares> q = new ArrayList<>();
+        List<ListaBecasDto> ldto = new ArrayList<>();
+       
+        q = f.getEntityManager().createQuery("SELECT a from BecasPeriodosEscolares a", BecasPeriodosEscolares.class)
+        .getResultList();
+
+        if (q.isEmpty() || q == null) {
+            return null;
+        } else {
+            TypedQuery<EventosRegistros> query = f.getEntityManager().createQuery("SELECT er FROM EventosRegistros er WHERE :fecha BETWEEN er.fechaInicio AND er.fechaFin", EventosRegistros.class);
+            query.setParameter("fecha", new Date());
+            EventosRegistros eventoRegistro = query.getSingleResult();
+            q.forEach(x -> {
+                PeriodosEscolares p = f.getEntityManager().find(PeriodosEscolares.class, x.getMatriculaPeriodosEscolares().getPeriodo());
+                Caster caster = new Caster();
+                String periodoAsignacion = caster.periodoToString(p);
+                String strDateFormat = "yyyy";
+                SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+                String cicloEscolar = sdf.format(p.getCiclo().getInicio()) + " - " + sdf.format(p.getCiclo().getFin());
+                BecaTipos becaTipos = f.getEntityManager().find(BecaTipos.class, x.getBeca());
+
+                Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());
+                MatriculaPeriodosEscolares mat = f.getEntityManager().find(MatriculaPeriodosEscolares.class, x.getMatriculaPeriodosEscolares().getRegistro());
+                genero = mat.getCurp().substring(10, 11);
+                
+                AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, mat.getProgramaEducativo());
+                ActividadesPoa a = registro.getActividadesPoaList().isEmpty() ? null :registro.getActividadesPoaList().get(0);
+                ListaBecasDto dto;
+                if (eventoRegistro.equals(registro.getEventoRegistro())) {
+                    dto = new ListaBecasDto(Boolean.TRUE, cicloEscolar, periodoAsignacion, becaTipos, x, mat, genero, au, a);
+                } else {
+                    dto = new ListaBecasDto(Boolean.FALSE, cicloEscolar, periodoAsignacion, becaTipos, x, mat, genero, au, a);
+                }
+                ldto.add(dto);
+            });
+            return ldto;
+        }
+    }
+
 }
