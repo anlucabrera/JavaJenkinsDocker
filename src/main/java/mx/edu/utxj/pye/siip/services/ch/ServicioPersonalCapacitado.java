@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -446,10 +447,15 @@ public class ServicioPersonalCapacitado implements EjbPersonalCapacitado{
             
             Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
             ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            PeriodosEscolares p = f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodo());
+            String strDateFormat = "yyyy";
+            SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+            String cicloe = sdf.format(p.getCiclo().getInicio()) + " - " + sdf.format(p.getCiclo().getFin());
             l.add(new DTOPersonalCapacitado(
                     e,
                     f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodo()),
-                    a));
+                    a,
+                    cicloe));
         });
         
         return l;
@@ -577,4 +583,56 @@ public class ServicioPersonalCapacitado implements EjbPersonalCapacitado{
         return nuevoPerCap;
     }
 
+    @Override
+    public List<DTOPersonalCapacitado> getRegistroPerCap() {
+        //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+        List<DTOPersonalCapacitado> l = new ArrayList<>();
+        List<PersonalCapacitado> entities = new ArrayList<>();
+        
+        //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+        entities = f.getEntityManager().createQuery("SELECT p FROM PersonalCapacitado p INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er",  PersonalCapacitado.class)
+                .getResultList();
+        
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            PeriodosEscolares p = f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodo());
+            String strDateFormat = "yyyy";
+            SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+            String cicloe = sdf.format(p.getCiclo().getInicio()) + " - " + sdf.format(p.getCiclo().getFin());
+            l.add(new DTOPersonalCapacitado(
+                    e,
+                    f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodo()),
+                    a,
+                    cicloe));
+        });
+        
+        return l;
+    }
+
+    @Override
+    public List<DTOPerCapParticipantes> getRegistroPartCap() {
+        //obtener la lista de registros mensuales
+        List<DTOPerCapParticipantes> l = new ArrayList<>();
+        List<ParticipantesPersonalCapacitado> entities = new ArrayList<>();
+        
+        //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+        entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesPersonalCapacitado p INNER JOIN p.percap a INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er", ParticipantesPersonalCapacitado.class)
+                .getResultList();
+     
+
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            l.add(new DTOPerCapParticipantes(
+                    e,
+                    f.getEntityManager().find(Personal.class, e.getPersonal()),
+                    a));
+        });
+        
+        return l;
+    }
 }

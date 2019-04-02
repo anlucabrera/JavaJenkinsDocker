@@ -5,11 +5,9 @@
  */
 package mx.edu.utxj.pye.siip.services.vin;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -365,6 +363,36 @@ public class ServicioFeriasProfesiograficas implements EjbFeriasProfesiograficas
             
         } catch (NoResultException ex) {
             return null;
+        }
+    }
+
+    @Override
+    public List<ListaFeriasDTO> getRegistroReporteFerProf() {
+        List<FeriasProfesiograficas> q = new ArrayList<>();
+        List<ListaFeriasDTO> ldto = new ArrayList<>();
+        
+        q = f.getEntityManager().createQuery("SELECT a from FeriasProfesiograficas a", FeriasProfesiograficas.class)
+        .getResultList();
+            
+        if (q.isEmpty() || q == null) {
+            return null;
+        } else {
+            TypedQuery<EventosRegistros> query = f.getEntityManager().createQuery("SELECT er FROM EventosRegistros er WHERE :fecha BETWEEN er.fechaInicio AND er.fechaFin", EventosRegistros.class);
+            query.setParameter("fecha", new Date());
+            EventosRegistros eventoRegistro = query.getSingleResult();
+            q.forEach(x -> {            
+                Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());
+                AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, registro.getArea());
+                ActividadesPoa a = registro.getActividadesPoaList().isEmpty()?null:registro.getActividadesPoaList().get(0);
+                ListaFeriasDTO dto;
+                if (eventoRegistro.equals(registro.getEventoRegistro())) {
+                    dto = new ListaFeriasDTO(Boolean.TRUE,  x, au, a);
+                            } else {
+                    dto = new ListaFeriasDTO(Boolean.FALSE, x, au, a);
+                }
+                ldto.add(dto);
+            });
+            return ldto;
         }
     }
 }

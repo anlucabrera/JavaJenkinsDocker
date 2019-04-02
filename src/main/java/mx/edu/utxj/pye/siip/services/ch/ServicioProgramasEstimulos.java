@@ -5,7 +5,6 @@
  */
 package mx.edu.utxj.pye.siip.services.ch;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -279,6 +278,37 @@ public class ServicioProgramasEstimulos implements EjbProgramasEstimulos{
         q.setParameter("mes", mes);
         q.setParameter("ejercicio", ejercicio);
         q.setParameter("area", controladorEmpleado.getNuevaAreasUniversidad().getArea());
+        List<ProgramasEstimulos> l = q.getResultList();
+        if (l.isEmpty() || l == null) {
+            return null;
+        } else {
+            TypedQuery<EventosRegistros> query = f.getEntityManager().createQuery("SELECT er FROM EventosRegistros er WHERE :fecha BETWEEN er.fechaInicio AND er.fechaFin", EventosRegistros.class);
+            query.setParameter("fecha", new Date());
+            EventosRegistros eventoRegistro = query.getSingleResult();
+            l.forEach(x -> {
+                Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());
+                EventosRegistros eventos = f.getEntityManager().find(EventosRegistros.class,registro.getEventoRegistro().getEventoRegistro());
+                Personal personal = f.getEntityManager().find(Personal.class, x.getTrabajador());
+                ProgramasEstimulosTipos programasEstimulosTipos = f.getEntityManager().find(ProgramasEstimulosTipos.class, x.getTipoPrograma().getTipoPrograma());
+                AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, personal.getAreaOperativa());
+                ActividadesPoa a = registro.getActividadesPoaList().isEmpty() ? null :registro.getActividadesPoaList().get(0);
+                DTOProgramasEstimulos dto;
+                if (eventoRegistro.equals(registro.getEventoRegistro())) {
+                    dto = new DTOProgramasEstimulos(x, personal, programasEstimulosTipos, au, a, eventos, personal.getActividad().getNombre(), au.getNombre());
+                } else {
+                    dto = new DTOProgramasEstimulos(x, personal, programasEstimulosTipos, au, a, eventos, personal.getActividad().getNombre(), au.getNombre());
+                }
+                ldto.add(dto);
+            });
+            return ldto;
+    }
+    }
+
+    @Override
+    public List<DTOProgramasEstimulos> getRegistroReporteProgEst() {
+         List<DTOProgramasEstimulos> ldto = new ArrayList<>();
+        TypedQuery<ProgramasEstimulos> q = f.getEntityManager()
+                .createQuery("SELECT p from ProgramasEstimulos p", ProgramasEstimulos.class);
         List<ProgramasEstimulos> l = q.getResultList();
         if (l.isEmpty() || l == null) {
             return null;

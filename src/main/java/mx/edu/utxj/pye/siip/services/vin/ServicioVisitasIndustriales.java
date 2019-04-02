@@ -5,7 +5,6 @@
  */
 package mx.edu.utxj.pye.siip.services.vin;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -15,8 +14,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.inject.Inject;
@@ -27,7 +24,6 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
-import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -395,6 +391,53 @@ public class ServicioVisitasIndustriales implements EjbVisitasIndustriales{
 
             });
 //            ldto.forEach(System.err::println);
+            return ldto;
+        }
+    }
+
+    @Override
+    public VisitasIndustriales actualizarVisita(VisitasIndustriales nuevaVisita) throws Throwable {
+        f.setEntityClass(VisitasIndustriales.class);
+        f.edit(nuevaVisita);
+        f.flush();
+        Messages.addGlobalInfo("El registro se ha actualizado correctamente");
+        return nuevaVisita;
+    }
+
+    @Override
+    public List<ListaDtoVisitasIndustriales> getRegistroVisitas() {
+        List<VisitasIndustriales> q = new ArrayList<>();
+        List<ListaDtoVisitasIndustriales> ldto = new ArrayList<>();
+       
+        q = f.getEntityManager().createQuery("SELECT v FROM VisitasIndustriales v", VisitasIndustriales.class)
+        .getResultList();
+        
+        if (q.isEmpty() || q == null) {
+            return null;
+        } else {
+            TypedQuery<EventosRegistros> query = f.getEntityManager().createQuery("SELECT er FROM EventosRegistros er WHERE :fecha BETWEEN er.fechaInicio AND er.fechaFin", EventosRegistros.class);
+            query.setParameter("fecha", new Date());
+            EventosRegistros eventoRegistro = query.getSingleResult();
+            q.forEach(x -> {
+                PeriodosEscolares p = f.getEntityManager().find(PeriodosEscolares.class, x.getPeriodoEscolar());
+                CiclosEscolares c = f.getEntityManager().find(CiclosEscolares.class, x.getCicloEscolar());
+                Caster caster = new Caster();
+                String periodo = caster.periodoToString(p);
+                String strDateFormat = "yyyy";
+                SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+                String cicloe = sdf.format(c.getInicio()) + " - " + sdf.format(c.getFin());
+                Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());
+                AreasUniversidad a = f.getEntityManager().find(AreasUniversidad.class, x.getProgramaEducativo());
+                ActividadesPoa ap = registro.getActividadesPoaList().isEmpty()?null:registro.getActividadesPoaList().get(0);
+                if (eventoRegistro.equals(registro.getEventoRegistro())) {
+                    ListaDtoVisitasIndustriales dto = new ListaDtoVisitasIndustriales(true, cicloe, periodo, a, x, ap);
+                    ldto.add(dto);
+                } else {
+                    ListaDtoVisitasIndustriales dto = new ListaDtoVisitasIndustriales(false, cicloe, periodo, a, x, ap);
+                    ldto.add(dto);
+                }
+
+            });
             return ldto;
         }
     }

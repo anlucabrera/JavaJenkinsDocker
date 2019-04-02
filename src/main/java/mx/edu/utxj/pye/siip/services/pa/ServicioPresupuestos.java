@@ -326,4 +326,36 @@ public class ServicioPresupuestos implements EjbPresupuestos{
         return nuevoPresupuesto;
     }
 
+    @Override
+    public List<DTOPresupuestos> getRegistroPresupuestos() {
+        List<DTOPresupuestos> ldto = new ArrayList<>();
+        List<Presupuestos> l = new ArrayList<>();
+        
+        l = f.getEntityManager().createQuery("SELECT p from Presupuestos p", Presupuestos.class)
+        .getResultList();
+
+        if (l.isEmpty() || l == null) {
+            return null;
+        } else {
+            TypedQuery<EventosRegistros> query = f.getEntityManager().createQuery("SELECT er FROM EventosRegistros er WHERE :fecha BETWEEN er.fechaInicio AND er.fechaFin", EventosRegistros.class);
+            query.setParameter("fecha", new Date());
+            EventosRegistros eventoRegistro = query.getSingleResult();
+            l.forEach(x -> {
+                Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());
+                EventosRegistros eventos = f.getEntityManager().find(EventosRegistros.class,registro.getEventoRegistro().getEventoRegistro());
+                CapitulosTipos capitulosTipos = f.getEntityManager().find(CapitulosTipos.class, x.getCapituloTipo().getCapituloTipo());
+                AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, registro.getArea());
+                ActividadesPoa a = registro.getActividadesPoaList().isEmpty() ? null :registro.getActividadesPoaList().get(0);
+                DTOPresupuestos dto;
+                if (eventoRegistro.equals(registro.getEventoRegistro())) {
+                    dto = new DTOPresupuestos(x, capitulosTipos, a, eventos, capitulosTipos.getNombre());
+                } else {
+                    dto = new DTOPresupuestos(x, capitulosTipos, a, eventos, capitulosTipos.getNombre());
+                }
+                ldto.add(dto);
+            });
+            return ldto;
+    }
+    }
+
 }

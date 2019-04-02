@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.siip.services.vin;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -536,11 +537,16 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
         entities.forEach(e -> {
             Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
             ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            PeriodosEscolares p = f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodoEscolarCursado());
+            String strDateFormat = "yyyy";
+            SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+            String cicloe = sdf.format(p.getCiclo().getInicio()) + " - " + sdf.format(p.getCiclo().getFin());
             l.add(new DTORegistroMovilidad(
                     e,
                     f.getEntityManager().find(AreasUniversidad.class, e.getProgramaEducativo()),
                     f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodoEscolarCursado()),
-                    a));
+                    a,
+                    cicloe));
         });
         
         return l;
@@ -768,6 +774,94 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
         f.flush();
         Messages.addGlobalInfo("El registro se ha actualizado correctamente");
         return nuevoRegMov;
+    }
+
+    @Override
+    public List<DTORegistroMovilidad> getRegistroReporteMov(Short claveArea) {
+        //verificar que el parametro no sea nulo
+        if(claveArea == null){
+            return null;
+        }
+         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+        List<DTORegistroMovilidad> l = new ArrayList<>();
+        List<RegistrosMovilidad> entities = new ArrayList<>();
+      
+        areas = ejbModulos.getAreasDependientes(claveArea);
+        entities = f.getEntityManager().createQuery("SELECT r FROM RegistrosMovilidad r INNER JOIN r.registros reg INNER JOIN reg.eventoRegistro er WHERE reg.area IN :areas", RegistrosMovilidad.class)
+                .setParameter("areas", areas)
+                .getResultList();
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            PeriodosEscolares p = f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodoEscolarCursado());
+            String strDateFormat = "yyyy";
+            SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+            String cicloe = sdf.format(p.getCiclo().getInicio()) + " - " + sdf.format(p.getCiclo().getFin());
+            l.add(new DTORegistroMovilidad(
+                    e,
+                    f.getEntityManager().find(AreasUniversidad.class, e.getProgramaEducativo()),
+                    f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodoEscolarCursado()),
+                    a,
+                    cicloe));
+        });
+        
+        return l;
+    }
+
+    @Override
+    public List<DTOMovilidadDocente> getRegistroReporteMovDoc(Short claveArea) {
+        //verificar que el parametro no sea nulo
+        if(claveArea == null){
+            return null;
+        }
+         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+        List<DTOMovilidadDocente> l = new ArrayList<>();
+        List<RegistroMovilidadDocente> entities = new ArrayList<>();
+      
+        areas = ejbModulos.getAreasDependientes(claveArea);
+        entities = f.getEntityManager().createQuery("SELECT d FROM RegistroMovilidadDocente d INNER JOIN d.registroMovilidad r INNER JOIN d.registros reg INNER JOIN reg.eventoRegistro er WHERE reg.area IN :areas", RegistroMovilidadDocente.class)
+                .setParameter("areas", areas)
+                .getResultList();
+      
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            l.add(new DTOMovilidadDocente(
+                    e,
+                    f.getEntityManager().find(Personal.class, e.getClavePersonal()),
+                    a));
+        });
+        
+        return l;
+    }
+
+    @Override
+    public List<DTOMovilidadEstudiante> getRegistroReporteMovEst(Short claveArea) {
+        //verificar que el parametro no sea nulo
+        if(claveArea == null){
+            return null;
+        }
+         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+        List<DTOMovilidadEstudiante> l = new ArrayList<>();
+        List<RegistroMovilidadEstudiante> entities = new ArrayList<>();
+      
+        areas = ejbModulos.getAreasDependientes(claveArea);
+        entities = f.getEntityManager().createQuery("SELECT e FROM RegistroMovilidadEstudiante e INNER JOIN e.registroMovilidad r INNER JOIN e.registros reg INNER JOIN reg.eventoRegistro er WHERE reg.area IN :areas", RegistroMovilidadEstudiante.class)
+                .setParameter("areas", areas)
+                .getResultList();
+  
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            l.add(new DTOMovilidadEstudiante(
+                    e,
+                    a));
+        });
+        
+        return l;
     }
 
 }

@@ -133,4 +133,16 @@ public interface EjbPersonalCapacitado {
      * @throws java.lang.Throwable
      */
     public PersonalCapacitado actualizarPerCap(PersonalCapacitado nuevoPerCap) throws Throwable;
+    
+     /**
+     * Obtiene la lista de registros actuales del registro
+     * @return Lista de registros
+     */
+    public List<DTOPersonalCapacitado> getRegistroPerCap();
+    
+     /**
+     * Obtiene la lista de registros actuales del registro
+     * @return Lista de registros
+     */
+    public List<DTOPerCapParticipantes> getRegistroPartCap();
 }

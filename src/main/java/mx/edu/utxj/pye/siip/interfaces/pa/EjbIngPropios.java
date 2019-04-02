@@ -85,4 +85,10 @@ public interface EjbIngPropios {
      * @throws java.lang.Throwable
      */
     public IngresosPropiosCaptados actualizarIngPropios(IngresosPropiosCaptados nuevoIngPropios) throws Throwable;
+
+    /**
+     * Obtiene la lista de registros actuales del registro
+     * @return Lista de registros
+     */
+    public List<DTOIngPropios> getListaRegistrosParaReporte();
 }

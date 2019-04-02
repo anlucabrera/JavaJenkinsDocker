@@ -54,4 +54,17 @@ public interface EjbDifusionIems {
      */
    public List<ListaDifusionIemsDTO> getRegistroDifusionIemsDTO(String mes, Short ejercicio);
    
+    /**
+     * Método que actualiza el registro seleccionado 
+     * @param nuevaDifusion
+     * @return entity.
+     * @throws java.lang.Throwable
+     */
+    public DifusionIems actualizarDifusion(DifusionIems nuevaDifusion) throws Throwable;
+    
+     /**
+     * Obtiene la lista de registros actuales del registro
+     * @return Lista de registros
+     */
+    public List<ListaDifusionIemsDTO> getRegistroDifusion();
 }

@@ -341,6 +341,7 @@ public class ControladorPresupuestos implements Serializable{
     public void guardarEdicion() {
          try {
             nuevoPresupuesto = ejbPresupuestos.actualizarPresupuesto(nuevoPresupuesto);
+            Ajax.update("formMuestraDatosActivos");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorPresupuestos.class.getName()).log(Level.SEVERE, null, ex);

@@ -369,5 +369,34 @@ public class ServicioDesercionReprobacion implements EjbDesercionReprobacion{
         return l;
     }
 
-    
+    @Override
+    public List<ListaDtoReprobacion> getRegistroReprobacion() {
+        List<DesercionReprobacionMaterias> q = new ArrayList<>();
+        q = f.getEntityManager().createQuery("SELECT v FROM DesercionReprobacionMaterias v", DesercionReprobacionMaterias.class)
+        .getResultList();
+     
+        if (q.isEmpty() || q == null) {
+            return null;
+        } else {
+             TypedQuery<EventosRegistros> query = f.getEntityManager().createQuery("SELECT er FROM EventosRegistros er WHERE :fecha BETWEEN er.fechaInicio AND er.fechaFin", EventosRegistros.class);
+            query.setParameter("fecha", new Date());
+            EventosRegistros eventoRegistro = query.getSingleResult();
+            List<ListaDtoReprobacion> ldto = new ArrayList<>();
+            q.forEach(x->{
+                MateriasProgramaEducativo m = f.getEntityManager().find(MateriasProgramaEducativo.class, x.getAsignatura().getCveMateria());
+                Personal p = f.getEntityManager().find(Personal.class, x.getDocente());
+                Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());
+                AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, registro.getArea());
+                ActividadesPoa a =registro.getActividadesPoaList().isEmpty()?null:registro.getActividadesPoaList().get(0);
+                if (eventoRegistro.equals(registro.getEventoRegistro())) {
+                    ListaDtoReprobacion dto = new ListaDtoReprobacion(true, x.getDpe().getMatriculaPeriodosEscolares().getMatricula(), m, p, x, au, a);
+                    ldto.add(dto);
+                } else {
+                    ListaDtoReprobacion dto = new ListaDtoReprobacion(false, x.getDpe().getMatriculaPeriodosEscolares().getMatricula(), m, p, x, au, a);
+                    ldto.add(dto);
+                } 
+            });            
+            return ldto;
+        }
+    }
 }

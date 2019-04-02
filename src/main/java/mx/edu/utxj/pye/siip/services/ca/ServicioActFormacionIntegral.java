@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.siip.services.ca;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -475,10 +476,15 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
             Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
             //ActividadesPoa a = e.getRegistros().getActividadesPoaList().isEmpty()?null:e.getRegistros().getActividadesPoaList().get(0);
             ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            PeriodosEscolares p = f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodo());
+            String strDateFormat = "yyyy";
+            SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+            String cicloEscolar = sdf.format(p.getCiclo().getInicio()) + " - " + sdf.format(p.getCiclo().getFin());
             l.add(new DTOActFormacionIntegral(
                     e,
                     f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodo()),
-                    a));
+                    a,
+                    cicloEscolar));
         });
         return l;
     }
@@ -625,5 +631,81 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
         f.flush();
         Messages.addGlobalInfo("El registro se ha actualizado correctamente");
         return nuevaActFormInt;
+    }
+
+    @Override
+    public List<DTOActFormacionIntegral> getListaRegistrosAFI(Short claveArea) {
+        //verificar que el parametro no sea nulo
+        if(claveArea == null){
+            return null;
+        }
+        
+        //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+        List<DTOActFormacionIntegral> l = new ArrayList<>();
+        List<ActividadesFormacionIntegral> entities = new ArrayList<>();
+      
+//        if(claveArea==6 || claveArea==9){
+//        entities = f.getEntityManager().createQuery("SELECT a FROM ActividadesFormacionIntegral a", ActividadesFormacionIntegral.class)
+//                .getResultList();
+//        }
+//        else{
+            
+        areas = ejbModulos.getAreasDependientes(claveArea);
+        
+        entities = f.getEntityManager().createQuery("SELECT a FROM ActividadesFormacionIntegral a INNER JOIN a.registros reg WHERE reg.area IN :areas", ActividadesFormacionIntegral.class)
+                .setParameter("areas", areas)
+                .getResultList();
+//        }
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+            //ActividadesPoa a = e.getRegistros().getActividadesPoaList().isEmpty()?null:e.getRegistros().getActividadesPoaList().get(0);
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            PeriodosEscolares p = f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodo());
+            String strDateFormat = "yyyy";
+            SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+            String cicloEscolar = sdf.format(p.getCiclo().getInicio()) + " - " + sdf.format(p.getCiclo().getFin());
+            l.add(new DTOActFormacionIntegral(
+                    e,
+                    f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodo()),
+                    a,
+                    cicloEscolar));
+        });
+        return l;
+    }
+
+    @Override
+    public List<DTOParticipantesActFormInt> getListaRegistrosPAFI(Short claveArea) {
+        //verificar que el parametro no sea nulo
+        if(claveArea == null){
+            return null;
+        }
+        areas = ejbModulos.getAreasDependientes(claveArea);
+
+        //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+        List<DTOParticipantesActFormInt> l = new ArrayList<>();
+        List<ParticipantesActividadesFormacionIntegral> entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p INNER JOIN p.actividadFormacionIntegral a INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE reg.area IN :areas ORDER BY p.matriculaPeriodosEscolares.matricula ASC", ParticipantesActividadesFormacionIntegral.class)
+                .setParameter("areas", areas)
+                .getResultList();
+     
+
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+            MatriculaPeriodosEscolares mat = f.getEntityManager().find(MatriculaPeriodosEscolares.class, e.getMatriculaPeriodosEscolares().getRegistro());
+            genero = mat.getCurp().substring(10, 11);
+            AreasUniversidad progEdu = f.getEntityManager().find(AreasUniversidad.class, mat.getProgramaEducativo());
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+
+            l.add(new DTOParticipantesActFormInt(
+                    e,
+                    mat,
+                    genero,
+                    progEdu,
+                    a));
+        });
+        
+        return l;
     }
 }

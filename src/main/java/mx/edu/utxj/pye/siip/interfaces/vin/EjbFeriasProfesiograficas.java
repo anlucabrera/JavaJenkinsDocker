@@ -74,4 +74,10 @@ public interface EjbFeriasProfesiograficas {
      * @return Lista de registros.
      */
     public List<ListaFeriasDTO> getRegistroFeriaProf( String mes, Short ejercicio);
+    
+     /**
+     * Obtiene la lista de registros actuales del registro
+     * @return Lista de registros
+     */
+    public List<ListaFeriasDTO> getRegistroReporteFerProf();
 }

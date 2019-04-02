@@ -32,6 +32,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
+import mx.edu.utxj.pye.sgi.entity.pye2.VisitasIndustriales;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.vin.DtoVisitasIndustriales;
@@ -71,6 +72,8 @@ public class ControladorVisitasIndustriales implements Serializable {
     @Getter @Setter private List<ModulosRegistrosUsuarios> listaReg;
     @Getter @Setter private Integer clavePersonal;
     @Getter @Setter private Short claveRegistro;
+    
+    @Getter @Setter private VisitasIndustriales nuevaVisita;
 
     @PostConstruct
     public void init() {
@@ -315,5 +318,32 @@ public class ControladorVisitasIndustriales implements Serializable {
         if(listaReg == null || listaReg.isEmpty()){
             Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
         }
+    }
+    
+     public void editarRegistro(ListaDtoVisitasIndustriales registro){
+        dto.setRegistro(registro);
+        nuevaVisita = dto.getRegistro().getVisitasIndustriales();
+        Ajax.update("frmModalEdicion");
+        Ajax.oncomplete("skin();");
+        dto.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionDialogo();
+    }
+    
+    public void forzarAperturaEdicionDialogo(){
+        if(dto.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEdicion').show();");
+            dto.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void guardarEdicion() {
+         try {
+            nuevaVisita = ejbVisitasIndustriales.actualizarVisita(nuevaVisita);
+            Ajax.update("formMuestraDatosActivos");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorVisitasIndustriales.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 }

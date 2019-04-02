@@ -59,4 +59,10 @@ public interface EjbProgramasEstimulos {
      * @return Lista de registros.
      */
    public List<DTOProgramasEstimulos> getRegistroDTOProgramasEstimulos(String mes, Short ejercicio); 
+   
+   /**
+     * Obtiene la lista de registros actuales del registro
+     * @return Lista de registros
+    */
+   public List<DTOProgramasEstimulos> getRegistroReporteProgEst(); 
 }

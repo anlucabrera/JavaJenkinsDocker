@@ -281,4 +281,13 @@ public class ServicioBolsaEntrevistas implements EjbBolsaEntrevistas{
         
         return l;
     }
+
+    @Override
+    public BolsaTrabajoEntrevistas actualizarEntBolTrab(BolsaTrabajoEntrevistas nuevaEntBolTrab) throws Throwable {
+        f.setEntityClass(BolsaTrabajoEntrevistas.class);
+        f.edit(nuevaEntBolTrab);
+        f.flush();
+        Messages.addGlobalInfo("El registro se ha actualizado correctamente");
+        return nuevaEntBolTrab;
+    }
 }

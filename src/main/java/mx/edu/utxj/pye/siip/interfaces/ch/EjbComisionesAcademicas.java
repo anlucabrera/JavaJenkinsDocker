@@ -93,5 +93,16 @@ public interface EjbComisionesAcademicas {
      * @throws Throwable
      */
     public List<Integer> buscaRegistroEvidenciasPartComAcad(String clave) throws Throwable;
-
+    
+     /**
+     * Obtiene la lista de registros actuales del registro
+     * @return Lista de registros
+     */
+    public List<DTOComisionesAcademicas> getRegistroReporteComAcad();
+     
+    /**
+     * Obtiene la lista de registros actuales del registro
+     * @return Lista de registros
+    */
+    public List<DTOComAcadParticipantes> getRegistroReportePartCA();
 }

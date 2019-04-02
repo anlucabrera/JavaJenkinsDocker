@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.siip.services.ca;
 
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -433,12 +434,17 @@ public class ServicioAcervoBibliografico implements EjbAcervoBibliografico{
             
             Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
             ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            PeriodosEscolares p = f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodoEscolar());
+            String strDateFormat = "yyyy";
+            SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+            String cicloe = sdf.format(p.getCiclo().getInicio()) + " - " + sdf.format(p.getCiclo().getFin());
             l.add(new DTOAcervoBibliograficoPeriodosEscolares(
                     e,
                     f.getEntityManager().find(CiclosEscolares.class, e.getCicloEscolar()),
                     f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodoEscolar()),
                     f.getEntityManager().find(AreasUniversidad.class, e.getProgramaEducativo()),
-                    a));
+                    a,
+                    cicloe));
         });
         
 
@@ -473,5 +479,33 @@ public class ServicioAcervoBibliografico implements EjbAcervoBibliografico{
         Map<List<PeriodosEscolares>,List<EventosRegistros>> map = new HashMap<>();
         map.put(periodos, eventos);
         return map.entrySet().iterator().next();
+    }
+
+    @Override
+    public List<DTOAcervoBibliograficoPeriodosEscolares> getRegistroReporteAcervoBib() {
+        //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+        List<DTOAcervoBibliograficoPeriodosEscolares> l = new ArrayList<>();
+        List<AcervoBibliograficoPeriodosEscolares> entities = f.getEntityManager().createQuery("SELECT a FROM AcervoBibliograficoPeriodosEscolares a", AcervoBibliograficoPeriodosEscolares.class)
+                .getResultList();
+      
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            PeriodosEscolares p = f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodoEscolar());
+            String strDateFormat = "yyyy";
+            SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+            String cicloe = sdf.format(p.getCiclo().getInicio()) + " - " + sdf.format(p.getCiclo().getFin());
+            l.add(new DTOAcervoBibliograficoPeriodosEscolares(
+                    e,
+                    f.getEntityManager().find(CiclosEscolares.class, e.getCicloEscolar()),
+                    f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodoEscolar()),
+                    f.getEntityManager().find(AreasUniversidad.class, e.getProgramaEducativo()),
+                    a,
+                    cicloe));
+        });
+
+        return l;
     }
 }

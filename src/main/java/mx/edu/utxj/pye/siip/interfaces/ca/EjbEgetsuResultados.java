@@ -51,4 +51,10 @@ public interface EjbEgetsuResultados {
      * @return Lista de registros.
      */
   public List<DTOEgetsu> filtroEgetsu(Short generacion);
+  
+   /**
+     * Obtiene la lista de registros actuales del registro
+     * @return Lista de registros
+     */
+  public List<DTOEgetsu> getRegistroReporteEgetsu();
 }

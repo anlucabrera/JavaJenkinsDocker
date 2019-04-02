@@ -198,9 +198,30 @@ public class ServicioEgetsuResultados implements EjbEgetsuResultados{
                     a,
                     gen));
         });
-        
+        return l;
+    }
 
-
+    @Override
+    public List<DTOEgetsu> getRegistroReporteEgetsu() {
+        //obtener la lista de registros mensuales filtrando por evento y por claves de areas
+        List<DTOEgetsu> l = new ArrayList<>();
+        List<EgetsuResultadosGeneraciones> entities = f.getEntityManager().createQuery("SELECT e FROM EgetsuResultadosGeneraciones e",  EgetsuResultadosGeneraciones.class)
+                .getResultList();
+      
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            
+            Generaciones g = f.getEntityManager().find(Generaciones.class, e.getGeneracion());
+            String gen = g.getInicio() + " - " + g.getFin();
+            
+            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            l.add(new DTOEgetsu(
+                    e,
+                    f.getEntityManager().find(Generaciones.class, e.getGeneracion()),
+                    a,
+                    gen));
+        });
         return l;
     }
 }

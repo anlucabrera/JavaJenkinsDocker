@@ -100,5 +100,11 @@ public interface EjbDesercionReprobacion {
      * @return Lista de materias reprobadas.
      */
     public List<DTOReprobacion> getListaMateriasReprobadas(String desercion);
+    
+     /**
+     * Obtiene la lista de registros actuales del registro
+     * @return Lista de registros
+     */
+    public List<ListaDtoReprobacion> getRegistroReprobacion();
 }
 

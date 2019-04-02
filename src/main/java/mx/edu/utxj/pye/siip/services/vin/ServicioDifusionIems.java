@@ -255,4 +255,45 @@ public class ServicioDifusionIems implements EjbDifusionIems{
             return ldto;
         }
     }
+
+    @Override
+    public DifusionIems actualizarDifusion(DifusionIems nuevaDifusion) throws Throwable {
+        f.setEntityClass(DifusionIems.class);
+        f.edit(nuevaDifusion);
+        f.flush();
+        Messages.addGlobalInfo("El registro se ha actualizado correctamente");
+        return nuevaDifusion;
+    }
+
+    @Override
+    public List<ListaDifusionIemsDTO> getRegistroDifusion() {
+        List<DifusionIems> q = new ArrayList<>();
+        List<ListaDifusionIemsDTO> ldto = new ArrayList<>();
+       
+        q = f.getEntityManager().createQuery("SELECT a from DifusionIems a", DifusionIems.class)
+        .getResultList();
+
+        if (q.isEmpty() || q == null) {
+            return null;
+        } else {
+//            l.forEach(System.err::println);
+            TypedQuery<EventosRegistros> query = f.getEntityManager().createQuery("SELECT er FROM EventosRegistros er WHERE :fecha BETWEEN er.fechaInicio AND er.fechaFin", EventosRegistros.class);
+            query.setParameter("fecha", new Date());
+            EventosRegistros eventoRegistro = query.getSingleResult();
+            q.forEach(x -> {
+
+                ListaDifusionIemsDTO dto;
+                Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());
+                AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, registro.getArea());
+                ActividadesPoa a = registro.getActividadesPoaList().isEmpty()?null:registro.getActividadesPoaList().get(0);
+                if (eventoRegistro.equals(registro.getEventoRegistro())) {
+                    dto = new ListaDifusionIemsDTO(Boolean.TRUE, x, au, a);
+                } else {
+                    dto = new ListaDifusionIemsDTO(Boolean.FALSE, x, au, a);
+                }
+                ldto.add(dto);
+            });
+            return ldto;
+        }
+    }
 }

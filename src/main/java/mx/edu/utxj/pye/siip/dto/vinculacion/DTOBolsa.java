@@ -31,4 +31,5 @@ public class DTOBolsa implements Serializable{
     @Getter @Setter @NonNull private BolsaTrabajo bolsaTrabajo; //se declara como llave primaria para interacturar con sus eviedencias
     @Getter @Setter private PeriodosEscolares periodosEscolares;
     @Getter @Setter private ActividadesPoa actividadAlineada;
+    @Getter @Setter private String cicloEscolar;
 }

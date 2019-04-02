@@ -30,7 +30,6 @@ public class ListaBecasDto {
     @Getter @Setter private BecasPeriodosEscolares becasPeriodosEscolares;
     @Getter @Setter private MatriculaPeriodosEscolares matriculaPeriodosEscolares;
     @Getter @Setter private String genero;
-    
     @Getter @Setter private AreasUniversidad areasUniversidad;
     @Getter @Setter private ActividadesPoa actividadAlineada;
 }
