@@ -1,8 +1,6 @@
 package mx.edu.utxj.pye.sgi.controladores.ch;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,7 +22,6 @@ import mx.edu.utxj.pye.sgi.entity.ch.Cuidados;
 import mx.edu.utxj.pye.sgi.entity.ch.Incapacidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
-import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Ajax;
@@ -118,7 +115,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
             listaIncidencias = new ArrayList<>();
             listaIncidencias.clear();
             incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
-            if (!incidenciases.isEmpty()) {
+                        if (!incidenciases.isEmpty()) {
                 incidenciases.forEach((t) -> {
                     if (area != 0) {
                         if (t.getClavePersonal().getAreaOperativa() == area) {
@@ -145,21 +142,22 @@ public class ControladorIncidenciasGeneral implements Serializable {
                     if (area != 0) {
                         if (lp.getAreaOperativa() == area) {
                             if (lp.getActividad() == 1 || lp.getActividad() == 3) {
-                                bitacoraIncidenciases.add(new ListaBitacoraIncidencias(buscarPerosnal(t.getClavePersonal()), buscarIncidencias(t.getNumeroRegistro(), t.getAccion(), t), t));
+                                bitacoraIncidenciases.add(new ListaBitacoraIncidencias(lp, buscarIncidencias(t.getNumeroRegistro(), t.getAccion(), t), t));
                             }
                         } else if (lp.getAreaSuperior() == area) {
-                            bitacoraIncidenciases.add(new ListaBitacoraIncidencias(buscarPerosnal(t.getClavePersonal()), buscarIncidencias(t.getNumeroRegistro(), t.getAccion(), t), t));
+                            bitacoraIncidenciases.add(new ListaBitacoraIncidencias(lp, buscarIncidencias(t.getNumeroRegistro(), t.getAccion(), t), t));
                         }
                     } else {
-                        bitacoraIncidenciases.add(new ListaBitacoraIncidencias(buscarPerosnal(t.getClavePersonal()), buscarIncidencias(t.getNumeroRegistro(), t.getAccion(), t), t));
+                        bitacoraIncidenciases.add(new ListaBitacoraIncidencias(lp, buscarIncidencias(t.getNumeroRegistro(), t.getAccion(), t), t));
                     }
                 }
+
             });
-            
+                        
             listaIncapacidads = new ArrayList<>();
             listaIncapacidads.clear();
             incapacidads = ejbNotificacionesIncidencias.mostrarIncapacidadReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
-            if (!incapacidads.isEmpty()) {
+                        if (!incapacidads.isEmpty()) {
                 incapacidads.forEach((t) -> {
                     if (area != 0) {
                         if (t.getClavePersonal().getAreaOperativa() == area) {
@@ -175,7 +173,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
                 });
             }
             cuidadoses = ejbNotificacionesIncidencias.mostrarCuidadosReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
-            if (!cuidadoses.isEmpty()) {
+                        if (!cuidadoses.isEmpty()) {
                 cuidadoses.forEach((t) -> {
                     if (area != 0) {
                         if (t.getPersonal().getAreaOperativa() == area) {
@@ -273,10 +271,9 @@ public class ControladorIncidenciasGeneral implements Serializable {
     public ListaPersonal buscarPerosnal(Integer clave) {
         try {
             ListaPersonal p = new ListaPersonal();
-            if (clave == 0) {
+            p = ejbPersonal.mostrarListaPersonal(clave);
+            if (p == null || clave == 0) {
                 p = new ListaPersonal(0, "Sistema", new Date(), 'A', Short.parseShort("0"), 'S', "Sistema", Short.parseShort("0"), "Sistema", Short.parseShort("6"), "Sistema", Short.parseShort("0"), "Sistema", Short.parseShort("0"), "Sistema", Short.parseShort("0"), "Sistema", Short.parseShort("0"), "Sistema", Short.parseShort("0"), "", "", Short.parseShort("0"), Short.parseShort("0"), new Date(), "Sistema", "Sistema", "Sistema", "Sistema", false, false, "Sistema", "Sistema", Short.parseShort("0"), "Sistema");
-            } else {
-                p = ejbPersonal.mostrarListaPersonal(clave);
             }
             return p;
         } catch (Throwable ex) {

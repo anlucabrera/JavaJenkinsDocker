@@ -9,10 +9,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.faces.event.ValueChangeEvent;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
@@ -26,36 +25,38 @@ import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.Proyectos;
-import org.omnifaces.cdi.ViewScoped;
-import org.omnifaces.util.Ajax;
+import mx.edu.utxj.pye.sgi.util.POAUtilidades;
 import org.omnifaces.util.Messages;
 import org.primefaces.model.chart.MeterGaugeChartModel;
 
 @Named
-@ManagedBean
-@ViewScoped
+@SessionScoped
 public class cuadroMandoIntegralArea implements Serializable {
 
-    @Getter    @Setter    private MeterGaugeChartModel meterGaugeModel1;
+    @Getter    @Setter    private List<Grafica> graf = new ArrayList<>();
+    @Getter    @Setter    private ResultadosCMI cmiGeneral;
+    @Getter    @Setter    private ResultadosCMI cmiEJe1;
+    @Getter    @Setter    private ResultadosCMI cmiEJe2;
+    @Getter    @Setter    private ResultadosCMI cmiEJe3;
+    @Getter    @Setter    private ResultadosCMI cmiEJe4;
+    @Getter    @Setter    private MeterGaugeChartModel grafRA;
+    @Getter    @Setter    private Date fechaActual = new Date();
+    /////////////////////////////////////////////////////////////////////////////////////////////
 
     @Getter    @Setter    private List<ActividadesPoa> actividadesPoas = new ArrayList<>();
     @Getter    @Setter    private List<EjesRegistro> ejesRegistros = new ArrayList<>();
-    @Getter    @Setter    private List<resultadosCMI> cMIs = new ArrayList<>();
     @Getter    @Setter    private List<String> resultados = new ArrayList<>();
+
+    @Getter    @Setter    private Integer programadas = 0, realizadas = 0, incremento = 0;
+    @Getter    @Setter    private Integer alca = 0, progra = 0, numeroMes = 0, numeroEje = 0;
+    @Getter    @Setter    private Short ejercicioFiscal = 0;
+    @Getter    @Setter    private Double avance = 0D;
+    @Getter    @Setter    private String mes = "", valores = "";
+    @Getter    @Setter    private DecimalFormat df = new DecimalFormat("#.00");
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Getter    @Setter    private List<Proyectos> proyectoses = new ArrayList<>();
     @Getter    @Setter    private List<Estrategias> estrategiases = new ArrayList<>();
-
-    @Getter    @Setter    private resultadosCMI cMIArea;
-    @Getter    @Setter    private Integer programadas = 0, realizadas = 0, incremento = 0;
-    @Getter    @Setter    private Integer alca = 0, progra = 0,numeroMes=0;
-    @Getter    @Setter    private Short ejercicioFiscal = 0;
-    @Getter    @Setter    private Double avance = 0D;
-    @Getter    @Setter    private String mes = "", mesNombre = "";
-    @Getter    @Setter    private List<grafica> graf = new ArrayList<>();
-    @Getter    @Setter    private MeterGaugeChartModel grafRA;
-    @Getter    @Setter    private Date fechaActual = new Date();
-    @Getter    @Setter    private DecimalFormat df = new DecimalFormat("#.00");
 
     @Getter    @Setter    private List<listaEjesEsLaAp> ejesEsLaAp = new ArrayList<>();
     @Getter    @Setter    private List<listaProyectosEstrategias> proyectosEstrategiases = new ArrayList<>();
@@ -65,22 +66,19 @@ public class cuadroMandoIntegralArea implements Serializable {
     @EJB    EjbPoaSelectec poaSelectec;
     @EJB    EjbAreasLogeo areasLogeo;
     @Inject    ControladorEmpleado controladorEmpleado;
+    @Inject    POAUtilidades poau;
 
     @PostConstruct
     public void init() {
-        System.out.println("cuadroMandoIntegralArea Inicio: " + System.currentTimeMillis());
         numeroMes = fechaActual.getMonth();
-//        numeroMes=0;
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralArea.init()" + numeroMes);
         if (numeroMes == 0) {
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralArea.init()");
             numeroMes = 11;
             ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 102));
         } else {
             numeroMes = numeroMes - 1;
             ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 101));
         }
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralArea.init()"+ejercicioFiscal);
+        
         switch (numeroMes) {
             case 0:                mes = "Avance al mes de: Enero";                break;
             case 1:                mes = "Avance al mes de: Febrero";                break;
@@ -93,12 +91,73 @@ public class cuadroMandoIntegralArea implements Serializable {
             case 8:                mes = "Avance al mes de: Septiembre";                break;
             case 9:                mes = "Avance al mes de: Octubre";                break;
             case 10:                mes = "Avance al mes de: Noviembre";                break;
-            case 11:                mes = "Avance al mes de: Diciembre del 20"+(fechaActual.getYear()-101);                break;
+            case 11:                mes = "Avance al mes de: Diciembre del 20" + (fechaActual.getYear() - 101);                break;
         }
-        cmiPorArea();
+        cmiEnGeneral();
         cmiPorEje();
         actividadesProyecto();
-        System.out.println("cuadroMandoIntegralArea Fin: " + System.currentTimeMillis());
+    }
+
+    public void cmiEnGeneral() {
+        actividadesPoas = new ArrayList<>();
+        actividadesPoas.clear();
+        actividadesPoas = poaSelectec.mostrarActividadesPoasReporteArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
+        cmiGeneral = new ResultadosCMI(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativaNombre(), 0, 0, 0.0, graf, new MeterGaugeChartModel(), false);
+        if (!actividadesPoas.isEmpty()) {
+            List<ActividadesPoa> actividadesPoasFiltradas = new ArrayList<>();
+            actividadesPoasFiltradas.clear();
+            actividadesPoasFiltradas = actividadesFiltradas(actividadesPoas);
+            if (!actividadesPoasFiltradas.isEmpty()) {
+                calculosCMI(actividadesPoasFiltradas);
+                grafRA = initMeterGaugeModel();
+                grafRA.setTitle(mes);
+                grafRA.setSeriesColors("666666,808080,a0a0a0");
+                grafRA.setGaugeLabel(df.format((realizadas.doubleValue() / programadas.doubleValue()) * 100D) + " % avance");
+                grafRA.setGaugeLabelPosition("bottom");
+                grafRA.setShowTickLabels(true);
+                grafRA.setLabelHeightAdjust(10);
+                grafRA.setIntervalOuterRadius(100);
+                cmiGeneral = new ResultadosCMI(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativaNombre(), programadas, realizadas, avance, graf, grafRA, true);
+            }
+        }
+    }
+
+    public void cmiPorEje() {
+        ejesRegistros = new ArrayList<>();
+        ejesRegistros.clear();
+        ejesRegistros = poaSelectec.mostrarEjesRegistrosAreas(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
+        
+        if (!ejesRegistros.isEmpty()) {
+            ejesRegistros.forEach((t) -> {
+                numeroEje = t.getEje();
+                switch (numeroEje) {
+                    case 1:                        cmiEJe1 = cmiEje(t);                        break;
+                    case 2:                        cmiEJe2 = cmiEje(t);                        break;
+                    case 3:                        cmiEJe3 = cmiEje(t);                        break;
+                    case 4:                        cmiEJe4 = cmiEje(t);                        break;
+                }
+            });
+        }
+    }
+
+    public ResultadosCMI cmiEje(EjesRegistro er) {
+        actividadesPoas = new ArrayList<>();
+        actividadesPoas.clear();
+        actividadesPoas = poaSelectec.mostrarActividadesPoasAreaEjeyEjercicioFiscal(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, er);
+        List<ActividadesPoa> actividadesPoasFiltradas = new ArrayList<>();
+        actividadesPoasFiltradas.clear();
+        actividadesPoasFiltradas = actividadesFiltradas(actividadesPoas);
+        calculosCMI(actividadesPoasFiltradas);
+        grafRA = initMeterGaugeModel();
+        grafRA.setTitle(mes);
+        grafRA.setSeriesColors("666666,808080,a0a0a0");
+        grafRA.setGaugeLabelPosition("bottom");
+        grafRA.setShowTickLabels(true);
+        grafRA.setLabelHeightAdjust(10);
+        grafRA.setIntervalOuterRadius(100);
+        grafRA.setGaugeLabel(avance + " % avance");
+
+        return new ResultadosCMI(er.getNombre(), programadas, realizadas, avance, graf, grafRA, true);
     }
 
     public void calculosCMI(List<ActividadesPoa> actividadesPoa) {
@@ -107,151 +166,80 @@ public class cuadroMandoIntegralArea implements Serializable {
         avance = 0D;
         graf = new ArrayList<>();
         graf.clear();
-        if (!actividadesPoa.isEmpty()) {
+
+        if (actividadesPoa.isEmpty()) {
+            for (incremento = 0; incremento <= numeroMes; incremento++) {
+                  graf.add(new Grafica(poau.obtenerMesNombre(incremento), 0D));
+            }
+        } else {
             actividadesPoa.forEach((t) -> {
                 if (t.getBandera().equals("y")) {
                     Integer tP = 0;
                     Integer tR = 0;
                     switch (numeroMes) {
-                        case 0:
-                            tR = 0 + t.getNAEnero();
-                            tP = 0 + t.getNPEnero();
-                            break;
-                        case 1:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero();
-                            break;
-                        case 2:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo();
-                            break;
-                        case 3:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril();
-                            break;
-                        case 4:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo();
-                            break;
-                        case 5:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio();
-                            break;
-                        case 6:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio();
-                            break;
-                        case 7:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto();
-                            break;
-                        case 8:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto() + t.getNASeptiembre();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre();
-                            break;
-                        case 9:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto() + t.getNASeptiembre() + t.getNAOctubre();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre() + t.getNPOctubre();
-                            break;
-                        case 10:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto() + t.getNASeptiembre() + t.getNAOctubre() + t.getNANoviembre();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre() + t.getNPOctubre() + t.getNPNoviembre();
-                            break;
-                        case 11:
-                            tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto() + t.getNASeptiembre() + t.getNAOctubre() + t.getNANoviembre() + t.getNADiciembre();
-                            tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre() + t.getNPOctubre() + t.getNPNoviembre() + t.getNPDiciembre();
-                            break;
+                        case 11:                            tR = tR + t.getNADiciembre();                            tP = tP + t.getNPDiciembre();
+                        case 10:                            tR = tR + t.getNANoviembre();                            tP = tP + t.getNPNoviembre();
+                        case 9:                            tR = tR + t.getNAOctubre();                            tP = tP + t.getNPOctubre();
+                        case 8:                            tR = tR + t.getNASeptiembre();                            tP = tP + t.getNPSeptiembre();
+                        case 7:                            tR = tR + t.getNAAgosto();                            tP = tP + t.getNPAgosto();
+                        case 6:                            tR = tR + t.getNAJulio();                            tP = tP + t.getNPJulio();
+                        case 5:                            tR = tR + t.getNAJunio();                            tP = tP + t.getNPJunio();
+                        case 4:                            tR = tR + t.getNAMayo();                            tP = tP + t.getNPMayo();
+                        case 3:                            tR = tR + t.getNAAbril();                            tP = tP + t.getNPAbril();
+                        case 2:                            tR = tR + t.getNAMarzo();                            tP = tP + t.getNPMarzo();
+                        case 1:                            tR = tR + t.getNAFebrero();                            tP = tP + t.getNPFebrero();
+                        case 0:                            tR = tR + t.getNAEnero();                            tP = tP + t.getNPEnero();                            break;
                     }
-                    if(tP!=0){                        
-                    programadas=programadas+1;
+                    if (tP != 0) {
+                        programadas = programadas + 1;
                     }
                     if (tR != 0 && Objects.equals(tR, tP)) {
-                        realizadas++;
+                        realizadas = realizadas + 1;
                     }
                 }
             });
             
-            for (incremento = 0; incremento <= numeroMes; incremento++) {
-                mesNombre = "";
+            for(incremento = 0; incremento <= numeroMes; incremento++) {
                 alca = 0;
                 progra = 0;
                 actividadesPoa.forEach((t) -> {
                     if (t.getBandera().equals("y")) {
                         Integer tP = 0;
                         Integer tR = 0;
-                        switch (incremento) {
-                            case 0:
-                                mesNombre = "Ene";
-                                tR = 0 + t.getNAEnero();
-                                tP = 0 + t.getNPEnero();
-                                break;
-                            case 1:
-                                mesNombre = "Feb";
-                                tR = 0 + t.getNAEnero() + t.getNAFebrero();
-                                tP = 0 + t.getNPEnero() + t.getNPFebrero();
-                                break;
-                            case 2:
-                                mesNombre = "Mar";
-                                tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo();
-                                tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo();
-                                break;
-                            case 3:
-                                mesNombre = "Abr";
-                                tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril();
-                                tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril();
-                                break;
-                            case 4:
-                                mesNombre = "May";
-                                tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo();
-                                tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo();
-                                break;
-                            case 5:
-                                mesNombre = "Jun";
-                                tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio();
-                                tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio();
-                                break;
-                            case 6:
-                                mesNombre = "Jul";
-                                tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio();
-                                tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio();
-                                break;
-                            case 7:
-                                mesNombre = "Ago";
-                                tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto();
-                                tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto();
-                                break;
-                            case 8:
-                                mesNombre = "Sep";
-                                tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto() + t.getNASeptiembre();
-                                tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre();
-                                break;
-                            case 9:
-                                mesNombre = "Oct";
-                                tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto() + t.getNASeptiembre() + t.getNAOctubre();
-                                tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre() + t.getNPOctubre();
-                                break;
-                            case 10:
-                                mesNombre = "Nov";
-                                tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto() + t.getNASeptiembre() + t.getNAOctubre() + t.getNANoviembre();
-                                tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre() + t.getNPOctubre() + t.getNPNoviembre();
-                                break;
-                            case 11:
-                                mesNombre = "Dic";
-                                tR = 0 + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto() + t.getNASeptiembre() + t.getNAOctubre() + t.getNANoviembre() + t.getNADiciembre();
-                                tP = 0 + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre() + t.getNPOctubre() + t.getNPNoviembre() + t.getNPDiciembre();
-                                break;
+                        switch (numeroMes) {
+                            case 11:                                tR = tR + t.getNADiciembre();                                tP = tP + t.getNPDiciembre();
+                            case 10:                                tR = tR + t.getNANoviembre();                                tP = tP + t.getNPNoviembre();
+                            case 9:                                tR = tR + t.getNAOctubre();                                tP = tP + t.getNPOctubre();
+                            case 8:                                tR = tR + t.getNASeptiembre();                                tP = tP + t.getNPSeptiembre();
+                            case 7:                                tR = tR + t.getNAAgosto();                                tP = tP + t.getNPAgosto();
+                            case 6:                                tR = tR + t.getNAJulio();                                tP = tP + t.getNPJulio();
+                            case 5:                                tR = tR + t.getNAJunio();                                tP = tP + t.getNPJunio();
+                            case 4:                                tR = tR + t.getNAMayo();                                tP = tP + t.getNPMayo();
+                            case 3:                                tR = tR + t.getNAAbril();                                tP = tP + t.getNPAbril();
+                            case 2:                                tR = tR + t.getNAMarzo();                                tP = tP + t.getNPMarzo();
+                            case 1:                                tR = tR + t.getNAFebrero();                                tP = tP + t.getNPFebrero();
+                            case 0:                                tR = tR + t.getNAEnero();                                tP = tP + t.getNPEnero();                                break;
                         }
-                       if (tP != 0) {
-                            progra=progra+1;
+                        if (tP != 0) {
+                            progra = progra + 1;
                         }
+
                         if (tR != 0 && Objects.equals(tR, tP)) {
-                            alca++;
+                            alca = alca + 1;
                         }
                     }
                 });
-                graf.add(new grafica(mesNombre, (alca.doubleValue() / progra.doubleValue()) * 100D));
+                if (progra != 0) {
+                    graf.add(new Grafica(poau.obtenerMesNombre(incremento), (alca.doubleValue() / progra.doubleValue()) * 100D));
+                } else {
+                    graf.add(new Grafica(poau.obtenerMesNombre(incremento), 0D));
+                }
             }
+        }
+        if (programadas != 0) {
             avance = (Double.parseDouble(realizadas.toString()) / Double.parseDouble(programadas.toString()) * 100D);
+        } else {
+            avance = 0D;
         }
     }
 
@@ -263,73 +251,11 @@ public class cuadroMandoIntegralArea implements Serializable {
                 CuadroMandoIntegral cmi = new CuadroMandoIntegral();
                 cmi = t.getCuadroMandoInt();
 //                if (cmi.getProyecto() != null) {
-                    actividadesPoasRegistradas.add(t);
+                actividadesPoasRegistradas.add(t);
 //                }
             });
         }
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralArea.actividadesFiltradas()"+actividadesPoasRegistradas.size());
         return actividadesPoasRegistradas;
-    }  
-    
-    public void cmiPorEje() {
-        cMIs = new ArrayList<>();
-        cMIs.clear();
-        ejesRegistros = new ArrayList<>();
-        ejesRegistros.clear();
-        ejesRegistros = poaSelectec.mostrarEjesRegistrosAreas(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
-        if (!ejesRegistros.isEmpty()) {
-            ejesRegistros.forEach((t) -> {
-                actividadesPoas = new ArrayList<>();
-                actividadesPoas.clear();
-                actividadesPoas = poaSelectec.mostrarActividadesPoasAreaEjeyEjercicioFiscal(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, t);
-                if (!actividadesPoas.isEmpty()) {
-                    List<ActividadesPoa> actividadesPoasFiltradas = new ArrayList<>();
-                    actividadesPoasFiltradas.clear();
-                    actividadesPoasFiltradas = actividadesFiltradas(actividadesPoas);
-                    if (!actividadesPoasFiltradas.isEmpty()) {
-                        calculosCMI(actividadesPoasFiltradas);
-                        if (programadas != 0) {
-                            
-                            grafRA = initMeterGaugeModel();
-                            grafRA.setTitle(mes);
-                            grafRA.setSeriesColors("FF0000,ffff00,66ff33");
-                            grafRA.setGaugeLabel(df.format((realizadas.doubleValue() / programadas.doubleValue()) * 100D) + " % avance");
-                            grafRA.setGaugeLabelPosition("bottom");
-                            grafRA.setShowTickLabels(true);
-                            grafRA.setLabelHeightAdjust(10);
-                            grafRA.setIntervalOuterRadius(100);
-                            cMIs.add(new resultadosCMI(t.getNombre(), programadas, realizadas, avance, graf, grafRA));
-                        }
-                    }
-                }
-            });
-        }
-    }
-
-    public void cmiPorArea() {
-        actividadesPoas = new ArrayList<>();
-        actividadesPoas.clear();
-        graf.clear();
-        actividadesPoas = poaSelectec.mostrarActividadesPoasReporteArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.cmi.cuadroMandoIntegralArea.cmiPorArea()"+actividadesPoas.size());
-        cMIArea = new resultadosCMI(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativaNombre(), 0, 0, 0.0, graf, new MeterGaugeChartModel());
-        if (!actividadesPoas.isEmpty()) {
-            List<ActividadesPoa> actividadesPoasFiltradas = new ArrayList<>();
-            actividadesPoasFiltradas.clear();
-            actividadesPoasFiltradas = actividadesFiltradas(actividadesPoas);
-            if (!actividadesPoasFiltradas.isEmpty()) {
-                calculosCMI(actividadesPoasFiltradas);
-                grafRA = initMeterGaugeModel();
-                grafRA.setTitle(mes);
-                grafRA.setSeriesColors("FF0000,ffff00,66ff33");
-                grafRA.setGaugeLabel(df.format((realizadas.doubleValue() / programadas.doubleValue()) * 100D) + " % avance");
-                grafRA.setGaugeLabelPosition("bottom");
-                grafRA.setShowTickLabels(true);
-                grafRA.setLabelHeightAdjust(10);
-                grafRA.setIntervalOuterRadius(100);
-                cMIArea = new resultadosCMI(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativaNombre(), programadas, realizadas, avance, graf, grafRA);
-            }
-        }
     }
 
     private MeterGaugeChartModel initMeterGaugeModel() {
@@ -340,8 +266,7 @@ public class cuadroMandoIntegralArea implements Serializable {
                 add(115.0);
             }
         };
-
-        return new MeterGaugeChartModel((realizadas.doubleValue() / programadas.doubleValue()) * 100D, intervals);
+        return new MeterGaugeChartModel(avance, intervals);
     }
 
     public void actividadesProyecto() {
@@ -397,8 +322,8 @@ public class cuadroMandoIntegralArea implements Serializable {
                     proyectosEstrategiases.clear();
                 }
             });
-        }else{
-            ejesEsLaAp=new ArrayList<>();
+        } else {
+            ejesEsLaAp = new ArrayList<>();
             ejesEsLaAp.clear();
             Messages.addGlobalError("no hay registros");
         }
@@ -410,85 +335,37 @@ public class cuadroMandoIntegralArea implements Serializable {
     public Integer totalProgramado(ActividadesPoa actividadesPoas) {
         Integer totalPCorte = 0;
         switch (numeroMes) {
-            case 0:
-                totalPCorte = 0 + actividadesPoas.getNPEnero();
-                break;
-            case 1:
-                totalPCorte = actividadesPoas.getNPEnero() + actividadesPoas.getNPFebrero();
-                break;
-            case 2:
-                totalPCorte = actividadesPoas.getNPEnero() + actividadesPoas.getNPFebrero() + actividadesPoas.getNPMarzo();
-                break;
-            case 3:
-                totalPCorte = actividadesPoas.getNPEnero() + actividadesPoas.getNPFebrero() + actividadesPoas.getNPMarzo() + actividadesPoas.getNPAbril();
-                break;
-            case 4:
-                totalPCorte = actividadesPoas.getNPEnero() + actividadesPoas.getNPFebrero() + actividadesPoas.getNPMarzo() + actividadesPoas.getNPAbril() + actividadesPoas.getNPMayo();
-                break;
-            case 5:
-                totalPCorte = actividadesPoas.getNPEnero() + actividadesPoas.getNPFebrero() + actividadesPoas.getNPMarzo() + actividadesPoas.getNPAbril() + actividadesPoas.getNPMayo() + actividadesPoas.getNPJunio();
-                break;
-            case 6:
-                totalPCorte = actividadesPoas.getNPEnero() + actividadesPoas.getNPFebrero() + actividadesPoas.getNPMarzo() + actividadesPoas.getNPAbril() + actividadesPoas.getNPMayo() + actividadesPoas.getNPJunio() + actividadesPoas.getNPJulio();
-                break;
-            case 7:
-                totalPCorte = actividadesPoas.getNPEnero() + actividadesPoas.getNPFebrero() + actividadesPoas.getNPMarzo() + actividadesPoas.getNPAbril() + actividadesPoas.getNPMayo() + actividadesPoas.getNPJunio() + actividadesPoas.getNPJulio() + actividadesPoas.getNPAgosto();
-                break;
-            case 8:
-                totalPCorte = actividadesPoas.getNPEnero() + actividadesPoas.getNPFebrero() + actividadesPoas.getNPMarzo() + actividadesPoas.getNPAbril() + actividadesPoas.getNPMayo() + actividadesPoas.getNPJunio() + actividadesPoas.getNPJulio() + actividadesPoas.getNPAgosto() + actividadesPoas.getNPSeptiembre();
-                break;
-            case 9:
-                totalPCorte = actividadesPoas.getNPEnero() + actividadesPoas.getNPFebrero() + actividadesPoas.getNPMarzo() + actividadesPoas.getNPAbril() + actividadesPoas.getNPMayo() + actividadesPoas.getNPJunio() + actividadesPoas.getNPJulio() + actividadesPoas.getNPAgosto() + actividadesPoas.getNPSeptiembre() + actividadesPoas.getNPOctubre();
-                break;
-            case 10:
-                totalPCorte = actividadesPoas.getNPEnero() + actividadesPoas.getNPFebrero() + actividadesPoas.getNPMarzo() + actividadesPoas.getNPAbril() + actividadesPoas.getNPMayo() + actividadesPoas.getNPJunio() + actividadesPoas.getNPJulio() + actividadesPoas.getNPAgosto() + actividadesPoas.getNPSeptiembre() + actividadesPoas.getNPOctubre() + actividadesPoas.getNPNoviembre();
-                break;
-            case 11:
-                totalPCorte = actividadesPoas.getNPEnero() + actividadesPoas.getNPFebrero() + actividadesPoas.getNPMarzo() + actividadesPoas.getNPAbril() + actividadesPoas.getNPMayo() + actividadesPoas.getNPJunio() + actividadesPoas.getNPJulio() + actividadesPoas.getNPAgosto() + actividadesPoas.getNPSeptiembre() + actividadesPoas.getNPOctubre() + actividadesPoas.getNPNoviembre() + actividadesPoas.getNPDiciembre();
-                break;
-        }
+            case 11:                totalPCorte = totalPCorte + actividadesPoas.getNPDiciembre();
+            case 10:                totalPCorte = totalPCorte + actividadesPoas.getNPNoviembre();
+            case 9:                totalPCorte = totalPCorte + actividadesPoas.getNPOctubre();
+            case 8:                totalPCorte = totalPCorte + actividadesPoas.getNPSeptiembre();
+            case 7:                totalPCorte = totalPCorte + actividadesPoas.getNPAgosto();
+            case 6:                totalPCorte = totalPCorte + actividadesPoas.getNPJulio();
+            case 5:                totalPCorte = totalPCorte + actividadesPoas.getNPJunio();
+            case 4:                totalPCorte = totalPCorte + actividadesPoas.getNPMayo();
+            case 3:                totalPCorte = totalPCorte + actividadesPoas.getNPAbril();
+            case 2:                totalPCorte = totalPCorte + actividadesPoas.getNPMarzo();
+            case 1:                totalPCorte = totalPCorte + actividadesPoas.getNPFebrero();
+            case 0:                totalPCorte = totalPCorte + actividadesPoas.getNPEnero();                break;
+        }        
         return totalPCorte;
     }
 
     public Integer totalAlcanzado(ActividadesPoa actividadesPoas) {
         Integer totalACorte = 0;
         switch (numeroMes) {
-            case 0:
-                totalACorte = 0 + actividadesPoas.getNAEnero();
-                break;
-            case 1:
-                totalACorte = actividadesPoas.getNAEnero() + actividadesPoas.getNAFebrero();
-                break;
-            case 2:
-                totalACorte = actividadesPoas.getNAEnero() + actividadesPoas.getNAFebrero() + actividadesPoas.getNAMarzo();
-                break;
-            case 3:
-                totalACorte = actividadesPoas.getNAEnero() + actividadesPoas.getNAFebrero() + actividadesPoas.getNAMarzo() + actividadesPoas.getNAAbril();
-                break;
-            case 4:
-                totalACorte = actividadesPoas.getNAEnero() + actividadesPoas.getNAFebrero() + actividadesPoas.getNAMarzo() + actividadesPoas.getNAAbril() + actividadesPoas.getNAMayo();
-                break;
-            case 5:
-                totalACorte = actividadesPoas.getNAEnero() + actividadesPoas.getNAFebrero() + actividadesPoas.getNAMarzo() + actividadesPoas.getNAAbril() + actividadesPoas.getNAMayo() + actividadesPoas.getNAJunio();
-                break;
-            case 6:
-                totalACorte = actividadesPoas.getNAEnero() + actividadesPoas.getNAFebrero() + actividadesPoas.getNAMarzo() + actividadesPoas.getNAAbril() + actividadesPoas.getNAMayo() + actividadesPoas.getNAJunio() + actividadesPoas.getNAJulio();
-                break;
-            case 7:
-                totalACorte = actividadesPoas.getNAEnero() + actividadesPoas.getNAFebrero() + actividadesPoas.getNAMarzo() + actividadesPoas.getNAAbril() + actividadesPoas.getNAMayo() + actividadesPoas.getNAJunio() + actividadesPoas.getNAJulio() + actividadesPoas.getNAAgosto();
-                break;
-            case 8:
-                totalACorte = actividadesPoas.getNAEnero() + actividadesPoas.getNAFebrero() + actividadesPoas.getNAMarzo() + actividadesPoas.getNAAbril() + actividadesPoas.getNAMayo() + actividadesPoas.getNAJunio() + actividadesPoas.getNAJulio() + actividadesPoas.getNAAgosto() + actividadesPoas.getNASeptiembre();
-                break;
-            case 9:
-                totalACorte = actividadesPoas.getNAEnero() + actividadesPoas.getNAFebrero() + actividadesPoas.getNAMarzo() + actividadesPoas.getNAAbril() + actividadesPoas.getNAMayo() + actividadesPoas.getNAJunio() + actividadesPoas.getNAJulio() + actividadesPoas.getNAAgosto() + actividadesPoas.getNASeptiembre() + actividadesPoas.getNAOctubre();
-                break;
-            case 10:
-                totalACorte = actividadesPoas.getNAEnero() + actividadesPoas.getNAFebrero() + actividadesPoas.getNAMarzo() + actividadesPoas.getNAAbril() + actividadesPoas.getNAMayo() + actividadesPoas.getNAJunio() + actividadesPoas.getNAJulio() + actividadesPoas.getNAAgosto() + actividadesPoas.getNASeptiembre() + actividadesPoas.getNAOctubre() + actividadesPoas.getNANoviembre();
-                break;
-            case 11:
-                totalACorte = actividadesPoas.getNAEnero() + actividadesPoas.getNAFebrero() + actividadesPoas.getNAMarzo() + actividadesPoas.getNAAbril() + actividadesPoas.getNAMayo() + actividadesPoas.getNAJunio() + actividadesPoas.getNAJulio() + actividadesPoas.getNAAgosto() + actividadesPoas.getNASeptiembre() + actividadesPoas.getNAOctubre() + actividadesPoas.getNANoviembre() + actividadesPoas.getNADiciembre();
-                break;
+            case 11:                totalACorte = totalACorte + actividadesPoas.getNADiciembre();
+            case 10:                totalACorte = totalACorte + actividadesPoas.getNANoviembre();
+            case 9:                totalACorte = totalACorte + actividadesPoas.getNAOctubre();
+            case 8:                totalACorte = totalACorte + actividadesPoas.getNASeptiembre();
+            case 7:                totalACorte = totalACorte + actividadesPoas.getNAAgosto();
+            case 6:                totalACorte = totalACorte + actividadesPoas.getNAJulio();
+            case 5:                totalACorte = totalACorte + actividadesPoas.getNAJunio();
+            case 4:                totalACorte = totalACorte + actividadesPoas.getNAMayo();
+            case 3:                totalACorte = totalACorte + actividadesPoas.getNAAbril();
+            case 2:                totalACorte = totalACorte + actividadesPoas.getNAMarzo();
+            case 1:                totalACorte = totalACorte + actividadesPoas.getNAFebrero();
+            case 0:                totalACorte = totalACorte + actividadesPoas.getNAEnero();                break;
         }
         return totalACorte;
     }
@@ -591,25 +468,6 @@ public class cuadroMandoIntegralArea implements Serializable {
         }
     }
 
-    public static class resultadosCMI {
-
-        @Getter        @Setter        private String ejesRegistro;
-        @Getter        @Setter        private Integer programadas;
-        @Getter        @Setter        private Integer realizadas;
-        @Getter        @Setter        private Double avance;
-        @Getter        @Setter        private List<grafica> avanceGraf;
-        @Getter        @Setter        private MeterGaugeChartModel gaugeChartModel;
-
-        public resultadosCMI(String ejesRegistro, Integer programadas, Integer realizadas, Double avance, List<grafica> avanceGraf, MeterGaugeChartModel gaugeChartModel) {
-            this.ejesRegistro = ejesRegistro;
-            this.programadas = programadas;
-            this.realizadas = realizadas;
-            this.avance = avance;
-            this.avanceGraf = avanceGraf;
-            this.gaugeChartModel = gaugeChartModel;
-        }
-    }
-
     public static class listaEjesEsLaAp {
 
         @Getter        @Setter        private EjesRegistro ejeA;
@@ -676,15 +534,46 @@ public class cuadroMandoIntegralArea implements Serializable {
         }
     }
 
-    public class grafica {
+    public static class ResultadosCMI {
+
+        @Getter        @Setter        private String ejesRegistro;
+        @Getter        @Setter        private Integer programadas;
+        @Getter        @Setter        private Integer realizadas;
+        @Getter        @Setter        private Double avance;
+        @Getter        @Setter        private List<Grafica> avanceGraf;
+        @Getter        @Setter        private MeterGaugeChartModel gaugeChartModel;
+        @Getter        @Setter        private Boolean renderizar;
+
+        public ResultadosCMI(String ejesRegistro, Integer programadas, Integer realizadas, Double avance, List<Grafica> avanceGraf, MeterGaugeChartModel gaugeChartModel, Boolean renderizar) {
+            this.ejesRegistro = ejesRegistro;
+            this.programadas = programadas;
+            this.realizadas = realizadas;
+            this.avance = avance;
+            this.avanceGraf = avanceGraf;
+            this.gaugeChartModel = gaugeChartModel;
+            this.renderizar = renderizar;
+        }
+
+        private ResultadosCMI() {
+
+        }
+    }
+
+    public class Grafica {
 
         @Getter        @Setter        private String mes;
         @Getter        @Setter        private Double avance;
 
-        public grafica(String mes, Double avance) {
+        public Grafica(String mes, Double avance) {
             this.mes = mes;
             this.avance = avance;
         }
+
+        @Override
+        public String toString() {
+            return mes + "" + avance;
+        }
+
     }
 
     public void imprimirValores() {

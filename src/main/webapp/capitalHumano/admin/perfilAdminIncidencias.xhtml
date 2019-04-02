@@ -131,7 +131,7 @@
                                                     </p:cellEditor>
                                                 </p:column>     
                                                 <p:column headerText="Tiempo" style="width: 5%;text-align: center;">
-                                                    <h:outputText value="#{incidencias.tiempo}" />
+                                                    <h:outputLabel value="0#{incidencias.tiempo.hours}:#{incidencias.tiempo.minutes}" />
                                                 </p:column>  
                                                 <p:column style="width:5%;" class="noprint">
                                                     <p:rowEditor />
