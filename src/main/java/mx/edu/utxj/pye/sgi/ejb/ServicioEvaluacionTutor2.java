@@ -87,7 +87,7 @@ public class ServicioEvaluacionTutor2 implements EjbEvaluacionTutor2 {
 
     @Override
     public EvaluacionesTutoresResultados getResultados(Evaluaciones evaluacion, VistaEvaluacionesTutores estudiante) {
-        TypedQuery<EvaluacionesTutoresResultados> q = f.getEntityManager().createQuery("SELECT r FROM EvaluacionesTutoresResultados r WHERE r.pk.evaluacion=:evaluacion AND r.pk.evaluador=:evaluador", EvaluacionesTutoresResultados.class);
+        TypedQuery<EvaluacionesTutoresResultados> q = f.getEntityManager().createQuery("SELECT r FROM EvaluacionesTutoresResultados r WHERE r.evaluacionesTutoresResultadosPK.evaluacion=:evaluacion AND r.evaluacionesTutoresResultadosPK.evaluador=:evaluador", EvaluacionesTutoresResultados.class);
         q.setParameter("evaluacion", evaluacion.getEvaluacion());
         q.setParameter("evaluador", Integer.parseInt(estudiante.getPk().getMatricula()));
         List<EvaluacionesTutoresResultados> l = q.getResultList();
@@ -104,7 +104,7 @@ public class ServicioEvaluacionTutor2 implements EjbEvaluacionTutor2 {
     @Override
     public EvaluacionesTutoresResultados getSoloResultados(Evaluaciones evaluacion, Integer estudiante) {
 //        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionTutor2.getSoloResultados() matricula :_ " + estudiante);
-        TypedQuery<EvaluacionesTutoresResultados> q = f.getEntityManager().createQuery("SELECT r FROM EvaluacionesTutoresResultados r WHERE r.pk.evaluacion=:evaluacion AND r.pk.evaluador=:evaluador", EvaluacionesTutoresResultados.class);
+        TypedQuery<EvaluacionesTutoresResultados> q = f.getEntityManager().createQuery("SELECT r FROM EvaluacionesTutoresResultados r WHERE r.evaluacionesTutoresResultadosPK.evaluacion=:evaluacion AND r.evaluacionesTutoresResultadosPK.evaluador=:evaluador", EvaluacionesTutoresResultados.class);
         q.setParameter("evaluacion", evaluacion.getEvaluacion());
         q.setParameter("evaluador", estudiante);
         List<EvaluacionesTutoresResultados> l = q.getResultList();

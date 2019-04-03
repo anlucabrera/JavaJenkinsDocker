@@ -47,9 +47,6 @@ import org.primefaces.component.selectonemenu.SelectOneMenu;
 @Named
 @SessionScoped
 public class Evaluacion360Admin1 implements Serializable {
-
-    private static final long serialVersionUID = -2104785351397760456L;
-
     @Getter private final Integer maxEvaluando = 4;
     @Getter private Integer evaluados = 0;
     @Getter private Integer evaluando = 0;
@@ -57,11 +54,11 @@ public class Evaluacion360Admin1 implements Serializable {
 
     @Getter private Evaluaciones360 evaluacion;
     @Getter private PeriodosEscolares periodoEscolar;
-    @Getter @Setter private ListaPersonal directivoSeleccionado;
+    @Getter @Setter private ListaPersonal evaluador;
 
     @Getter private List<Apartado> apartados;
-    @Getter private List<ListaPersonal> listaDirectivos;
-    @Getter private List<ListaPersonal> listaSubordinados;
+    //@Getter private List<ListaPersonal> listaDirectivos;
+    @Getter private List<ListaPersonal> listaEvaluados;
     @Getter private List<ListaPersonalEvaluacion360> listaPersonalEvaluando;
     @Getter private List<SelectItem> respuestasPosibles;
     @Getter private List<ListaPersonalEvaluacion360> listaPersonalEvaluado;
@@ -78,71 +75,48 @@ public class Evaluacion360Admin1 implements Serializable {
     @PostConstruct
     public void init() {
         try {
-            respuestasPosibles = ejbEvaluacion360.getRespuestasPosibles();
-            apartados = ejbEvaluacion360.getApartados();
+            evaluacion = ejbEvaluacion360.evaluacionActiva();
+//            System.out.println("evaluacion = " + evaluacion);
+            if (evaluacion != null) {
+                respuestasPosibles = ejbEvaluacion360.getRespuestasPosibles();
+//                System.out.println("respuestasPosibles = " + respuestasPosibles);
+                apartados = ejbEvaluacion360.getApartados();
+//                System.out.println("apartados = " + apartados);
+//                System.out.println("logonMB = " + logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
+                evaluador = ejbEvaluacion360.getEvaluador(); //(ListaPersonal) facade.find(Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
+//                System.out.println("evaluador = " + evaluador);
 
-            //paso 1 obtener lista de directivos
-//        listaDirectivos = evaluacionDesempenioEJB.getListaDirectivos();
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.init() ld: " + listaDirectivos);
-            //paso 2 elegir un directivo
-//        directivoSeleccionado = new ListaPersonal(30);
-//        if(listaDirectivos.contains(directivoSeleccionado)){
-//            directivoSeleccionado = listaDirectivos.get(listaDirectivos.indexOf(directivoSeleccionado));
-//        }
-            facade.setEntityClass(ListaPersonal.class);
-//            System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.init() lucn: " + logonMB.getListaUsuarioClaveNomina());
-            directivoSeleccionado = (ListaPersonal) facade.find(Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.init() elegido: " + directivoSeleccionado);
+                if (evaluador != null) {
+                    listaEvaluados = ejbEvaluacion360.getListaEvaluados(evaluador);
+//                    listaEvaluados.forEach(lp -> System.out.println("lp = " + lp));
+//                    System.out.println("evaluacion.getPeriodo() = " + evaluacion.getPeriodo());
+                    periodoEscolar = ejbEvaluacion360.getPeriodo(evaluacion);//(PeriodosEscolares) facade.find(evaluacion.getPeriodo());
+                    ejbEvaluacion360.cargarResultadosAlmacenados(evaluacion, evaluador, listaEvaluados);
 
-            if (directivoSeleccionado != null) {
-                //paso 3 obtener la lista de subordnados del directivo elegido
-                listaSubordinados = ejbEvaluacion360.getListaSubordinados(directivoSeleccionado);
-//                System.err.println("");
-//                listaSubordinados.forEach(x -> {System.err.println("el personal : "+ x.getClave());});
-//                System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.init() subordinados: " + listaSubordinados.size());
-//                listaSubordinados.forEach(System.out::println);
-                //paso 4 obtener las fotos de los subordinados
-                //se convierte en paso 11 debido a que la lista de personal debe decidirse segun las opciones en pantalla
-                //paso 5 obtener la evaluacion activa
-                evaluacion = ejbEvaluacion360.evaluacionActiva();
-                //TODO: tomar acciones en casa de no encontrar una evaluación activa
-
-                if (evaluacion != null) {
-                    //paso 6 obtener periodo activo
-                    facade.setEntityClass(PeriodosEscolares.class);
-                    periodoEscolar = (PeriodosEscolares) facade.find(evaluacion.getPeriodo());
-//                    System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.init() periodoEscolar:" + periodoEscolar);
-                    //paso 7 obtener respuestas
-                    ejbEvaluacion360.cargarResultadosAlmacenados(evaluacion, directivoSeleccionado, listaSubordinados);
-//        for(DesempenioEvaluacionResultados der : evaluacion.getDesempenioEvaluacionResultadosList()){
-//            System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.init(7) der: " + der);
-//        }
-
-                    //paso8 inicializar claves de opciones
                     clavesOpciones.clear();
-                    for (int i = 0; (i < maxEvaluando && i < listaSubordinados.size()); i++) {
-                        clavesOpciones.add(listaSubordinados.get(i).getClave());
+                    for (int i = 0; (i < maxEvaluando && i < listaEvaluados.size()); i++) {
+                        clavesOpciones.add(listaEvaluados.get(i).getClave());
                     }
 
-                    //paso 9 inicializar opciones
+//                    System.out.println("1");
                     initOpciones();
-
-                    //paso 10 inicializar mapeo de respuestas por clave subordinado y numero de pregunta
+//                    System.out.println("2");
                     initRespuestas();
-
-                    //paso 11 definir la lista del personal que se esta evaluando
+//                    System.out.println("3");
                     initPersonalEvaluando();
-
-                    initPersonalEvaluado();
+//                    System.out.println("4");
+//                    initPersonalEvaluado();
+//                    System.out.println("5");
                     cargada = true;
-//                    System.out.println("se carga  360");
+
                 }
             }
 
         } catch (Exception e) {
-//            System.out.println("admini 360 e: " + e.getMessage());
+            e.printStackTrace();
             cargada = false;
         }
+//        System.out.println("cargada = " + cargada);
 
     }
 
@@ -150,20 +124,19 @@ public class Evaluacion360Admin1 implements Serializable {
         opciones.clear();
         Integer index = 0;
         for (Integer clave : clavesOpciones) {
-//            System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.init(9) clave: " + clave);
             opciones.put(index, new ArrayList<>());
-            facade.setEntityClass(ListaPersonal.class);
-            ListaPersonal lpPrimero = (ListaPersonal) facade.find(clave);
+            ListaPersonal lpPrimero = facade.getEntityManager().find(ListaPersonal.class, clave); //(ListaPersonal) facade.find(clave);
             opciones.get(index).add(lpPrimero);
             //opcionesSelect.get(index).add(e)
-            for (ListaPersonal lp : listaSubordinados) {
+            for (ListaPersonal lp : listaEvaluados) {
 //                System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.init(9) res: " + (!clavesOpciones.contains(lp.getClave()) || clave.equals(lp.getClave())) + ", lp: " + lp);
                 if ((!clavesOpciones.contains(lp.getClave()) || clave.equals(lp.getClave())) && !opciones.get(index).contains(lp)) {
                     opciones.get(index).add(lp);
                 }
             }
-            facade.setEntityClass(Evaluaciones360Resultados.class);
-            Evaluaciones360Resultados resultado = (Evaluaciones360Resultados) facade.find(new Evaluaciones360ResultadosPK(evaluacion.getEvaluacion(), directivoSeleccionado.getClave(), clave));
+
+            Evaluaciones360ResultadosPK pk = new Evaluaciones360ResultadosPK(evaluacion.getEvaluacion(), evaluador.getClave(), clave);
+            Evaluaciones360Resultados resultado = facade.getEntityManager().find(Evaluaciones360Resultados.class, pk);//(Evaluaciones360Resultados) facade.find(new Evaluaciones360ResultadosPK(evaluacion.getEvaluacion(), evaluador.getClave(), clave));
             apartadosHabilidades.put(clave, ejbEvaluacion360.getApartadoHabilidades(resultado.getCategoria().getCategoria()));
             index++;
         }
@@ -171,12 +144,12 @@ public class Evaluacion360Admin1 implements Serializable {
     }
 
     private void initRespuestas() {
-        listaSubordinados.stream().map((subordinado) -> {
+        listaEvaluados.stream().map((subordinado) -> {
             respuestas.put(subordinado.getClave(), new HashMap<>());
             return subordinado;
         }).forEachOrdered((subordinado) -> {
 //            System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.initRespuestas() el subordinado es : " + subordinado.getNombre());
-            Integer index = evaluacion.getEvaluaciones360ResultadosList().indexOf(new Evaluaciones360Resultados(evaluacion.getEvaluacion(), directivoSeleccionado.getClave(), subordinado.getClave()));
+            Integer index = evaluacion.getEvaluaciones360ResultadosList().indexOf(new Evaluaciones360Resultados(evaluacion.getEvaluacion(), evaluador.getClave(), subordinado.getClave()));
             Evaluaciones360Resultados resultado = evaluacion.getEvaluaciones360ResultadosList().get(index);
 //            System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.init(10) resultado: " + resultado);
             for (float fi = 1.0f; fi <= 33.0f; fi++) {
@@ -187,22 +160,27 @@ public class Evaluacion360Admin1 implements Serializable {
 
     private void initPersonalEvaluando() {
         listaPersonalEvaluando = null;
+//        System.out.println("a");
         initPersonalEvaluado();
+//        System.out.println("b");
+//        System.out.println("listaPersonalEvaluado = " + listaPersonalEvaluado.size());
+//        listaPersonalEvaluado.forEach(evaluado -> System.out.println("evaluado = " + evaluado));
         listaPersonalEvaluando = new ArrayList<>();
         clavesOpciones.stream().map((clave) -> {
             facade.setEntityClass(ListaPersonalEvaluacion360.class);
             return clave;
         }).forEachOrdered((clave) -> {
-            ListaPersonalEvaluacion360 lpde = new ListaPersonalEvaluacion360(new Evaluaciones360ResultadosPK(evaluacion.getEvaluacion(), directivoSeleccionado.getClave(), clave));
+            ListaPersonalEvaluacion360 lpde = new ListaPersonalEvaluacion360(new Evaluaciones360ResultadosPK(evaluacion.getEvaluacion(), evaluador.getClave(), clave));
 //            System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.initPersonalEvaluando() lpde: " + lpde);
             listaPersonalEvaluando.add(listaPersonalEvaluado.get(listaPersonalEvaluado.indexOf(lpde)));
-//            listaPersonalEvaluando.add((ListaPersonalDesempenioEvaluacion)facade.find(new DesempenioEvaluacionResultadosPK(evaluacion.getEvaluacion(), directivoSeleccionado.getClave(), clave)));
+//            listaPersonalEvaluando.add((ListaPersonalDesempenioEvaluacion)facade.find(new DesempenioEvaluacionResultadosPK(evaluacion.getEvaluacion(), evaluador.getClave(), clave)));
         });//        System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.init(11) evaluando: " + listaPersonalEvaluando.toString());
     }
 
     private void initPersonalEvaluado() {
+        //TODO:Eliminar vista lista_personal_evaluacion_360
         listaPersonalEvaluado = null;
-        listaPersonalEvaluado = ejbEvaluacion360.obtenerListaResultadosPorEvaluacionEvaluador(evaluacion, directivoSeleccionado);
+        listaPersonalEvaluado = ejbEvaluacion360.obtenerListaResultadosPorEvaluacionEvaluador(evaluacion, evaluador);
 //        listaPersonalEvaluado.forEach(lp -> System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.initPersonalEvaluado() lp: " + lp));
         evaluados = listaPersonalEvaluado.stream().filter(personal -> personal.getCompleto()).collect(Collectors.toList()).size();
         evaluando = listaPersonalEvaluado.stream().filter(personal -> personal.getIncompleto()).collect(Collectors.toList()).size();
@@ -216,7 +194,7 @@ public class Evaluacion360Admin1 implements Serializable {
 //        System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.guardarRespuesta(" + pregunta_id + ") evaluado: " + clave + ", respuesta: " + e.getNewValue() );
 
         //1 detectar si ya se tiene la respuesta, de lo contrario generarla
-        Evaluaciones360Resultados resultado = new Evaluaciones360Resultados(evaluacion.getEvaluacion(), directivoSeleccionado.getClave(), clave);
+        Evaluaciones360Resultados resultado = new Evaluaciones360Resultados(evaluacion.getEvaluacion(), evaluador.getClave(), clave);
         if (evaluacion.getEvaluaciones360ResultadosList().contains(resultado)) {
             int index = evaluacion.getEvaluaciones360ResultadosList().indexOf(resultado);
             resultado = evaluacion.getEvaluaciones360ResultadosList().get(index);
