@@ -249,6 +249,14 @@ body .ui-datatable th[role="columnheader"].ui-state-default, body .ui-treetable 
     background-color: #666666 !important;
 }
 
+body .ui-datatable tbody>tr.ui-widget-content, body .ui-treetable tbody>tr.ui-widget-content {
+    border-top-color: #dde3e7;
+    border-bottom-color: #dde3e7;
+    border-left: #f4f4f4;
+    border-right: #f4f4f4;
+    color: #000000;
+}
+
 .panel.panel-heading
 {
     color: #fff;
