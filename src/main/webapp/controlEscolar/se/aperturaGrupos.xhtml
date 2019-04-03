@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+         <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>  
+        <c:if test="#{!controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if> 
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Grupos
+    </ui:define>
+    
+    <ui:define name="description">
+        Configuración para grupos
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:sidebar collapsed="true"/> 
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:tabView id="tabw1">
+            <p:tab title="Apertura de Grupos">
+                <p:panel id="informacion" class="hidden-xs hidden-sm" styleClass="box box-primary">
+                    <section class="content">
+                        <h:form id="frmGrupos">
+                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                <div class="col-md-12">
+                                    <div class="box box-widget widget-user-2">
+                                        <div class="row">
+                                            <div class="col-sm-12 border-right">
+                                                <div class="description-block">
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                <p:outputLabel for="pe" style="font-size: large" value="Programa Educativo"/>
+                                                                <p:selectOneMenu id="pe" class="form-control" style="width: 100%;">
+                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                    <f:selectItems var="pe" value="#{procesoInscripcion.listaAreasUniversidad}" itemLabel="#{pe.nombre}" itemValue="#{pe}"/>
+                                                                </p:selectOneMenu>
+                                                            </div>
+                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                <p:outputLabel for="cuatrimestre" style="font-size: large" value="Cuatrimestre"/>
+                                                                <p:selectOneMenu id="cuatrimestre">
+                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                    <f:selectItem itemValue="1" itemLabel="1"/>
+                                                                    <f:selectItem itemValue="2" itemLabel="2"/>
+                                                                    <f:selectItem itemValue="3" itemLabel="3"/>
+                                                                    <f:selectItem itemValue="4" itemLabel="4"/>
+                                                                    <f:selectItem itemValue="5" itemLabel="5"/>
+                                                                    <f:selectItem itemValue="6" itemLabel="6"/>
+                                                                    <f:selectItem itemValue="7" itemLabel="7"/>
+                                                                    <f:selectItem itemValue="8" itemLabel="8"/>
+                                                                    <f:selectItem itemValue="9" itemLabel="9"/>
+                                                                    <f:selectItem itemValue="10" itemLabel="10"/>
+                                                                    <f:selectItem itemValue="11" itemLabel="11"/>
+                                                                </p:selectOneMenu>
+                                                            </div>
+                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                <p:outputLabel for="periodo" style="font-size: large" value="Periodo"/>
+                                                                <p:selectOneMenu id="periodo">
+                                                                    
+                                                                </p:selectOneMenu>
+                                                            </div>
+                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                <p:outputLabel for="turno" style="font-size: large" value="Turno"/>
+                                                                <p:selectOneMenu id="turno">
+                                                                    
+                                                                </p:selectOneMenu>
+                                                            </div>
+                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                <p:outputLabel for="sistema" style="font-size: large" value="Sistema"/>
+                                                                <p:selectOneMenu id="sistema">
+                                                                    
+                                                                </p:selectOneMenu>
+                                                            </div>
+                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                <p:outputLabel for="noG" style="font-size: large" value="No. Grupos"/>
+                                                                <p:selectOneMenu id="noG">
+                                                                    
+                                                                </p:selectOneMenu>
+                                                            </div>
+                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                <p:outputLabel for="noEstu" style="font-size: large" value="Capacidad Maxima Estudiantes"/><br/>
+                                                                <p:spinner id="noEstu" required="true" maxlength="3" min="0" max="30" size="2" requiredMessage="Ingrese la cantidad de días." >
+                                                                </p:spinner>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+                    </section>
+                </p:panel>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+</ui:composition>

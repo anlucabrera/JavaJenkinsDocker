@@ -5,7 +5,6 @@
  */
 package mx.edu.utxj.pye.sgi.entity.prontuario;
 
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -26,15 +25,15 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Planeacion
+ * @author UTXJ
  */
 @Entity
 @Table(name = "categorias", catalog = "prontuario", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Categorias.findAll", query = "SELECT c FROM Categorias c")
-    , @NamedQuery(name = "Categorias.findByCategoria", query = "SELECT c FROM Categorias c WHERE c.categoria = :categoria")
-    , @NamedQuery(name = "Categorias.findByDescripcion", query = "SELECT c FROM Categorias c WHERE c.descripcion = :descripcion")})
+    @NamedQuery(name = "Categorias.findAll", query = "SELECT c FROM Categorias c"),
+    @NamedQuery(name = "Categorias.findByCategoria", query = "SELECT c FROM Categorias c WHERE c.categoria = :categoria"),
+    @NamedQuery(name = "Categorias.findByDescripcion", query = "SELECT c FROM Categorias c WHERE c.descripcion = :descripcion")})
 public class Categorias implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -110,7 +109,7 @@ public class Categorias implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.ejb.prontuario.Categorias[ categoria=" + categoria + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.prontuario.Categorias[ categoria=" + categoria + " ]";
     }
     
 }

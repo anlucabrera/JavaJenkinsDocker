@@ -15,7 +15,8 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Turno;
 import javax.ejb.Local;
 import javax.faces.model.SelectItem;
 import java.util.List;
-import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Sistema;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 
 /**
  *
@@ -33,6 +34,7 @@ public interface EjbSelectItemCE {
     public List<SelectItem> itemAreaAcademica();
     public List<SelectItem> itemProgramEducativoPorArea(Short area);
     public List<SelectItem> itemProgramaEducativoAll();
-    public List<ProgramasEducativos> itemPEAll();
+    public List<AreasUniversidad> itemPEAll();
     public List<Turno> itemTurno();
+    public List<Sistema> itemSistema();
 }

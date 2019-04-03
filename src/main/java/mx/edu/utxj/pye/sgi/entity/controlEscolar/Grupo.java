@@ -61,7 +61,7 @@ public class Grupo implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "id_pe")
-    private int idPe;
+    private short idPe;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "grupo")
     private List<Estudiante> estudianteList;
     @JoinColumn(name = "id_sistema", referencedColumnName = "id_sistema")
@@ -82,7 +82,7 @@ public class Grupo implements Serializable {
         this.idGrupo = idGrupo;
     }
 
-    public Grupo(Integer idGrupo, Character literal, int grado, int capMaxima, int idPe) {
+    public Grupo(Integer idGrupo, Character literal, int grado, int capMaxima, short idPe) {
         this.idGrupo = idGrupo;
         this.literal = literal;
         this.grado = grado;
@@ -122,11 +122,11 @@ public class Grupo implements Serializable {
         this.capMaxima = capMaxima;
     }
 
-    public int getIdPe() {
+    public short getIdPe() {
         return idPe;
     }
 
-    public void setIdPe(int idPe) {
+    public void setIdPe(short idPe) {
         this.idPe = idPe;
     }
 

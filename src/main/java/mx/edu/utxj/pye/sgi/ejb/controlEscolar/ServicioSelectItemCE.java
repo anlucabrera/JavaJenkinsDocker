@@ -18,9 +18,11 @@ import javax.faces.model.SelectItem;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Escolaridad;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EspecialidadCentro;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Ocupacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Sistema;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoDiscapacidad;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoSangre;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Turno;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 
 /**
  *
@@ -98,8 +100,8 @@ public class ServicioSelectItemCE implements EjbSelectItemCE {
                 .getResultList();
     }
 
-    public List<ProgramasEducativosAreas> getProgramasEducativos(){
-        return facadeCE.getEntityManager().createQuery("SELECT a FROM ProgramasEducativosAreas a",ProgramasEducativosAreas.class)
+    public List<AreasUniversidad> getProgramasEducativos(){
+        return facadeCE.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.categoria.categoria = 8",AreasUniversidad.class)
                 .getResultList();
     }
 
@@ -114,8 +116,8 @@ public class ServicioSelectItemCE implements EjbSelectItemCE {
         return lsaa;
     }
 
-    public List<ProgramasEducativos> getProgramasEducativosByArea(Short area){
-        return facadeCE.getEntityManager().createQuery("SELECT pe FROM ProgramasEducativos pe WHERE pe.area.area = :idArea AND pe.nivel.nivel = 'TSU' AND pe.activo = 1",ProgramasEducativos.class)
+    public List<AreasUniversidad> getProgramasEducativosByArea(Short area){
+        return facadeCE.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior = :idArea AND au.nivelEducativo.nivel = 'TSU' AND au.vigente = 1",AreasUniversidad.class)
                 .setParameter("idArea", area)
                 .getResultList();
     }
@@ -124,7 +126,7 @@ public class ServicioSelectItemCE implements EjbSelectItemCE {
     public List<SelectItem> itemProgramEducativoPorArea(Short area) {
         List<SelectItem> slpe = new ArrayList<>();
         getProgramasEducativosByArea(area).stream()
-                .map(programasEducativos -> new SelectItem(programasEducativos.getSiglas(),programasEducativos.getNivel().getNombre().concat(" en ").concat(programasEducativos.getNombre())))
+                .map(programasEducativos -> new SelectItem(programasEducativos.getArea(),programasEducativos.getNombre()))
                 .forEachOrdered(selectItem -> {
                     slpe.add(selectItem);
                 });
@@ -155,8 +157,14 @@ public class ServicioSelectItemCE implements EjbSelectItemCE {
     }
 
     @Override
-    public List<ProgramasEducativos> itemPEAll() {
-        return facadeCE.getEntityManager().createQuery("SELECT pe FROM ProgramasEducativos pe WHERE pe.nivel.nivel = 'TSU' AND pe.activo = 1",ProgramasEducativos.class)
+    public List<AreasUniversidad> itemPEAll() {
+        return facadeCE.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.nivelEducativo.nivel = 'TSU' AND au.vigente = 1",AreasUniversidad.class)
+                .getResultList();
+    }
+
+    @Override
+    public List<Sistema> itemSistema() {
+        return facadeCE.getEntityManager().createNamedQuery("Sistema.findAll", Sistema.class)
                 .getResultList();
     }
 }

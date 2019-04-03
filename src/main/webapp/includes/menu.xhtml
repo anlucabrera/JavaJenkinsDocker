@@ -17,13 +17,13 @@
             <li>
                 <p:link href="/controlEscolar/fichaAdmision.xhtml">
                     <i class="fa fa-graduation-cap"></i>
-                    <span>Registro Ficha AdmisiÃ³n</span>
+                    <span>Registro Ficha Admisión</span>
                 </p:link>
             </li>
             <li>
                 <p:link href="/controlEscolar/estatusFicha.xhtml">
                     <i class="fa fa-check-circle"></i>
-                    <span>Estatus Ficha de AdmisiÃ³n</span>
+                    <span>Estatus Ficha de Admisión</span>
                 </p:link>
             </li>
         </c:if>
@@ -568,10 +568,10 @@
                                 </p:link>
                             </li>
                             <li>
-                            <p:link href="/poa/pye/planeacionCMI.xhtml"><i class="fa fa-bar-chart"></i>
-                                <span>CMI PYE admin</span>
-                            </p:link>
-                        </li> 
+                                <p:link href="/poa/pye/planeacionCMI.xhtml"><i class="fa fa-bar-chart"></i>
+                                    <span>CMI PYE admin</span>
+                                </p:link>
+                            </li> 
                         </c:if>
                     </ul>
                 </li>               
@@ -734,6 +734,28 @@
                         <i class="fa fa-calendar"></i>
                         <span>Calendario</span>
                     </p:link>
+                </li>
+            </c:if>
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave  eq 56 || controladorEmpleado.nuevoOBJListaPersonal.clave  eq 444 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 551}">
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-id-card"></i> <span>Proceso Inscripción</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <li>
+                            <p:link href="/controlEscolar/se/procesoInscripcion.xhtml"><i class="fa fa-check"></i>
+                                <span>Validación Ficha</span>
+                            </p:link>
+                        </li>
+                        <li>
+                            <p:link href="/controlEscolar/se/aperturaGrupos.xhtml"><i class="fa fa-check"></i>
+                                <span>Grupos</span>
+                            </p:link>
+                        </li>
+                    </ul>
                 </li>
             </c:if>
         </c:if>

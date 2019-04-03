@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.List;
 
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
 
@@ -162,7 +163,7 @@ public interface EjbFichaAdmision {
      * @param clave parámetro mediante el cual el sistema realiza la busquede del programa educativo
      * @return devuelve el programa educativo encontrado
      */
-    public ProgramasEducativos buscaPEByClave(String clave);
+    public AreasUniversidad buscaPEByClave(Short clave);
     /**
      * Método mediante el cual el usuario guarda sus requisitos de ficha de admisión
      * @param file parámetro mediante el cual el usuario guarda sus requisitos de inscripción
