@@ -370,7 +370,7 @@
                                                                                 <p:message for="tipoS"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                                <p:outputLabel for="tipoD" style="font-size: large" value="Tipo Discapacidad*"/>
+                                                                                <p:outputLabel for="tipoD" style="font-size: large" value="Discapacidad*"/>
                                                                                 <p:selectOneMenu id="tipoD" required="true" value="#{fichaAdm.datosMedicos.cveDiscapacidad}" converter="tipoDiscapacidadConverter" requiredMessage="Es importante que mencione si tiene alguna discapacidad">
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{fichaAdm.listaTipoDiscapacidad}"/>
@@ -397,7 +397,7 @@
                                                                                 <p:message for="css"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                                <p:outputLabel for="nss" style="font-size: large" value="Numero de Seguro Social"/>
+                                                                                <p:outputLabel for="nss" style="font-size: large" value="Número de Seguro Social"/>
                                                                                 <p:inputText id="nss" class="form-control" value="#{fichaAdm.datosMedicos.nss}" placeholder="Numero de Seguro Social" readonly="#{fichaAdm.datosMedicos.nssVigente == false}" required="true" requiredMessage="Debe de ingresar su número de seguro social"/>
                                                                                 <p:message for="nss"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -827,10 +827,10 @@
                                                                                 <p:message for="pe1"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                                <p:outputLabel for="turno1" style="font-size: large" value="Turno*"/>
-                                                                                <p:selectOneMenu id="turno1" required="true" value="#{fichaAdm.datosAcademicos.sistemaPrimeraOpcion}" converter="turnoConverter" requiredMessage="Debe de indicar el turno del programa educativo">
+                                                                                <p:outputLabel for="turno1" style="font-size: large" value="Sistema*"/>
+                                                                                <p:selectOneMenu id="turno1" required="true" value="#{fichaAdm.datosAcademicos.sistemaPrimeraOpcion}" converter="sistemaConverter" requiredMessage="Debe de indicar el turno del programa educativo">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{fichaAdm.listaTurno}" var="tp" itemValue="#{tp}" itemLabel="#{tp.nombre}" itemDisabled="#{(tp.idTurno == 2 and fichaAdm.areaAcademicaPO == 2)}"/>
+                                                                                    <f:selectItems value="#{fichaAdm.listaSistema}" var="sistemaPO" itemValue="#{sistemaPO}" itemLabel="#{sistemaPO.nombre}" itemDisabled="#{(sistemaPO.idSistema == 2 and fichaAdm.areaAcademicaPO == 25)}"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="turno1"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -863,10 +863,10 @@
                                                                                 <p:message for="pe2"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                                <p:outputLabel for="turno2" style="font-size: large" value="Turno*"/>
-                                                                                <p:selectOneMenu id="turno2" required="true" value="#{fichaAdm.datosAcademicos.sistemaSegundaOpcion}" converter="turnoConverter" requiredMessage="Debe de indicar el turno del programa educativo">
+                                                                                <p:outputLabel for="turno2" style="font-size: large" value="Sistema*"/>
+                                                                                <p:selectOneMenu id="turno2" required="true" value="#{fichaAdm.datosAcademicos.sistemaSegundaOpcion}" converter="sistemaConverter" requiredMessage="Debe de indicar el turno del programa educativo">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{fichaAdm.listaTurno}" var="ts" itemValue="#{ts}" itemLabel="#{ts.nombre}" itemDisabled="#{(ts.idTurno == 2 and fichaAdm.areaAcademicaSO == 2)}"/>
+                                                                                    <f:selectItems value="#{fichaAdm.listaSistema}" var="sistemaSO" itemValue="#{sistemaSO}" itemLabel="#{sistemaSO.nombre}" itemDisabled="#{(sistemaSO.idSistema == 2 and fichaAdm.areaAcademicaSO == 25)}"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="turno2"><p:autoUpdate/></p:message>
                                                                             </div>

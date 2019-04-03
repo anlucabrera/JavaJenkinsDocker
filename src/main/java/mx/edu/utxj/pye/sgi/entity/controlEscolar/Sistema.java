@@ -47,6 +47,10 @@ public class Sistema implements Serializable {
     @Size(min = 1, max = 45)
     @Column(name = "nombre")
     private String nombre;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sistemaPrimeraOpcion")
+    private List<DatosAcademicos> datosAcademicosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sistemaSegundaOpcion")
+    private List<DatosAcademicos> datosAcademicosList1;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idSistema")
     private List<Grupo> grupoList;
 
@@ -76,6 +80,24 @@ public class Sistema implements Serializable {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    @XmlTransient
+    public List<DatosAcademicos> getDatosAcademicosList() {
+        return datosAcademicosList;
+    }
+
+    public void setDatosAcademicosList(List<DatosAcademicos> datosAcademicosList) {
+        this.datosAcademicosList = datosAcademicosList;
+    }
+
+    @XmlTransient
+    public List<DatosAcademicos> getDatosAcademicosList1() {
+        return datosAcademicosList1;
+    }
+
+    public void setDatosAcademicosList1(List<DatosAcademicos> datosAcademicosList1) {
+        this.datosAcademicosList1 = datosAcademicosList1;
     }
 
     @XmlTransient

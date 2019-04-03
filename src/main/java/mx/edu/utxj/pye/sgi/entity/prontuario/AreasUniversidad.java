@@ -26,17 +26,17 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author UTXJ
  */
 @Entity
-@Table(name = "areas_universidad", catalog = "prontuario", schema = "")
+@Table(name = "areas_universidad",catalog = "prontuario", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "AreasUniversidad.findAll", query = "SELECT a FROM AreasUniversidad a")
-    , @NamedQuery(name = "AreasUniversidad.findByArea", query = "SELECT a FROM AreasUniversidad a WHERE a.area = :area")
-    , @NamedQuery(name = "AreasUniversidad.findByAreaSuperior", query = "SELECT a FROM AreasUniversidad a WHERE a.areaSuperior = :areaSuperior")
-    , @NamedQuery(name = "AreasUniversidad.findByNombre", query = "SELECT a FROM AreasUniversidad a WHERE a.nombre = :nombre")
-    , @NamedQuery(name = "AreasUniversidad.findBySiglas", query = "SELECT a FROM AreasUniversidad a WHERE a.siglas = :siglas")
-    , @NamedQuery(name = "AreasUniversidad.findByResponsable", query = "SELECT a FROM AreasUniversidad a WHERE a.responsable = :responsable")
-    , @NamedQuery(name = "AreasUniversidad.findByVigente", query = "SELECT a FROM AreasUniversidad a WHERE a.vigente = :vigente")
-    , @NamedQuery(name = "AreasUniversidad.findByTienePoa", query = "SELECT a FROM AreasUniversidad a WHERE a.tienePoa = :tienePoa")})
+    @NamedQuery(name = "AreasUniversidad.findAll", query = "SELECT a FROM AreasUniversidad a"),
+    @NamedQuery(name = "AreasUniversidad.findByArea", query = "SELECT a FROM AreasUniversidad a WHERE a.area = :area"),
+    @NamedQuery(name = "AreasUniversidad.findByAreaSuperior", query = "SELECT a FROM AreasUniversidad a WHERE a.areaSuperior = :areaSuperior"),
+    @NamedQuery(name = "AreasUniversidad.findByNombre", query = "SELECT a FROM AreasUniversidad a WHERE a.nombre = :nombre"),
+    @NamedQuery(name = "AreasUniversidad.findBySiglas", query = "SELECT a FROM AreasUniversidad a WHERE a.siglas = :siglas"),
+    @NamedQuery(name = "AreasUniversidad.findByResponsable", query = "SELECT a FROM AreasUniversidad a WHERE a.responsable = :responsable"),
+    @NamedQuery(name = "AreasUniversidad.findByVigente", query = "SELECT a FROM AreasUniversidad a WHERE a.vigente = :vigente"),
+    @NamedQuery(name = "AreasUniversidad.findByTienePoa", query = "SELECT a FROM AreasUniversidad a WHERE a.tienePoa = :tienePoa")})
 public class AreasUniversidad implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -68,6 +68,9 @@ public class AreasUniversidad implements Serializable {
     @NotNull
     @Column(name = "tiene_poa")
     private boolean tienePoa;
+    @JoinColumn(name = "nivelEducativo", referencedColumnName = "nivel")
+    @ManyToOne
+    private ProgramasEducativosNiveles nivelEducativo;
     @JoinColumn(name = "categoria", referencedColumnName = "categoria")
     @ManyToOne(optional = false)
     private Categorias categoria;
@@ -141,6 +144,14 @@ public class AreasUniversidad implements Serializable {
 
     public void setTienePoa(boolean tienePoa) {
         this.tienePoa = tienePoa;
+    }
+
+    public ProgramasEducativosNiveles getNivelEducativo() {
+        return nivelEducativo;
+    }
+
+    public void setNivelEducativo(ProgramasEducativosNiveles nivelEducativo) {
+        this.nivelEducativo = nivelEducativo;
     }
 
     public Categorias getCategoria() {

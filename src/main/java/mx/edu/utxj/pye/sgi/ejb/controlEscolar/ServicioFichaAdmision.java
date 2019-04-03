@@ -56,6 +56,7 @@ import javax.mail.util.ByteArrayDataSource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import mx.edu.utxj.pye.sgi.entity.ch.Generos;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 
@@ -69,6 +70,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
 
     @EJB FacadeCE facadeCE;
     @EJB EjbDatosUsuarioLogeado ejbDatosUsuarioLogeado;
+    @EJB EjbProcesoInscripcion ejbProcesoInscripcion;
 
     @Override
     public void GuardaPersona(Persona persona) {
@@ -118,7 +120,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
                         p.setNombre(ucFirst(parts[4]));
                         if(parts[5].equals("HOMBRE"))
                             p.setGenero((short) 2);
-                        if(parts.equals("MUJER"))
+                        if(parts[5].equals("MUJER"))
                             p.setGenero((short) 1);
                         fecha_nacimiento = parts[6].replace("/","-");
                         p.setFechaNacimiento(sm.parse(fecha_nacimiento));
@@ -340,9 +342,9 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     }
 
     @Override
-    public ProgramasEducativos buscaPEByClave(String clave) {
-        return facadeCE.getEntityManager().createNamedQuery("ProgramasEducativos.findBySiglas",ProgramasEducativos.class)
-                .setParameter("siglas",clave)
+    public AreasUniversidad buscaPEByClave(Short clave) {
+        return facadeCE.getEntityManager().createNamedQuery("AreasUniversidad.findByArea",AreasUniversidad.class)
+                .setParameter("area",clave)
                 .getSingleResult();
     }
 
@@ -498,7 +500,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
         AcroFields fields = pdfStamper.getAcroFields();
         fields.setField("folio", String.valueOf(aspirante.getFolioAspirante()));
         fields.setField("fechaA", sm.format(aspirante.getFechaRegistro()));
-        fields.setField("carreraA", academicos.getPrimeraOpcion());
+        fields.setField("carreraA", ejbProcesoInscripcion.buscaAreaByClave(academicos.getPrimeraOpcion()).getNombre());
         fields.setField("apellidoPatA", persona.getApellidoPaterno());
         fields.setField("apellidoMatA", persona.getApellidoMaterno());
         fields.setField("nombreAlumnoA", persona.getNombre());
@@ -524,7 +526,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
         fields.setField("turnoA", academicos.getSistemaPrimeraOpcion().getNombre());
 
         fields.setField("fechaC", sm.format(aspirante.getFechaRegistro()));
-        fields.setField("carreraC",academicos.getSegundaOpcion());
+        fields.setField("carreraC",ejbProcesoInscripcion.buscaAreaByClave(academicos.getPrimeraOpcion()).getNombre());
         fields.setField("apellidoPatC", persona.getApellidoPaterno());
         fields.setField("apellidoMatC", persona.getApellidoMaterno());
         fields.setField("nombreAlumnoC", persona.getNombre());

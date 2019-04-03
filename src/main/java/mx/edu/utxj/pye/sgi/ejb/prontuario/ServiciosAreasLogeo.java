@@ -60,4 +60,10 @@ public class ServiciosAreasLogeo implements EjbAreasLogeo {
         facade.flush();
         return au;
     }
+
+    @Override
+    public List<AreasUniversidad> listaProgramasEducativos(){
+        return facade.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.categoria.categoria = 9 ORDER BY au.nombre", AreasUniversidad.class)
+                .getResultList();
+    }
 }

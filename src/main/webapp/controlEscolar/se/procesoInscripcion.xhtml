@@ -12,10 +12,10 @@
         <ui:param name="renderBreadCrumb" value="false"/>
          <!-- Inicio estilos par proceso electoral -->
         <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
-            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
         </c:if>  
         <c:if test="#{!controladorEmpleado.procesoElectoralActivo}">
-            <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
         </c:if> 
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
@@ -35,7 +35,7 @@
                 Esta página está disponible solo para pantallas superiores a 1024px.
             </h1>
         </p:panel>
-        <p:tabView id="tabw1" dynamic="true">
+        <p:tabView id="tabw1">
             <p:tab title="Validación de Ficha de Admisión">
                 <p:panel id="informacion" class="hidden-xs hidden-sm" styleClass="box box-primary">
                     <section class="content">
@@ -132,10 +132,10 @@
                                     </p:row>
                                 </p:columnGroup>
                                 <p:column>
-                                    <h:outputText value="#{concentrado.nivel.nombre.concat(' en ').concat(concentrado.nombre)}"/>
+                                    <h:outputText value="#{concentrado.nombre}"/>
                                 </p:column>
                                 <p:column style="text-align: center;">
-                                    <h:outputText value="#{procesoInscripcion.carlcularTotales(concentrado.siglas)}"/>
+                                    <h:outputText value="#{procesoInscripcion.carlcularTotales(concentrado.area)}"/>
                                 </p:column>
                                 <p:column style="text-align: center;">
                                     <h:outputText value="#{procesoInscripcion.totalRegistroSabatino}"/>
@@ -157,10 +157,10 @@
                         <hr/>
                         <h:form id="frmListaA">
                             <p:dataTable var="a" value="#{procesoInscripcion.listaAspirantesTSU}" sortBy="#{a.datosAcademicos.primeraOpcion}" expandableRowGroups="true" emptyMessage="No existen aspirantes registrados para esta carrera" paginator="true"
-                                         rows="30" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="60,90,120">
+                                         rows="150" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="60,90,120">
                                 <p:headerRow>
                                     <p:column colspan="10" style="background-color: #00b5ad;">
-                                        <h:outputText value="#{a.datosAcademicos.primeraOpcion}" />
+                                        <h:outputText value="#{procesoInscripcion.nombrePE(a.datosAcademicos.primeraOpcion)}" />
                                     </p:column>
                                 </p:headerRow>
                                 <p:column headerText="Folio Ficha de Admisión">
@@ -181,13 +181,13 @@
                                 <p:column headerText="CURP">
                                     <h:outputText value="#{a.idPersona.curp}"/>
                                 </p:column>
-                                <p:column headerText="Turno">
+                                <p:column headerText="Sistema" style="width: 100px;">
                                     <h:outputText value="#{a.datosAcademicos.sistemaPrimeraOpcion.nombre}"/>
                                 </p:column>
                                 <p:column headerText="Carrera Segunda Opcion">
-                                    <h:outputText value="#{a.datosAcademicos.segundaOpcion}"/>
+                                    <h:outputText value="#{procesoInscripcion.nombrePE(a.datosAcademicos.segundaOpcion)}"/>
                                 </p:column>
-                                <p:column headerText="Turno Segunda Opcion">
+                                <p:column headerText="Sistema Segunda Opcion" style="width: 100px;">
                                     <h:outputText value="#{a.datosAcademicos.sistemaSegundaOpcion.nombre}"/>
                                 </p:column>
                                 <p:column headerText="Estatus" style="text-align: center;width: 85px;">
@@ -213,26 +213,26 @@
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                 <p:focus context=":tabw1:inscripcion"/>
                                                                 <p:outputLabel for="folioI" style="font-size: large;text-align: right;" value="Folio ficha de admisión:" />
-                                                                <p:inputText id="folioI" class="form-control" value="#{procesoInscripcion.folioFicha}"  placeholder="Ingresa tu folio de ficha de admisión" required="true" requiredMessage="Es necesario que ingrese su el folio de ficha de admisión">
-                                                                    <p:ajax event="change" listener="#{procesoInscripcion.buscarFichaAdmision()}" update="@form"/>
+                                                                <p:inputText id="folioI" class="form-control" value="#{procesoInscripcion.folioFichaInscripcion}"  placeholder="Ingresa tu folio de ficha de admisión" required="true" requiredMessage="Es necesario que ingrese su el folio de ficha de admisión">
+                                                                    <p:ajax event="change" listener="#{procesoInscripcion.buscarFichaAdmisionValida()}" update="@form"/>
                                                                 </p:inputText>
                                                                 <p:message for="folioI"><p:autoUpdate/></p:message>
                                                             </div>
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                 <p:outputLabel for="nombre" style="font-size: large;text-align: right;" value="Nombre:" />
-                                                                <p:inputText id="nombre" class="form-control" value="#{procesoInscripcion.persona.nombre}" readonly="true"/>
+                                                                <p:inputText id="nombre" class="form-control" value="#{procesoInscripcion.personaValido.nombre}" readonly="true"/>
                                                             </div>
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                 <p:outputLabel for="ap" style="font-size: large;text-align: right;" value="Apellido Paterno" />
-                                                                <p:inputText id="ap" class="form-control" value="#{procesoInscripcion.persona.apellidoPaterno}" readonly="true"/>
+                                                                <p:inputText id="ap" class="form-control" value="#{procesoInscripcion.personaValido.apellidoPaterno}" readonly="true"/>
                                                             </div>
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                 <p:outputLabel for="am" style="font-size: large;text-align: right;" value="Apellido Materno" />
-                                                                <p:inputText id="am" class="form-control" value="#{procesoInscripcion.persona.apellidoMaterno}" readonly="true"/>
+                                                                <p:inputText id="am" class="form-control" value="#{procesoInscripcion.personaValido.apellidoMaterno}" readonly="true"/>
                                                             </div>
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                 <p:outputLabel for="promedio" style="font-size: large" value="Promedio:*"/>
-                                                                <p:inputText id="promedio" class="form-control" placeholder="0.0" value="#{fichaAdm.datosAcademicos.promedio}" required="true" requiredMessage="Dede de indicar el promedio de su bachillerato">
+                                                                <p:inputText id="promedio" class="form-control" placeholder="0.0" value="#{procesoInscripcion.aspiranteValido.datosAcademicos.promedio}" required="true" requiredMessage="Dede de indicar el promedio de su bachillerato">
                                                                     <f:convertNumber pattern="#0.00" />
                                                                     <f:validateDoubleRange maximum="10.00" minimum="6.00"/>
                                                                 </p:inputText>
@@ -240,7 +240,7 @@
                                                             </div>
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                 <p:outputLabel for="tipoS" style="font-size: large" value="Tipo Sangre*"/>
-                                                                <p:selectOneMenu id="tipoS" required="true" value="#{fichaAdm.datosMedicos.cveTipoSangre}" converter="tipoSangreConverter" requiredMessage="Es nesesario que ingrese su tipo de sangre">
+                                                                <p:selectOneMenu id="tipoS" required="true" value="#{procesoInscripcion.personaValido.datosMedicos.cveTipoSangre}" converter="tipoSangreConverter" requiredMessage="Es nesesario que ingrese su tipo de sangre">
                                                                     <f:selectItem itemValue="#{null}"/>
                                                                     <f:selectItems value="#{fichaAdm.listaTipoSangre}"/>
                                                                 </p:selectOneMenu>
@@ -248,24 +248,25 @@
                                                             </div>
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                 <p:outputLabel for="peP" style="font-size: large;text-align: right;" value="Carrera Principal" />
-                                                                <p:inputText id="peP" class="form-control" value="#{procesoInscripcion.aspirante.datosAcademicos.primeraOpcion}" readonly="true"/>
+                                                                <p:inputText id="peP" class="form-control" value="#{procesoInscripcion.aspiranteValido.datosAcademicos.primeraOpcion}" readonly="true"/>
                                                             </div>
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                 <p:outputLabel for="sistemaP" style="font-size: large;text-align: right;" value="Sistema Principal" />
-                                                                <p:inputText id="sistemaP" class="form-control" value="#{procesoInscripcion.aspirante.datosAcademicos.sistemaPrimeraOpcion.nombre}" readonly="true"/>
+                                                                <p:inputText id="sistemaP" class="form-control" value="#{procesoInscripcion.aspiranteValido.datosAcademicos.sistemaPrimeraOpcion.nombre}" readonly="true"/>
                                                             </div>
                                                              <div class="col-sm-3 col-md-3 col-lg-3">
                                                                 <p:outputLabel for="peO" style="font-size: large;text-align: right;" value="Carrera Opcional" />
-                                                                <p:inputText id="peO" class="form-control" value="#{procesoInscripcion.aspirante.datosAcademicos.primeraOpcion}" readonly="true"/>
+                                                                <p:inputText id="peO" class="form-control" value="#{procesoInscripcion.aspiranteValido.datosAcademicos.primeraOpcion}" readonly="true"/>
                                                             </div>
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                 <p:outputLabel for="sistemaO" style="font-size: large;text-align: right;" value="Sistema Opcional" />
-                                                                <p:inputText id="sistemaO" class="form-control" value="#{procesoInscripcion.aspirante.datosAcademicos.sistemaPrimeraOpcion.nombre}" readonly="true"/>
+                                                                <p:inputText id="sistemaO" class="form-control" value="#{procesoInscripcion.aspiranteValido.datosAcademicos.sistemaPrimeraOpcion.nombre}" readonly="true"/>
                                                             </div>
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                 <p:selectOneRadio id="prgP" layout="responsive" columns="3">
-                                                                    <f:selectItem itemValue="primeraOpcion" itemLabel="Primera Opción"/>
-                                                                    <f:selectItem itemValue="segundaOpcion" itemLabel="Segunda Opción"/>
+                                                                    <f:selectItem itemValue="1" itemLabel="Primera Opción"/>
+                                                                    <f:selectItem itemValue="2" itemLabel="Segunda Opción"/>
+                                                                    <p:ajax  listener="#{procesoInscripcion.opcionInscripcio()}"/>
                                                                 </p:selectOneRadio>
                                                             </div>
                                                         </div>

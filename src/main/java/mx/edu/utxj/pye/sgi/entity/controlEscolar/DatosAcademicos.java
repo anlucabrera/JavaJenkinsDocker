@@ -17,7 +17,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -44,14 +43,12 @@ public class DatosAcademicos implements Serializable {
     private Integer aspirante;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 11)
     @Column(name = "primera_opcion")
-    private String primeraOpcion;
+    private short primeraOpcion;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 11)
     @Column(name = "segunda_opcion")
-    private String segundaOpcion;
+    private short segundaOpcion;
     @Basic(optional = false)
     @NotNull
     @Column(name = "promedio")
@@ -60,18 +57,18 @@ public class DatosAcademicos implements Serializable {
     @NotNull
     @Column(name = "institucion_academica")
     private int institucionAcademica;
+    @JoinColumn(name = "sistema_primera_opcion", referencedColumnName = "id_sistema")
+    @ManyToOne(optional = false)
+    private Sistema sistemaPrimeraOpcion;
+    @JoinColumn(name = "sistema_segunda_opcion", referencedColumnName = "id_sistema")
+    @ManyToOne(optional = false)
+    private Sistema sistemaSegundaOpcion;
     @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Aspirante aspirante1;
     @JoinColumn(name = "especialidad_iems", referencedColumnName = "id_especialidad_centro")
     @ManyToOne(optional = false)
     private EspecialidadCentro especialidadIems;
-    @JoinColumn(name = "sistema_primera_opcion", referencedColumnName = "id_turno")
-    @ManyToOne(optional = false)
-    private Turno sistemaPrimeraOpcion;
-    @JoinColumn(name = "sistema_segunda_opcion", referencedColumnName = "id_turno")
-    @ManyToOne(optional = false)
-    private Turno sistemaSegundaOpcion;
 
     public DatosAcademicos() {
     }
@@ -80,7 +77,7 @@ public class DatosAcademicos implements Serializable {
         this.aspirante = aspirante;
     }
 
-    public DatosAcademicos(Integer aspirante, String primeraOpcion, String segundaOpcion, double promedio, int institucionAcademica) {
+    public DatosAcademicos(Integer aspirante, short primeraOpcion, short segundaOpcion, double promedio, int institucionAcademica) {
         this.aspirante = aspirante;
         this.primeraOpcion = primeraOpcion;
         this.segundaOpcion = segundaOpcion;
@@ -96,19 +93,19 @@ public class DatosAcademicos implements Serializable {
         this.aspirante = aspirante;
     }
 
-    public String getPrimeraOpcion() {
+    public short getPrimeraOpcion() {
         return primeraOpcion;
     }
 
-    public void setPrimeraOpcion(String primeraOpcion) {
+    public void setPrimeraOpcion(short primeraOpcion) {
         this.primeraOpcion = primeraOpcion;
     }
 
-    public String getSegundaOpcion() {
+    public short getSegundaOpcion() {
         return segundaOpcion;
     }
 
-    public void setSegundaOpcion(String segundaOpcion) {
+    public void setSegundaOpcion(short segundaOpcion) {
         this.segundaOpcion = segundaOpcion;
     }
 
@@ -128,6 +125,22 @@ public class DatosAcademicos implements Serializable {
         this.institucionAcademica = institucionAcademica;
     }
 
+    public Sistema getSistemaPrimeraOpcion() {
+        return sistemaPrimeraOpcion;
+    }
+
+    public void setSistemaPrimeraOpcion(Sistema sistemaPrimeraOpcion) {
+        this.sistemaPrimeraOpcion = sistemaPrimeraOpcion;
+    }
+
+    public Sistema getSistemaSegundaOpcion() {
+        return sistemaSegundaOpcion;
+    }
+
+    public void setSistemaSegundaOpcion(Sistema sistemaSegundaOpcion) {
+        this.sistemaSegundaOpcion = sistemaSegundaOpcion;
+    }
+
     public Aspirante getAspirante1() {
         return aspirante1;
     }
@@ -142,22 +155,6 @@ public class DatosAcademicos implements Serializable {
 
     public void setEspecialidadIems(EspecialidadCentro especialidadIems) {
         this.especialidadIems = especialidadIems;
-    }
-
-    public Turno getSistemaPrimeraOpcion() {
-        return sistemaPrimeraOpcion;
-    }
-
-    public void setSistemaPrimeraOpcion(Turno sistemaPrimeraOpcion) {
-        this.sistemaPrimeraOpcion = sistemaPrimeraOpcion;
-    }
-
-    public Turno getSistemaSegundaOpcion() {
-        return sistemaSegundaOpcion;
-    }
-
-    public void setSistemaSegundaOpcion(Turno sistemaSegundaOpcion) {
-        this.sistemaSegundaOpcion = sistemaSegundaOpcion;
     }
 
     @Override

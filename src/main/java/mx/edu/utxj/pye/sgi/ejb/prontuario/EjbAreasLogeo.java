@@ -18,4 +18,6 @@ public interface EjbAreasLogeo {
     public AreasUniversidad agregarAreasUniversidad(AreasUniversidad au) throws Throwable;
 
     public AreasUniversidad actualizarAreasUniversidad(AreasUniversidad au) throws Throwable;
+    
+    public List<AreasUniversidad> listaProgramasEducativos();
 }

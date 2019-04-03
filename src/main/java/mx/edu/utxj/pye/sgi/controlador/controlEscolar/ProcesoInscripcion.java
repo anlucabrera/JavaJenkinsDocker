@@ -1,8 +1,11 @@
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
@@ -20,10 +23,11 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbFichaAdmision;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbProcesoInscripcion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSelectItemCE;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion;
-import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import org.omnifaces.util.Messages;
 
 @Named(value = "procesoInscripcion")
@@ -31,25 +35,30 @@ import org.omnifaces.util.Messages;
 public class ProcesoInscripcion implements Serializable{
     
     @Getter @Setter private ProcesosInscripcion procesosInscripcion;
-    @Getter @Setter private Aspirante aspirante;
-    @Getter @Setter private Persona persona;
+    @Getter @Setter private Aspirante aspirante, aspiranteValido;
+    @Getter @Setter private Persona persona, personaValido;
     @Getter @Setter private List<Aspirante> listaAspirantesTSU;
     @Getter @Setter private List<Aspirante> listaAspirantesTSUXPE;
-    @Getter @Setter private List<ProgramasEducativos> listaPe;
-    @Getter @Setter private Integer folioFicha;
+    @Getter @Setter private List<AreasUniversidad> listaPe;
+    @Getter @Setter private List<AreasUniversidad> listaAreasUniversidad = new ArrayList<>();
+    @Getter @Setter private Integer folioFicha,folioFichaInscripcion;
     @Getter @Setter private long totalRegistroSemanal,totalRegistroSabatino,totalRegistroSemanalValido,totalRegistroSabatinoValido;
     
     @EJB EjbFichaAdmision ejbFichaAdmision;
     @EJB EjbProcesoInscripcion ejbProcesoInscripcion;
     @EJB EjbSelectItemCE ejbSelectItemCE;
+    @EJB EjbAreasLogeo ejbAreasLogeo;
     
     @PostConstruct
     public void init(){
         aspirante = new Aspirante();
         persona = new Persona();
+        aspiranteValido = new Aspirante();
+        personaValido = new Persona();
         procesosInscripcion = ejbFichaAdmision.getProcesoIncripcionTSU();
         listaAspirantesTSU = ejbProcesoInscripcion.listaAspirantesTSU(procesosInscripcion.getIdProcesosInscripcion());
         listaPe = ejbSelectItemCE.itemPEAll();
+        listaAreasUniversidad = ejbAreasLogeo.listaProgramasEducativos();
     }
     
     public void buscarFichaAdmision(){
@@ -124,7 +133,7 @@ public class ProcesoInscripcion implements Serializable{
         folioFicha = null;
     }
     
-    public Long carlcularTotales(String clavePe){
+    public Long carlcularTotales(Short clavePe){
         listaAspirantesTSUXPE = ejbProcesoInscripcion.lisAspirantesByPE(clavePe, procesosInscripcion.getIdProcesosInscripcion());
         
         totalRegistroSemanal = listaAspirantesTSUXPE.stream()
@@ -144,5 +153,24 @@ public class ProcesoInscripcion implements Serializable{
                 .count();
         
         return totalRegistroSemanal;
+    }
+    
+    public void buscarFichaAdmisionValida(){
+        aspiranteValido = ejbProcesoInscripcion.buscaAspiranteByFolioValido(folioFichaInscripcion);
+        if(aspiranteValido != null){
+            personaValido = aspiranteValido.getIdPersona();
+            Messages.addGlobalInfo("Registro encontrado exitosamente de "+personaValido.getNombre()+" !");
+        }else{
+            Messages.addGlobalError("No se encuentra registro con este folio , verificar si ya fue validado!");
+            folioFicha = null;
+        }
+    }
+    
+    public String nombrePE(Short idpe){
+        return ejbProcesoInscripcion.buscaAreaByClave(idpe).getNombre();
+    }
+    
+    public void opcionInscripcio(){
+        
     }
 }

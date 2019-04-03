@@ -7,7 +7,6 @@ import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbFichaAdmision;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSelectItemCE;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
-import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
 import org.omnifaces.util.Messages;
 
@@ -23,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 
 import org.omnifaces.util.Faces;
 
@@ -48,7 +48,7 @@ public class FichaAdmision implements Serializable {
     @Getter @Setter private List<Escolaridad> listaEscolaridad;
     @Getter @Setter private List<Ocupacion> listaOcupacion;
     @Getter @Setter private List<EspecialidadCentro> listaEspecialidades;
-    @Getter @Setter private List<Turno> listaTurno;
+    @Getter @Setter private List<Sistema> listaSistema;
     @Getter @Setter private List<String> selectAM;
     @Getter @Setter private ProcesosInscripcion procesosInscripcion;
     @Getter @Setter private Persona persona;
@@ -91,11 +91,11 @@ public class FichaAdmision implements Serializable {
         listaEspecialidades = ejbItemCE.itemEspecialidadCentro();
         listaAreasPO = ejbItemCE.itemAreaAcademica();
         listaAreasSO = ejbItemCE.itemAreaAcademica();
-        listaTurno = ejbItemCE.itemTurno();
+        listaSistema = ejbItemCE.itemSistema();
         Faces.setSessionAttribute("listaOcp", listaOcupacion);
         Faces.setSessionAttribute("listaEsc", listaEscolaridad);
         Faces.setSessionAttribute("listaEspecialidad", listaEspecialidades);
-        Faces.setSessionAttribute("listTurno",listaTurno);
+        Faces.setSessionAttribute("listaSistema",listaSistema);
     }
 
     public void desencriptarCURP() throws IOException {
@@ -330,8 +330,9 @@ public class FichaAdmision implements Serializable {
 
     public void guardaDatosAcademicos(){
         if(datosAcademicos.getAspirante() == null){
-            if(datosAcademicos.getPrimeraOpcion().equals(datosAcademicos.getSegundaOpcion())){
-                datosAcademicos.setSegundaOpcion(null);
+            if(datosAcademicos.getPrimeraOpcion() == datosAcademicos.getSegundaOpcion()){
+                short a = 0;
+                datosAcademicos.setSegundaOpcion(a);
                 Messages.addGlobalWarn("La carrera principal y opcional deben de ser diferentes!");
                 index = 4;
             }else{
@@ -346,8 +347,9 @@ public class FichaAdmision implements Serializable {
             }
             
         }else{
-            if(datosAcademicos.getPrimeraOpcion().equals(datosAcademicos.getSegundaOpcion())){
-                datosAcademicos.setSegundaOpcion(null);
+            if(datosAcademicos.getPrimeraOpcion() == datosAcademicos.getSegundaOpcion()){
+                short a = 0;
+                datosAcademicos.setSegundaOpcion(a);
                 Messages.addGlobalWarn("La carrera principal y opcional deben de ser diferentes!");
                 index = 4;
             }else{
@@ -401,16 +403,16 @@ public class FichaAdmision implements Serializable {
         if(aspirante.getDatosAcademicos() != null){
             datosAcademicos = aspirante.getDatosAcademicos();
             Iems iems = new Iems();
-            ProgramasEducativos p1 = new ProgramasEducativos();
-            ProgramasEducativos p2 = new ProgramasEducativos();
+            AreasUniversidad p1 = new AreasUniversidad();
+            AreasUniversidad p2 = new AreasUniversidad();
             iems = ejbFichaAdmision.buscaIemsByClave(datosAcademicos.getInstitucionAcademica());
             estado_iems = iems.getLocalidad().getLocalidadPK().getClaveEstado();
             municipio_iems = iems.getLocalidad().getLocalidadPK().getClaveMunicipio();
             localidad_iems = iems.getLocalidad().getLocalidadPK().getClaveLocalidad();
             p1 = ejbFichaAdmision.buscaPEByClave(datosAcademicos.getPrimeraOpcion());
             p2 = ejbFichaAdmision.buscaPEByClave(datosAcademicos.getSegundaOpcion());
-            areaAcademicaPO = p1.getArea().getArea();
-            areaAcademicaSO = p2.getArea().getArea();
+            areaAcademicaPO = p1.getAreaSuperior();
+            areaAcademicaSO = p2.getAreaSuperior();
             selectMunicipioIems();
             selectLocalidadIems();
             selectIems();
