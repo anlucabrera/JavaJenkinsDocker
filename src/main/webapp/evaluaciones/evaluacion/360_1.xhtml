@@ -9,7 +9,7 @@
 
     <ui:define name="head-end">
         <!-- Inicio estilos par proceso electoral -->
-        <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+<!--        <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />-->
         <!-- Fin estilos par proceso electoral -->
         <style type="text/css">
             .ui-datatable .ui-datatable-header {
@@ -43,7 +43,7 @@
                     <div id="main-buttons" class="hidden-sm hidden-xs" >
                         <p:toolbar id="tb">
                             <f:facet name="left">
-                                <p:outputLabel value="Total a evualuar: #{evaluacion360Admin1.listaSubordinados.size()}" />
+                                <p:outputLabel value="Total a evualuar: #{evaluacion360Admin1.listaEvaluados.size()}" />
                                 <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                 <p:outputLabel value="Evaluados: #{evaluacion360Admin1.evaluados}" />
                                 <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
@@ -51,7 +51,7 @@
                                 <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                             </f:facet>
                             <f:facet name="right">
-                                <p:commandButton value="Descargar" id="btnDescargar" actionListener="#{evaluacion360Admin1.descargarCedulas()}" process="@this" icon="fa fa-sign-in" styleClass="btn-primary"  update="@this" rendered="#{evaluacion360Admin1.directivoSeleccionado.areaOperativa eq caster.toInt(13) or evaluacion360Admin1.directivoSeleccionado.clave eq caster.toInt(203) or evaluacion360Admin1.directivoSeleccionado.clave eq caster.toInt(30)}" />
+                                <p:commandButton value="Descargar" id="btnDescargar" actionListener="#{evaluacion360Admin1.descargarCedulas()}" process="@this" icon="fa fa-sign-in" styleClass="btn-primary"  update="@this" rendered="#{evaluacion360Admin1.evaluador.areaOperativa eq caster.toInt(13) or evaluacion360Admin1.evaluador.clave eq caster.toInt(203) or evaluacion360Admin1.evaluador.clave eq caster.toInt(30)}" />
                                 <p:commandButton value="Actualizar" id="btnActualizar" actionListener="#{evaluacion360Admin1.actualizar()}" process="@this" icon="fa fa-refresh" styleClass="btn-primary" />
                                 <p:commandButton value="Siguiente" id="btnSiguiente" actionListener="#{evaluacion360Admin1.continuarEvaluando()}" process="@this" icon="fa fa-sign-in" styleClass="btn-primary"  update="@form"/>
                             </f:facet>
@@ -88,7 +88,7 @@
                             <c:if test="#{!empty evaluacion360Admin1.evaluacion}">
                                 <div jsf:id="filaHeader" class="row hidden-sm hidden-md hidden-sm hidden-xs" style="background-color: white;">
                                     <div class="col-lg-4 text-center text-info" style="height: 230px; vertical-align: middle;">
-                                        <c:if test="#{evaluacion360Admin1.listaSubordinados.size() eq evaluacion360Admin1.evaluados}">
+                                        <c:if test="#{evaluacion360Admin1.listaEvaluados.size() eq evaluacion360Admin1.evaluados}">
                                             <div>
                                                 <h2 style="background-color: aliceblue;">Evaluación terminada</h2>
                                                 <p:graphicImage library="img" name="ok_azul.png" height="150" />

@@ -270,7 +270,7 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
 
     @Override
     public List<EvaluacionDocentesMateriaResultados> getEvaluacionDocentesResultadosPromedioGeneral(EvaluacionDocentesMaterias evaluacion, Integer evaluado) {
-        TypedQuery<EvaluacionDocentesMateriaResultados> q = f.getEntityManager().createQuery("SELECT e from EvaluacionDocentesMateriaResultados e WHERE e.evaluacionDocentesMaterias.evaluacion = :evaluacion AND e.evaluacionDocentesMateriaResultadosPK.evaluado = :evaluado ", EvaluacionDocentesMateriaResultados.class);
+        TypedQuery<EvaluacionDocentesMateriaResultados> q = f.getEntityManager().createQuery("SELECT e from EvaluacionDocentesMateriaResultados e WHERE e.evaluaciones.evaluacion = :evaluacion AND e.evaluacionDocentesMateriaResultadosPK.evaluado = :evaluado ", EvaluacionDocentesMateriaResultados.class);
         q.setParameter("evaluacion", evaluacion.getEvaluacion());
         q.setParameter("evaluado", evaluado);
         List<EvaluacionDocentesMateriaResultados> l = q.getResultList();
@@ -298,7 +298,7 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
 
     @Override
     public List<EvaluacionDocentesMateriaResultados> getEvaluacionDocentesResultadosPromedioMateria(EvaluacionDocentesMaterias evaluacion, Integer evaluado, String materia) {
-        TypedQuery<EvaluacionDocentesMateriaResultados> q = f.getEntityManager().createQuery("SELECT e from EvaluacionDocentesMateriaResultados e WHERE e.evaluacionDocentesMaterias.evaluacion = :evaluacion AND e.evaluacionDocentesMateriaResultadosPK.evaluado = :evaluado AND e.evaluacionDocentesMateriaResultadosPK.cveMateria = :materia", EvaluacionDocentesMateriaResultados.class);
+        TypedQuery<EvaluacionDocentesMateriaResultados> q = f.getEntityManager().createQuery("SELECT e from EvaluacionDocentesMateriaResultados e WHERE e.evaluaciones.evaluacion = :evaluacion AND e.evaluacionDocentesMateriaResultadosPK.evaluado = :evaluado AND e.evaluacionDocentesMateriaResultadosPK.cveMateria = :materia", EvaluacionDocentesMateriaResultados.class);
         q.setParameter("evaluacion", evaluacion.getEvaluacion());
         q.setParameter("evaluado", evaluado);
         q.setParameter("materia", materia);
@@ -312,7 +312,7 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
 
     @Override
     public List<EvaluacionDocentesMateriaResultados> getGlobalEvaluacionDocentes(EvaluacionDocentesMaterias evaluacion) {
-        TypedQuery<EvaluacionDocentesMateriaResultados> q = f.getEntityManager().createQuery("SELECT e FROM EvaluacionDocentesMateriaResultados e WHERE  e.evaluacionDocentesMaterias.evaluacion = :evaluacion", EvaluacionDocentesMateriaResultados.class);
+        TypedQuery<EvaluacionDocentesMateriaResultados> q = f.getEntityManager().createQuery("SELECT e FROM EvaluacionDocentesMateriaResultados e WHERE  e.evaluaciones.evaluacion = :evaluacion", EvaluacionDocentesMateriaResultados.class);
         q.setParameter("evaluacion", evaluacion.getEvaluacion());
         List<EvaluacionDocentesMateriaResultados> l = q.getResultList();
         if (l.isEmpty() || l == null) {
@@ -396,10 +396,15 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
 
     @Override
     public Evaluaciones360 nuevaEvaluacion360(Evaluaciones360 evaluacion) {
-        if (evaluacion != null) {
-            evaluacion.setEvaluaciones360ResultadosList(null);
-            f.create(evaluacion);
-        }
+        Evaluaciones360 evaBD = f.getEntityManager().createQuery("select e from Evaluaciones360 e where e.periodo=:periodo", Evaluaciones360.class)
+                .setParameter("periodo", evaluacion.getPeriodo())
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+        if(evaBD != null) return  evaBD;
+
+        evaluacion.setEvaluaciones360ResultadosList(null);
+        f.create(evaluacion);
         return evaluacion;
     }
 

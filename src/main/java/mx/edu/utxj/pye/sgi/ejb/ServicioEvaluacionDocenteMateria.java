@@ -161,8 +161,8 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
 
     @Override
     public Evaluaciones ultimaEvaluacionDocenteMaterias() {
-        TypedQuery<Evaluaciones> q = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones e ORDER BY e.evaluacion DESC", Evaluaciones.class);
-        List<Evaluaciones> l = q.getResultList();
+        TypedQuery<Evaluaciones> q = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones e where e.tipo=:tipo ORDER BY e.evaluacion DESC", Evaluaciones.class);
+        List<Evaluaciones> l = q.setParameter("tipo", "Docente materia").getResultList();
         return l.get(0);
     }
 

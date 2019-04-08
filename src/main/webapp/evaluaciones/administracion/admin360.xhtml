@@ -13,22 +13,17 @@
                 text-align: right !important;
             }
 
-        </style>
-        <script>
-            function descargar(ruta) {
-                var win = window.open(ruta, '_blank');
-                if (win) {
-                    win.focus();
-                }
+            .ui-selectbooleanbutton.ui-button{
+                top: 10px;
             }
-        </script>
+        </style>
     </ui:define>
 
     <ui:define name="title">
-        Adminsitración de evaluación de 360 grados
+        Administración de evaluaciones al personal
     </ui:define>
     <ui:define name="description">
-        Permite generar las combinaciones entre evaluadores y evaluados
+
     </ui:define>
     <ui:define name="body">
         <adm:breadcrumb title="Admin 360"/>
@@ -54,25 +49,34 @@
                                             <p:autoUpdate/>
                                             <p:outputPanel rendered="#{adminEvaluacion360.nivelOperacion eq(2)}" style="margin-top: 4px; margin-bottom: -3px;">
                                                 <p:spacer width="15px"/>
-                                                <f:ajax  execute="sobCombinaciones sobCombinaciones2">
-                                                    <p:selectBooleanButton onLabel="360°" offLabel="360°" value="#{adminEvaluacion360.e360b}" />
-                                                    <p:selectBooleanButton onLabel="Desempeño" offLabel="Desempeño°" value="#{adminEvaluacion360.EDesempenio}" />
-                                                </f:ajax>
+                                                <p:selectBooleanButton onLabel="360°" offLabel="360°" value="#{adminEvaluacion360.e360b}">
+                                                    <p:ajax process="@this" update="@form:tb"/>
+                                                </p:selectBooleanButton>
+                                                <p:selectBooleanButton onLabel="Desempeño" offLabel="Desempeño°" value="#{adminEvaluacion360.edesempenio}">
+                                                    <p:ajax process="@this" update="@form:tb"/>
+                                                </p:selectBooleanButton>
                                             </p:outputPanel>
 
                                             <p:outputPanel rendered="#{adminEvaluacion360.nivelOperacion eq (1)}">
                                                 <p:spacer width="15px"/>
-                                                <p:selectBooleanButton onLabel="360°" offLabel="360°" value="#{adminEvaluacion360.e360b}" />
-                                                <p:selectBooleanButton onLabel="Desempeño" offLabel="Desempeño°" value="#{adminEvaluacion360.EDesempenio}" />
-                                                <p:commandButton class="btn btn-primary" value="Agregar" icon="fa fa-plus" oncomplete="PF('modalNEvaluacion').show()"
-                                                                 actionListener="#{adminEvaluacion360.validarNuevaEvaluacion()}"/>
+                                                <p:selectBooleanButton onLabel="360°" offLabel="360°" value="#{adminEvaluacion360.e360b}">
+                                                    <p:ajax process="@this" update="@form:tb"/>
+                                                </p:selectBooleanButton>
+                                                <p:selectBooleanButton onLabel="Desempeño" offLabel="Desempeño" value="#{adminEvaluacion360.edesempenio}" >
+                                                    <p:ajax process="@this" update="@form:tb"/>
+                                                </p:selectBooleanButton>
+                                                <p:commandButton class="btn btn-primary" value="Agregar" icon="fa fa-plus" oncomplete="PF('modalNEvaluacion').show()" actionListener="#{adminEvaluacion360.validarNuevaEvaluacion()}"/>
                                             </p:outputPanel>
 
                                             <p:outputPanel rendered="#{adminEvaluacion360.nivelOperacion eq (3)}" id="nivel3">
                                                 <p:spacer width="15px"/>
                                                 <f:ajax execute="nivel3">
-                                                    <p:selectBooleanButton onLabel="360°" offLabel="360°" value="#{adminEvaluacion360.e360b}" />
-                                                    <p:selectBooleanButton onLabel="Desempeño" offLabel="Desempeño°" value="#{adminEvaluacion360.EDesempenio}" />
+                                                    <p:selectBooleanButton onLabel="360°" offLabel="360°" value="#{adminEvaluacion360.e360b}" >
+                                                        <p:ajax process="@this" update="@form:tb"/>
+                                                    </p:selectBooleanButton>
+                                                    <p:selectBooleanButton onLabel="Desempeño" offLabel="Desempeño°" value="#{adminEvaluacion360.edesempenio}" >
+                                                        <p:ajax process="@this" update="@form:tb"/>
+                                                    </p:selectBooleanButton>
                                                     <p:commandButton class="btn btn-primary" value="Ver" icon="fa fa-eye"  actionListener="#{adminEvaluacion360.verListaEvaluaciones()}" process="@this" update="tblEvaluaciones"/>
                                                 </f:ajax>
                                             </p:outputPanel>
@@ -84,13 +88,6 @@
                         </p:outputPanel>
                     </div>
                     <div class="box box-solid">
-                        <div class="box-header">
-                            <div class="well well-md">
-                                <p style="text-align: justify; font-size: larger;">
-                                    Administracion de evaluaciones
-                                </p>
-                            </div>
-                        </div>
                         <div class="box-body">          
                             <p:panel id="panelTblCombinaciones">
                                 <p:dataTable id="tblEvaluaciones" lazy="false" value="#{adminEvaluacion360.listaEvaluaciones}"   var="listaEncuesta" filterDelay="700" 
@@ -144,43 +141,43 @@
             <p:outputPanel id="pnlGeneralModal" >
                 <p:autoUpdate/>
                 <h:form>
-                    <p:outputPanel id="pnlAE360" rendered="#{adminEvaluacion360.e360b and !adminEvaluacion360.EDesempenio}" >
+                    <p:outputPanel id="pnlAE360" rendered="#{adminEvaluacion360.e360b and !adminEvaluacion360.edesempenio}" >
                         <p:autoUpdate/>
                         <p:outputLabel value="Agrega una nueva evaluacion 360°" />
                         <br/><br/>
                         <f:ajax execute="pnlNEB" >
                             <p:outputPanel id="pnlNEB">
-                                <p:outputLabel value="Periodo de evaluació"/>
-                                <p:selectOneMenu id="som360P" value="#{adminEvaluacion360.periodoEvaluacion}"  autoWidth="true" effect="fade">
+                                <p:outputLabel value="Periodo de evaluación"/>
+                                <p:selectOneMenu id="som360P" value="#{adminEvaluacion360.periodoEvaluacion}"  autoWidth="true" effect="fade" required="true" requiredMessage="Debe seleccionar un periodo.">
                                     <f:selectItem itemLabel="Elija un periodo: " itemValue="" />
                                     <f:selectItems value="#{adminEvaluacion360.SIPeriodos}" 
                                                    var="periodo" itemValue="#{periodo.value}" itemLabel="#{periodo.label}" 
                                                    itemDescription="#{periodo.description}"  >
                                     </f:selectItems>
                                 </p:selectOneMenu>
+                                <p:message for="som360P" />
                                 <br/>
                                 <p:outputLabel value="Selecione un rango de fechas"/>
                                 <br/>
-                                <p:calendar value="#{adminEvaluacion360.fechaA}" locale="es" /> <p:calendar value="#{adminEvaluacion360.fechaB}" locale="es" />
+                                De: <p:calendar id="fechaA" value="#{adminEvaluacion360.fechaA}" locale="es" pattern="dd/MM/yyyy" readonlyInput="true" required="true" requiredMessage="Seleccione una fecha de inicio." />
+                                <p:message for="fechaA" />
+                                a: <p:calendar id="fechaB" value="#{adminEvaluacion360.fechaB}" locale="es" pattern="dd/MM/yyyy" readonlyInput="true" required="true" requiredMessage="Seleccione una fecha de fin." />
+                                <p:message for="fechaB" />
                             </p:outputPanel>
                         </f:ajax>
-                        <center>
-                            <br/><br/>
-                            <p:commandButton process="pnlAE360" update="panelTblCombinaciones"  icon="fa fa-floppy-o" value="Guradar" title="Guarda una nueva evaluación 360" 
-                                             class="btb btn-primary" actionListener="#{adminEvaluacion360.genera360()}" 
-                                             oncomplete="alert('La evaluacion y las combinaciones han sido creadas correctamente!'); PF('modalNEvaluacion').hide()">
-                                <p:confirm header="Mensaje" message="Al crear una nueva evaluacion se crearan las  combinaciones aleatoriamente, en caso de querer modificar alguna combinacion o agregar a un evaluador mas personal a evaluar, consulte el apartado de combinaciones, EL PROCESO DE CREAR LAS COMBINACIONES PUEDE TARDAR UNOS MINUTOS..." icon="ui-icon-alert"  />
+                        <div style="text-align: center;">
+                            <p:commandButton process="pnlAE360" update="panelTblCombinaciones"  icon="fa fa-floppy-o" value="Guardar" title="Guarda una nueva evaluación 360"
+                                             class="btb btn-primary" actionListener="#{adminEvaluacion360.genera360()}">
+                                <p:confirm header="Mensaje" message="¿Desea confirmar la creación de combinaciones, es caso de existir se reemplazan?" icon="ui-icon-alert"  />
                             </p:commandButton>
                             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" >
-                                <center>
                                     <p:commandButton value="Continuar" class="btn btn-primary"  styleClass="ui-confirmdialog-yes" icon="fa fa-check-circle" />
                                     <p:commandButton value="Cerrar" class="btn btn-warning"  styleClass="ui-confirmdialog-no" icon="fa fa-times-circle" oncomplete="location.reload(true)"/>
-                                </center> 
                             </p:confirmDialog>
-                        </center> 
+                        </div>
                     </p:outputPanel>
 
-                    <p:outputPanel id="pnlAED" rendered="#{adminEvaluacion360.EDesempenio and !adminEvaluacion360.e360b}" >
+                    <p:outputPanel id="pnlAED" rendered="#{adminEvaluacion360.edesempenio and !adminEvaluacion360.e360b}" >
                         <p:autoUpdate/>
                         <p:outputLabel value="Agrega una nueva evaluacion Desempeño" />
                         <br/><br/>
@@ -203,7 +200,7 @@
                                              oncomplete="alert('La evaluacion fue creada Correctamente!'); PF('modalNEvaluacion').hide()"/>
                         </center>        
                     </p:outputPanel>
-                    <p:outputPanel rendered="#{adminEvaluacion360.EDesempenio and adminEvaluacion360.e360b}">
+                    <p:outputPanel rendered="#{adminEvaluacion360.edesempenio and adminEvaluacion360.e360b}">
                         <h1>Solo debe seleccionar un tipo de evaluacion a la vez!</h1>
                     </p:outputPanel>
                 </h:form>
@@ -229,7 +226,7 @@
                         </center>        
                     </p:outputPanel>
 
-                    <p:outputPanel id="pnlAED"  rendered="#{adminEvaluacion360.EDesempenio}" >
+                    <p:outputPanel id="pnlAED"  rendered="#{adminEvaluacion360.edesempenio}" >
                         <p:outputLabel value="Modifique el lapso de fechas para la evaluación seleccionada" />
                         <br/>
                         <p:calendar value="#{adminEvaluacion360.fechaA}" locale="es" /> <p:calendar value="#{adminEvaluacion360.fechaB}" locale="es" />
@@ -310,7 +307,7 @@
                             </p:column>
                         </p:dataTable>             
                     </p:outputPanel>
-                    <p:outputPanel id="pnlAEDes" rendered="#{adminEvaluacion360.EDesempenio}" >
+                    <p:outputPanel id="pnlAEDes" rendered="#{adminEvaluacion360.edesempenio}" >
                         <p:autoUpdate/>
                         <c:if test="#{adminEvaluacion360.listadoEvaluacionDesempenio.size() eq 0}">
                             <h1>Aun no hay registros de esta evaluacion, los registros se generan automaticamente cuando el evaluador accede al sistema</h1>
