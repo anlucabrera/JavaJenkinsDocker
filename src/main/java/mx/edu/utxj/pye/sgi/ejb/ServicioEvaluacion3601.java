@@ -107,7 +107,7 @@ public class ServicioEvaluacion3601 implements EjbEvaluacion3601 {
     @Override
     public Evaluaciones360 evaluacionActiva() {
         return  f.getEntityManager().createQuery("select e from Evaluaciones360 e where e.periodo=:periodo", Evaluaciones360.class)
-                .setParameter("periodo", (short)50)
+                .setParameter("periodo", (short)51)
                 .getResultStream()
                 .findFirst()
                 .orElse(null);
