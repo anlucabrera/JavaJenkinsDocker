@@ -30,7 +30,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
-import mx.edu.utxj.pye.sgi.util.POAUtilidades;
+import mx.edu.utxj.pye.sgi.util.UtilidadesPOA;
 import org.omnifaces.util.Messages;
 import org.omnifaces.util.Servlets;
 import org.primefaces.event.RowEditEvent;
@@ -86,7 +86,7 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
     @EJB    EjbAreasLogeo ejbAreasLogeo;
     
     @Inject    ControladorEmpleado controladorEmpleado;
-    @Inject    POAUtilidades pOAUtilidades;
+    @Inject    UtilidadesPOA pOAUtilidades;
 
     @PostConstruct
     public void init() {
@@ -95,9 +95,9 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
                 
         ejes=new EjesRegistro(0);
         
-        ejercicioFiscal = pOAUtilidades.obtenerejercicioFiscal("Evaluacion", 101);
-        mes = pOAUtilidades.obtenerMes("Evaluacion");
-        mesNombre = pOAUtilidades.obtenerMesNombre(mes);
+        ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa2();;
+        mes = controladorEmpleado.getProcesopoa().getEvaluacion().getFechaInicio().getMonth();
+        mesNombre = controladorEmpleado.getProcesopoa().getEvaluacion().getMesEvaluacion();
         
         claveArea = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
         

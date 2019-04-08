@@ -16,6 +16,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Historicoplantillapersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
+import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
 @Stateful
@@ -60,6 +61,32 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
         facade.setEntityClass(Eventos.class);
         facade.remove(e);
         return e;
+    }
+    
+    @Override
+    public List<Procesopoa> mostrarProcesopoa() throws Throwable{
+        TypedQuery<Procesopoa> q = em.createQuery("SELECT p FROM Procesopoa p", Procesopoa.class);
+        List<Procesopoa> pr = q.getResultList();
+        return pr;
+    }
+
+    @Override
+    public Procesopoa mostrarEtapaPOA(Short calveArea) throws Throwable {
+        TypedQuery<Procesopoa> q = em.createQuery("SELECT p FROM Procesopoa p WHERE p.area=:area", Procesopoa.class);
+        q.setParameter("area", calveArea);
+        List<Procesopoa> pr = q.getResultList();
+        if (pr.isEmpty()) {
+            return null;
+        } else {
+            return pr.get(0);
+        }
+    }
+
+    @Override
+    public Procesopoa actualizarEtapaPOA(Procesopoa procesopoa) throws Throwable {
+        facade.setEntityClass(Procesopoa.class);
+        facade.edit(procesopoa);
+        return procesopoa;
     }
 
     ////////////////////////////////////////////////////////////////////////////////Eventos Áreas
@@ -132,7 +159,7 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
 
 ////////////////////////////////////////////////////////////////////////////////Bitacora Accesos
     @Override
-    public List<Bitacoraacceso> mostrarBitacoraacceso(String tabla,Date fechaI,Date fechaF) throws Throwable {
+    public List<Bitacoraacceso> mostrarBitacoraacceso(String tabla, Date fechaI, Date fechaF) throws Throwable {
         TypedQuery<Bitacoraacceso> q = em.createQuery("SELECT b FROM Bitacoraacceso b WHERE b.tabla=:tabla AND b.fechaHora BETWEEN :fechaI AND :frchaF", Bitacoraacceso.class);
         q.setParameter("tabla", tabla);
         q.setParameter("fechaI", fechaI);

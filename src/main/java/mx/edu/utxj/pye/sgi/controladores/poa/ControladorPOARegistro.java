@@ -21,7 +21,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.UnidadMedidas;
-import mx.edu.utxj.pye.sgi.util.POAUtilidades;
+import mx.edu.utxj.pye.sgi.util.UtilidadesPOA;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
@@ -44,7 +44,7 @@ public class ControladorPOARegistro implements Serializable {
     @Getter    @Setter    private Date fechaActual=new Date();   
     @Getter    @Setter    private Short numPm1=0,numPm2=0,numPm3=0,numPm4=0,numPm5=0,numPm6=0,numPm7=0,numPm8=0,numPm9=0,numPm10=0,numPm11=0,numPm12=0;
     @Getter    @Setter    private Short numPEm1=0,numPEm2=0,numPEm3=0,numPEm4=0,numPEm5=0,numPEm6=0,numPEm7=0,numPEm8=0,numPEm9=0,numPEm10=0,numPEm11=0,numPEm12=0;
-    @Getter    @Setter    private String tipo = "Actividad", nombreUnidad = "", mensajeValidacion = "";
+    @Getter    @Setter    private String tipo = "Actividad", nombreUnidad = "", mensajeValidacion = "",pwd="";
     @Getter    @Setter    private Integer totalProgramado = 0, numeroActividadPrincipal = 1, numeroActividadSecuendaria = 1, numeroActividadPrincipalAnterior = 0, unidadExistente = 0;
     @Getter    @Setter    private Integer mes1 = 0, mes2 = 0, mes3 = 0, mes4 = 0, mes5 = 0, mes6 = 0, mes7 = 0, mes8 = 0, mes9 = 0, mes10 = 0, mes11 = 0, mes12 = 0;
 // variables de entities
@@ -62,12 +62,12 @@ public class ControladorPOARegistro implements Serializable {
 
     @EJB    EjbPoaSelectec poaSelectec;
     @Inject    ControladorEmpleado controladorEmpleado;
-    @Inject    POAUtilidades pOAUtilidades;
+    @Inject    UtilidadesPOA pOAUtilidades;
 
     @PostConstruct
     public void init() {
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARegistro.init()");
-        ejercicioFiscal =  pOAUtilidades.obtenerejercicioFiscal("Registro",100);
+        ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa1();
         unidadDMedida = null;
         numPm1 = null;        numPm2 = null;        numPm3 = null;        numPm4 = null;        numPm5 = null;        numPm6 = null;
         numPm7 = null;        numPm8 = null;        numPm9 = null;        numPm10 = null;        numPm11 = null;        numPm12 = null;
@@ -916,7 +916,7 @@ public class ControladorPOARegistro implements Serializable {
             this.actividadesPoas = actividadesPoas;
         }
     }
-
+    
     public void imprimirValores() {
     }
 

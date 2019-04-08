@@ -22,7 +22,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
-import mx.edu.utxj.pye.sgi.util.POAUtilidades;
+import mx.edu.utxj.pye.sgi.util.UtilidadesPOA;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.primefaces.model.chart.MeterGaugeChartModel;
@@ -58,7 +58,7 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
     @EJB    EjbPoaSelectec poaSelectec;
     @EJB    EjbAreasLogeo areasLogeo;
     @Inject    ControladorEmpleado controladorEmpleado;
-    @Inject    POAUtilidades poau;
+    @Inject    UtilidadesPOA poau;
 
     @PostConstruct
     public void init() {

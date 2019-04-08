@@ -10,6 +10,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.EventosAreasPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Historicoplantillapersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
+import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 
 @Local
 public interface EjbUtilidadesCH {
@@ -22,6 +23,12 @@ public interface EjbUtilidadesCH {
     public Eventos actualizarEventoses(Eventos e) throws Throwable;
 
     public Eventos eliminarEventosesEventos(Eventos e) throws Throwable;
+
+    public List<Procesopoa> mostrarProcesopoa() throws Throwable;
+
+    public Procesopoa mostrarEtapaPOA(Short calveArea) throws Throwable;
+
+    public Procesopoa actualizarEtapaPOA(Procesopoa procesopoa) throws Throwable;
 
 ////////////////////////////////////////////////////////////////////////////////Eventos Áreas
     public List<EventosAreas> mostrarEventosesAreases() throws Throwable;
@@ -42,7 +49,7 @@ public interface EjbUtilidadesCH {
     public PersonalCategorias crearNuevoPersonalCategorias(PersonalCategorias nuevoPersonalCategorias) throws Throwable;
 
 ////////////////////////////////////////////////////////////////////////////////Bitacora Accesos
-    public List<Bitacoraacceso> mostrarBitacoraacceso(String tabla,Date fechaI,Date fechaF) throws Throwable;
+    public List<Bitacoraacceso> mostrarBitacoraacceso(String tabla, Date fechaI, Date fechaF) throws Throwable;
 
     public Bitacoraacceso crearBitacoraacceso(Bitacoraacceso nuevoBitacoraacceso) throws Throwable;
 

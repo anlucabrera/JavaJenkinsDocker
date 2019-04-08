@@ -23,20 +23,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Zabdiel Pèrez Morale
  */
 @Entity
-@Table(name = "areas_universidad",catalog = "prontuario", schema = "")
+@Table(name = "areas_universidad", catalog = "prontuario", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "AreasUniversidad.findAll", query = "SELECT a FROM AreasUniversidad a"),
-    @NamedQuery(name = "AreasUniversidad.findByArea", query = "SELECT a FROM AreasUniversidad a WHERE a.area = :area"),
-    @NamedQuery(name = "AreasUniversidad.findByAreaSuperior", query = "SELECT a FROM AreasUniversidad a WHERE a.areaSuperior = :areaSuperior"),
-    @NamedQuery(name = "AreasUniversidad.findByNombre", query = "SELECT a FROM AreasUniversidad a WHERE a.nombre = :nombre"),
-    @NamedQuery(name = "AreasUniversidad.findBySiglas", query = "SELECT a FROM AreasUniversidad a WHERE a.siglas = :siglas"),
-    @NamedQuery(name = "AreasUniversidad.findByResponsable", query = "SELECT a FROM AreasUniversidad a WHERE a.responsable = :responsable"),
-    @NamedQuery(name = "AreasUniversidad.findByVigente", query = "SELECT a FROM AreasUniversidad a WHERE a.vigente = :vigente"),
-    @NamedQuery(name = "AreasUniversidad.findByTienePoa", query = "SELECT a FROM AreasUniversidad a WHERE a.tienePoa = :tienePoa")})
+    @NamedQuery(name = "AreasUniversidad.findAll", query = "SELECT a FROM AreasUniversidad a")
+    , @NamedQuery(name = "AreasUniversidad.findByArea", query = "SELECT a FROM AreasUniversidad a WHERE a.area = :area")
+    , @NamedQuery(name = "AreasUniversidad.findByAreaSuperior", query = "SELECT a FROM AreasUniversidad a WHERE a.areaSuperior = :areaSuperior")
+    , @NamedQuery(name = "AreasUniversidad.findByNombre", query = "SELECT a FROM AreasUniversidad a WHERE a.nombre = :nombre")
+    , @NamedQuery(name = "AreasUniversidad.findBySiglas", query = "SELECT a FROM AreasUniversidad a WHERE a.siglas = :siglas")
+    , @NamedQuery(name = "AreasUniversidad.findByResponsable", query = "SELECT a FROM AreasUniversidad a WHERE a.responsable = :responsable")
+    , @NamedQuery(name = "AreasUniversidad.findByVigente", query = "SELECT a FROM AreasUniversidad a WHERE a.vigente = :vigente")
+    , @NamedQuery(name = "AreasUniversidad.findByTienePoa", query = "SELECT a FROM AreasUniversidad a WHERE a.tienePoa = :tienePoa")
+    , @NamedQuery(name = "AreasUniversidad.findByCorreoInstitucional", query = "SELECT a FROM AreasUniversidad a WHERE a.correoInstitucional = :correoInstitucional")})
 public class AreasUniversidad implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -68,12 +69,15 @@ public class AreasUniversidad implements Serializable {
     @NotNull
     @Column(name = "tiene_poa")
     private boolean tienePoa;
-    @JoinColumn(name = "nivelEducativo", referencedColumnName = "nivel")
-    @ManyToOne
-    private ProgramasEducativosNiveles nivelEducativo;
+    @Size(max = 255)
+    @Column(name = "correoInstitucional")
+    private String correoInstitucional;
     @JoinColumn(name = "categoria", referencedColumnName = "categoria")
     @ManyToOne(optional = false)
     private Categorias categoria;
+    @JoinColumn(name = "nivelEducativo", referencedColumnName = "nivel")
+    @ManyToOne
+    private ProgramasEducativosNiveles nivelEducativo;
 
     public AreasUniversidad() {
     }
@@ -146,12 +150,12 @@ public class AreasUniversidad implements Serializable {
         this.tienePoa = tienePoa;
     }
 
-    public ProgramasEducativosNiveles getNivelEducativo() {
-        return nivelEducativo;
+    public String getCorreoInstitucional() {
+        return correoInstitucional;
     }
 
-    public void setNivelEducativo(ProgramasEducativosNiveles nivelEducativo) {
-        this.nivelEducativo = nivelEducativo;
+    public void setCorreoInstitucional(String correoInstitucional) {
+        this.correoInstitucional = correoInstitucional;
     }
 
     public Categorias getCategoria() {
@@ -160,6 +164,14 @@ public class AreasUniversidad implements Serializable {
 
     public void setCategoria(Categorias categoria) {
         this.categoria = categoria;
+    }
+
+    public ProgramasEducativosNiveles getNivelEducativo() {
+        return nivelEducativo;
+    }
+
+    public void setNivelEducativo(ProgramasEducativosNiveles nivelEducativo) {
+        this.nivelEducativo = nivelEducativo;
     }
 
     @Override

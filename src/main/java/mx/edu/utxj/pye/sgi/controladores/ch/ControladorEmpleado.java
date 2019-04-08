@@ -5,11 +5,9 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +28,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.InformacionAdicionalPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
 import mx.edu.utxj.pye.sgi.entity.ch.Notificaciones;
+import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Messages;
@@ -44,6 +43,7 @@ public class ControladorEmpleado implements Serializable {
 ////////////////////////////////////////////////////////////////////////////////Datos Perosnales 
     @Getter    @Setter    private InformacionAdicionalPersonal nuevoOBJInformacionAdicionalPersonal;
     @Getter    @Setter    private ListaPersonal nuevoOBJListaPersonal;
+    @Getter    @Setter    private Procesopoa procesopoa=new Procesopoa();
 
 ////////////////////////////////////////////////////////////////////////////////Listas complementarias
     @Getter    @Setter    private List<Docencias> listaDocencias = new ArrayList<>();
@@ -61,7 +61,6 @@ public class ControladorEmpleado implements Serializable {
             mensajeIndex1 = "", mensajeIndex2 = "";
 
     @Getter    @Setter    private Boolean fechaLimiteCV, fechaLimiteFunciones, procesoElectoralActivo, tienePOA = false, estiloInfo = false, mensajeGeneral = false;
-    @Getter    @Setter    private Boolean poaA = false, poaJ = false, poaR = false, poaE = false, poaVJ = false, poaVR = false, poaVF = false, poaVEPye = false;
     @Getter    @Setter    private List<Modulosregistro> nuevaListaModulosregistro = new ArrayList<>();
 
     @Getter    @Setter    private Eventos nuevaEventos;
@@ -196,17 +195,24 @@ public class ControladorEmpleado implements Serializable {
 
     public void areaPoa() {
         try {
+            procesopoa = new Procesopoa();
             nuevaAreasUniversidad = ejbAreasLogeo.mostrarAreasUniversidad(nuevoOBJListaPersonal.getAreaOperativa());
             if (nuevaAreasUniversidad != null) {
                 if (nuevaAreasUniversidad.getTienePoa()) {
-                    if(Objects.equals(nuevaAreasUniversidad.getResponsable(), empleadoLogeado)) {
+                    if (Objects.equals(nuevaAreasUniversidad.getResponsable(), empleadoLogeado)) {
                         tienePOA = true;
+                        procesopoa = ejbUtilidadesCH.mostrarEtapaPOA(nuevoOBJListaPersonal.getAreaOperativa());
+                        eventosRegistro();
                     } else {
+                        if (nuevaAreasUniversidad.getArea() == 6) {
+                            procesopoa = ejbUtilidadesCH.mostrarEtapaPOA(nuevoOBJListaPersonal.getAreaOperativa());
+                            eventosRegistro();
+                        }
                         tienePOA = false;
                     }
                 }
             }
-            eventosRegistro();
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.areaPoa()"+tienePOA);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
@@ -215,62 +221,21 @@ public class ControladorEmpleado implements Serializable {
 
     public void eventosRegistro() {
         try {
-            fechaActual = LocalDate.now();
-            poaA = false;            poaJ = false;            poaR = false;            poaE = false;
-            poaVJ = false;            poaVR = false;            poaVF = false;            poaVEPye = false;
-            nuevaListaEventos.clear();
-            nuevaListaEventos = ejbUtilidadesCH.mostrarEventoses();
-            if (!nuevaListaEventos.isEmpty()) {
-                nuevaListaEventos.forEach((t) -> {
-                    if (t.getTipo().equals("POA")) {
-                        t.getFechaFin().setHours(23);
-                        t.getFechaFin().setMinutes(59);
-                        t.getFechaFin().setSeconds(59);
-                        switch (t.getNombre()) {
-                            case "Registro":
-                                poaA = periodoActivoPOA(t);
-                                break;
-                            case "Justificacion":
-                                poaJ = periodoActivoPOA(t);
-                                break;
-                            case "Recurso":
-                                poaR = periodoActivoPOA(t);
-                                break;
-                            case "Evaluacion":
-                                poaE = periodoActivoPOA(t);
-                                if (poaE) {
-                                    mensajeGeneral = false;
-                                    estiloInfo = false;
-                                    Integer diasR = (int) ((t.getFechaFin().getTime() - uch.castearLDaD(fechaActual).getTime()) / 86400000);
-                                    Integer diasI = (int) ((uch.castearLDaD(fechaActual).getTime() - t.getFechaInicio().getTime()) / 86400000);
-                                    if (diasI <= 2) {
-                                        mensajeIndex1 = "Inicio del periodo para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + uch.castearDaLD(t.getFechaInicio()).getMonth().getDisplayName(TextStyle.FULL, new Locale("es","MX"));
-                                        estiloInfo = true;
-                                        mensajeGeneral = true;
-                                    }
-                                    if (diasR <= 5) {
-                                        mensajeIndex1 = "La fecha límite para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + uch.castearDaLD(t.getFechaInicio()).getMonth().getDisplayName(TextStyle.FULL, new Locale("es","MX")) + " ¡Está por vencer!";
-                                        mensajeIndex2 = "Restan " + diasR + " días";
-                                        estiloInfo = false;
-                                        mensajeGeneral = true;
-                                    }
-                                }
-                                break;
-                            case "VJustificacion":
-                                poaVJ = periodoActivoPOA(t);
-                                break;
-                            case "VRecurso":
-                                poaVR = periodoActivoPOA(t);
-                                break;
-                            case "VFinal":
-                                poaVF = periodoActivoPOA(t);
-                                break;
-                            case "EvaluacionPYE":
-                                poaVEPye = periodoActivoPOA(t);
-                                break;
-                        }
-                    }
-                });
+            fechaActual = LocalDate.now();                              
+            mensajeGeneral = false;
+            estiloInfo = false;
+            Integer diasR = (int) ((procesopoa.getEvaluacion().getFechaFin().getTime() - uch.castearLDaD(fechaActual).getTime()) / 86400000);
+            Integer diasI = (int) ((uch.castearLDaD(fechaActual).getTime() - procesopoa.getEvaluacion().getFechaInicio().getTime()) / 86400000);
+            if (diasI <= 2) {
+                mensajeIndex1 = "Inicio del periodo para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + procesopoa.getEvaluacion().getMesEvaluacion();
+                estiloInfo = true;
+                mensajeGeneral = true;
+            }
+            if (diasR <= 5) {
+                mensajeIndex1 = "La fecha límite para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + procesopoa.getEvaluacion().getMesEvaluacion() + " ¡Está por vencer!";
+                mensajeIndex2 = "Restan " + diasR + " días";
+                estiloInfo = false;
+                mensajeGeneral = true;
             }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -278,11 +243,11 @@ public class ControladorEmpleado implements Serializable {
         }
     }
 
-     public Boolean periodoActivoPOA(Eventos t){
-         if ((fechaActual.isBefore(uch.castearDaLD(t.getFechaFin())) || (fechaActual.getDayOfMonth() == uch.castearDaLD(t.getFechaFin()).getDayOfMonth() && fechaActual.getMonthValue() == uch.castearDaLD(t.getFechaFin()).getMonthValue() && fechaActual.getYear() == uch.castearDaLD(t.getFechaFin()).getYear())) && (fechaActual.isAfter(uch.castearDaLD(t.getFechaInicio())) || fechaActual.equals(uch.castearDaLD(t.getFechaInicio())))) {
-             return true;
-         } else {
-             nuevaEventosAreas = new EventosAreas();
+    public Boolean periodoActivoPOA(Eventos t) {
+        if ((fechaActual.isBefore(uch.castearDaLD(t.getFechaFin())) || (fechaActual.getDayOfMonth() == uch.castearDaLD(t.getFechaFin()).getDayOfMonth() && fechaActual.getMonthValue() == uch.castearDaLD(t.getFechaFin()).getMonthValue() && fechaActual.getYear() == uch.castearDaLD(t.getFechaFin()).getYear())) && (fechaActual.isAfter(uch.castearDaLD(t.getFechaInicio())) || fechaActual.equals(uch.castearDaLD(t.getFechaInicio())))) {
+            return true;
+        } else {
+            nuevaEventosAreas = new EventosAreas();
              nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
              if(nuevaEventosAreas != null) {
                  return true;
@@ -291,24 +256,6 @@ public class ControladorEmpleado implements Serializable {
              }
          }
      }
-    public String mesNombre(Integer noMes) {
-        String mesnN = "";
-        switch (noMes) {
-            case 0:                mesnN = "Enero";                break;
-            case 1:                mesnN = "Febrero";                break;
-            case 2:                mesnN = "Marzo";                break;
-            case 3:                mesnN = "Abril";                break;
-            case 4:                mesnN = "Mayo";                break;
-            case 5:                mesnN = "Junio";                break;
-            case 6:                mesnN = "Julio";                break;
-            case 7:                mesnN = "Agosto";                break;
-            case 8:                mesnN = "Septiembre";                break;
-            case 9:                mesnN = "Octubre";                break;
-            case 10:                mesnN = "Noviembre";                break;
-            case 11:                mesnN = "Diciembre";                break;
-        }
-        return mesnN;
-    }
 
     public void llenaListaPaises() {
         listaPaises.clear();

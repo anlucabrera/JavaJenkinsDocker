@@ -52,7 +52,7 @@ public class ConsultarPOAReportePYE implements Serializable {
     @PostConstruct
     public void init() {
         System.out.println("ControladorHabilidadesIIL Inicio: " + System.currentTimeMillis());
-        ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear()-2001));
+        ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa1();;
         System.out.println("ControladorHabilidadesIIL Inicio: " + ejercicioFiscal);
         ejeses=new ArrayList<>();
         ejeses.clear();

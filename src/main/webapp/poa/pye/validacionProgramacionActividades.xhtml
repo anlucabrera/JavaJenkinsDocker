@@ -79,10 +79,12 @@
                                 <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>                                
                             </f:facet>
                             <f:facet name="right">
-
                                 <p:outputPanel>            
                                     <p:autoUpdate/>
-                                    <p:commandButton value="Liberar Programacion" id="btnlbPOA" actionListener="#{controladorRegistroActividadesPOAPyE.validarPlaneacion()}" disabled="#{controladorRegistroActividadesPOAPyE.liberado}" title="El poa del area #{controladorRegistroActividadesPOAPyE.areaPOASeleccionada.nombre} ya a sido aprobado" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":dtbBajas" />
+                                    <p:commandButton value="Finalizar validacion de registro de actividades" id="btnEnviaCorreo" 
+                                                     actionListener="#{utilidadesPOA.enviarCorreo(2,controladorRegistroActividadesPOAPyE.areaPOASeleccionada.correoInstitucional)}"
+                                                     process="@this" disabled="#{controladorRegistroActividadesPOAPyE.procesopoa.validacionRegistroA}"
+                                                     icon="fa fa-info-circle" styleClass="btn-primary"/>
                                 </p:outputPanel>
                             </f:facet>
                         </p:toolbar>

@@ -42,6 +42,7 @@
     <ui:define name="body">
 
         <adm:sidebar collapsed="true"/> 
+
         <h:form id="frmAlineacionEstratejica" prependId="false" class="form-inline">
             <div class="box box-primary">
                 <div id="main-buttons" class="hidden-sm hidden-xs" >
@@ -65,6 +66,29 @@
         <h:form id="frm2" prependId="false" class="form-inline" >
             <div class="box box-primary">
                 <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                        <p:toolbar id="tb">
+                            <f:facet name="left">
+                                <p:outputPanel>     
+                                    <p:outputLabel value="Área: #{controladorRegistroActividadesPOAPyE.areaPOASeleccionada.nombre}" />
+                                    <p:autoUpdate/>
+                                </p:outputPanel>
+                            </f:facet>
+                            <f:facet name="center">
+                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>                                
+                            </f:facet>
+                            <f:facet name="right">
+
+                                <p:outputPanel>            
+                                    <p:autoUpdate/>
+                                    <p:commandButton value="Finalizar validacion de registro de actividades" id="btnEnviaCorreo" 
+                                                     actionListener="#{utilidadesPOA.enviarCorreo(4,controladorRegistroActividadesPOAPyE.areaPOASeleccionada.correoInstitucional)}"
+                                                     process="@this" disabled="#{controladorRegistroActividadesPOAPyE.procesopoa.validacionRFFinalizado}"
+                                                     icon="fa fa-info-circle" styleClass="btn-primary"/>
+                                </p:outputPanel>
+                            </f:facet>
+                        </p:toolbar>
+                    </div>
                     <p:separator/>         
                     <div class="row">         
                         <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center;">
@@ -302,7 +326,6 @@
                                                                 <p:column colspan="12" headerText="Calendarización de Metas" style="width: 700px;"/>  
                                                                 <p:column rowspan="2" headerText="Total" style="width: 50px;"/>
                                                                 <p:column rowspan="2" headerText="Justificacion" />
-                                                                <p:column rowspan="2" headerText="Validación de recurso"  style="width: 100px;"/>
                                                             </p:row>
                                                             <p:row class="success">
                                                                 <p:column headerText="Ene" />
@@ -321,7 +344,7 @@
                                                         </p:columnGroup>
 
                                                         <p:headerRow>
-                                                            <p:column colspan="19" styleClass="lac">
+                                                            <p:column colspan="18" styleClass="lac">
                                                                 <h:outputText value="#{poa.cuadroMandoInt.lineaAccion.nombre}"/>
                                                             </p:column>
                                                         </p:headerRow>  
@@ -380,12 +403,6 @@
                                                         </p:column>
                                                         <p:column style="text-align: justify" >
                                                             <h:outputText value="#{poa.descripcion}" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <p:selectBooleanCheckbox id="validar" value="#{poa.validadoFinanzas}"
-                                                                                     valueChangeListener="#{controladorRegistroActividadesPOAPyE.validarFinanzas(poa)}" >
-                                                                <p:ajax update=":dtbBajas" />
-                                                            </p:selectBooleanCheckbox>
                                                         </p:column>
 
                                                         <p:rowExpansion rendered="#{poa.recursosActividadList.size() eq 0?false:true}">

@@ -39,7 +39,7 @@ public class ConsultarPOAReporte implements Serializable {
     @PostConstruct
     public void init() {
         System.out.println("ControladorHabilidadesIIL Inicio: " + System.currentTimeMillis());
-        ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 101));
+        ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa1();
         consultarListasValidacionFinal();
         System.out.println(" ControladorHabilidadesIIL Fin: " + System.currentTimeMillis());
     }

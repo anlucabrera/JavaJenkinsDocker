@@ -39,9 +39,10 @@
         Registro de actividades
     </ui:define>
 
-    <ui:define name="body">
+    <ui:define id="bodyy" name="body">
         <adm:sidebar collapsed="true"/>
         <c:if test="#{controladorEmpleado.tienePOA}">
+            <!-- Formulario para geracion de reportes y mostrar cuadro de dialogo de sinbologia -->
             <h:form id="frmopciones" prependId="false" class="form-inline">
                 <div class="box box-primary">
                     <div class="box-header with-border">
@@ -57,7 +58,11 @@
                                                  actionListener="#{controladorPOARegistro.imprimirValores()}"  
                                                  oncomplete="PF('dlgRdVPC').show()" process="@this" 
                                                  icon="fa fa-info-circle" styleClass="btn-primary"/>
-
+                                
+                                <p:commandButton value="Finalizar registro de actividades" id="btnEnviaCorreo" 
+                                                 actionListener="#{utilidadesPOA.enviarCorreo(1,'')}"
+                                                 process="@this" disabled="#{controladorEmpleado.procesopoa.registroAFinalizado}"
+                                                 icon="fa fa-info-circle" styleClass="btn-primary"/>
 
                             </p:panel>
                         </div>
@@ -65,6 +70,7 @@
                 </div>
             </h:form>
 
+            <!-- Formulario para selccion de alineacion estrategica -->
             <h:form id="frmAlineacionEstratejica" prependId="false" class="form-inline">
                 <div class="box box-primary">
                     <div id="main-buttons" class="hidden-sm hidden-xs" >
@@ -103,6 +109,8 @@
                     </div>
                 </div>
             </h:form>
+
+            <!-- Formulario para registro de actividades -->
             <h:form id="frm2" prependId="false" class="form-inline" >
                 <p:panel header="Registro de actividades" visible="#{!controladorPOARegistro.ejeActivo}" class="box box-primary" >
                     <div class="box-header with-border">
@@ -229,6 +237,8 @@
                     </div>
                 </p:panel>
             </h:form>
+
+            <!-- Formulario para mostra tabla de actividades registradas -->
             <h:form id="frm" prependId="false" class="form-inline">
                 <div class="box box-solid">
                     <div class="box-body">
@@ -385,6 +395,7 @@
                 </div>
             </h:form>
 
+            <!-- Formulario de confirmacion de eliminacion de actividades -->
             <p:dialog id="eliminar" header="¿Confirma la eliminación de la actividad?" widgetVar="eliminar" modal="true" showEffect="fade" hideEffect="fade" resizable="false" style="max-width: 500px" closeOnEscape="true">
                 <h:form id="frmEliminarActividad">
                     <div class="row">
@@ -407,6 +418,7 @@
                 </h:form>
             </p:dialog>
 
+            <!-- Formulario para edicion de actividades -->
             <p:dialog id="dlgActualizacionActividad" header="Parámetros de registro que ya cuentan con registros" widgetVar="dlgActualizacionActividad" modal="true" 
                       showEffect="fade" hideEffect="fade" resizable="false" width="800" closeOnEscape="true">
                 <h:form id="frmActualizaActividad">
@@ -473,6 +485,7 @@
                 </h:form>
             </p:dialog>
 
+            <!-- cuadro de dialogo para simbologia -->
             <p:dialog header="Instrucciones y Simbología" widgetVar="dlgRdVPC" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
                 <p:tabView>
                     <p:tab title="Instrucciones">
@@ -509,7 +522,8 @@
                     </p:tab>                    
                 </p:tabView>
             </p:dialog>
-
+           
+            <!-- cuadro de dialogo para mensajes de validacion -->
             <p:dialog id="validacion" header="Error" widgetVar="validacion" modal="true" 
                       showEffect="fade" hideEffect="fade" resizable="false" width="300" closeOnEscape="true">
                 <h:form id="frmvalidacion">
@@ -519,8 +533,8 @@
                     </p:outputPanel>
                 </h:form>
             </p:dialog>
-
-
+            
+            <!-- Cuadro de dialogo extra -->
             <p:dialog id="dlgParametrosRegistrados" header="Parámetros de registro que ya cuentan con registros" widgetVar="dlgParametrosRegistrados" modal="true" 
                       showEffect="fade" hideEffect="fade" resizable="false" width="800" closeOnEscape="true">
                 <h:form id="frmParametrosReguistrados">
@@ -529,6 +543,12 @@
                     </p:outputPanel>
                 </h:form>
             </p:dialog>
+            
+            <p:blockUI block="frmAlineacionEstratejica" widgetVar="buiRegistro1" blocked="#{controladorEmpleado.procesopoa.registroAFinalizado}"/>
+            <p:blockUI block="frm2" widgetVar="buiRegistro2" blocked="#{controladorEmpleado.procesopoa.registroAFinalizado}">
+                Ha confirmado la culminación de este proceso, espere la respuesta por parte de la Dirección de Planeación y Evaluación, que indique si se realizaran, modificaciones o podrá pasar a la siguiente fase.
+            </p:blockUI>            
+            <p:blockUI block="frm" widgetVar="buiRegistro3" blocked="#{controladorEmpleado.procesopoa.registroAFinalizado}"/>
         </c:if>
         <c:if test="#{!controladorEmpleado.tienePOA}">
             <div class="box box-primary">

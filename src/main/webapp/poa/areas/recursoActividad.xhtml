@@ -58,6 +58,10 @@
                                 <p:commandButton id="btnRSimbo2" actionListener="#{controladorPOARecurso.imprimirValores()}"
                                                  icon="fa fa-usd" styleClass="btn-success"/> 
 
+                                <p:commandButton value="Finalizar registro de actividades" id="btnEnviaCorreo" 
+                                                 actionListener="#{utilidadesPOA.enviarCorreo(3,'')}"
+                                                 process="@this" disabled="#{controladorEmpleado.procesopoa.asiganacionRFinalizado}"
+                                                 icon="fa fa-info-circle" styleClass="btn-primary"/>
                             </p:panel>
                         </div>
                     </div>
@@ -574,6 +578,12 @@
                     </div>
                 </h:form>
             </p:dialog>
+
+            <p:blockUI block="frmAlineacionEstratejica" widgetVar="buiRegistro1" blocked="#{controladorEmpleado.procesopoa.registroAFinalizado}"/>
+            <p:blockUI block="frm2" widgetVar="buiRegistro2" blocked="#{controladorEmpleado.procesopoa.registroAFinalizado}">
+                Ha confirmado la culminación de este proceso, espere la respuesta por parte de la Dirección de Planeación y Evaluación, que indique si se realizaran, modificaciones o podrá pasar a la siguiente fase.
+            </p:blockUI>            
+            <p:blockUI block="frm" widgetVar="buiRegistro3" blocked="#{controladorEmpleado.procesopoa.registroAFinalizado}"/>
         </c:if>
         <c:if test="#{!controladorEmpleado.tienePOA}">
             <div class="box box-primary">

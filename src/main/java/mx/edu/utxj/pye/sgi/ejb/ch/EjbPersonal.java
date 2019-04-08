@@ -57,4 +57,5 @@ public interface EjbPersonal {
     public List<Generos> mostrarListaGeneros() throws Throwable;
 
     public List<Actividades> mostrarListaActividades() throws Throwable;
+    
 }

@@ -19,9 +19,11 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbPoaSelectec;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.entity.ch.Incapacidad;
+import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
@@ -68,7 +70,7 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
     @Getter    @Setter    private List<capitulosLista> capitulo5000 = new ArrayList<>();
     @Getter    @Setter    private List<capitulosLista> capituloCPDD = new ArrayList<>();
     
-    
+    @Getter    @Setter    private Procesopoa procesopoa=new Procesopoa();
     
     @Getter    @Setter    private List<listaEjesEsLaAp> ejesEsLaAp=new ArrayList<>();
     @Getter    @Setter    private List<listaEjeEstrategia> listaListaEjeEstrategia=new ArrayList<>();
@@ -76,6 +78,7 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
     @EJB    EjbPoaSelectec poaSelectec;
     @Inject    ControladorEmpleado controladorEmpleado;
     @EJB    EjbAreasLogeo ejbAreasLogeo;
+    @EJB    EjbUtilidadesCH ejbUtilidadesCH;
     @EJB    Facade f;
 
     @PostConstruct
@@ -145,9 +148,11 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
     public void areaSeleccionada(ValueChangeEvent event) {
         try {
             claveArea = 0;
-            areaPOASeleccionada=new AreasUniversidad();
+            areaPOASeleccionada = new AreasUniversidad();
+            procesopoa = new Procesopoa();
             claveArea = Short.parseShort(event.getNewValue().toString());
-            areaPOASeleccionada=ejbAreasLogeo.mostrarAreasUniversidad(claveArea);
+            areaPOASeleccionada = ejbAreasLogeo.mostrarAreasUniversidad(claveArea);
+            procesopoa = ejbUtilidadesCH.mostrarEtapaPOA(claveArea);
             consultarListasValidacionFinal();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -286,7 +291,6 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
         if (totalCaptituloCPDD < pretechoCPDD) {            clasePC = "mayor";        }
         if (totalCaptitulos < totalPretecho) {            clasePT = "mayor";        }
     }
-    
     
     public void obteneroTotalesCapitulosDesglosado() {
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOAPyE.obteneroTotalesCapitulosDesglosado()");

@@ -20,6 +20,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.EventosAreas;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreasPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
+import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Ajax;
@@ -39,6 +40,7 @@ public class AdministracionControl implements Serializable {
     @Getter    @Setter    private List<Eventos> eventoses = new ArrayList<>();
     @Getter    @Setter    private List<EventosAreas> eventosesAreases = new ArrayList<>();
     @Getter    @Setter    private List<AreasUniversidad> areasUniversidads = new ArrayList<>();
+    @Getter    @Setter    private List<Procesopoa> procesopoas = new ArrayList<>();
 
     @Getter    @Setter    private Integer eventoC = 0;
     @Getter    @Setter    private Short areaC = 0;
@@ -58,10 +60,25 @@ public class AdministracionControl implements Serializable {
         estatus.add("Aceptado");
         estatus.add("Denegado");
         estatus.add("Pendiente");
+        mostrarProcesoPOA();
         mostrarIncidencias();
         mostrarModulos();
         mostrarEventos();
     }
+    
+     public void mostrarProcesoPOA() {
+        try {
+            procesopoas = new ArrayList<>();            
+            procesopoas.clear();
+
+            procesopoas = ejbUtilidadesCH.mostrarProcesopoa();
+            
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
 
     public void mostrarEventos() {
         try {

@@ -50,6 +50,10 @@
 
                                 <div class="box-body">  
                                     <div class="row">
+                                        <p:commandButton value="Finalizar registro de actividades" id="btnEnviaCorreo" 
+                                                         actionListener="#{utilidadesPOA.enviarCorreo(5,'')}"
+                                                         process="@this" disabled="#{controladorEmpleado.procesopoa.registroJustificacionFinalizado}"
+                                                         icon="fa fa-info-circle" styleClass="btn-primary"/>
                                         <div class="col-md-12 col-sm-12 col-xs-12">
                                             <div class="info-box">
                                                 <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
@@ -352,6 +356,12 @@
                     </p:panelGrid>
                 </p:dialog>
             </h:form>
+
+            <p:blockUI block="frmAlineacionEstratejica" widgetVar="buiRegistro2" blocked="#{controladorEmpleado.procesopoa.registroAFinalizado}">
+                Ha confirmado la culminación de este proceso, espere la respuesta por parte de la Dirección de Planeación y Evaluación, que indique si se realizaran, modificaciones o podrá pasar a la siguiente fase.
+            </p:blockUI>            
+            <p:blockUI block="frm" widgetVar="buiRegistro3" blocked="#{controladorEmpleado.procesopoa.registroAFinalizado}"/>
+
         </c:if>
         <c:if test="#{!controladorEmpleado.tienePOA}">
             <div class="box box-primary">

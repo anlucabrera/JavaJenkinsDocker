@@ -284,32 +284,32 @@
                         <div class="box-body">  
                             <div class="row">                                
                                 <div class="col-lg-12 col-md-12 col-xs-12">
-                                        <p:panelGrid style="margin-top:20px">
-                                            <p:row>
-                                                <p:column style="font-weight: bold;">Actividades Programadas</p:column>
-                                                <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.cmiGeneral.programadas}</p:column>
-                                                <p:column rowspan="3" style="font-weight: bold;">
-                                                    <!--# {cuadroMandoIntegralArea.datosGraica(cuadroMandoIntegralArea.cmiEJe1.avanceGraf)}-->
-                                                    <hf:chart type="line" height="400px" extender="myconfig" render="true" updateMethod="true"
-                                                              xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
-                                                        <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralArea.cmiGeneral.avanceGraf}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
-                                                    </hf:chart>
-                                                </p:column>
-                                                <p:column rowspan="3" style="font-weight: bold;">
-                                                    <p:chart type="metergauge" model="#{cuadroMandoIntegralArea.cmiGeneral.gaugeChartModel}" responsive="true" />                                            
-                                                </p:column>
-                                            </p:row>
+                                    <p:panelGrid style="margin-top:20px">
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Actividades Programadas</p:column>
+                                            <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.cmiGeneral.programadas}</p:column>
+                                            <p:column rowspan="3" style="font-weight: bold;">
+                                                <!--# {cuadroMandoIntegralArea.datosGraica(cuadroMandoIntegralArea.cmiEJe1.avanceGraf)}-->
+                                                <hf:chart type="line" height="400px" extender="myconfig" render="true" updateMethod="true"
+                                                          xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
+                                                    <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralArea.cmiGeneral.avanceGraf}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
+                                                </hf:chart>
+                                            </p:column>
+                                            <p:column rowspan="3" style="font-weight: bold;">
+                                                <p:chart type="metergauge" model="#{cuadroMandoIntegralArea.cmiGeneral.gaugeChartModel}" responsive="true" />                                            
+                                            </p:column>
+                                        </p:row>
 
-                                            <p:row>
-                                                <p:column style="font-weight: bold;">Actividades Realizadas</p:column>
-                                                <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.cmiGeneral.realizadas}</p:column>
-                                            </p:row>
-                                            <p:row>
-                                                <p:column style="font-weight: bold;">Porcentaje Avance</p:column>
-                                                <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.df.format(cuadroMandoIntegralArea.cmiGeneral.avance)}%</p:column>
-                                            </p:row>
-                                        </p:panelGrid>
-                                    <a href="poa/areas/areaCMI.xhtml" class="small-box-footer">Ver más</a>
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Actividades Realizadas</p:column>
+                                            <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.cmiGeneral.realizadas}</p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Porcentaje Avance</p:column>
+                                            <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.df.format(cuadroMandoIntegralArea.cmiGeneral.avance)}%</p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+                                    <a href="poa/areas/areaCMI.xhtml" class="small-box-footer" style="font-size: x-large">Ver más</a>
                                 </div>       
                             </div>
                         </div>
@@ -329,8 +329,39 @@
                         </div>
                     </div>
                     <div class="box-body">  
-                        <div class="row"> 
-
+                        <div class="row">     
+                            <c:if test="#{controladorEmpleado.tienePOA}">
+                                <c:if test="#{controladorEmpleado.mensajeGeneral}">                                                             
+                                    <div class="col-lg-6 col-md-6 col-xs-12">
+                                        <div class="small-box #{controladorEmpleado.estiloInfo?'bg-blue':'bg-yellow'}">
+                                            <div class="inner">
+                                                <h3>¡Atento Aviso!</h3>
+                                                <p>#{controladorEmpleado.mensajeIndex1}</p>
+                                                <p style="font-weight: bolder;text-align: center;font-size: 25px;">#{controladorEmpleado.mensajeIndex2}</p>
+                                            </div>
+                                            <div class="icon">
+                                                <i class="fa fa-calendar"/>
+                                            </div>
+                                            <a href="poa/areas/evaluacion.xhtml" class="small-box-footer">Evaluar <i class="fa fa-chevron-circle-right"/></a>
+                                            <a href="siip/modulosRegistro/menu_general.xhtml" class="small-box-footer">Registrar <i class="fa fa-chevron-circle-right"/></a>
+                                            <a href="calendarioActividades.xhtml" class="small-box-footer">Consultar calendario <i class="fa fa-chevron-circle-right"/></a>
+                                        </div>
+                                    </div> 
+                                </c:if>
+                            </c:if>    
+                            <div class="col-lg-6 col-md-6 col-xs-12">
+                                <div class="small-box bg-yellow">
+                                    <div class="inner">
+                                        <h3>Menú</h3>
+                                        <p>Se ha modificado el menú, agrupando las opciones de acuerdo a los módulos con los que tiene permitido el acceso. </p>
+                                        <p>Si tiene alguna duda se pude comunicar al correo: sistemas@utxicotepec.edu.mx</p>
+                                        <p>O a la línea operativa: 3216</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fa fa-map"/>
+                                    </div>
+                                </div>
+                            </div>       
                             <div class="col-lg-3 col-md-6 col-xs-12">
                                 <div class="small-box bg-yellow">
                                     <div class="inner">
@@ -360,25 +391,6 @@
                                     </div> 
                                 </c:if>
                             </c:if>         
-                            <c:if test="#{controladorEmpleado.tienePOA}">
-                                <c:if test="#{controladorEmpleado.mensajeGeneral}">                                                             
-                                    <div class="col-lg-6 col-md-6 col-xs-12">
-                                        <div class="small-box #{controladorEmpleado.estiloInfo?'bg-blue':'bg-yellow'}">
-                                            <div class="inner">
-                                                <h3>¡Atento Aviso!</h3>
-                                                <p>#{controladorEmpleado.mensajeIndex1}</p>
-                                                <p style="font-weight: bolder;text-align: center;font-size: 25px;">#{controladorEmpleado.mensajeIndex2}</p>
-                                            </div>
-                                            <div class="icon">
-                                                <i class="fa fa-calendar"/>
-                                            </div>
-                                            <a href="poa/areas/evaluacion.xhtml" class="small-box-footer">Evaluar <i class="fa fa-chevron-circle-right"/></a>
-                                            <a href="siip/modulosRegistro/menu_general.xhtml" class="small-box-footer">Registrar <i class="fa fa-chevron-circle-right"/></a>
-                                            <a href="calendarioActividades.xhtml" class="small-box-footer">Consultar calendario <i class="fa fa-chevron-circle-right"/></a>
-                                        </div>
-                                    </div> 
-                                </c:if>
-                            </c:if>              
                         </div>
                     </div>
                 </div>
