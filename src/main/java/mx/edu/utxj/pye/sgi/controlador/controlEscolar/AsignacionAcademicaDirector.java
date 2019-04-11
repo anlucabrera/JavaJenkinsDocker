@@ -77,10 +77,9 @@ public class AsignacionAcademicaDirector extends ViewScopedRol {
                     ResultadoEJB<Map<ProgramasEducativos, List<Grupo>>> resProgramas = ejb.getProgramasActivos();
                     if(!resProgramas.getCorrecto()) mostrarMensajeResultadoEJB(resProgramas);
 
-
                     rol.setPeriodos(resPeriodos.getValor());
                     rol.setProgramasGruposMap(resProgramas.getValor());
-                }
+                }else mostrarMensajeNoAcceso();
             }else mostrarMensajeResultadoEJB(resPrograma);
         }catch (Exception e){
             mostrarExcepcion(e);
