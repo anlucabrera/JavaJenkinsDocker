@@ -6,6 +6,7 @@ import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
@@ -31,6 +32,21 @@ public class EjbAsignacionAcademica {
             return ResultadoEJB.crearCorrecto(p, "El usuario ha sido comprobado como un director.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El director no se pudo validar.", e, PersonalActivo.class);
+        }
+    }
+
+    /**
+     * COnvierte el area operativa del director en programa para mostrar los docentes y grupos correspondientes a ese programa.
+     * @param area Area operativa del directos
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<ProgramasEducativos> areaAPrograma(AreasUniversidad area){
+        try{
+            ProgramasEducativos programa = new ProgramasEducativos();
+            //:TODO hacer la conversion de area a programa
+            return ResultadoEJB.crearCorrecto(programa, "Programa convertido.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "ENo se pudo convertir el area a programa.", e, ProgramasEducativos.class);
         }
     }
 
@@ -63,8 +79,8 @@ public class EjbAsignacionAcademica {
     }
 
     /**
-     * Permite obtener la lista de programas educativos que tienen planes de estudio vigentes, los programas deben ordenarse por nivel,
-     * área y nombre y los grupos por grado y letra
+     * Permite obtener la lista de programas educativos que tienen planes de estudio vigentes, los programas deben ordenarse por
+     * área, nivel y nombre y los grupos por grado y letra
      * @return Resultado del proceso
      */
     public ResultadoEJB<Map<ProgramasEducativos, List<Grupo>>> getProgramasActivos(){
@@ -105,6 +121,11 @@ public class EjbAsignacionAcademica {
      */
     public ResultadoEJB<CargaAcademica> asignarMateriaDocente(Materia materia, PersonalActivo docente, Grupo grupo, PeriodosEscolares periodo, Operacion operacion){
         try{
+            if(materia == null) return ResultadoEJB.crearErroneo(3, "La materia no debe ser nula.", CargaAcademica.class);
+            if(grupo == null) return ResultadoEJB.crearErroneo(4, "El grupo no debe ser nulo.", CargaAcademica.class);
+            if(periodo == null) return ResultadoEJB.crearErroneo(5, "El periodo no debe ser nulo.", CargaAcademica.class);
+            if(docente == null) return ResultadoEJB.crearErroneo(6, "El docente no debe ser nulo.", CargaAcademica.class);
+
             switch (operacion){
                 case PERSISTIR:
                     CargaAcademica cargaAcademica = new CargaAcademica();
