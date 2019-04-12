@@ -39,7 +39,6 @@ public class TramitesSupervisor extends ViewScopedRol {
 
     @EJB EjbFiscalizacion ejbFiscalizacion;
     @EJB EjbPersonalBean ejbPersonalBean;
-    @EJB Facade f;
     @Inject Caster caster;
     @Inject LogonMB logon;
     @Getter Boolean tieneAcceso;

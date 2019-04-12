@@ -17,4 +17,12 @@ public class ViewScopedRol implements Serializable {
     public void mostrarMensajeResultadoEJB(ResultadoEJB res){
         Messages.addGlobal(res.getCorrecto() ? FacesMessage.SEVERITY_INFO : FacesMessage.SEVERITY_ERROR, res.getMensaje());
     }
+
+    public void mostrarMensaje(String mensaje){
+        Messages.addGlobal(FacesMessage.SEVERITY_INFO, mensaje);
+    }
+
+    public void mostrarExcepcion(Throwable e){
+        Messages.addGlobal(FacesMessage.SEVERITY_ERROR, "Ocurrió un error: " + e.getCause()!=null?e.getCause().getMessage():e.getMessage());
+    }
 }
