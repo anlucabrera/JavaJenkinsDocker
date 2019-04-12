@@ -65,16 +65,16 @@ public class Aspirante implements Serializable {
     private Date fechaRegistro;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
     private DatosAcademicos datosAcademicos;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "aspirante")
-    private List<Estudiante> estudianteList;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
     private DocumentoAspirante documentoAspirante;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "aspirante")
     private List<EncuestaAspirante> encuestaAspiranteList;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
-    private Domicilio domicilio;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
     private DatosFamiliares datosFamiliares;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "aspirante")
+    private List<Estudiante> estudianteList;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
+    private Domicilio domicilio;
     @JoinColumn(name = "id_persona", referencedColumnName = "idpersona")
     @OneToOne(optional = false)
     private Persona idPersona;
@@ -145,15 +145,6 @@ public class Aspirante implements Serializable {
         this.datosAcademicos = datosAcademicos;
     }
 
-    @XmlTransient
-    public List<Estudiante> getEstudianteList() {
-        return estudianteList;
-    }
-
-    public void setEstudianteList(List<Estudiante> estudianteList) {
-        this.estudianteList = estudianteList;
-    }
-
     public DocumentoAspirante getDocumentoAspirante() {
         return documentoAspirante;
     }
@@ -171,20 +162,29 @@ public class Aspirante implements Serializable {
         this.encuestaAspiranteList = encuestaAspiranteList;
     }
 
-    public Domicilio getDomicilio() {
-        return domicilio;
-    }
-
-    public void setDomicilio(Domicilio domicilio) {
-        this.domicilio = domicilio;
-    }
-
     public DatosFamiliares getDatosFamiliares() {
         return datosFamiliares;
     }
 
     public void setDatosFamiliares(DatosFamiliares datosFamiliares) {
         this.datosFamiliares = datosFamiliares;
+    }
+
+    @XmlTransient
+    public List<Estudiante> getEstudianteList() {
+        return estudianteList;
+    }
+
+    public void setEstudianteList(List<Estudiante> estudianteList) {
+        this.estudianteList = estudianteList;
+    }
+
+    public Domicilio getDomicilio() {
+        return domicilio;
+    }
+
+    public void setDomicilio(Domicilio domicilio) {
+        this.domicilio = domicilio;
     }
 
     public Persona getIdPersona() {

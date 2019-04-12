@@ -11,6 +11,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
@@ -21,7 +23,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -37,40 +38,38 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Estudiante.findByIdEstudiante", query = "SELECT e FROM Estudiante e WHERE e.idEstudiante = :idEstudiante"),
     @NamedQuery(name = "Estudiante.findByMatricula", query = "SELECT e FROM Estudiante e WHERE e.matricula = :matricula"),
     @NamedQuery(name = "Estudiante.findByPeriodo", query = "SELECT e FROM Estudiante e WHERE e.periodo = :periodo"),
-    @NamedQuery(name = "Estudiante.findByGeneracion", query = "SELECT e FROM Estudiante e WHERE e.generacion = :generacion"),
     @NamedQuery(name = "Estudiante.findByCarrera", query = "SELECT e FROM Estudiante e WHERE e.carrera = :carrera"),
-    @NamedQuery(name = "Estudiante.findByEstatus", query = "SELECT e FROM Estudiante e WHERE e.estatus = :estatus")})
+    @NamedQuery(name = "Estudiante.findByOpcionIncripcion", query = "SELECT e FROM Estudiante e WHERE e.opcionIncripcion = :opcionIncripcion")})
 public class Estudiante implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id_estudiante")
     private Integer idEstudiante;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 7)
     @Column(name = "matricula")
-    private String matricula;
+    private int matricula;
     @Basic(optional = false)
     @NotNull
     @Column(name = "periodo")
     private int periodo;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "generacion")
-    private short generacion;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "carrera")
     private int carrera;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "estatus")
-    private boolean estatus;
+    @Column(name = "opcionIncripcion")
+    private boolean opcionIncripcion;
     @ManyToMany(mappedBy = "estudianteList")
     private List<Asesoria> asesoriaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    private List<Baja> bajaList;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "estudiante1")
+    private Documentosentregadosestudiante documentosentregadosestudiante;
     @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante")
     @ManyToOne(optional = false)
     private Aspirante aspirante;
@@ -85,8 +84,6 @@ public class Estudiante implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "estudiante1")
     private Calificaciones calificaciones;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
-    private List<Baja> bajaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<ParticipantesTutoria> participantesTutoriaList;
 
     public Estudiante() {
@@ -96,13 +93,12 @@ public class Estudiante implements Serializable {
         this.idEstudiante = idEstudiante;
     }
 
-    public Estudiante(Integer idEstudiante, String matricula, int periodo, short generacion, int carrera, boolean estatus) {
+    public Estudiante(Integer idEstudiante, int matricula, int periodo, int carrera, boolean opcionIncripcion) {
         this.idEstudiante = idEstudiante;
         this.matricula = matricula;
         this.periodo = periodo;
-        this.generacion = generacion;
         this.carrera = carrera;
-        this.estatus = estatus;
+        this.opcionIncripcion = opcionIncripcion;
     }
 
     public Integer getIdEstudiante() {
@@ -113,11 +109,11 @@ public class Estudiante implements Serializable {
         this.idEstudiante = idEstudiante;
     }
 
-    public String getMatricula() {
+    public int getMatricula() {
         return matricula;
     }
 
-    public void setMatricula(String matricula) {
+    public void setMatricula(int matricula) {
         this.matricula = matricula;
     }
 
@@ -129,14 +125,6 @@ public class Estudiante implements Serializable {
         this.periodo = periodo;
     }
 
-    public short getGeneracion() {
-        return generacion;
-    }
-
-    public void setGeneracion(short generacion) {
-        this.generacion = generacion;
-    }
-
     public int getCarrera() {
         return carrera;
     }
@@ -145,12 +133,12 @@ public class Estudiante implements Serializable {
         this.carrera = carrera;
     }
 
-    public boolean getEstatus() {
-        return estatus;
+    public boolean getOpcionIncripcion() {
+        return opcionIncripcion;
     }
 
-    public void setEstatus(boolean estatus) {
-        this.estatus = estatus;
+    public void setOpcionIncripcion(boolean opcionIncripcion) {
+        this.opcionIncripcion = opcionIncripcion;
     }
 
     @XmlTransient
@@ -160,6 +148,23 @@ public class Estudiante implements Serializable {
 
     public void setAsesoriaList(List<Asesoria> asesoriaList) {
         this.asesoriaList = asesoriaList;
+    }
+
+    @XmlTransient
+    public List<Baja> getBajaList() {
+        return bajaList;
+    }
+
+    public void setBajaList(List<Baja> bajaList) {
+        this.bajaList = bajaList;
+    }
+
+    public Documentosentregadosestudiante getDocumentosentregadosestudiante() {
+        return documentosentregadosestudiante;
+    }
+
+    public void setDocumentosentregadosestudiante(Documentosentregadosestudiante documentosentregadosestudiante) {
+        this.documentosentregadosestudiante = documentosentregadosestudiante;
     }
 
     public Aspirante getAspirante() {
@@ -201,15 +206,6 @@ public class Estudiante implements Serializable {
 
     public void setCalificaciones(Calificaciones calificaciones) {
         this.calificaciones = calificaciones;
-    }
-
-    @XmlTransient
-    public List<Baja> getBajaList() {
-        return bajaList;
-    }
-
-    public void setBajaList(List<Baja> bajaList) {
-        this.bajaList = bajaList;
     }
 
     @XmlTransient

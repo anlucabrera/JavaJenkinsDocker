@@ -24,14 +24,6 @@ import nl.lcs.qrscan.core.QrPdf;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.faces.model.SelectItem;
-import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.servlet.annotation.MultipartConfig;
@@ -44,10 +36,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.faces.context.FacesContext;
 import javax.mail.util.ByteArrayDataSource;
@@ -58,6 +48,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
+import mx.edu.utxj.pye.sgi.util.EnvioCorreos;
 
 /**
  *
@@ -100,14 +91,13 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
             ServicioArchivos.eliminarArchivo(rutaArchivo);
             rutaRelativa = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
             file.write(rutaArchivo);
-
+            
             //Leer codigo QR de archivo de la Curp
 
             QrPdf pdf = new QrPdf(Paths.get(rutaR.concat(file.getSubmittedFileName())));
             String qrCode = pdf.getQRCode(1, true, true);
             String fecha_nacimiento = "";
             String[] parts = qrCode.split("\\|");
-
             if(buscaPersonaByCurp(parts[0]) != null){
                 p = buscaPersonaByCurp(parts[0]);
             }else{
@@ -239,7 +229,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     public Aspirante buscaAspiranteByClave(Integer id) {
         return  facadeCE.getEntityManager().createQuery("SELECT a FROM Aspirante a WHERE a.idPersona.idpersona = :idP",Aspirante.class)
                 .setParameter("idP",id)
-                .getSingleResult();
+                .getResultList().stream().findFirst().orElse(null);
     }
 
     @Override
@@ -368,14 +358,6 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
             if(tipoRequisito.equals("HistorialAcademico")){
                 documentoAspirante.setEvidenciaHistorialAcademico(rutaRelativa);
             }
-            String mensaje = "Estimado(a) "+aspirante.getIdPersona().getNombre()+"\n\n Gracias por elegir a la Universidad Tecnologica de Xicotepec de Juárez como opción para continuar con tus estudios de nivel superior." +
-                        "\n\n Debes de esperar el correo de confirmacion de que tu información es correcta y posteriormente continuar con " +
-                        "tu examen CENEVAL Exanii II y con el examen institucional\n\n\n" +
-                        "ATENTAMENTE \n" +
-                        "Departamento de Servicios Escolares";
-            if(documentoAspirante.getEvidenciaCurp() != null && documentoAspirante.getEvidenciaActaNacimiento() != null && documentoAspirante.getEvidenciaHistorialAcademico() != null){
-                enviarConfirmacionCorreoElectronico(aspirante,mensaje);
-            }
             facadeCE.create(documentoAspirante);
         }else{
             documentoAspirante = aspirante.getDocumentoAspirante();
@@ -385,12 +367,6 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
             if(tipoRequisito.equals("HistorialAcademico")){
                 documentoAspirante.setEvidenciaHistorialAcademico(rutaRelativa);
             }
-            String mensaje = "Estimado(a) "+aspirante.getIdPersona().getNombre()+"\n\n Has realizado cambios en los requisitos de ficha de admisión, espera a que estos sean validados por el área correspondiente\n\n\n" +
-                        "ATENTAMENTE \n" +
-                        "Departamento de Servicios Escolares";
-            if(documentoAspirante.getEvidenciaCurp() != null && documentoAspirante.getEvidenciaActaNacimiento() != null && documentoAspirante.getEvidenciaHistorialAcademico() != null){
-                enviarConfirmacionCorreoElectronico(aspirante,mensaje);
-            }
             facadeCE.edit(documentoAspirante);
             facadeCE.flush();
         }
@@ -398,48 +374,6 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
         
         return documentoAspirante;
 
-    }
-
-    public void enviarConfirmacionCorreoElectronico(Aspirante aspirante,String msj){
-        // El correo gmail de envío
-        String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";
-        String claveCorreo = "Serv.Escolares";
-        Properties properties = new Properties();
-
-        properties.put("mail.smtp.host", "smtp.gmail.com");
-        properties.put("mail.smtp.starttls.enable", "true");
-        properties.put("mail.smtp.port", "587");
-        properties.put("mail.smtp.auth", "true");
-        properties.put("mail.user", correoEnvia);
-        properties.put("mail.password", claveCorreo);
-
-        if(aspirante.getIdPersona().getMedioComunicacion().getEmail() != null){
-            Session session = Session.getInstance(properties,null);
-            try {
-                MimeMessage mimeMessage = new MimeMessage(session);
-                mimeMessage.setFrom(new InternetAddress(correoEnvia,"Registro de Ficha de Admisión 2019 UTXJ"));
-
-                InternetAddress internetAddress = new InternetAddress(aspirante.getIdPersona().getMedioComunicacion().getEmail());
-
-                mimeMessage.setRecipient(Message.RecipientType.TO,internetAddress);
-                mimeMessage.setSubject("Registro Exitoso");
-
-                MimeBodyPart mimeBodyPart = new MimeBodyPart();
-                mimeBodyPart.setText(msj);
-
-                Multipart multipart = new MimeMultipart();
-                multipart.addBodyPart(mimeBodyPart);
-
-                mimeMessage.setContent(multipart);
-
-                Transport transport = session.getTransport("smtp");
-                transport.connect(correoEnvia,claveCorreo);
-                transport.sendMessage(mimeMessage,mimeMessage.getAllRecipients());
-                transport.close();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
     }
 
     public static String ucFirst(String str){
@@ -573,29 +507,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
         // El correo gmail de envío
         String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";
         String claveCorreo = "Serv.Escolares";
-        Properties properties = new Properties();
-
-        properties.put("mail.smtp.host", "smtp.gmail.com");
-        properties.put("mail.smtp.starttls.enable", "true");
-        properties.put("mail.smtp.port", "587");
-        properties.put("mail.smtp.auth", "true");
-        properties.put("mail.user", correoEnvia);
-        properties.put("mail.password", claveCorreo);
-
-        if(medioComunicacion.getEmail() != null){
-            Session session = Session.getInstance(properties,null);
-            try {
-                MimeMessage mimeMessage = new MimeMessage(session);
-                mimeMessage.setFrom(new InternetAddress(correoEnvia,"Registro de Ficha de Admisión 2019 UTXJ"));
-
-                InternetAddress internetAddress = new InternetAddress(medioComunicacion.getEmail());
-
-                mimeMessage.setRecipient(Message.RecipientType.TO,internetAddress);
-                mimeMessage.setSubject("Registro Exitoso");
-
-                MimeBodyPart mimeBodyPart = new MimeBodyPart();
-                MimeBodyPart mimeBodyPart1 = new MimeBodyPart();
-                mimeBodyPart1.setText("Estimado(a) "+persona.getNombre()+"\n\n Gracias por elegir a la Universidad Tecnologica de Xicotepec de Juárez como opción para continuar con tus estudios de nivel superior." +
+        String mensaje = "Estimado(a) "+persona.getNombre()+"\n\n Gracias por elegir a la Universidad Tecnologica de Xicotepec de Juárez como opción para continuar con tus estudios de nivel superior." +
                         "\n\n Para continuar descarga la ficha la admisión y asiste a las instalaciones de la UTXJ y entregar la documentación necesaria\n\n"
                         + "* Formato de Ficha de Admisión.\n"
                         + "* Copia de CURP (nuevo formato).\n"
@@ -603,23 +515,15 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
                         + "* Copia de Certificado de Nivel Medio Superior o Constancia de Estudios Original reciente con tira de materias y calificaciones (aprobatorias) del 1o. al 5o. semestre; indicando el promedio general y firmado por el titular de la Institución\n"
                         + "* Referencia bancaria del pago de ficha y examen de admisión.\n\n" +
                         "ATENTAMENTE \n" +
-                        "Departamento de Servicios Escolares");
-
-                Multipart multipart = new MimeMultipart();
-                
+                        "Departamento de Servicios Escolares";
+        
+        String identificador = "Registro de Ficha de Admisión 2019 UTXJ";
+        String asunto = "Registro Exitoso";
+        
+        if(medioComunicacion.getEmail() != null){
+            try {
                 DataSource source = new ByteArrayDataSource(baos.toByteArray(), "application/pdf");
-                mimeBodyPart.setDataHandler(new DataHandler(source));
-                mimeBodyPart.setFileName(aspirante.getFolioAspirante()+".pdf");
-                
-                multipart.addBodyPart(mimeBodyPart);
-                multipart.addBodyPart(mimeBodyPart1);
-                
-                mimeMessage.setContent(multipart);
-
-                Transport transport = session.getTransport("smtp");
-                transport.connect(correoEnvia,claveCorreo);
-                transport.sendMessage(mimeMessage,mimeMessage.getAllRecipients());
-                transport.close();
+                EnvioCorreos.EnviarCorreoArchivos(correoEnvia, claveCorreo,identificador,asunto,persona.getMedioComunicacion().getEmail(),mensaje,source,String.valueOf(aspirante.getFolioAspirante()));
             }catch (Exception e){
                 e.printStackTrace();
             }

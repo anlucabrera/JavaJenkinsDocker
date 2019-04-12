@@ -10,13 +10,15 @@
 
     <ui:define name="head-end">
         <ui:param name="renderBreadCrumb" value="false"/>
+        <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
          <!-- Inicio estilos par proceso electoral -->
         <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
         </c:if>  
         <c:if test="#{!controladorEmpleado.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
-        </c:if> 
+        </c:if>
+         
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
@@ -248,7 +250,7 @@
                                                             </div>
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                 <p:outputLabel for="peP" style="font-size: large;text-align: right;" value="Carrera Principal" />
-                                                                <p:inputText id="peP" class="form-control" value="#{procesoInscripcion.aspiranteValido.datosAcademicos.primeraOpcion}" readonly="true"/>
+                                                                <p:inputText id="peP" class="form-control" value="#{procesoInscripcion.nombreCarreraPO}" readonly="true"/>
                                                             </div>
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                 <p:outputLabel for="sistemaP" style="font-size: large;text-align: right;" value="Sistema Principal" />
@@ -256,18 +258,92 @@
                                                             </div>
                                                              <div class="col-sm-3 col-md-3 col-lg-3">
                                                                 <p:outputLabel for="peO" style="font-size: large;text-align: right;" value="Carrera Opcional" />
-                                                                <p:inputText id="peO" class="form-control" value="#{procesoInscripcion.aspiranteValido.datosAcademicos.primeraOpcion}" readonly="true"/>
+                                                                <p:inputText id="peO" class="form-control" value="#{procesoInscripcion.nombreCarreraSO}" readonly="true"/>
                                                             </div>
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                 <p:outputLabel for="sistemaO" style="font-size: large;text-align: right;" value="Sistema Opcional" />
-                                                                <p:inputText id="sistemaO" class="form-control" value="#{procesoInscripcion.aspiranteValido.datosAcademicos.sistemaPrimeraOpcion.nombre}" readonly="true"/>
+                                                                <p:inputText id="sistemaO" class="form-control" value="#{procesoInscripcion.aspiranteValido.datosAcademicos.sistemaSegundaOpcion.nombre}" readonly="true"/>
                                                             </div>
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                <p:selectOneRadio id="prgP" layout="responsive" columns="3">
-                                                                    <f:selectItem itemValue="1" itemLabel="Primera Opción"/>
-                                                                    <f:selectItem itemValue="2" itemLabel="Segunda Opción"/>
-                                                                    <p:ajax  listener="#{procesoInscripcion.opcionInscripcio()}"/>
+                                                                <p:selectOneRadio id="prgP" layout="responsive" columns="2" value="#{procesoInscripcion.opcionIncripcion}" required="true" requiredMessage="Es nesecesario elegir una opción">
+                                                                    <f:selectItem itemValue="#{true}" itemLabel="Primera Opción"/>
+                                                                    <f:selectItem itemValue="#{false}" itemLabel="Segunda Opción"/>
                                                                 </p:selectOneRadio>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <label class="col-sm-12 control-label"><h3 style="text-align: center">Datos de Inscripción</h3></label>
+                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                <p:outputLabel for="matricula" style="font-size: large;text-align: right;" value="Matrícula" />
+                                                                <p:inputText id="matricula" class="form-control" value="#{procesoInscripcion.estudiante.matricula}" readonly="true"/>
+                                                            </div>
+                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                <p:outputLabel for="pe" style="font-size: large;text-align: right;" value="Programa Educativo" />
+                                                                <p:inputTextarea id="pe" class="form-control" value="#{procesoInscripcion.carreraInscrito}" readonly="true"/>
+                                                            </div>
+                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                <p:outputLabel for="grupo" style="font-size: large;text-align: right;" value="Grupo" />
+                                                                <p:inputText id="grupo" class="form-control" value="#{procesoInscripcion.estudiante.grupo.literal}" readonly="true"/>
+                                                            </div>
+                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                <p:outputLabel for="sistemaI" style="font-size: large;text-align: right;" value="Sistema" />
+                                                                <p:inputText id="sistemaI" class="form-control" value="#{procesoInscripcion.estudiante.grupo.idSistema.nombre}" readonly="true"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr/>
+                                                    <div class="row">
+                                                        <center>
+                                                            <p:panelGrid style="width: 70%;" columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+                                                                layout="grid" styleClass="ui-fluid card">
+                                                                <f:facet name="header">
+                                                                    Documentos a entregar
+                                                                </f:facet>
+                                                                
+                                                                <p:outputLabel for="actaN" value="Acta de Nacimiento:"/>
+                                                                <p:selectBooleanButton id="actaN" value="#{procesoInscripcion.documentosentregadosestudiante.actaNacimiento}" onLabel="Si" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px"/>
+                                                                
+                                                                <p:outputLabel for="CopiaActaN" value="Copia Acta de Nacimiento:"/>
+                                                                <p:selectBooleanButton id="CopiaActaN" value="#{procesoInscripcion.documentosentregadosestudiante.copiaActaNacimiento}" onLabel="Si" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px"/>
+                                                                
+                                                                <p:outputLabel for="certificadoB" value="Certificado de Bachillerato:"/>
+                                                                <p:selectBooleanButton id="certificadoB" value="#{procesoInscripcion.documentosentregadosestudiante.certificadoIems}" onLabel="Si" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px"/>
+                                                                
+                                                                <p:outputLabel for="CopiaCertificadoB" value="Copia Certificado de Bachillerato:"/>
+                                                                <p:selectBooleanButton id="CopiaCertificadoB" value="#{procesoInscripcion.documentosentregadosestudiante.copiaCertificadoIems}" onLabel="Si" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px"/>
+                                                                
+                                                                <p:outputLabel for="historialAcad" value="Historial Academico:"/>
+                                                                <p:selectBooleanButton id="historialAcad" value="#{procesoInscripcion.documentosentregadosestudiante.historial}" onLabel="Si" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px"/>
+                                                                
+                                                                <p:outputLabel for="curp" value="CURP:"/>
+                                                                <p:selectBooleanButton id="curp" value="#{procesoInscripcion.documentosentregadosestudiante.curp}" onLabel="Si" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px"/>
+                                                                
+                                                                <p:outputLabel for="pago" value="Pago Coleguiatura:"/>
+                                                                <p:selectBooleanButton id="pago" value="#{procesoInscripcion.documentosentregadosestudiante.pagoColegiatura}" onLabel="Si" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px"/>
+                                                                
+                                                                <p:outputLabel for="comprobanteTS" value="Comprobante de Tipo de Sangre:"/>
+                                                                <p:selectBooleanButton id="comprobanteTS" value="#{procesoInscripcion.documentosentregadosestudiante.tipoSangre}" onLabel="Si" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px"/>
+                                                                
+                                                                <span/>
+                                                                <p:commandButton id="imprimeComprobanteIns" value="Comprobante de Inscripción" icon="fa fa-print" class="btn-primary btn-block col-md-3" onclick="target='_blank'"
+                                                                         process="@form" update="@form" actionListener="#{procesoInscripcion.imprimirComprobateIns()}" ajax="false" disabled="#{(procesoInscripcion.estudiante.idEstudiante == null)}"/>
+                                                                <p:commandButton id="imprimeCartaCompromiso" value="Carta compromiso" icon="fa fa-print" class="btn-primary btn-block col-md-3" onclick="target='_blank'" 
+                                                                                 process="@form" update="@form" actionListener="#{procesoInscripcion.imprimirComprobateIns()}" ajax="false" disabled="#{(procesoInscripcion.estudiante.idEstudiante == null) or (procesoInscripcion.estudiante.documentosentregadosestudiante.actaNacimiento == true) or (procesoInscripcion.estudiante.documentosentregadosestudiante.certificadoIems == true)}"/>
+                                                                <span/>
+                                                            </p:panelGrid>
+                                                        </center>
+                                                    </div>
+                                                    <hr/>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                <p:commandButton id="btnGuardaGrupos" value="Inscribir Estudiante" icon="fa fa-floppy-o"
+                                                                                 class="btn-primary btn-block col-md-3" process="@form" update="@form" actionListener="#{procesoInscripcion.guardarEstudiante()}" disabled="#{(procesoInscripcion.aspiranteValido.estatus == false)}"/>
+                                                                <p:commandButton id="btnClean" value="Nuevo" icon="fa fa-floppy-o"
+                                                                                 class="btn-primary btn-block col-md-3" process="@form" update="@form" actionListener="#{procesoInscripcion.clearDatos()}" disabled="#{(procesoInscripcion.aspiranteValido.estatus == false)}"/>
                                                             </div>
                                                         </div>
                                                     </div>

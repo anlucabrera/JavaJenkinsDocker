@@ -44,14 +44,14 @@ public class CargaAcademica implements Serializable {
     @NotNull
     @Column(name = "docente")
     private int docente;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargaAcademica1")
-    private List<ConfiguracionMateria> configuracionMateriaList;
     @JoinColumn(name = "cve_grupo", referencedColumnName = "id_grupo", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Grupo grupo;
     @JoinColumn(name = "cve_materia", referencedColumnName = "id_materia", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Materia materia;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargaAcademica1")
+    private List<ConfiguracionMateria> configuracionMateriaList;
 
     public CargaAcademica() {
     }
@@ -85,15 +85,6 @@ public class CargaAcademica implements Serializable {
         this.docente = docente;
     }
 
-    @XmlTransient
-    public List<ConfiguracionMateria> getConfiguracionMateriaList() {
-        return configuracionMateriaList;
-    }
-
-    public void setConfiguracionMateriaList(List<ConfiguracionMateria> configuracionMateriaList) {
-        this.configuracionMateriaList = configuracionMateriaList;
-    }
-
     public Grupo getGrupo() {
         return grupo;
     }
@@ -108,6 +99,15 @@ public class CargaAcademica implements Serializable {
 
     public void setMateria(Materia materia) {
         this.materia = materia;
+    }
+
+    @XmlTransient
+    public List<ConfiguracionMateria> getConfiguracionMateriaList() {
+        return configuracionMateriaList;
+    }
+
+    public void setConfiguracionMateriaList(List<ConfiguracionMateria> configuracionMateriaList) {
+        this.configuracionMateriaList = configuracionMateriaList;
     }
 
     @Override

@@ -37,7 +37,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Grupo.findByLiteral", query = "SELECT g FROM Grupo g WHERE g.literal = :literal"),
     @NamedQuery(name = "Grupo.findByGrado", query = "SELECT g FROM Grupo g WHERE g.grado = :grado"),
     @NamedQuery(name = "Grupo.findByCapMaxima", query = "SELECT g FROM Grupo g WHERE g.capMaxima = :capMaxima"),
-    @NamedQuery(name = "Grupo.findByIdPe", query = "SELECT g FROM Grupo g WHERE g.idPe = :idPe")})
+    @NamedQuery(name = "Grupo.findByIdPe", query = "SELECT g FROM Grupo g WHERE g.idPe = :idPe"),
+    @NamedQuery(name = "Grupo.findByPeriodo", query = "SELECT g FROM Grupo g WHERE g.periodo = :periodo")})
 public class Grupo implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -62,18 +63,22 @@ public class Grupo implements Serializable {
     @NotNull
     @Column(name = "id_pe")
     private short idPe;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grupo")
-    private List<Estudiante> estudianteList;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "periodo")
+    private int periodo;
     @JoinColumn(name = "id_sistema", referencedColumnName = "id_sistema")
     @ManyToOne(optional = false)
     private Sistema idSistema;
     @JoinColumn(name = "id_turno", referencedColumnName = "id_turno")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Turno idTurno;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "grupo")
-    private List<Tutoria> tutoriaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grupo")
     private List<CargaAcademica> cargaAcademicaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grupo")
+    private List<Estudiante> estudianteList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grupo")
+    private List<Tutoria> tutoriaList;
 
     public Grupo() {
     }
@@ -82,12 +87,13 @@ public class Grupo implements Serializable {
         this.idGrupo = idGrupo;
     }
 
-    public Grupo(Integer idGrupo, Character literal, int grado, int capMaxima, short idPe) {
+    public Grupo(Integer idGrupo, Character literal, int grado, int capMaxima, short idPe, int periodo) {
         this.idGrupo = idGrupo;
         this.literal = literal;
         this.grado = grado;
         this.capMaxima = capMaxima;
         this.idPe = idPe;
+        this.periodo = periodo;
     }
 
     public Integer getIdGrupo() {
@@ -130,13 +136,12 @@ public class Grupo implements Serializable {
         this.idPe = idPe;
     }
 
-    @XmlTransient
-    public List<Estudiante> getEstudianteList() {
-        return estudianteList;
+    public int getPeriodo() {
+        return periodo;
     }
 
-    public void setEstudianteList(List<Estudiante> estudianteList) {
-        this.estudianteList = estudianteList;
+    public void setPeriodo(int periodo) {
+        this.periodo = periodo;
     }
 
     public Sistema getIdSistema() {
@@ -156,21 +161,30 @@ public class Grupo implements Serializable {
     }
 
     @XmlTransient
-    public List<Tutoria> getTutoriaList() {
-        return tutoriaList;
-    }
-
-    public void setTutoriaList(List<Tutoria> tutoriaList) {
-        this.tutoriaList = tutoriaList;
-    }
-
-    @XmlTransient
     public List<CargaAcademica> getCargaAcademicaList() {
         return cargaAcademicaList;
     }
 
     public void setCargaAcademicaList(List<CargaAcademica> cargaAcademicaList) {
         this.cargaAcademicaList = cargaAcademicaList;
+    }
+
+    @XmlTransient
+    public List<Estudiante> getEstudianteList() {
+        return estudianteList;
+    }
+
+    public void setEstudianteList(List<Estudiante> estudianteList) {
+        this.estudianteList = estudianteList;
+    }
+
+    @XmlTransient
+    public List<Tutoria> getTutoriaList() {
+        return tutoriaList;
+    }
+
+    public void setTutoriaList(List<Tutoria> tutoriaList) {
+        this.tutoriaList = tutoriaList;
     }
 
     @Override
