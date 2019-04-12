@@ -65,12 +65,14 @@ public class Materia implements Serializable {
     @NotNull
     @Column(name = "estatus")
     private boolean estatus;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "materia")
-    private List<Calificaciones> calificacionesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idMateria")
     private List<UnidadMateria> unidadMateriaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "materia")
     private List<CargaAcademica> cargaAcademicaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "materia")
+    private List<Asesoria> asesoriaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "materia")
+    private List<Calificaciones> calificacionesList;
     @JoinColumn(name = "id_area_conocimiento", referencedColumnName = "id_area_conocimiento")
     @ManyToOne(optional = false)
     private AreaConocimiento idAreaConocimiento;
@@ -80,8 +82,6 @@ public class Materia implements Serializable {
     @JoinColumn(name = "id_plan", referencedColumnName = "id_plan_estudio")
     @ManyToOne(optional = false)
     private PlanEstudio idPlan;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "materia")
-    private List<Asesoria> asesoriaList;
 
     public Materia() {
     }
@@ -139,15 +139,6 @@ public class Materia implements Serializable {
     }
 
     @XmlTransient
-    public List<Calificaciones> getCalificacionesList() {
-        return calificacionesList;
-    }
-
-    public void setCalificacionesList(List<Calificaciones> calificacionesList) {
-        this.calificacionesList = calificacionesList;
-    }
-
-    @XmlTransient
     public List<UnidadMateria> getUnidadMateriaList() {
         return unidadMateriaList;
     }
@@ -163,6 +154,24 @@ public class Materia implements Serializable {
 
     public void setCargaAcademicaList(List<CargaAcademica> cargaAcademicaList) {
         this.cargaAcademicaList = cargaAcademicaList;
+    }
+
+    @XmlTransient
+    public List<Asesoria> getAsesoriaList() {
+        return asesoriaList;
+    }
+
+    public void setAsesoriaList(List<Asesoria> asesoriaList) {
+        this.asesoriaList = asesoriaList;
+    }
+
+    @XmlTransient
+    public List<Calificaciones> getCalificacionesList() {
+        return calificacionesList;
+    }
+
+    public void setCalificacionesList(List<Calificaciones> calificacionesList) {
+        this.calificacionesList = calificacionesList;
     }
 
     public AreaConocimiento getIdAreaConocimiento() {
@@ -187,15 +196,6 @@ public class Materia implements Serializable {
 
     public void setIdPlan(PlanEstudio idPlan) {
         this.idPlan = idPlan;
-    }
-
-    @XmlTransient
-    public List<Asesoria> getAsesoriaList() {
-        return asesoriaList;
-    }
-
-    public void setAsesoriaList(List<Asesoria> asesoriaList) {
-        this.asesoriaList = asesoriaList;
     }
 
     @Override

@@ -25,24 +25,20 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
  */
 @Local
 public interface EjbEvaluacion3601 {
-    
+     
     public List<SelectItem> getRespuestasPosibles();
     
     public List<Apartado> getApartados();
     
-    //public List<ListaPersonal> getListaDirectivos();
+    public List<ListaPersonal> getListaDirectivos();
     
-    public List<ListaPersonal> getListaEvaluados(ListaPersonal directivo);
+    public List<ListaPersonal> getListaSubordinados(ListaPersonal directivo);
     
     /**
      * Busca la evaluación activa considerando las fechas de inicio y fin de cada evaluación
      * @return Devuelve la evaluación activa del periodo mas reciente, en caso de no haber evaluaciones activas devuelve null.
      */
     public Evaluaciones360 evaluacionActiva();
-
-    public ListaPersonal getEvaluador();
-
-    public PeriodosEscolares getPeriodo(Evaluaciones360 evaluacion);
     
     public void actualizarRespuestaPorPregunta(Evaluaciones360Resultados resultado, Float pregunta, String respuesta);
     
