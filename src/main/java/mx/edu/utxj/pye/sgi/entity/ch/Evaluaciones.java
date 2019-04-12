@@ -30,12 +30,6 @@ import java.util.List;
     , @NamedQuery(name = "Evaluaciones.findByTipo", query = "SELECT e FROM Evaluaciones e WHERE e.tipo = :tipo")})
 public class Evaluaciones implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "evaluacion")
-    private Integer evaluacion;
     @Basic(optional = false)
     @NotNull
     @Column(name = "periodo")
@@ -55,6 +49,15 @@ public class Evaluaciones implements Serializable {
     @Size(min = 1, max = 39)
     @Column(name = "tipo")
     private String tipo;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    private EvaluacionEstadiaResultados evaluacionEstadiaResultados;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "evaluacion")
+    private Integer evaluacion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
     private List<EncuestaSatisfaccionEgresadosIng> encuestaSatisfaccionEgresadosIngList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
@@ -95,13 +98,6 @@ public class Evaluaciones implements Serializable {
         this.evaluacion = evaluacion;
     }
 
-    public int getPeriodo() {
-        return periodo;
-    }
-
-    public void setPeriodo(int periodo) {
-        this.periodo = periodo;
-    }
 
     public Date getFechaInicio() {
         return fechaInicio;
@@ -119,13 +115,6 @@ public class Evaluaciones implements Serializable {
         this.fechaFin = fechaFin;
     }
 
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
 
     @XmlTransient
     public List<EncuestaSatisfaccionEgresadosIng> getEncuestaSatisfaccionEgresadosIngList() {
@@ -222,6 +211,29 @@ public class Evaluaciones implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones[ evaluacion=" + evaluacion + " ]";
+    }
+
+    public int getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(int periodo) {
+        this.periodo = periodo;
+    }
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public EvaluacionEstadiaResultados getEvaluacionEstadiaResultados() {
+        return evaluacionEstadiaResultados;
+    }
+
+    public void setEvaluacionEstadiaResultados(EvaluacionEstadiaResultados evaluacionEstadiaResultados) {
+        this.evaluacionEstadiaResultados = evaluacionEstadiaResultados;
     }
     
 }

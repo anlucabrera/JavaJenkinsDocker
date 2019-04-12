@@ -25,4 +25,5 @@ public class ListadoEvaluacionEgresados {
     @Getter @Setter private Short grado;
     @Getter @Setter private String grupo;
     @Getter @Setter private String tutor;
+
 }

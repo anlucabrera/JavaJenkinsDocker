@@ -92,7 +92,7 @@ public class administracionAvanceEncuestaServicio  implements Serializable{
                     if(!ejbAdmEncuesta.esPlaneacion(1, Short.parseShort("2"), Short.parseShort("18"), Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()){
                         planeacion = true;
                     }
-                }
+            }
             }
         } catch (Throwable ex) {
             director = false;
