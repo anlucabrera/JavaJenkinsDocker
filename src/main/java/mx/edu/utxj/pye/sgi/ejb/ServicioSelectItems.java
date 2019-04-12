@@ -124,7 +124,7 @@ public class ServicioSelectItems implements EJBSelectItems {
             Listaperiodosescolares lp = q.getSingleResult();
             lp360.add(new SelectItem(ev.getPeriodo(), lp.getMesInicio() + "-" + lp.getMesFin() + " " + lp.getAnio(), "Periodo : " + lp.getMesInicio() + "-" + lp.getMesFin() + " " + lp.getAnio()));
         }
-        System.out.println("select item 360: " + lp360);
+//        System.out.println("select item 360: " + lp360);
         return lp360;
     }
 

@@ -165,7 +165,7 @@
                                 <p:spacer width="10"/>
 
                                 <p:remoteCommand name="rc" update="@form" actionListener="#{administrativoEvaluacion.utilAdmin.reload()}"  />
-                                <p:commandButton value="Grnera resultados" id="btnResultadoPersonal" actionListener="#{administrativoEvaluacion.utilAdmin.resultadosPersonal()}" process="@this" icon="fa fa-refresh" styleClass="btn-primary"  update="@form" rendered="#{administrativoEvaluacion.utilAdmin.periodoSeleccionado > 0}" oncomplete="rc()"/>
+                                <p:commandButton value="Genera resultados" id="btnResultadoPersonal" actionListener="#{administrativoEvaluacion.utilAdmin.resultadosPersonal()}" process="@this" icon="fa fa-refresh" styleClass="btn-primary"  update="@form" rendered="#{administrativoEvaluacion.utilAdmin.periodoSeleccionado > 0}" oncomplete="rc()"/>
                                 <!--<p:commandButton value="Genera resultados" id="btnResultadoPersonalgENERAL" actionListener="# {administrativoEvaluacion.utilAdmin.personalEvaluadoResultados()}" process="@this" icon="fa fa-refresh" styleClass="btn-primary"  update="@form" />-->
                             </h:panelGrid>
                         </f:facet>

@@ -465,6 +465,71 @@
                     </ul>
                 </li>
             </c:if>            
+            <c:if test="#{(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.areaSuperior ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaSuperior le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.clave eq 43 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 394)}">
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Registros de estadía</li>
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-file-text-o"></i> <span>Formatos estadía</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <li>
+                            <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/1. ESPACIOS CONCERTADOS DE ESTADÍA.xlsx">
+                                <span>1. Espacios concertados</span>
+                            </p:link>
+                        </li>      
+                        <li>
+                            <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/2. CONCENTRADO DE ESTADÍAS.xlsx">
+                                <span>2. Concentrado de estadías</span>
+                            </p:link>
+                        </li>       
+                        <li>
+                            <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/3. CARTA DE PRESENTACIÓN DE ESTADÍA.docx">
+                                <span>3. Carta de presentación</span>
+                            </p:link>
+                        </li>       
+                        <li>
+                            <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/4. Carta de Aceptacion de Estadía.docx">
+                                <span>4. Carta de aceptación</span>
+                            </p:link>
+                        </li>       
+                        <c:if test="#{(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.areaSuperior ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaSuperior le 29 )}">
+                            <li>
+                                <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/5. Seguimiento de la Estadía Técnica.xls">
+                                    <span>5. Seguimiento de la estadía</span>
+                                </p:link>
+                            </li>       
+                            <li>
+                                <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/6. INFORME MENSUAL DE ESTADÍA.doc">
+                                    <span>6. Informe mensual</span>
+                                </p:link>
+                            </li>       
+                            <li>
+                                <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/7. EVALUACIÓN DE ESTADIA POR ASESOR EMPRESARIAL.xls">
+                                    <span>7. Evaluación asesor empresarial</span>
+                                </p:link>
+                            </li>       
+                            <li>
+                                <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/8. CARTA DE LIBERACIÓN EMPRESARIAL.docx">
+                                    <span>8. Carta de liberación empresarial</span>
+                                </p:link>
+                            </li>       
+                            <li>
+                                <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/9. Carta de evaluación y acreditación de estadia (4).doc">
+                                    <span>9. evaluación, acreditación estadía</span>
+                                </p:link>
+                            </li>  
+                        </c:if>      
+                        <li>
+                            <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/PROCESO ESTADIA TECNICA.pdf">
+                                <span>Proceso estadía técnica</span>
+                            </p:link>
+                        </li> 
+                    </ul>
+                </li>
+            </c:if>    
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 || controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 7 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 148 ||controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 6 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 300}">
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Administrador</li>
             </c:if>
@@ -672,7 +737,7 @@
                     </p:link>
                 </li>
             </c:if>      
-            
+
             <!--li class="treeview">
                 <a href="#"><i class="fa fa-money"></i><span>Finanzas</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
                 <ul class="treeview-menu">

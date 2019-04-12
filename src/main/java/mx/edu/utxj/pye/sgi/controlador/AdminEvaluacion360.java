@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.model.SelectItem;
-import javax.faces.view.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.ListaEvaluacion360Combinaciones;
@@ -35,6 +34,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Listaperiodosescolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 
@@ -53,7 +53,7 @@ public class AdminEvaluacion360 implements Serializable {
      */
     @Getter @Setter private Integer nivelOperacion, nivelOperacion2, periodoSeleccionado, periodoEvaluacion, evEd;
     @Getter @Setter private String tipoEvaluacion;
-    @Getter @Setter private Boolean e360b = true, eDesempenio = false ;
+    @Getter private Boolean e360b = true, edesempenio = false ;
     @Getter @Setter private Date fechaA, fechaB;
     @Getter @Setter private Personal evaluadorAu, evaluadoAu;
     @Getter @Setter private PersonalCategorias categoria;
@@ -84,7 +84,6 @@ public class AdminEvaluacion360 implements Serializable {
     @EJB EjbEvaluacion3601 ejbEvaluacion3601;
     @EJB EjbAdministracionEncuestas ejbAdministracionEncuestas;
     @EJB EjbEvaluacionDesempenio ejbDes;
-//    @Inject @Getter @Setter UtilidadesAdministracionEvaluaciones utilAdmin;
     
     @PostConstruct
     public void init() {
@@ -97,54 +96,30 @@ public class AdminEvaluacion360 implements Serializable {
         sIPeriodo360 = eJBSelectItems.itemsPeriodos360();
         sIPeriodoDesempemio = eJBSelectItems.itemsPeriodos360();
         sIPeriodos = eJBSelectItems.itemsPeriodos();
-        // codigo con el cual originalmente se creaban las combinaciones
-//        evaluacionActiva = ejbEvaluacion3601.evaluacionActiva();
-//        resultados = ejbEvaluacion360Combinaciones.generar(evaluacionActiva);
-//        configurado = ejbEvaluacion360Combinaciones.detectarConfiguracion(evaluacionActiva);
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.init() hay configuracion: " + configurado);
-//        
-//        if(!configurado){
-//            ejbEvaluacion360Combinaciones.guardarCombinaciones(resultados);
-//        }
     }
 
     public void generaEvaluacion360() {
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.generaEvaluacion360() entra a la generacion de combinaciones");
         evaluacionActiva = ejbEvaluacion3601.evaluacionActiva();
-        if (evaluacionActiva != null) {
-//            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.generaEvaluacion360() la evaluacion esta activa");
-        }
         resultados = ejbEvaluacion360Combinaciones.generar(nuevaEvaluacion);
-        configurado = ejbEvaluacion360Combinaciones.detectarConfiguracion(nuevaEvaluacion);
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.init() hay configuracion: " + configurado);
+        resultados.forEach(res -> {
+            System.out.println("res = (periodo=" + res.getEvaluaciones360().getPeriodo() + ", evaluación=" + res.getEvaluaciones360().getEvaluacion() + ", evaluado=" + res.getEvaluaciones360ResultadosPK().getEvaluado() + ", tipo=" + res.getTipo() + ", evaluador=" + res.getEvaluaciones360ResultadosPK().getEvaluador() + ".");
+        });
+//        configurado = ejbEvaluacion360Combinaciones.detectarConfiguracion(nuevaEvaluacion);
 
-        if (!configurado) {
-            ejbEvaluacion360Combinaciones.guardarCombinaciones(resultados);
-        }
-        // codigo original
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.generaEvaluacion360() entra a la generacion de combinaciones");
-//        evaluacionActiva = ejbEvaluacion3601.evaluacionActiva();
-//        resultados = ejbEvaluacion360Combinaciones.generar(evaluacionActiva);
-//        configurado = ejbEvaluacion360Combinaciones.detectarConfiguracion(evaluacionActiva);
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.init() hay configuracion: " + configurado);
-//        
-//        if(!configurado){
-//            ejbEvaluacion360Combinaciones.guardarCombinaciones(resultados);
+//        if (!configurado) {
+            //ejbEvaluacion360Combinaciones.guardarCombinaciones(resultados);
 //        }
     }
 
     public void genera360() {
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.genera360() entra al metodo antes del if");
         if (periodoEvaluacion == null || fechaA == null || fechaB == null) {
             Messages.addGlobalWarn("Asegurese de completar los campos antes de crear la encuesta");
         } else {
-//            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.genera360() entra al metodo para insertar");
             nueva360 = new Evaluaciones360();
             nueva360.setEvaluacion(0);
             nueva360.setPeriodo(periodoEvaluacion);
             nueva360.setFechaInicio(fechaA);
             nueva360.setFechaFin(fechaB);
-//            System.out.println("datos de evaluacion periodo, fecha a, fecha b... " + periodoEvaluacion + " f " + fechaA + " fb " + fechaB);
             nuevaEvaluacion = ejbAdministracionEncuestas.nuevaEvaluacion360(nueva360);
             generaEvaluacion360();
         }
@@ -156,23 +131,22 @@ public class AdminEvaluacion360 implements Serializable {
         nuevaDesempenio.setPeriodo(periodoEvaluacion);
         nuevaDesempenio.setFechaInicio(fechaA);
         nuevaDesempenio.setFechaFin(fechaB);
-//        System.out.println("datos de evaluacion periodo, fecha a, fecha b... " + periodoEvaluacion + " f " + fechaA + " fb " + fechaB);
         ejbAdministracionEncuestas.nuevaEvaluacionDesempenio(nuevaDesempenio);
     }
 
     public void validarNuevaEvaluacion() {
-        if (e360b && eDesempenio) {
-            Messages.addGlobalWarn("solo debe seleccionar una evlaución al mismo tiempo.");
-        } else if (!e360b && !eDesempenio) {
-            Messages.addGlobalWarn("solo debe seleccionar una evaluación.");
+        if (e360b && edesempenio) {
+            Messages.addGlobalWarn("Sólo debe seleccionar una evaluación.");
+        } else if (!e360b && !edesempenio) {
+            Messages.addGlobalWarn("Debe seleccionar una evaluación.");
         }
     }
 
     public void verListaEvaluaciones() {
         listaEvaluaciones = new ArrayList<>();
-        if (e360b && eDesempenio) {
+        if (e360b && edesempenio) {
             Messages.addGlobalWarn("solo debe seleccionar una evlaución al mismo tiempo.");
-        } else if (!e360b && !eDesempenio) {
+        } else if (!e360b && !edesempenio) {
             Messages.addGlobalWarn("solo debe seleccionar una evaluación.");
         }
         if (e360b) {
@@ -193,7 +167,7 @@ public class AdminEvaluacion360 implements Serializable {
                     listaEvaluaciones.add(new listadoEvaluacionesDTO(e.getEvaluacion(), pEva.getMesInicio() + "-" + pEva.getMesFin() + " " + pEva.getAnio() + " (" + pEva.getPeriodo() + ")", e.getFechaInicio(), e.getFechaFin(), status));
                 });
             }
-        } else if (eDesempenio) {
+        } else if (edesempenio) {
             List<DesempenioEvaluaciones> le = ejbEvaluacion360Combinaciones.getEvaluacionesDesempenio();
             if (le.isEmpty()) {
                 Messages.addGlobalWarn("No existen evaluaciones para mostrar");
@@ -217,11 +191,10 @@ public class AdminEvaluacion360 implements Serializable {
     }
 
     public void getListaCombinaciones(Integer evaluacion) {
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.getListaCombinaciones() la evaluacion que entra es: " + evaluacion);
         Integer evaluaciionN = evaluacion;
-        if (e360b && eDesempenio) {
+        if (e360b && edesempenio) {
             Messages.addGlobalWarn("solo debe seleccionar una evlaución al mismo tiempo.");
-        } else if (!e360b && !eDesempenio) {
+        } else if (!e360b && !edesempenio) {
             Messages.addGlobalWarn("solo debe seleccionar una evaluación.");
         }
         if (e360b) {
@@ -230,14 +203,11 @@ public class AdminEvaluacion360 implements Serializable {
             listaEvaluacionDesempeñoFiltro = new ArrayList<>();
             personalActivo = ejbEvaluacion360Combinaciones.getPersonalActivo();
             personalActivo.forEach(p -> {
-//                System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.getListaCombinaciones() persona en cuestion : " + p.getNombre() + " nomina: " + p.getClave());
                 List<Evaluaciones360Resultados> lr = ejbEvaluacion360Combinaciones.getResultados360(evaluaciionN, p.getClave());
                 if (lr == null || lr.isEmpty()) {
 //                    System.out.println("Persona inactiva durante el periodo : " + p.getNombre());
                 } else {
-                    //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.getListaCombinaciones() si tiene datos como evaluador " + lr.get(0).getPersonalEvaluado().getNombre());
                     lr.forEach(lr360 -> {
-//                        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.getListaCombinaciones() busca resultados para llenar el dto");
                         Personal evaluador = ejbEvaluacion360Combinaciones.getPersonalEvaluador(lr360.getPersonal1().getClave());
                         String claveLista = evaluacion + "" + evaluador.getClave() + "" + p.getClave();
                         listaCombinacion360.add(new ListaEvaluacion360Combinaciones(Integer.parseInt(claveLista), evaluacion, lr360.getTipo(),
@@ -249,7 +219,7 @@ public class AdminEvaluacion360 implements Serializable {
                     });
                 }
             });
-        } else if (eDesempenio) {
+        } else if (edesempenio) {
             personalActivo = new ArrayList<>();
             listadoEvaluacionDesempenio = new ArrayList<>();
             personalActivo = ejbEvaluacion360Combinaciones.getPersonalActivo();
@@ -282,11 +252,10 @@ public class AdminEvaluacion360 implements Serializable {
     }
 
     public void editaEvaluacion(Integer evaluacion) {
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.editaEvaluacion() evaluacion = " + evaluacion);
         if (e360b) {
             Evaluaciones360 e3 = ejbEvaluacion360Combinaciones.getEvaluaciones360().stream().filter(e -> e.getEvaluacion().equals(evaluacion)).collect(Collectors.toList()).get(0);
             ejbEvaluacion360Combinaciones.editaEvaluacion360(e3, fechaA, fechaB);
-        } else if (eDesempenio) {
+        } else if (edesempenio) {
             DesempenioEvaluaciones eD = ejbEvaluacion360Combinaciones.getEvaluacionesDesempenio().stream().filter(e -> e.getEvaluacion().equals(evaluacion)).collect(Collectors.toList()).get(0);
             ejbEvaluacion360Combinaciones.editaDesempenioEvaluaciones(eD, fechaA, fechaB);
         }
@@ -295,15 +264,10 @@ public class AdminEvaluacion360 implements Serializable {
     public void validaEdicionCombinaciones360(ListaEvaluacion360Combinaciones combinacion) {
         if (combinacion != null) {
             resultado360 = ejbEvaluacion360Combinaciones.getCombinacion(combinacion.getEvaluacion(), combinacion.getNominaEvaluado(), combinacion.getNominaEvaluador());
-//            System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.validaEdicionCombinaciones360() la combinacion -->> " + resultado360);
         }
     }
 
     public void validaEdicionCombinacionesDes(ListaEvaluacionDesempenio combinacion) {
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.validaEdicionCombinacionesDes() pasa ala combinacion : " + combinacion);
-//        System.out.println("Evaluacion: " + combinacion.getEvaluacion());
-//        System.out.println("Evaluador: " + combinacion.getEvaluador());
-//        System.out.println("Evaluado: " + combinacion.getEvaluado());
         
         resultadosDesempeño = ejbEvaluacion360Combinaciones.getCombinacionDesempenio(combinacion.getEvaluacion(), combinacion.getEvaluado(), combinacion.getEvaluador());
 //        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.validaEdicionCombinacionesDes() la combinacion es -->> " + resultadosDesempeño);
@@ -322,7 +286,6 @@ public class AdminEvaluacion360 implements Serializable {
     
     public void editaCombinación() {
         ejbEvaluacion360Combinaciones.editaCombinacion360(resultado360, evaluadoAu.getClave(), evaluadorAu.getClave(), categoria.getCategoria(), tipoEvaluacion);
-//            if(ejbEvaluacion360Combinaciones.editaCombinacion360(resultado360, evaluadoAu.getClave(), evaluadorAu.getClave(), categoria.getCategoria(), tipoEvaluacion)!=null){
         listaCombinacion360.clear();
     }
     
@@ -332,12 +295,10 @@ public class AdminEvaluacion360 implements Serializable {
     }
     
     public void eliminaCombinacion360(ListaEvaluacion360Combinaciones combinacion) {
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.eliminaCombinacion360() la combinacion que entra es : " + combinacion);
         ejbEvaluacion360Combinaciones.eliminaCombinacion360(combinacion);
     }
 
     public void eliminaCombinacionDes(ListaEvaluacionDesempenio combinacion) {
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.AdminEvaluacion360.eliminaCombinacionDes() la combinacion que entra es : " + combinacion);
         ejbEvaluacion360Combinaciones.eliminaCombinacionDes(combinacion);
     }
 
@@ -347,5 +308,15 @@ public class AdminEvaluacion360 implements Serializable {
 
     public List<PersonalCategorias> completePersonalCategorias(String query) { 
         return listaCategorias.stream().filter(x -> x.getNombre().contains(query.trim())).collect(Collectors.toList());
+    }
+
+    public void setE360b(Boolean e360b) {
+        this.e360b = e360b;
+        this.edesempenio = ! e360b;
+    }
+
+    public void setEdesempenio(Boolean edesempenio) {
+        this.edesempenio = edesempenio;
+        this.e360b = !edesempenio;
     }
 }

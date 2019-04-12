@@ -74,7 +74,7 @@ public class ServicioEvaluacionTutor implements EjbEvaluacionTutor {
     public List<EvaluacionesTutoresResultados> getListaTutores(VistaEvaluacionesTutores estudianteEvaluador) {
         Evaluaciones evaluacion = evaluacionActiva();
         
-        TypedQuery<EvaluacionesTutoresResultados> q = f.getEntityManager().createQuery("SELECT r FROM EvaluacionesTutoresResultados r WHERE r.pk.evaluacion=:evaluacion AND r.pk.evaluador=:evaluador AND r.pk.evaluado=:evaluado", EvaluacionesTutoresResultados.class);
+        TypedQuery<EvaluacionesTutoresResultados> q = f.getEntityManager().createQuery("SELECT r FROM EvaluacionesTutoresResultados r WHERE r.evaluacionesTutoresResultadosPK.evaluacion=:evaluacion AND r.evaluacionesTutoresResultadosPK.evaluador=:evaluador AND r.evaluacionesTutoresResultadosPK.evaluado=:evaluado", EvaluacionesTutoresResultados.class);
         q.setParameter("evaluacion", evaluacion.getEvaluacion());
         q.setParameter("evaluador", Integer.parseInt(estudianteEvaluador.getPk().getMatricula()));
         q.setParameter("evaluado", Integer.parseInt(estudianteEvaluador.getPk().getNumeroNomina()));
@@ -150,7 +150,7 @@ public class ServicioEvaluacionTutor implements EjbEvaluacionTutor {
 
     @Override
     public List<EvaluacionesTutoresResultados> obtenerListaResultadosPorEvaluacionEvaluador(Evaluaciones evaluacion, VistaEvaluacionesTutores evaluador) {
-        TypedQuery<EvaluacionesTutoresResultados> q = f.getEntityManager().createQuery("SELECT r FROM EvaluacionesTutoresResultados r WHERE r.pk.evaluacion=:evaluacion AND r.pk.evaluador=:evaluador", EvaluacionesTutoresResultados.class);
+        TypedQuery<EvaluacionesTutoresResultados> q = f.getEntityManager().createQuery("SELECT r FROM EvaluacionesTutoresResultados r WHERE r.evaluacionesTutoresResultadosPK.evaluacion=:evaluacion AND r.evaluacionesTutoresResultadosPK.evaluador=:evaluador", EvaluacionesTutoresResultados.class);
         q.setParameter("evaluacion", evaluacion.getEvaluacion());
         q.setParameter("evaluador", Integer.parseInt(evaluador.getPk().getMatricula()));
         return q.getResultList();

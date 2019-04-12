@@ -79,7 +79,7 @@ public class ControladorPOARecurso implements Serializable {
     @PostConstruct
     public void init() {
         System.out.println("inicio"+System.currentTimeMillis());
-        ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa1();;
+        ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa1();
         numPm1 = null;        numPm2 = null;        numPm3 = null;        numPm4 = null;        numPm5 = null;        numPm6 = null;
         numPm7 = null;        numPm8 = null;        numPm9 = null;        numPm10 = null;        numPm11 = null;        numPm12 = null;
         alineacionSeleccionada = false;
@@ -355,7 +355,7 @@ public class ControladorPOARecurso implements Serializable {
     }
     
     public void asignarRecursoActividad(ActividadesPoa actividadesPoaRecurso) {
-        System.out.println("asignacion"+System.currentTimeMillis());
+        System.out.println("asignacion"+actividadesPoaRecurso);
         actividadesPoa = new ActividadesPoa();
         actividadesPoa = actividadesPoaRecurso;
         System.out.println("asignacion"+System.currentTimeMillis());

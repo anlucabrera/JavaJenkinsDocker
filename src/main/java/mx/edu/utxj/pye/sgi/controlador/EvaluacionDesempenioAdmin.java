@@ -86,13 +86,13 @@ public class EvaluacionDesempenioAdmin implements Serializable {
 //        listaDirectivos = evaluacionDesempenioEJB.getListaDirectivos();
 //        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() ld: " + listaDirectivos);
             //paso 2 elegir un directivo
-//        directivoSeleccionado = new ListaPersonal(30);
-//        if(listaDirectivos.contains(directivoSeleccionado)){
-//            directivoSeleccionado = listaDirectivos.get(listaDirectivos.indexOf(directivoSeleccionado));
+//        evaluador = new ListaPersonal(30);
+//        if(listaDirectivos.contains(evaluador)){
+//            evaluador = listaDirectivos.get(listaDirectivos.indexOf(evaluador));
 //        }
             facade.setEntityClass(ListaPersonal.class);
             directivoSeleccionado = (ListaPersonal) facade.find(Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
-        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() elegido: " + directivoSeleccionado);
+        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() elegido: " + evaluador);
 
             //paso 3 obtener la lista de subordnados del directivo elegido
             listaSubordinados = evaluacionDesempenioEJB.getListaSubordinados(directivoSeleccionado);
@@ -192,7 +192,7 @@ public class EvaluacionDesempenioAdmin implements Serializable {
             ListaPersonalDesempenioEvaluacion lpde = new ListaPersonalDesempenioEvaluacion(new DesempenioEvaluacionResultadosPK(desempenioEvaluacion.getEvaluacion(), directivoSeleccionado.getClave(), clave));
 //            //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.initPersonalEvaluando() lpde: " + lpde);
             listaPersonalEvaluando.add(listaPersonalEvaluado.get(listaPersonalEvaluado.indexOf(lpde)));
-//            listaPersonalEvaluando.add((ListaPersonalDesempenioEvaluacion)facade.find(new DesempenioEvaluacionResultadosPK(desempenioEvaluacion.getEvaluacion(), directivoSeleccionado.getClave(), clave)));
+//            listaPersonalEvaluando.add((ListaPersonalDesempenioEvaluacion)facade.find(new DesempenioEvaluacionResultadosPK(desempenioEvaluacion.getEvaluacion(), evaluador.getClave(), clave)));
         });//        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init(11) evaluando: " + listaPersonalEvaluando.toString());
     }
 
@@ -310,7 +310,7 @@ public class EvaluacionDesempenioAdmin implements Serializable {
         //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() la ultima evaluacion es : "+ ultimaEvaluacion);
         
         directivoSeleccionado = (ListaPersonal) facade.find(Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
-        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() el directivo es : "+ directivoSeleccionado);
+        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() el directivo es : "+ evaluador);
         
         listaSubordinados = evaluacionDesempenioEJB.getListaSubordinados(directivoSeleccionado);
         
@@ -343,7 +343,7 @@ public class EvaluacionDesempenioAdmin implements Serializable {
         //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() la ultima evaluacion es : "+ ultimaEvaluacion);
         
         directivoSeleccionado = (ListaPersonal) facade.find(Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
-        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() el directivo es : "+ directivoSeleccionado);
+        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() el directivo es : "+ evaluador);
         
         listaSubordinados = evaluacionDesempenioEJB.getListaSubordinados(directivoSeleccionado);
         

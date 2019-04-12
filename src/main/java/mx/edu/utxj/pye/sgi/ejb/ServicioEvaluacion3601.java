@@ -1,11 +1,15 @@
 package mx.edu.utxj.pye.sgi.ejb;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.faces.model.SelectItem;
+import javax.inject.Inject;
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
@@ -18,6 +22,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonalEvaluacion360;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonalEvaluacion360Promedios;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonalEvaluacion360Reporte;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
 /**
@@ -27,8 +32,8 @@ import mx.edu.utxj.pye.sgi.facade.Facade;
 @Stateful
 public class ServicioEvaluacion3601 implements EjbEvaluacion3601 {
 
-    @EJB
-    Facade f;
+    @EJB Facade f;
+    @Inject LogonMB logonMB;
 
     @Override
     public List<SelectItem> getRespuestasPosibles() {
@@ -71,17 +76,24 @@ public class ServicioEvaluacion3601 implements EjbEvaluacion3601 {
         return l;
     }
 
-    @Override
+    /*@Override
     public List<ListaPersonal> getListaDirectivos() {
         TypedQuery<ListaPersonal> q = f.getEntityManager().createQuery("from ListaPersonal lp where lp.actividad = 2 order by lp.nombre", ListaPersonal.class);
 
         return q.getResultList();
-    }
+    }*/
 
     @Override
-    public List<ListaPersonal> getListaSubordinados(ListaPersonal directivo) {
+    public List<ListaPersonal> getListaEvaluados(ListaPersonal evaluador) {
         Evaluaciones360 eva = evaluacionActiva();
-        if (eva != null) {
+        return f.getEntityManager().createQuery("select r from Evaluaciones360Resultados r where r.evaluaciones360ResultadosPK.evaluacion=:evaluacion and r.evaluaciones360ResultadosPK.evaluador=:evaluador", Evaluaciones360Resultados.class)
+                .setParameter("evaluacion", eva.getEvaluacion())
+                .setParameter("evaluador", evaluador.getClave())
+                .getResultStream()
+                .map(r -> f.getEntityManager().find(ListaPersonal.class, r.getEvaluaciones360ResultadosPK().getEvaluado()))
+                .sorted(Comparator.comparing(ListaPersonal::getCategoriaOperativaNombre).thenComparing(Comparator.comparing(ListaPersonal::getNombre)))
+                .collect(Collectors.toList());
+        /*if (eva != null) {
             StoredProcedureQuery q = f.getEntityManager().createStoredProcedureQuery("obtener_lista_personal_evaluar_360", ListaPersonal.class).
                     registerStoredProcedureParameter("par_evaluacion", Integer.class, ParameterMode.IN).setParameter("par_evaluacion", eva.getEvaluacion()).
                     registerStoredProcedureParameter("par_evaluador", Integer.class, ParameterMode.IN).setParameter("par_evaluador", directivo.getClave());
@@ -89,19 +101,39 @@ public class ServicioEvaluacion3601 implements EjbEvaluacion3601 {
                 return q.getResultList();
             }
 
-        return null;
+        return null;*/
     }
 
     @Override
     public Evaluaciones360 evaluacionActiva() {
-        StoredProcedureQuery spq = f.getEntityManager().createStoredProcedureQuery("buscar_evaluacion_360_activa", Evaluaciones360.class);
+        return  f.getEntityManager().createQuery("select e from Evaluaciones360 e where e.periodo=:periodo", Evaluaciones360.class)
+                .setParameter("periodo", (short)51)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+        /*StoredProcedureQuery spq = f.getEntityManager().createStoredProcedureQuery("buscar_evaluacion_360_activa", Evaluaciones360.class);
         List<Evaluaciones360> l = spq.getResultList();
 
         if (l == null || l.isEmpty()) {
             return null;
         } else {
             return l.get(0);
-        }
+        }*/
+    }
+
+    @Override
+    public ListaPersonal getEvaluador() {
+        return f.getEntityManager().createQuery("select p from ListaPersonal p where p.clave=:clave", ListaPersonal.class)
+                .setParameter("clave", logonMB.getPersonal().getClave())
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public PeriodosEscolares getPeriodo(Evaluaciones360 evaluacion) {
+        if(evaluacion == null) return null;
+        return f.getEntityManager().find(PeriodosEscolares.class, evaluacion.getPeriodo());
     }
 
     @Override
@@ -210,23 +242,23 @@ public class ServicioEvaluacion3601 implements EjbEvaluacion3601 {
     }
 
     @Override
-    public void cargarResultadosAlmacenados(Evaluaciones360 evaluacion, ListaPersonal directivo, List<ListaPersonal> subordinados) {
+    public void cargarResultadosAlmacenados(Evaluaciones360 evaluacion, ListaPersonal evaluador, List<ListaPersonal> evaluados) {
         try {
             List<Integer> claves = new ArrayList<>();
-            subordinados.forEach((lp) -> {
+            evaluados.forEach((lp) -> {
                 claves.add(lp.getClave());
             });
 
-            TypedQuery<Evaluaciones360Resultados> q = f.getEntityManager().createQuery("select a from Evaluaciones360Resultados a where a.pk.evaluacion=:evaluacion and a.pk.evaluador = :evaluador and a.pk.evaluado in :claves", Evaluaciones360Resultados.class);
+            TypedQuery<Evaluaciones360Resultados> q = f.getEntityManager().createQuery("select a from Evaluaciones360Resultados a where a.evaluaciones360ResultadosPK.evaluacion=:evaluacion and a.evaluaciones360ResultadosPK.evaluador = :evaluador and a.evaluaciones360ResultadosPK.evaluado in :claves", Evaluaciones360Resultados.class);
             q.setParameter("evaluacion", evaluacion.getEvaluacion());
-            q.setParameter("evaluador", directivo.getClave());
+            q.setParameter("evaluador", evaluador.getClave());
             q.setParameter("claves", claves);
 
             List<Evaluaciones360Resultados> l = q.getResultList();
 
             evaluacion.setEvaluaciones360ResultadosList(new ArrayList<>());
-            subordinados.forEach((subordinado) -> {
-                Evaluaciones360ResultadosPK pk = new Evaluaciones360ResultadosPK(evaluacion.getEvaluacion(), directivo.getClave(), subordinado.getClave());
+            evaluados.forEach((subordinado) -> {
+                Evaluaciones360ResultadosPK pk = new Evaluaciones360ResultadosPK(evaluacion.getEvaluacion(), evaluador.getClave(), subordinado.getClave());
                 Evaluaciones360Resultados der = new Evaluaciones360Resultados(pk);
 
                 if (l.contains(der)) {
@@ -354,12 +386,19 @@ public class ServicioEvaluacion3601 implements EjbEvaluacion3601 {
     }
 
     @Override
-    public List<ListaPersonalEvaluacion360> obtenerListaResultadosPorEvaluacionEvaluador(Evaluaciones360 desempenioEvaluacion, ListaPersonal directivo) {
-//        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacion3601.obtenerListaResultadosPorEvaluacionEvaluador(): " + desempenioEvaluacion.getEvaluacion() + "," + directivo.getClave());
-        StoredProcedureQuery q = f.getEntityManager().createStoredProcedureQuery("obtener_lista_resultados_360_por_evaluacion_evaluador", ListaPersonalEvaluacion360.class).
-                registerStoredProcedureParameter("par_evaluacion", Integer.class, ParameterMode.IN).setParameter("par_evaluacion", desempenioEvaluacion.getEvaluacion()).
-                registerStoredProcedureParameter("par_evaluador", Integer.class, ParameterMode.IN).setParameter("par_evaluador", directivo.getClave());
-        return q.getResultList();
+    public List<ListaPersonalEvaluacion360> obtenerListaResultadosPorEvaluacionEvaluador(Evaluaciones360 evaluacion, ListaPersonal directivo) {
+//        System.out.println("evaluacion = [" + evaluacion + "], directivo = [" + directivo + "]");
+        Comparator<ListaPersonalEvaluacion360> comparator = Comparator.comparing(ListaPersonalEvaluacion360::getEvaluadoCategoriaOperativaNombre).thenComparing(Comparator.comparing(ListaPersonalEvaluacion360::getEvaluadoNombre));
+        return f.getEntityManager().createQuery("select r from Evaluaciones360Resultados r where r.evaluaciones360ResultadosPK.evaluacion=:evaluacion and r.evaluaciones360ResultadosPK.evaluador=:evaluador", Evaluaciones360Resultados.class)
+                .setParameter("evaluacion", evaluacion.getEvaluacion())
+                .setParameter("evaluador", directivo.getClave())
+                .getResultStream()
+                .map(r -> {
+                    Evaluaciones360ResultadosPK pk = new Evaluaciones360ResultadosPK(evaluacion.getEvaluacion(), r.getEvaluaciones360ResultadosPK().getEvaluador(), r.getEvaluaciones360ResultadosPK().getEvaluado());
+                    return f.getEntityManager().find(ListaPersonalEvaluacion360.class, pk);
+                })
+                .sorted(comparator)
+                .collect(Collectors.toList());
     }
 
     @Override

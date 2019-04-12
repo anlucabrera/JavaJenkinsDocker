@@ -579,11 +579,11 @@
                 </h:form>
             </p:dialog>
 
-            <p:blockUI block="frmAlineacionEstratejica" widgetVar="buiRegistro1" blocked="#{controladorEmpleado.procesopoa.registroAFinalizado}"/>
-            <p:blockUI block="frm2" widgetVar="buiRegistro2" blocked="#{controladorEmpleado.procesopoa.registroAFinalizado}">
+            <p:blockUI block="frmAlineacionEstratejica" widgetVar="buiRegistro1" blocked="#{controladorEmpleado.procesopoa.asiganacionRFinalizado}"/>
+            <p:blockUI block="frm2" widgetVar="buiRegistro2" blocked="#{controladorEmpleado.procesopoa.asiganacionRFinalizado}">
                 Ha confirmado la culminación de este proceso, espere la respuesta por parte de la Dirección de Planeación y Evaluación, que indique si se realizaran, modificaciones o podrá pasar a la siguiente fase.
             </p:blockUI>            
-            <p:blockUI block="frm" widgetVar="buiRegistro3" blocked="#{controladorEmpleado.procesopoa.registroAFinalizado}"/>
+            <p:blockUI block="frm" widgetVar="buiRegistro3" blocked="#{controladorEmpleado.procesopoa.asiganacionRFinalizado}"/>
         </c:if>
         <c:if test="#{!controladorEmpleado.tienePOA}">
             <div class="box box-primary">

@@ -190,9 +190,9 @@ public class AdministrativoEvaluacion implements Serializable {
         listaCarreras = new ArrayList<>();
         listaDeResultadosEvaluaciones = new ArrayList<>();
         desempenioAdmin.getDirectivoSeleccionado();
-       //System.out.println("Director Seleccionado : " + desempenioAdmin.getDirectivoSeleccionado());
+       //System.out.println("Director Seleccionado : " + desempenioAdmin.getEvaluador());
         Short area = desempenioAdmin.getDirectivoSeleccionado().getAreaOperativa();
-       //System.out.println("area operativa : " + desempenioAdmin.getDirectivoSeleccionado().getAreaOperativa());
+       //System.out.println("area operativa : " + desempenioAdmin.getEvaluador().getAreaOperativa());
         listaCarreras = eJBAdministracionEncuestas.obtenerAreasDirector(area, "1");
        //System.out.println("Lista de carreras : " + listaCarreras);
         listaCarreras.stream().forEach(c -> {

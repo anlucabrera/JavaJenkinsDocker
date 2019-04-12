@@ -108,7 +108,7 @@ public class CvEducacion implements Serializable {
             nuevoOBJFormacionAcademica.getClavePersonal().setClave(usuario);
             //Posteriormente se procese a realizar la asignación de valores que no se obtienen mediante la interfaz grafica
             nuevoOBJFormacionAcademica.setEstatus("Denegado");
-            //En caso de que sea información nueva se procede a enviar la información al “EJB” el cual la agregara a la BD.
+            //Se procede a enviar la información al “EJB” el cual la agregara a la BD.
             nuevoOBJFormacionAcademica = ejbEducacion.crearNuevoFormacionAcademica(nuevoOBJFormacionAcademica);
             //Después de agregar la información a la BD, se procede a realizar el registro de la “Bitácora”, para esto se requiere de enviar ciertos parámetros, los cuales se describen dentro el método en el controlador de utilidadesCH
             utilidadesCH.agregaBitacora(usuario, nuevoOBJFormacionAcademica.getFormacion().toString(), "Formación Académica", "Insert");

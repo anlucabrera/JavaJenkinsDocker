@@ -8,6 +8,8 @@ package mx.edu.utxj.pye.sgi.ejb;
 import java.util.List;
 import javax.ejb.Local;
 import javax.faces.model.SelectItem;
+
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360Resultados;
@@ -15,6 +17,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonalEvaluacion360;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonalEvaluacion360Promedios;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonalEvaluacion360Reporte;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 /**
  *
@@ -27,15 +30,19 @@ public interface EjbEvaluacion3601 {
     
     public List<Apartado> getApartados();
     
-    public List<ListaPersonal> getListaDirectivos();
+    //public List<ListaPersonal> getListaDirectivos();
     
-    public List<ListaPersonal> getListaSubordinados(ListaPersonal directivo);
+    public List<ListaPersonal> getListaEvaluados(ListaPersonal directivo);
     
     /**
      * Busca la evaluación activa considerando las fechas de inicio y fin de cada evaluación
      * @return Devuelve la evaluación activa del periodo mas reciente, en caso de no haber evaluaciones activas devuelve null.
      */
     public Evaluaciones360 evaluacionActiva();
+
+    public ListaPersonal getEvaluador();
+
+    public PeriodosEscolares getPeriodo(Evaluaciones360 evaluacion);
     
     public void actualizarRespuestaPorPregunta(Evaluaciones360Resultados resultado, Float pregunta, String respuesta);
     
