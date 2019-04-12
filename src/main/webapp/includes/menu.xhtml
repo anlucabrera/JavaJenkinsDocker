@@ -44,6 +44,7 @@
                 <c:if test="#{encuestaSatisfaccionEgresadosTsu.cargada}"><li><p:link href="/encuestas/Estudiantes/satisfaccionEgresadosTsu.xhtml"><i class="fa fa-graduation-cap"></i><span>Satisfacción T.S.U.</span></p:link></li></c:if>
                 <c:if test="#{encuestaServicios.cargada}"><li><p:link href="/encuestas/Estudiantes/servicios.xhtml"><i class="fa fa-tty"></i><span>Servicios</span></p:link></li></c:if>
                 <c:if test="#{estudioSocioeconomicoOperativo.cargada}"><li><p:link href="/evaluaciones/evaluacion/estudioSocioeconomico.xhtml"><i class="fa fa-ticket"></i><span>Estudio socioeconómico</span></p:link></li></c:if>
+                <c:if test="#{evaluacionEstadia.cargada}"><li><p:link href="/encuestas/Estudiantes/evaluacionEstadia.xhtml"><i class="fa fa-user-circle-o"></i><span>Evaluación Estadia</span></p:link></li></c:if>
             </li>
         </c:if>
 <!--        <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
@@ -144,7 +145,7 @@
 
                     <c:if test="#{(administracionAvanceEncSatTsu.aperturado and administracionAvanceEncSatTsu.planeacion) or
                                   (administracionAvanceEncuestaSatIng.aperturado and administracionAvanceEncuestaSatIng.planeacion) or
-                                  (administracionAvanceEncuestaServicio.aperturado and administracionAvanceEncuestaServicio.planeacion) or
+                                  (administracionAvanceEncuestaServicio.planeacion) or
                                   (administracionAvanceEstudioSocioeconomico.aperturado and administracionAvanceEstudioSocioeconomico.planeacion)}">
                         <li class="treeview">
                             <a href="#">
@@ -159,7 +160,7 @@
                                 </c:if>
                                 <li><p:link href="/encuestas/seguimiento/admEncuestaEgresPlaneacion.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción ING</span></p:link></li>
                                 <li><p:link href="/encuestas/seguimiento/admEncuestaServicioPlaneacion.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta servicios</span></p:link></li>
-                                <li><p:link href="/encuestas/seguimiento/admEstudioSocieconomicoPlaneacion.xhtml"><i class="fa fa-list-ol"></i><span>Estudio Socioeconómico</span></p:link></li>
+                                <li><p:link href="/encuestas/seguimiento/admEvaluacionPlaneacion.xhtml"><i class="fa fa-list-ol"></i><span>Evaluación Estadía</span></p:link></li>
                             </ul>
                         </li>
                     </c:if>
