@@ -27,7 +27,7 @@ public class EjbAdministracionEvaluacionEstadia {
     public EvaluacionEstadiaResultados obtenerResultadosEvaluacionPorAlumno(String evaluador){
         Integer evaluacion = ejbEE.getEvaluacionActiva().getEvaluacion();
         List<EvaluacionEstadiaResultados> eer = f.getEntityManager().createQuery("select e from EvaluacionEstadiaResultados as e " +
-                        "where e.evaluador = :evaluador and e.evaluacionEstadiaResultadosPK.evaluacion = :evaluacion",EvaluacionEstadiaResultados.class)
+                        "where e.evaluacionEstadiaResultadosPK.evaluador = :evaluador and e.evaluacionEstadiaResultadosPK.evaluacion = :evaluacion",EvaluacionEstadiaResultados.class)
                 .setParameter("evaluador", evaluador)
                 .setParameter("evaluacion", evaluacion)
                 .getResultStream().collect(Collectors.toList());

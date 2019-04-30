@@ -221,6 +221,9 @@
                     <c:if test="#{administracionEncuestaTsu.esDeIyE and administracionAvanceEncSatTsu.esDeInformacionYEst and administracionEncuestaTsu.aperturas and administracionAvanceEncSatTsu.aperturado}">
                         <li><p:link href="/encuestas/seguimiento/admEncuestaEgreTsu.xhtml" ><i class="fa fa-list-ol"></i><span>Encuesta satisfacción TSU</span></p:link></li>
                     </c:if>
+                    <c:if test="#{administracionEvaluacionEstadia.esDeIyE and administracionAvanceEvaluacionEstadia.esDeInformacionYEst}">
+                        <li><p:link href="/encuestas/seguimiento/admEvaluacionEstadiaPyE.xhtml" ><i class="fa fa-list-ol"></i><span>Evaluación estadía</span></p:link></li>
+                    </c:if>
                     <c:if test="#{administracionEncuestaIng.esDeIyE and administracionEncuestaIng.aperturas and administracionAvanceEncuestaSatIng.esDeInformacionYEst and administracionAvanceEncuestaSatIng.aperturado}">
                         <li>
                             <p:link href="/encuestas/seguimiento/resultadoEcuestaEgresadosIng.xhtml">

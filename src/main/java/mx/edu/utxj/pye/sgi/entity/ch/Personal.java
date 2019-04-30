@@ -57,19 +57,13 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Personal.findByCorreoElectronico2", query = "SELECT p FROM Personal p WHERE p.correoElectronico2 = :correoElectronico2")})
 public class Personal implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "clave")
-    private Integer clave;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 250)
     @Column(name = "nombre")
     private String nombre;
     @Basic(optional = false)
-    @NotNull
+    @NotNull()
     @Column(name = "fecha_ingreso")
     @Temporal(TemporalType.DATE)
     private Date fechaIngreso;
@@ -141,6 +135,14 @@ public class Personal implements Serializable {
     @Size(max = 200)
     @Column(name = "correo_electronico2")
     private String correoElectronico2;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
+    private List<EvaluacionEstadiaResultados> evaluacionEstadiaResultadosList;
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "clave")
+    private Integer clave;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
     private List<ContactoEmergencias> contactoEmergenciasList;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "personal")
@@ -202,13 +204,6 @@ public class Personal implements Serializable {
         this.clave = clave;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
 
     public Date getFechaIngreso() {
         return fechaIngreso;
@@ -218,13 +213,6 @@ public class Personal implements Serializable {
         this.fechaIngreso = fechaIngreso;
     }
 
-    public Character getStatus() {
-        return status;
-    }
-
-    public void setStatus(Character status) {
-        this.status = status;
-    }
 
     public short getAreaOperativa() {
         return areaOperativa;
@@ -282,45 +270,6 @@ public class Personal implements Serializable {
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public String getMunicipio() {
-        return municipio;
-    }
-
-    public void setMunicipio(String municipio) {
-        this.municipio = municipio;
-    }
-
-    public String getLocalidad() {
-        return localidad;
-    }
-
-    public void setLocalidad(String localidad) {
-        this.localidad = localidad;
-    }
-
-    public String getPais() {
-        return pais;
-    }
-
-    public void setPais(String pais) {
-        this.pais = pais;
-    }
-
-    public boolean getSni() {
-        return sni;
-    }
-
-    public void setSni(boolean sni) {
-        this.sni = sni;
-    }
 
     public boolean getPerfilProdep() {
         return perfilProdep;
@@ -442,6 +391,71 @@ public class Personal implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Personal[ clave=" + clave + " ]";
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    
+    public Character getStatus() {
+        return status;
+    }
+
+    public void setStatus(Character status) {
+        this.status = status;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public String getMunicipio() {
+        return municipio;
+    }
+
+    public void setMunicipio(String municipio) {
+        this.municipio = municipio;
+    }
+
+    public String getLocalidad() {
+        return localidad;
+    }
+
+    public void setLocalidad(String localidad) {
+        this.localidad = localidad;
+    }
+
+    public String getPais() {
+        return pais;
+    }
+
+    public void setPais(String pais) {
+        this.pais = pais;
+    }
+
+    public boolean getSni() {
+        return sni;
+    }
+
+    public void setSni(boolean sni) {
+        this.sni = sni;
+    }
+
+    @XmlTransient
+    public List<EvaluacionEstadiaResultados> getEvaluacionEstadiaResultadosList() {
+        return evaluacionEstadiaResultadosList;
+    }
+
+    public void setEvaluacionEstadiaResultadosList(List<EvaluacionEstadiaResultados> evaluacionEstadiaResultadosList) {
+        this.evaluacionEstadiaResultadosList = evaluacionEstadiaResultadosList;
     }
     
 }

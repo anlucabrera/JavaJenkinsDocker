@@ -49,6 +49,8 @@ public class Evaluaciones implements Serializable {
     @Size(min = 1, max = 39)
     @Column(name = "tipo")
     private String tipo;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    private List<EvaluacionEstadiaResultados> evaluacionEstadiaResultadosList;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
     private EvaluacionEstadiaResultados evaluacionEstadiaResultados;
 
@@ -213,6 +215,15 @@ public class Evaluaciones implements Serializable {
         return "mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones[ evaluacion=" + evaluacion + " ]";
     }
 
+
+    public EvaluacionEstadiaResultados getEvaluacionEstadiaResultados() {
+        return evaluacionEstadiaResultados;
+    }
+
+    public void setEvaluacionEstadiaResultados(EvaluacionEstadiaResultados evaluacionEstadiaResultados) {
+        this.evaluacionEstadiaResultados = evaluacionEstadiaResultados;
+    }
+
     public int getPeriodo() {
         return periodo;
     }
@@ -228,12 +239,13 @@ public class Evaluaciones implements Serializable {
         this.tipo = tipo;
     }
 
-    public EvaluacionEstadiaResultados getEvaluacionEstadiaResultados() {
-        return evaluacionEstadiaResultados;
+    @XmlTransient
+    public List<EvaluacionEstadiaResultados> getEvaluacionEstadiaResultadosList() {
+        return evaluacionEstadiaResultadosList;
     }
 
-    public void setEvaluacionEstadiaResultados(EvaluacionEstadiaResultados evaluacionEstadiaResultados) {
-        this.evaluacionEstadiaResultados = evaluacionEstadiaResultados;
+    public void setEvaluacionEstadiaResultadosList(List<EvaluacionEstadiaResultados> evaluacionEstadiaResultadosList) {
+        this.evaluacionEstadiaResultadosList = evaluacionEstadiaResultadosList;
     }
     
 }
