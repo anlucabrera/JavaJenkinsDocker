@@ -91,13 +91,13 @@ public class EjbEvaluacionEstadia {
     
     public EvaluacionEstadiaResultados getResultado(Evaluaciones evaluacion, String evaluador, Integer evaluado, Map<String,String> respuestas) {
         try {
-            EvaluacionEstadiaResultadosPK pk = new EvaluacionEstadiaResultadosPK(evaluacion.getEvaluacion(), evaluado);
+            EvaluacionEstadiaResultadosPK pk = new EvaluacionEstadiaResultadosPK(evaluacion.getEvaluacion(),evaluador, evaluado);
             f.setEntityClass(EvaluacionEstadiaResultados.class);
 
             EvaluacionEstadiaResultados r = (EvaluacionEstadiaResultados) f.find(pk);
 
             if (r == null) {
-                r = new EvaluacionEstadiaResultados(pk, evaluador);
+                r = new EvaluacionEstadiaResultados(pk);
                 f.create(r);
             }
 

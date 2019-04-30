@@ -6,7 +6,6 @@
 package mx.edu.utxj.pye.sgi.entity.ch;
 
 import java.io.Serializable;
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -15,7 +14,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -24,12 +22,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Planeacion
  */
 @Entity
-@Table(name = "evaluacion_estadia_resultados")
+@Table(name = "evaluacion_estadia_resultados", catalog = "capital_humano", schema = "")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "EvaluacionEstadiaResultados.findAll", query = "SELECT e FROM EvaluacionEstadiaResultados e")
     , @NamedQuery(name = "EvaluacionEstadiaResultados.findByEvaluacion", query = "SELECT e FROM EvaluacionEstadiaResultados e WHERE e.evaluacionEstadiaResultadosPK.evaluacion = :evaluacion")
-    , @NamedQuery(name = "EvaluacionEstadiaResultados.findByEvaluador", query = "SELECT e FROM EvaluacionEstadiaResultados e WHERE e.evaluador = :evaluador")
+    , @NamedQuery(name = "EvaluacionEstadiaResultados.findByEvaluador", query = "SELECT e FROM EvaluacionEstadiaResultados e WHERE e.evaluacionEstadiaResultadosPK.evaluador = :evaluador")
     , @NamedQuery(name = "EvaluacionEstadiaResultados.findByEvaluado", query = "SELECT e FROM EvaluacionEstadiaResultados e WHERE e.evaluacionEstadiaResultadosPK.evaluado = :evaluado")
     , @NamedQuery(name = "EvaluacionEstadiaResultados.findByR1", query = "SELECT e FROM EvaluacionEstadiaResultados e WHERE e.r1 = :r1")
     , @NamedQuery(name = "EvaluacionEstadiaResultados.findByR2", query = "SELECT e FROM EvaluacionEstadiaResultados e WHERE e.r2 = :r2")
@@ -84,11 +82,6 @@ public class EvaluacionEstadiaResultados implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected EvaluacionEstadiaResultadosPK evaluacionEstadiaResultadosPK;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 6)
-    @Column(name = "evaluador")
-    private String evaluador;
     @Size(max = 250)
     @Column(name = "r1")
     private String r1;
@@ -200,13 +193,8 @@ public class EvaluacionEstadiaResultados implements Serializable {
         this.evaluacionEstadiaResultadosPK = evaluacionEstadiaResultadosPK;
     }
 
-    public EvaluacionEstadiaResultados(EvaluacionEstadiaResultadosPK evaluacionEstadiaResultadosPK, String evaluador) {
-        this.evaluacionEstadiaResultadosPK = evaluacionEstadiaResultadosPK;
-        this.evaluador = evaluador;
-    }
-
-    public EvaluacionEstadiaResultados(int evaluacion, int evaluador, int evaluado) {
-        this.evaluacionEstadiaResultadosPK = new EvaluacionEstadiaResultadosPK(evaluacion, evaluado);
+    public EvaluacionEstadiaResultados(int evaluacion, String evaluador, int evaluado) {
+        this.evaluacionEstadiaResultadosPK = new EvaluacionEstadiaResultadosPK(evaluacion, evaluador, evaluado);
     }
 
     public EvaluacionEstadiaResultadosPK getEvaluacionEstadiaResultadosPK() {
@@ -215,14 +203,6 @@ public class EvaluacionEstadiaResultados implements Serializable {
 
     public void setEvaluacionEstadiaResultadosPK(EvaluacionEstadiaResultadosPK evaluacionEstadiaResultadosPK) {
         this.evaluacionEstadiaResultadosPK = evaluacionEstadiaResultadosPK;
-    }
-
-    public String getEvaluador() {
-        return evaluador;
-    }
-
-    public void setEvaluador(String evaluador) {
-        this.evaluador = evaluador;
     }
 
     public String getR1() {

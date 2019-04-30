@@ -89,6 +89,7 @@ public class EvaluacionEstadia implements Serializable{
             }
         } catch (Exception e) {
             cargada = false;
+            e.printStackTrace();
             System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaServicios.init() e: " + e.getMessage());
         }
     }  

@@ -11,6 +11,9 @@ public class ComparadorEvaluacionEstadia implements Comparador<EvaluacionEstadia
 
     @Override
     public boolean isCompleto(EvaluacionEstadiaResultados resultado) {
+        if(resultado==null)
+            return false;
+        
         if(resultado.getR1() == null 
                 || resultado.getR2() == null
                 || resultado.getR3() == null
