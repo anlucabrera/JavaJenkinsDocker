@@ -38,17 +38,15 @@ public class ControladorPOARegistro implements Serializable {
     @Getter    @Setter    private List<LineasAccion> consultaListaLineasAccion = new ArrayList<>();
     @Getter    @Setter    private List<UnidadMedidas> consultaListaUnidadMedidas = new ArrayList<>();
     @Getter    @Setter    private List<ActividadesPoa> consultaListaActividadesPoa = new ArrayList<>();
-   
+    @Getter    @Setter    private List<CuadroMandoIntegral> consultaListaCuadroMandoIntegrals = new ArrayList<>();
+    @Getter    @Setter    private List<ActividadesPoa> listaActividadesPoasPadres = new ArrayList<>();
+
 // Listas de entities 
-    @Getter    @Setter    private List<ActividadesPoa> listaActividadesPoas = new ArrayList<>();
-    @Getter    @Setter    private List<ActividadesPoa> listaActividadesPoasPadres = new ArrayList<>(), listaActividadesPoasHijas = new ArrayList<>();
-    @Getter    @Setter    private List<CuadroMandoIntegral> listaCuadroMandoIntegrals = new ArrayList<>();
 // variables de datos Primitivos
-    @Getter    @Setter    private Boolean unidadMedidaNueva = false, esActividadPrincipal = false, permitirRegistro = false,ejeActivo = false;
-    @Getter    @Setter    private Short unidadDMedida = 0, ejercicioFiscal = 0, aumentoSubactividades=1,aumentoActividades=1;    
-    @Getter    @Setter    private Date fechaActual=new Date();   
-    @Getter    @Setter    private Short numPm1=0,numPm2=0,numPm3=0,numPm4=0,numPm5=0,numPm6=0,numPm7=0,numPm8=0,numPm9=0,numPm10=0,numPm11=0,numPm12=0;
-    @Getter    @Setter    private Short numPEm1=0,numPEm2=0,numPEm3=0,numPEm4=0,numPEm5=0,numPEm6=0,numPEm7=0,numPEm8=0,numPEm9=0,numPEm10=0,numPEm11=0,numPEm12=0;
+    @Getter    @Setter    private Boolean unidadMedidaNueva = false, esActividadPrincipal = false, permitirRegistro = false, ejeActivo = false;
+    @Getter    @Setter    private Short unidadDMedida = 0, ejercicioFiscal = 0, aumentoSubactividades = 1, aumentoActividades = 1;
+    @Getter    @Setter    private Short numPm1 = 0, numPm2 = 0, numPm3 = 0, numPm4 = 0, numPm5 = 0, numPm6 = 0, numPm7 = 0, numPm8 = 0, numPm9 = 0, numPm10 = 0, numPm11 = 0, numPm12 = 0;
+    @Getter    @Setter    private Short numPEm1 = 0, numPEm2 = 0, numPEm3 = 0, numPEm4 = 0, numPEm5 = 0, numPEm6 = 0, numPEm7 = 0, numPEm8 = 0, numPEm9 = 0, numPEm10 = 0, numPEm11 = 0, numPEm12 = 0;
     @Getter    @Setter    private String tipo = "Actividad", nombreUnidad = "", mensajeValidacion = "";
     @Getter    @Setter    private Integer totalProgramado = 0, numeroActividadPrincipal = 1, numeroActividadSecuendaria = 1, numeroActividadPrincipalAnterior = 0, unidadExistente = 0;
     @Getter    @Setter    private Integer mes1 = 0, mes2 = 0, mes3 = 0, mes4 = 0, mes5 = 0, mes6 = 0, mes7 = 0, mes8 = 0, mes9 = 0, mes10 = 0, mes11 = 0, mes12 = 0;
@@ -63,7 +61,7 @@ public class ControladorPOARegistro implements Serializable {
     @Getter    @Setter    private List<ListaEjesEsLaAp> ejesEsLaAp = new ArrayList<>();
     @Getter    @Setter    private List<ListaEjeEstrategia> listaListaEjeEstrategia = new ArrayList<>();
     @Getter    @Setter    private List<ListaEstrategiaActividades> listaEstrategiaActividadesesEje = new ArrayList<>();
-   
+
     @EJB    EjbRegistroActividades registroActividades;
     @EJB    EjbCatalogos catalogos;
     @Inject    ControladorEmpleado controladorEmpleado;
@@ -71,7 +69,7 @@ public class ControladorPOARegistro implements Serializable {
 
     @PostConstruct
     public void init() {
-                ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa1();
+        ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa1();
         unidadDMedida = null;
         numPm1 = null;        numPm2 = null;        numPm3 = null;        numPm4 = null;        numPm5 = null;        numPm6 = null;
         numPm7 = null;        numPm8 = null;        numPm9 = null;        numPm10 = null;        numPm11 = null;        numPm12 = null;
@@ -94,24 +92,22 @@ public class ControladorPOARegistro implements Serializable {
 
         consultaListaEjesRegistro.addAll(catalogos.mostrarEjesRegistros());
 
-        consultarPOA(null,1);
+        consultarPOA(null, 1);
     }
-    
+
     public void consultarPOA(EjesRegistro er, Integer tipo) {
         consultaListaActividadesPoa = new ArrayList<>();
         consultaListaUnidadMedidas = new ArrayList<>();
         listaActividadesPoasPadres = new ArrayList<>();
-        listaActividadesPoasHijas = new ArrayList<>();
-        ejesEsLaAp=new ArrayList<>();
+        ejesEsLaAp = new ArrayList<>();
         consultaListaActividadesPoa.clear();
         consultaListaUnidadMedidas.clear();
         listaActividadesPoasPadres.clear();
-        listaActividadesPoasHijas.clear();
-        ejesEsLaAp=new ArrayList<>();
-        
+        ejesEsLaAp = new ArrayList<>();
+
         consultaListaUnidadMedidas.add(new UnidadMedidas(Short.parseShort("0"), "Nueva unidad de medida"));
         consultaListaUnidadMedidas.addAll(catalogos.mostrarUnidadMedidases());
-        
+
         if (tipo == 1) {
             consultaListaActividadesPoa = registroActividades.mostrarActividadesPoasTotalArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
         } else {
@@ -122,8 +118,6 @@ public class ControladorPOARegistro implements Serializable {
             consultaListaActividadesPoa.forEach((t) -> {
                 if (t.getNumeroS() == 0) {
                     listaActividadesPoasPadres.add(t);
-                } else {
-                    listaActividadesPoasHijas.add(t);
                 }
             });
         }
@@ -160,7 +154,7 @@ public class ControladorPOARegistro implements Serializable {
         }
         Collections.sort(ejesEsLaAp, (x, y) -> Integer.compare(x.getEjeA().getEje(), y.getEjeA().getEje()));
     }
-    
+
 //////////////////////////////////////////////////////////////////////////////// Registrar actividades
     public void anadirNuavUnidadDeMedida() {
         if ("Subactividad".equals(tipo)) {
@@ -200,17 +194,18 @@ public class ControladorPOARegistro implements Serializable {
     }
 
     public void anadirNuavActividad() {
-        mes1 = 0;        mes2 = 0;        mes3 = 0;        mes4 = 0;        mes5 = 0;        mes6 = 0;        mes7 = 0;        mes8 = 0;        mes9 = 0;
-        mes10 = 0;        mes11 = 0;        mes12 = 0;        totalProgramado = 0;        numeroActividadPrincipal = 0;        numeroActividadSecuendaria = 0;
-        
+        mes1 = 0;        mes2 = 0;        mes3 = 0;        mes4 = 0;        mes5 = 0;        mes6 = 0;
+        mes7 = 0;        mes8 = 0;        mes9 = 0;        mes10 = 0;        mes11 = 0;        mes12 = 0;
+        totalProgramado = 0;        numeroActividadPrincipal = 0;        numeroActividadSecuendaria = 0;
+
         if ("Actividad".equals(tipo)) {
-           if (esActividadPrincipal) {
+            if (esActividadPrincipal) {
                 actividadesPoa.setBandera("X");
             } else {
                 actividadesPoa.setBandera("y");
             }
-            actividadesPoa.setCuadroMandoInt(new CuadroMandoIntegral(cuadroMandoIntegral.getCuadroMandoInt()));           
-            Integer numeroP = registroActividades.mostrarActividadesPoaPrincipalesCuadroMando(cuadroMandoIntegral.getCuadroMandoInt(),controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).size() + 1;
+            actividadesPoa.setCuadroMandoInt(new CuadroMandoIntegral(cuadroMandoIntegral.getCuadroMandoInt()));
+            Integer numeroP = registroActividades.mostrarActividadesPoaPrincipalesCuadroMando(cuadroMandoIntegral.getCuadroMandoInt(), controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).size() + 1;
             actividadesPoa.setNumeroP(Short.parseShort(numeroP.toString()));
         } else {
             Integer numeroS = registroActividades.mostrarSubActividadesPoa(actividadPoaPrincipal.getActividadPoa()).size();
@@ -225,7 +220,7 @@ public class ControladorPOARegistro implements Serializable {
         actividadesPoa.setUnidadMedida(new UnidadMedidas(unidadDMedida));
         actividadesPoa.setArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
         actividadesPoa = registroActividades.agregarActividadesPoa(actividadesPoa);
-        
+
         if ("Subactividad".equals(tipo)) {
             actualizarNumeracionYTotales(actividadesPoa.getActividadPadre());
         } else {
@@ -234,14 +229,14 @@ public class ControladorPOARegistro implements Serializable {
         resetearValores();
         consultarPOA(ejesRegistro, 2);
     }
-    
+
     public void asignarActividadPrincipal(ValueChangeEvent event) {
         numeroActividadPrincipal = Integer.parseInt(event.getNewValue().toString());
         actividadPoaPrincipal = registroActividades.mostrarActividadPoaPrincipal(numeroActividadPrincipal);
     }
-    
+
     public void asignarNumerosProgramados(ValueChangeEvent event) {
-                switch (event.getComponent().getId()) {
+        switch (event.getComponent().getId()) {
             case "mes1":
                 actividadesPoa.setNPEnero(comparacionValores(event.getNewValue(), 1));
                 numPm1 = comparacionValores(event.getNewValue(), 2);
@@ -295,7 +290,7 @@ public class ControladorPOARegistro implements Serializable {
         totalProgramado = actividadesPoa.getNPEnero() + actividadesPoa.getNPFebrero() + actividadesPoa.getNPMarzo() + actividadesPoa.getNPAbril() + actividadesPoa.getNPMayo() + actividadesPoa.getNPJunio() + actividadesPoa.getNPJulio() + actividadesPoa.getNPAgosto() + actividadesPoa.getNPSeptiembre() + actividadesPoa.getNPOctubre() + actividadesPoa.getNPNoviembre() + actividadesPoa.getNPDiciembre();
         actividadesPoa.setTotal(Short.parseShort(totalProgramado.toString()));
     }
-    
+
 //////////////////////////////////////////////////////////////////////////////// Ediatar Actividades
     public void buscarActividadParaEdicion(ActividadesPoa actividadesPoa) {
         numPEm1 = null;        numPEm2 = null;        numPEm3 = null;        numPEm4 = null;        numPEm5 = null;        numPEm6 = null;
@@ -331,21 +326,21 @@ public class ControladorPOARegistro implements Serializable {
             esActividadPrincipal = false;
         }
         if (actividadesPoa.getNPEnero() != 0) {            numPEm1 = actividadesPoa.getNPEnero();        }
-        if (actividadesPoa.getNPFebrero() != 0) {            numPEm2 = actividadesPoa.getNPFebrero();      }  
+        if (actividadesPoa.getNPFebrero() != 0) {            numPEm2 = actividadesPoa.getNPFebrero();        }
         if (actividadesPoa.getNPMarzo() != 0) {            numPEm3 = actividadesPoa.getNPMarzo();        }
         if (actividadesPoa.getNPAbril() != 0) {            numPEm4 = actividadesPoa.getNPAbril();        }
-        if (actividadesPoa.getNPMayo() != 0) {            numPEm5 = actividadesPoa.getNPMayo();         }
+        if (actividadesPoa.getNPMayo() != 0) {            numPEm5 = actividadesPoa.getNPMayo();        }
         if (actividadesPoa.getNPJunio() != 0) {            numPEm6 = actividadesPoa.getNPJunio();        }
         if (actividadesPoa.getNPJulio() != 0) {            numPEm7 = actividadesPoa.getNPJulio();        }
-        if (actividadesPoa.getNPAgosto() != 0) {            numPEm8 = actividadesPoa.getNPAgosto();       }
-        if (actividadesPoa.getNPSeptiembre() != 0) {            numPEm9 = actividadesPoa.getNPSeptiembre();   }    
-        if (actividadesPoa.getNPOctubre() != 0) {            numPEm10 = actividadesPoa.getNPOctubre();     }  
-        if (actividadesPoa.getNPNoviembre() != 0) {            numPEm11 = actividadesPoa.getNPNoviembre();   }    
-        if (actividadesPoa.getNPDiciembre() != 0) {            numPEm12 = actividadesPoa.getNPDiciembre();   }
+        if (actividadesPoa.getNPAgosto() != 0) {            numPEm8 = actividadesPoa.getNPAgosto();        }
+        if (actividadesPoa.getNPSeptiembre() != 0) {            numPEm9 = actividadesPoa.getNPSeptiembre();        }
+        if (actividadesPoa.getNPOctubre() != 0) {            numPEm10 = actividadesPoa.getNPOctubre();        }
+        if (actividadesPoa.getNPNoviembre() != 0) {            numPEm11 = actividadesPoa.getNPNoviembre();        }
+        if (actividadesPoa.getNPDiciembre() != 0) {            numPEm12 = actividadesPoa.getNPDiciembre();        }
     }
-    
+
     public void actualizarActividadPoa() {
-                totalProgramado=0;
+        totalProgramado = 0;
         totalProgramado = actividadPoaEditando.getNPEnero() + actividadPoaEditando.getNPFebrero() + actividadPoaEditando.getNPMarzo() + actividadPoaEditando.getNPAbril() + actividadPoaEditando.getNPMayo() + actividadPoaEditando.getNPJunio() + actividadPoaEditando.getNPJulio() + actividadPoaEditando.getNPAgosto() + actividadPoaEditando.getNPSeptiembre() + actividadPoaEditando.getNPOctubre() + actividadPoaEditando.getNPNoviembre() + actividadPoaEditando.getNPDiciembre();
         actividadPoaEditando.setTotal(Short.parseShort(totalProgramado.toString()));
         actividadPoaEditando.setUnidadMedida(new UnidadMedidas(unidadDMedida));
@@ -368,10 +363,10 @@ public class ControladorPOARegistro implements Serializable {
         } else {
             consultarPOA(ejesRegistro, 2);
         }
-            }
+    }
 
     public void asignarNumerosProgramadosEdicion(ValueChangeEvent event) {
-                switch (event.getComponent().getId()) {
+        switch (event.getComponent().getId()) {
             case "mes1":
                 actividadPoaEditando.setNPEnero(comparacionValores(event.getNewValue(), 1));
                 numPEm1 = comparacionValores(event.getNewValue(), 2);
@@ -424,7 +419,7 @@ public class ControladorPOARegistro implements Serializable {
         totalProgramado = actividadPoaEditando.getNPEnero() + actividadPoaEditando.getNPFebrero() + actividadPoaEditando.getNPMarzo() + actividadPoaEditando.getNPAbril() + actividadPoaEditando.getNPMayo() + actividadPoaEditando.getNPJunio() + actividadPoaEditando.getNPJulio() + actividadPoaEditando.getNPAgosto() + actividadPoaEditando.getNPSeptiembre() + actividadPoaEditando.getNPOctubre() + actividadPoaEditando.getNPNoviembre() + actividadPoaEditando.getNPDiciembre();
         actividadPoaEditando.setTotal(Short.parseShort(totalProgramado.toString()));
     }
-    
+
     public void asignarNumeroP(ValueChangeEvent event) {
         numeroActividadPrincipal = 0;
         numeroActividadPrincipalAnterior = 0;
@@ -438,21 +433,20 @@ public class ControladorPOARegistro implements Serializable {
 
 //////////////////////////////////////////////////////////////////////////////// Elinimar actividades
     public void buscarActividadeaEliminar(ActividadesPoa actividadesPoa) {
-        actividadPoaEliminado=new ActividadesPoa();
-        actividadPoaEliminado=actividadesPoa;
+        actividadPoaEliminado = new ActividadesPoa();
+        actividadPoaEliminado = actividadesPoa;
     }
-    
+
     public void eliminarActividad() {
         /////////// reseteo valores
         numeroActividadPrincipal = 1;
         numeroActividadSecuendaria = 1;
         listaActividadesPoasPadres.clear();
-        listaActividadesPoasHijas.clear();
         ///////////////
         actividadPoaEliminada = new ActividadesPoa();
         actividadPoaEliminada = actividadPoaEliminado;
         registroActividades.eliminarActividadesPoa(actividadPoaEliminado);
-        
+
         if (actividadPoaEliminada.getNumeroS() == 0) {
             List<ActividadesPoa> subActividadesPoas = new ArrayList<>();
             subActividadesPoas = registroActividades.mostrarSubActividadesPoa(actividadPoaEliminada.getActividadPoa());
@@ -467,19 +461,19 @@ public class ControladorPOARegistro implements Serializable {
         }
 
         resetearValores();
-                if(ejeActivo == false){
-                        Faces.refresh();
-        }else{
+        if (ejeActivo == false) {
+            Faces.refresh();
+        } else {
             consultarPOA(ejesRegistro, 2);
         }
     }
-    
+
 //////////////////////////////////////////////////////////////////////////////// Utilidades
-     public void actualizarNumeracionActividadesPOA(Integer cuadroDeMando) {
+    public void actualizarNumeracionActividadesPOA(Integer cuadroDeMando) {
         aumentoActividades = 1;
         List<ActividadesPoa> actividadesPoas = new ArrayList<>();
         actividadesPoas.clear();
-        actividadesPoas = registroActividades.mostrarActividadesPoaPrincipalesCuadroMando(cuadroDeMando,controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        actividadesPoas = registroActividades.mostrarActividadesPoaPrincipalesCuadroMando(cuadroDeMando, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
         if (!actividadesPoas.isEmpty()) {
             actividadesPoas.forEach((t) -> {
                 t.setNumeroP(aumentoActividades);
@@ -489,9 +483,9 @@ public class ControladorPOARegistro implements Serializable {
             });
         }
     }
-    
+
     public void actualizarNumeracionYTotales(Integer claveActividadPOa) {
-                mes1 = 0;        mes2 = 0;        mes3 = 0;        mes4 = 0;        mes5 = 0;        mes6 = 0;
+        mes1 = 0;        mes2 = 0;        mes3 = 0;        mes4 = 0;        mes5 = 0;        mes6 = 0;
         mes7 = 0;        mes8 = 0;        mes9 = 0;        mes10 = 0;        mes11 = 0;        mes12 = 0;
         totalProgramado = 0;
         ActividadesPoa actividadesPoas = new ActividadesPoa();
@@ -499,27 +493,33 @@ public class ControladorPOARegistro implements Serializable {
         aumentoSubactividades = 1;
         actividadesPoas = registroActividades.mostrarActividadPoaPrincipal(claveActividadPOa);
         subActividadesPoas = registroActividades.mostrarSubActividadesPoa(claveActividadPOa);
-        
-                                
+
         final Short numeroP = actividadesPoas.getNumeroP();
 
         if (!subActividadesPoas.isEmpty()) {
-                        subActividadesPoas.forEach((t) -> {
-                t.setNumeroP(numeroP);                t.setNumeroS(aumentoSubactividades);
-                mes1 = mes1 + t.getNPEnero();                mes2 = mes2 + t.getNPFebrero();
-                mes3 = mes3 + t.getNPMarzo();                mes4 = mes4 + t.getNPAbril();
-                mes5 = mes5 + t.getNPMayo();                mes6 = mes6 + t.getNPJunio();
-                mes7 = mes7 + t.getNPJulio();                mes8 = mes8 + t.getNPAgosto();
-                mes9 = mes9 + t.getNPSeptiembre();                mes10 = mes10 + t.getNPOctubre();
-                mes11 = mes11 + t.getNPNoviembre();                mes12 = mes12 + t.getNPDiciembre();
+            subActividadesPoas.forEach((t) -> {
+                t.setNumeroP(numeroP);
+                t.setNumeroS(aumentoSubactividades);
+                mes1 = mes1 + t.getNPEnero();
+                mes2 = mes2 + t.getNPFebrero();
+                mes3 = mes3 + t.getNPMarzo();
+                mes4 = mes4 + t.getNPAbril();
+                mes5 = mes5 + t.getNPMayo();
+                mes6 = mes6 + t.getNPJunio();
+                mes7 = mes7 + t.getNPJulio();
+                mes8 = mes8 + t.getNPAgosto();
+                mes9 = mes9 + t.getNPSeptiembre();
+                mes10 = mes10 + t.getNPOctubre();
+                mes11 = mes11 + t.getNPNoviembre();
+                mes12 = mes12 + t.getNPDiciembre();
 
                 registroActividades.actualizaActividadesPoa(t);
                 aumentoSubactividades++;
-            });   
+            });
             actividadesPoas.setBandera("x");
         } else {
-                        if (actividadesPoas.getBandera().equals("y")) {
-                                mes1 = mes1 + actividadesPoas.getNPEnero();
+            if (actividadesPoas.getBandera().equals("y")) {
+                mes1 = mes1 + actividadesPoas.getNPEnero();
                 mes2 = mes2 + actividadesPoas.getNPFebrero();
                 mes3 = mes3 + actividadesPoas.getNPMarzo();
                 mes4 = mes4 + actividadesPoas.getNPAbril();
@@ -531,7 +531,7 @@ public class ControladorPOARegistro implements Serializable {
                 mes10 = mes10 + actividadesPoas.getNPOctubre();
                 mes11 = mes11 + actividadesPoas.getNPNoviembre();
                 mes12 = mes12 + actividadesPoas.getNPDiciembre();
-                            }
+            }
             actividadesPoas.setBandera("y");
         }
         totalProgramado = mes1 + mes2 + mes3 + mes4 + mes5 + mes6 + mes7 + mes8 + mes9 + mes10 + mes11 + mes12;
@@ -550,9 +550,9 @@ public class ControladorPOARegistro implements Serializable {
         actividadesPoas.setTotal(Short.parseShort(totalProgramado.toString()));
         registroActividades.actualizaActividadesPoa(actividadesPoas);
     }
-    
+
     public Short comparacionValores(Object valor, Integer tipoValor) {
-                Short valor1 = 0;
+        Short valor1 = 0;
         Short valor2 = 0;
         if (valor == null) {
             valor1 = 0;
@@ -571,9 +571,9 @@ public class ControladorPOARegistro implements Serializable {
             return valor2;
         }
     }
-     
+
     public void asignarParametrosRegistro(ValueChangeEvent event) {
-                if (Short.parseShort(event.getNewValue().toString()) != Short.parseShort("0")) {
+        if (Short.parseShort(event.getNewValue().toString()) != Short.parseShort("0")) {
             switch (event.getComponent().getId()) {
                 case "eje":
                     ejesRegistro = new EjesRegistro();
@@ -586,7 +586,7 @@ public class ControladorPOARegistro implements Serializable {
                         catalogos.mostrarEstrategiasRegistro(ejercicioFiscal, ejesRegistro).forEach((t) -> {
                             consultaListaEstrategias.add(t);
                         });
-                        consultarPOA(ejesRegistro,2);
+                        consultarPOA(ejesRegistro, 2);
                         permitirRegistro = false;
                     }
                     resetearValores();
@@ -610,9 +610,9 @@ public class ControladorPOARegistro implements Serializable {
                     lineasAccion = catalogos.mostrarLineaAccion(Short.parseShort(event.getNewValue().toString()));
                     if (lineasAccion != null) {
                         cuadroMandoIntegral = new CuadroMandoIntegral();
-                        listaCuadroMandoIntegrals.clear();
-                        listaCuadroMandoIntegrals = catalogos.mostrarCuadroMandoIntegralRegistrpo(ejercicioFiscal, ejesRegistro, estrategias, lineasAccion);
-                        cuadroMandoIntegral = listaCuadroMandoIntegrals.get(0);
+                        consultaListaCuadroMandoIntegrals.clear();
+                        consultaListaCuadroMandoIntegrals = catalogos.mostrarCuadroMandoIntegralRegistrpo(ejercicioFiscal, ejesRegistro, estrategias, lineasAccion);
+                        cuadroMandoIntegral = consultaListaCuadroMandoIntegrals.get(0);
                         permitirRegistro = true;
                     }
                     resetearValores();
@@ -625,11 +625,11 @@ public class ControladorPOARegistro implements Serializable {
             lineasAccion = new LineasAccion();
             consultaListaEstrategias.clear();
             consultaListaLineasAccion.clear();
-            listaCuadroMandoIntegrals.clear();
+            consultaListaCuadroMandoIntegrals.clear();
             consultarListasProcesoRegistro();
         }
     }
-    
+
     public void asignarUnidadMedida(ValueChangeEvent event) {
         if ("medida".equals(event.getComponent().getId()) || "medida1".equals(event.getComponent().getId())) {
             if (Integer.parseInt(event.getNewValue().toString()) == 0) {
@@ -643,10 +643,9 @@ public class ControladorPOARegistro implements Serializable {
             nombreUnidad = event.getNewValue().toString();
         }
     }
-    
+
     public void resetearValores() {
         actividadesPoa = new ActividadesPoa();
-        listaActividadesPoas.clear();
         unidadDMedida = null;
         actividadPoaPrincipal = new ActividadesPoa();
         tipo = "Actividad";
@@ -658,7 +657,7 @@ public class ControladorPOARegistro implements Serializable {
         numPEm1 = null;        numPEm2 = null;        numPEm3 = null;        numPEm4 = null;        numPEm5 = null;        numPEm6 = null;
         numPEm7 = null;        numPEm8 = null;        numPEm9 = null;        numPEm10 = null;        numPEm11 = null;        numPEm12 = null;
     }
-    
+
     public void resetearProgramados(ValueChangeEvent event) {
         esActividadPrincipal = Boolean.parseBoolean(event.getNewValue().toString());
         if (esActividadPrincipal) {
@@ -666,29 +665,34 @@ public class ControladorPOARegistro implements Serializable {
             numPm7 = null;            numPm8 = null;            numPm9 = null;            numPm10 = null;            numPm11 = null;            numPm12 = null;
             numPEm1 = null;            numPEm2 = null;            numPEm3 = null;            numPEm4 = null;            numPEm5 = null;            numPEm6 = null;
             numPEm7 = null;            numPEm8 = null;            numPEm9 = null;            numPEm10 = null;            numPEm11 = null;            numPEm12 = null;
-            actividadesPoa.setNPEnero(Short.parseShort("0"));            actividadesPoa.setNPFebrero(Short.parseShort("0"));
-            actividadesPoa.setNPMarzo(Short.parseShort("0"));            actividadesPoa.setNPAbril(Short.parseShort("0"));
-            actividadesPoa.setNPMayo(Short.parseShort("0"));            actividadesPoa.setNPJunio(Short.parseShort("0"));
-            actividadesPoa.setNPJulio(Short.parseShort("0"));            actividadesPoa.setNPAgosto(Short.parseShort("0"));
-            actividadesPoa.setNPSeptiembre(Short.parseShort("0"));            actividadesPoa.setNPOctubre(Short.parseShort("0"));
-            actividadesPoa.setNPNoviembre(Short.parseShort("0"));            actividadesPoa.setNPDiciembre(Short.parseShort("0"));
+            actividadesPoa.setNPEnero(Short.parseShort("0"));
+            actividadesPoa.setNPFebrero(Short.parseShort("0"));
+            actividadesPoa.setNPMarzo(Short.parseShort("0"));
+            actividadesPoa.setNPAbril(Short.parseShort("0"));
+            actividadesPoa.setNPMayo(Short.parseShort("0"));
+            actividadesPoa.setNPJunio(Short.parseShort("0"));
+            actividadesPoa.setNPJulio(Short.parseShort("0"));
+            actividadesPoa.setNPAgosto(Short.parseShort("0"));
+            actividadesPoa.setNPSeptiembre(Short.parseShort("0"));
+            actividadesPoa.setNPOctubre(Short.parseShort("0"));
+            actividadesPoa.setNPNoviembre(Short.parseShort("0"));
+            actividadesPoa.setNPDiciembre(Short.parseShort("0"));
             totalProgramado = actividadesPoa.getNPEnero() + actividadesPoa.getNPFebrero() + actividadesPoa.getNPMarzo() + actividadesPoa.getNPAbril() + actividadesPoa.getNPMayo() + actividadesPoa.getNPJunio() + actividadesPoa.getNPJulio() + actividadesPoa.getNPAgosto() + actividadesPoa.getNPSeptiembre() + actividadesPoa.getNPOctubre() + actividadesPoa.getNPNoviembre() + actividadesPoa.getNPDiciembre();
             actividadesPoa.setTotal(Short.parseShort(totalProgramado.toString()));
         }
     }
-    
+
     public void actividadTipo(ValueChangeEvent event) {
         tipo = "";
         tipo = event.getNewValue().toString();
         esActividadPrincipal = false;
     }
 
-    public void recargarPag(){        
-            Faces.refresh();
+    public void recargarPag() {
+        Faces.refresh();
     }
-    
-    public void imprimirValores() {
-    }
+
+    public void imprimirValores() {}
     //////////////////////////////////////////////////////////////////////////// DTO'S
 
     public static class ListaEjesEsLaAp {
@@ -722,5 +726,5 @@ public class ControladorPOARegistro implements Serializable {
             this.estrategias = estrategias;
             this.actividadesPoas = actividadesPoas;
         }
-    }  
+    }
 }

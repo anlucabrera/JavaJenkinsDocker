@@ -21,6 +21,7 @@ import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbPoaSelectec;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbPresupuestacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.entity.ch.Incapacidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
@@ -76,6 +77,7 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
     @Getter    @Setter    private List<listaEjeEstrategia> listaListaEjeEstrategia=new ArrayList<>();
     
     @EJB    EjbPoaSelectec poaSelectec;
+    @EJB    EjbPresupuestacion presupuestacion;
     @Inject    ControladorEmpleado controladorEmpleado;
     @EJB    EjbAreasLogeo ejbAreasLogeo;
     @EJB    EjbUtilidadesCH ejbUtilidadesCH;
@@ -262,11 +264,11 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
         recursosActividads4.clear();        recursosActividads5.clear();
         recursosActividadscdh.clear();
 
-        recursosActividads2=poaSelectec.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("2"));
-        recursosActividads3=poaSelectec.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("3"));
-        recursosActividads4=poaSelectec.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("4"));
-        recursosActividads5=poaSelectec.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("5"));
-        recursosActividadscdh=poaSelectec.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("6"));
+        recursosActividads2=presupuestacion.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("2"));
+        recursosActividads3=presupuestacion.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("3"));
+        recursosActividads4=presupuestacion.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("4"));
+        recursosActividads5=presupuestacion.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("5"));
+        recursosActividadscdh=presupuestacion.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("6"));
         
         totalCaptitulo2000 = 0D;
         totalCaptitulo3000 = 0D;

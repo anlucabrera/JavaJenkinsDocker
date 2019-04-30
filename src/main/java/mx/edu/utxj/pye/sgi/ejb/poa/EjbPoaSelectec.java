@@ -96,17 +96,6 @@ public interface EjbPoaSelectec {
     public ActividadesPoa actualizaActividadesPoa(ActividadesPoa nuevaActividadesPoa);
 
     public ActividadesPoa eliminarActividadesPoa(ActividadesPoa nuevaActividadesPoa);
-//  ------------------------------------------ RecursosActividad ------------------------------------------------
-
-    public List<RecursosActividad> mostrarRecursosActividad(Short area, Short ejercicioFical, Short capitulo);
-
-    public List<RecursosActividad> mostrarRecursosActividadReporte(ActividadesPoa actividadesPoa);
-
-    public RecursosActividad agregarRecursosActividad(RecursosActividad nuevoRecursosActividad);
-
-    public RecursosActividad actualizaRecursosActividad(RecursosActividad nuevoRecursosActividad);
-
-    public RecursosActividad eliminarRecursosActividad(RecursosActividad nuevoRecursosActividad);
 
 //  -------------------------------------------- EjerciciosFiscales --------------------------------------------------
     public List<EjerciciosFiscales> mostrarEjerciciosFiscaleses();
