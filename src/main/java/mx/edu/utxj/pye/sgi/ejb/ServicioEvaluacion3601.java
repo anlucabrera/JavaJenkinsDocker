@@ -407,8 +407,10 @@ public class ServicioEvaluacion3601 implements EjbEvaluacion3601 {
 
     @Override
     public List<ListaPersonalEvaluacion360Promedios> getPromediosPorEvaluado() {
-        f.setEntityClass(ListaPersonalEvaluacion360Promedios.class);
-        return f.findAll();
+        List<ListaPersonalEvaluacion360Promedios> l = f.getEntityManager().createQuery("select l from ListaPersonalEvaluacion360Promedios l", ListaPersonalEvaluacion360Promedios.class)
+                .getResultList();
+        l.forEach(registro -> f.getEntityManager().refresh(registro));
+        return l;
     }
 
     @Override
