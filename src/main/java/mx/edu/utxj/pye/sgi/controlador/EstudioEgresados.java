@@ -40,7 +40,7 @@ public class EstudioEgresados implements Serializable {
     private static final long serialVersionUID = -615669920932201958L;
 
     @Getter private Boolean finalizado;
-    @Getter private Boolean cargada, sinRespuestas = false;
+    @Getter private Boolean cargada = false, sinRespuestas = false;
     @Getter private Boolean TSU, ING;
     
     @Getter private Alumnos alumnos;
@@ -76,10 +76,13 @@ public class EstudioEgresados implements Serializable {
     
     @PostConstruct
     public void init() {
+        cargada = false;
         selectItemCarreras = ejb.selectItemsProgramasEducativos();
         listaGeneraciones = ejb.getGeneraciones();
         if (logonMB.getUsuarioTipo() == UsuarioTipo.ESTUDIANTE) {
             alumnos = ejb.getAlumnoPorMatricula(logonMB.getCurrentUser());
+//            System.out.println("alumnos = " + alumnos);
+//            System.out.println("alumnos.getGradoActual() = " + alumnos.getGradoActual());
             if (alumnos.getGradoActual() == 11) {
                 ING = true;
             } else  if (alumnos.getGradoActual() >=6 &&alumnos.getGradoActual() < 11) {
@@ -88,7 +91,7 @@ public class EstudioEgresados implements Serializable {
             try {
                 // modificar para aperturar a onceavos o sextos
 //                if(alumnos.getGradoActual() == 11){ //estudiantes egresadod de 11 vo
-                if(alumnos.getGradoActual() >=6 &&alumnos.getGradoActual() <=7){   //Estudiantes egresados de 6to grado
+                if(ING){   //Estudiantes egresados de 6to grado
 //                if ( alumnos.getGradoActual() == 11 || alumnos.getGradoActual() >=6 &&alumnos.getGradoActual() <=7) { //Estudiantes egresados de 6to y 11vo grado
                     finalizado = false;
                     respuestas = new HashMap<>();
