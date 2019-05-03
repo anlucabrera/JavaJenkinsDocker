@@ -138,6 +138,9 @@
                                 <c:if test="#{administracionAvanceEstudioSocioeconomico.aperturado and administracionAvanceEstudioSocioeconomico.esSecretario}">
                                     <li><p:link href="/encuestas/seguimiento/admEstudioSocieconomicoSecretario.xhtml"><i class="fa fa-list-ol"></i><span>Estudio Socioeconómico</span></p:link></li>
                                 </c:if>
+                                <c:if test="#{administracionAvanceEvaluacionEstadia.esSecretario}">
+                                    <li><p:link href="/encuestas/seguimiento/admEvaluacionEstadiaSecretario.xhtml"><i class="fa fa-list-ol"></i><span>Evaluación Estadía</span></p:link></li>
+                                </c:if>
                             </ul>
 
                         </li>
@@ -179,6 +182,9 @@
                     </c:if>
                     <c:if test="#{administracionEstudioSocioeconomico.director and administracionAvanceEstudioSocioeconomico.director and administracionEstudioSocioeconomico.aperturas and administracionAvanceEstudioSocioeconomico.aperturado}">
                         <li><p:link href="/encuestas/seguimiento/admEstudioSocieconomicoDirectores.xhtml"><i class="fa fa-list-ol"></i><span>Estudio SocioEconómico</span></p:link></li>
+                    </c:if>
+                    <c:if test="#{administracionEvaluacionEstadia.director and administracionAvanceEvaluacionEstadia.director}">
+                        <li><p:link href="/encuestas/seguimiento/admEvaluacionEstadiaDirectores.xhtml"><i class="fa fa-list-ol"></i><span>Evaluación Estadía</span></p:link></li>
                     </c:if>
 
 
