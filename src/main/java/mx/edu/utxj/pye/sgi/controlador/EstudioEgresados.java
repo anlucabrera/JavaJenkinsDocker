@@ -47,7 +47,7 @@ public class EstudioEgresados implements Serializable {
     @Getter private Evaluaciones evaluacion;
     @Getter private Integer evaluador;
     
-    @Getter @Setter private String tipoFiltro="", nivelGeneraciones="";
+    @Getter @Setter private String tipoFiltro="", nivelGeneraciones="", valor;
     @Getter @Setter private Short generacionSeleccionada;
     @Getter @Setter private EvaluacionEstudioEgresadosResultados resultados;   
     @Getter @Setter private Generaciones generacion = new Generaciones();
@@ -152,14 +152,17 @@ public class EstudioEgresados implements Serializable {
 
     public void guardarRespuesta(ValueChangeEvent e) {
         UIComponent origen = (UIComponent) e.getSource();
-        String valor = e.getNewValue().toString();
+        if(e.getNewValue()==null){
+        valor = "";            
+        }else{
+        valor = e.getNewValue().toString();
+        }
         ejb.actualizarRespuestaPorPregunta(resultados, origen.getId(), valor);
         finalizado = ejb.actualizarResultado(resultados);
         
     }  
     
     public void guardarRespuestaRemota(){
-        
         String id = Faces. getRequestParameter("id");
         String valor = Faces.getRequestParameter("valor");
         respuestas.put(id, valor);

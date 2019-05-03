@@ -247,7 +247,7 @@
                                             <p:outputLabel id="lbl#{id}" for="#{id}" value="#{evaluado2.evaluadoNombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
                                             <f:ajax execute="#{id}">
                                                 <p:inputTextarea id="#{id}" class="form-control" value="#{evaluacion360Admin1.respuestas[caster.toInt(evaluado2.pk.evaluado)][caster.toFloat(32)]}"
-                                                                 rows="6" placeholder="Ingrese sus comentarios aquí..." maxlength="500"
+                                                                 rows="6" placeholder="Ingrese sus comentarios aquí..." maxlength="1000"
                                                                  valueChangeListener="#{evaluacion360Admin1.guardarRespuesta}" queryDelay="1500" />
                                             </f:ajax>
                                         </div>
@@ -272,7 +272,7 @@
                                             <p:outputLabel id="lbl#{id}" for="#{id}" value="#{evaluado2.evaluadoNombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
                                             <f:ajax execute="#{id}">
                                                 <p:inputTextarea id="#{id}" class="form-control" value="#{evaluacion360Admin1.respuestas[caster.toInt(evaluado2.pk.evaluado)][caster.toFloat(33)]}"
-                                                                 rows="6" placeholder="Ingrese sus comentarios aquí..." maxlength="500"
+                                                                 rows="6" placeholder="Ingrese sus comentarios aquí..." maxlength="1000"
                                                                  valueChangeListener="#{evaluacion360Admin1.guardarRespuesta}" queryDelay="1500" />
                                             </f:ajax>
                                         </div>

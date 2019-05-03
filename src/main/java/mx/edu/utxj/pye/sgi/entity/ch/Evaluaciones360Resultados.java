@@ -140,10 +140,10 @@ public class Evaluaciones360Resultados implements Serializable {
     private Short r30;
     @Column(name = "r31")
     private Short r31;
-    @Size(max = 500)
+    @Size(max = 1000)
     @Column(name = "r32")
     private String r32;
-    @Size(max = 500)
+    @Size(max = 1000)
     @Column(name = "r33")
     private String r33;
     @Basic(optional = false)
