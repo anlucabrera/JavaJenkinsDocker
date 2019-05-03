@@ -137,22 +137,16 @@ public class NotificacionesControl implements Serializable {
 
             notificacioneses = new ArrayList<>();
             notificacioneses.clear();
-            notificacioneses = ejbNotificacionesIncidencias.mostrarListaDenotificacionesPorUsuario(controladorEmpleado.getNuevoOBJListaPersonal().getClave());
+            notificacioneses = ejbNotificacionesIncidencias.mostrarListaDenotificacionesPorConversacion(controladorEmpleado.getNuevoOBJListaPersonal().getClave(),contactoDestino);
             if (!notificacioneses.isEmpty()) {
-                nIterator = notificacioneses.iterator();
-                while (nIterator.hasNext()) {
-                    Notificaciones n = nIterator.next();
-                    if (Objects.equals(n.getClaveTDestino().getClave(), contactoDestino)) {
-
-                    } else if (Objects.equals(n.getClaveTRemitente().getClave(), contactoDestino)) {
+                notificacioneses.forEach((n) -> {
+                    if (Objects.equals(n.getClaveTRemitente().getClave(), contactoDestino)) {
                         if (n.getStatus() == 0) {
                             n.setStatus(1);
                             ejbNotificacionesIncidencias.actualizarNotificaciones(n);
                         }
-                    } else {
-                        nIterator.remove();
                     }
-                }
+                });                
             }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());

@@ -262,52 +262,88 @@ public class ControladorPOARecurso implements Serializable {
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARecurso.asignarRecursoProgramados(2) "+event.getNewValue());
         switch (event.getComponent().getId()) {
             case "mes1":
-                recursosActividad.setRPEnero(comparacionValores(event.getNewValue(), 1));
-                numPm1 = comparacionValores(event.getNewValue(), 2);
+                if (event.getNewValue() != null) {
+                    if (Double.parseDouble(event.getNewValue().toString()) != 0D) {
+                        recursosActividad.setRPEnero((numPm1 = Double.parseDouble(event.getNewValue().toString())));
+                    } else {                    numPm1 = null;                    recursosActividad.setRPEnero(Double.parseDouble("0"));                }
+                } else {                    numPm1 = null;                    recursosActividad.setRPEnero(Double.parseDouble("0"));                }
                 break;
             case "mes2":
-                recursosActividad.setRPFebero(comparacionValores(event.getNewValue(), 1));
-                numPm2 = comparacionValores(event.getNewValue(), 2);
+                if (event.getNewValue() != null) {
+                    if (Double.parseDouble(event.getNewValue().toString()) != 0D) {
+                        recursosActividad.setRPFebero((numPm2 = Double.parseDouble(event.getNewValue().toString())));
+                    } else {                    numPm2 = null;                    recursosActividad.setRPFebero(Double.parseDouble("0"));                }
+                } else {                    numPm2 = null;                    recursosActividad.setRPFebero(Double.parseDouble("0"));                }
                 break;
             case "mes3":
-                recursosActividad.setRPMarzo(comparacionValores(event.getNewValue(), 1));
-                numPm3 = comparacionValores(event.getNewValue(), 2);
+                if (event.getNewValue() != null) {
+                    if (Double.parseDouble(event.getNewValue().toString()) != 0D) {
+                        recursosActividad.setRPMarzo((numPm3 = Double.parseDouble(event.getNewValue().toString())));
+                    } else {                    numPm3 = null;                    recursosActividad.setRPMarzo(Double.parseDouble("0"));                }
+                } else {                    numPm3 = null;                    recursosActividad.setRPMarzo(Double.parseDouble("0"));                }
                 break;
             case "mes4":
-                recursosActividad.setRPAbril(comparacionValores(event.getNewValue(), 1));
-                numPm4 = comparacionValores(event.getNewValue(), 2);
+                if (event.getNewValue() != null) {
+                    if (Double.parseDouble(event.getNewValue().toString()) != 0D) {
+                        recursosActividad.setRPAbril((numPm4 = Double.parseDouble(event.getNewValue().toString())));
+                    } else {                    numPm4 = null;                    recursosActividad.setRPAbril(Double.parseDouble("0"));                }
+                } else {                    numPm4 = null;                    recursosActividad.setRPAbril(Double.parseDouble("0"));                }
                 break;
             case "mes5":
-                recursosActividad.setRPMayo(comparacionValores(event.getNewValue(), 1));
-                numPm5 = comparacionValores(event.getNewValue(), 2);
+                if (event.getNewValue() != null) {
+                    if (Double.parseDouble(event.getNewValue().toString()) != 0D) {
+                        recursosActividad.setRPMayo((numPm5 = Double.parseDouble(event.getNewValue().toString())));
+                    } else {                    numPm5 = null;                    recursosActividad.setRPMayo(Double.parseDouble("0"));                }
+                } else {                    numPm5 = null;                    recursosActividad.setRPMayo(Double.parseDouble("0"));                }
                 break;
             case "mes6":
-                recursosActividad.setRPJunio(comparacionValores(event.getNewValue(), 1));
-                numPm6 = comparacionValores(event.getNewValue(), 2);
+                if (event.getNewValue() != null) {
+                    if (Double.parseDouble(event.getNewValue().toString()) != 0D) {
+                        recursosActividad.setRPJunio((numPm6 = Double.parseDouble(event.getNewValue().toString())));
+                    } else {                    numPm6 = null;                    recursosActividad.setRPJunio(Double.parseDouble("0"));                }
+                } else {                    numPm6 = null;                    recursosActividad.setRPJunio(Double.parseDouble("0"));                }
                 break;
             case "mes7":
-                recursosActividad.setRPJulio(comparacionValores(event.getNewValue(), 1));
-                numPm7 = comparacionValores(event.getNewValue(), 2);
+                if (event.getNewValue() != null) {
+                    if (Double.parseDouble(event.getNewValue().toString()) != 0D) {
+                        recursosActividad.setRPJulio((numPm7 = Double.parseDouble(event.getNewValue().toString())));
+                    } else {                    numPm7 = null;                    recursosActividad.setRPJulio(Double.parseDouble("0"));                }
+                } else {                    numPm7 = null;                    recursosActividad.setRPJulio(Double.parseDouble("0"));                }
                 break;
             case "mes8":
-                recursosActividad.setRPAgosto(comparacionValores(event.getNewValue(), 1));
-                numPm8 = comparacionValores(event.getNewValue(), 2);
+                if (event.getNewValue() != null) {
+                    if (Double.parseDouble(event.getNewValue().toString()) != 0D) {
+                        recursosActividad.setRPAgosto((numPm8 = Double.parseDouble(event.getNewValue().toString())));
+                    } else {                    numPm8 = null;                    recursosActividad.setRPAgosto(Double.parseDouble("0"));                }
+                } else {                    numPm8 = null;                    recursosActividad.setRPAgosto(Double.parseDouble("0"));                }
                 break;
             case "mes9":
-                recursosActividad.setRPSeptiembre(comparacionValores(event.getNewValue(), 1));
-                numPm9 = comparacionValores(event.getNewValue(), 2);
+                if (event.getNewValue() != null) {
+                    if (Double.parseDouble(event.getNewValue().toString()) != 0D) {
+                        recursosActividad.setRPSeptiembre((numPm9 = Double.parseDouble(event.getNewValue().toString())));
+                    } else {                    numPm9 = null;                    recursosActividad.setRPSeptiembre(Double.parseDouble("0"));                }
+                } else {                    numPm9 = null;                    recursosActividad.setRPSeptiembre(Double.parseDouble("0"));                }
                 break;
             case "mes10":
-                recursosActividad.setRPOctubre(comparacionValores(event.getNewValue(), 1));
-                numPm10 = comparacionValores(event.getNewValue(), 2);
+                if (event.getNewValue() != null) {
+                    if (Double.parseDouble(event.getNewValue().toString()) != 0D) {
+                        recursosActividad.setRPOctubre((numPm10 = Double.parseDouble(event.getNewValue().toString())));
+                    } else {                    numPm10 = null;                    recursosActividad.setRPOctubre(Double.parseDouble("0"));                }
+                } else {                    numPm10 = null;                    recursosActividad.setRPOctubre(Double.parseDouble("0"));                }
                 break;
             case "mes11":
-                recursosActividad.setRPNoviembre(comparacionValores(event.getNewValue(), 1));
-                numPm11 = comparacionValores(event.getNewValue(), 2);
+                if (event.getNewValue() != null) {
+                    if (Double.parseDouble(event.getNewValue().toString()) != 0D) {
+                        recursosActividad.setRPNoviembre((numPm11 = Double.parseDouble(event.getNewValue().toString())));
+                    } else {                    numPm11 = null;                    recursosActividad.setRPNoviembre(Double.parseDouble("0"));                }
+                } else {                    numPm11 = null;                    recursosActividad.setRPNoviembre(Double.parseDouble("0"));                }
                 break;
             case "mes12":
-                recursosActividad.setRPDiciembre(comparacionValores(event.getNewValue(), 1));
-                numPm12 = comparacionValores(event.getNewValue(), 2);
+                if (event.getNewValue() != null) {
+                    if (Double.parseDouble(event.getNewValue().toString()) != 0D) {
+                        recursosActividad.setRPDiciembre((numPm12 = Double.parseDouble(event.getNewValue().toString())));
+                    } else {                    numPm12 = null;                    recursosActividad.setRPDiciembre(Double.parseDouble("0"));                }
+                } else {                    numPm12 = null;                    recursosActividad.setRPDiciembre(Double.parseDouble("0"));                }
                 break;
         }
         totalRecursoActividad = recursosActividad.getRPEnero() + recursosActividad.getRPFebero() + recursosActividad.getRPMarzo() + recursosActividad.getRPAbril() + recursosActividad.getRPMayo() + recursosActividad.getRPJunio() + recursosActividad.getRPJulio() + recursosActividad.getRPAgosto() + recursosActividad.getRPSeptiembre() + recursosActividad.getRPOctubre() + recursosActividad.getRPNoviembre() + recursosActividad.getRPDiciembre();
@@ -465,27 +501,6 @@ public class ControladorPOARecurso implements Serializable {
         }else{            
             return "#FF0000";
         }    
-    }
-    public Double comparacionValores(Object valor, Integer tipoValor) {
-        Double valor1 = 0D;
-        Double valor2 = 0D;
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARecurso.comparacionValores()");
-        if (valor.toString() == null) {
-            valor1 = 0D;
-            valor2 = null;
-        } else {
-            if (Double.parseDouble(valor.toString()) != 0D) {
-                valor2 = valor1 = Double.parseDouble(valor.toString());
-            } else {
-                valor1 = 0D;
-                valor2 = null;
-            }
-        }
-        if (tipoValor == 1) {
-            return valor1;
-        } else {
-            return valor2;
-        }
     }
     
     public void resetearValores() {

@@ -24,10 +24,12 @@ public class ServiciosNotificacionesIncidencias implements EjbNotificacionesInci
 
     // ------------------------------------------------------------- Notificaciones -------------------------------------------------------------
     @Override
-    public List<Notificaciones> mostrarListaDenotificacionesPorUsuario(Integer clave) throws Throwable {
-        TypedQuery<Notificaciones> q = em.createQuery("SELECT n FROM Notificaciones n JOIN n.claveTDestino cd JOIN n.claveTRemitente cr WHERE cd.clave=:claveD OR cr.clave=:claveR ORDER BY n.fecha DESC ", Notificaciones.class);
-        q.setParameter("claveD", clave);
-        q.setParameter("claveR", clave);
+    public List<Notificaciones> mostrarListaDenotificacionesPorConversacion(Integer claveR,Integer claveD) throws Throwable {
+        TypedQuery<Notificaciones> q = em.createQuery("SELECT n FROM Notificaciones n JOIN n.claveTDestino cd JOIN n.claveTRemitente cr WHERE (cd.clave=:claveD1 OR cr.clave=:claveR1) AND (cd.clave=:claveD2 OR cr.clave=:claveR2) ORDER BY n.fecha DESC ", Notificaciones.class);
+        q.setParameter("claveD1", claveR);
+        q.setParameter("claveR1", claveR);
+        q.setParameter("claveD2", claveD);
+        q.setParameter("claveR2", claveD);
         List<Notificaciones> pr = q.getResultList();
         return pr;
     }

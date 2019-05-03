@@ -39,6 +39,14 @@ box-primary{
 .aceptado{
     background-color:#666666  !important;
 }
+.mp{
+    background: #666666 !important;
+    color: #ffffff
+}
+.ci{
+    background: #374850 !important;
+    color: #ffffff
+}
 .pendiente{
     background-color: #cccccc !important;
 }

@@ -159,18 +159,38 @@ public class ControladorSubordinados implements Serializable {
             
             if ((fechaActual.isAfter(fechaMi) || fechaActual.equals(fechaMi)) && (fechaActual.isBefore(fechaMF) || fechaActual.equals(fechaMF))) {
                 fechaReportesActiva = true;
-                if (fechaMF.getDayOfMonth() > 15) {
-                    fechaIR = LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue(), 01);
-                    fechaFR = LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue(), 15);
-                } else {
-                    if (fechaMF.getMonthValue() == 1) {
-                        fechaIR = LocalDate.of((fechaMF.getYear() - 1), 12, 16);
-                        fechaFR = LocalDate.of((fechaMF.getYear() - 1), 12, 31);
+                if (fechaMF.getMonthValue() == fechaMi.getMonthValue()) {
+                    if (fechaMF.getDayOfMonth() > 15) {
+                        fechaIR = LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue(), 01);
+                        fechaFR = LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue(), 15);
                     } else {
-                        fechaIR = LocalDate.of(fechaMF.getYear(), (fechaMF.getMonthValue() - 1), 16);
-                        fechaFR = LocalDate.of(fechaMF.getYear(), (fechaMF.getMonthValue() - 1), LocalDate.of(anioNumero, (fechaMF.getMonthValue() - 1), 01).lengthOfMonth());
+                        if (fechaMF.getMonthValue() == 1) {
+                            fechaIR = LocalDate.of((fechaMF.getYear() - 1), 12, 16);
+                            fechaFR = LocalDate.of((fechaMF.getYear() - 1), 12, 31);
+                        } else {
+                            fechaIR = LocalDate.of(fechaMF.getYear(), (fechaMF.getMonthValue() - 1), 16);
+                            fechaFR = LocalDate.of(fechaMF.getYear(), (fechaMF.getMonthValue() - 1), LocalDate.of(anioNumero, (fechaMF.getMonthValue() - 1), 01).lengthOfMonth());
+                        }
+                    }
+                } else {
+                    if (fechaMi.getDayOfMonth() > 15) {
+                        fechaIR = LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue() - 1, 01);
+                        fechaFR = LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue() - 1, 15);
+                    } else {
+                        if (fechaMi.getMonthValue() == 1) {
+                            fechaIR = LocalDate.of((fechaMi.getYear() - 1), 12, 16);
+                            fechaFR = LocalDate.of((fechaMi.getYear() - 1), 12, 31);
+                        } else {
+                            if (fechaMi.getDayOfMonth() == 01) {
+                                fechaIR = LocalDate.of(fechaMi.getYear(), (fechaMi.getMonthValue()), 01);
+                            } else {
+                                fechaIR = LocalDate.of(fechaMi.getYear(), (fechaMi.getMonthValue()), 16);
+                            }
+                            fechaFR = LocalDate.of(fechaMi.getYear(), (fechaMi.getMonthValue()), LocalDate.of(anioNumero, (fechaMi.getMonthValue() - 1), 01).lengthOfMonth());
+                        }
                     }
                 }
+
                 incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(utilidadesCH.castearLDaD(fechaIR), utilidadesCH.castearLDaD(fechaFR));
                 if (!incidenciases.isEmpty()) {
                     incidenciases.forEach((Incidencias t) -> {
