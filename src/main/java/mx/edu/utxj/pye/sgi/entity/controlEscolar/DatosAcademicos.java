@@ -24,15 +24,15 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author UTXJ
  */
 @Entity
-@Table(name = "datos_academicos")
+@Table(name = "datos_academicos", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "DatosAcademicos.findAll", query = "SELECT d FROM DatosAcademicos d"),
-    @NamedQuery(name = "DatosAcademicos.findByAspirante", query = "SELECT d FROM DatosAcademicos d WHERE d.aspirante = :aspirante"),
-    @NamedQuery(name = "DatosAcademicos.findByPrimeraOpcion", query = "SELECT d FROM DatosAcademicos d WHERE d.primeraOpcion = :primeraOpcion"),
-    @NamedQuery(name = "DatosAcademicos.findBySegundaOpcion", query = "SELECT d FROM DatosAcademicos d WHERE d.segundaOpcion = :segundaOpcion"),
-    @NamedQuery(name = "DatosAcademicos.findByPromedio", query = "SELECT d FROM DatosAcademicos d WHERE d.promedio = :promedio"),
-    @NamedQuery(name = "DatosAcademicos.findByInstitucionAcademica", query = "SELECT d FROM DatosAcademicos d WHERE d.institucionAcademica = :institucionAcademica")})
+    @NamedQuery(name = "DatosAcademicos.findAll", query = "SELECT d FROM DatosAcademicos d")
+    , @NamedQuery(name = "DatosAcademicos.findByAspirante", query = "SELECT d FROM DatosAcademicos d WHERE d.aspirante = :aspirante")
+    , @NamedQuery(name = "DatosAcademicos.findByPrimeraOpcion", query = "SELECT d FROM DatosAcademicos d WHERE d.primeraOpcion = :primeraOpcion")
+    , @NamedQuery(name = "DatosAcademicos.findBySegundaOpcion", query = "SELECT d FROM DatosAcademicos d WHERE d.segundaOpcion = :segundaOpcion")
+    , @NamedQuery(name = "DatosAcademicos.findByPromedio", query = "SELECT d FROM DatosAcademicos d WHERE d.promedio = :promedio")
+    , @NamedQuery(name = "DatosAcademicos.findByInstitucionAcademica", query = "SELECT d FROM DatosAcademicos d WHERE d.institucionAcademica = :institucionAcademica")})
 public class DatosAcademicos implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -57,18 +57,18 @@ public class DatosAcademicos implements Serializable {
     @NotNull
     @Column(name = "institucion_academica")
     private int institucionAcademica;
-    @JoinColumn(name = "sistema_primera_opcion", referencedColumnName = "id_sistema")
-    @ManyToOne(optional = false)
-    private Sistema sistemaPrimeraOpcion;
-    @JoinColumn(name = "sistema_segunda_opcion", referencedColumnName = "id_sistema")
-    @ManyToOne(optional = false)
-    private Sistema sistemaSegundaOpcion;
     @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Aspirante aspirante1;
     @JoinColumn(name = "especialidad_iems", referencedColumnName = "id_especialidad_centro")
     @ManyToOne(optional = false)
     private EspecialidadCentro especialidadIems;
+    @JoinColumn(name = "sistema_primera_opcion", referencedColumnName = "id_sistema")
+    @ManyToOne(optional = false)
+    private Sistema sistemaPrimeraOpcion;
+    @JoinColumn(name = "sistema_segunda_opcion", referencedColumnName = "id_sistema")
+    @ManyToOne(optional = false)
+    private Sistema sistemaSegundaOpcion;
 
     public DatosAcademicos() {
     }
@@ -125,22 +125,6 @@ public class DatosAcademicos implements Serializable {
         this.institucionAcademica = institucionAcademica;
     }
 
-    public Sistema getSistemaPrimeraOpcion() {
-        return sistemaPrimeraOpcion;
-    }
-
-    public void setSistemaPrimeraOpcion(Sistema sistemaPrimeraOpcion) {
-        this.sistemaPrimeraOpcion = sistemaPrimeraOpcion;
-    }
-
-    public Sistema getSistemaSegundaOpcion() {
-        return sistemaSegundaOpcion;
-    }
-
-    public void setSistemaSegundaOpcion(Sistema sistemaSegundaOpcion) {
-        this.sistemaSegundaOpcion = sistemaSegundaOpcion;
-    }
-
     public Aspirante getAspirante1() {
         return aspirante1;
     }
@@ -155,6 +139,22 @@ public class DatosAcademicos implements Serializable {
 
     public void setEspecialidadIems(EspecialidadCentro especialidadIems) {
         this.especialidadIems = especialidadIems;
+    }
+
+    public Sistema getSistemaPrimeraOpcion() {
+        return sistemaPrimeraOpcion;
+    }
+
+    public void setSistemaPrimeraOpcion(Sistema sistemaPrimeraOpcion) {
+        this.sistemaPrimeraOpcion = sistemaPrimeraOpcion;
+    }
+
+    public Sistema getSistemaSegundaOpcion() {
+        return sistemaSegundaOpcion;
+    }
+
+    public void setSistemaSegundaOpcion(Sistema sistemaSegundaOpcion) {
+        this.sistemaSegundaOpcion = sistemaSegundaOpcion;
     }
 
     @Override

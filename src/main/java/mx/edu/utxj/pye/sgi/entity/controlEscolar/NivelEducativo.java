@@ -26,12 +26,12 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author UTXJ
  */
 @Entity
-@Table(name = "nivel_educativo")
+@Table(name = "nivel_educativo", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "NivelEducativo.findAll", query = "SELECT n FROM NivelEducativo n"),
-    @NamedQuery(name = "NivelEducativo.findByIdNivelEducativo", query = "SELECT n FROM NivelEducativo n WHERE n.idNivelEducativo = :idNivelEducativo"),
-    @NamedQuery(name = "NivelEducativo.findByNombre", query = "SELECT n FROM NivelEducativo n WHERE n.nombre = :nombre")})
+    @NamedQuery(name = "NivelEducativo.findAll", query = "SELECT n FROM NivelEducativo n")
+    , @NamedQuery(name = "NivelEducativo.findByIdNivelEducativo", query = "SELECT n FROM NivelEducativo n WHERE n.idNivelEducativo = :idNivelEducativo")
+    , @NamedQuery(name = "NivelEducativo.findByNombre", query = "SELECT n FROM NivelEducativo n WHERE n.nombre = :nombre")})
 public class NivelEducativo implements Serializable {
 
     private static final long serialVersionUID = 1L;

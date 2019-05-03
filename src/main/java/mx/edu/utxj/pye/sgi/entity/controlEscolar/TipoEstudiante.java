@@ -11,6 +11,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -26,19 +28,19 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author UTXJ
  */
 @Entity
-@Table(name = "tipo_estudiante")
+@Table(name = "tipo_estudiante", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "TipoEstudiante.findAll", query = "SELECT t FROM TipoEstudiante t"),
-    @NamedQuery(name = "TipoEstudiante.findByIdTipoEstudiante", query = "SELECT t FROM TipoEstudiante t WHERE t.idTipoEstudiante = :idTipoEstudiante"),
-    @NamedQuery(name = "TipoEstudiante.findByDescripcion", query = "SELECT t FROM TipoEstudiante t WHERE t.descripcion = :descripcion"),
-    @NamedQuery(name = "TipoEstudiante.findByActivo", query = "SELECT t FROM TipoEstudiante t WHERE t.activo = :activo")})
+    @NamedQuery(name = "TipoEstudiante.findAll", query = "SELECT t FROM TipoEstudiante t")
+    , @NamedQuery(name = "TipoEstudiante.findByIdTipoEstudiante", query = "SELECT t FROM TipoEstudiante t WHERE t.idTipoEstudiante = :idTipoEstudiante")
+    , @NamedQuery(name = "TipoEstudiante.findByDescripcion", query = "SELECT t FROM TipoEstudiante t WHERE t.descripcion = :descripcion")
+    , @NamedQuery(name = "TipoEstudiante.findByActivo", query = "SELECT t FROM TipoEstudiante t WHERE t.activo = :activo")})
 public class TipoEstudiante implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id_tipo_estudiante")
     private Short idTipoEstudiante;
     @Basic(optional = false)
