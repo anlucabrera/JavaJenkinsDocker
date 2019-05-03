@@ -342,49 +342,6 @@ public class ServiciosPoaSelectec implements EjbPoaSelectec {
         facadePoa.flush();
         return nuevaActividadesPoa;
     }
-//  ------------------------------------------ RecursosActividad ------------------------------------------------
-
-    @Override
-    public List<RecursosActividad> mostrarRecursosActividad(Short area, Short ejercicioFical, Short capitulo) {
-        TypedQuery<RecursosActividad> q = em.createQuery("SELECT r FROM RecursosActividad r INNER JOIN r.productoArea p WHERE p.area = :area AND p.productos.productosPK.ejercicioFiscal=:ejercicioFiscal AND p.capitulo.capituloTipo=:capituloTipo", RecursosActividad.class);
-        q.setParameter("area", area);
-        q.setParameter("ejercicioFiscal", ejercicioFical);
-        q.setParameter("capituloTipo", capitulo);
-        List<RecursosActividad> pr = q.getResultList();
-        return pr;
-    }
-
-    @Override
-    public List<RecursosActividad> mostrarRecursosActividadReporte(ActividadesPoa actividadesPoa) {
-        TypedQuery<RecursosActividad> q = em.createQuery("SELECT r FROM RecursosActividad r INNER JOIN r.actividadPoa ap WHERE ap.actividadPoa = :actividadPoa", RecursosActividad.class);
-        q.setParameter("actividadPoa", actividadesPoa.getActividadPoa());
-        List<RecursosActividad> pr = q.getResultList();
-        return pr;
-    }
-
-    @Override
-    public RecursosActividad agregarRecursosActividad(RecursosActividad nuevoRecursosActividad) {
-        facadePoa.setEntityClass(RecursosActividad.class);
-        facadePoa.create(nuevoRecursosActividad);
-        facadePoa.flush();
-        return nuevoRecursosActividad;
-    }
-
-    @Override
-    public RecursosActividad actualizaRecursosActividad(RecursosActividad nuevoRecursosActividad) {
-        facadePoa.setEntityClass(RecursosActividad.class);
-        facadePoa.edit(nuevoRecursosActividad);
-        facadePoa.flush();
-        return nuevoRecursosActividad;
-    }
-
-    @Override
-    public RecursosActividad eliminarRecursosActividad(RecursosActividad nuevoRecursosActividad) {
-        facadePoa.setEntityClass(RecursosActividad.class);
-        facadePoa.remove(nuevoRecursosActividad);
-        facadePoa.flush();
-        return nuevoRecursosActividad;
-    }
 //  ------------------------------------------CuadroMandoIntegral -----------------------------------------------
 
 //  -------------------------------------------- EjerciciosFiscales --------------------------------------------------

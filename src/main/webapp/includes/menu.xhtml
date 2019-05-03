@@ -44,6 +44,7 @@
                 <c:if test="#{encuestaSatisfaccionEgresadosTsu.cargada}"><li><p:link href="/encuestas/Estudiantes/satisfaccionEgresadosTsu.xhtml"><i class="fa fa-graduation-cap"></i><span>Satisfacción T.S.U.</span></p:link></li></c:if>
                 <c:if test="#{encuestaServicios.cargada}"><li><p:link href="/encuestas/Estudiantes/servicios.xhtml"><i class="fa fa-tty"></i><span>Servicios</span></p:link></li></c:if>
                 <c:if test="#{estudioSocioeconomicoOperativo.cargada}"><li><p:link href="/evaluaciones/evaluacion/estudioSocioeconomico.xhtml"><i class="fa fa-ticket"></i><span>Estudio socioeconómico</span></p:link></li></c:if>
+                <c:if test="#{evaluacionEstadia.cargada}"><li><p:link href="/encuestas/Estudiantes/evaluacionEstadia.xhtml"><i class="fa fa-user-circle-o"></i><span>Evaluación Estadia</span></p:link></li></c:if>
             </li>
         </c:if>
 <!--        <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
@@ -144,7 +145,7 @@
 
                     <c:if test="#{(administracionAvanceEncSatTsu.aperturado and administracionAvanceEncSatTsu.planeacion) or
                                   (administracionAvanceEncuestaSatIng.aperturado and administracionAvanceEncuestaSatIng.planeacion) or
-                                  (administracionAvanceEncuestaServicio.aperturado and administracionAvanceEncuestaServicio.planeacion) or
+                                  (administracionAvanceEncuestaServicio.planeacion) or
                                   (administracionAvanceEstudioSocioeconomico.aperturado and administracionAvanceEstudioSocioeconomico.planeacion)}">
                         <li class="treeview">
                             <a href="#">
@@ -159,7 +160,7 @@
                                 </c:if>
                                 <li><p:link href="/encuestas/seguimiento/admEncuestaEgresPlaneacion.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción ING</span></p:link></li>
                                 <li><p:link href="/encuestas/seguimiento/admEncuestaServicioPlaneacion.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta servicios</span></p:link></li>
-                                <li><p:link href="/encuestas/seguimiento/admEstudioSocieconomicoPlaneacion.xhtml"><i class="fa fa-list-ol"></i><span>Estudio Socioeconómico</span></p:link></li>
+                                <li><p:link href="/encuestas/seguimiento/admEvaluacionPlaneacion.xhtml"><i class="fa fa-list-ol"></i><span>Evaluación Estadía</span></p:link></li>
                             </ul>
                         </li>
                     </c:if>
@@ -219,6 +220,9 @@
                     <!--Equipo de Informacion y Estadistica-->
                     <c:if test="#{administracionEncuestaTsu.esDeIyE and administracionAvanceEncSatTsu.esDeInformacionYEst and administracionEncuestaTsu.aperturas and administracionAvanceEncSatTsu.aperturado}">
                         <li><p:link href="/encuestas/seguimiento/admEncuestaEgreTsu.xhtml" ><i class="fa fa-list-ol"></i><span>Encuesta satisfacción TSU</span></p:link></li>
+                    </c:if>
+                    <c:if test="#{administracionEvaluacionEstadia.esDeIyE and administracionAvanceEvaluacionEstadia.esDeInformacionYEst}">
+                        <li><p:link href="/encuestas/seguimiento/admEvaluacionEstadiaPyE.xhtml" ><i class="fa fa-list-ol"></i><span>Evaluación estadía</span></p:link></li>
                     </c:if>
                     <c:if test="#{administracionEncuestaIng.esDeIyE and administracionEncuestaIng.aperturas and administracionAvanceEncuestaSatIng.esDeInformacionYEst and administracionAvanceEncuestaSatIng.aperturado}">
                         <li>
@@ -465,6 +469,71 @@
                     </ul>
                 </li>
             </c:if>            
+            <c:if test="#{(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.areaSuperior ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaSuperior le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.clave eq 43 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 394)}">
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Registros de estadía</li>
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-file-text-o"></i> <span>Formatos estadía</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <li>
+                            <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/1. ESPACIOS CONCERTADOS DE ESTADÍA.xlsx">
+                                <span>1. Espacios concertados</span>
+                            </p:link>
+                        </li>      
+                        <li>
+                            <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/2. CONCENTRADO DE ESTADÍAS.xlsx">
+                                <span>2. Concentrado de estadías</span>
+                            </p:link>
+                        </li>       
+                        <li>
+                            <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/3. CARTA DE PRESENTACIÓN DE ESTADÍA.docx">
+                                <span>3. Carta de presentación</span>
+                            </p:link>
+                        </li>       
+                        <li>
+                            <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/4. Carta de Aceptacion de Estadía.docx">
+                                <span>4. Carta de aceptación</span>
+                            </p:link>
+                        </li>       
+                        <c:if test="#{(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.areaSuperior ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaSuperior le 29 )}">
+                            <li>
+                                <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/5. Seguimiento de la Estadía Técnica.xls">
+                                    <span>5. Seguimiento de la estadía</span>
+                                </p:link>
+                            </li>       
+                            <li>
+                                <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/6. INFORME MENSUAL DE ESTADÍA.doc">
+                                    <span>6. Informe mensual</span>
+                                </p:link>
+                            </li>       
+                            <li>
+                                <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/7. EVALUACIÓN DE ESTADIA POR ASESOR EMPRESARIAL.xls">
+                                    <span>7. Evaluación asesor empresarial</span>
+                                </p:link>
+                            </li>       
+                            <li>
+                                <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/8. CARTA DE LIBERACIÓN EMPRESARIAL.docx">
+                                    <span>8. Carta de liberación empresarial</span>
+                                </p:link>
+                            </li>       
+                            <li>
+                                <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/9. Carta de evaluación y acreditación de estadia (4).doc">
+                                    <span>9. evaluación, acreditación estadía</span>
+                                </p:link>
+                            </li>  
+                        </c:if>      
+                        <li>
+                            <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/PROCESO ESTADIA TECNICA.pdf">
+                                <span>Proceso estadía técnica</span>
+                            </p:link>
+                        </li> 
+                    </ul>
+                </li>
+            </c:if>    
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 || controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 7 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 148 ||controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 6 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 300}">
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Administrador</li>
             </c:if>
@@ -624,7 +693,7 @@
                             </p:link>
                         </li>
                         <li>
-                            <p:link href="/controlEscolar/se/aperturaGrupos.xhtml"><i class="fa fa-check"></i>
+                            <p:link href="/controlEscolar/se/aperturaGrupos.xhtml"><i class="fa fa-users"></i>
                                 <span>Grupos</span>
                             </p:link>
                         </li>
@@ -672,7 +741,7 @@
                     </p:link>
                 </li>
             </c:if>      
-            
+
             <!--li class="treeview">
                 <a href="#"><i class="fa fa-money"></i><span>Finanzas</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
                 <ul class="treeview-menu">

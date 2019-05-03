@@ -80,7 +80,7 @@
                                     <p:autoUpdate/>
                                     <p:outputLabel value="Eje rector:" />
                                     <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" value="#{controladorPOARegistro.ejesRegistro.eje}" valueChangeListener="#{controladorPOARegistro.asignarParametrosRegistro}">
-                                        <f:selectItems value="#{controladorPOARegistro.listaEjesRegistros}" var="eje" itemValue="#{eje.eje}" itemLabel="#{eje.eje} -- #{eje.nombre}" />
+                                        <f:selectItems value="#{controladorPOARegistro.consultaListaEjesRegistro}" var="eje" itemValue="#{eje.eje}" itemLabel="#{eje.eje} -- #{eje.nombre}" />
                                         <p:ajax update="estra :frm" listener="#{controladorPOARegistro.imprimirValores()}"/>
                                     </p:selectOneMenu> 
                                     <p:message for="eje" display="tooltip" />
@@ -89,7 +89,7 @@
                                     <p:outputPanel id="estra">
                                         <p:outputLabel value="Estrategia:" /> 
                                         <p:selectOneMenu filter="true" filterMatchMode="contains" id="estrategia" value="#{controladorPOARegistro.estrategias.numero}" valueChangeListener="#{controladorPOARegistro.asignarParametrosRegistro}">
-                                            <f:selectItems value="#{controladorPOARegistro.listaEstrategias}" var="estrategia" itemValue="#{estrategia.estrategia}" itemLabel="#{estrategia.numero} -- #{estrategia.nombre}" />
+                                            <f:selectItems value="#{controladorPOARegistro.consultaListaEstrategias}" var="estrategia" itemValue="#{estrategia.estrategia}" itemLabel="#{estrategia.numero} -- #{estrategia.nombre}" />
                                             <p:ajax update="linea" listener="#{controladorPOARegistro.imprimirValores()}"/>
                                         </p:selectOneMenu>
                                     </p:outputPanel>
@@ -98,8 +98,8 @@
                                     <p:outputPanel id="linea">  
                                         <p:outputLabel for="lineaAccion"  value="Linea de acción" />
                                         <p:selectOneMenu filter="true" filterMatchMode="contains" id="lineaAccion" value="#{controladorPOARegistro.lineasAccion.lineaAccion}" valueChangeListener="#{controladorPOARegistro.asignarParametrosRegistro}">
-                                            <f:selectItems value="#{controladorPOARegistro.listaLineasAccion}" var="lineasAccion" itemValue="#{lineasAccion.lineaAccion}" itemLabel="#{lineasAccion.numero} -- #{lineasAccion.nombre}" />
-                                            <p:ajax update=":frm :frm2" listener="#{controladorPOARegistro.consultarListas()}"/>
+                                            <f:selectItems value="#{controladorPOARegistro.consultaListaLineasAccion}" var="lineasAccion" itemValue="#{lineasAccion.lineaAccion}" itemLabel="#{lineasAccion.numero} -- #{lineasAccion.nombre}" />
+                                            <p:ajax update=":frm :frm2" listener="#{controladorPOARegistro.consultarPOA(controladorPOARegistro.ejesRegistro,2)}"/>
                                         </p:selectOneMenu> 
                                         <p:message for="lineaAccion" display="tooltip" />
                                     </p:outputPanel>
@@ -144,7 +144,7 @@
                                     <p:selectOneMenu filter="true" filterMatchMode="contains" required="true" requiredMessage="Es necesario que la actividad cuente con una unidad de medida" id="medida"  
                                                      valueChangeListener="#{controladorPOARegistro.asignarUnidadMedida}" widgetVar="medida" value="#{controladorPOARegistro.unidadDMedida}" >
                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                        <f:selectItems value="#{controladorPOARegistro.listaUnidadMedidases}" var="unidadMedida" itemValue="#{unidadMedida.unidadMedida}" itemLabel="#{unidadMedida.nombre}" />
+                                        <f:selectItems value="#{controladorPOARegistro.consultaListaUnidadMedidas}" var="unidadMedida" itemValue="#{unidadMedida.unidadMedida}" itemLabel="#{unidadMedida.nombre}" />
                                         <p:ajax update="actividad"/>
                                     </p:selectOneMenu> 
                                     <p:message for="medida" display="tooltip" />
@@ -369,7 +369,7 @@
                                                     </p:column>
                                                     <p:column>
                                                         <p:commandButton icon="fa fa-edit" title="Editar actividad" styleClass="btn-primary" oncomplete="PF('dlgActualizacionActividad').show()" process="@this" update=":frmActualizaActividad"
-                                                                         actionListener="#{controladorPOARegistro.buscarActividadesVariasPlaneacionCuatrimestral(pOa)}" onsuccess="actualizarTabla2()">
+                                                                         actionListener="#{controladorPOARegistro.buscarActividadParaEdicion(pOa)}" onsuccess="actualizarTabla2()">
                                                             <span class="label label-success"></span>
                                                             <f:setPropertyActionListener target="#{controladorPOARegistro.actividadPoaEditando}" value="#{pOa}" />
                                                         </p:commandButton>
@@ -428,7 +428,7 @@
                                 <p:outputLabel for="medida1"  value="Unidad de medida" />
                                 <p:selectOneMenu filter="true" filterMatchMode="contains" required="true" disabled="#{controladorPOARegistro.actividadPoaEditando.esPIDE ne 'NO PIDE'}" requiredMessage="Es necesario que la actividad cuente con una unidad de medida" id="medida1"  value="#{controladorPOARegistro.unidadDMedida}" >
                                     <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                    <f:selectItems value="#{controladorPOARegistro.listaUnidadMedidases}" var="unidadMedida" itemValue="#{unidadMedida.unidadMedida}" itemLabel="#{unidadMedida.nombre}" />
+                                    <f:selectItems value="#{controladorPOARegistro.consultaListaUnidadMedidas}" var="unidadMedida" itemValue="#{unidadMedida.unidadMedida}" itemLabel="#{unidadMedida.nombre}" />
                                 </p:selectOneMenu> 
                                 <p:message for="medida1" display="tooltip" /> 
                                 <hr/>
@@ -479,7 +479,7 @@
                             </p:outputPanel>
                         </div>
                     </div> 
-                    <p:commandButton value="Actualizar" id="btnActualiza" actionListener="#{controladorPOARegistro.onRowEdit()}"  oncomplete="PF('dlgActualizacionActividad').hide()" onsuccess="actualizarTabla2()" process=":frmActualizaActividad" icon="fa fa-edit" styleClass="btn-primary" update=":frm2" />
+                    <p:commandButton value="Actualizar" id="btnActualiza" actionListener="#{controladorPOARegistro.actualizarActividadPoa()}"  oncomplete="PF('dlgActualizacionActividad').hide()" onsuccess="actualizarTabla2()" process=":frmActualizaActividad" icon="fa fa-edit" styleClass="btn-primary" update=":frm2" />
                     <p:commandButton value="Cancelar" id="btnCancelar" actionListener="#{controladorPOARegistro.resetearValores()}"  oncomplete="PF('dlgActualizacionActividad').hide()" process=":frmActualizaActividad" icon="fa fa-times" styleClass="btn-primary" update=":frm2" />
 
                 </h:form>

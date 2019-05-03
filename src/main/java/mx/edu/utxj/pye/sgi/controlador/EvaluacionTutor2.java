@@ -50,15 +50,21 @@ public class EvaluacionTutor2 implements Serializable {
 
     @PostConstruct
     public void init(){
-        evaluacion = ejbEvaluacionTutor2.evaluacionActiva();        
+        evaluacion = ejbEvaluacionTutor2.evaluacionActiva();
+        System.out.println("evaluacion = " + evaluacion);
         
         if(evaluacion != null){
             estudianteTutor = ejbEvaluacionTutor2.getEstudianteTutor(evaluacion.getPeriodo(), logonMB.getCurrentUser());
+            System.out.println("estudianteTutor = " + estudianteTutor);
             periodoEscolar = ejbEvaluacionTutor2.getPeriodo(evaluacion);
+            System.out.println("periodoEscolar = " + periodoEscolar);
             if(estudianteTutor != null){
                 resultados = ejbEvaluacionTutor2.getResultados(evaluacion, estudianteTutor);
+                System.out.println("resultados = " + resultados);
                 apartados = ejbEvaluacionTutor2.getApartados();
+                System.out.println("apartados = " + apartados);
                 respuestasPosibles = ejbEvaluacionTutor2.getRespuestasPosibles();
+                System.out.println("respuestasPosibles = " + respuestasPosibles);
                 cargada = true;
                 comprobar();
             }

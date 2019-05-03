@@ -263,3 +263,7 @@ body .ui-datatable tbody>tr.ui-widget-content, body .ui-treetable tbody>tr.ui-wi
     background-color: #000000;
     border-color: #000000;
 }
+
+.ui-panelgrid .ui-grid-responsive .ui-panelgrid-cell {
+    text-align: left;
+}

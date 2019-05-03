@@ -40,12 +40,6 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "PersonalCategorias.findByTipo", query = "SELECT p FROM PersonalCategorias p WHERE p.tipo = :tipo")})
 public class PersonalCategorias implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "categoria")
-    private Short categoria;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
@@ -56,6 +50,13 @@ public class PersonalCategorias implements Serializable {
     @Size(min = 1, max = 19)
     @Column(name = "tipo")
     private String tipo;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "categoria")
+    private Short categoria;
     @JoinTable(name = "categorias_habilidades", joinColumns = {
         @JoinColumn(name = "categoria", referencedColumnName = "categoria")}, inverseJoinColumns = {
         @JoinColumn(name = "habilidad", referencedColumnName = "habilidad")})
@@ -106,21 +107,6 @@ public class PersonalCategorias implements Serializable {
         this.categoria = categoria;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
 
     @XmlTransient
     public List<Habilidades> getHabilidadesList() {
@@ -244,6 +230,22 @@ public class PersonalCategorias implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias[ categoria=" + categoria + " ]";
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
     
 }

@@ -115,10 +115,9 @@
                                         <div class="icon">
                                             <i class="fa  fa-graduation-cap "></i>
                                         </div>
-                                        <p:link outcome="evaluaciones/evaluacion/estudioEgresados"  class="small-box-footer">
+                                        <p:link  outcome="evaluaciones/evaluacion/estudioEgresados"  target="_blank" class="small-box-footer">
                                             Entrar <i class="fa fa-arrow-circle-right"></i>
                                         </p:link>
-                                        <h:form><p:remoteCommand name="estudioEgr" action="evaluaciones/evaluacion/estudioEgresados" /></h:form>
                                     </div>
                                 </div>                                
                             </c:if>
@@ -162,6 +161,27 @@
                                     </div>
                                 </div>                                
                             </c:if>
+                            <c:if test="#{evaluacionEstadia.cargada}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="evaluacionEstadia();">
+                                            <h3>
+                                                <h:outputLabel value="#{evaluacionEstadia.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" 
+                                                               onclick="evaluacionEstadia();" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Evaluacion Estadía<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-user"></i>
+                                        </div>
+                                        <p:link outcome="encuestas/Estudiantes/evaluacionEstadia"  class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="evaluacionEstadia" action="encuestas/Estudiantes/evaluacionEstadia" /></h:form>
+                                    </div>
+                                </div>                                
+                            </c:if>
                             <c:if test="#{evaluacionDoncenteMateriaControler.cargada}">
                                 <div class="#{claseResumen}" style="max-height: 154px;">
                                     <div class="small-box bg-blue">
@@ -202,7 +222,8 @@
                                     </div>
                                 </div>                                
                             </c:if>
-                            <c:if test="#{estudioEgresados.cargada and false}">
+                            '#{estudioEgresados.cargada}'
+                            <c:if test="#{estudioEgresados.cargada}">
                                 <div class="#{claseResumen}" style="max-height: 154px;">
                                     <div class="small-box bg-blue">
                                         <div class="inner" style="cursor: pointer;" onclick="estudioEgresados();">
@@ -411,7 +432,7 @@
                                     <div class="inner">
                                         <h3>Contacto</h3>
                                         <p>Registro</p>
-                                        <p>Contacto de emergencia</p>
+                                        <p>Contacto de emergencia #{evaluacion360Admin1.cargada}</p>
                                     </div>
                                     <div class="icon">
                                         <i class="fa fa-user-plus"/>
@@ -570,7 +591,7 @@
                                         </div>
                                     </div>
                                 </c:if>
-                                <!--c:if test="# {evaluacionDesempenioAdmin.directivoSeleccionado.actividad eq 2 || evaluacionDesempenioAdmin.directivoSeleccionado.actividad eq 4 }">
+                                <!--c:if test="# {evaluacionDesempenioAdmin.evaluador.actividad eq 2 || evaluacionDesempenioAdmin.evaluador.actividad eq 4 }">
                                     <div class="box box-primary">
                                         <div class="box box-solid">
                                             <div class="box-header with-border" title="Solo se realiza la descarga de las cedulas de la ultima evaluación">

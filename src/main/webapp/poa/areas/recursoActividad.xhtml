@@ -76,7 +76,7 @@
                                     <p:autoUpdate/>
                                     <p:outputLabel value="Eje rector:" />
                                     <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorPOARecurso.asignarParametrosRegistro}">
-                                        <f:selectItems value="#{controladorPOARecurso.listaEjesRegistros}" var="eje" itemValue="#{eje.eje}" itemLabel="#{eje.eje} -- #{eje.nombre}" />
+                                        <f:selectItems value="#{controladorPOARecurso.consultaListaEjesRegistros}" var="eje" itemValue="#{eje.eje}" itemLabel="#{eje.eje} -- #{eje.nombre}" />
                                         <p:ajax update="estra" listener="#{controladorPOARecurso.imprimirValores()}"/>
                                     </p:selectOneMenu> 
                                     <p:message for="eje" display="tooltip" />
@@ -85,7 +85,7 @@
                                     <p:outputPanel id="estra">
                                         <p:outputLabel value="Estrategia:" /> 
                                         <p:selectOneMenu filter="true" filterMatchMode="contains" id="estrategia" value="#{controladorPOARecurso.estrategias.numero}" valueChangeListener="#{controladorPOARecurso.asignarParametrosRegistro}">
-                                            <f:selectItems value="#{controladorPOARecurso.listaEstrategias}" var="estrategia" itemValue="#{estrategia.estrategia}" itemLabel="#{estrategia.numero} -- #{estrategia.nombre}" />
+                                            <f:selectItems value="#{controladorPOARecurso.consultaListaEstrategias}" var="estrategia" itemValue="#{estrategia.estrategia}" itemLabel="#{estrategia.numero} -- #{estrategia.nombre}" />
                                             <p:ajax update=":frm" listener="#{controladorPOARecurso.imprimirValores()}"/>
                                         </p:selectOneMenu>
                                     </p:outputPanel>
@@ -99,11 +99,10 @@
                 <div class="box box-primary">
                     <div class="box-header with-border">
                         <p:separator/>         
-                        <div class="row">         
+                        <div class="row">   
                             <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center;">
                                 <p:outputLabel value="Presupuesto general"/>
                             </div>
-
                             <p:outputPanel>
                                 <p:autoUpdate/>
                                 <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center">
@@ -122,7 +121,7 @@
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
                                         <p:outputLabel value="Capítulo 5000"/>                            
                                     </div>
-                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorPOARecurso.pretechoCPDD eq 0.0?'collapse':'visible'};">
+                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorPOARecurso.capituloCD.rendered eq true?'collapse':'visible'};">
                                         <p:outputLabel value="Captación de derechos"/>                            
                                     </div>
                                     <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center;">
@@ -134,32 +133,32 @@
                                         <p:outputLabel value="Pretecho"/>                            
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{controladorPOARecurso.pretecho2000}">
+                                        <p:outputLabel value="#{controladorPOARecurso.capitulo2m.totalPretecho}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{controladorPOARecurso.pretecho3000}">
+                                        <p:outputLabel value="#{controladorPOARecurso.capitulo3m.totalPretecho}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{controladorPOARecurso.pretecho4000}">
+                                        <p:outputLabel value="#{controladorPOARecurso.capitulo4m.totalPretecho}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{controladorPOARecurso.pretecho5000}">
+                                        <p:outputLabel value="#{controladorPOARecurso.capitulo5m.totalPretecho}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
-                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorPOARecurso.pretechoCPDD eq 0.0?'collapse':'visible'};">
-                                        <p:outputLabel value="#{controladorPOARecurso.pretechoCPDD}">
+                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorPOARecurso.capituloCD.rendered eq true?'collapse':'visible'};">
+                                        <p:outputLabel value="#{controladorPOARecurso.capituloCD.totalPretecho}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
-                                        <p:outputLabel value="#{controladorPOARecurso.totalPretecho}">
+                                        <p:outputLabel value="#{controladorPOARecurso.capituloTT.totalPretecho}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
@@ -169,32 +168,32 @@
                                         <p:outputLabel value="Programado"/>                            
                                     </div>                                
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{controladorPOARecurso.totalCaptitulo2000}">
+                                        <p:outputLabel value="#{controladorPOARecurso.capitulo2m.totalProgramado}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{controladorPOARecurso.totalCaptitulo3000}">
+                                        <p:outputLabel value="#{controladorPOARecurso.capitulo3m.totalProgramado}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{controladorPOARecurso.totalCaptitulo4000}">
+                                        <p:outputLabel value="#{controladorPOARecurso.capitulo4m.totalProgramado}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{controladorPOARecurso.totalCaptitulo5000}">
+                                        <p:outputLabel value="#{controladorPOARecurso.capitulo5m.totalProgramado}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
-                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorPOARecurso.pretechoCPDD eq 0.0?'collapse':'visible'};">
-                                        <p:outputLabel value="#{controladorPOARecurso.totalCaptituloCPDD}">
+                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorPOARecurso.capituloCD.rendered eq true?'collapse':'visible'};">
+                                        <p:outputLabel value="#{controladorPOARecurso.capituloCD.totalProgramado}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
-                                        <p:outputLabel value="#{controladorPOARecurso.totalCaptitulos}">
+                                        <p:outputLabel value="#{controladorPOARecurso.capituloTT.totalProgramado}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
@@ -204,32 +203,32 @@
                                         <p:outputLabel value="Disponible"/>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel style="#{controladorPOARecurso.claseP1 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorPOARecurso.pretecho2000-controladorPOARecurso.totalCaptitulo2000}">
+                                        <p:outputLabel style="color: #{controladorPOARecurso.capitulo2m.colorClase}" value="#{controladorPOARecurso.capitulo2m.totalDisponible}">    
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel style="#{controladorPOARecurso.claseP2 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorPOARecurso.pretecho3000-controladorPOARecurso.totalCaptitulo3000}">
+                                        <p:outputLabel style="color: #{controladorPOARecurso.capitulo3m.colorClase}" value="#{controladorPOARecurso.capitulo3m.totalDisponible}">    
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel style="#{controladorPOARecurso.claseP3 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorPOARecurso.pretecho4000-controladorPOARecurso.totalCaptitulo4000}">
+                                        <p:outputLabel style="color: #{controladorPOARecurso.capitulo4m.colorClase}" value="#{controladorPOARecurso.capitulo4m.totalDisponible}">    
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel style="#{controladorPOARecurso.claseP4 eq 'mayor'?'':'color: #ff0000'}" value="#{controladorPOARecurso.pretecho5000-controladorPOARecurso.totalCaptitulo5000}">
+                                        <p:outputLabel style="color: #{controladorPOARecurso.capitulo5m.colorClase}" value="#{controladorPOARecurso.capitulo5m.totalDisponible}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
-                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorPOARecurso.pretechoCPDD eq 0.0?'collapse':'visible'};">
-                                        <p:outputLabel style="#{controladorPOARecurso.clasePC eq 'mayor'?'':'color: #ff0000'}" value="#{controladorPOARecurso.pretechoCPDD-controladorPOARecurso.totalCaptituloCPDD}">
+                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorPOARecurso.capituloCD.rendered eq true?'collapse':'visible'};">
+                                        <p:outputLabel style="color: #{controladorPOARecurso.capituloCD.colorClase}" value="#{controladorPOARecurso.capituloCD.totalDisponible}">    
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
-                                        <p:outputLabel style="#{controladorPOARecurso.clasePT eq 'mayor'?'':'color: #ff0000'}" value="#{controladorPOARecurso.totalPretecho-controladorPOARecurso.totalCaptitulos}">
+                                        <p:outputLabel style="color: #{controladorPOARecurso.capituloTT.colorClase}" value="#{controladorPOARecurso.capituloTT.totalDisponible}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
@@ -244,7 +243,7 @@
                     <div class="box-body">
                         <div class="row">
                             <div class="col-lg-12 col-md-12 text-info text-center">
-                                <p:remoteCommand name="actualizarTabla" actionListener="#{controladorPOARecurso.imprimirValores()}" update="@(form)" />
+                                <p:remoteCommand name="actualizarTabla" actionListener="#{controladorPOARecurso.imprimirValores()}" update="frm" />
                                 <p:dataTable id="dtbEje" widgetVar="dtbEje" var="eje" sortBy="#{eje.ejeA.eje}" expandableRowGroups="true"
                                              value="#{controladorPOARecurso.listaEstrategiases}">
                                     <p:headerRow>
@@ -335,7 +334,7 @@
                                                             </p:column>
                                                             <p:column styleClass="#{actividad.actividadesPoa1.numeroS eq 0?'actividad':''}" style="text-align: center; width: 3%;"> 
                                                                 <p:commandButton id="btnRecurso" actionListener="#{controladorPOARecurso.asignarRecursoActividad(actividad.actividadesPoa1)}"
-                                                                                 process="@this" update="frm" oncomplete="PF('delRegistroProdustos').show()" icon="fa fa-usd" 
+                                                                                 process="@this" icon="fa fa-usd" 
                                                                                  styleClass="#{actividad.actividadesPoa1.recursosActividadList.size() eq 0?'btn-primary':'btn-success'}" title="Agregar recurso" onsuccess="actualizarTabla()"/> 
                                                             </p:column>
 
@@ -515,14 +514,14 @@
                         <div class="col-sm-12 col-md-12 col-lg-12">
                             <p:outputLabel for="partida"  value="Partida" />
                             <p:selectOneMenu filter="true" filterMatchMode="contains" id="partida" value="#{controladorPOARecurso.partidas.partida}" valueChangeListener="#{controladorPOARecurso.asignaProductos}">
-                                <f:selectItems value="#{controladorPOARecurso.partidases}" var="partidasList" itemValue="#{partidasList.partida}" itemLabel="#{partidasList.partida} -- #{partidasList.denominacion}" />
+                                <f:selectItems value="#{controladorPOARecurso.consultaListaPartidas}" var="partidasList" itemValue="#{partidasList.partida}" itemLabel="#{partidasList.partida} -- #{partidasList.denominacion}" />
                                 <p:ajax update="producto" listener="#{controladorPOARecurso.imprimirValores()}" global="false"/>
                             </p:selectOneMenu>  
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-12">
                             <p:outputLabel for="producto"  value="Producto" />
                             <p:selectOneMenu filter="true" filterMatchMode="contains" id="producto" valueChangeListener="#{controladorPOARecurso.asignaRecursoProductos}">
-                                <f:selectItems value="#{controladorPOARecurso.productoses}" var="productos" itemValue="#{productos.productosPK.producto}" itemLabel="#{productos.descripcion}" />
+                                <f:selectItems value="#{controladorPOARecurso.consltaListaProductos}" var="productos" itemValue="#{productos.productosPK.producto}" itemLabel="#{productos.descripcion}" />
                                 <p:ajax update="producto mensejeError"/>
                             </p:selectOneMenu> 
                         </div>
@@ -579,11 +578,11 @@
                 </h:form>
             </p:dialog>
 
-            <p:blockUI block="frmAlineacionEstratejica" widgetVar="buiRegistro1" blocked="#{controladorEmpleado.procesopoa.registroAFinalizado}"/>
-            <p:blockUI block="frm2" widgetVar="buiRegistro2" blocked="#{controladorEmpleado.procesopoa.registroAFinalizado}">
+            <p:blockUI block="frmAlineacionEstratejica" widgetVar="buiRegistro1" blocked="#{controladorEmpleado.procesopoa.asiganacionRFinalizado}"/>
+            <p:blockUI block="frm2" widgetVar="buiRegistro2" blocked="#{controladorEmpleado.procesopoa.asiganacionRFinalizado}">
                 Ha confirmado la culminación de este proceso, espere la respuesta por parte de la Dirección de Planeación y Evaluación, que indique si se realizaran, modificaciones o podrá pasar a la siguiente fase.
             </p:blockUI>            
-            <p:blockUI block="frm" widgetVar="buiRegistro3" blocked="#{controladorEmpleado.procesopoa.registroAFinalizado}"/>
+            <p:blockUI block="frm" widgetVar="buiRegistro3" blocked="#{controladorEmpleado.procesopoa.asiganacionRFinalizado}"/>
         </c:if>
         <c:if test="#{!controladorEmpleado.tienePOA}">
             <div class="box box-primary">

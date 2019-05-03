@@ -18,6 +18,7 @@ import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
+import org.omnifaces.util.Faces;
 
 @Named
 @ViewScoped
@@ -167,6 +168,7 @@ public class UtilidadesPOA implements Serializable {
         System.out.println("mensaje: " + mensaje);
         correosElectronicos.enviarConfirmacionCorreoElectronico(correoRemitente, contrasenia, correoDestino, titulo, asunto, mensaje,tipoDcorreo);
         actualizarProcesopoa();
+        recargarPag();
     }
   
     public void actualizarProcesopoa() {
@@ -177,6 +179,10 @@ public class UtilidadesPOA implements Serializable {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void recargarPag(){        
+            Faces.refresh();
     }
 
 }

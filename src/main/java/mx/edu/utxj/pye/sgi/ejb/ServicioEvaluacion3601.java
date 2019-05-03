@@ -1,11 +1,15 @@
 package mx.edu.utxj.pye.sgi.ejb;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.faces.model.SelectItem;
+import javax.inject.Inject;
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
@@ -18,6 +22,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonalEvaluacion360;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonalEvaluacion360Promedios;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonalEvaluacion360Reporte;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
 /**
@@ -27,7 +32,7 @@ import mx.edu.utxj.pye.sgi.facade.Facade;
 @Stateful
 public class ServicioEvaluacion3601 implements EjbEvaluacion3601 {
 
-    @EJB
+      @EJB
     Facade f;
 
     @Override
@@ -402,8 +407,10 @@ public class ServicioEvaluacion3601 implements EjbEvaluacion3601 {
 
     @Override
     public List<ListaPersonalEvaluacion360Promedios> getPromediosPorEvaluado() {
-        f.setEntityClass(ListaPersonalEvaluacion360Promedios.class);
-        return f.findAll();
+        List<ListaPersonalEvaluacion360Promedios> l = f.getEntityManager().createQuery("select l from ListaPersonalEvaluacion360Promedios l", ListaPersonalEvaluacion360Promedios.class)
+                .getResultList();
+        l.forEach(registro -> f.getEntityManager().refresh(registro));
+        return l;
     }
 
     @Override

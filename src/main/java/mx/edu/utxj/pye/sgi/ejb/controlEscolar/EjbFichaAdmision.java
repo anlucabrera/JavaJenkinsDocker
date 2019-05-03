@@ -17,7 +17,6 @@ import java.util.List;
 
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
 
 /**

@@ -78,7 +78,7 @@ public class AdministracionEncuestaServicios implements Serializable{
                     if(!ejbAdmTutor.estTutordeGrupo(cveTrabajador).isEmpty() && ejbAdmTutor.estTutordeGrupo(cveTrabajador).get(0).getGrado() == 11){
                         tutor = true;
                     }
-                }
+            }
             }
         } catch (Throwable e) {
             director = false;

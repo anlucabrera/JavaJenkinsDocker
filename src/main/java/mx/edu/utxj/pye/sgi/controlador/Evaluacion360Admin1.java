@@ -47,7 +47,7 @@ import org.primefaces.component.selectonemenu.SelectOneMenu;
 @Named
 @SessionScoped
 public class Evaluacion360Admin1 implements Serializable {
-
+    
     private static final long serialVersionUID = -2104785351397760456L;
 
     @Getter private final Integer maxEvaluando = 4;

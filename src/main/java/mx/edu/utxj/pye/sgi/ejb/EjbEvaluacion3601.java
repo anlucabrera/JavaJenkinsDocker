@@ -8,6 +8,8 @@ package mx.edu.utxj.pye.sgi.ejb;
 import java.util.List;
 import javax.ejb.Local;
 import javax.faces.model.SelectItem;
+
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360Resultados;
@@ -15,6 +17,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonalEvaluacion360;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonalEvaluacion360Promedios;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonalEvaluacion360Reporte;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 /**
  *
@@ -22,7 +25,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonalEvaluacion360Reporte;
  */
 @Local
 public interface EjbEvaluacion3601 {
-    
+     
     public List<SelectItem> getRespuestasPosibles();
     
     public List<Apartado> getApartados();
