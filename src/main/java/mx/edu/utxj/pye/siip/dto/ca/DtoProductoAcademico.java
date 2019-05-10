@@ -12,13 +12,19 @@ import java.util.List;
 import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
+import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.sgi.entity.pye2.Localidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
+import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
+import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAcademicos;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 
 /**
@@ -26,6 +32,24 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
  * @author UTXJ
  */
 public final class DtoProductoAcademico {
+    /****************************** Edición ****************************************/
+    @Getter @Setter List<AreasUniversidad> listaAreasAcademicas;
+    @Getter @Setter List<ProductosAcademicos> listaProductosAcademicoInt;
+    
+    @Getter @Setter AreasUniversidad areaAcademica;
+    
+    @Getter private Pais pais;
+    @Getter private Estado estado;
+    @Getter private Municipio municipio;
+    
+    @Getter private List<Pais> paises;
+    @Getter private List<Estado> estados;
+    @Getter private List<Municipio> municipios;
+    @Getter @Setter private String mensaje;
+    
+    @Getter @Setter List<ListaPersonal> listaPersonal;
+    @Getter @Setter ListaPersonal persona;
+    
     /************************** Lista áreas ****************************************/
     @Getter private List<Categorias> listaCategoriasPOA;
     @Getter private List<AreasUniversidad> listaAreasPOA; 
@@ -235,4 +259,53 @@ public final class DtoProductoAcademico {
         mesesConsulta = Collections.EMPTY_LIST;
     }
     
+    /**
+     * ******************** Ubicación ***********************************
+     */
+    public void setPais(Pais pais) {
+        this.pais = pais;
+        if (pais == null) {
+            nulificarPais();
+        }
+    }
+
+    public void nulificarPais() {
+        estados = Collections.EMPTY_LIST;
+        nulificarEstados();
+    }
+
+    public void nulificarEstados() {
+        municipios = Collections.EMPTY_LIST;
+    }
+
+    
+    public void setEstado(Estado estado) {
+        this.estado = estado;
+        if (estado == null) {
+            nulificarEstados();
+        }
+    }
+
+    public void setMunicipio(Municipio municipio) {
+        this.municipio = municipio;
+    }
+
+    public void setPaises(List<Pais> paises) {
+        this.paises = paises;
+        if (paises.isEmpty()) {
+            nulificarPais();
+        }
+    }
+
+    public void setEstados(List<Estado> estados) {
+        this.estados = estados;
+        if (estados.isEmpty()) {
+            nulificarEstados();
+        }
+    }
+
+    public void setMunicipios(List<Municipio> municipios) {
+        this.municipios = municipios;
+    }
+
 }

@@ -30,18 +30,22 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.entity.pye2.ContactosEmpresa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CorreosEmpresa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
+import mx.edu.utxj.pye.sgi.entity.pye2.EmpresasTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
+import mx.edu.utxj.pye.sgi.entity.pye2.GirosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.Localidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.LocalidadPK;
 import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.MunicipioPK;
+import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
 import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasBeneficiadosVinculacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasBeneficiadosVinculacionPK;
+import mx.edu.utxj.pye.sgi.entity.pye2.SectoresTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.TelefonosEmpresa;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.vin.DtoOrganismosVinculados;
@@ -86,6 +90,22 @@ public class ControladorOrganismosVinculadosPYE implements Serializable {
         filtros();
         try {
             dtoOrganismosVinculado.setListaProgramasEducativosBeneficiadosV(ejbOrganismosVinculados.getProgramasBeneficiadosVinculacion());
+        } catch (Throwable ex) {
+            Logger.getLogger(ControladorOrganismosVinculadosPYE.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void inicializarCatalogos() {
+        try {
+            dtoOrganismosVinculado.setOrganismoTipos(ejbOrganismosVinculados.getOrganismosTipo());
+            dtoOrganismosVinculado.setEmpresaTipos(ejbOrganismosVinculados.getEmpresasTipos());
+            dtoOrganismosVinculado.setGiroTipos(ejbOrganismosVinculados.getGirosTipo());
+            dtoOrganismosVinculado.setSectorTipos(ejbOrganismosVinculados.getSectoresTipo());
+            
+            Faces.setSessionAttribute("organismosTipos", dtoOrganismosVinculado.getOrganismoTipos());
+            Faces.setSessionAttribute("empresasTipos", dtoOrganismosVinculado.getEmpresaTipos());
+            Faces.setSessionAttribute("sectoresTipos", dtoOrganismosVinculado.getSectorTipos());
+            Faces.setSessionAttribute("girosTipos", dtoOrganismosVinculado.getGiroTipos());
         } catch (Throwable ex) {
             Logger.getLogger(ControladorOrganismosVinculadosPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -151,15 +171,19 @@ public class ControladorOrganismosVinculadosPYE implements Serializable {
         }
     }
     
-    public void inicializarUbicacion(){
-        dtoOrganismosVinculado.setPais(new Pais(42));
-        dtoOrganismosVinculado.setEstado(new Estado(21));
-        dtoOrganismosVinculado.setMunicipio(new Municipio(new MunicipioPK(21, 197)));
-        dtoOrganismosVinculado.setLocalidad(new Localidad(new LocalidadPK(21,191,1)));
-        dtoOrganismosVinculado.setPaises(ejbFiscalizacion.getPaises());
-        dtoOrganismosVinculado.setEstados(ejbFiscalizacion.getEstadosPorPais(dtoOrganismosVinculado.getPais()));
-        dtoOrganismosVinculado.setMunicipios(ejbFiscalizacion.getMunicipiosPorEstado(dtoOrganismosVinculado.getEstado()));
-        dtoOrganismosVinculado.setLocalidades(ejbFiscalizacion.getLocalidadesPorMunicipio(dtoOrganismosVinculado.getMunicipio()));
+    public void inicializarUbicacion() {
+        try {
+            dtoOrganismosVinculado.setPais(new Pais(42));
+            dtoOrganismosVinculado.setEstado(new Estado(21));
+            dtoOrganismosVinculado.setMunicipio(new Municipio(new MunicipioPK(21, 197)));
+            dtoOrganismosVinculado.setLocalidad(new Localidad(new LocalidadPK(21, 197, 1)));
+            dtoOrganismosVinculado.setPaises(ejbFiscalizacion.getPaises());
+            dtoOrganismosVinculado.setEstados(ejbFiscalizacion.getEstadosPorPais(dtoOrganismosVinculado.getPais()));
+            dtoOrganismosVinculado.setMunicipios(ejbFiscalizacion.getMunicipiosPorEstado(dtoOrganismosVinculado.getEstado()));
+            dtoOrganismosVinculado.setLocalidades(ejbFiscalizacion.getLocalidadesPorMunicipio(dtoOrganismosVinculado.getMunicipio()));
+        } catch (Throwable ex) {
+            Logger.getLogger(ControladorOrganismosVinculadosPYE.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void buscaOrganismosVinculados() {
@@ -691,6 +715,70 @@ public class ControladorOrganismosVinculadosPYE implements Serializable {
         if(guardado){
             abrirProgramasBeneficiadosVinculacion(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado());
         }else  Messages.addGlobalError("El programa educativo no pudo asignarse.");
+    }
+    
+    public void forzarAperturaEdicionOrganismoVinculado(){
+        if(dtoOrganismosVinculado.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEdicionOrganismoVinculado').show();");
+            dtoOrganismosVinculado.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void actualizaInterfazEdicionOrganismoVinculado(){
+        Ajax.update("frmEdicionOrganismoVinculado");
+        Ajax.oncomplete("skin();");
+        dtoOrganismosVinculado.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionOrganismoVinculado();
+    }
+    
+    public void abrirEdicionOrganismoVinculado(OrganismosVinculados organismoVinculado) {
+        if("Si".equals(organismoVinculado.getConvenio())){
+            dtoOrganismosVinculado.setTieneConvenio(Boolean.TRUE);
+        }else{
+            dtoOrganismosVinculado.setTieneConvenio(Boolean.FALSE);
+        }
+        inicializarCatalogos();
+        DTOOrganismoVinculado dtoOrgVin = new DTOOrganismoVinculado();
+        dtoOrgVin.setOrganismoVinculado(organismoVinculado);
+        dtoOrganismosVinculado.setRegistro(dtoOrgVin);
+        dtoOrganismosVinculado.setMensaje("");
+        actualizaInterfazEdicionOrganismoVinculado();
+    }
+    
+    public void editaOrganismoVinculado(){
+        if(ejbOrganismosVinculados.buscaOrganismoVinculadoExistente(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado())){
+            dtoOrganismosVinculado.setMensaje("El nombre de la empresa ya se encuentra asignado por otra empresa, la actualización será descartada");
+        }else{
+            dtoOrganismosVinculado.getRegistro().setOrganismoVinculado(ejbOrganismosVinculados.editaOrganismoVinculado(dtoOrganismosVinculado.getRegistro().getOrganismoVinculado()));
+            dtoOrganismosVinculado.setMensaje("El Organismo Vinculado se ha actualizado");
+            actualizaInterfazEdicionOrganismoVinculado();
+        }
+        Ajax.update("mensaje");
+    }
+    
+    public void actualizarOrganismoTipo(ValueChangeEvent event){
+        dtoOrganismosVinculado.getRegistro().getOrganismoVinculado().setOrgTip((OrganismosTipo)event.getNewValue());
+    }
+    
+    public void actualizarEmpresasTipo(ValueChangeEvent event){
+        dtoOrganismosVinculado.getRegistro().getOrganismoVinculado().setEmpTip((EmpresasTipo)event.getNewValue());
+    }
+    
+    public void actualizarSectoresTipo(ValueChangeEvent event){
+        dtoOrganismosVinculado.getRegistro().getOrganismoVinculado().setSector((SectoresTipo)event.getNewValue());
+    }
+    
+    public void actualizarGirosTipo(ValueChangeEvent event){
+        dtoOrganismosVinculado.getRegistro().getOrganismoVinculado().setGiro((GirosTipo)event.getNewValue());
+    }
+    
+    public void actualizaTieneConvenio(ValueChangeEvent event){
+        dtoOrganismosVinculado.setTieneConvenio((Boolean)event.getNewValue());
+        if(dtoOrganismosVinculado.getTieneConvenio()){
+            dtoOrganismosVinculado.getRegistro().getOrganismoVinculado().setConvenio("Si");
+        }else{
+            dtoOrganismosVinculado.getRegistro().getOrganismoVinculado().setConvenio("No");
+        }
     }
     
 }

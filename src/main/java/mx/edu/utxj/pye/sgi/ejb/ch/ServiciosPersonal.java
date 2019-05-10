@@ -1,10 +1,12 @@
 package mx.edu.utxj.pye.sgi.ejb.ch;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.ch.Actividades;
@@ -76,6 +78,18 @@ public class ServiciosPersonal implements EjbPersonal {
         } 
         return pr;
     }
+    
+    @Override
+    public List<ListaPersonal> buscaCoincidenciasListaPersonal(String parametro) {
+        try {
+            return facade.getEntityManager().createQuery("SELECT l FROM ListaPersonal l WHERE l.nombre LIKE CONCAT('%',:parametro,'%' ) OR l.clave LIKE CONCAT('%',:parametro,'%' ) OR l.areaOperativaNombre LIKE CONCAT('%',:parametro,'%' )", ListaPersonal.class)
+                    .setParameter("parametro", parametro)
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+    
 ////////////////////////////////////////////////////////////////////////////////Personal
 
     @Override

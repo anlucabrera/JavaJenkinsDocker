@@ -12,6 +12,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -55,6 +57,8 @@ public class ServicioServiciosEnfermeriaCicloPeriodos implements EjbServiciosEnf
     
     @Inject Caster      caster;
 
+    private static final Logger LOG = Logger.getLogger(ServicioServiciosEnfermeriaCicloPeriodos.class.getName());
+    
     @Override
     public List<DTOServiciosEnfemeriaCicloPeriodos> getListaServiciosEnfermeriaCicloPeriodos(String rutaArchivo) throws Throwable {
         if (Files.exists(Paths.get(rutaArchivo))) {
@@ -305,6 +309,51 @@ public class ServicioServiciosEnfermeriaCicloPeriodos implements EjbServiciosEnf
             });
             return listaDtoServEnf;
         } catch (NoResultException ex) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public ServiciosEnfermeriaCicloPeriodos editaServicioEnfermeria(ServiciosEnfermeriaCicloPeriodos servicioEnfermeria) {
+        try {
+            facadeEscolar.setEntityClass(ServiciosEnfermeriaCicloPeriodos.class);
+            facadeEscolar.edit(servicioEnfermeria);
+            facadeEscolar.flush();
+            return servicioEnfermeria;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo actualizar el registro: " + servicioEnfermeria.getServicio().getDescripcion(), e);
+            return null;
+        }
+    }
+
+    @Override
+    public Boolean buscaServicioEnfermeriaExistente(ServiciosEnfermeriaCicloPeriodos servicioEnfermeria) {
+        try {
+            ServiciosEnfermeriaCicloPeriodos servEnf = new ServiciosEnfermeriaCicloPeriodos();
+            servEnf = facadeEscolar.getEntityManager().createQuery("SELECT s FROM ServiciosEnfermeriaCicloPeriodos s JOIN s.servicio t WHERE s.cicloEscolar = :cicloEscolar AND s.periodoEscolar = :periodoEscolar AND t.servicio = :servicio AND s.mes = :mes AND s.registro <> :registro",ServiciosEnfermeriaCicloPeriodos.class)
+                    .setParameter("cicloEscolar", servicioEnfermeria.getCicloEscolar())
+                    .setParameter("periodoEscolar", servicioEnfermeria.getPeriodoEscolar())
+                    .setParameter("servicio", servicioEnfermeria.getServicio().getServicio())
+                    .setParameter("mes", servicioEnfermeria.getMes())
+                    .setParameter("registro", servicioEnfermeria.getRegistro())
+                    .getSingleResult();
+            if(servEnf != null){
+                return true;
+            }else{
+                return false;
+            }
+        } catch (NoResultException | NonUniqueResultException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public List<ServiciosEnfermeriaCicloPeriodos> getReporteGeneralEjercicioServiciosEnfermeria() {
+        try {
+            return facadeEscolar.getEntityManager().createQuery("SELECT s FROM ServiciosEnfermeriaCicloPeriodos s INNER JOIN s.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY s.mes",ServiciosEnfermeriaCicloPeriodos.class)
+                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .getResultList();
+        } catch (NoResultException e) {
             return Collections.EMPTY_LIST;
         }
     }

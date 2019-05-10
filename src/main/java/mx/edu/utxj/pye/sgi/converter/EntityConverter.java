@@ -11,16 +11,28 @@ import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
+import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadAreasEstudio;
+import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadDisciplinas;
+import mx.edu.utxj.pye.sgi.entity.pye2.CuerposAcademicosRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
+import mx.edu.utxj.pye.sgi.entity.pye2.EmpresasTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
+import mx.edu.utxj.pye.sgi.entity.pye2.GirosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.Localidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.LocalidadPK;
 import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.MunicipioPK;
+import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
+import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAcademicos;
+import mx.edu.utxj.pye.sgi.entity.pye2.SectoresTipo;
+import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosEnfermeriaTipo;
+import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosTecnologicosAnioMes;
+import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosTipos;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import org.omnifaces.util.Faces;
 
@@ -132,10 +144,66 @@ public class EntityConverter implements Converter{
                     List<Categorias> categorias = Faces.getSessionAttribute("categorias");
                     Categorias categoria = new Categorias(Short.valueOf(value));
                     return categorias.get(categorias.indexOf(categoria));
+                case "somOrganismoTipo":
+                    List<OrganismosTipo> organismosTipos = Faces.getSessionAttribute("organismosTipos");
+                    OrganismosTipo organismoTipo = new OrganismosTipo(Short.valueOf(value));
+                    return organismosTipos.get(organismosTipos.indexOf(organismoTipo));
+                case "somEmpresaTipo":
+                    List<EmpresasTipo> empresasTipos = Faces.getSessionAttribute("empresasTipos");
+                    EmpresasTipo empresaTipo = new EmpresasTipo(Short.valueOf(value));
+                    return empresasTipos.get(empresasTipos.indexOf(empresaTipo));
+                case "somSector":
+                    List<SectoresTipo> sectoresTipos = Faces.getSessionAttribute("sectoresTipos");
+                    SectoresTipo sectorTipo = new SectoresTipo(Short.valueOf(value));
+                    return sectoresTipos.get(sectoresTipos.indexOf(sectorTipo));
+                case "somGiro":
+                    List<GirosTipo> girosTipos = Faces.getSessionAttribute("girosTipos");
+                    GirosTipo giroTipo = new GirosTipo(Short.valueOf(value));
+                    return girosTipos.get(girosTipos.indexOf(giroTipo));
+                case "somServicioTipo":
+                    List<ServiciosTipos> serviciosTipos = Faces.getSessionAttribute("serviciosTipos");
+                    ServiciosTipos servicioTipo = new ServiciosTipos(Short.valueOf(value));
+                    return serviciosTipos.get(serviciosTipos.indexOf(servicioTipo));
+                case "somServicioTecnologico":
+                    List<ServiciosTecnologicosAnioMes> serviciosTecnologicos = Faces.getSessionAttribute("serviciosTecnologicos");
+                    ServiciosTecnologicosAnioMes servicioTecnologico = new ServiciosTecnologicosAnioMes(Integer.valueOf(value));
+                    return serviciosTecnologicos.get(serviciosTecnologicos.indexOf(servicioTecnologico));
+                case "somGeneraciones":
+                    List<Generaciones> generaciones = Faces.getSessionAttribute("generaciones");
+                    Generaciones generacion = new Generaciones(Short.valueOf(value));
+                    return generaciones.get(generaciones.indexOf(generacion));
+                case "somProgramasEducativos":
+                    List<AreasUniversidad> programasEducativos = Faces.getSessionAttribute("programasEducativos");
+                    AreasUniversidad programaEducativo = new AreasUniversidad(Short.valueOf(value));
+                    return programasEducativos.get(programasEducativos.indexOf(programaEducativo));
+                case "somServicioEnfermeriaTipos":
+                    List<ServiciosEnfermeriaTipo> serviciosEnfermeriaTipos = Faces.getSessionAttribute("serviciosEnfermeriaTipos");
+                    ServiciosEnfermeriaTipo servicioEnfermeriaTipo = new ServiciosEnfermeriaTipo(Short.valueOf(value));
+                    return serviciosEnfermeriaTipos.get(serviciosEnfermeriaTipos.indexOf(servicioEnfermeriaTipo));
+                case "somAreasEstudio":
+                    List<CuerpacadAreasEstudio> cuerpacadAreasEstudio = Faces.getSessionAttribute("caAreasEstudio");
+                    CuerpacadAreasEstudio cuerpacadAreaEstudio = new CuerpacadAreasEstudio(Short.valueOf(value));
+                    return cuerpacadAreasEstudio.get(cuerpacadAreasEstudio.indexOf(cuerpacadAreaEstudio));
+                case "somDisciplinas":
+                    List<CuerpacadDisciplinas> cuerpacadDisciplinas = Faces.getSessionAttribute("caDisciplinas");
+                    CuerpacadDisciplinas cuerpacadDisciplina = new CuerpacadDisciplinas(Short.valueOf(value));
+                    return cuerpacadDisciplinas.get(cuerpacadDisciplinas.indexOf(cuerpacadDisciplina));
+                case "somCuerposAcademicosIntegrantes":
+                    List<CuerposAcademicosRegistro> cuerposAcademicos = Faces.getSessionAttribute("cuerposAcademicos");
+                    CuerposAcademicosRegistro cuerpoAcademico = new CuerposAcademicosRegistro(Integer.valueOf(value));
+                    return cuerposAcademicos.get(cuerposAcademicos.indexOf(cuerpoAcademico));
+                case "somCuerposAcademicosLI":
+                    List<CuerposAcademicosRegistro> cuerposAcademicosLI = Faces.getSessionAttribute("cuerposAcademicos");
+                    CuerposAcademicosRegistro cuerpoAcademicoLI = new CuerposAcademicosRegistro(Integer.valueOf(value));
+                    return cuerposAcademicosLI.get(cuerposAcademicosLI.indexOf(cuerpoAcademicoLI));
+                case "somProductosAcademicos":
+                    List<ProductosAcademicos> productosAcademicos = Faces.getSessionAttribute("productosAcademicos");
+                    ProductosAcademicos productoAcademico = new ProductosAcademicos(Integer.valueOf(value));
+                    return productosAcademicos.get(productosAcademicos.indexOf(productoAcademico));
                 default:
                     throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "", component.getClientId() + " no es un componente válido."));
             }
-            
+
         }catch(Exception e){
             e.printStackTrace();
             throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "", value + " no es una clave válida."));
@@ -167,6 +235,30 @@ public class EntityConverter implements Converter{
                 return ((Estado)value).getIdestado().toString();
             else if(value instanceof Categorias)
                 return ((Categorias)value).getCategoria().toString();
+            else if(value instanceof OrganismosTipo)
+                return ((OrganismosTipo)value).getOrgtipo().toString();
+            else if(value instanceof EmpresasTipo)
+                return ((EmpresasTipo)value).getEmptipo().toString();
+            else if(value instanceof SectoresTipo)
+                return ((SectoresTipo)value).getSector().toString();
+            else if(value instanceof GirosTipo)
+                return ((GirosTipo)value).getGiro().toString();
+            else if(value instanceof ServiciosTipos)
+                return ((ServiciosTipos)value).getServtipo().toString();
+            else if(value instanceof ServiciosTecnologicosAnioMes)
+                return ((ServiciosTecnologicosAnioMes)value).getRegistro().toString();
+            else if(value instanceof Generaciones)
+                return ((Generaciones)value).getGeneracion().toString();
+            else if(value instanceof ServiciosEnfermeriaTipo)
+                return ((ServiciosEnfermeriaTipo)value).getServicio().toString();
+            else if(value instanceof CuerpacadAreasEstudio)
+                return ((CuerpacadAreasEstudio)value).getAreaEstudio().toString();
+            else if(value instanceof CuerpacadDisciplinas)
+                return ((CuerpacadDisciplinas)value).getDisciplina().toString();
+            else if(value instanceof CuerposAcademicosRegistro)
+                return ((CuerposAcademicosRegistro)value).getRegistro().toString();
+            else if(value instanceof ProductosAcademicos)
+                return ((ProductosAcademicos)value).getRegistro().toString();
             else if(value instanceof Municipio){
                 String json = (new Gson()).toJson(((Municipio)value).getMunicipioPK());
                 return json;

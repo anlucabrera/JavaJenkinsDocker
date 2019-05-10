@@ -8,12 +8,18 @@
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
                 xmlns:pe="http://primefaces.org/ui/extensions"
-                xmlns:pr="http://xmlns.jcp.org/jsp/jstl/functions">
+                xmlns:pr="http://xmlns.jcp.org/jsp/jstl/functions"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
 
     <ui:define name="head-end">
         <ui:param name="renderBreadCrumb" value="true"/>
         <h:outputStylesheet library="css" name="tablaDatos.css" />
         <h:outputScript library="js" name="dialogs.js" />
+        <!-- Inicio estilos par proceso electoral -->
+            <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+                <h:outputStylesheet library="css" name="procesoElectoral.css" />
+            </c:if>
+        <!-- Fin estilos par proceso electoral -->
     </ui:define>
     <ui:define name="title">
         Matrícula
@@ -99,13 +105,16 @@
                                                      lazy="true">
                                             <p:columnGroup type="header">
                                                 <p:row>
-                                                    <p:column headerText="Acciones"             width="100"/>
+                                                    <p:column headerText="Acciones"             width="150"/>
                                                     <p:column headerText="Periodo Escolar"      width="200" rendered="false"/>
                                                     <p:column headerText="Programa Educativo"   width="600"/>
                                                     <p:column headerText="Matricula"            width="100"/>
                                                     <p:column headerText="Cuatrimestre"         width="100"/>
                                                     <p:column headerText="Grupo"                width="100"/>
                                                     <p:column headerText="CURP"                 width="400"/>
+                                                    <p:column headerText="Lengua Indígena"      width="300"/>
+                                                    <p:column headerText="Discapacidad"         width="300"/>
+                                                    <p:column headerText="Comunidad Indígena"   width="300"/>
                                                 </p:row>
                                             </p:columnGroup>
                                             <p:column style="text-align: center">
@@ -124,6 +133,10 @@
                                                     <p:commandButton actionListener="#{controladorMatriculaPeriodosEscolares.abrirAlineacionPOA(matricula)}"
                                                                      class="btn btn-sm #{!empty matricula.actividadAlineada?'btn-info':'btn-warning'}" icon="fa fa-cog"
                                                                      title="Alineación a POA." />
+                                                    <p:commandButton actionListener="#{controladorMatriculaPeriodosEscolares.abrirEdicionMatriculaPeriodoEscolar(matricula.matricula)}"
+                                                                         class="btn btn-sm btn-info"
+                                                                         icon="fa fa-pencil-square-o"
+                                                                         title="Editar Matricula"/>
                                                 </div>
                                             </p:column>  
 
@@ -150,6 +163,19 @@
                                             <p:column>
                                                 <h:outputText value="#{matricula.matricula.curp}"/>
                                             </p:column>
+                                            
+                                            <p:column>
+                                                <h:outputText value="#{matricula.matricula.lenguaIndigena}"/>
+                                            </p:column>
+                                            
+                                            <p:column>
+                                                <h:outputText value="#{matricula.matricula.discapacidad}"/>
+                                            </p:column>
+                                            
+                                            <p:column>
+                                                <h:outputText value="#{matricula.matricula.comunidadIndigena}"/>
+                                            </p:column>
+                                            
                                             <f:facet name="footer">
                                                 En el mes de: #{controladorMatriculaPeriodosEscolares.dto.eventoSeleccionado.mes} hay un total de: #{fn:length(controladorMatriculaPeriodosEscolares.dto.lista)} registros de Matricula Inicial.
                                             </f:facet>
@@ -408,6 +434,9 @@
                                                     <p:column headerText="Cuatrimestre"         width="100"/>
                                                     <p:column headerText="Grupo"                width="100"/>
                                                     <p:column headerText="CURP"                 width="400"/>
+                                                    <p:column headerText="Lengua Indígena"      width="300"/>
+                                                    <p:column headerText="Discapacidad"         width="300"/>
+                                                    <p:column headerText="Comunidad Indígena"   width="300"/>
                                                 </p:row>
                                             </p:columnGroup>
 
@@ -435,6 +464,18 @@
                                                 <h:outputText value="#{matricula.matricula.curp}"/>
                                             </p:column>
                                             
+                                            <p:column>
+                                                <h:outputText value="#{matricula.matricula.lenguaIndigena}"/>
+                                            </p:column>
+                                            
+                                            <p:column>
+                                                <h:outputText value="#{matricula.matricula.discapacidad}"/>
+                                            </p:column>
+                                            
+                                            <p:column>
+                                                <h:outputText value="#{matricula.matricula.comunidadIndigena}"/>
+                                            </p:column>
+                                            
                                             <f:facet name="footer">
                                                 Su archivo de excel contiene un total de: #{fn:length(controladorMatriculaPeriodosEscolares.dto.lista)} registros de Matricula Inicial.
                                             </f:facet>
@@ -458,6 +499,238 @@
                             </h:form>
                         </div>
                     </div>
+                    
+                    <p:dialog id="modalEdicionMatriculaPeriodoEscolar" 
+                              widgetVar="modalEdicionMatriculaPeriodoEscolar" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{controladorMatriculaPeriodosEscolares.dto.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Edición de Matricula" 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmEdicionMatriculaPeriodoEscolar">
+                            <div class="row">
+                                
+                                <div class="col-sm-12 col-md-12">
+                                    <p:outputLabel value="Actualización de datos de la matricula: #{controladorMatriculaPeriodosEscolares.dto.registro.matricula.matricula}"/>
+                                </div>
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
+                                    <p:outputLabel id="mensaje" value="#{controladorMatriculaPeriodosEscolares.dto.mensaje}"/>
+                                    <br></br>
+                                </div>
+                                
+                                <!--Periodo Escolar-->
+                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
+                                    <p:outputLabel for="somPeriodoEscolar" value="Periodo Escolar: "/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="somPeriodoEscolar"
+                                                     required="true"
+                                                     requiredMessage="Seleccione el Periodo Escolar"
+                                                     value="#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarMatriculaPeriodoEscolar.periodo}"
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     style="padding-top: 0px;"
+                                                     disabled="true"
+                                                     >
+                                        <f:selectItem itemValue="#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarMatriculaPeriodoEscolar.periodo}" 
+                                                      itemLabel="#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarMatriculaPeriodoEscolar.mesInicio.mes}-#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarMatriculaPeriodoEscolar.mesFin.mes}"
+                                                      itemDescription="#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarMatriculaPeriodoEscolar.mesInicio.mes}-#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarMatriculaPeriodoEscolar.mesFin.mes}" />
+                                        <p:ajax process="somPeriodoEscolar" update="somCuatrimestre" />
+                                    </p:selectOneMenu>
+                                    <p:message for="somPeriodoEscolar" />
+                                </div>
+                                
+                                <!--Programa Educativo-->
+                                <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
+                                    <p:outputLabel for="somProgramasEducativos" value="Programa Educativo: "/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="somProgramasEducativos"
+                                                     required="true"
+                                                     requiredMessage="Seleccione el Programa Educativo"
+                                                     value="#{controladorMatriculaPeriodosEscolares.dto.programaEducativoMatriculaPeriodoEscolar}"
+                                                     valueChangeListener="#{controladorMatriculaPeriodosEscolares.actualizarProgramaEducativo}"
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     style="padding-top: 0px; width: 30em;"
+                                                     converter="entidadConverter2"
+                                                     
+                                                     >
+                                        <f:selectItems value="#{controladorMatriculaPeriodosEscolares.dto.programasEducativos}" 
+                                                       var="proEdu"
+                                                       itemValue="#{proEdu}" 
+                                                       itemLabel="#{proEdu.nombre}"
+                                                       itemDescription="#{proEdu.nivelEducativo.nivel}" />
+                                        <p:ajax event="change" process="somProgramasEducativos" update="somCuatrimestre" />
+                                    </p:selectOneMenu>
+                                    <p:message for="somProgramasEducativos" />
+                                </div>
+                                
+                                <!--Matricula-->
+                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Matricula: " for="spnMatricula" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnMatricula"
+                                               label="spnMatricula"
+                                               required="true"
+                                               maxlength="6"
+                                               requiredMessage="Favor de ingresar la matricula del estudiante"
+                                               value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.matricula}"
+                                               styleClass="campo3Partes"
+                                               disabled="true"
+                                               />
+                                    <p:watermark for="spnMatricula" value="161210 *" />
+                                    <p:message for="spnMatricula" />
+                                </div>
+                                
+                                <!--Curp-->
+                                <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="CURP: " for="iptCURP"/>
+                                    <p:inputText id="iptCURP"
+                                                 label="iptCURP"
+                                                 maxlength="18"
+                                                 required="true"
+                                                 class="form-control"
+                                                 requiredMessage="Ingrese el CURP del estudiante"
+                                                 value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.curp}"
+                                                 onkeyup="this.value=this.value.toUpperCase()"
+                                                 >
+                                        <f:validateRegex pattern="[A-Z]{1}[AEIOU]{1}[A-Z]{2}[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])[HM]{1}(AS|BC|BS|CC|CS|CH|CL|CM|DF|DG|GT|GR|HG|JC|MC|MN|MS|NT|NL|OC|PL|QT|QR|SP|SL|SR|TC|TS|TL|VZ|YN|ZS|NE)[B-DF-HJ-NP-TV-Z]{3}[0-9A-Z]{1}[0-9]{1}$" />
+                                    </p:inputText>
+                                    <p:watermark for="iptCURP" value="AAGL980223MPLMTZ08 *" />
+                                    <p:message for="iptCURP" />
+                                </div>
+                                
+                                <!--Cuatrimestres-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Cuatrimestres: " for="somCuatrimestre"/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="somCuatrimestre"
+                                                     required="true"
+                                                     requiredMessage="Seleccione cuatrimestre"
+                                                     value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.cuatrimestre}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     style="padding-top: 0px; width: 22.5em;"
+                                                     >
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorMatriculaPeriodosEscolares.dto.programaEducativoMatriculaPeriodoEscolar.nivelEducativo.nivel eq 'TSU'? controladorMatriculaPeriodosEscolares.dto.cuatrimestresTSU : controladorMatriculaPeriodosEscolares.dto.cuatrimestresING}" 
+                                                       var="cuat"
+                                                       itemValue="#{cuat}" 
+                                                       itemLabel="#{cuat}"
+                                                       itemDescription="#{cuat}"/>
+                                        <p:ajax process="somCuatrimestre" />
+                                        <p:message for="somCuatrimestre" />
+                                    </p:selectOneMenu>
+                                </div>
+                                
+                                <!--Grupo-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Grupos: " for="somGrupos"/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="somGrupos"
+                                                     required="true"
+                                                     requiredMessage="Seleccione grupo"
+                                                     value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.grupo}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     style="padding-top: 0px; width: 22.5em;"
+                                                     >
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorMatriculaPeriodosEscolares.dto.grupos}" 
+                                                       var="grupo"
+                                                       itemValue="#{grupo}" 
+                                                       itemLabel="#{grupo}"
+                                                       itemDescription="#{grupo}"/>
+                                        <p:ajax process="somGrupos" />
+                                        <p:message for="somGrupos" />
+                                    </p:selectOneMenu>
+                                </div>
+                                
+                                <!--Lengua Indigena-->
+                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Lengua Indígena: " for="iptLenguaIndigena"/>
+                                    <p:inputText id="iptLenguaIndigena"
+                                                 label="iptLenguaIndigena"
+                                                 maxlength="255"
+                                                 required="true"
+                                                 class="form-control"
+                                                 requiredMessage="Ingrese la lengua indígena del estudiante, en caso de que no aplique, favor de ingresar N/A"
+                                                 value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.lenguaIndigena}"/>
+                                    <p:watermark for="iptLenguaIndigena" value="Totonaca *" />
+                                    <p:message for="iptLenguaIndigena" />
+                                </div>
+                                
+                                <!--Discapacidad-->
+                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Discapacidad: " for="iptDiscapacidad"/>
+                                    <p:inputText id="iptDiscapacidad"
+                                                 label="iptDiscapacidad"
+                                                 maxlength="255"
+                                                 required="true"
+                                                 class="form-control"
+                                                 requiredMessage="Ingrese la discapacidad del estudiante, en caso de que no aplique, favor de ingresar N/A"
+                                                 value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.discapacidad}"/>
+                                    <p:watermark for="iptDiscapacidad" value="Hipoacusia *" />
+                                    <p:message for="iptDiscapacidad" />
+                                </div>
+                                
+                                <!--Comunidad Indigena-->
+                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Comunidad Indígena: " for="iptComunidadIndigena"/>
+                                    <p:inputText id="iptComunidadIndigena"
+                                                 label="iptComunidadIndigena"
+                                                 maxlength="255"
+                                                 required="true"
+                                                 class="form-control"
+                                                 requiredMessage="Ingrese la comunidad indígena del estudiante, en caso de que no aplique, favor de ingresar N/A"
+                                                 value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.comunidadIndigena}"/>
+                                    <p:watermark for="iptComunidadIndigena" value="Aucatlan *" />
+                                    <p:message for="iptComunidadIndigena" />
+                                </div>
+                                
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <center>
+                                        <p:commandButton id="btnEditaMatriculaPeriodoEscolar"
+                                                         value="Actualizar Cambios"
+                                                         icon="fa fa-save"
+                                                         class="btn-primary"
+                                                         actionListener="#{controladorMatriculaPeriodosEscolares.editaMatriculaPeriodoEscolar}"
+                                                         update="@form:frmEdicionMatriculaPeriodoEscolar" 
+                                                         process="@form:frmEdicionMatriculaPeriodoEscolar"
+                                                         />
+                                    </center>
+                                </div>
+                                
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    
                 </div>
 
                 <p:dialog widgetVar="modalCargaArchivo" 

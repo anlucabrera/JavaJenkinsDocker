@@ -49,8 +49,6 @@ public class Variables implements Serializable {
     @Size(min = 1, max = 250)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "variable")
-    private List<IndicadoresVariables> indicadoresVariablesList;
     @JoinColumn(name = "periodo_cumplimiento", referencedColumnName = "periodo_cumplimiento")
     @ManyToOne(optional = false)
     private VariableCumplimientoPeriodos periodoCumplimiento;
@@ -66,6 +64,8 @@ public class Variables implements Serializable {
     @JoinColumn(name = "unidad_medida", referencedColumnName = "unidad_medida")
     @ManyToOne(optional = false)
     private VariableMedidaUnidades unidadMedida;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "variable")
+    private List<IndicadoresVariables> indicadoresVariablesList;
 
     public Variables() {
     }
@@ -93,15 +93,6 @@ public class Variables implements Serializable {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    @XmlTransient
-    public List<IndicadoresVariables> getIndicadoresVariablesList() {
-        return indicadoresVariablesList;
-    }
-
-    public void setIndicadoresVariablesList(List<IndicadoresVariables> indicadoresVariablesList) {
-        this.indicadoresVariablesList = indicadoresVariablesList;
     }
 
     public VariableCumplimientoPeriodos getPeriodoCumplimiento() {
@@ -142,6 +133,15 @@ public class Variables implements Serializable {
 
     public void setUnidadMedida(VariableMedidaUnidades unidadMedida) {
         this.unidadMedida = unidadMedida;
+    }
+
+    @XmlTransient
+    public List<IndicadoresVariables> getIndicadoresVariablesList() {
+        return indicadoresVariablesList;
+    }
+
+    public void setIndicadoresVariablesList(List<IndicadoresVariables> indicadoresVariablesList) {
+        this.indicadoresVariablesList = indicadoresVariablesList;
     }
 
     @Override

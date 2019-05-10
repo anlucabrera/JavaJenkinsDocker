@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
@@ -347,6 +348,49 @@ public class ServicioConvenios implements EjbConvenios {
             }
         } catch (NoResultException e) {
             return false;
+        }
+    }
+
+    @Override
+    public Convenios editaConvenio(Convenios convenio) {
+        try {
+            facadeVinculacion.setEntityClass(Convenios.class);
+            facadeVinculacion.edit(convenio);
+            facadeVinculacion.flush();
+            return convenio;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo actualizar el registro: " + convenio.getDescripcion(), e);
+            return null;
+        }
+    }
+
+    @Override
+    public Boolean buscaConvenioExistente(Convenios convenio) {
+        try {
+            Convenios cnv = new Convenios();
+            cnv = facadeVinculacion.getEntityManager().createQuery("SELECT c FROM Convenios c JOIN c.empresa e WHERE e.empresa = :empresa AND c.fechaFirma = :fechaFirma AND c.registro <> :registro", Convenios.class)
+                    .setParameter("empresa", convenio.getEmpresa().getEmpresa())
+                    .setParameter("fechaFirma", convenio.getFechaFirma())
+                    .setParameter("registro", convenio.getRegistro())
+                    .getSingleResult();
+            if(cnv != null){
+                return true;
+            }else{
+                return false;
+            }
+        } catch (NoResultException | NonUniqueResultException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public List<Convenios> getReporteGeneralConvenios() {
+        try {
+            return f.getEntityManager().createQuery("SELECT c FROM Convenios c INNER JOIN c.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY c.registros.eventoRegistro.mes",Convenios.class)
+                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
         }
     }
 

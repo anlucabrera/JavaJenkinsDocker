@@ -40,7 +40,8 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "CuerposAcademicos.findByNivRecProdep", query = "SELECT c FROM CuerposAcademicos c WHERE c.nivRecProdep = :nivRecProdep")
     , @NamedQuery(name = "CuerposAcademicos.findByAreaAcademica", query = "SELECT c FROM CuerposAcademicos c WHERE c.areaAcademica = :areaAcademica")
     , @NamedQuery(name = "CuerposAcademicos.findByAreaEstudio", query = "SELECT c FROM CuerposAcademicos c WHERE c.areaEstudio = :areaEstudio")
-    , @NamedQuery(name = "CuerposAcademicos.findByDisciplina", query = "SELECT c FROM CuerposAcademicos c WHERE c.disciplina = :disciplina")})
+    , @NamedQuery(name = "CuerposAcademicos.findByDisciplina", query = "SELECT c FROM CuerposAcademicos c WHERE c.disciplina = :disciplina")
+    , @NamedQuery(name = "CuerposAcademicos.findByOrden", query = "SELECT c FROM CuerposAcademicos c WHERE c.orden = :orden")})
 public class CuerposAcademicos implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -85,6 +86,10 @@ public class CuerposAcademicos implements Serializable {
     @Size(min = 1, max = 50)
     @Column(name = "disciplina")
     private String disciplina;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "orden")
+    private short orden;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "claveRegistro")
     private List<CuerposAcademicosLineasInvestigacion> cuerposAcademicosLineasInvestigacionList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "claveRegistro")
@@ -97,7 +102,7 @@ public class CuerposAcademicos implements Serializable {
         this.claveRegistro = claveRegistro;
     }
 
-    public CuerposAcademicos(String claveRegistro, Date fechaInicioVig, Date fechaTerVig, String cuerpoAcademico, String nivRecProdep, String areaAcademica, String areaEstudio, String disciplina) {
+    public CuerposAcademicos(String claveRegistro, Date fechaInicioVig, Date fechaTerVig, String cuerpoAcademico, String nivRecProdep, String areaAcademica, String areaEstudio, String disciplina, short orden) {
         this.claveRegistro = claveRegistro;
         this.fechaInicioVig = fechaInicioVig;
         this.fechaTerVig = fechaTerVig;
@@ -106,6 +111,7 @@ public class CuerposAcademicos implements Serializable {
         this.areaAcademica = areaAcademica;
         this.areaEstudio = areaEstudio;
         this.disciplina = disciplina;
+        this.orden = orden;
     }
 
     public String getClaveRegistro() {
@@ -170,6 +176,14 @@ public class CuerposAcademicos implements Serializable {
 
     public void setDisciplina(String disciplina) {
         this.disciplina = disciplina;
+    }
+
+    public short getOrden() {
+        return orden;
+    }
+
+    public void setOrden(short orden) {
+        this.orden = orden;
     }
 
     @XmlTransient

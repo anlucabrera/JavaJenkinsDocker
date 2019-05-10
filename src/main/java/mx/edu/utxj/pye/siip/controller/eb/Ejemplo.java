@@ -200,6 +200,43 @@ public class Ejemplo {
         System.out.println("--");
         System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main()Caso 3: " + validaFechas(fechaInicioActividadInc, fechaInicioEvento, fechaFinEvento));
         
+        
+        
+        System.out.println("-------------------------------------------------------");
+        System.out.println("-------------------------------------------------------");
+        System.out.println("-------------------------------------------------------");
+        
+        System.out.println("--------------------------Validando fecha inicial-----------------------------");
+        Date fechaI1 = new Date(2019, 03, 21);
+        Date fechaF1 = new Date(2019, 03, 20);
+        if (fechaI1.before(fechaF1)) {
+            System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() true");
+        } else {
+            if (fechaF1.before(fechaI1)) {
+                System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() false");
+            } else {
+                System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() Las fechas son iguales");
+                System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() true");
+            }
+        }
+        
+        System.out.println("--------------------------Validando fecha final-----------------------------");
+        Date fechaI2 = new Date(2019, 03, 21);
+        Date fechaF2 = new Date(2019, 03, 22);
+        if (fechaF2.after(fechaI2)) {
+            System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() true");
+        } else {
+            if (fechaI2.after(fechaF2)) {
+                System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() false");
+            } else {
+                System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() Las fechas son iguales");
+                System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() true");
+            }
+        }
+        
+        System.out.println("-------------------------------------------------------");
+        System.out.println("-------------------------------------------------------");
+        System.out.println("-------------------------------------------------------");
     }
     
     public static Boolean validaFechas(LocalDate fechaInicioActividad, LocalDate fechaInicioEvento, LocalDate fechaFinEvento) {

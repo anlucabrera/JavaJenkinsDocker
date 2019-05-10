@@ -645,4 +645,52 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
             return false;
         }
     }
+
+    @Override
+    public AsesoriasTutoriasMensualPeriodosEscolares editaAsesoriaTutoriaMensualPeriodoEscolar(AsesoriasTutoriasMensualPeriodosEscolares asesoriaTutoriaMensual) {
+        try {
+            facadeEscolar.setEntityClass(AsesoriasTutoriasMensualPeriodosEscolares.class);
+            facadeEscolar.edit(asesoriaTutoriaMensual);
+            facadeEscolar.flush();
+            return asesoriaTutoriaMensual;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo actualizar el registro: " + asesoriaTutoriaMensual.getRegistro(), e);
+            return null;
+        }
+    }
+
+    @Override
+    public Boolean buscaAsesoriaTutoriaExistente(AsesoriasTutoriasMensualPeriodosEscolares asesoriaTutoria) {
+        try {
+            AsesoriasTutoriasMensualPeriodosEscolares asesTut = new AsesoriasTutoriasMensualPeriodosEscolares();
+            asesTut = facadeEscolar.getEntityManager().createQuery("SELECT a FROM AsesoriasTutoriasMensualPeriodosEscolares AS a WHERE a.periodoEscolar = :periodoEscolar AND a.mes = :mes AND a.programaEducativo = :programaEducativo AND a.cuatrimestre = :cuatrimestre AND a.grupo = :grupo AND a.tipoActividad = :tipoActividad AND a.tipo = :tipo AND a.registro <> :registro",AsesoriasTutoriasMensualPeriodosEscolares.class)
+                    .setParameter("periodoEscolar", asesoriaTutoria.getPeriodoEscolar())
+                    .setParameter("mes", asesoriaTutoria.getMes())
+                    .setParameter("programaEducativo", asesoriaTutoria.getProgramaEducativo())
+                    .setParameter("cuatrimestre", asesoriaTutoria.getCuatrimestre())
+                    .setParameter("grupo", asesoriaTutoria.getGrupo())
+                    .setParameter("tipoActividad", asesoriaTutoria.getTipoActividad())
+                    .setParameter("tipo", asesoriaTutoria.getTipo())
+                    .setParameter("registro", asesoriaTutoria.getRegistro())
+                    .getSingleResult();
+            if(asesTut != null){
+                return true;
+            }else{
+                return false;
+            }
+        } catch (NoResultException | NonUniqueResultException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public List<AsesoriasTutoriasMensualPeriodosEscolares> getListaReporteGeneralAsesoriasTutorias() {
+        try {
+            return facadeEscolar.getEntityManager().createQuery("SELECT a FROM AsesoriasTutoriasMensualPeriodosEscolares a JOIN a.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY r.eventoRegistro.ejercicioFiscal,a.mes,a.programaEducativo,a.cuatrimestre,a.grupo,a.tipoActividad,a.tipo",AsesoriasTutoriasMensualPeriodosEscolares.class)
+                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .getResultList();
+        } catch (Exception e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
 }

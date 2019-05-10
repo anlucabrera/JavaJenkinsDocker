@@ -28,6 +28,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasBeneficiadosVinculacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasBeneficiadosVinculacionPK;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
@@ -316,6 +317,74 @@ public class ControladorConvenios implements Serializable {
             cargarAlineacionXActividad();
             Ajax.update("frmAlineacion");
         }else Messages.addGlobalError("La alineación no pudo eliminarse.");
+    }
+    
+    /********************************************* Edición ***********************************************/
+    public void forzarAperturaEdicionConvenio(){
+        if(dtoConvenios.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEdicionConvenio').show();");
+            dtoConvenios.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void actualizaInterfazEdicionConvenio(){
+        Ajax.update("frmEdicionConvenio");
+        Ajax.oncomplete("skin();");
+        dtoConvenios.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionConvenio();
+    }
+    
+    public void abrirEdicionConvenio(Convenios convenio) {
+        DTOConvenio dtoCon = new DTOConvenio();
+        dtoCon.setConvenio(convenio);
+        dtoConvenios.setRegistro(dtoCon);
+        dtoConvenios.setMensaje("");
+        actualizaInterfazEdicionConvenio();
+    }
+    
+    public void editaConvenio(){
+        if(ejbConvenios.buscaConvenioExistente(dtoConvenios.getRegistro().getConvenio())){
+            dtoConvenios.setMensaje("Ya existe un convenio con las mismas caracteristicas, favor de corregir la empresa o bien la fecha de firma del convenio");
+        }else{
+            dtoConvenios.getRegistro().setConvenio(ejbConvenios.editaConvenio(dtoConvenios.getRegistro().getConvenio()));
+            dtoConvenios.setMensaje("El convenio: " +  dtoConvenios.getRegistro().getConvenio().getEmpresa().getNombre() + " ha sido actualizado correctamente");
+            actualizaInterfazEdicionConvenio();
+        }
+        Ajax.update("mensaje");
+    }
+    
+    public List<OrganismosVinculados> completeOrganismosVinculados(String organismoVinculado) { 
+        dtoConvenios.setListaEmpresas(ejbOrganismosVinculados.buscaCoincidenciasOrganismosVinculados(organismoVinculado));
+        Faces.setSessionAttribute("organismosVinculados", dtoConvenios.getListaEmpresas());
+        return dtoConvenios.getListaEmpresas();
+    }
+    
+    public void seleccionaOrganismoVinculado(ValueChangeEvent event){
+        dtoConvenios.getRegistro().getConvenio().setEmpresa((OrganismosVinculados)event.getNewValue());
+    }
+    
+    public void validaFechaFirma(ValueChangeEvent event) {
+        dtoConvenios.getRegistro().getConvenio().setFechaFirma((Date)event.getNewValue());
+        if (dtoConvenios.getRegistro().getConvenio().getFechaFirma().before(dtoConvenios.getRegistro().getConvenio().getVigencia())) {
+        } else {
+            if (dtoConvenios.getRegistro().getConvenio().getVigencia().before(dtoConvenios.getRegistro().getConvenio().getFechaFirma())) {
+                dtoConvenios.getRegistro().getConvenio().setVigencia(null);
+                dtoConvenios.getRegistro().getConvenio().setVigencia(dtoConvenios.getRegistro().getConvenio().getFechaFirma());
+            } else {
+            }
+        }
+    }
+    
+    public void validaFechaVigencia(ValueChangeEvent event) {
+        dtoConvenios.getRegistro().getConvenio().setVigencia((Date)event.getNewValue());
+        if (dtoConvenios.getRegistro().getConvenio().getVigencia().after(dtoConvenios.getRegistro().getConvenio().getFechaFirma())) {
+        } else {
+            if (dtoConvenios.getRegistro().getConvenio().getFechaFirma().after(dtoConvenios.getRegistro().getConvenio().getVigencia())) {
+                dtoConvenios.getRegistro().getConvenio().setFechaFirma(null);
+                dtoConvenios.getRegistro().getConvenio().setFechaFirma(dtoConvenios.getRegistro().getConvenio().getVigencia());
+            } else {
+            }
+        }
     }
     
 }

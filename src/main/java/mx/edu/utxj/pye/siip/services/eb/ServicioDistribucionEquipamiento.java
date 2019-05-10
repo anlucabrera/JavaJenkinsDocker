@@ -14,6 +14,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.ejb.EJB;
@@ -59,6 +61,8 @@ public class ServicioDistribucionEquipamiento implements EjbDistribucionEquipami
     @EJB    EjbModulos ejbModulos;
     
     @Inject Caster caster;
+    
+    private static final Logger LOG = Logger.getLogger(ServicioDistribucionEquipamiento.class.getName());
     
     @Override
     public List<DTOEquiposComputoCPE> getListaEquiposComputoCPE(String rutaArchivo) throws Throwable{
@@ -714,8 +718,7 @@ public class ServicioDistribucionEquipamiento implements EjbDistribucionEquipami
         AreasUniversidad area = facadeServGen.getEntityManager().find(AreasUniversidad.class, claveArea);
 
         List<DTOEquiposComputoCPE> l = new ArrayList<>();
-        List<EquiposComputoCicloPeriodoEscolar> entities = facadeServGen.getEntityManager().createQuery("SELECT eccpe FROM EquiposComputoCicloPeriodoEscolar eccpe INNER JOIN eccpe.registros r INNER JOIN r.tipo t INNER JOIN r.eventoRegistro er WHERE r.area = :area AND eccpe.periodoEscolar = :periodo AND t.registroTipo=:tipo", EquiposComputoCicloPeriodoEscolar.class)
-                .setParameter("area", area.getArea())
+        List<EquiposComputoCicloPeriodoEscolar> entities = facadeServGen.getEntityManager().createQuery("SELECT eccpe FROM EquiposComputoCicloPeriodoEscolar eccpe INNER JOIN eccpe.registros r INNER JOIN r.tipo t INNER JOIN r.eventoRegistro er WHERE eccpe.periodoEscolar = :periodo AND t.registroTipo=:tipo", EquiposComputoCicloPeriodoEscolar.class)
                 .setParameter("periodo", periodo.getPeriodo())
                 .setParameter("tipo", registrosTipo.getRegistroTipo())
                 .getResultList();
@@ -754,8 +757,7 @@ public class ServicioDistribucionEquipamiento implements EjbDistribucionEquipami
         AreasUniversidad area = facadeServGen.getEntityManager().find(AreasUniversidad.class, claveArea);
 
         List<DTOEquiposComputoInternetCPE> l = new ArrayList<>();
-        List<EquiposComputoInternetCicloPeriodoEscolar> entities = facadeServGen.getEntityManager().createQuery("SELECT ecicpe FROM EquiposComputoInternetCicloPeriodoEscolar ecicpe INNER JOIN ecicpe.registros r INNER JOIN r.tipo t INNER JOIN r.eventoRegistro er WHERE r.area = :area AND ecicpe.periodoEscolar = :periodo AND t.registroTipo=:tipo", EquiposComputoInternetCicloPeriodoEscolar.class)
-                .setParameter("area", area.getArea())
+        List<EquiposComputoInternetCicloPeriodoEscolar> entities = facadeServGen.getEntityManager().createQuery("SELECT ecicpe FROM EquiposComputoInternetCicloPeriodoEscolar ecicpe INNER JOIN ecicpe.registros r INNER JOIN r.tipo t INNER JOIN r.eventoRegistro er WHERE ecicpe.periodoEscolar = :periodo AND t.registroTipo=:tipo", EquiposComputoInternetCicloPeriodoEscolar.class)
                 .setParameter("periodo", periodo.getPeriodo())
                 .setParameter("tipo", registrosTipo.getRegistroTipo())
                 .getResultList();
@@ -810,6 +812,92 @@ public class ServicioDistribucionEquipamiento implements EjbDistribucionEquipami
         Map<List<PeriodosEscolares>,List<EventosRegistros>> map = new HashMap<>();
         map.put(periodos, eventos);
         return map.entrySet().iterator().next();
+    }
+
+    @Override
+    public Boolean buscaEquipoComputoExistente(EquiposComputoCicloPeriodoEscolar equiposComputoCicloPeriodoEscolar) {
+        try {
+            EquiposComputoCicloPeriodoEscolar eqcom = new EquiposComputoCicloPeriodoEscolar();
+            eqcom = facadeServGen.getEntityManager().createQuery("SELECT e FROM EquiposComputoCicloPeriodoEscolar e WHERE e.cicloEscolar = :cicloEscolar AND e.periodoEscolar = :periodoEscolar AND e.registro <> :registro", EquiposComputoCicloPeriodoEscolar.class)
+                    .setParameter("cicloEscolar", equiposComputoCicloPeriodoEscolar.getCicloEscolar())
+                    .setParameter("periodoEscolar", equiposComputoCicloPeriodoEscolar.getPeriodoEscolar())
+                    .setParameter("registro", equiposComputoCicloPeriodoEscolar.getRegistro())
+                    .getSingleResult();
+            if (eqcom != null) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (NoResultException | NonUniqueResultException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean buscaEquipoComputoInternetExistente(EquiposComputoInternetCicloPeriodoEscolar equiposComputoInternetCicloPeriodoEscolar) {
+        try {
+            EquiposComputoInternetCicloPeriodoEscolar eqComInt = new EquiposComputoInternetCicloPeriodoEscolar();
+            eqComInt = facadeServGen.getEntityManager().createQuery("SELECT e FROM EquiposComputoInternetCicloPeriodoEscolar e WHERE e.cicloEscolar = :cicloEscolar AND e.periodoEscolar = :periodoEscolar AND e.registro <> :registro", EquiposComputoInternetCicloPeriodoEscolar.class)
+                    .setParameter("cicloEscolar", equiposComputoInternetCicloPeriodoEscolar.getCicloEscolar())
+                    .setParameter("periodoEscolar", equiposComputoInternetCicloPeriodoEscolar.getPeriodoEscolar())
+                    .setParameter("registro", equiposComputoInternetCicloPeriodoEscolar.getRegistro())
+                    .getSingleResult();
+            if (eqComInt != null) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (NoResultException | NonUniqueResultException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public EquiposComputoCicloPeriodoEscolar editaEquipoComputoCicloPeriodoEscolar(EquiposComputoCicloPeriodoEscolar equiposComputoCicloPeriodoEscolar) {
+        try {
+            facadeServGen.setEntityClass(EquiposComputoCicloPeriodoEscolar.class);
+            facadeServGen.edit(equiposComputoCicloPeriodoEscolar);
+            facadeServGen.flush();
+            return equiposComputoCicloPeriodoEscolar;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo actualizar el registro: " + equiposComputoCicloPeriodoEscolar.getRegistro(), e);
+            return null;
+        }
+    }
+
+    @Override
+    public EquiposComputoInternetCicloPeriodoEscolar editaEquipoComputoInternetCicloPeriodoEscolar(EquiposComputoInternetCicloPeriodoEscolar equiposComputoInternetCicloPeriodoEscolar) {
+        try {
+            facadeServGen.setEntityClass(EquiposComputoInternetCicloPeriodoEscolar.class);
+            facadeServGen.edit(equiposComputoInternetCicloPeriodoEscolar);
+            facadeServGen.flush();
+            return equiposComputoInternetCicloPeriodoEscolar;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo actualizar el registro: " + equiposComputoInternetCicloPeriodoEscolar.getRegistro(), e);
+            return null;
+        }
+    }
+
+    @Override
+    public List<EquiposComputoCicloPeriodoEscolar> reporteEquiposComputoCicloPeriodoEscolares() {
+        try {
+            return facadeServGen.getEntityManager().createQuery("SELECT e FROM EquiposComputoCicloPeriodoEscolar e INNER JOIN e.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY r.eventoRegistro.mes",EquiposComputoCicloPeriodoEscolar.class)
+                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<EquiposComputoInternetCicloPeriodoEscolar> reporteEquiposComputoInternetCicloPeriodoEscolares() {
+        try {
+            return facadeServGen.getEntityManager().createQuery("SELECT e FROM EquiposComputoInternetCicloPeriodoEscolar e INNER JOIN e.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY r.eventoRegistro.mes",EquiposComputoInternetCicloPeriodoEscolar.class)
+                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
     }
     
 }

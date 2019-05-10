@@ -14,19 +14,36 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
+import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
+import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosTecnologicosAnioMes;
+import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosTipos;
 
 /**
  *
  * @author UTXJ
  */
 public final class DtoServiciosTecnologicos {
+    /************************** Edición ****************************************/
+    @Getter @Setter private List<ServiciosTipos> servicioTipos;
+    @Getter @Setter private Boolean servicioDemandado;
+    @Getter @Setter private Boolean nuevoRegistro;
+    
+    @Getter @Setter private List<Estado> estados;
+    @Getter @Setter private List<Municipio> municipios;
+    
+    @Getter @Setter private List<OrganismosVinculados> listaEmpresas;
+    @Getter @Setter private List<Generaciones> generaciones;
+    @Getter @Setter private List<AreasUniversidad> programasEducativos;
+
     /************************** Lista áreas ****************************************/
     @Getter private List<Categorias> listaCategoriasPOA;
     @Getter private List<AreasUniversidad> listaAreasPOA; 
@@ -79,6 +96,8 @@ public final class DtoServiciosTecnologicos {
         setRegistros(new ArrayList<>(Arrays.asList(registroTipoST.getRegistroTipo(),registroTipoSTP.getRegistroTipo())));
         tieneEvidencia = false;
         forzarAperturaDialogo = false;
+        servicioDemandado = false;
+        nuevoRegistro = false;
     }
     
     public void setRegistro (DTOServiciosTecnologicosAnioMes registro){

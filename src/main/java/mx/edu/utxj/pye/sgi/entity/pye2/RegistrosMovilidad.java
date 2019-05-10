@@ -144,8 +144,7 @@ public class RegistrosMovilidad implements Serializable {
     @NotNull
     @Column(name = "ing_extra")
     private BigDecimal ingExtra;
-    @Basic(optional = false)
-    @Size(min = 1, max = 255)
+    @Size(max = 255)
     @Column(name = "descripcion_ing_ext")
     private String descripcionIngExt;
     @JoinColumns({
@@ -171,7 +170,7 @@ public class RegistrosMovilidad implements Serializable {
         this.registro = registro;
     }
 
-    public RegistrosMovilidad(Integer registro, String registroMovilidad, String tipoParticipante, String tipoMovilidad, Date fechaInicio, Date fechaFin, String participante, short programaEducativo, int periodoEscolarCursado, String cuatrimestreCursado, String institucionOrganizacion, String proyecto, String descripcion, BigDecimal presEst, BigDecimal presFed, BigDecimal capDer, BigDecimal ingPropios, BigDecimal ingExtra, String descripcionIngExt) {
+    public RegistrosMovilidad(Integer registro, String registroMovilidad, String tipoParticipante, String tipoMovilidad, Date fechaInicio, Date fechaFin, String participante, short programaEducativo, int periodoEscolarCursado, String cuatrimestreCursado, String institucionOrganizacion, String proyecto, String descripcion, BigDecimal presEst, BigDecimal presFed, BigDecimal capDer, BigDecimal ingPropios, BigDecimal ingExtra) {
         this.registro = registro;
         this.registroMovilidad = registroMovilidad;
         this.tipoParticipante = tipoParticipante;
@@ -190,7 +189,6 @@ public class RegistrosMovilidad implements Serializable {
         this.capDer = capDer;
         this.ingPropios = ingPropios;
         this.ingExtra = ingExtra;
-        this.descripcionIngExt = descripcionIngExt;
     }
 
     public Integer getRegistro() {

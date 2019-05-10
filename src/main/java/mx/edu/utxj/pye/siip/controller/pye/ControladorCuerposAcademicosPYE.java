@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -18,14 +19,18 @@ import java.util.stream.Collectors;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
+import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadIntegrantes;
@@ -67,6 +72,7 @@ public class ControladorCuerposAcademicosPYE implements Serializable{
     @EJB    EjbModulos              ejbModulos;
     @EJB    EjbFiscalizacion        ejbFiscalizacion;
     @EJB    EjbCatalogos            ejbCatalogos;
+    @EJB    EjbPersonal             ejbPersonal;
     
     @Inject ControladorEmpleado controladorEmpleado;
     @Inject ControladorModulosRegistro controladorModulosRegistro;
@@ -78,6 +84,11 @@ public class ControladorCuerposAcademicosPYE implements Serializable{
         filtros();
         try {
             dtoCuerposAcademicos.setListaCuerpoAreasAcademicas(ejbCuerposAcademicos.getCuerpoAreasAcademicas());
+            
+            dtoCuerposAcademicos.setListaAreasEstudio(ejbCuerposAcademicos.getCuerpacadAreasEstudio());
+            Faces.setSessionAttribute("caAreasEstudio", dtoCuerposAcademicos.getListaAreasEstudio());
+            dtoCuerposAcademicos.setListaDisciplinas(ejbCuerposAcademicos.getCuerpacadDisciplinas());
+            Faces.setSessionAttribute("caDisciplinas", dtoCuerposAcademicos.getListaDisciplinas());
         } catch (Throwable ex) {
             Logger.getLogger(ControladorCuerposAcademicosPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -153,13 +164,14 @@ public class ControladorCuerposAcademicosPYE implements Serializable{
             if (dtoCuerposAcademicos.getMesConsulta() != null && !dtoCuerposAcademicos.getMesesConsulta().isEmpty()) {
                 inicializarListas();
                 dtoCuerposAcademicos.setLstDtoCuerposAcademicosR(ejbCuerposAcademicos.getFiltroCuerposAcademicosEjercicioMesArea(dtoCuerposAcademicos.getAnioConsulta(), dtoCuerposAcademicos.getAreaUniversidadPOA().getArea()));
+                dtoCuerposAcademicos.setListaCuerposAcademicosIntLa(ejbCuerposAcademicos.getFiltroCuerposAcademicosEdicion(dtoCuerposAcademicos.getAnioConsulta(), dtoCuerposAcademicos.getAreaUniversidadPOA().getArea()));
                 dtoCuerposAcademicos.setLstDtoCuerpAcadIntegrantes(ejbCuerposAcademicos.getFiltroCuerpAcadIntegrantesEjercicioMesArea(dtoCuerposAcademicos.getAnioConsulta(), dtoCuerposAcademicos.getAreaUniversidadPOA().getArea()));
                 dtoCuerposAcademicos.setLstCuerpAcadLineas(ejbCuerposAcademicos.getFiltroCuerpAcadLineasEjercicioMesArea(dtoCuerposAcademicos.getAnioConsulta(), dtoCuerposAcademicos.getAreaUniversidadPOA().getArea()));
 
                 dtoCuerposAcademicos.getLstDtoCuerposAcademicosR().stream().forEach((car) -> {
                     car.getCuerposAcademicosRegistro().setRegistros(ejbModulos.buscaRegistroPorClave(car.getCuerposAcademicosRegistro().getRegistro()));
                 });
-
+                
                 dtoCuerposAcademicos.getLstDtoCuerpAcadIntegrantes().stream().forEach((cai) -> {
                     cai.getCuerpoAcademicoIntegrantes().setRegistros(ejbModulos.buscaRegistroPorClave(cai.getCuerpoAcademicoIntegrantes().getRegistro()));
                 });
@@ -172,6 +184,7 @@ public class ControladorCuerposAcademicosPYE implements Serializable{
                 dtoCuerposAcademicos.setLstDtoCuerpAcadIntegrantes(Collections.EMPTY_LIST);
                 dtoCuerposAcademicos.setLstCuerpAcadLineas(Collections.EMPTY_LIST);
             }
+            Faces.setSessionAttribute("cuerposAcademicos", dtoCuerposAcademicos.getListaCuerposAcademicosIntLa());
             Ajax.update("formMuestraDatosActivos");
         } catch (Throwable ex) {
             Logger.getLogger(ControladorCuerposAcademicosPYE.class.getName()).log(Level.SEVERE, null, ex);
@@ -608,6 +621,145 @@ public class ControladorCuerposAcademicosPYE implements Serializable{
         if(guardado){
             abrirCuerpoAreasAcademicas(dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro());
         }else  Messages.addGlobalError("El área académica no pudo asignarse.");
+    }
+    
+    /********************************************* Edición cuerpo académico registro ***********************************************/
+    public void forzarAperturaEdicionCuerpoAcademico(){
+        if(dtoCuerposAcademicos.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEdicionCuerpoAcademico').show();");
+            dtoCuerposAcademicos.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void actualizaInterfazEdicionCuerpoAcademico(){
+        Ajax.update("frmEdicionCuerpoAcademico");
+        Ajax.oncomplete("skin();");
+        dtoCuerposAcademicos.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionCuerpoAcademico();
+    }
+    
+    public void abrirEdicionCuerpoAcademico(CuerposAcademicosRegistro cuerpoAcademico) {
+        DTOCuerposAcademicosR dtoCA = new DTOCuerposAcademicosR();
+        dtoCA.setCuerposAcademicosRegistro(cuerpoAcademico);
+        dtoCuerposAcademicos.setRegistroCuerposAcademicosR(dtoCA);
+        actualizaInterfazEdicionCuerpoAcademico();
+    }
+    
+    public void editaCuerpoAcademico(){
+        dtoCuerposAcademicos.getRegistroCuerposAcademicosR().setCuerposAcademicosRegistro(ejbCuerposAcademicos.editaCuerpoAcademicoRegistro(dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro()));
+        actualizaInterfazEdicionCuerpoAcademico();
+    }
+    
+    public void validaFechaInicio(ValueChangeEvent event) {
+        dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro().setFechaInicio((Date)event.getNewValue());
+        if (dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro().getFechaInicio().before(dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro().getFechaTermino())) {
+        } else {
+            if (dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro().getFechaTermino().before(dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro().getFechaInicio())) {
+                dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro().setFechaTermino(null);
+                dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro().setFechaTermino(dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro().getFechaInicio());
+            } else {
+            }
+        }
+    }
+    
+    public void validaFechaTermino(ValueChangeEvent event) {
+        dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro().setFechaTermino((Date)event.getNewValue());
+        if (dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro().getFechaTermino().after(dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro().getFechaInicio())) {
+        } else {
+            if (dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro().getFechaInicio().after(dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro().getFechaTermino())) {
+                dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro().setFechaInicio(null);
+                dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro().setFechaInicio(dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro().getFechaTermino());
+            } else {
+            }
+        }
+    }
+    
+    /********************************************* Edición cuerpo académico integrante ***********************************************/
+    public void forzarAperturaEdicionCuerpoAcademicoIntegrante(){
+        if(dtoCuerposAcademicos.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEdicionCuerpoAcademicoIntegrante').show();");
+            dtoCuerposAcademicos.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void actualizaInterfazEdicionCuerpoAcademicoIntegrante(){
+        Ajax.update("frmEdicionCuerpoAcademicoIntegrante");
+        Ajax.oncomplete("skin();");
+        dtoCuerposAcademicos.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionCuerpoAcademicoIntegrante();
+    }
+    
+    public void abrirEdicionCuerpoAcademicoIntegrante(CuerpacadIntegrantes cuerpoAcademicoIntegrante) {
+        try {
+            DTOCuerpAcadIntegrantes dtoCAI = new DTOCuerpAcadIntegrantes();
+            dtoCAI.setCuerpoAcademicoIntegrantes(cuerpoAcademicoIntegrante);
+            dtoCuerposAcademicos.setRegistroCuerpAcadIntegrantes(dtoCAI);
+            dtoCuerposAcademicos.setPersona(ejbPersonal.mostrarListaPersonal(dtoCuerposAcademicos.getRegistroCuerpAcadIntegrantes().getCuerpoAcademicoIntegrantes().getPersonal()));
+            dtoCuerposAcademicos.setListaPersonal(ejbPersonal.buscaCoincidenciasListaPersonal(String.valueOf(dtoCuerposAcademicos.getRegistroCuerpAcadIntegrantes().getCuerpoAcademicoIntegrantes().getPersonal())));
+            Faces.setSessionAttribute("listaPersonal", dtoCuerposAcademicos.getListaPersonal());
+            dtoCuerposAcademicos.setMensaje("");
+            actualizaInterfazEdicionCuerpoAcademicoIntegrante();
+        } catch (Throwable ex) {
+            Logger.getLogger(ControladorCuerposAcademicosPYE.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    
+    public void editaCuerpoAcademicoIntegrante(){
+        if (ejbCuerposAcademicos.buscaCuerpoAcademicoIntegranteExistente(dtoCuerposAcademicos.getRegistroCuerpAcadIntegrantes().getCuerpoAcademicoIntegrantes())) {
+            dtoCuerposAcademicos.setMensaje("El personal que ha seleccionado ya se encuentra asignado a este cuerpo académico, la actualización será omitida");
+        } else {
+            dtoCuerposAcademicos.getRegistroCuerpAcadIntegrantes().setCuerpoAcademicoIntegrantes(ejbCuerposAcademicos.editaCuerpoAcademicoIntegrante(dtoCuerposAcademicos.getRegistroCuerpAcadIntegrantes().getCuerpoAcademicoIntegrantes()));
+            dtoCuerposAcademicos.setMensaje("El integrante se ha actualizado");
+            buscarCuerposAcademicos();
+            actualizaInterfazEdicionCuerpoAcademicoIntegrante();
+        }
+        Ajax.update("mensaje");
+    }
+    
+    public List<ListaPersonal> completeListaPersonal(String parametro) { 
+        dtoCuerposAcademicos.setListaPersonal(ejbPersonal.buscaCoincidenciasListaPersonal(parametro));
+        Faces.setSessionAttribute("listaPersonal", dtoCuerposAcademicos.getListaPersonal());
+        return dtoCuerposAcademicos.getListaPersonal();
+    }
+    
+    public void seleccionaListaPersonal(ValueChangeEvent event){
+        ListaPersonal listaPersonal = (ListaPersonal)event.getNewValue();
+        dtoCuerposAcademicos.getRegistroCuerpAcadIntegrantes().getCuerpoAcademicoIntegrantes().setPersonal(listaPersonal.getClave());
+    }
+    
+    /********************************************* Edición cuerpo académico linea de investigación ***********************************************/
+    public void forzarAperturaEdicionCuerpoAcademicoLI(){
+        if(dtoCuerposAcademicos.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEdicionCuerpoAcademicoLI').show();");
+            dtoCuerposAcademicos.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void actualizaInterfazEdicionCuerpoAcademicoLI(){
+        Ajax.update("frmEdicionCuerpoAcademicoLI");
+        Ajax.oncomplete("skin();");
+        dtoCuerposAcademicos.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionCuerpoAcademicoLI();
+    }
+    
+    public void abrirEdicionCuerpoAcademicoLI(CuerpacadLineas cuerpacadLineas) {
+        DTOCuerpAcadLineas dtoCALI = new DTOCuerpAcadLineas();
+        dtoCALI.setCuerpoAcademicoLineas(cuerpacadLineas);
+        dtoCuerposAcademicos.setRegistroCuerpAcadLineas(dtoCALI);
+        dtoCuerposAcademicos.setMensaje("");
+        actualizaInterfazEdicionCuerpoAcademicoLI();
+    }
+    
+    public void editaCuerpoAcademicoLI(){
+        if(ejbCuerposAcademicos.buscaCuerpoAcademicoLineaInvestigacionExistente(dtoCuerposAcademicos.getRegistroCuerpAcadLineas().getCuerpoAcademicoLineas())){
+            dtoCuerposAcademicos.setMensaje("La línea de investigación que ha ingresado ya se encuentra en este cuerpo académico, la actualización será omitida");
+        }else{
+            dtoCuerposAcademicos.getRegistroCuerpAcadLineas().setCuerpoAcademicoLineas(ejbCuerposAcademicos.editaCuerpoAcademicoLineaInvestigacion(dtoCuerposAcademicos.getRegistroCuerpAcadLineas().getCuerpoAcademicoLineas()));
+            dtoCuerposAcademicos.setMensaje("La línea de investigación se ha actualizado");
+            actualizaInterfazEdicionCuerpoAcademicoLI();
+        }
+        Ajax.update("mensaje");
     }
     
 }

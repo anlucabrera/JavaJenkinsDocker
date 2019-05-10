@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author jonny
+ * @author UTXJ
  */
 @Entity
 @Table(name = "configuracion_propiedades", catalog = "prontuario", schema = "")

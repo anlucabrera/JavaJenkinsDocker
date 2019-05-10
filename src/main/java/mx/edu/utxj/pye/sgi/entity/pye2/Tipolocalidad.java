@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author UTXJ
  */
 @Entity
-@Table(name = "tipolocalidad",catalog = "pye2", schema = "")
+@Table(name = "tipolocalidad", catalog = "pye2", schema = "")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Tipolocalidad.findAll", query = "SELECT t FROM Tipolocalidad t")
@@ -49,6 +49,8 @@ public class Tipolocalidad implements Serializable {
     private String tipoDescripcion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "zonaAsentamiento")
     private List<Asentamiento> asentamientoList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "claveTipoLocalidad")
+    private List<Localidad> localidadList;
 
     public Tipolocalidad() {
     }
@@ -85,6 +87,15 @@ public class Tipolocalidad implements Serializable {
 
     public void setAsentamientoList(List<Asentamiento> asentamientoList) {
         this.asentamientoList = asentamientoList;
+    }
+
+    @XmlTransient
+    public List<Localidad> getLocalidadList() {
+        return localidadList;
+    }
+
+    public void setLocalidadList(List<Localidad> localidadList) {
+        this.localidadList = localidadList;
     }
 
     @Override

@@ -56,7 +56,7 @@ public class ProfesoresPerfilDeseablePromep implements Serializable {
     @Size(min = 1, max = 50)
     @Column(name = "area_academica")
     private String areaAcademica;
-    @Size(max = 50)
+    @Size(max = 60)
     @Column(name = "cuerpo_academico")
     private String cuerpoAcademico;
     @Size(max = 255)

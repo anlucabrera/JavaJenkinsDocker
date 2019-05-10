@@ -9,6 +9,7 @@ import mx.edu.utxj.pye.siip.controller.eb.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,8 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
+import mx.edu.utxj.pye.sgi.entity.pye2.EquiposComputoCicloPeriodoEscolar;
+import mx.edu.utxj.pye.sgi.entity.pye2.EquiposComputoInternetCicloPeriodoEscolar;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
@@ -116,10 +119,10 @@ public class ControladorDistribucionEquipamientoPYE implements Serializable{
     }
     
     public void llenaAreasAcademicas(){
-        Categorias cat = new Categorias((short) 6);
+        Categorias cat = new Categorias((short) 4);
         dto.setListaAreasPOA(ejbCatalogos.getAreasUniversidadPorCategoriaConPoa(cat)
                 .stream()
-                .filter(area -> (short) 14 == area.getArea())
+                .filter(area -> (short) 4 == area.getArea())
                 .collect(Collectors.toList()));
         if (!dto.getListaAreasPOA().isEmpty() && dto.getAreaUniversidadPOA() == null) {
             dto.setAreaUniversidadPOA(null);
@@ -406,6 +409,96 @@ public class ControladorDistribucionEquipamientoPYE implements Serializable{
         } catch (Throwable ex) {
             Logger.getLogger(ControladorDistribucionEquipamientoPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    private Calendar dateToCalendar(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar;
+    }
+    
+    /************************************* Edición - Equipo de computo **************************************/
+    
+    public void forzarAperturaEdicionEquipoComputo(){
+        if(dto.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEdicionEquipoComputo').show();");
+            dto.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void actualizaInterfazEdicionEquipoComputo(){
+        Ajax.update("frmEdicionEquipoComputo");
+        Ajax.oncomplete("skin();");
+        dto.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionEquipoComputo();
+    }
+    
+    public void abrirEdicionEquipoComputo(EquiposComputoCicloPeriodoEscolar eqCom) {
+        DTOEquiposComputoCPE dtoEC = new DTOEquiposComputoCPE();
+        dtoEC.setEquiposComputoCicloPeriodoEscolar(eqCom);
+        
+        dto.setRegistroEquiposComputoCPE(dtoEC);
+        dto.setCicloEscolar(ejbModulos.buscaCicloEscolarEspecifico(dto.getRegistroEquiposComputoCPE().getEquiposComputoCicloPeriodoEscolar().getCicloEscolar()));
+        dto.setPeriodoEscolar(ejbModulos.buscaPeriodoEscolarEspecifico(dto.getRegistroEquiposComputoCPE().getEquiposComputoCicloPeriodoEscolar().getPeriodoEscolar()));
+        
+        dto.setCicloInicio(dateToCalendar(dto.getCicloEscolar().getInicio()).get(Calendar.YEAR));
+        dto.setCicloFin(dateToCalendar(dto.getCicloEscolar().getFin()).get(Calendar.YEAR));
+        dto.setMensaje("");
+        
+        actualizaInterfazEdicionEquipoComputo();
+    }
+    
+    public void editaEquipoComputo(){
+        if(ejb.buscaEquipoComputoExistente(dto.getRegistroEquiposComputoCPE().getEquiposComputoCicloPeriodoEscolar())){
+            dto.setMensaje("La distribución de equipo de cómputo que ha ingresado ya ha sido agregada anteriormente");
+        }else{
+            dto.getRegistroEquiposComputoCPE().setEquiposComputoCicloPeriodoEscolar(ejb.editaEquipoComputoCicloPeriodoEscolar(dto.getRegistroEquiposComputoCPE().getEquiposComputoCicloPeriodoEscolar()));
+            dto.setMensaje("La distribución de equipo de cómputo ha sido actualizado correctamente");
+            actualizaInterfazEdicionEquipoComputo();
+        }
+        Ajax.update("mensaje");
+    }
+    
+    /************************************* Edición - Equipo de computo con internet **************************************/
+    
+    public void forzarAperturaEdicionEquipoComputoInternet(){
+        if(dto.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEdicionEquipoComputoInternet').show();");
+            dto.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void actualizaInterfazEdicionEquipoComputoInternet(){
+        Ajax.update("frmEdicionEquipoComputoInternet");
+        Ajax.oncomplete("skin();");
+        dto.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionEquipoComputoInternet();
+    }
+    
+    public void abrirEdicionEquipoComputoInternet(EquiposComputoInternetCicloPeriodoEscolar eqComInternet) {
+        DTOEquiposComputoInternetCPE dtoECInternet = new DTOEquiposComputoInternetCPE();
+        dtoECInternet.setEquiposComputoInternetCicloPeriodoEscolar(eqComInternet);
+        
+        dto.setRegistroEquiposInternetCPE(dtoECInternet);
+        dto.setCicloEscolar(ejbModulos.buscaCicloEscolarEspecifico(dto.getRegistroEquiposInternetCPE().getEquiposComputoInternetCicloPeriodoEscolar().getCicloEscolar()));
+        dto.setPeriodoEscolar(ejbModulos.buscaPeriodoEscolarEspecifico(dto.getRegistroEquiposInternetCPE().getEquiposComputoInternetCicloPeriodoEscolar().getPeriodoEscolar()));
+        
+        dto.setCicloInicio(dateToCalendar(dto.getCicloEscolar().getInicio()).get(Calendar.YEAR));
+        dto.setCicloFin(dateToCalendar(dto.getCicloEscolar().getFin()).get(Calendar.YEAR));
+        dto.setMensaje("");
+        
+        actualizaInterfazEdicionEquipoComputoInternet();
+    }
+    
+    public void editaEquipoComputoInternet(){
+        if(ejb.buscaEquipoComputoInternetExistente(dto.getRegistroEquiposInternetCPE().getEquiposComputoInternetCicloPeriodoEscolar())){
+            dto.setMensaje("La distribución de equipo de cómputo con internet que ha ingresado ya ha sido agregada anteriormente");
+        }else{
+            dto.getRegistroEquiposInternetCPE().setEquiposComputoInternetCicloPeriodoEscolar(ejb.editaEquipoComputoInternetCicloPeriodoEscolar(dto.getRegistroEquiposInternetCPE().getEquiposComputoInternetCicloPeriodoEscolar()));
+            dto.setMensaje("La distribución de equipo de cómputo con internet ha sido actualizada correctamente");
+            actualizaInterfazEdicionEquipoComputoInternet();
+        }
+        Ajax.update("mensaje");
     }
     
 }

@@ -15,6 +15,12 @@
         <ui:param name="renderBreadCrumb" value="true"/>
         <h:outputStylesheet library="css" name="tablaDatos.css" />
         <h:outputScript library="js" name="dialogs.js" />
+        <h:outputScript library="js" name="calendario.js"/>
+        <!-- Inicio estilos par proceso electoral -->
+            <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+                <h:outputStylesheet library="css" name="procesoElectoral.css" />
+            </c:if>
+        <!-- Fin estilos par proceso electoral -->
     </ui:define>
     <ui:define name="title">
         Servicios Tecnológicos
@@ -118,7 +124,7 @@
                                                              tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                                     <p:columnGroup type="header">
                                                         <p:row>
-                                                            <p:column rowspan="2" headerText="Opciones" width="110" />
+                                                            <p:column rowspan="2" headerText="Opciones" width="140" />
                                                             <p:column rowspan="2" headerText="Servicio Tecnológico" width="300" />
                                                             <p:column rowspan="2" headerText="Tipo de Servicio" width="200" />
                                                             <p:column rowspan="2" headerText="Nombre del Servicio" width="400" />
@@ -157,6 +163,10 @@
                                                                              class="btn btn-sm #{controladorServiciosTecnologicosAnioMes.verificaAlineacion(servicioTecnologico.registro)?'btn-info':'btn-warning'}"
                                                                              icon="fa fa-cog"
                                                                              title="Alineación a POA."/>
+                                                            <p:commandButton actionListener="#{controladorServiciosTecnologicosAnioMes.abrirEdicionServicioTecnologico(servicioTecnologico)}"
+                                                                         class="btn btn-sm btn-info"
+                                                                         icon="fa fa-pencil-square-o"
+                                                                         title="Editar Servicio Tecnológico"/>
                                                         </div>
                                                     </p:column>
                                                     <p:column>
@@ -222,7 +232,7 @@
                                                              tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                                     <p:columnGroup type="header">
                                                         <p:row>
-                                                            <p:column headerText="Opciones" width="110" />
+                                                            <p:column headerText="Opciones" width="140" />
                                                             <p:column headerText="Servicio Tecnólogico" width="300" />
                                                             <p:column headerText="Sexo" width="100" />
                                                             <p:column headerText="Edad" width="100" />
@@ -260,6 +270,10 @@
                                                                              class="btn btn-sm #{controladorServiciosTecnologicosAnioMes.verificaAlineacion(servicioTecnologicoPart.serviciosTecnologicosParticipantes.registro)?'btn-info':'btn-warning'}"
                                                                              icon="fa fa-cog"
                                                                              title="Alineación a POA."/>
+                                                            <p:commandButton actionListener="#{controladorServiciosTecnologicosAnioMes.abrirEdicionServicioTecnologicoParticipante(servicioTecnologicoPart.serviciosTecnologicosParticipantes)}"
+                                                                         class="btn btn-sm btn-info"
+                                                                         icon="fa fa-pencil-square-o"
+                                                                         title="Editar Servicio Tecnológico Participante"/>
                                                         </div>
                                                     </p:column>
                                                     <p:column>
@@ -837,6 +851,458 @@
                         </div>
                     </div>
 
+                    <p:dialog id="modalEdicionServicioTecnologico" 
+                              widgetVar="modalEdicionServicioTecnologico" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Edición de Servicios Tecnológicos" 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmEdicionServicioTecnologico">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12">
+                                    <p:outputLabel value="Edición del servicio tecnológico #{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registro.serviciosTecnologicosAnioMes.servicio}"/>
+                                </div>
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+
+                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Servicio Tipo: " for="somServicioTipo"/>
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="somServicioTipo"
+                                                     required="true"
+                                                     requiredMessage="Seleccione el tipo de servicio"
+                                                     value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registro.serviciosTecnologicosAnioMes.servicioTipo}"
+                                                     valueChangeListener="#{controladorServiciosTecnologicosAnioMes.actualizarServicioTipo}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     converter="entidadConverter2"
+                                                     style="padding-top: 0px">
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.servicioTipos}" 
+                                                       var="servt" 
+                                                       itemValue="#{servt}" 
+                                                       itemLabel="#{servt.descripcion}"
+                                                       itemDescription="#{servt.descripcion}"/>
+                                        <p:ajax process="somServicioTipo" />
+                                        <p:message for="somServicioTipo" />
+                                    </p:selectOneMenu>
+                                </div>
+
+                                <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Nombre: " for="iptNombreServTec"/>
+                                    <p:inputText id="iptNombreServTec"
+                                                 label="iptNombreServTec"
+                                                 maxlength="250"
+                                                 required="true"
+                                                 class="form-control"
+                                                 requiredMessage="Ingrese el nombre del servicio tecnológico"
+                                                 value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registro.serviciosTecnologicosAnioMes.nombre}"/>
+                                    <p:watermark for="iptNombreServTec" value="Curso Operación Autobús, Van y Taxi. *" />
+                                    <p:message for="iptNombreServTec" />
+                                </div>
+
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Fecha de inicio: " for="iptFechaInicio" />
+                                    <br></br>
+                                    <p:spacer width="5" />
+                                    <p:calendar id="iptFechaInicio"
+                                                label="iptFechaInicio"
+                                                required="true"
+                                                requiredMessage="Ingrese Fecha de Inicio"
+                                                value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registro.serviciosTecnologicosAnioMes.fechaInicio}"
+                                                valueChangeListener="#{controladorServiciosTecnologicosAnioMes.validaFechaInicio}"
+                                                pattern="yyyy-MM-dd" 
+                                                mask="true"
+                                                locale="es"
+                                                styleClass="campo2Partes"
+                                                >
+                                        <p:ajax event="dateSelect" process="iptFechaInicio" update="iptFechaTermino"/>
+                                        <p:ajax event="change" process="iptFechaInicio" update="iptFechaTermino"/>
+                                    </p:calendar>
+                                    <p:watermark for="iptFechaInicio" value="2019-01-15 *" />
+                                    <p:message for="iptFechaInicio" />
+                                </div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Fecha de termino: " for="iptFechaTermino" />
+                                    <br></br>
+                                    <p:spacer width="5" />
+                                    <p:calendar id="iptFechaTermino"
+                                                label="iptFechaTermino"
+                                                required="true"
+                                                requiredMessage="Ingrese Fecha de Termino"
+                                                value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registro.serviciosTecnologicosAnioMes.fechaTermino}"
+                                                valueChangeListener="#{controladorServiciosTecnologicosAnioMes.validaFechaFin}"
+                                                pattern="yyyy-MM-dd" 
+                                                mask="true"
+                                                styleClass="campo2Partes"
+                                                locale="es"
+                                                >
+                                        <p:ajax event="dateSelect" process="iptFechaTermino" update="iptFechaInicio"/>
+                                        <p:ajax event="change" process="iptFechaTermino" update="iptFechaInicio"/>
+                                    </p:calendar>
+                                    <p:watermark for="iptFechaTermino" value="2019-01-26 *" />
+                                    <p:message for="iptFechaTermino" />
+                                </div>
+
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Duración Horas: " for="spnDuracionHoras" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnDuracionHoras"
+                                               label="spnDuracionHoras"
+                                               required="true"
+                                               requiredMessage="Ingrese total en horas"
+                                               value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registro.serviciosTecnologicosAnioMes.duracion}" 
+                                               min="0" max="1000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnDuracionHoras" value="8 *" />
+                                    <p:message for="spnDuracionHoras" />
+                                </div>
+
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Monto ingresado: " for="spnMontoIngresado" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnMontoIngresado"
+                                               label="spnMontoIngresado"
+                                               required="true"
+                                               requiredMessage="Ingrese la cantidad del monto ingresado"
+                                               value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registro.serviciosTecnologicosAnioMes.montoIngresado}" 
+                                               min="0" max="500000"
+                                               styleClass="campo2Partes"
+                                               stepFactor="0.00"
+                                               prefix="$"
+                                               />
+                                    <p:watermark for="spnMontoIngresado" value="40550 *" />
+                                    <p:message for="spnMontoIngresado" />
+                                </div>
+
+                                <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Facilitador/a: " for="iptFacilitador"/>
+                                    <p:inputText id="iptFacilitador"
+                                                 label="iptFacilitador"
+                                                 maxlength="250"
+                                                 required="true"
+                                                 class="form-control"
+                                                 requiredMessage="Ingrese el nombre de él o la facilitador/a"
+                                                 value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registro.serviciosTecnologicosAnioMes.facilitador}"/>
+                                    <p:watermark for="iptFacilitador" value="Antonio Sotomayor Lecona *" />
+                                    <p:message for="iptFacilitador" />
+                                </div>
+
+                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px">
+                                    <p:outputLabel value="Servicio Demandado: " for="sbbServDemandado" />
+                                    <p:selectBooleanButton id="sbbServDemandado"
+                                                           required="true"
+                                                           requiredMessage="Seleccione si existe convenio"
+                                                           value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.servicioDemandado}"
+                                                           valueChangeListener="#{controladorServiciosTecnologicosAnioMes.actualizaServicioDemandado}"
+                                                           onLabel="Por Oferta"
+                                                           offLabel="Por Demanda"
+                                                           onIcon="ui-icon-check"
+                                                           offIcon="ui-icon-check"
+                                                           class="btn-sm"
+                                                           style="text-align: left">
+                                        <p:ajax process="sbbServDemandado"/>
+                                        <p:message for="sbbServDemandado" />
+                                    </p:selectBooleanButton>
+                                </div>
+
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <center>
+                                        <p:commandButton id="btnEditaServicioTecnologico"
+                                                         value="Actualizar Cambios"
+                                                         icon="fa fa-save"
+                                                         class="btn-primary"
+                                                         actionListener="#{controladorServiciosTecnologicosAnioMes.editaServicioTecnologico}"
+                                                         update="@form:frmEdicionServicioTecnologico" 
+                                                         process="@form:frmEdicionServicioTecnologico"
+                                                         />
+                                    </center>
+                                </div>
+
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog id="modalEdicionServicioTecnologicoParticipante" 
+                              widgetVar="modalEdicionServicioTecnologicoParticipante" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Edición de Servicios Tecnológicos Participantes" 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+
+                        <h:form id="frmEdicionServicioTecnologicoParticipante">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12">
+                                    <p:outputLabel value="Edición del participante #{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.nombre}"/>
+                                </div>
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Servicio Tecnológico: " for="somServicioTecnologico" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="somServicioTecnologico"
+                                                     required="true"
+                                                     requiredMessage="Seleccione el servicio tecnológico"
+                                                     value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.servicioTecnologico}"
+                                                     valueChangeListener="#{controladorServiciosTecnologicosAnioMes.actualizarServicioTecnologicoAsignado}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     converter="entidadConverter2"
+                                                     style="padding-top: 0px">
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.lstServiciosTecnologicosAnioMes}" 
+                                                       var="servtec" 
+                                                       itemValue="#{servtec}" 
+                                                       itemLabel="#{servtec.nombre}"
+                                                       itemDescription="#{servtec.servicio}"/>
+                                        <p:ajax process="somServicioTecnologico" />
+                                        <p:message for="somServicioTecnologico" />
+                                    </p:selectOneMenu>
+                                </div>
+
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Nombre: " for="iptNombreParticipante"/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:inputText id="iptNombreParticipante"
+                                                 label="iptNombreParticipante"
+                                                 maxlength="150"
+                                                 required="true"
+                                                 class="form-control"
+                                                 requiredMessage="Ingrese el nombre de él o la participante"
+                                                 value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.nombre}"/>
+                                    <p:watermark for="iptNombreParticipante" value="Adalberto Vázquez Sanchez *" />
+                                    <p:message for="iptNombreParticipante" />
+                                </div>
+
+                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Sexo: " for="sobSexo"/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneButton id="sobSexo"
+                                                       label="sobSexo"
+                                                       value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.sexo}"
+                                                       required="true"
+                                                       requiredMessage="Seleccione el sexo del participante"
+                                                       >
+                                        <f:selectItem itemLabel="Hombre" itemValue="H" />
+                                        <f:selectItem itemLabel="Mujer" itemValue="M" />
+                                    </p:selectOneButton>
+                                    <p:message for="sobSexo" />
+                                </div>
+
+                                <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Edad: " for="spnEdad" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnEdad"
+                                               label="spnEdad"
+                                               required="true"
+                                               requiredMessage="Ingrese la edad del participante"
+                                               value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.edad}" 
+                                               min="0" max="100"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnEdad" value="8 *" />
+                                    <p:message for="spnEdad" />
+                                </div>
+
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel for="estado" value="Estado: "/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="estado" 
+                                                     required="true" 
+                                                     requiredMessage="Seleccione un estado"
+                                                     value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.municipio.estado}" 
+                                                     valueChangeListener="#{controladorServiciosTecnologicosAnioMes.actualizarMunicipiosSTP}" 
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains" 
+                                                     converter="entidadConverter2">
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.estados}" 
+                                                       var="estado" 
+                                                       itemValue="#{estado}" 
+                                                       itemLabel="#{estado.nombre}" 
+                                                       itemDescription="#{estado.nombre}" />
+                                        <p:ajax process="estado" update="municipio" />
+                                    </p:selectOneMenu>
+                                    <p:message for="estado" />
+                                </div>
+
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel for="municipio" value="Municipio: "/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="municipio" 
+                                                     required="true"
+                                                     requiredMessage="Seleccione un municipio"
+                                                     value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.municipio}" 
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains" 
+                                                     converter="entidadConverter2">
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.municipios}" 
+                                                       var="municipio" 
+                                                       itemValue="#{municipio}" 
+                                                       itemLabel="#{municipio.nombre}" 
+                                                       itemDescription="#{municipio.nombre}" />
+                                        <p:ajax process="municipio" />
+                                    </p:selectOneMenu>
+                                    <p:message for="municipio" />
+                                </div>
+                                
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Lengua Indígena: " for="iptLenguaIndigena"/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:inputText id="iptLenguaIndigena"
+                                                 label="iptLenguaIndigena"
+                                                 maxlength="200"
+                                                 class="form-control"
+                                                 required="true"
+                                                 requiredMessage="En caso de que no aplique, ingresar N/A "
+                                                 value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.lenguaIndigena}"/>
+                                    <p:watermark for="iptLenguaIndigena" value="Náhuatl *" />
+                                    <p:message for="iptLenguaIndigena" />
+                                </div>
+                                
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Discapacidad: " for="iptDiscapacidad"/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:inputText id="iptDiscapacidad"
+                                                 label="iptDiscapacidad"
+                                                 maxlength="200"
+                                                 class="form-control"
+                                                 required="true"
+                                                 requiredMessage="En caso de que no aplique, ingresar N/A "
+                                                 value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.discapacidad}"/>
+                                    <p:watermark for="iptDiscapacidad" value="Visual *" />
+                                    <p:message for="iptDiscapacidad" />
+                                </div>
+                                
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Empresa: " for="acEmpresa" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:autoComplete id="acEmpresa"
+                                                    value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.empresa}"
+                                                    completeMethod="#{controladorServiciosTecnologicosAnioMes.completeOrganismosVinculados}"
+                                                    inputStyle="width: 45.5em;"
+                                                    queryDelay="1000"
+                                                    var="empresa"
+                                                    itemLabel="#{empresa.nombre}"
+                                                    itemValue="#{empresa}"
+                                                    converter="organismoVinculadoConverter"
+                                                    forceSelection="true"
+                                                    minQueryLength="4"
+                                                    scrollHeight="300"
+                                                    placeholder="Escriba el nombre y seleccione."
+                                                    valueChangeListener="#{controladorServiciosTecnologicosAnioMes.seleccionaOrganismoVinculado}"
+                                                    >
+                                        <p:column><h:outputText value="#{empresa.empresa}" /></p:column>
+                                        <p:column><h:outputText value="#{empresa.nombre}"/></p:column>
+                                        <p:ajax event="itemSelect" process="acEmpresa"/>
+                                    </p:autoComplete>
+                                </div>
+                                
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <p:outputLabel for="somGeneraciones" value="Generaciones: "/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="somGeneraciones"
+                                                     value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.generacion}" 
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains"
+                                                     >
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.generaciones}" 
+                                                       var="generacion" 
+                                                       itemValue="#{generacion.generacion}" 
+                                                       itemLabel="#{generacion.inicio}-#{generacion.fin}" 
+                                                       itemDescription="#{generacion.inicio}-#{generacion.fin}" />
+                                        <p:ajax process="somGeneraciones" />
+                                    </p:selectOneMenu>
+                                    <p:message for="somGeneraciones" />
+                                </div>
+                                
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <p:outputLabel for="somProgramasEducativos" value="Programas Educativos: "/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="somProgramasEducativos"
+                                                     value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.programaEducativo}" 
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains"
+                                                     >
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.programasEducativos}" 
+                                                       var="programaEducativo" 
+                                                       itemValue="#{programaEducativo.area}" 
+                                                       itemLabel="#{programaEducativo.nombre}" 
+                                                       itemDescription="#{programaEducativo.siglas}"/>
+                                        <p:ajax process="somProgramasEducativos" />
+                                    </p:selectOneMenu>
+                                    <p:message for="somProgramasEducativos" />
+                                </div>
+
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <center>
+                                        <p:commandButton id="btnEditaServicioTecnologicoParticipante"
+                                                         value="Actualizar Cambios"
+                                                         icon="fa fa-save"
+                                                         class="btn-primary"
+                                                         actionListener="#{controladorServiciosTecnologicosAnioMes.editaServicioTecnologicoParticipante}"
+                                                         update="@form:frmEdicionServicioTecnologicoParticipante" 
+                                                         process="@form:frmEdicionServicioTecnologicoParticipante"
+                                                         />
+                                    </center>
+                                </div>
+                            </div>
+                        </h:form>
+
+                    </p:dialog>
+                    
                 </div>
 
                 <p:dialog widgetVar="modalCargaArchivo" width="400" height="auto" showEffect="fade" hideEffect="fade" modal="true" header="Carga de Archivo" styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">

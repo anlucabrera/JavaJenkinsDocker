@@ -20,6 +20,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 
 /**
@@ -27,6 +28,10 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
  * @author Planeacion
  */
 public final class DtoConvenios {
+    /************************** Edición ****************************************/
+    @Getter @Setter private List<OrganismosVinculados>  listaEmpresas;
+    @Getter @Setter private String                      mensaje;
+    
     /************************** Lista áreas ****************************************/
     @Getter private List<Categorias> listaCategoriasPOA;
     @Getter private List<AreasUniversidad> listaAreasPOA; 

@@ -250,4 +250,9 @@ public interface EjbOrganismosVinculados {
      */
     public Boolean eliminarProgramaBeneficiadoVinculacion(ProgramasBeneficiadosVinculacion programaBeneficiadosVinculacion);
     
+    public OrganismosVinculados editaOrganismoVinculado(OrganismosVinculados organismoVinculado);
+    
+    public List<OrganismosVinculados> buscaCoincidenciasOrganismosVinculados(String parametro);
+    
+    public Boolean buscaOrganismoVinculadoExistente(OrganismosVinculados organismoVinculado);
 }

@@ -12,6 +12,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -61,6 +63,8 @@ public class ServicioProductosAcademicos implements EjbProductosAcademicos {
 
     @Inject Caster  caster;    
 
+    private static final Logger LOG = Logger.getLogger(ServicioProductosAcademicos.class.getName());
+    
     @Override
     public List<DTOProductosAcademicos> getListaProductosAcademicos(String rutaArchivo) throws Throwable {
         if (Files.exists(Paths.get(rutaArchivo))) {
@@ -474,7 +478,7 @@ public class ServicioProductosAcademicos implements EjbProductosAcademicos {
         });
         Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
-
+    
     @Override
     public void guardaProductosAcademicosPersonal(List<DTOProductosAcademicosPersonal> listaProductosAcademicos, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
         List<String> listaCondicional = new ArrayList<>();
@@ -563,6 +567,19 @@ public class ServicioProductosAcademicos implements EjbProductosAcademicos {
     }
 
     @Override
+    public List<ProductosAcademicos> getFiltroProductosAcademicosEjercicioMesAreaInt(Short ejercicio, String mes, Short area) throws Throwable {
+        try {
+            return facadeCapitalHumano.getEntityManager().createQuery("SELECT p FROM ProductosAcademicos p JOIN p.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes AND r.area = :area", ProductosAcademicos.class)
+                    .setParameter("anio", ejercicio)
+                    .setParameter("mes", mes)
+                    .setParameter("area", area)
+                    .getResultList();
+        } catch (NoResultException ex) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
     public List<DTOProductosAcademicosPersonal> getFiltroProductosAcademicosPersonalEjercicioMesArea(Short ejercicio, String mes, Short area) throws Throwable {
         List<DTOProductosAcademicosPersonal> listaDtoPAP = new ArrayList<>();
         List<ProductosAcademicosPersonal> productosAcademicosPersonal = new ArrayList<>();
@@ -599,4 +616,93 @@ public class ServicioProductosAcademicos implements EjbProductosAcademicos {
         }
     }
 
+    @Override
+    public Boolean buscaProductoAcademicoExistente(ProductosAcademicos productoAcademico) {
+        try {
+            ProductosAcademicos prodAcad = new ProductosAcademicos();
+            prodAcad = facadeCapitalHumano.getEntityManager().createQuery("SELECT p FROM ProductosAcademicos p WHERE p.productoAcademico = :productoAcademico AND p.registro <> :registro", ProductosAcademicos.class)
+                    .setParameter("productoAcademico", productoAcademico.getProductoAcademico())
+                    .setParameter("registro", productoAcademico.getRegistro())
+                    .getSingleResult();
+            if (prodAcad != null) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (NoResultException | NonUniqueResultException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean buscaProductoAcademicoPersonalExistente(ProductosAcademicosPersonal productoAcademicoPersonal) {
+        try {
+            ProductosAcademicosPersonal prodAcadPer = new ProductosAcademicosPersonal();
+            prodAcadPer = facadeCapitalHumano.getEntityManager().createQuery("SELECT p FROM ProductosAcademicosPersonal p WHERE p.productoAcademico.productoAcademico = :productoAcademico AND p.personal = :personal AND p.registro <> :registro", ProductosAcademicosPersonal.class)
+                    .setParameter("productoAcademico", productoAcademicoPersonal.getProductoAcademico().getProductoAcademico())
+                    .setParameter("personal", productoAcademicoPersonal.getPersonal())
+                    .setParameter("registro", productoAcademicoPersonal.getRegistro())
+                    .getSingleResult();
+            if (prodAcadPer != null) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (NoResultException | NonUniqueResultException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public ProductosAcademicos editaProductoAcademico(ProductosAcademicos productoAcademico) {
+        try {
+            facadeCapitalHumano.setEntityClass(ProductosAcademicos.class);
+            facadeCapitalHumano.edit(productoAcademico);
+            facadeCapitalHumano.flush();
+            return productoAcademico;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo actualizar el registro: " + productoAcademico.getProductoAcademico(), e);
+            return null;
+        }
+    }
+
+    @Override
+    public ProductosAcademicosPersonal editaProductoAcademicoPersonal(ProductosAcademicosPersonal productoAcademicoPersonal) {
+        try {
+            facadeCapitalHumano.setEntityClass(ProductosAcademicosPersonal.class);
+            facadeCapitalHumano.edit(productoAcademicoPersonal);
+            facadeCapitalHumano.flush();
+            return productoAcademicoPersonal;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo actualizar el registro: " + productoAcademicoPersonal.getProductoAcademico().getProductoAcademico(), e);
+            return null;
+        }
+    }
+
+    @Override
+    public Pais getPaisProductoAcademico(ProductosAcademicos productoAcademico) {
+        try {
+            if(productoAcademico == null)
+                return null;
+            return facadeCapitalHumano.getEntityManager().createQuery("SELECT p FROM ProductosAcademicos pa JOIN pa.pais p WHERE pa.registro = :registro",Pais.class)
+                .setParameter("registro", productoAcademico.getRegistro())
+                .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public Municipio getMunicipioProductoAcademico(ProductosAcademicos productoAcademico) {
+        try {
+            if(productoAcademico == null)
+                return null;
+            return facadeCapitalHumano.getEntityManager().createQuery("SELECT m FROM ProductosAcademicos pa JOIN pa.municipio m WHERE pa.registro = :registro",Municipio.class)
+                    .setParameter("registro", productoAcademico.getRegistro())
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+    
 }

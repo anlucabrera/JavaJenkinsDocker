@@ -15,6 +15,11 @@
         <ui:param name="renderBreadCrumb" value="true"/>        
         <h:outputStylesheet library="css" name="tablaDatos.css" />
         <h:outputScript library="js" name="dialogs.js" />
+        <!-- Inicio estilos par proceso electoral -->
+            <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+                <h:outputStylesheet library="css" name="procesoElectoral.css" />
+            </c:if>
+        <!-- Fin estilos par proceso electoral -->
     </ui:define>
     <ui:define name="title">
         Servicios de Enfermería
@@ -116,7 +121,7 @@
                                                      tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                             <p:columnGroup type="header">
                                                 <p:row>
-                                                    <p:column rowspan="2" headerText="Opciones"                 width="120"  />
+                                                    <p:column rowspan="2" headerText="Opciones"                 width="150"  />
                                                     <p:column rowspan="2" headerText="Ciclo Escolar"            width="200" />
                                                     <p:column rowspan="2" headerText="Periodo Escolar"          width="200" />
                                                     <p:column rowspan="2" headerText="Tipo de servicio"         width="300" />
@@ -157,6 +162,10 @@
                                                                      class="btn btn-sm #{controladorServiciosEnfermeriaCicloPeriodos.verificaAlineacion(servicioEnfermeriaEliminar)?'btn-info':'btn-warning'}"
                                                                      icon="fa fa-cog"
                                                                      title="Alineación a POA."/>
+                                                    <p:commandButton actionListener="#{controladorServiciosEnfermeriaCicloPeriodos.abrirEdicionServicioEnfermeria(servicioEnfermeria.serviciosEnfermeriaCicloPeriodos)}"
+                                                                         class="btn btn-sm btn-info"
+                                                                         icon="fa fa-pencil-square-o"
+                                                                         title="Editar servicio enfermeria"/>
                                                 </div>
                                             </p:column>
                                             <p:column>
@@ -486,6 +495,218 @@
                         </div>
                     </div>
 
+                    <p:dialog id="modalEdicionServicioEnfermeria" 
+                              widgetVar="modalEdicionServicioEnfermeria" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{controladorServiciosEnfermeriaCicloPeriodos.dto.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Edición de Servicio Enfermería" 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmEdicionServicioEnfermeria">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12">
+                                    <p:outputLabel value="Edición del servicio: #{controladorServiciosEnfermeriaCicloPeriodos.dto.registro.serviciosEnfermeriaCicloPeriodos.servicio.descripcion}"/>
+                                </div>
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
+                                    <p:outputLabel id="mensaje" value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.mensaje}"/>
+                                    <br></br>
+                                </div>
+                                
+                                <!--Ciclo escolar-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel for="somCicloEscolar" value="Ciclo Escolar: "/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="somCicloEscolar"
+                                                     required="true"
+                                                     requiredMessage="Seleccione el Ciclo Escolar"
+                                                     value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.cicloEscolar.ciclo}"
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     style="padding-top: 0px;"
+                                                     disabled="true"
+                                                     >
+                                        <f:selectItem itemValue="#{controladorServiciosEnfermeriaCicloPeriodos.dto.cicloEscolar.ciclo}" 
+                                                      itemLabel="#{controladorServiciosEnfermeriaCicloPeriodos.dto.cicloInicio}-#{controladorServiciosEnfermeriaCicloPeriodos.dto.cicloFin}" 
+                                                      itemDescription="#{controladorServiciosEnfermeriaCicloPeriodos.dto.cicloInicio}-#{controladorServiciosEnfermeriaCicloPeriodos.dto.cicloFin}" />
+                                        <p:ajax process="somCicloEscolar" />
+                                    </p:selectOneMenu>
+                                    <p:message for="somCicloEscolar" />
+                                </div>
+                                
+                                <!--Periodo escolar-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel for="somPeriodoEscolar" value="Periodo Escolar: "/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="somPeriodoEscolar"
+                                                     required="true"
+                                                     requiredMessage="Seleccione el Periodo Escolar"
+                                                     value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.periodoEscolar.periodo}"
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     style="padding-top: 0px;"
+                                                     disabled="true"
+                                                     >
+                                        <f:selectItem itemValue="#{controladorServiciosEnfermeriaCicloPeriodos.dto.periodoEscolar.periodo}" 
+                                                      itemLabel="#{controladorServiciosEnfermeriaCicloPeriodos.dto.periodoEscolar.mesInicio.mes}-#{controladorServiciosEnfermeriaCicloPeriodos.dto.periodoEscolar.mesFin.mes}"
+                                                      itemDescription="#{controladorServiciosEnfermeriaCicloPeriodos.dto.periodoEscolar.mesInicio.mes}-#{controladorServiciosEnfermeriaCicloPeriodos.dto.periodoEscolar.mesFin.mes}" />
+                                        <p:ajax process="somPeriodoEscolar" />
+                                    </p:selectOneMenu>
+                                    <p:message for="somPeriodoEscolar" />
+                                </div>
+                                
+                                <!--Mes-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel for="somMes" value="Mes: "/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="somMes"
+                                                     required="true"
+                                                     requiredMessage="Seleccione el Mes"
+                                                     value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.registro.serviciosEnfermeriaCicloPeriodos.mes}"
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     style="padding-top: 0px;"
+                                                     disabled="true"
+                                                     >
+                                        <f:selectItem itemValue="#{controladorServiciosEnfermeriaCicloPeriodos.dto.registro.serviciosEnfermeriaCicloPeriodos.mes}" 
+                                                      itemLabel="#{controladorServiciosEnfermeriaCicloPeriodos.dto.registro.serviciosEnfermeriaCicloPeriodos.mes}"
+                                                      itemDescription="#{controladorServiciosEnfermeriaCicloPeriodos.dto.registro.serviciosEnfermeriaCicloPeriodos.mes}" />
+                                        <p:ajax process="somMes" />
+                                    </p:selectOneMenu>
+                                    <p:message for="somMes" />
+                                </div>
+                                
+                                <!--Servicio Enfermería-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Servicio Enfermeria Tipo: " for="somServicioEnfermeriaTipos"/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="somServicioEnfermeriaTipos"
+                                                     required="true"
+                                                     requiredMessage="Seleccione el tipo de servicio de enfermería"
+                                                     value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.registro.serviciosEnfermeriaCicloPeriodos.servicio}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     converter="entidadConverter2"
+                                                     style="padding-top: 0px"
+                                                     disabled="true"
+                                                     >
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.listaServiciosEnfermeriaTipos}" 
+                                                       var="set" 
+                                                       itemValue="#{set}" 
+                                                       itemLabel="#{set.descripcion}"
+                                                       itemDescription="#{set.descripcion}"/>
+                                        <p:ajax process="somServicioEnfermeriaTipos" />
+                                        <p:message for="somServicioEnfermeriaTipos" />
+                                    </p:selectOneMenu>
+                                </div>
+                                
+                                <!--Estudiantes atentidos hombres-->
+                                <div class="col-sm-3 col-md-3" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Estudiantes atendidos hombres: " for="spnESTH" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnESTH"
+                                               label="spnESTH"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.registro.serviciosEnfermeriaCicloPeriodos.estH}" 
+                                               min="0" max="1000"
+                                               styleClass="campo4Partes"/>
+                                    <p:watermark for="spnESTH" value="100 *" />
+                                    <p:message for="spnESTH" />
+                                </div>
+                                
+                                <!--Estudiantes atentidos mujeres-->
+                                <div class="col-sm-3 col-md-3" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Estudiantes atendidos mujeres: " for="spnESTM" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnESTM"
+                                               label="spnESTM"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.registro.serviciosEnfermeriaCicloPeriodos.estM}" 
+                                               min="0" max="1000"
+                                               styleClass="campo4Partes"/>
+                                    <p:watermark for="spnESTM" value="100 *" />
+                                    <p:message for="spnESTM" />
+                                </div>
+                                
+                                <!--Personal atentido hombres-->
+                                <div class="col-sm-3 col-md-3" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Personal atendido hombres: " for="spnPERH" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnPERH"
+                                               label="spnPERH"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.registro.serviciosEnfermeriaCicloPeriodos.perH}" 
+                                               min="0" max="1000"
+                                               styleClass="campo4Partes"/>
+                                    <p:watermark for="spnPERH" value="100 *" />
+                                    <p:message for="spnPERH" />
+                                </div>
+                                
+                                <!--Personal atentido mujeres-->
+                                <div class="col-sm-3 col-md-3" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Personal atendido mujeres: " for="spnPERM" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnPERM"
+                                               label="spnPERM"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorServiciosEnfermeriaCicloPeriodos.dto.registro.serviciosEnfermeriaCicloPeriodos.perM}" 
+                                               min="0" max="1000"
+                                               styleClass="campo4Partes"/>
+                                    <p:watermark for="spnPERM" value="100 *" />
+                                    <p:message for="spnPERM" />
+                                </div>
+                                
+                                <!--Guardar-->
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <center>
+                                        <p:commandButton id="btnEditaServicioEnfermeria"
+                                                         value="Actualizar Cambios"
+                                                         icon="fa fa-save"
+                                                         class="btn-primary"
+                                                         actionListener="#{controladorServiciosEnfermeriaCicloPeriodos.editaServicioEnfermeria}"
+                                                         update="@form:frmEdicionServicioEnfermeria" 
+                                                         process="@form:frmEdicionServicioEnfermeria"
+                                                         />
+                                    </center>
+                                </div>
+
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    
                 </div>
 
                 <p:dialog widgetVar="modalCargaArchivo" 

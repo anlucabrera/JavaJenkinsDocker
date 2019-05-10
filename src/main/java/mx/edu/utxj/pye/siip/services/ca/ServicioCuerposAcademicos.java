@@ -668,6 +668,19 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
             return null;
         }
     }
+    
+     @Override
+    public List<CuerposAcademicosRegistro> getFiltroCuerposAcademicosEdicion(Short ejercicio, Short area) throws Throwable {
+         try {
+            return facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerposAcademicosRegistro c JOIN c.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND r.area = :area", CuerposAcademicosRegistro.class)
+                    .setParameter("anio", ejercicio)
+                    .setParameter("area", area)
+                    .getResultList();
+         } catch (NoResultException e) {
+             return Collections.EMPTY_LIST;
+         }
+    }
+    
 
     @Override
     public List<DTOCuerpAcadIntegrantes> getFiltroCuerpAcadIntegrantesEjercicioMesArea(Short ejercicio, Short area) throws Throwable {
@@ -781,7 +794,7 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
             }
             return true;
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "No se pudo asginar el área académica al cuerpo académico.", e);
+            LOG.log(Level.SEVERE, "No se pudo asignar el área académica al cuerpo académico.", e);
             return false;
         }
     }
@@ -796,7 +809,7 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
             }
             return true;
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "No se pudo asginar el área académica al cuerpo académico.", e);
+            LOG.log(Level.SEVERE, "No se pudo asignar el área académica al cuerpo académico.", e);
             return false;
         }
     }
@@ -937,6 +950,83 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
             }
         } catch (Exception e) {
             Messages.addGlobalInfo("<b>Ha ocurrido un error durante la alta del siguiente Participante: </b> " + cuerpacadLineas.getNombre());
+            return false;
+        }
+    }
+
+    @Override
+    public CuerposAcademicosRegistro editaCuerpoAcademicoRegistro(CuerposAcademicosRegistro cuerpoAcademicoRegistro) {
+        try {
+            facadeCapitalHumano.setEntityClass(CuerposAcademicosRegistro.class);
+            facadeCapitalHumano.edit(cuerpoAcademicoRegistro);
+            facadeCapitalHumano.flush();
+            return cuerpoAcademicoRegistro;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo actualizar el registro: " + cuerpoAcademicoRegistro.getCuerpoAcademico(), e);
+            return null;
+        }
+    }
+
+    @Override
+    public CuerpacadIntegrantes editaCuerpoAcademicoIntegrante(CuerpacadIntegrantes cuerpoAcademicoIntegrante) {
+        try {
+            facadeCapitalHumano.setEntityClass(CuerpacadIntegrantes.class);
+            facadeCapitalHumano.edit(cuerpoAcademicoIntegrante);
+            facadeCapitalHumano.flush();
+            return cuerpoAcademicoIntegrante;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo actualizar el registro: " + cuerpoAcademicoIntegrante.getCuerpoAcademico(), e);
+            return null;
+        }
+    }
+
+    @Override
+    public CuerpacadLineas editaCuerpoAcademicoLineaInvestigacion(CuerpacadLineas cuerpoAcademicoLinea) {
+        try {
+            facadeCapitalHumano.setEntityClass(CuerpacadLineas.class);
+            facadeCapitalHumano.edit(cuerpoAcademicoLinea);
+            facadeCapitalHumano.flush();
+            return cuerpoAcademicoLinea;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo actualizar el registro: " + cuerpoAcademicoLinea.getNombre(), e);
+            return null;
+        }
+    }
+
+    @Override
+    public Boolean buscaCuerpoAcademicoIntegranteExistente(CuerpacadIntegrantes cuerpacadIntegrante) {
+        try {
+            CuerpacadIntegrantes cai = new CuerpacadIntegrantes();
+            cai = facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerpacadIntegrantes c JOIN c.cuerpoAcademico ca WHERE ca.cuerpoAcademico = :cuerpoAcademico AND c.personal = :personal AND c.registro <> :registro",CuerpacadIntegrantes.class)
+                .setParameter("cuerpoAcademico", cuerpacadIntegrante.getCuerpoAcademico().getCuerpoAcademico())
+                .setParameter("personal", cuerpacadIntegrante.getPersonal())
+                .setParameter("registro", cuerpacadIntegrante.getRegistro())
+                .getSingleResult();
+            if(cai != null){
+                return true;
+            }else{
+                return false;
+            }
+        } catch (NoResultException | NonUniqueResultException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean buscaCuerpoAcademicoLineaInvestigacionExistente(CuerpacadLineas cuerpacadLinea) {
+        try {
+            CuerpacadLineas cali = new CuerpacadLineas();
+            cali = facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerpacadLineas c JOIN c.cuerpoAcademico ca WHERE ca.cuerpoAcademico = :cuerpoAcademico AND c.nombre = :nombre AND c.registro <> :registro",CuerpacadLineas.class)
+                .setParameter("cuerpoAcademico", cuerpacadLinea.getCuerpoAcademico().getCuerpoAcademico())
+                .setParameter("nombre", cuerpacadLinea.getNombre())
+                .setParameter("registro", cuerpacadLinea.getRegistro())
+                .getSingleResult();
+            if(cali != null){
+                return true;
+            }else{
+                return false;
+            }
+        } catch (NoResultException | NonUniqueResultException ex) {
             return false;
         }
     }
