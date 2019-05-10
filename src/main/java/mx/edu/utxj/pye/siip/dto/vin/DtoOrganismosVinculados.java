@@ -19,15 +19,19 @@ import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesVinculacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ContactosEmpresa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CorreosEmpresa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
+import mx.edu.utxj.pye.sgi.entity.pye2.EmpresasTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
+import mx.edu.utxj.pye.sgi.entity.pye2.GirosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.Localidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
+import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
 import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
+import mx.edu.utxj.pye.sgi.entity.pye2.SectoresTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.TelefonosEmpresa;
 
 /**
@@ -35,6 +39,18 @@ import mx.edu.utxj.pye.sgi.entity.pye2.TelefonosEmpresa;
  * @author Planeacion
  */
 public final class DtoOrganismosVinculados {
+     /************************** Edición ****************************************/
+    @Getter @Setter Boolean                 tieneConvenio;
+    
+    @Getter @Setter Boolean                 nuevoRegistro;
+    
+    @Getter @Setter List<OrganismosTipo>    organismoTipos;
+    @Getter @Setter List<EmpresasTipo>      empresaTipos;
+    @Getter @Setter List<GirosTipo>         giroTipos;
+    @Getter @Setter List<SectoresTipo>      sectorTipos;
+    
+    @Getter @Setter String                  mensaje;
+    
      /************************** Lista áreas ****************************************/
     @Getter private List<Categorias> listaCategoriasPOA;
     @Getter private List<AreasUniversidad> listaAreasPOA; 
@@ -113,6 +129,7 @@ public final class DtoOrganismosVinculados {
         setRegistros(new ArrayList<>(Arrays.asList(registroTipo.getRegistroTipo())));
         tieneEvidencia = false;
         forzarAperturaDialogo = false;
+        nuevoRegistro = false;
     }
 
     public void setRegistro(DTOOrganismoVinculado registro) {

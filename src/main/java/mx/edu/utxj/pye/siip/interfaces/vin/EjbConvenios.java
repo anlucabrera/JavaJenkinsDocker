@@ -36,6 +36,12 @@ public interface EjbConvenios {
      * @param area  Área superior de cada usuario logueado
      * @return Regresa una lista de registros de Convenios que serán ocupados para consulta o eliminación
      */
-    public List<Convenios> getFiltroConveniosEjercicioMesArea(Short ejercicio, String mes, Short area);
+    public List<Convenios> getFiltroConveniosEjercicioMesArea(Short ejercicio, String mes, Short area);    
+    
+    public List<Convenios> getReporteGeneralConvenios();
+    
+    public Convenios editaConvenio(Convenios convenio);
+    
+    public Boolean buscaConvenioExistente(Convenios convenio);
     
 }

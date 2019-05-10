@@ -6,7 +6,6 @@
 package mx.edu.utxj.pye.sgi.entity.pye2;
 
 import java.io.Serializable;
-import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,8 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -32,13 +29,14 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Viewparticipantesactformintegral.findByAreaReg", query = "SELECT v FROM Viewparticipantesactformintegral v WHERE v.areaReg = :areaReg")
     , @NamedQuery(name = "Viewparticipantesactformintegral.findByRegAct", query = "SELECT v FROM Viewparticipantesactformintegral v WHERE v.regAct = :regAct")
     , @NamedQuery(name = "Viewparticipantesactformintegral.findByActividadFormacionIntegral", query = "SELECT v FROM Viewparticipantesactformintegral v WHERE v.actividadFormacionIntegral = :actividadFormacionIntegral")
-    , @NamedQuery(name = "Viewparticipantesactformintegral.findByFechaInicio", query = "SELECT v FROM Viewparticipantesactformintegral v WHERE v.fechaInicio = :fechaInicio")
-    , @NamedQuery(name = "Viewparticipantesactformintegral.findByFechaFin", query = "SELECT v FROM Viewparticipantesactformintegral v WHERE v.fechaFin = :fechaFin")
+    , @NamedQuery(name = "Viewparticipantesactformintegral.findByFechainiciodmY", query = "SELECT v FROM Viewparticipantesactformintegral v WHERE v.fechainiciodmY = :fechainiciodmY")
+    , @NamedQuery(name = "Viewparticipantesactformintegral.findByFechafindmY", query = "SELECT v FROM Viewparticipantesactformintegral v WHERE v.fechafindmY = :fechafindmY")
     , @NamedQuery(name = "Viewparticipantesactformintegral.findByNombre", query = "SELECT v FROM Viewparticipantesactformintegral v WHERE v.nombre = :nombre")
     , @NamedQuery(name = "Viewparticipantesactformintegral.findByTipoActividad", query = "SELECT v FROM Viewparticipantesactformintegral v WHERE v.tipoActividad = :tipoActividad")
     , @NamedQuery(name = "Viewparticipantesactformintegral.findByTipoEvento", query = "SELECT v FROM Viewparticipantesactformintegral v WHERE v.tipoEvento = :tipoEvento")
     , @NamedQuery(name = "Viewparticipantesactformintegral.findByMes", query = "SELECT v FROM Viewparticipantesactformintegral v WHERE v.mes = :mes")
     , @NamedQuery(name = "Viewparticipantesactformintegral.findByAnio", query = "SELECT v FROM Viewparticipantesactformintegral v WHERE v.anio = :anio")
+    , @NamedQuery(name = "Viewparticipantesactformintegral.findByCveArea", query = "SELECT v FROM Viewparticipantesactformintegral v WHERE v.cveArea = :cveArea")
     , @NamedQuery(name = "Viewparticipantesactformintegral.findByArea", query = "SELECT v FROM Viewparticipantesactformintegral v WHERE v.area = :area")
     , @NamedQuery(name = "Viewparticipantesactformintegral.findByPrograma", query = "SELECT v FROM Viewparticipantesactformintegral v WHERE v.programa = :programa")
     , @NamedQuery(name = "Viewparticipantesactformintegral.findByNivel", query = "SELECT v FROM Viewparticipantesactformintegral v WHERE v.nivel = :nivel")
@@ -57,9 +55,11 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Viewparticipantesactformintegral.findByOrganizaParticipa", query = "SELECT v FROM Viewparticipantesactformintegral v WHERE v.organizaParticipa = :organizaParticipa")})
 public class Viewparticipantesactformintegral implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     @Basic(optional = false)
     @NotNull
     @Column(name = "areaReg")
+    @Id
     private short areaReg;
     @Basic(optional = false)
     @NotNull
@@ -70,16 +70,12 @@ public class Viewparticipantesactformintegral implements Serializable {
     @Size(min = 1, max = 25)
     @Column(name = "actividad_formacion_integral")
     private String actividadFormacionIntegral;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "fecha_inicio")
-    @Temporal(TemporalType.DATE)
-    private Date fechaInicio;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "fecha_fin")
-    @Temporal(TemporalType.DATE)
-    private Date fechaFin;
+    @Size(max = 10)
+    @Column(name = "fecha_inicio,'%d/%m/%Y')")
+    private String fechainiciodmY;
+    @Size(max = 10)
+    @Column(name = "fecha_fin,'%d/%m/%Y')")
+    private String fechafindmY;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 300)
@@ -123,9 +119,8 @@ public class Viewparticipantesactformintegral implements Serializable {
     @Size(min = 1, max = 12)
     @Column(name = "nivel")
     private String nivel;
-    @Id
     @Basic(optional = false)
-    @NotNull()
+    @NotNull
     @Column(name = "regParticipante")
     private int regParticipante;
     @Size(max = 9)
@@ -170,54 +165,16 @@ public class Viewparticipantesactformintegral implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "comunidadIndigena")
     private String comunidadIndigena;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Column(name = "edad")
+    private Double edad;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 9)
     @Column(name = "organiza_participa")
     private String organizaParticipa;
-    private static final long serialVersionUID = 1L;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Column(name = "edad")
-    private Double edad;
 
     public Viewparticipantesactformintegral() {
-    }
-
-
-    public String getActividadFormacionIntegral() {
-        return actividadFormacionIntegral;
-    }
-
-    public void setActividadFormacionIntegral(String actividadFormacionIntegral) {
-        this.actividadFormacionIntegral = actividadFormacionIntegral;
-    }
-
-    public Date getFechaInicio() {
-        return fechaInicio;
-    }
-
-    public void setFechaInicio(Date fechaInicio) {
-        this.fechaInicio = fechaInicio;
-    }
-
-    public Date getFechaFin() {
-        return fechaFin;
-    }
-
-    public void setFechaFin(Date fechaFin) {
-        this.fechaFin = fechaFin;
-    }
-    public Double getEdad() {
-        return edad;
-    }
-    public void setEdad(Double edad) {
-        this.edad = edad;
-    }
-    public String getOrganizaParticipa() {
-        return organizaParticipa;
-    }
-    public void setOrganizaParticipa(String organizaParticipa) {
-        this.organizaParticipa = organizaParticipa;
     }
 
     public short getAreaReg() {
@@ -235,7 +192,31 @@ public class Viewparticipantesactformintegral implements Serializable {
     public void setRegAct(int regAct) {
         this.regAct = regAct;
     }
-    
+
+    public String getActividadFormacionIntegral() {
+        return actividadFormacionIntegral;
+    }
+
+    public void setActividadFormacionIntegral(String actividadFormacionIntegral) {
+        this.actividadFormacionIntegral = actividadFormacionIntegral;
+    }
+
+    public String getFechainiciodmY() {
+        return fechainiciodmY;
+    }
+
+    public void setFechainiciodmY(String fechainiciodmY) {
+        this.fechainiciodmY = fechainiciodmY;
+    }
+
+    public String getFechafindmY() {
+        return fechafindmY;
+    }
+
+    public void setFechafindmY(String fechafindmY) {
+        this.fechafindmY = fechafindmY;
+    }
+
     public String getNombre() {
         return nombre;
     }
@@ -396,4 +377,20 @@ public class Viewparticipantesactformintegral implements Serializable {
         this.comunidadIndigena = comunidadIndigena;
     }
 
+    public Double getEdad() {
+        return edad;
+    }
+
+    public void setEdad(Double edad) {
+        this.edad = edad;
+    }
+
+    public String getOrganizaParticipa() {
+        return organizaParticipa;
+    }
+
+    public void setOrganizaParticipa(String organizaParticipa) {
+        this.organizaParticipa = organizaParticipa;
+    }
+    
 }

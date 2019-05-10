@@ -32,8 +32,10 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
+import mx.edu.utxj.pye.sgi.util.ServicioCURP;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.eb.DtoMatriculaPeriodoEscolar;
 import mx.edu.utxj.pye.siip.dto.eb.DTOMatriculaPeriodosEscolares;
@@ -72,6 +74,8 @@ public class ControladorMatriculaPeriodosEscolaresPYE implements Serializable{
         dto.setPeriodoEscolarActivo(ejbModulos.getPeriodoEscolarActivo());
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());
+            dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos());
+            Faces.setSessionAttribute("programasEducativos", dto.getProgramasEducativos());
         } catch (EventoRegistroNoExistenteException ex) {
             Logger.getLogger(ControladorMatriculaPeriodosEscolaresPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -266,6 +270,51 @@ public class ControladorMatriculaPeriodosEscolaresPYE implements Serializable{
             cargarAlineacionXActividad();
             Ajax.update("frmAlineacion");
         }else Messages.addGlobalError("La alineación no pudo eliminarse.");
+    }
+    
+    /********************************************* Edición ***********************************************/
+    public void forzarAperturaEdicionMatriculaPeriodoEscolar(){
+        if(dto.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEdicionMatriculaPeriodoEscolar').show();");
+            dto.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void actualizaInterfazEdicionMatriculaPeriodoEscolar(){
+        Ajax.update("frmEdicionMatriculaPeriodoEscolar");
+        Ajax.oncomplete("skin();");
+        dto.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionMatriculaPeriodoEscolar();
+    }
+    
+    public void abrirEdicionMatriculaPeriodoEscolar(MatriculaPeriodosEscolares matPerEsc) {
+        DTOMatriculaPeriodosEscolares dtoMaPerEsc = new DTOMatriculaPeriodosEscolares();
+        dtoMaPerEsc.setMatricula(matPerEsc);
+        dto.setRegistro(dtoMaPerEsc);
+        dto.setMensaje("");
+        dto.setPeriodoEscolarMatriculaPeriodoEscolar(ejbModulos.buscaPeriodoEscolarEspecifico(dto.getRegistro().getMatricula().getPeriodo()));
+        dto.setProgramaEducativoMatriculaPeriodoEscolar(ejbModulos.buscaProgramaEducativoEspecifico(dto.getRegistro().getMatricula().getProgramaEducativo()));
+        actualizaInterfazEdicionMatriculaPeriodoEscolar();
+    }
+    
+    public void editaMatriculaPeriodoEscolar(){
+        if (ServicioCURP.validaCurp(dto.getRegistro().getMatricula().getCurp())) {
+            if (ejb.buscaMatriculaPeriodoEscolarExistente(dto.getRegistro().getMatricula())) {
+                dto.setMensaje("La matricula ya ha sido registrada anteriormente");
+            } else {
+                dto.getRegistro().setMatricula(ejb.editaMatriculaPeriodoEscolar(dto.getRegistro().getMatricula()));
+                dto.setMensaje("El registro ha sido actualizado");
+                actualizaInterfazEdicionMatriculaPeriodoEscolar();
+            }
+        } else {
+            dto.setMensaje("La CURP que ha ingresado no es válida");
+        }
+        Ajax.update("mensaje");
+    }
+    
+    public void actualizarProgramaEducativo(ValueChangeEvent event){
+        dto.setProgramaEducativoMatriculaPeriodoEscolar(((AreasUniversidad)event.getNewValue()));
+        dto.getRegistro().getMatricula().setProgramaEducativo(dto.getProgramaEducativoMatriculaPeriodoEscolar().getArea());
     }
     
 }

@@ -9,6 +9,7 @@ import java.util.List;
 import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
+import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosTecnologicosAnioMes;
 import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosTecnologicosParticipantes;
@@ -37,7 +38,9 @@ public interface EjbServiciosTecnologicosAnioMes {
      * @return Regresa una lista de registros de Servicios Tecnológicos que serán ocupados para consulta o eliminación
      */
     public List<ServiciosTecnologicosAnioMes> getFiltroServiciosTecnologicosEjercicioMesArea(Short ejercicio, String mes, Short area);
-  
+    
+    public List<ServiciosTecnologicosAnioMes> getReporteGeneralServiciosTecnologicos();
+    
     /**
      * Método que se ocupa para el filtrado de Servicios Tecnológicos Participantes por Ejercicio, Mes y área el cual es mostrado para consulta y eliminación
      * @param ejercicio Ejercicio actual que deberá venir de la tabla eventos_registro
@@ -46,6 +49,8 @@ public interface EjbServiciosTecnologicosAnioMes {
      * @return Regresa una lista de registros de Servicios Tecnológicos Participantes que serán ocupados para consulta o eliminación
      */
     public List<DTOServiciosTecnologicosParticipantes> getFiltroServiciosTecnologicosPartEjercicioMesArea(Short ejercicio, String mes, Short area);
+    
+    public List<ServiciosTecnologicosParticipantes> getReporteGeneralServiciosTecnologicoParticipantes();
     /**
      * Método que devuelve la lista de registros encontrados en caso de que el registro principal contenga participantes, esta lista será ocupada para eliminar los participantes
      * @param servicioTecnologico   Entity que permite la búsqueda de los participantes
@@ -60,4 +65,9 @@ public interface EjbServiciosTecnologicosAnioMes {
      * @throws Throwable 
      */
     public List<ServiciosTipos> getListaServiciosTipo() throws Throwable;
+    
+    public ServiciosTecnologicosAnioMes editaServicioTecnologicoAnioMes(ServiciosTecnologicosAnioMes servicioTecnologicoAnioMes);
+    
+    public ServiciosTecnologicosParticipantes editaServicioTecnologicoParticipante(ServiciosTecnologicosParticipantes servicioTecnologicoParticipante);
+    
 }

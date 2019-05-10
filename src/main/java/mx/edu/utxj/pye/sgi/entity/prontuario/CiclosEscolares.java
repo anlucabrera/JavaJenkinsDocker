@@ -56,50 +56,56 @@ public class CiclosEscolares implements Serializable {
     @Column(name = "fin")
     @Temporal(TemporalType.DATE)
     private Date fin;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
-    private List<MovilidadAcademica> movilidadAcademicaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
-    private List<EducacionContinua> educacionContinuaList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
-    private EquiposComputo equiposComputo;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cicloEscolar")
     private List<ProgramasPertinentesCalidad> programasPertinentesCalidadList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo")
     private List<RegistroEventos> registroEventosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    private List<FormacionIntegral> formacionIntegralList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    private List<MovilidadDocente> movilidadDocenteList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo")
+    private List<CapacidadInstalada> capacidadInstaladaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    private List<ServiciosEnfermeria> serviciosEnfermeriaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    private List<MovilidadAcademica> movilidadAcademicaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    private List<EncuestaSatisfaccionEmpleadoresPece> encuestaSatisfaccionEmpleadoresPeceList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cicloEscolar")
+    private List<IngresosServEstTec> ingresosServEstTecList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo")
+    private List<CiclosescolaresGeneraciones> ciclosescolaresGeneracionesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    private List<EncuestaSatisfaccionEgresadosPece> encuestaSatisfaccionEgresadosPeceList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo")
+    private List<AcervoBibliografico> acervoBibliograficoList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    private List<EquiposComputo> equiposComputoList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    private List<EncuestaSatisfaccion> encuestaSatisfaccionList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
     private List<AprovechamientoEscolar> aprovechamientoEscolarList;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
     private CostoPorAlumno costoPorAlumno;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
     private ResultadosExani resultadosExani;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
-    private EquiposComputoInternet equiposComputoInternet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo")
     private List<DistribucionAulas> distribucionAulasList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo")
-    private List<PeriodosEscolares> periodosEscolaresList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
-    private List<FormacionIntegral> formacionIntegralList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
-    private List<MovilidadDocente> movilidadDocenteList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cicloEscolar")
-    private List<IngresosServEstTec> ingresosServEstTecList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo")
     private List<DesercionHistorico> desercionHistoricoList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    private List<EncuestaSatisfaccionEgresadosServicioProporcionado> encuestaSatisfaccionEgresadosServicioProporcionadoList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    private List<EducacionContinua> educacionContinuaList;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    private EquiposComputoInternet equiposComputoInternet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo")
-    private List<CapacidadInstalada> capacidadInstaladaList;
+    private List<PeriodosEscolares> periodosEscolaresList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
     private List<ServiciosTecnologicos> serviciosTecnologicosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
     private List<CalificacionesCuatrimestre> calificacionesCuatrimestreList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo")
-    private List<CiclosescolaresGeneraciones> ciclosescolaresGeneracionesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
-    private List<EncuestaSatisfaccionEgresadosServicioProporcionado> encuestaSatisfaccionEgresadosServicioProporcionadoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
-    private List<ServiciosEnfermeria> serviciosEnfermeriaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo")
-    private List<AcervoBibliografico> acervoBibliograficoList;
 
     public CiclosEscolares() {
     }
@@ -139,32 +145,6 @@ public class CiclosEscolares implements Serializable {
     }
 
     @XmlTransient
-    public List<MovilidadAcademica> getMovilidadAcademicaList() {
-        return movilidadAcademicaList;
-    }
-
-    public void setMovilidadAcademicaList(List<MovilidadAcademica> movilidadAcademicaList) {
-        this.movilidadAcademicaList = movilidadAcademicaList;
-    }
-
-    @XmlTransient
-    public List<EducacionContinua> getEducacionContinuaList() {
-        return educacionContinuaList;
-    }
-
-    public void setEducacionContinuaList(List<EducacionContinua> educacionContinuaList) {
-        this.educacionContinuaList = educacionContinuaList;
-    }
-
-    public EquiposComputo getEquiposComputo() {
-        return equiposComputo;
-    }
-
-    public void setEquiposComputo(EquiposComputo equiposComputo) {
-        this.equiposComputo = equiposComputo;
-    }
-
-    @XmlTransient
     public List<ProgramasPertinentesCalidad> getProgramasPertinentesCalidadList() {
         return programasPertinentesCalidadList;
     }
@@ -180,6 +160,114 @@ public class CiclosEscolares implements Serializable {
 
     public void setRegistroEventosList(List<RegistroEventos> registroEventosList) {
         this.registroEventosList = registroEventosList;
+    }
+
+    @XmlTransient
+    public List<FormacionIntegral> getFormacionIntegralList() {
+        return formacionIntegralList;
+    }
+
+    public void setFormacionIntegralList(List<FormacionIntegral> formacionIntegralList) {
+        this.formacionIntegralList = formacionIntegralList;
+    }
+
+    @XmlTransient
+    public List<MovilidadDocente> getMovilidadDocenteList() {
+        return movilidadDocenteList;
+    }
+
+    public void setMovilidadDocenteList(List<MovilidadDocente> movilidadDocenteList) {
+        this.movilidadDocenteList = movilidadDocenteList;
+    }
+
+    @XmlTransient
+    public List<CapacidadInstalada> getCapacidadInstaladaList() {
+        return capacidadInstaladaList;
+    }
+
+    public void setCapacidadInstaladaList(List<CapacidadInstalada> capacidadInstaladaList) {
+        this.capacidadInstaladaList = capacidadInstaladaList;
+    }
+
+    @XmlTransient
+    public List<ServiciosEnfermeria> getServiciosEnfermeriaList() {
+        return serviciosEnfermeriaList;
+    }
+
+    public void setServiciosEnfermeriaList(List<ServiciosEnfermeria> serviciosEnfermeriaList) {
+        this.serviciosEnfermeriaList = serviciosEnfermeriaList;
+    }
+
+    @XmlTransient
+    public List<MovilidadAcademica> getMovilidadAcademicaList() {
+        return movilidadAcademicaList;
+    }
+
+    public void setMovilidadAcademicaList(List<MovilidadAcademica> movilidadAcademicaList) {
+        this.movilidadAcademicaList = movilidadAcademicaList;
+    }
+
+    @XmlTransient
+    public List<EncuestaSatisfaccionEmpleadoresPece> getEncuestaSatisfaccionEmpleadoresPeceList() {
+        return encuestaSatisfaccionEmpleadoresPeceList;
+    }
+
+    public void setEncuestaSatisfaccionEmpleadoresPeceList(List<EncuestaSatisfaccionEmpleadoresPece> encuestaSatisfaccionEmpleadoresPeceList) {
+        this.encuestaSatisfaccionEmpleadoresPeceList = encuestaSatisfaccionEmpleadoresPeceList;
+    }
+
+    @XmlTransient
+    public List<IngresosServEstTec> getIngresosServEstTecList() {
+        return ingresosServEstTecList;
+    }
+
+    public void setIngresosServEstTecList(List<IngresosServEstTec> ingresosServEstTecList) {
+        this.ingresosServEstTecList = ingresosServEstTecList;
+    }
+
+    @XmlTransient
+    public List<CiclosescolaresGeneraciones> getCiclosescolaresGeneracionesList() {
+        return ciclosescolaresGeneracionesList;
+    }
+
+    public void setCiclosescolaresGeneracionesList(List<CiclosescolaresGeneraciones> ciclosescolaresGeneracionesList) {
+        this.ciclosescolaresGeneracionesList = ciclosescolaresGeneracionesList;
+    }
+
+    @XmlTransient
+    public List<EncuestaSatisfaccionEgresadosPece> getEncuestaSatisfaccionEgresadosPeceList() {
+        return encuestaSatisfaccionEgresadosPeceList;
+    }
+
+    public void setEncuestaSatisfaccionEgresadosPeceList(List<EncuestaSatisfaccionEgresadosPece> encuestaSatisfaccionEgresadosPeceList) {
+        this.encuestaSatisfaccionEgresadosPeceList = encuestaSatisfaccionEgresadosPeceList;
+    }
+
+    @XmlTransient
+    public List<AcervoBibliografico> getAcervoBibliograficoList() {
+        return acervoBibliograficoList;
+    }
+
+    public void setAcervoBibliograficoList(List<AcervoBibliografico> acervoBibliograficoList) {
+        this.acervoBibliograficoList = acervoBibliograficoList;
+    }
+
+    @XmlTransient
+    public List<EquiposComputo> getEquiposComputoList() {
+        return equiposComputoList;
+    }
+
+    public void setEquiposComputoList(List<EquiposComputo> equiposComputoList) {
+        this.equiposComputoList = equiposComputoList;
+    }
+
+    @XmlTransient
+    public List<EncuestaSatisfaccion> getEncuestaSatisfaccionList() {
+        return encuestaSatisfaccionList;
+    }
+
+    public void setEncuestaSatisfaccionList(List<EncuestaSatisfaccion> encuestaSatisfaccionList) {
+        this.encuestaSatisfaccionList = encuestaSatisfaccionList;
     }
 
     @XmlTransient
@@ -207,14 +295,6 @@ public class CiclosEscolares implements Serializable {
         this.resultadosExani = resultadosExani;
     }
 
-    public EquiposComputoInternet getEquiposComputoInternet() {
-        return equiposComputoInternet;
-    }
-
-    public void setEquiposComputoInternet(EquiposComputoInternet equiposComputoInternet) {
-        this.equiposComputoInternet = equiposComputoInternet;
-    }
-
     @XmlTransient
     public List<DistribucionAulas> getDistribucionAulasList() {
         return distribucionAulasList;
@@ -222,42 +302,6 @@ public class CiclosEscolares implements Serializable {
 
     public void setDistribucionAulasList(List<DistribucionAulas> distribucionAulasList) {
         this.distribucionAulasList = distribucionAulasList;
-    }
-
-    @XmlTransient
-    public List<PeriodosEscolares> getPeriodosEscolaresList() {
-        return periodosEscolaresList;
-    }
-
-    public void setPeriodosEscolaresList(List<PeriodosEscolares> periodosEscolaresList) {
-        this.periodosEscolaresList = periodosEscolaresList;
-    }
-
-    @XmlTransient
-    public List<FormacionIntegral> getFormacionIntegralList() {
-        return formacionIntegralList;
-    }
-
-    public void setFormacionIntegralList(List<FormacionIntegral> formacionIntegralList) {
-        this.formacionIntegralList = formacionIntegralList;
-    }
-
-    @XmlTransient
-    public List<MovilidadDocente> getMovilidadDocenteList() {
-        return movilidadDocenteList;
-    }
-
-    public void setMovilidadDocenteList(List<MovilidadDocente> movilidadDocenteList) {
-        this.movilidadDocenteList = movilidadDocenteList;
-    }
-
-    @XmlTransient
-    public List<IngresosServEstTec> getIngresosServEstTecList() {
-        return ingresosServEstTecList;
-    }
-
-    public void setIngresosServEstTecList(List<IngresosServEstTec> ingresosServEstTecList) {
-        this.ingresosServEstTecList = ingresosServEstTecList;
     }
 
     @XmlTransient
@@ -270,12 +314,38 @@ public class CiclosEscolares implements Serializable {
     }
 
     @XmlTransient
-    public List<CapacidadInstalada> getCapacidadInstaladaList() {
-        return capacidadInstaladaList;
+    public List<EncuestaSatisfaccionEgresadosServicioProporcionado> getEncuestaSatisfaccionEgresadosServicioProporcionadoList() {
+        return encuestaSatisfaccionEgresadosServicioProporcionadoList;
     }
 
-    public void setCapacidadInstaladaList(List<CapacidadInstalada> capacidadInstaladaList) {
-        this.capacidadInstaladaList = capacidadInstaladaList;
+    public void setEncuestaSatisfaccionEgresadosServicioProporcionadoList(List<EncuestaSatisfaccionEgresadosServicioProporcionado> encuestaSatisfaccionEgresadosServicioProporcionadoList) {
+        this.encuestaSatisfaccionEgresadosServicioProporcionadoList = encuestaSatisfaccionEgresadosServicioProporcionadoList;
+    }
+
+    @XmlTransient
+    public List<EducacionContinua> getEducacionContinuaList() {
+        return educacionContinuaList;
+    }
+
+    public void setEducacionContinuaList(List<EducacionContinua> educacionContinuaList) {
+        this.educacionContinuaList = educacionContinuaList;
+    }
+
+    public EquiposComputoInternet getEquiposComputoInternet() {
+        return equiposComputoInternet;
+    }
+
+    public void setEquiposComputoInternet(EquiposComputoInternet equiposComputoInternet) {
+        this.equiposComputoInternet = equiposComputoInternet;
+    }
+
+    @XmlTransient
+    public List<PeriodosEscolares> getPeriodosEscolaresList() {
+        return periodosEscolaresList;
+    }
+
+    public void setPeriodosEscolaresList(List<PeriodosEscolares> periodosEscolaresList) {
+        this.periodosEscolaresList = periodosEscolaresList;
     }
 
     @XmlTransient
@@ -294,42 +364,6 @@ public class CiclosEscolares implements Serializable {
 
     public void setCalificacionesCuatrimestreList(List<CalificacionesCuatrimestre> calificacionesCuatrimestreList) {
         this.calificacionesCuatrimestreList = calificacionesCuatrimestreList;
-    }
-
-    @XmlTransient
-    public List<CiclosescolaresGeneraciones> getCiclosescolaresGeneracionesList() {
-        return ciclosescolaresGeneracionesList;
-    }
-
-    public void setCiclosescolaresGeneracionesList(List<CiclosescolaresGeneraciones> ciclosescolaresGeneracionesList) {
-        this.ciclosescolaresGeneracionesList = ciclosescolaresGeneracionesList;
-    }
-
-    @XmlTransient
-    public List<EncuestaSatisfaccionEgresadosServicioProporcionado> getEncuestaSatisfaccionEgresadosServicioProporcionadoList() {
-        return encuestaSatisfaccionEgresadosServicioProporcionadoList;
-    }
-
-    public void setEncuestaSatisfaccionEgresadosServicioProporcionadoList(List<EncuestaSatisfaccionEgresadosServicioProporcionado> encuestaSatisfaccionEgresadosServicioProporcionadoList) {
-        this.encuestaSatisfaccionEgresadosServicioProporcionadoList = encuestaSatisfaccionEgresadosServicioProporcionadoList;
-    }
-
-    @XmlTransient
-    public List<ServiciosEnfermeria> getServiciosEnfermeriaList() {
-        return serviciosEnfermeriaList;
-    }
-
-    public void setServiciosEnfermeriaList(List<ServiciosEnfermeria> serviciosEnfermeriaList) {
-        this.serviciosEnfermeriaList = serviciosEnfermeriaList;
-    }
-
-    @XmlTransient
-    public List<AcervoBibliografico> getAcervoBibliograficoList() {
-        return acervoBibliograficoList;
-    }
-
-    public void setAcervoBibliograficoList(List<AcervoBibliografico> acervoBibliograficoList) {
-        this.acervoBibliograficoList = acervoBibliograficoList;
     }
 
     @Override

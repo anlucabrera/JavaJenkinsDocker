@@ -15,6 +15,12 @@
         <ui:param name="renderBreadCrumb" value="true"/>
         <h:outputStylesheet library="css" name="tablaDatos.css" />
         <h:outputScript library="js" name="dialogs.js" />
+        <h:outputScript library="js" name="calendario.js"/>
+        <!-- Inicio estilos par proceso electoral -->
+            <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+                <h:outputStylesheet library="css" name="procesoElectoral.css" />
+            </c:if>
+        <!-- Fin estilos par proceso electoral -->
     </ui:define>
     <ui:define name="title">
         Productos Académicos
@@ -166,7 +172,7 @@
                                                          tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                                 <p:columnGroup type="header">
                                                     <p:row>
-                                                        <p:column rowspan="2" headerText="Opciones" width="110" />
+                                                        <p:column rowspan="2" headerText="Opciones" width="150" />
                                                         <p:column rowspan="2" headerText="Producto Académico" width="200" />
                                                         <p:column rowspan="2" headerText="Área Académica" width="350" />
                                                         <p:column rowspan="2" headerText="Tipo de producto" width="300" />
@@ -210,6 +216,10 @@
                                                                          class="btn btn-sm #{controladorProductosAcademicosPYE.verificaAlineacion(prodAcad.productosAcademicos.registro)?'btn-info':'btn-warning'}"
                                                                          icon="fa fa-cog"
                                                                          title="Alineación a POA."/>
+                                                        <p:commandButton actionListener="#{controladorProductosAcademicosPYE.abrirEdicionProductoAcademico(prodAcad.productosAcademicos)}"
+                                                                         class="btn btn-sm btn-info"
+                                                                         icon="fa fa-pencil-square-o"
+                                                                         title="Editar producto académico"/>
                                                     </div>
                                                 </p:column>
                                                 <p:column>
@@ -289,7 +299,7 @@
                                                          tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                                 <p:columnGroup type="header">
                                                     <p:row>
-                                                        <p:column headerText="Opciones" width="50" />
+                                                        <p:column headerText="Opciones" width="90" />
                                                         <p:column rowspan="2" headerText="Producto Académico" width="200"/>
                                                         <p:column rowspan="2" headerText="Nombre" width="350" />
                                                     </p:row>
@@ -318,6 +328,10 @@
                                                                          class="btn btn-sm #{controladorProductosAcademicosPYE.verificaAlineacion(productoAcademicoPersonal.productoAcademicoPersonal.registro)?'btn-info':'btn-warning'}"
                                                                          icon="fa fa-cog"
                                                                          title="Alineación a POA."/>
+                                                        <p:commandButton actionListener="#{controladorProductosAcademicosPYE.abrirEdicionProductoAcademicoPersonal(productoAcademicoPersonal.productoAcademicoPersonal)}"
+                                                                         class="btn btn-sm btn-info"
+                                                                         icon="fa fa-pencil-square-o"
+                                                                         title="Editar producto académico personal"/>
                                                     </div>
                                                 </p:column>
                                                 <p:column>
@@ -713,6 +727,446 @@
                         </h:form>
                     </p:dialog>
 
+                    <p:dialog id="modalEdicionProductosAcademicos" 
+                              widgetVar="modalEdicionProductosAcademicos" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{controladorProductosAcademicosPYE.dtoProductoAcademico.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Edición de Producto Académico" 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmEdicionProductosAcademicos">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12">
+                                    <p:outputLabel value="Edición del producto académico #{controladorProductosAcademicosPYE.dtoProductoAcademico.registroProductoAcademico.productosAcademicos.productoAcademico}"/>
+                                </div>
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                
+                                <!--Programa Educativo-->
+                                <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
+                                    <p:outputLabel for="somProgramasEducativos" value="Areas Académicas: "/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="somProgramasEducativos"
+                                                     required="true"
+                                                     requiredMessage="Seleccione el Área Académica"
+                                                     value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.areaAcademica}"
+                                                     valueChangeListener="#{controladorProductosAcademicosPYE.actualizarAreaAcademica}"
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     style="padding-top: 0px; width: 32em;"
+                                                     converter="entidadConverter2"
+                                                     >
+                                        <f:selectItems value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.listaAreasAcademicas}" 
+                                                       var="areaAcad"
+                                                       itemValue="#{areaAcad}" 
+                                                       itemLabel="#{areaAcad.nombre}"
+                                                       itemDescription="#{areaAcad.nivelEducativo.nivel}" />
+                                        <p:ajax event="change" process="somProgramasEducativos"/>
+                                    </p:selectOneMenu>
+                                    <p:message for="somProgramasEducativos" />
+                                </div>
+                                
+                                <!--Tipo-->
+                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
+                                    <p:outputLabel for="somTipoProductoAcademico" value="Tipo: "/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="somTipoProductoAcademico"
+                                                     required="true"
+                                                     requiredMessage="Seleccione el Área Académica"
+                                                     value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.registroProductoAcademico.productosAcademicos.tipo}"
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     style="padding-top: 0px; width: 14em;"
+                                                     >
+                                        <f:selectItem itemValue="Exposición de cartel" 
+                                                      itemLabel="Exposición de cartel"
+                                                      itemDescription="Exposición de cartel" />
+                                        <f:selectItem itemValue="Ponencia en congreso" 
+                                                      itemLabel="Ponencia en congreso"
+                                                      itemDescription="Ponencia en congreso" />
+                                        <f:selectItem itemValue="Publicación en memorias de congreso" 
+                                                      itemLabel="Publicación en memorias de congreso"
+                                                      itemDescription="Publicación en memorias de congreso" />
+                                        <f:selectItem itemValue="Publicación en revista especializada" 
+                                                      itemLabel="Publicación en revista especializada"
+                                                      itemDescription="Publicación en revista especializada" />
+                                        <f:selectItem itemValue="Capítulo de libro impreso" 
+                                                      itemLabel="Capítulo de libro impreso"
+                                                      itemDescription="Capítulo de libro impreso" />
+                                        <f:selectItem itemValue="Capítulo de libro digital" 
+                                                      itemLabel="Capítulo de libro digital"
+                                                      itemDescription="Capítulo de libro digital" />
+                                        <f:selectItem itemValue="Libro impreso" 
+                                                      itemLabel="Libro impreso"
+                                                      itemDescription="Libro impreso" /> 
+                                        <f:selectItem itemValue="Libro digital" 
+                                                      itemLabel="Libro digital"
+                                                      itemDescription="Libro digital" />  
+                                        <f:selectItem itemValue="Revista especializada online" 
+                                                      itemLabel="Revista especializada online"
+                                                      itemDescription="Revista especializada online" />
+                                    </p:selectOneMenu>
+                                    <p:message for="somTipoProductoAcademico" />
+                                </div>
+                                
+                                <!--Nombre producto académico-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Nombre: " for="iptNombreProductoAcademico"/>
+                                    <p:inputText id="iptNombreProductoAcademico"
+                                                 label="iptNombreProductoAcademico"
+                                                 maxlength="250"
+                                                 required="true"
+                                                 class="form-control"
+                                                 requiredMessage="Ingrese el nombre de la empresa"
+                                                 value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.registroProductoAcademico.productosAcademicos.nombreProd}"/>
+                                    <p:watermark for="iptNombreProductoAcademico" value="Ejemplo de nombre de producto académico *" />
+                                    <p:message for="iptNombreProductoAcademico" />
+                                </div>
+                                
+                                <!--Evento o revista de presentación-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Evento o revista de presentación: " for="iptEveRevPresentacion"/>
+                                    <p:inputText id="iptEveRevPresentacion"
+                                                 label="iptEveRevPresentacion"
+                                                 maxlength="250"
+                                                 required="true"
+                                                 class="form-control"
+                                                 requiredMessage="Ingrese el nombre del evento o revista de presentación"
+                                                 value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.registroProductoAcademico.productosAcademicos.eventrevPresentacion}"/>
+                                    <p:watermark for="iptEveRevPresentacion" value="Ejemplo de evento o revista de presentación *" />
+                                    <p:message for="iptEveRevPresentacion" />
+                                </div>
+                                
+                                <!--Fecha de inicio-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Fecha de inicio: " for="iptFechaInicio" />
+                                    <br></br>
+                                    <p:spacer width="5" />
+                                    <p:calendar id="iptFechaInicio"
+                                                label="iptFechaInicio"
+                                                required="true"
+                                                requiredMessage="Ingrese Fecha de Inicio"
+                                                value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.registroProductoAcademico.productosAcademicos.fechaInicio}"
+                                                valueChangeListener="#{controladorProductosAcademicosPYE.validaFechaInicio}"
+                                                pattern="yyyy-MM-dd" 
+                                                mask="true"
+                                                locale="es"
+                                                styleClass="campo2Partes"
+                                                >
+                                        <p:ajax event="dateSelect" process="iptFechaInicio" update="iptFechaFin"/>
+                                        <p:ajax event="change" process="iptFechaInicio" update="iptFechaFin"/>
+                                    </p:calendar>
+                                    <p:watermark for="iptFechaInicio" value="2019-03-19 *" />
+                                    <p:message for="iptFechaInicio" />
+                                </div>
+                                <!--Fecha de termino-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Fecha de termino: " for="iptFechaFin" />
+                                    <br></br>
+                                    <p:spacer width="5" />
+                                    <p:calendar id="iptFechaFin"
+                                                label="iptFechaFin"
+                                                required="true"
+                                                requiredMessage="Ingrese Fecha de Termino"
+                                                value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.registroProductoAcademico.productosAcademicos.fechaFin}" 
+                                                valueChangeListener="#{controladorProductosAcademicosPYE.validaFechaFin}"
+                                                pattern="yyyy-MM-dd" 
+                                                mask="true"
+                                                styleClass="campo2Partes"
+                                                locale="es"
+                                                >
+                                        <p:ajax event="dateSelect" process="iptFechaFin" update="iptFechaInicio"/>
+                                        <p:ajax event="change" process="iptFechaFin" update="iptFechaInicio"/>
+                                    </p:calendar>
+                                    <p:watermark for="iptFechaFin" value="2019-03-20 *" />
+                                    <p:message for="iptFechaFin" />
+                                </div>
+                                
+                                <!--País-->
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;">
+                                    <p:outputLabel for="pais" 
+                                                   value="País: "/>
+                                    <br></br>
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="pais" 
+                                                     required="true" 
+                                                     requiredMessage="Seleccione un país"
+                                                     value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.pais}" 
+                                                     valueChangeListener="#{controladorProductosAcademicosPYE.actualizarEstados}" 
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains" 
+                                                     converter="entidadConverter2">
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.paises}" 
+                                                       var="pais" 
+                                                       itemValue="#{pais}" 
+                                                       itemLabel="#{pais.nombre}" 
+                                                       itemDescription="#{pais.nombre}" />
+                                        <p:ajax process="pais" 
+                                                update="@form:estado,@form:municipio" />
+                                        <p:message for="pais" />
+                                    </p:selectOneMenu>
+                                </div>
+
+                                <!--Estado-->
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;">
+                                    <p:outputLabel for="estado" 
+                                                   value="Estado: "/>
+                                    <br></br>
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="estado" 
+                                                     required="true"
+                                                     requiredMessage="Seleccione un estado"
+                                                     value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.estado}" 
+                                                     valueChangeListener="#{controladorProductosAcademicosPYE.actualizarMunicipios}" 
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains" 
+                                                     converter="entidadConverter2">
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.estados}" 
+                                                       var="estado" 
+                                                       itemValue="#{estado}" 
+                                                       itemLabel="#{estado.nombre}" 
+                                                       itemDescription="#{estado.nombre}" />
+                                        <p:ajax process="estado" 
+                                                update="@form:municipio" />
+                                        <p:message for="estado" />
+                                    </p:selectOneMenu>
+                                </div>
+
+                                <!--Municipio-->
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;">
+                                    <p:outputLabel for="municipio" 
+                                                   value="Municipio: "/>
+                                    <br></br>
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="municipio" 
+                                                     required="true"
+                                                     requiredMessage="Seleccione un municipio"
+                                                     value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.municipio}"
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains" 
+                                                     converter="entidadConverter2">
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.municipios}" 
+                                                       var="municipio" 
+                                                       itemValue="#{municipio}" 
+                                                       itemLabel="#{municipio.nombre}" 
+                                                       itemDescription="#{municipio.nombre}" />
+                                        <p:ajax process="municipio" />
+                                        <p:message for="municipio" />
+                                    </p:selectOneMenu>
+                                </div>
+                                
+                                <!--Lugar de realización-->
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Lugar de realización: " for="itaLugarRealizacion" />
+                                    <p:inputTextarea id="itaLugarRealizacion"
+                                                     rows="3" 
+                                                     counter="displayLR" 
+                                                     maxlength="500" 
+                                                     counterTemplate="{0} caracteres en total." 
+                                                     autoResize="true"
+                                                     required="true"
+                                                     class="form-control"
+                                                     requiredMessage="Ingrese el lugar de realización"
+                                                     value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.registroProductoAcademico.productosAcademicos.lugar}"/>
+                                    <h:outputText id="displayLR" />
+                                    <p:watermark for="itaLugarRealizacion" value="Ingrese el lugar de realización del producto académico *" />
+                                    <p:message for="itaLugarRealizacion" />
+                                </div>
+                                
+                                <!--Descripción-->
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Descripción: " for="itaDescripcion" />
+                                    <p:inputTextarea id="itaDescripcion"
+                                                     rows="3" 
+                                                     counter="displayDesc" 
+                                                     maxlength="500" 
+                                                     counterTemplate="{0} caracteres en total." 
+                                                     autoResize="true"
+                                                     required="true"
+                                                     class="form-control"
+                                                     requiredMessage="Ingrese el lugar de realización"
+                                                     value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.registroProductoAcademico.productosAcademicos.descripcion}"/>
+                                    <h:outputText id="displayDesc" />
+                                    <p:watermark for="itaDescripcion" value="Ingrese una descripción del producto académico *" />
+                                    <p:message for="itaDescripcion" />
+                                </div>
+                                
+                                <!--ISSN-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="ISSN ó ISBN: " for="iptISSN"/>
+                                    <p:inputText id="iptISSN"
+                                                 label="iptISSN"
+                                                 maxlength="25"
+                                                 required="true"
+                                                 class="form-control"
+                                                 requiredMessage="Ingrese ISSN ó ISBN"
+                                                 value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.registroProductoAcademico.productosAcademicos.issn}"/>
+                                    <p:watermark for="iptISSN" value="ISSN-00001-01 *" />
+                                    <p:message for="iptISSN" />
+                                </div>
+                                
+                                <!--Arbitrado/Indexado-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Arbitrado/Indexado: " for="sobArbitradoIndexado"/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneButton id="sobArbitradoIndexado"
+                                                       label="sobArbitradoIndexado"
+                                                       value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.registroProductoAcademico.productosAcademicos.arbitradoIndexado}"
+                                                       required="true"
+                                                       requiredMessage="Seleccione el tipo de actividad"
+                                                       >
+                                        <f:selectItem itemLabel="Arbitrado" itemValue="Arbitrado" />
+                                        <f:selectItem itemLabel="Indexado" itemValue="Indexado" />
+                                    </p:selectOneButton>
+                                    <p:message for="sobArbitradoIndexado" />
+                                </div>
+                                
+                                <!--Guardar-->
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <center>
+                                        <p:commandButton id="btnEditaProductoAcademico"
+                                                         value="Actualizar Cambios"
+                                                         icon="fa fa-save"
+                                                         class="btn-primary"
+                                                         actionListener="#{controladorProductosAcademicosPYE.editaProductoAcademico}"
+                                                         update="@form:frmEdicionProductosAcademicos" 
+                                                         process="@form:frmEdicionProductosAcademicos"
+                                                         />
+                                    </center>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    
+                    <p:dialog id="modalEdicionProductoAcademicoPersonal" 
+                              widgetVar="modalEdicionProductoAcademicoPersonal" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{controladorProductosAcademicosPYE.dtoProductoAcademico.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Edición de Personal en Producto Académico" 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmEdicionProductoAcademicoPersonal">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12">
+                                    <p:outputLabel value="Edición del integrante: #{controladorProductosAcademicosPYE.dtoProductoAcademico.registroProductosAcademicosPersonal.productoAcademicoPersonal.personal}"/>
+                                </div>
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
+                                    <p:outputLabel id="mensaje" value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.mensaje}"/>
+                                    <br></br>
+                                </div>
+                                
+                                <!--Productos Académicos-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px">
+                                    <p:outputLabel value="Producto Académico: " for="somProductosAcademicos" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="somProductosAcademicos"
+                                                     required="true"
+                                                     requiredMessage="Seleccione el producto académico"
+                                                     value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.registroProductosAcademicosPersonal.productoAcademicoPersonal.productoAcademico}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     converter="entidadConverter2"
+                                                     style="padding-top: 0px"
+                                                     styleClass="campo2Partes"
+                                                     >
+                                        <f:selectItem itemLabel=" - Seleccione - "
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.listaProductosAcademicoInt}"
+                                                       var="pa"
+                                                       itemValue="#{pa}"
+                                                       itemLabel="#{pa.productoAcademico} - #{pa.nombreProd}"
+                                                       itemDescription="#{pa.productoAcademico}"/>
+                                        <p:message for="somProductosAcademicos" />
+                                    </p:selectOneMenu>
+                                </div>
+                                
+                                <!--Personal-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Integrante (Busqueda por Clave, Nombre, Área): " for="acPersonal" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:autoComplete id="acPersonal"
+                                                    value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.persona}"
+                                                    completeMethod="#{controladorProductosAcademicosPYE.completeListaPersonal}"
+                                                    styleClass="campo2Partes"
+                                                    queryDelay="1000"
+                                                    var="persona"
+                                                    itemLabel="#{persona.nombre}"
+                                                    itemValue="#{persona}"
+                                                    converter="listaPersonalConverter"
+                                                    forceSelection="true"
+                                                    minQueryLength="3"
+                                                    scrollHeight="300"
+                                                    placeholder="Escriba el nombre y seleccione."
+                                                    valueChangeListener="#{controladorProductosAcademicosPYE.seleccionaListaPersonal}"
+                                                    required="true"
+                                                    requiredMessage="Seleccione una opción"
+                                                    >
+                                        <p:column><h:outputText value="#{persona.clave}" /></p:column>
+                                        <p:column><h:outputText value="#{persona.nombre}" /></p:column>
+                                        <p:column><h:outputText value="#{persona.areaOperativaNombre}" /></p:column> 
+                                        <p:ajax event="itemSelect" process="acPersonal"/>
+                                        <p:message for="acPersonal" />
+                                    </p:autoComplete>
+                                </div>
+                                
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <center>
+                                        <p:commandButton id="btnEditaProductoAcademico"
+                                                         value="Actualizar Cambios"
+                                                         icon="fa fa-save"
+                                                         class="btn-primary"
+                                                         actionListener="#{controladorProductosAcademicosPYE.editaProductoAcademicoPersonal}"
+                                                         update="@form:frmEdicionProductoAcademicoPersonal" 
+                                                         process="@form:frmEdicionProductoAcademicoPersonal"
+                                                         />
+                                    </center>
+                                </div>
+                                
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    
                 </div>
             </div>
         </div>

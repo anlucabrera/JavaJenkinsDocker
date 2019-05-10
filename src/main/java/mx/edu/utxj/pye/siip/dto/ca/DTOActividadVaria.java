@@ -22,7 +22,6 @@ import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesVariasRegistro;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(of = "actividadVaria")
 @EqualsAndHashCode
 public class DTOActividadVaria implements Serializable{
 

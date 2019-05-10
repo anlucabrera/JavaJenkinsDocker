@@ -26,10 +26,10 @@ import javax.persistence.TypedQuery;
 import javax.servlet.http.Part;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Meses;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
-import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
@@ -594,6 +594,33 @@ public class ServicioModulos implements EjbModulos {
         }
         
         return areas;
+    }
+
+    @Override
+    public CiclosEscolares buscaCicloEscolarEspecifico(Integer generacion) {
+        try {
+            return f.getEntityManager().find(CiclosEscolares.class, generacion);
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public PeriodosEscolares buscaPeriodoEscolarEspecifico(Integer periodo) {
+        try {
+            return f.getEntityManager().find(PeriodosEscolares.class, periodo);
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public AreasUniversidad buscaProgramaEducativoEspecifico(Short programaEducativo) {
+        try {
+            return f.getEntityManager().find(AreasUniversidad.class, programaEducativo);
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
 }

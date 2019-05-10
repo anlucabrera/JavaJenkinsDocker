@@ -48,6 +48,8 @@ public class ProgramasEducativosNiveles implements Serializable {
     private String nombre;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "nivel")
     private List<ProgramasEducativos> programasEducativosList;
+    @OneToMany(mappedBy = "nivelEducativo")
+    private List<AreasUniversidad> areasUniversidadList;
 
     public ProgramasEducativosNiveles() {
     }
@@ -84,6 +86,15 @@ public class ProgramasEducativosNiveles implements Serializable {
 
     public void setProgramasEducativosList(List<ProgramasEducativos> programasEducativosList) {
         this.programasEducativosList = programasEducativosList;
+    }
+
+    @XmlTransient
+    public List<AreasUniversidad> getAreasUniversidadList() {
+        return areasUniversidadList;
+    }
+
+    public void setAreasUniversidadList(List<AreasUniversidad> areasUniversidadList) {
+        this.areasUniversidadList = areasUniversidadList;
     }
 
     @Override

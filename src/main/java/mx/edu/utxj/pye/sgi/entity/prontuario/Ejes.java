@@ -48,6 +48,8 @@ public class Ejes implements Serializable {
     @Column(name = "nombre")
     private String nombre;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "eje")
+    private List<IndicadoresCarrousel> indicadoresCarrouselList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eje")
     private List<Indicadores> indicadoresList;
 
     public Ejes() {
@@ -76,6 +78,15 @@ public class Ejes implements Serializable {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    @XmlTransient
+    public List<IndicadoresCarrousel> getIndicadoresCarrouselList() {
+        return indicadoresCarrouselList;
+    }
+
+    public void setIndicadoresCarrouselList(List<IndicadoresCarrousel> indicadoresCarrouselList) {
+        this.indicadoresCarrouselList = indicadoresCarrouselList;
     }
 
     @XmlTransient

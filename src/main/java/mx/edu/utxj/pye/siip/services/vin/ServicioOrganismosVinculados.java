@@ -68,12 +68,9 @@ import org.omnifaces.util.Messages;
 @MultipartConfig
 public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
 
-    @EJB
-    Facade facadeProntuario;
-    @EJB
-    EjbModulos ejbModulos;
-    @EJB Facade f;
-    @Inject LogonMB logonMB;
+    @EJB        EjbModulos  ejbModulos;
+    @EJB        Facade      facadeProntuario;
+    @Inject     LogonMB     logonMB;
     
     @EJB
     EjbFiscalizacion ejbFiscalizacion;
@@ -879,7 +876,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
             }
             return true;
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "No se pudo asginar el programa al convenio.", e);
+            LOG.log(Level.SEVERE, "No se pudo asignar el programa al convenio.", e);
             return false;
         }
     }
@@ -895,6 +892,49 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
             return true;
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "No se pudo eliminar el programa del convenio.", e);
+            return false;
+        }
+    }
+
+    @Override
+    public OrganismosVinculados editaOrganismoVinculado(OrganismosVinculados organismoVinculado) {
+        try {
+            facadeProntuario.setEntityClass(OrganismosVinculados.class);
+            facadeProntuario.edit(organismoVinculado);
+            facadeProntuario.flush();
+            return organismoVinculado;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo actualizar el registro: " + organismoVinculado.getNombre(), e);
+            return null;
+        }
+    }
+
+    @Override
+    public List<OrganismosVinculados> buscaCoincidenciasOrganismosVinculados(String parametro) {
+        try {
+            return facadeProntuario.getEntityManager().createQuery("SELECT o FROM OrganismosVinculados o WHERE o.nombre like concat('%',:parametro,'%') AND o.estatus = :estatus ORDER BY o.nombre", OrganismosVinculados.class)
+                    .setParameter("parametro", parametro)
+                    .setParameter("estatus", true)
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public Boolean buscaOrganismoVinculadoExistente(OrganismosVinculados organismoVinculado) {
+        try {
+            OrganismosVinculados orgVin = new OrganismosVinculados();
+            orgVin = facadeProntuario.getEntityManager().createQuery("SELECT o FROM OrganismosVinculados o WHERE o.nombre = :nombre AND o.registro <> :registro",OrganismosVinculados.class)
+                .setParameter("nombre", organismoVinculado.getNombre())
+                .setParameter("registro", organismoVinculado.getRegistro())
+                .getSingleResult();
+            if(orgVin != null){
+                return true;
+            }else{
+                return false;
+            }
+        } catch (NoResultException | NonUniqueResultException ex) {
             return false;
         }
     }

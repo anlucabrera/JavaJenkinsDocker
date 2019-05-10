@@ -699,5 +699,5 @@ public class ActividadesPoa implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa[ actividadPoa=" + actividadPoa + " ]";
     }
-
+    
 }

@@ -71,6 +71,9 @@ public class AreasUniversidad implements Serializable {
     @JoinColumn(name = "categoria", referencedColumnName = "categoria")
     @ManyToOne(optional = false)
     private Categorias categoria;
+    @JoinColumn(name = "nivelEducativo", referencedColumnName = "nivel")
+    @ManyToOne
+    private ProgramasEducativosNiveles nivelEducativo;
 
     public AreasUniversidad() {
     }
@@ -149,6 +152,14 @@ public class AreasUniversidad implements Serializable {
 
     public void setCategoria(Categorias categoria) {
         this.categoria = categoria;
+    }
+
+    public ProgramasEducativosNiveles getNivelEducativo() {
+        return nivelEducativo;
+    }
+
+    public void setNivelEducativo(ProgramasEducativosNiveles nivelEducativo) {
+        this.nivelEducativo = nivelEducativo;
     }
 
     @Override

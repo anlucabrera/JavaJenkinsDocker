@@ -66,19 +66,14 @@ import org.omnifaces.util.Messages;
 @Stateful
 public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosEscolares {
     
-    @EJB
-    EjbModulos ejbModulos;
+    @EJB    EjbModulos          ejbModulos;
+    @EJB    Facade              f;
+    @EJB    EjbPropiedades      ep;
+    @EJB    EjbFiscalizacion    ejbFiscalizacion;
 
-    @EJB
-    Facade f;
-    @EJB
-    EjbPropiedades ep;
-    @Inject
-    Caster caster;
-    @Inject
-    LogonMB logonMB;
-    @EJB
-    EjbFiscalizacion ejbFiscalizacion;
+    @Inject Caster      caster;
+    @Inject LogonMB     logonMB;
+    
 
     @Override
     public List<DTOMatriculaPeriodosEscolares> getListaMatriculaPeriodosEscolares(String rutaArchivo) throws Throwable {
@@ -231,6 +226,45 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
                             } else {
                                 validarCelda.add(false);
                                 datosInvalidos.add("Dato incorrecto: CURP en la columna: " + (14 + 1) + " y fila: " + (i + 1));
+                            }
+                            
+                            if (fila.getCell(15).getCellTypeEnum() == CellType.STRING) {
+                                switch (fila.getCell(15).getCellTypeEnum()) {
+                                    case STRING:
+                                        matriculaPeriodoEscolar.setLenguaIndigena(fila.getCell(15).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Lengua Indígena en la columna: " + (15 + 1) + " y fila: " + (i + 1));
+                            }
+                            
+                            if (fila.getCell(17).getCellTypeEnum() == CellType.STRING) {
+                                switch (fila.getCell(17).getCellTypeEnum()) {
+                                    case STRING:
+                                        matriculaPeriodoEscolar.setDiscapacidad(fila.getCell(17).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Discapacidad en la columna: " + (17 + 1) + " y fila: " + (i + 1));
+                            }
+                            
+                            if (fila.getCell(19).getCellTypeEnum() == CellType.STRING) {
+                                switch (fila.getCell(19).getCellTypeEnum()) {
+                                    case STRING:
+                                        matriculaPeriodoEscolar.setComunidadIndigena(fila.getCell(19).getStringCellValue());
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                validarCelda.add(false);
+                                datosInvalidos.add("Dato incorrecto: Comunidad Indígena en la columna: " + (19 + 1) + " y fila: " + (i + 1));
                             }
 
                             dtoMatriculaPeriodoEscolar.setMatricula(matriculaPeriodoEscolar);
@@ -413,10 +447,11 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
         
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         List<DTOMatriculaPeriodosEscolares> l = new ArrayList<>();
-        List<MatriculaPeriodosEscolares> entities = f.getEntityManager().createQuery("SELECT mpe FROM MatriculaPeriodosEscolares mpe INNER JOIN FETCH mpe.registros r INNER JOIN r.tipo t WHERE (mpe.periodo=:periodo) AND (t.registroTipo=:tipo) AND (r.area = :area) ORDER BY mpe.programaEducativo,mpe.cuatrimestre,mpe.grupo,mpe.matricula", MatriculaPeriodosEscolares.class)
+        List<MatriculaPeriodosEscolares> entities = f.getEntityManager().createQuery("SELECT mpe FROM MatriculaPeriodosEscolares mpe INNER JOIN mpe.registros r INNER JOIN r.tipo t WHERE (mpe.periodo=:periodo) AND (t.registroTipo=:tipo) AND (r.area = :area) ORDER BY mpe.programaEducativo,mpe.cuatrimestre,mpe.grupo,mpe.matricula", MatriculaPeriodosEscolares.class)
                 .setParameter("periodo", periodo.getPeriodo())
                 .setParameter("tipo", registrosTipo.getRegistroTipo())
                 .setParameter("area", area.getArea())
+                .setMaxResults(500)
                 .getResultList();
 
         //construir la lista de dto's para mostrar en tabla
@@ -595,5 +630,37 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
     }
     
     private static final Logger LOG = Logger.getLogger(ServicioMatriculaPeriodosEscolares.class.getName());
+
+    @Override
+    public MatriculaPeriodosEscolares editaMatriculaPeriodoEscolar(MatriculaPeriodosEscolares mpe) {
+        try {
+            f.setEntityClass(MatriculaPeriodosEscolares.class);
+            f.edit(mpe);
+            f.flush();
+            return mpe;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo actualizar el registro de matricula: " + mpe.getMatricula(), e);
+            return null;
+        }
+    }
+
+    @Override
+    public Boolean buscaMatriculaPeriodoEscolarExistente(MatriculaPeriodosEscolares matriculaPeriodoEscolar) {
+        try {
+            MatriculaPeriodosEscolares mpe = new MatriculaPeriodosEscolares();
+            mpe = f.getEntityManager().createQuery("SELECT m FROM MatriculaPeriodosEscolares m WHERE m.matricula = :matricula AND m.periodo = :periodo AND m.registro <> :registro", MatriculaPeriodosEscolares.class)
+                    .setParameter("matricula", matriculaPeriodoEscolar.getMatricula())
+                    .setParameter("periodo", matriculaPeriodoEscolar.getPeriodo())
+                    .setParameter("registro", matriculaPeriodoEscolar.getRegistro())
+                    .getSingleResult();
+            if (mpe != null) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (NoResultException | NonUniqueResultException ex) {
+            return false;
+        }
+    }
 
 }

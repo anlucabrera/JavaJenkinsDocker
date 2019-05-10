@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.ejb.Local;
 import javax.servlet.http.Part;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
@@ -284,4 +285,11 @@ public interface EjbModulos {
      * @return Lista de claves de área.
      */
     public List<Short> getAreasDependientes (Short area);
+    
+    public CiclosEscolares buscaCicloEscolarEspecifico(Integer generacion);
+    
+    public PeriodosEscolares buscaPeriodoEscolarEspecifico(Integer periodo);
+    
+    public AreasUniversidad buscaProgramaEducativoEspecifico(Short programaEducativo);
+    
 }

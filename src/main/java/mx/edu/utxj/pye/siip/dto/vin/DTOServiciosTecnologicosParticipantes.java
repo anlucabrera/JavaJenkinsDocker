@@ -23,7 +23,6 @@ import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosTecnologicosParticipantes;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(of = "serviciosTecnologicosParticipantes")
 @EqualsAndHashCode
 public class DTOServiciosTecnologicosParticipantes implements Serializable{
     private static final long serialVersionUID = -8886379137437964410L;

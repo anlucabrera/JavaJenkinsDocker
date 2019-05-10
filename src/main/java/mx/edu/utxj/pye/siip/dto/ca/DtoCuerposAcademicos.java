@@ -12,10 +12,14 @@ import java.util.List;
 import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
+import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadAreasEstudio;
+import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadDisciplinas;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadLineas;
+import mx.edu.utxj.pye.sgi.entity.pye2.CuerposAcademicosRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
@@ -27,6 +31,14 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
  * @author UTXJ
  */
 public final class DtoCuerposAcademicos {
+    /************************** Edición ****************************************/
+    @Getter @Setter List<CuerpacadAreasEstudio> listaAreasEstudio;
+    @Getter @Setter List<CuerpacadDisciplinas> listaDisciplinas;
+    @Getter @Setter List<ListaPersonal> listaPersonal;
+    @Getter @Setter List<CuerposAcademicosRegistro> listaCuerposAcademicosIntLa;
+    @Getter @Setter ListaPersonal persona;
+    @Getter @Setter String mensaje;
+    
     /************************** Lista áreas ****************************************/
     @Getter private List<Categorias> listaCategoriasPOA;
     @Getter private List<AreasUniversidad> listaAreasPOA; 

@@ -128,6 +128,7 @@ public class ServicioCarga implements EjbCarga {
 //    Variables creadas para la subida de archivos de los Modulos de registro
     public static final String modulosRegistro = "modulos_registro";
     public static final String plantillas = "plantillas";
+    public static final String reportes = "reportes";
     public static final String completo = "completo";
     private static final String carpetaW = "C:\\archivos\\";
     private static final String carpetaL = "/home/admin/archivos/";
@@ -160,7 +161,15 @@ public class ServicioCarga implements EjbCarga {
     public static String genCarpetaRelativa(String modulosRegistro, String plantillas, String eje, String completo){
         return carpetaRaiz + modulosRegistro + File.separator + plantillas + File.separator + eje + File.separator + completo + File.separator;
     }
-     
+    
+    public static String genCarpetaRelativaReporte(String modulosRegistro, String reportes, String eje){
+        return carpetaRaiz + modulosRegistro + File.separator + reportes + File.separator + eje + File.separator;
+    }
+    
+    public static String genCarpetaRelativaReporte(String modulosRegistro, String reportes, String eje, String completo){
+        return carpetaRaiz + modulosRegistro + File.separator + reportes + File.separator + eje + File.separator + completo + File.separator;
+    }
+    
     @Override
     public String subirExcelRegistro(String ejercicio, String area, String eje, String registro, Part file) {
         try {
@@ -237,6 +246,20 @@ public class ServicioCarga implements EjbCarga {
     @Override
     public String crearDirectorioPlantillaCompleto(String eje) {
         String rutaRelativa = genCarpetaRelativa(modulosRegistro, plantillas, eje, completo);
+        addCarpetaRelativa(rutaRelativa);
+        return rutaRelativa;
+    }
+
+    @Override
+    public String crearDirectorioReporte(String eje) {
+        String rutaRelativa = genCarpetaRelativaReporte(modulosRegistro, reportes, eje);
+        addCarpetaRelativa(rutaRelativa);
+        return rutaRelativa;
+    }
+
+    @Override
+    public String crearDirectorioReporteCompleto(String eje) {
+        String rutaRelativa = genCarpetaRelativaReporte(modulosRegistro, reportes, eje, completo);
         addCarpetaRelativa(rutaRelativa);
         return rutaRelativa;
     }

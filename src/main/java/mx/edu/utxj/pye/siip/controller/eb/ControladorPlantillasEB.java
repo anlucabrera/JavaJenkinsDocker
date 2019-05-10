@@ -12,6 +12,7 @@ import javax.annotation.ManagedBean;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbPlantillasEBExcel;
+import mx.edu.utxj.pye.siip.interfaces.eb.EjbReportesEBExcel;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Faces;
 
@@ -26,8 +27,8 @@ public class ControladorPlantillasEB implements Serializable{
     
     private static final long serialVersionUID = 4672526767052124642L;
     
-    @EJB
-    EjbPlantillasEBExcel ejbPlantillasEBExcel;
+    @EJB    EjbPlantillasEBExcel    ejbPlantillasEBExcel;
+    @EJB    EjbReportesEBExcel      ejbReportesEBExcel;
     
     public void descargarPlantillaMatriculaPeriodoEscolar()throws IOException, Throwable{
         File f = new File(ejbPlantillasEBExcel.getPlantillaMatriculaPeriodosEscolares());
@@ -49,4 +50,8 @@ public class ControladorPlantillasEB implements Serializable{
         Faces.sendFile(f, true);
     }
     
+    public void descargarReporteDistribucionEquipamiento() throws IOException, Throwable{
+        File f = new File(ejbReportesEBExcel.getReporteDistribucionEquipamiento());
+        Faces.sendFile(f, true);
+    }
 }

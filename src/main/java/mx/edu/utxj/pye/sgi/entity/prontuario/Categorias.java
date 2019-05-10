@@ -5,7 +5,6 @@
  */
 package mx.edu.utxj.pye.sgi.entity.prontuario;
 
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -26,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Planeacion
+ * @author UTXJ
  */
 @Entity
 @Table(name = "categorias", catalog = "prontuario", schema = "")
@@ -110,7 +109,7 @@ public class Categorias implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.ejb.prontuario.Categorias[ categoria=" + categoria + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.prontuario.Categorias[ categoria=" + categoria + " ]";
     }
     
 }

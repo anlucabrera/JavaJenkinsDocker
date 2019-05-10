@@ -11,6 +11,7 @@ import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
@@ -25,6 +26,14 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
  * @author UTXJ
  */
 public final class DtoDistribucionEquipamiento {
+    /************************** Edición ****************************************/
+    @Getter @Setter CiclosEscolares cicloEscolar;
+    @Getter @Setter PeriodosEscolares periodoEscolar;
+    @Getter @Setter Integer cicloInicio, cicloFin;
+    @Getter @Setter String mensaje;
+    @Getter @Setter Boolean visualiza;
+    @Getter @Setter Boolean visualizaCInernet;
+    
     /************************** Lista áreas ****************************************/
     @Getter @Setter private List<AreasUniversidad> listaAreasPOA; 
     

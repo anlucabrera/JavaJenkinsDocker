@@ -52,6 +52,8 @@ public interface EjbDistribucionEquipamiento {
      */
     public List<DTOEquiposComputoCPE> getListaEquiposComputoPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo, RegistrosTipo registrosTipo);
     
+    public List<EquiposComputoCicloPeriodoEscolar> reporteEquiposComputoCicloPeriodoEscolares();
+    
     /**
      * Obtiene la lista de registros correspondientes al evento seleccionado.
      * @param evento Evento seleccionado.
@@ -62,6 +64,8 @@ public interface EjbDistribucionEquipamiento {
      */
     public List<DTOEquiposComputoInternetCPE> getListaEquiposComputoInternetPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo, RegistrosTipo registrosTipo);
 
+    public List<EquiposComputoInternetCicloPeriodoEscolar> reporteEquiposComputoInternetCicloPeriodoEscolares();
+    
     /**
      * Comprueba si el periodo del evento actual se encuentra en el periodo mas reciente, en caso de no encontrarlo obtiene el periodo correspondiente.
      * @param periodos Lista de periodos obtenidos con registros.
@@ -74,5 +78,13 @@ public interface EjbDistribucionEquipamiento {
      * @throws mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException Se lanza en casi que se requiera un periodo que no existe aún en la base de datos.
      */
     public Map.Entry<List<PeriodosEscolares>,List<EventosRegistros>> comprobarEventoActual(List<PeriodosEscolares> periodos, List<EventosRegistros> eventos, EventosRegistros eventoActual, RegistrosTipo registrosTipoEC, RegistrosTipo registrosTipoECI, AreasUniversidad area) throws PeriodoEscolarNecesarioNoRegistradoException;    
+    
+    public Boolean buscaEquipoComputoExistente(EquiposComputoCicloPeriodoEscolar equiposComputoCicloPeriodoEscolar);
+    
+    public Boolean buscaEquipoComputoInternetExistente(EquiposComputoInternetCicloPeriodoEscolar equiposComputoInternetCicloPeriodoEscolar);
+    
+    public EquiposComputoCicloPeriodoEscolar editaEquipoComputoCicloPeriodoEscolar(EquiposComputoCicloPeriodoEscolar equiposComputoCicloPeriodoEscolar);
+    
+    public EquiposComputoInternetCicloPeriodoEscolar editaEquipoComputoInternetCicloPeriodoEscolar(EquiposComputoInternetCicloPeriodoEscolar equiposComputoInternetCicloPeriodoEscolar);
     
 }

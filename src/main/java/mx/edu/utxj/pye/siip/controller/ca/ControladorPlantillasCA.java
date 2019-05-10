@@ -12,6 +12,7 @@ import javax.annotation.ManagedBean;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbPlantillasCAExcel;
+import mx.edu.utxj.pye.siip.interfaces.ca.EjbReportesCAExcel;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Faces;
 
@@ -28,6 +29,8 @@ public class ControladorPlantillasCA implements Serializable{
     
     @EJB
     EjbPlantillasCAExcel ejbPlantillasCAExcel;
+    @EJB
+    EjbReportesCAExcel ejbReportesCAExcel;
     
     public void descargarPlantillaCuerposAcademicos() throws IOException, Throwable{
         File f = new File(ejbPlantillasCAExcel.getPlantillaCuerposAcademicos());
@@ -56,6 +59,21 @@ public class ControladorPlantillasCA implements Serializable{
     
     public void descargarPlantillaServiciosEnfermeria() throws IOException, Throwable{
         File f = new File(ejbPlantillasCAExcel.getPlantillaServiciosEnfermeria());
+        Faces.sendFile(f, true);
+    }
+    
+    public void descargarReporteActividadesVarias() throws IOException, Throwable{
+        File f = new File(ejbReportesCAExcel.getReporteActividadesVarias());
+        Faces.sendFile(f, true);
+    }
+    
+    public void descargarReporteAsesoriasTutorias() throws IOException, Throwable{
+        File f = new File(ejbReportesCAExcel.getReporteAsesoriasTutorias());
+        Faces.sendFile(f, true);
+    }
+    
+    public void descargarReporteServiciosEnfermeria() throws IOException, Throwable{
+        File f = new File(ejbReportesCAExcel.getReporteServiciosEnfermeria());
         Faces.sendFile(f, true);
     }
     

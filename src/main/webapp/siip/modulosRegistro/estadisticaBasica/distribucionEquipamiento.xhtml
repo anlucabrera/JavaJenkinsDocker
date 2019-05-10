@@ -14,6 +14,11 @@
         <ui:param name="renderBreadCrumb" value="true"/>
         <h:outputStylesheet library="css" name="tablaDatos.css" />
         <h:outputScript library="js" name="dialogs.js" />
+        <!-- Inicio estilos par proceso electoral -->
+            <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+                <h:outputStylesheet library="css" name="procesoElectoral.css" />
+            </c:if>
+        <!-- Fin estilos par proceso electoral -->
     </ui:define>
     <ui:define name="title">
         Distribución de equipamiento
@@ -104,7 +109,7 @@
                                                              tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                                     <p:columnGroup type="header">
                                                         <p:row>
-                                                            <p:column rowspan="2" headerText="Opciones"                     width="100" />
+                                                            <p:column rowspan="2" headerText="Opciones"                     width="150" />
                                                             <p:column rowspan="2" headerText="Ciclo Escolar"                width="200" />
                                                             <p:column rowspan="2" headerText="Periodo Escolar"              width="200" />
                                                             <p:column colspan="3" headerText="Equipos de cómputo"           width="600" />
@@ -133,19 +138,29 @@
                                                     <p:column style="text-align: center;">
                                                         <div class="btn-group">
                                                             <p:commandButton class="btn btn-info btn-sm" 
-                                                                             icon="fa fa-trash" 
+                                                                             icon="fa fa-trash"
                                                                              actionListener="#{controladorDistribucionEquipamiento.eliminarRegistro(equipoComputo)}"
                                                                              title="Eliminar registro."
-                                                                             rendered="#{controladorDistribucionEquipamiento.dto.periodoEscolarActivo.periodo eq equipoComputo.equiposComputoCicloPeriodoEscolar.periodoEscolar}">
+                                                                             rendered="#{controladorDistribucionEquipamiento.dto.periodoEscolarActivo.periodo eq equipoComputo.equiposComputoCicloPeriodoEscolar.periodoEscolar}"
+                                                                             disabled="#{controladorDistribucionEquipamiento.dto.visualiza}"
+                                                                             >
                                                                 <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de #{equipoComputo.periodoEscolar}" icon="ui-icon-alert" />
                                                             </p:commandButton>
                                                             <c:set var="evidencias" value="#{controladorDistribucionEquipamiento.consultarEvidencias(equipoComputo)}" />
                                                             <p:commandButton actionListener="#{controladorDistribucionEquipamiento.seleccionarRegistro(equipoComputo)}"
                                                                              class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" icon="fa fa-image"
-                                                                             title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                                             title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}"
+                                                                             disabled="#{controladorDistribucionEquipamiento.dto.visualiza}"
+                                                                             />
                                                             <p:commandButton actionListener="#{controladorDistribucionEquipamiento.abrirAlineacionPOA(equipoComputo)}"
                                                                              class="btn btn-sm #{!empty equipoComputo.actividadAlineada?'btn-info':'btn-warning'}" icon="fa fa-cog"
-                                                                             title="Alineación a POA." />
+                                                                             title="Alineación a POA." 
+                                                                             disabled="#{controladorDistribucionEquipamiento.dto.visualiza}"
+                                                                             />
+                                                            <p:commandButton actionListener="#{controladorDistribucionEquipamiento.abrirEdicionEquipoComputo(equipoComputo.equiposComputoCicloPeriodoEscolar)}"
+                                                                         class="btn btn-sm btn-info"
+                                                                         icon="fa fa-pencil-square-o"
+                                                                         title="Editar equipo de computo"/>
                                                         </div>
                                                     </p:column>
                                                     <p:column>
@@ -230,7 +245,7 @@
                                                              tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                                     <p:columnGroup type="header">
                                                         <p:row>
-                                                            <p:column rowspan="2" headerText="Opciones"                     width="100" />
+                                                            <p:column rowspan="2" headerText="Opciones"                     width="150" />
                                                             <p:column rowspan="2" headerText="Ciclo Escolar"                width="200" />
                                                             <p:column rowspan="2" headerText="Periodo Escolar"              width="200" />
                                                             <p:column colspan="3" headerText="Equipos de cómputo"           width="600" />
@@ -262,16 +277,26 @@
                                                                              icon="fa fa-trash" 
                                                                              actionListener="#{controladorDistribucionEquipamiento.eliminarRegistroECI(equipoComputoInternet)}"
                                                                              title="Eliminar registro."
-                                                                             rendered="#{controladorDistribucionEquipamiento.dto.periodoEscolarActivo.periodo eq equipoComputoInternet.equiposComputoInternetCicloPeriodoEscolar.periodoEscolar}">
+                                                                             rendered="#{controladorDistribucionEquipamiento.dto.periodoEscolarActivo.periodo eq equipoComputoInternet.equiposComputoInternetCicloPeriodoEscolar.periodoEscolar}"
+                                                                             disabled="#{controladorDistribucionEquipamiento.dto.visualizaCInernet}"
+                                                                             >
                                                                 <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de #{equipoComputoInternet.periodoEscolar}" icon="ui-icon-alert" />
                                                             </p:commandButton>
                                                             <c:set var="evidencias" value="#{controladorDistribucionEquipamiento.consultarEvidenciasECI(equipoComputoInternet)}" />
                                                             <p:commandButton actionListener="#{controladorDistribucionEquipamiento.seleccionarRegistroECI(equipoComputoInternet)}"
                                                                              class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" icon="fa fa-image"
-                                                                             title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                                             title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}"
+                                                                             disabled="#{controladorDistribucionEquipamiento.dto.visualizaCInernet}"
+                                                                             />
                                                             <p:commandButton actionListener="#{controladorDistribucionEquipamiento.abrirAlineacionPOAECI(equipoComputoInternet)}"
                                                                              class="btn btn-sm #{!empty equipoComputoInternet.actividadAlineada?'btn-info':'btn-warning'}" icon="fa fa-cog"
-                                                                             title="Alineación a POA." />
+                                                                             title="Alineación a POA."
+                                                                             disabled="#{controladorDistribucionEquipamiento.dto.visualizaCInernet}"
+                                                                             />
+                                                            <p:commandButton actionListener="#{controladorDistribucionEquipamiento.abrirEdicionEquipoComputoInternet(equipoComputoInternet.equiposComputoInternetCicloPeriodoEscolar)}"
+                                                                         class="btn btn-sm btn-info"
+                                                                         icon="fa fa-pencil-square-o"
+                                                                         title="Editar equipo de computo con internet"/>
                                                         </div>
                                                     </p:column>
                                                     <p:column>
@@ -982,6 +1007,508 @@
                             </h:form>
                         </div>
                     </div>
+                    
+                    <!--Edición de Equipo de computo-->
+                    <p:dialog id="modalEdicionEquipoComputo" 
+                              widgetVar="modalEdicionEquipoComputo" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{controladorDistribucionEquipamiento.dto.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Edición de Equipo de computo" 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmEdicionEquipoComputo">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12">
+                                    <p:outputLabel value="Edición de la distribución de equipo: #{controladorDistribucionEquipamiento.dto.cicloInicio}-#{controladorDistribucionEquipamiento.dto.cicloFin}"/>
+                                </div>
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
+                                    <p:outputLabel id="mensaje" value="#{controladorDistribucionEquipamiento.dto.mensaje}"/>
+                                    <br></br>
+                                </div>
+                                
+                                <!--Ciclo escolar-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel for="somCicloEscolar" value="Ciclo Escolar: "/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="somCicloEscolar"
+                                                     required="true"
+                                                     requiredMessage="Seleccione el Ciclo Escolar"
+                                                     value="#{controladorDistribucionEquipamiento.dto.cicloEscolar.ciclo}"
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     style="padding-top: 0px;"
+                                                     disabled="true"
+                                                     >
+                                        <f:selectItem itemValue="#{controladorDistribucionEquipamiento.dto.cicloEscolar.ciclo}" 
+                                                      itemLabel="#{controladorDistribucionEquipamiento.dto.cicloInicio}-#{controladorDistribucionEquipamiento.dto.cicloFin}" 
+                                                      itemDescription="#{controladorDistribucionEquipamiento.dto.cicloInicio}-#{controladorDistribucionEquipamiento.dto.cicloFin}" />
+                                        <p:ajax process="somCicloEscolar" />
+                                    </p:selectOneMenu>
+                                    <p:message for="somCicloEscolar" />
+                                </div>
+                                
+                                <!--Periodo escolar-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel for="somPeriodoEscolar" value="Periodo Escolar: "/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="somPeriodoEscolar"
+                                                     required="true"
+                                                     requiredMessage="Seleccione el Periodo Escolar"
+                                                     value="#{controladorDistribucionEquipamiento.dto.periodoEscolar.periodo}"
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     style="padding-top: 0px;"
+                                                     disabled="true"
+                                                     >
+                                        <f:selectItem itemValue="#{controladorDistribucionEquipamiento.dto.periodoEscolar.periodo}" 
+                                                      itemLabel="#{controladorDistribucionEquipamiento.dto.periodoEscolar.mesInicio.mes}-#{controladorDistribucionEquipamiento.dto.periodoEscolar.mesFin.mes}"
+                                                      itemDescription="#{controladorDistribucionEquipamiento.dto.periodoEscolar.mesInicio.mes}-#{controladorDistribucionEquipamiento.dto.periodoEscolar.mesFin.mes}" />
+                                        <p:ajax process="somPeriodoEscolar" />
+                                    </p:selectOneMenu>
+                                    <p:message for="somPeriodoEscolar" />
+                                </div>
+                                
+                                <!--Docentes de tiempo completo - leyenda encabezado-->
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;"><center><p:outputLabel value="Docentes de tiempo completo"/></center></div>
+                                
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Escritorio" for="spnDTCEscritorio" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnDTCEscritorio"
+                                               label="spnDTCEscritorio"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorDistribucionEquipamiento.dto.registroEquiposComputoCPE.equiposComputoCicloPeriodoEscolar.dtcEsc}" 
+                                               min="0" max="5000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnDTCEscritorio" value="100 *" />
+                                    <p:message for="spnDTCEscritorio" />
+                                </div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Portatiles" for="spnDTCPortatiles" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnDTCPortatiles"
+                                               label="spnDTCPortatiles"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorDistribucionEquipamiento.dto.registroEquiposComputoCPE.equiposComputoCicloPeriodoEscolar.dtcPort}" 
+                                               min="0" max="5000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnDTCPortatiles" value="100 *" />
+                                    <p:message for="spnDTCPortatiles" />
+                                </div>
+                                
+                                <!--Docentes de asignatura - leyenda encabezado-->
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;"><center><p:outputLabel value="Docentes de asignatura"/></center></div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Escritorio" for="spnDAEscritorio" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnDAEscritorio"
+                                               label="spnDAEscritorio"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorDistribucionEquipamiento.dto.registroEquiposComputoCPE.equiposComputoCicloPeriodoEscolar.daEsc}" 
+                                               min="0" max="5000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnDAEscritorio" value="100 *" />
+                                    <p:message for="spnDAEscritorio" />
+                                </div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Portatiles" for="spnDAPortatiles" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnDAPortatiles"
+                                               label="spnDAPortatiles"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorDistribucionEquipamiento.dto.registroEquiposComputoCPE.equiposComputoCicloPeriodoEscolar.daPort}" 
+                                               min="0" max="5000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnDAPortatiles" value="100 *" />
+                                    <p:message for="spnDAPortatiles" />
+                                </div>
+                                
+                                <!--Estudiantes - leyenda encabezado-->
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;"><center><p:outputLabel value="Estudiantes"/></center></div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Escritorio" for="spnESTescritorio" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnESTescritorio"
+                                               label="spnESTescritorio"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorDistribucionEquipamiento.dto.registroEquiposComputoCPE.equiposComputoCicloPeriodoEscolar.estEsc}" 
+                                               min="0" max="5000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnESTescritorio" value="100 *" />
+                                    <p:message for="spnESTescritorio" />
+                                </div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Portatiles" for="spnESTPortatiles" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnESTPortatiles"
+                                               label="spnESTPortatiles"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorDistribucionEquipamiento.dto.registroEquiposComputoCPE.equiposComputoCicloPeriodoEscolar.estPor}" 
+                                               min="0" max="5000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnESTPortatiles" value="100 *" />
+                                    <p:message for="spnESTPortatiles" />
+                                </div>
+                                
+                                <!--Personal Administrativo - leyenda encabezado-->
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;"><center><p:outputLabel value="Personal Administrativo"/></center></div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Escritorio" for="spnADMescritorio" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnADMescritorio"
+                                               label="spnADMescritorio"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorDistribucionEquipamiento.dto.registroEquiposComputoCPE.equiposComputoCicloPeriodoEscolar.admEsc}" 
+                                               min="0" max="5000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnADMescritorio" value="100 *" />
+                                    <p:message for="spnADMescritorio" />
+                                </div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Portatiles" for="spnADMPortatiles" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnADMPortatiles"
+                                               label="spnADMPortatiles"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorDistribucionEquipamiento.dto.registroEquiposComputoCPE.equiposComputoCicloPeriodoEscolar.admPort}" 
+                                               min="0" max="5000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnADMPortatiles" value="100 *" />
+                                    <p:message for="spnADMPortatiles" />
+                                </div>
+                                
+                                <!--Mandos medios y superiores - leyenda encabezado-->
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;"><center><p:outputLabel value="Mandos medios y superiores"/></center></div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Escritorio" for="spnMMSescritorio" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnMMSescritorio"
+                                               label="spnMMSescritorio"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorDistribucionEquipamiento.dto.registroEquiposComputoCPE.equiposComputoCicloPeriodoEscolar.mmsEsc}" 
+                                               min="0" max="5000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnMMSescritorio" value="100 *" />
+                                    <p:message for="spnMMSescritorio" />
+                                </div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Portatiles" for="spnMMSPortatiles" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnMMSPortatiles"
+                                               label="spnMMSPortatiles"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorDistribucionEquipamiento.dto.registroEquiposComputoCPE.equiposComputoCicloPeriodoEscolar.mmsPort}" 
+                                               min="0" max="5000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnMMSPortatiles" value="100 *" />
+                                    <p:message for="spnMMSPortatiles" />
+                                </div>
+                                
+                                <!--Guardar-->
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <center>
+                                        <p:commandButton id="btnEditaServicioEnfermeria"
+                                                         value="Actualizar Cambios"
+                                                         icon="fa fa-save"
+                                                         class="btn-primary"
+                                                         actionListener="#{controladorDistribucionEquipamiento.editaEquipoComputo}"
+                                                         update="@form:frmEdicionEquipoComputo" 
+                                                         process="@form:frmEdicionEquipoComputo"
+                                                         />
+                                    </center>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!--Edición de Equipo de computo con internet-->
+                    <p:dialog id="modalEdicionEquipoComputoInternet" 
+                              widgetVar="modalEdicionEquipoComputoInternet" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{controladorDistribucionEquipamiento.dto.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Edición de Equipo de computo con internet" 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmEdicionEquipoComputoInternet">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12">
+                                    <p:outputLabel value="Edición de la distribución de equipo con internet: #{controladorDistribucionEquipamiento.dto.cicloInicio}-#{controladorDistribucionEquipamiento.dto.cicloFin}"/>
+                                </div>
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
+                                    <p:outputLabel id="mensaje" value="#{controladorDistribucionEquipamiento.dto.mensaje}"/>
+                                    <br></br>
+                                </div>
+                                
+                                <!--Ciclo escolar-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel for="somCicloEscolar" value="Ciclo Escolar: "/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="somCicloEscolar"
+                                                     required="true"
+                                                     requiredMessage="Seleccione el Ciclo Escolar"
+                                                     value="#{controladorDistribucionEquipamiento.dto.cicloEscolar.ciclo}"
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     style="padding-top: 0px;"
+                                                     disabled="true"
+                                                     >
+                                        <f:selectItem itemValue="#{controladorDistribucionEquipamiento.dto.cicloEscolar.ciclo}" 
+                                                      itemLabel="#{controladorDistribucionEquipamiento.dto.cicloInicio}-#{controladorDistribucionEquipamiento.dto.cicloFin}" 
+                                                      itemDescription="#{controladorDistribucionEquipamiento.dto.cicloInicio}-#{controladorDistribucionEquipamiento.dto.cicloFin}" />
+                                        <p:ajax process="somCicloEscolar" />
+                                    </p:selectOneMenu>
+                                    <p:message for="somCicloEscolar" />
+                                </div>
+                                
+                                <!--Periodo escolar-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel for="somPeriodoEscolar" value="Periodo Escolar: "/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="somPeriodoEscolar"
+                                                     required="true"
+                                                     requiredMessage="Seleccione el Periodo Escolar"
+                                                     value="#{controladorDistribucionEquipamiento.dto.periodoEscolar.periodo}"
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     style="padding-top: 0px;"
+                                                     disabled="true"
+                                                     >
+                                        <f:selectItem itemValue="#{controladorDistribucionEquipamiento.dto.periodoEscolar.periodo}" 
+                                                      itemLabel="#{controladorDistribucionEquipamiento.dto.periodoEscolar.mesInicio.mes}-#{controladorDistribucionEquipamiento.dto.periodoEscolar.mesFin.mes}"
+                                                      itemDescription="#{controladorDistribucionEquipamiento.dto.periodoEscolar.mesInicio.mes}-#{controladorDistribucionEquipamiento.dto.periodoEscolar.mesFin.mes}" />
+                                        <p:ajax process="somPeriodoEscolar" />
+                                    </p:selectOneMenu>
+                                    <p:message for="somPeriodoEscolar" />
+                                </div>
+                                
+                                <!--Docentes de tiempo completo - leyenda encabezado-->
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;"><center><p:outputLabel value="Docentes de tiempo completo"/></center></div>
+                                
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Escritorio" for="spnDTCEscritorio" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnDTCEscritorio"
+                                               label="spnDTCEscritorio"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorDistribucionEquipamiento.dto.registroEquiposInternetCPE.equiposComputoInternetCicloPeriodoEscolar.dtcEsc}" 
+                                               min="0" max="5000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnDTCEscritorio" value="100 *" />
+                                    <p:message for="spnDTCEscritorio" />
+                                </div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Portatiles" for="spnDTCPortatiles" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnDTCPortatiles"
+                                               label="spnDTCPortatiles"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorDistribucionEquipamiento.dto.registroEquiposInternetCPE.equiposComputoInternetCicloPeriodoEscolar.dtcPort}" 
+                                               min="0" max="5000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnDTCPortatiles" value="100 *" />
+                                    <p:message for="spnDTCPortatiles" />
+                                </div>
+                                
+                                <!--Docentes de asignatura - leyenda encabezado-->
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;"><center><p:outputLabel value="Docentes de asignatura"/></center></div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Escritorio" for="spnDAEscritorio" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnDAEscritorio"
+                                               label="spnDAEscritorio"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorDistribucionEquipamiento.dto.registroEquiposInternetCPE.equiposComputoInternetCicloPeriodoEscolar.daEsc}" 
+                                               min="0" max="5000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnDAEscritorio" value="100 *" />
+                                    <p:message for="spnDAEscritorio" />
+                                </div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Portatiles" for="spnDAPortatiles" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnDAPortatiles"
+                                               label="spnDAPortatiles"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorDistribucionEquipamiento.dto.registroEquiposInternetCPE.equiposComputoInternetCicloPeriodoEscolar.daPort}" 
+                                               min="0" max="5000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnDAPortatiles" value="100 *" />
+                                    <p:message for="spnDAPortatiles" />
+                                </div>
+                                
+                                <!--Estudiantes - leyenda encabezado-->
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;"><center><p:outputLabel value="Estudiantes"/></center></div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Escritorio" for="spnESTescritorio" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnESTescritorio"
+                                               label="spnESTescritorio"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorDistribucionEquipamiento.dto.registroEquiposInternetCPE.equiposComputoInternetCicloPeriodoEscolar.estEsc}" 
+                                               min="0" max="5000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnESTescritorio" value="100 *" />
+                                    <p:message for="spnESTescritorio" />
+                                </div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Portatiles" for="spnESTPortatiles" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnESTPortatiles"
+                                               label="spnESTPortatiles"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorDistribucionEquipamiento.dto.registroEquiposInternetCPE.equiposComputoInternetCicloPeriodoEscolar.estPor}" 
+                                               min="0" max="5000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnESTPortatiles" value="100 *" />
+                                    <p:message for="spnESTPortatiles" />
+                                </div>
+                                
+                                <!--Personal Administrativo - leyenda encabezado-->
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;"><center><p:outputLabel value="Personal Administrativo"/></center></div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Escritorio" for="spnADMescritorio" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnADMescritorio"
+                                               label="spnADMescritorio"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorDistribucionEquipamiento.dto.registroEquiposInternetCPE.equiposComputoInternetCicloPeriodoEscolar.admEsc}" 
+                                               min="0" max="5000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnADMescritorio" value="100 *" />
+                                    <p:message for="spnADMescritorio" />
+                                </div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Portatiles" for="spnADMPortatiles" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnADMPortatiles"
+                                               label="spnADMPortatiles"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorDistribucionEquipamiento.dto.registroEquiposInternetCPE.equiposComputoInternetCicloPeriodoEscolar.admPort}" 
+                                               min="0" max="5000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnADMPortatiles" value="100 *" />
+                                    <p:message for="spnADMPortatiles" />
+                                </div>
+                                
+                                <!--Mandos medios y superiores - leyenda encabezado-->
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;"><center><p:outputLabel value="Mandos medios y superiores"/></center></div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Escritorio" for="spnMMSescritorio" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnMMSescritorio"
+                                               label="spnMMSescritorio"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorDistribucionEquipamiento.dto.registroEquiposInternetCPE.equiposComputoInternetCicloPeriodoEscolar.mmsEsc}" 
+                                               min="0" max="5000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnMMSescritorio" value="100 *" />
+                                    <p:message for="spnMMSescritorio" />
+                                </div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Portatiles" for="spnMMSPortatiles" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnMMSPortatiles"
+                                               label="spnMMSPortatiles"
+                                               required="true"
+                                               requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
+                                               value="#{controladorDistribucionEquipamiento.dto.registroEquiposInternetCPE.equiposComputoInternetCicloPeriodoEscolar.mmsPort}" 
+                                               min="0" max="5000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnMMSPortatiles" value="100 *" />
+                                    <p:message for="spnMMSPortatiles" />
+                                </div>
+                                
+                                <!--Guardar-->
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <center>
+                                        <p:commandButton id="btnEditaEquipoComputoInternet"
+                                                         value="Actualizar Cambios"
+                                                         icon="fa fa-save"
+                                                         class="btn-primary"
+                                                         actionListener="#{controladorDistribucionEquipamiento.editaEquipoComputoInternet}"
+                                                         update="@form:frmEdicionEquipoComputoInternet" 
+                                                         process="@form:frmEdicionEquipoComputoInternet"
+                                                         />
+                                    </center>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
 
                 </div>
 

@@ -71,26 +71,18 @@ public class ProgramasEducativos implements Serializable {
     @NotNull
     @Column(name = "activo")
     private boolean activo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "programasEducativos")
-    private List<MovilidadAcademica> movilidadAcademicaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "programasEducativos")
-    private List<EducacionContinua> educacionContinuaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "programa")
-    private List<ProgramasEducativosOrganismosEvaluadores> programasEducativosOrganismosEvaluadoresList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "carreraActual")
     private List<ProgramasPertinentesCalidad> programasPertinentesCalidadList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "carreraInicial")
     private List<ProgramasPertinentesCalidad> programasPertinentesCalidadList1;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "siglas")
-    private List<DesagregadosProgramas> desagregadosProgramasList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "siglas")
     private List<ActividadEgresado> actividadEgresadoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "programasEducativos")
-    private List<AprovechamientoEscolar> aprovechamientoEscolarList;
+    private List<FormacionIntegral> formacionIntegralList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "siglas")
-    private List<Becas> becasList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "programaEducativo")
-    private List<BolsaTrabajoContratados> bolsaTrabajoContratadosList;
+    private List<MatriculaProgramaPeriodoCuatri> matriculaProgramaPeriodoCuatriList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "programasEducativos")
+    private List<MovilidadAcademica> movilidadAcademicaList;
     @JoinColumn(name = "nivel", referencedColumnName = "nivel")
     @ManyToOne(optional = false)
     private ProgramasEducativosNiveles nivel;
@@ -98,23 +90,37 @@ public class ProgramasEducativos implements Serializable {
     @ManyToOne(optional = false)
     private ProgramasEducativosAreas area;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "programasEducativos")
-    private List<FormacionIntegral> formacionIntegralList;
+    private List<EncuestaSatisfaccionEmpleadoresPece> encuestaSatisfaccionEmpleadoresPeceList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "siglas")
+    private List<DesercionPorEstudiante> desercionPorEstudianteList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "programasEducativos")
+    private List<EncuestaSatisfaccionEgresadosPece> encuestaSatisfaccionEgresadosPeceList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "programaEducativo")
+    private List<AcervoBibliografico> acervoBibliograficoList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "programasEducativos")
+    private List<EncuestaSatisfaccion> encuestaSatisfaccionList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "siglas")
+    private List<DesagregadosProgramas> desagregadosProgramasList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "programasEducativos")
+    private List<AprovechamientoEscolar> aprovechamientoEscolarList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "siglas")
+    private List<Becas> becasList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "siglas")
     private List<EficienciaTerminalTasaTitulacion> eficienciaTerminalTasaTitulacionList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "siglas")
-    private List<DesercionPorEstudiante> desercionPorEstudianteList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "siglas")
     private List<DesercionHistorico> desercionHistoricoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "siglas")
-    private List<MatriculaProgramaPeriodoCuatri> matriculaProgramaPeriodoCuatriList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "siglas")
     private List<MatriculaProgramaPeriodoGenero> matriculaProgramaPeriodoGeneroList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "programasEducativos")
-    private List<CalificacionesCuatrimestre> calificacionesCuatrimestreList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "siglas")
     private List<NivelIngreso> nivelIngresoList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "programasEducativos")
+    private List<EducacionContinua> educacionContinuaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "programa")
+    private List<ProgramasEducativosOrganismosEvaluadores> programasEducativosOrganismosEvaluadoresList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "programaEducativo")
-    private List<AcervoBibliografico> acervoBibliograficoList;
+    private List<BolsaTrabajoContratados> bolsaTrabajoContratadosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "programasEducativos")
+    private List<CalificacionesCuatrimestre> calificacionesCuatrimestreList;
 
     public ProgramasEducativos() {
     }
@@ -180,33 +186,6 @@ public class ProgramasEducativos implements Serializable {
     }
 
     @XmlTransient
-    public List<MovilidadAcademica> getMovilidadAcademicaList() {
-        return movilidadAcademicaList;
-    }
-
-    public void setMovilidadAcademicaList(List<MovilidadAcademica> movilidadAcademicaList) {
-        this.movilidadAcademicaList = movilidadAcademicaList;
-    }
-
-    @XmlTransient
-    public List<EducacionContinua> getEducacionContinuaList() {
-        return educacionContinuaList;
-    }
-
-    public void setEducacionContinuaList(List<EducacionContinua> educacionContinuaList) {
-        this.educacionContinuaList = educacionContinuaList;
-    }
-
-    @XmlTransient
-    public List<ProgramasEducativosOrganismosEvaluadores> getProgramasEducativosOrganismosEvaluadoresList() {
-        return programasEducativosOrganismosEvaluadoresList;
-    }
-
-    public void setProgramasEducativosOrganismosEvaluadoresList(List<ProgramasEducativosOrganismosEvaluadores> programasEducativosOrganismosEvaluadoresList) {
-        this.programasEducativosOrganismosEvaluadoresList = programasEducativosOrganismosEvaluadoresList;
-    }
-
-    @XmlTransient
     public List<ProgramasPertinentesCalidad> getProgramasPertinentesCalidadList() {
         return programasPertinentesCalidadList;
     }
@@ -225,21 +204,109 @@ public class ProgramasEducativos implements Serializable {
     }
 
     @XmlTransient
-    public List<DesagregadosProgramas> getDesagregadosProgramasList() {
-        return desagregadosProgramasList;
-    }
-
-    public void setDesagregadosProgramasList(List<DesagregadosProgramas> desagregadosProgramasList) {
-        this.desagregadosProgramasList = desagregadosProgramasList;
-    }
-
-    @XmlTransient
     public List<ActividadEgresado> getActividadEgresadoList() {
         return actividadEgresadoList;
     }
 
     public void setActividadEgresadoList(List<ActividadEgresado> actividadEgresadoList) {
         this.actividadEgresadoList = actividadEgresadoList;
+    }
+
+    @XmlTransient
+    public List<FormacionIntegral> getFormacionIntegralList() {
+        return formacionIntegralList;
+    }
+
+    public void setFormacionIntegralList(List<FormacionIntegral> formacionIntegralList) {
+        this.formacionIntegralList = formacionIntegralList;
+    }
+
+    @XmlTransient
+    public List<MatriculaProgramaPeriodoCuatri> getMatriculaProgramaPeriodoCuatriList() {
+        return matriculaProgramaPeriodoCuatriList;
+    }
+
+    public void setMatriculaProgramaPeriodoCuatriList(List<MatriculaProgramaPeriodoCuatri> matriculaProgramaPeriodoCuatriList) {
+        this.matriculaProgramaPeriodoCuatriList = matriculaProgramaPeriodoCuatriList;
+    }
+
+    @XmlTransient
+    public List<MovilidadAcademica> getMovilidadAcademicaList() {
+        return movilidadAcademicaList;
+    }
+
+    public void setMovilidadAcademicaList(List<MovilidadAcademica> movilidadAcademicaList) {
+        this.movilidadAcademicaList = movilidadAcademicaList;
+    }
+
+    public ProgramasEducativosNiveles getNivel() {
+        return nivel;
+    }
+
+    public void setNivel(ProgramasEducativosNiveles nivel) {
+        this.nivel = nivel;
+    }
+
+    public ProgramasEducativosAreas getArea() {
+        return area;
+    }
+
+    public void setArea(ProgramasEducativosAreas area) {
+        this.area = area;
+    }
+
+    @XmlTransient
+    public List<EncuestaSatisfaccionEmpleadoresPece> getEncuestaSatisfaccionEmpleadoresPeceList() {
+        return encuestaSatisfaccionEmpleadoresPeceList;
+    }
+
+    public void setEncuestaSatisfaccionEmpleadoresPeceList(List<EncuestaSatisfaccionEmpleadoresPece> encuestaSatisfaccionEmpleadoresPeceList) {
+        this.encuestaSatisfaccionEmpleadoresPeceList = encuestaSatisfaccionEmpleadoresPeceList;
+    }
+
+    @XmlTransient
+    public List<DesercionPorEstudiante> getDesercionPorEstudianteList() {
+        return desercionPorEstudianteList;
+    }
+
+    public void setDesercionPorEstudianteList(List<DesercionPorEstudiante> desercionPorEstudianteList) {
+        this.desercionPorEstudianteList = desercionPorEstudianteList;
+    }
+
+    @XmlTransient
+    public List<EncuestaSatisfaccionEgresadosPece> getEncuestaSatisfaccionEgresadosPeceList() {
+        return encuestaSatisfaccionEgresadosPeceList;
+    }
+
+    public void setEncuestaSatisfaccionEgresadosPeceList(List<EncuestaSatisfaccionEgresadosPece> encuestaSatisfaccionEgresadosPeceList) {
+        this.encuestaSatisfaccionEgresadosPeceList = encuestaSatisfaccionEgresadosPeceList;
+    }
+
+    @XmlTransient
+    public List<AcervoBibliografico> getAcervoBibliograficoList() {
+        return acervoBibliograficoList;
+    }
+
+    public void setAcervoBibliograficoList(List<AcervoBibliografico> acervoBibliograficoList) {
+        this.acervoBibliograficoList = acervoBibliograficoList;
+    }
+
+    @XmlTransient
+    public List<EncuestaSatisfaccion> getEncuestaSatisfaccionList() {
+        return encuestaSatisfaccionList;
+    }
+
+    public void setEncuestaSatisfaccionList(List<EncuestaSatisfaccion> encuestaSatisfaccionList) {
+        this.encuestaSatisfaccionList = encuestaSatisfaccionList;
+    }
+
+    @XmlTransient
+    public List<DesagregadosProgramas> getDesagregadosProgramasList() {
+        return desagregadosProgramasList;
+    }
+
+    public void setDesagregadosProgramasList(List<DesagregadosProgramas> desagregadosProgramasList) {
+        this.desagregadosProgramasList = desagregadosProgramasList;
     }
 
     @XmlTransient
@@ -261,55 +328,12 @@ public class ProgramasEducativos implements Serializable {
     }
 
     @XmlTransient
-    public List<BolsaTrabajoContratados> getBolsaTrabajoContratadosList() {
-        return bolsaTrabajoContratadosList;
-    }
-
-    public void setBolsaTrabajoContratadosList(List<BolsaTrabajoContratados> bolsaTrabajoContratadosList) {
-        this.bolsaTrabajoContratadosList = bolsaTrabajoContratadosList;
-    }
-
-    public ProgramasEducativosNiveles getNivel() {
-        return nivel;
-    }
-
-    public void setNivel(ProgramasEducativosNiveles nivel) {
-        this.nivel = nivel;
-    }
-
-    public ProgramasEducativosAreas getArea() {
-        return area;
-    }
-
-    public void setArea(ProgramasEducativosAreas area) {
-        this.area = area;
-    }
-
-    @XmlTransient
-    public List<FormacionIntegral> getFormacionIntegralList() {
-        return formacionIntegralList;
-    }
-
-    public void setFormacionIntegralList(List<FormacionIntegral> formacionIntegralList) {
-        this.formacionIntegralList = formacionIntegralList;
-    }
-
-    @XmlTransient
     public List<EficienciaTerminalTasaTitulacion> getEficienciaTerminalTasaTitulacionList() {
         return eficienciaTerminalTasaTitulacionList;
     }
 
     public void setEficienciaTerminalTasaTitulacionList(List<EficienciaTerminalTasaTitulacion> eficienciaTerminalTasaTitulacionList) {
         this.eficienciaTerminalTasaTitulacionList = eficienciaTerminalTasaTitulacionList;
-    }
-
-    @XmlTransient
-    public List<DesercionPorEstudiante> getDesercionPorEstudianteList() {
-        return desercionPorEstudianteList;
-    }
-
-    public void setDesercionPorEstudianteList(List<DesercionPorEstudiante> desercionPorEstudianteList) {
-        this.desercionPorEstudianteList = desercionPorEstudianteList;
     }
 
     @XmlTransient
@@ -322,30 +346,12 @@ public class ProgramasEducativos implements Serializable {
     }
 
     @XmlTransient
-    public List<MatriculaProgramaPeriodoCuatri> getMatriculaProgramaPeriodoCuatriList() {
-        return matriculaProgramaPeriodoCuatriList;
-    }
-
-    public void setMatriculaProgramaPeriodoCuatriList(List<MatriculaProgramaPeriodoCuatri> matriculaProgramaPeriodoCuatriList) {
-        this.matriculaProgramaPeriodoCuatriList = matriculaProgramaPeriodoCuatriList;
-    }
-
-    @XmlTransient
     public List<MatriculaProgramaPeriodoGenero> getMatriculaProgramaPeriodoGeneroList() {
         return matriculaProgramaPeriodoGeneroList;
     }
 
     public void setMatriculaProgramaPeriodoGeneroList(List<MatriculaProgramaPeriodoGenero> matriculaProgramaPeriodoGeneroList) {
         this.matriculaProgramaPeriodoGeneroList = matriculaProgramaPeriodoGeneroList;
-    }
-
-    @XmlTransient
-    public List<CalificacionesCuatrimestre> getCalificacionesCuatrimestreList() {
-        return calificacionesCuatrimestreList;
-    }
-
-    public void setCalificacionesCuatrimestreList(List<CalificacionesCuatrimestre> calificacionesCuatrimestreList) {
-        this.calificacionesCuatrimestreList = calificacionesCuatrimestreList;
     }
 
     @XmlTransient
@@ -358,12 +364,39 @@ public class ProgramasEducativos implements Serializable {
     }
 
     @XmlTransient
-    public List<AcervoBibliografico> getAcervoBibliograficoList() {
-        return acervoBibliograficoList;
+    public List<EducacionContinua> getEducacionContinuaList() {
+        return educacionContinuaList;
     }
 
-    public void setAcervoBibliograficoList(List<AcervoBibliografico> acervoBibliograficoList) {
-        this.acervoBibliograficoList = acervoBibliograficoList;
+    public void setEducacionContinuaList(List<EducacionContinua> educacionContinuaList) {
+        this.educacionContinuaList = educacionContinuaList;
+    }
+
+    @XmlTransient
+    public List<ProgramasEducativosOrganismosEvaluadores> getProgramasEducativosOrganismosEvaluadoresList() {
+        return programasEducativosOrganismosEvaluadoresList;
+    }
+
+    public void setProgramasEducativosOrganismosEvaluadoresList(List<ProgramasEducativosOrganismosEvaluadores> programasEducativosOrganismosEvaluadoresList) {
+        this.programasEducativosOrganismosEvaluadoresList = programasEducativosOrganismosEvaluadoresList;
+    }
+
+    @XmlTransient
+    public List<BolsaTrabajoContratados> getBolsaTrabajoContratadosList() {
+        return bolsaTrabajoContratadosList;
+    }
+
+    public void setBolsaTrabajoContratadosList(List<BolsaTrabajoContratados> bolsaTrabajoContratadosList) {
+        this.bolsaTrabajoContratadosList = bolsaTrabajoContratadosList;
+    }
+
+    @XmlTransient
+    public List<CalificacionesCuatrimestre> getCalificacionesCuatrimestreList() {
+        return calificacionesCuatrimestreList;
+    }
+
+    public void setCalificacionesCuatrimestreList(List<CalificacionesCuatrimestre> calificacionesCuatrimestreList) {
+        this.calificacionesCuatrimestreList = calificacionesCuatrimestreList;
     }
 
     @Override

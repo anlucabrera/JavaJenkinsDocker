@@ -48,6 +48,8 @@ public class IndicadoresCategorias implements Serializable {
     @Column(name = "nombre")
     private String nombre;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoria")
+    private List<IndicadoresCarrousel> indicadoresCarrouselList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoria")
     private List<Indicadores> indicadoresList;
 
     public IndicadoresCategorias() {
@@ -76,6 +78,15 @@ public class IndicadoresCategorias implements Serializable {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    @XmlTransient
+    public List<IndicadoresCarrousel> getIndicadoresCarrouselList() {
+        return indicadoresCarrouselList;
+    }
+
+    public void setIndicadoresCarrouselList(List<IndicadoresCarrousel> indicadoresCarrouselList) {
+        this.indicadoresCarrouselList = indicadoresCarrouselList;
     }
 
     @XmlTransient

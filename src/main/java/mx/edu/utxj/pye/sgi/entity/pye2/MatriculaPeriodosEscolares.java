@@ -38,16 +38,25 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "MatriculaPeriodosEscolares.findByProgramaEducativo", query = "SELECT m FROM MatriculaPeriodosEscolares m WHERE m.programaEducativo = :programaEducativo")
     , @NamedQuery(name = "MatriculaPeriodosEscolares.findByCuatrimestre", query = "SELECT m FROM MatriculaPeriodosEscolares m WHERE m.cuatrimestre = :cuatrimestre")
     , @NamedQuery(name = "MatriculaPeriodosEscolares.findByGrupo", query = "SELECT m FROM MatriculaPeriodosEscolares m WHERE m.grupo = :grupo")
-    , @NamedQuery(name = "MatriculaPeriodosEscolares.findByCurp", query = "SELECT m FROM MatriculaPeriodosEscolares m WHERE m.curp = :curp")})
+    , @NamedQuery(name = "MatriculaPeriodosEscolares.findByCurp", query = "SELECT m FROM MatriculaPeriodosEscolares m WHERE m.curp = :curp")
+    , @NamedQuery(name = "MatriculaPeriodosEscolares.findByLenguaIndigena", query = "SELECT m FROM MatriculaPeriodosEscolares m WHERE m.lenguaIndigena = :lenguaIndigena")
+    , @NamedQuery(name = "MatriculaPeriodosEscolares.findByDiscapacidad", query = "SELECT m FROM MatriculaPeriodosEscolares m WHERE m.discapacidad = :discapacidad")
+    , @NamedQuery(name = "MatriculaPeriodosEscolares.findByComunidadIndigena", query = "SELECT m FROM MatriculaPeriodosEscolares m WHERE m.comunidadIndigena = :comunidadIndigena")})
 public class MatriculaPeriodosEscolares implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "registro")
+    private Integer registro;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 6)
     @Column(name = "matricula")
     private String matricula;
     @Basic(optional = false)
-    @NotNull()
+    @NotNull
     @Column(name = "periodo")
     private int periodo;
     @Basic(optional = false)
@@ -75,7 +84,7 @@ public class MatriculaPeriodosEscolares implements Serializable {
     @Column(name = "lenguaIndigena")
     private String lenguaIndigena;
     @Basic(optional = false)
-    @NotNull()
+    @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "discapacidad")
     private String discapacidad;
@@ -84,17 +93,11 @@ public class MatriculaPeriodosEscolares implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "comunidadIndigena")
     private String comunidadIndigena;
-    private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "registro")
-    private Integer registro;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Registros registros;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "matriculaPeriodosEscolares")
-    private BecasPeriodosEscolares becasPeriodosEscolares;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "matriculaPeriodosEscolares")
+    private List<BecasPeriodosEscolares> becasPeriodosEscolaresList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "matriculaPeriodosEscolares")
     private List<ParticipantesActividadesFormacionIntegral> participantesActividadesFormacionIntegralList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "matriculaPeriodosEscolares")
@@ -111,13 +114,17 @@ public class MatriculaPeriodosEscolares implements Serializable {
         this.registro = registro;
     }
 
-    public MatriculaPeriodosEscolares(Integer registro, String matricula, int periodo, short programaEducativo, String cuatrimestre, String grupo) {
+    public MatriculaPeriodosEscolares(Integer registro, String matricula, int periodo, short programaEducativo, String cuatrimestre, String grupo, String curp, String lenguaIndigena, String discapacidad, String comunidadIndigena) {
         this.registro = registro;
         this.matricula = matricula;
         this.periodo = periodo;
         this.programaEducativo = programaEducativo;
         this.cuatrimestre = cuatrimestre;
         this.grupo = grupo;
+        this.curp = curp;
+        this.lenguaIndigena = lenguaIndigena;
+        this.discapacidad = discapacidad;
+        this.comunidadIndigena = comunidadIndigena;
     }
 
     public Integer getRegistro() {
@@ -128,6 +135,21 @@ public class MatriculaPeriodosEscolares implements Serializable {
         this.registro = registro;
     }
 
+    public String getMatricula() {
+        return matricula;
+    }
+
+    public void setMatricula(String matricula) {
+        this.matricula = matricula;
+    }
+
+    public int getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(int periodo) {
+        this.periodo = periodo;
+    }
 
     public short getProgramaEducativo() {
         return programaEducativo;
@@ -137,6 +159,53 @@ public class MatriculaPeriodosEscolares implements Serializable {
         this.programaEducativo = programaEducativo;
     }
 
+    public String getCuatrimestre() {
+        return cuatrimestre;
+    }
+
+    public void setCuatrimestre(String cuatrimestre) {
+        this.cuatrimestre = cuatrimestre;
+    }
+
+    public String getGrupo() {
+        return grupo;
+    }
+
+    public void setGrupo(String grupo) {
+        this.grupo = grupo;
+    }
+
+    public String getCurp() {
+        return curp;
+    }
+
+    public void setCurp(String curp) {
+        this.curp = curp;
+    }
+
+    public String getLenguaIndigena() {
+        return lenguaIndigena;
+    }
+
+    public void setLenguaIndigena(String lenguaIndigena) {
+        this.lenguaIndigena = lenguaIndigena;
+    }
+
+    public String getDiscapacidad() {
+        return discapacidad;
+    }
+
+    public void setDiscapacidad(String discapacidad) {
+        this.discapacidad = discapacidad;
+    }
+
+    public String getComunidadIndigena() {
+        return comunidadIndigena;
+    }
+
+    public void setComunidadIndigena(String comunidadIndigena) {
+        this.comunidadIndigena = comunidadIndigena;
+    }
 
     public Registros getRegistros() {
         return registros;
@@ -146,12 +215,13 @@ public class MatriculaPeriodosEscolares implements Serializable {
         this.registros = registros;
     }
 
-    public BecasPeriodosEscolares getBecasPeriodosEscolares() {
-        return becasPeriodosEscolares;
+    @XmlTransient
+    public List<BecasPeriodosEscolares> getBecasPeriodosEscolaresList() {
+        return becasPeriodosEscolaresList;
     }
 
-    public void setBecasPeriodosEscolares(BecasPeriodosEscolares becasPeriodosEscolares) {
-        this.becasPeriodosEscolares = becasPeriodosEscolares;
+    public void setBecasPeriodosEscolaresList(List<BecasPeriodosEscolares> becasPeriodosEscolaresList) {
+        this.becasPeriodosEscolaresList = becasPeriodosEscolaresList;
     }
 
     @XmlTransient
@@ -213,70 +283,6 @@ public class MatriculaPeriodosEscolares implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares[ registro=" + registro + " ]";
-    }
-
-    public String getMatricula() {
-        return matricula;
-    }
-
-    public void setMatricula(String matricula) {
-        this.matricula = matricula;
-    }
-
-    public int getPeriodo() {
-        return periodo;
-    }
-
-    public void setPeriodo(int periodo) {
-        this.periodo = periodo;
-    }
-    
-    public String getCuatrimestre() {
-        return cuatrimestre;
-    }
-
-    public void setCuatrimestre(String cuatrimestre) {
-        this.cuatrimestre = cuatrimestre;
-    }
-
-    public String getGrupo() {
-        return grupo;
-    }
-
-    public void setGrupo(String grupo) {
-        this.grupo = grupo;
-    }
-
-    public String getCurp() {
-        return curp;
-    }
-
-    public void setCurp(String curp) {
-        this.curp = curp;
-    }
-
-    public String getLenguaIndigena() {
-        return lenguaIndigena;
-    }
-
-    public void setLenguaIndigena(String lenguaIndigena) {
-        this.lenguaIndigena = lenguaIndigena;
-    }
-
-    public String getDiscapacidad() {
-        return discapacidad;
-    }
-
-    public void setDiscapacidad(String discapacidad) {
-        this.discapacidad = discapacidad;
-    }
-
-    public String getComunidadIndigena() {
-        return comunidadIndigena;
-    }
-
-    public void setComunidadIndigena(String comunidadIndigena) {
-        this.comunidadIndigena = comunidadIndigena;
     }
     
 }

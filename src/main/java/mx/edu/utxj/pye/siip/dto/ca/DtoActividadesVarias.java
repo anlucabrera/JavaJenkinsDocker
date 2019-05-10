@@ -28,8 +28,11 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
  */
 public final class DtoActividadesVarias {
     
+    @Getter @Setter String mensaje;
+    
     @Getter @Setter private List<AreasUniversidad> listaAreasConRegistroMensualGeneral;
-    @Getter private Boolean tipoConsulta;
+    
+    @Getter @Setter private Boolean nuevoRegistro;
     
      /************************** Lista áreas ****************************************/
     @Getter private List<Categorias> listaCategoriasPOA;
@@ -80,7 +83,7 @@ public final class DtoActividadesVarias {
         setRegistros(new ArrayList<>(Arrays.asList(registroTipoAV.getRegistroTipo())));
         tieneEvidencia = false;
         forzarAperturaDialogo = false;
-        tipoConsulta = true;
+        nuevoRegistro = false;
     }
 
     public void setRegistro(DTOActividadVaria registro) {

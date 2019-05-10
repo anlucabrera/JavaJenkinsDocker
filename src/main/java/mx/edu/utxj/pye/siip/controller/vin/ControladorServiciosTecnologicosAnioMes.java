@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -24,17 +25,23 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
+import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
 import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosTecnologicosAnioMes;
+import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosTecnologicosParticipantes;
+import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosTipos;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.vin.DtoServiciosTecnologicos;
 import mx.edu.utxj.pye.siip.dto.vin.DTOServiciosTecnologicosAnioMes;
 import mx.edu.utxj.pye.siip.dto.vin.DTOServiciosTecnologicosParticipantes;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
+import mx.edu.utxj.pye.siip.interfaces.vin.EjbOrganismosVinculados;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbServiciosTecnologicosAnioMes;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
@@ -54,9 +61,11 @@ public class ControladorServiciosTecnologicosAnioMes implements Serializable{
 
     @Getter @Setter DtoServiciosTecnologicos dtoServicioTecnologico;
 
-    @EJB    EjbServiciosTecnologicosAnioMes ejbServiciosTecnologicosAnioMes;
-    @EJB    EjbModulos ejbModulos;
-    @EJB    EjbFiscalizacion ejbFiscalizacion;
+    @EJB    EjbServiciosTecnologicosAnioMes     ejbServiciosTecnologicosAnioMes;
+    @EJB    EjbModulos                          ejbModulos;
+    @EJB    EjbFiscalizacion                    ejbFiscalizacion;
+    @EJB    EjbCatalogos                        ejbCatalogos;
+    @EJB    EjbOrganismosVinculados             ejbOrganismosVinculados;
     
     @Inject ControladorEmpleado controladorEmpleado;
     @Inject ControladorModulosRegistro controladorModulosRegistro;
@@ -66,6 +75,24 @@ public class ControladorServiciosTecnologicosAnioMes implements Serializable{
         dtoServicioTecnologico = new DtoServiciosTecnologicos();
         dtoServicioTecnologico.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
         filtros();
+    }
+    
+    public void inicializarCatalogos(){
+        try {
+            dtoServicioTecnologico.setServicioTipos(ejbServiciosTecnologicosAnioMes.getListaServiciosTipo());
+            Faces.setSessionAttribute("serviciosTipos", dtoServicioTecnologico.getServicioTipos());
+        } catch (Throwable ex) {
+            Logger.getLogger(ControladorServiciosTecnologicosAnioMes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void inicializarCatalogosParticipantes(){
+        dtoServicioTecnologico.setGeneraciones(ejbCatalogos.getGeneracionesAct());
+        dtoServicioTecnologico.setProgramasEducativos(ejbCatalogos.getProgramasEducativosGeneral());
+        dtoServicioTecnologico.setEstados(ejbFiscalizacion.getEstados());
+        Faces.setSessionAttribute("generaciones", dtoServicioTecnologico.getGeneraciones());
+        Faces.setSessionAttribute("programasEducativos", dtoServicioTecnologico.getProgramasEducativos());
+        Faces.setSessionAttribute("estados", dtoServicioTecnologico.getEstados());
     }
     
     public void listaServiciosTecnologicosAnioMesPrevia(String rutaArchivo) {
@@ -138,17 +165,22 @@ public class ControladorServiciosTecnologicosAnioMes implements Serializable{
     }
     
     public void buscaServiciosTecnologicos() {
-        dtoServicioTecnologico.setLstServiciosTecnologicosAnioMes(ejbServiciosTecnologicosAnioMes.getFiltroServiciosTecnologicosEjercicioMesArea(dtoServicioTecnologico.getAnioConsulta(), dtoServicioTecnologico.getMesConsulta(), dtoServicioTecnologico.getArea().getArea()));
-        dtoServicioTecnologico.setLstDtoServiciosTecnologicosParticipantes(ejbServiciosTecnologicosAnioMes.getFiltroServiciosTecnologicosPartEjercicioMesArea(dtoServicioTecnologico.getAnioConsulta(), dtoServicioTecnologico.getMesConsulta(), dtoServicioTecnologico.getArea().getArea()));
-        
-        dtoServicioTecnologico.getLstServiciosTecnologicosAnioMes().stream().forEach((st) -> {
-            st.setRegistros(ejbModulos.buscaRegistroPorClave(st.getRegistro()));
-        });
-        
-        dtoServicioTecnologico.getLstDtoServiciosTecnologicosParticipantes().stream().forEach((stp) -> {
-            stp.getServiciosTecnologicosParticipantes().setRegistros(ejbModulos.buscaRegistroPorClave(stp.getServiciosTecnologicosParticipantes().getRegistro()));
-        });
-        
+        if (dtoServicioTecnologico.getMesConsulta() != null && !dtoServicioTecnologico.getMesesConsulta().isEmpty()) {
+            dtoServicioTecnologico.setLstServiciosTecnologicosAnioMes(ejbServiciosTecnologicosAnioMes.getFiltroServiciosTecnologicosEjercicioMesArea(dtoServicioTecnologico.getAnioConsulta(), dtoServicioTecnologico.getMesConsulta(), dtoServicioTecnologico.getArea().getArea()));
+            dtoServicioTecnologico.setLstDtoServiciosTecnologicosParticipantes(ejbServiciosTecnologicosAnioMes.getFiltroServiciosTecnologicosPartEjercicioMesArea(dtoServicioTecnologico.getAnioConsulta(), dtoServicioTecnologico.getMesConsulta(), dtoServicioTecnologico.getArea().getArea()));
+
+            dtoServicioTecnologico.getLstServiciosTecnologicosAnioMes().stream().forEach((st) -> {
+                st.setRegistros(ejbModulos.buscaRegistroPorClave(st.getRegistro()));
+            });
+
+            dtoServicioTecnologico.getLstDtoServiciosTecnologicosParticipantes().stream().forEach((stp) -> {
+                stp.getServiciosTecnologicosParticipantes().setRegistros(ejbModulos.buscaRegistroPorClave(stp.getServiciosTecnologicosParticipantes().getRegistro()));
+            });
+        } else {
+            dtoServicioTecnologico.setLstServiciosTecnologicosAnioMes(Collections.EMPTY_LIST);
+            dtoServicioTecnologico.setLstDtoServiciosTecnologicosParticipantes(Collections.EMPTY_LIST);
+        }
+        Faces.setSessionAttribute("serviciosTecnologicos", dtoServicioTecnologico.getLstServiciosTecnologicosAnioMes());
         Ajax.update("formMuestraDatosActivos");
 //        ecServiciosTecnologicosAnioMeses = ejbServiciosTecnologicosAnioMes.getFiltroServiciosTecnologicos(Short.valueOf(ejercicio), mes);
     }
@@ -431,4 +463,128 @@ public class ControladorServiciosTecnologicosAnioMes implements Serializable{
         }else Messages.addGlobalError("La alineación no pudo eliminarse.");
     }
     
+    public void forzarAperturaEdicionServicioTecnologico(){
+        if(dtoServicioTecnologico.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEdicionServicioTecnologico').show();");
+            dtoServicioTecnologico.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void actualizaInterfazEdicionServicioTecnologico(){
+        Ajax.update("frmEdicionServicioTecnologico");
+        Ajax.oncomplete("skin();");
+        dtoServicioTecnologico.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionServicioTecnologico();
+    }
+    
+    public void abrirEdicionServicioTecnologico(ServiciosTecnologicosAnioMes servicioTecnologico) {
+        if("Por oferta".equals(dtoServicioTecnologico.getServicioDemandado().toString())){
+            dtoServicioTecnologico.setServicioDemandado(Boolean.TRUE);
+        }else{
+            dtoServicioTecnologico.setServicioDemandado(Boolean.FALSE);
+        }
+        inicializarCatalogos();
+        DTOServiciosTecnologicosAnioMes dtoSerTec = new DTOServiciosTecnologicosAnioMes();
+        dtoSerTec.setServiciosTecnologicosAnioMes(servicioTecnologico);
+        dtoServicioTecnologico.setRegistro(dtoSerTec);
+        actualizaInterfazEdicionServicioTecnologico();
+    }
+    
+    public void editaServicioTecnologico(){
+        dtoServicioTecnologico.getRegistro().setServiciosTecnologicosAnioMes(ejbServiciosTecnologicosAnioMes.editaServicioTecnologicoAnioMes(dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes()));
+        actualizaInterfazEdicionServicioTecnologico();
+    }
+    
+    public void actualizarServicioTipo(ValueChangeEvent event){
+        dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes().setServicioTipo((ServiciosTipos)event.getNewValue());
+    }
+    
+    public void validaFechaInicio(ValueChangeEvent event) {
+        dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes().setFechaInicio((Date)event.getNewValue());
+        if (dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes().getFechaInicio().before(dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes().getFechaTermino())) {
+        } else {
+            if (dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes().getFechaTermino().before(dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes().getFechaInicio())) {
+                dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes().setFechaTermino(null);
+                dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes().setFechaTermino(dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes().getFechaInicio());
+            } else {
+            }
+        }
+    }
+    
+    public void validaFechaFin(ValueChangeEvent event) {
+        dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes().setFechaTermino((Date)event.getNewValue());
+        if (dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes().getFechaTermino().after(dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes().getFechaInicio())) {
+        } else {
+            if (dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes().getFechaInicio().after(dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes().getFechaTermino())) {
+                dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes().setFechaInicio(null);
+                dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes().setFechaInicio(dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes().getFechaTermino());
+            } else {
+            }
+        }
+    }
+    
+    public void actualizaServicioDemandado(ValueChangeEvent event){
+        dtoServicioTecnologico.setServicioDemandado((Boolean)event.getNewValue());
+        if(dtoServicioTecnologico.getServicioDemandado()){
+            dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes().setServicioDemandado("Por oferta");
+        }else{
+            dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes().setServicioDemandado("Por demanda");
+        }
+    }
+    
+    /************************************************************************************************************************/
+    
+    public void forzarAperturaEdicionServicioTecnologicoParticipante(){
+        if(dtoServicioTecnologico.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEdicionServicioTecnologicoParticipante').show();");
+            dtoServicioTecnologico.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void actualizaInterfazEdicionServicioTecnologicoParticipante(){
+        Ajax.update("frmEdicionServicioTecnologicoParticipante");
+        Ajax.oncomplete("skin();");
+        dtoServicioTecnologico.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionServicioTecnologicoParticipante();
+    }
+    
+    public void abrirEdicionServicioTecnologicoParticipante(ServiciosTecnologicosParticipantes servicioTecnologicoParticipante) {
+        inicializarCatalogosParticipantes();
+        DTOServiciosTecnologicosParticipantes dtoSerTecPart = new DTOServiciosTecnologicosParticipantes();
+        dtoSerTecPart.setServiciosTecnologicosParticipantes(servicioTecnologicoParticipante);
+        dtoServicioTecnologico.setRegistroParticipantes(dtoSerTecPart);
+        
+        dtoServicioTecnologico.setMunicipios(ejbFiscalizacion.getMunicipiosPorEstado(dtoServicioTecnologico.getRegistroParticipantes().getServiciosTecnologicosParticipantes().getMunicipio().getEstado()));
+        Faces.setSessionAttribute("municipios", dtoServicioTecnologico.getMunicipios());
+        
+        actualizaInterfazEdicionServicioTecnologicoParticipante();
+    }
+
+    public void editaServicioTecnologicoParticipante(){
+        if(dtoServicioTecnologico.getRegistroParticipantes().getServiciosTecnologicosParticipantes().getEmpresa() == null){
+            dtoServicioTecnologico.getRegistroParticipantes().getServiciosTecnologicosParticipantes().setEmpresa(null);
+        }
+        dtoServicioTecnologico.getRegistroParticipantes().setServiciosTecnologicosParticipantes(ejbServiciosTecnologicosAnioMes.editaServicioTecnologicoParticipante(dtoServicioTecnologico.getRegistroParticipantes().getServiciosTecnologicosParticipantes()));
+        actualizaInterfazEdicionServicioTecnologicoParticipante();
+    }
+    
+    public List<OrganismosVinculados> completeOrganismosVinculados(String organismoVinculado) { 
+        dtoServicioTecnologico.setListaEmpresas(ejbOrganismosVinculados.buscaCoincidenciasOrganismosVinculados(organismoVinculado));
+        Faces.setSessionAttribute("organismosVinculados", dtoServicioTecnologico.getListaEmpresas());
+        return dtoServicioTecnologico.getListaEmpresas();
+    }
+    
+    public void seleccionaOrganismoVinculado(ValueChangeEvent event){
+        dtoServicioTecnologico.getRegistroParticipantes().getServiciosTecnologicosParticipantes().setEmpresa((OrganismosVinculados)event.getNewValue());
+    }
+    
+    public void actualizarServicioTecnologicoAsignado(ValueChangeEvent event){
+        dtoServicioTecnologico.getRegistroParticipantes().getServiciosTecnologicosParticipantes().setServicioTecnologico((ServiciosTecnologicosAnioMes)event.getNewValue());
+    }
+    
+    public void actualizarMunicipiosSTP(ValueChangeEvent event){
+        dtoServicioTecnologico.getRegistroParticipantes().getServiciosTecnologicosParticipantes().getMunicipio().setEstado((Estado)event.getNewValue());
+        dtoServicioTecnologico.setMunicipios(ejbFiscalizacion.getMunicipiosPorEstado((Estado)event.getNewValue()));
+        Faces.setSessionAttribute("municipios", dtoServicioTecnologico.getMunicipios());
+    }
 }

@@ -18,7 +18,10 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.pye2.AsesoriasTutoriasMensualPeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
@@ -55,6 +58,7 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
     @EJB EjbModulos ejbModulos;
     @Inject ControladorEmpleado controladorEmpleado;
     @Inject ControladorModulosRegistro controladorModulosRegistro;
+    @EJB EjbCatalogos ejbCatalogos;
     
     @PostConstruct
     public void init(){
@@ -64,10 +68,10 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
 //        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
         dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
         dto.setPeriodoEscolarActivo(ejbModulos.getPeriodoEscolarActivo());
-
-        System.out.println("Mensaje construido");
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());
+            dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos());
+            Faces.setSessionAttribute("programasEducativos", dto.getProgramasEducativos());
         } catch (EventoRegistroNoExistenteException ex) {
             Logger.getLogger(ControladorAsesoriasTutoriasCicloEscolar.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -299,5 +303,47 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
             cargarAlineacionXActividad();
             Ajax.update("frmAlineacion");
         }else Messages.addGlobalError("La alineación no pudo eliminarse.");
+    }
+    
+    /********************************************* Edición ***********************************************/
+    public void forzarAperturaEdicionAsesoriaTutoriaMensual(){
+        if(dto.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEdicionAsesoriaTutoria').show();");
+            dto.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void actualizaInterfazEdicionAsesoriaTutoriaMensual(){
+        Ajax.update("frmEdicionAsesoriaTutoria");
+        Ajax.oncomplete("skin();");
+        dto.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionAsesoriaTutoriaMensual();
+    }
+    
+    public void abrirEdicionAsesoriasTutoriasMensual(AsesoriasTutoriasMensualPeriodosEscolares asesoriaTutoriaMensual) {
+        DTOAsesoriasTutoriasCicloPeriodos dtoAsTutMen = new DTOAsesoriasTutoriasCicloPeriodos();
+        dtoAsTutMen.setAsesoriasTutoriasCicloPeriodos(asesoriaTutoriaMensual);
+        dto.setRegistro(dtoAsTutMen);
+        dto.setPeriodoEscolarAsesoriaTutoria(ejbModulos.buscaPeriodoEscolarEspecifico(dto.getRegistro().getAsesoriasTutoriasCicloPeriodos().getPeriodoEscolar()));
+        dto.setProgramaEducativoAsesTut(ejbModulos.buscaProgramaEducativoEspecifico(dto.getRegistro().getAsesoriasTutoriasCicloPeriodos().getProgramaEducativo()));
+        dto.setMensaje("");
+        actualizaInterfazEdicionAsesoriaTutoriaMensual();
+    }
+    
+    public void editaAsesoriaTutoriaMensual(){
+        if(ejb.buscaAsesoriaTutoriaExistente(dto.getRegistro().getAsesoriasTutoriasCicloPeriodos())){
+            dto.setMensaje("No se ha podido actualizar debido a que el sistema ha detectado un registro con las mismas caracteristicas, favor de intentar nuevamente");
+            Ajax.update("mensaje");
+        }else{
+            dto.getRegistro().setAsesoriasTutoriasCicloPeriodos(ejb.editaAsesoriaTutoriaMensualPeriodoEscolar(dto.getRegistro().getAsesoriasTutoriasCicloPeriodos()));
+            dto.setMensaje("El registro se ha actualizado correctamente");
+            Ajax.update("mensaje");
+            actualizaInterfazEdicionAsesoriaTutoriaMensual();
+        }
+    }
+    
+    public void actualizarProgramaEducativo(ValueChangeEvent event){
+        dto.setProgramaEducativoAsesTut(((AreasUniversidad)event.getNewValue()));
+        dto.getRegistro().getAsesoriasTutoriasCicloPeriodos().setProgramaEducativo(dto.getProgramaEducativoAsesTut().getArea());
     }
 }

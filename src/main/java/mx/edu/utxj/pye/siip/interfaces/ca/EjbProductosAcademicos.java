@@ -9,6 +9,8 @@ import java.util.List;
 import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
+import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
+import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAcademicos;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAcademicosPersonal;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
@@ -49,6 +51,7 @@ public interface EjbProductosAcademicos {
      * @throws Throwable 
      */
     public List<DTOProductosAcademicos> getFiltroProductosAcademicosEjercicioMesArea(Short ejercicio, String mes, Short area) throws Throwable;
+    public List<ProductosAcademicos> getFiltroProductosAcademicosEjercicioMesAreaInt(Short ejercicio, String mes, Short area) throws Throwable;
     
     /**
      * Método que se ocupa para el filtrado de Productos Académicos Personal por Ejercicio, Mes y Área el cual es mostrado para la consulta y eliminación
@@ -67,4 +70,17 @@ public interface EjbProductosAcademicos {
      * @throws Throwable 
      */
     public List<Integer> buscaRegistrosPersonalProductosAcademicos(ProductosAcademicos productoAcademico) throws Throwable;
+    
+    public Boolean buscaProductoAcademicoExistente(ProductosAcademicos productoAcademico);
+    
+    public Boolean buscaProductoAcademicoPersonalExistente(ProductosAcademicosPersonal productoAcademicoPersonal);
+    
+    public ProductosAcademicos editaProductoAcademico(ProductosAcademicos productoAcademico);
+    
+    public ProductosAcademicosPersonal editaProductoAcademicoPersonal(ProductosAcademicosPersonal productoAcademicoPersonal);
+    
+    public Pais getPaisProductoAcademico(ProductosAcademicos productoAcademico);
+    
+    public Municipio getMunicipioProductoAcademico(ProductosAcademicos organismoVinculado);
+    
 }

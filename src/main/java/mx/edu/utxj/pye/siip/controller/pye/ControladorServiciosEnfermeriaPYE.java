@@ -8,7 +8,10 @@ package mx.edu.utxj.pye.siip.controller.pye;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -31,6 +34,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosEnfermeriaCicloPeriodos;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.ca.DTOServiciosEnfemeriaCicloPeriodos;
 import mx.edu.utxj.pye.siip.dto.ca.DtoServicioEnfermeria;
@@ -40,7 +44,6 @@ import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
-import org.primefaces.component.collector.Collector;
 
 /**
  *
@@ -65,9 +68,15 @@ public class ControladorServiciosEnfermeriaPYE implements Serializable{
     
     @PostConstruct
     public void init(){
-        dto = new DtoServicioEnfermeria();
-        dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        filtros();
+        try {
+            dto = new DtoServicioEnfermeria();
+            dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+            dto.setListaServiciosEnfermeriaTipos(ejbServiciosEnfermeriaCicloPeriodos.getServiciosEnfermeriaTipos());
+            Faces.setSessionAttribute("serviciosEnfermeriaTipos", dto.getListaServiciosEnfermeriaTipos());
+            filtros();
+        } catch (Throwable ex) {
+            Logger.getLogger(ControladorServiciosEnfermeriaPYE.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void filtros(){
@@ -304,4 +313,49 @@ public class ControladorServiciosEnfermeriaPYE implements Serializable{
             }
         }else Messages.addGlobalError("La alineación no pudo eliminarse.");
     }
+    
+    public void forzarAperturaEdicionServicioEnfermeria(){
+        if(dto.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEdicionServicioEnfermeria').show();");
+            dto.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void actualizaInterfazEdicionServicioEnfermeria(){
+        Ajax.update("frmEdicionServicioEnfermeria");
+        Ajax.oncomplete("skin();");
+        dto.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionServicioEnfermeria();
+    }
+    
+    public void abrirEdicionServicioEnfermeria(ServiciosEnfermeriaCicloPeriodos servEnf) {
+        DTOServiciosEnfemeriaCicloPeriodos dtoSerEnf = new DTOServiciosEnfemeriaCicloPeriodos();
+        dtoSerEnf.setServiciosEnfermeriaCicloPeriodos(servEnf);
+        dto.setRegistro(dtoSerEnf);
+        dto.setCicloEscolar(ejbModulos.buscaCicloEscolarEspecifico(dto.getRegistro().getServiciosEnfermeriaCicloPeriodos().getCicloEscolar()));
+        dto.setPeriodoEscolar(ejbModulos.buscaPeriodoEscolarEspecifico(dto.getRegistro().getServiciosEnfermeriaCicloPeriodos().getPeriodoEscolar()));
+        
+        dto.setCicloInicio(dateToCalendar(dto.getCicloEscolar().getInicio()).get(Calendar.YEAR));
+        dto.setCicloFin(dateToCalendar(dto.getCicloEscolar().getFin()).get(Calendar.YEAR));
+        dto.setMensaje("");
+        actualizaInterfazEdicionServicioEnfermeria();
+    }
+    
+    public void editaServicioEnfermeria(){
+        if(ejbServiciosEnfermeriaCicloPeriodos.buscaServicioEnfermeriaExistente(dto.getRegistro().getServiciosEnfermeriaCicloPeriodos())){
+            dto.setMensaje("El servicio de enfermería que ha ingresado ya ha sido agregado anteriormente, intente agregar otro servicio");
+        }else{
+            dto.getRegistro().setServiciosEnfermeriaCicloPeriodos(ejbServiciosEnfermeriaCicloPeriodos.editaServicioEnfermeria(dto.getRegistro().getServiciosEnfermeriaCicloPeriodos()));
+            dto.setMensaje("El servicio de enfemería ha sido actualizado correctamente");
+            actualizaInterfazEdicionServicioEnfermeria();
+        }
+        Ajax.update("mensaje");
+    }
+    
+    private Calendar dateToCalendar(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar;
+    }
+
 }

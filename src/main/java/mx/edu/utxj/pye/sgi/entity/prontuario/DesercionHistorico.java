@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "DesercionHistorico.findByRegEsc", query = "SELECT d FROM DesercionHistorico d WHERE d.regEsc = :regEsc")
     , @NamedQuery(name = "DesercionHistorico.findByIncHor", query = "SELECT d FROM DesercionHistorico d WHERE d.incHor = :incHor")
     , @NamedQuery(name = "DesercionHistorico.findByCamDom", query = "SELECT d FROM DesercionHistorico d WHERE d.camDom = :camDom")
-    , @NamedQuery(name = "DesercionHistorico.findByDefunsion", query = "SELECT d FROM DesercionHistorico d WHERE d.defunsion = :defunsion")
+    , @NamedQuery(name = "DesercionHistorico.findByDefuncion", query = "SELECT d FROM DesercionHistorico d WHERE d.defuncion = :defuncion")
     , @NamedQuery(name = "DesercionHistorico.findByProbSal", query = "SELECT d FROM DesercionHistorico d WHERE d.probSal = :probSal")
     , @NamedQuery(name = "DesercionHistorico.findByProbFam", query = "SELECT d FROM DesercionHistorico d WHERE d.probFam = :probFam")
     , @NamedQuery(name = "DesercionHistorico.findByIntCar", query = "SELECT d FROM DesercionHistorico d WHERE d.intCar = :intCar")
@@ -53,7 +53,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "DesercionHistorico.findByInasistencia", query = "SELECT d FROM DesercionHistorico d WHERE d.inasistencia = :inasistencia")
     , @NamedQuery(name = "DesercionHistorico.findByOriVoc", query = "SELECT d FROM DesercionHistorico d WHERE d.oriVoc = :oriVoc")
     , @NamedQuery(name = "DesercionHistorico.findByEmbarazo", query = "SELECT d FROM DesercionHistorico d WHERE d.embarazo = :embarazo")
-    , @NamedQuery(name = "DesercionHistorico.findByCamCd", query = "SELECT d FROM DesercionHistorico d WHERE d.camCd = :camCd")})
+    , @NamedQuery(name = "DesercionHistorico.findByCamCd", query = "SELECT d FROM DesercionHistorico d WHERE d.camCd = :camCd")
+    , @NamedQuery(name = "DesercionHistorico.findByAbanEst", query = "SELECT d FROM DesercionHistorico d WHERE d.abanEst = :abanEst")
+    , @NamedQuery(name = "DesercionHistorico.findByIntDist", query = "SELECT d FROM DesercionHistorico d WHERE d.intDist = :intDist")
+    , @NamedQuery(name = "DesercionHistorico.findByProbAcad", query = "SELECT d FROM DesercionHistorico d WHERE d.probAcad = :probAcad")})
 public class DesercionHistorico implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -124,8 +127,8 @@ public class DesercionHistorico implements Serializable {
     private int camDom;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "defunsion")
-    private int defunsion;
+    @Column(name = "defuncion")
+    private int defuncion;
     @Basic(optional = false)
     @NotNull
     @Column(name = "prob_sal")
@@ -158,6 +161,18 @@ public class DesercionHistorico implements Serializable {
     @NotNull
     @Column(name = "cam_cd")
     private int camCd;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "aban_est")
+    private int abanEst;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "int_dist")
+    private int intDist;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "prob_acad")
+    private int probAcad;
     @JoinColumn(name = "ciclo", referencedColumnName = "ciclo")
     @ManyToOne(optional = false)
     private CiclosEscolares ciclo;
@@ -175,7 +190,7 @@ public class DesercionHistorico implements Serializable {
         this.idDesercion = idDesercion;
     }
 
-    public DesercionHistorico(Integer idDesercion, int cuatrimestre, int temporales, int definitivas, int sinCausa, int incExp, int reprobacion, int probEco, int motPer, int disUt, int probTrab, int camUt, int camCar, int regEsc, int incHor, int camDom, int defunsion, int probSal, int probFam, int intCar, int camUni, int inasistencia, int oriVoc, int embarazo, int camCd) {
+    public DesercionHistorico(Integer idDesercion, int cuatrimestre, int temporales, int definitivas, int sinCausa, int incExp, int reprobacion, int probEco, int motPer, int disUt, int probTrab, int camUt, int camCar, int regEsc, int incHor, int camDom, int defuncion, int probSal, int probFam, int intCar, int camUni, int inasistencia, int oriVoc, int embarazo, int camCd, int abanEst, int intDist, int probAcad) {
         this.idDesercion = idDesercion;
         this.cuatrimestre = cuatrimestre;
         this.temporales = temporales;
@@ -192,7 +207,7 @@ public class DesercionHistorico implements Serializable {
         this.regEsc = regEsc;
         this.incHor = incHor;
         this.camDom = camDom;
-        this.defunsion = defunsion;
+        this.defuncion = defuncion;
         this.probSal = probSal;
         this.probFam = probFam;
         this.intCar = intCar;
@@ -201,6 +216,9 @@ public class DesercionHistorico implements Serializable {
         this.oriVoc = oriVoc;
         this.embarazo = embarazo;
         this.camCd = camCd;
+        this.abanEst = abanEst;
+        this.intDist = intDist;
+        this.probAcad = probAcad;
     }
 
     public Integer getIdDesercion() {
@@ -331,12 +349,12 @@ public class DesercionHistorico implements Serializable {
         this.camDom = camDom;
     }
 
-    public int getDefunsion() {
-        return defunsion;
+    public int getDefuncion() {
+        return defuncion;
     }
 
-    public void setDefunsion(int defunsion) {
-        this.defunsion = defunsion;
+    public void setDefuncion(int defuncion) {
+        this.defuncion = defuncion;
     }
 
     public int getProbSal() {
@@ -401,6 +419,30 @@ public class DesercionHistorico implements Serializable {
 
     public void setCamCd(int camCd) {
         this.camCd = camCd;
+    }
+
+    public int getAbanEst() {
+        return abanEst;
+    }
+
+    public void setAbanEst(int abanEst) {
+        this.abanEst = abanEst;
+    }
+
+    public int getIntDist() {
+        return intDist;
+    }
+
+    public void setIntDist(int intDist) {
+        this.intDist = intDist;
+    }
+
+    public int getProbAcad() {
+        return probAcad;
+    }
+
+    public void setProbAcad(int probAcad) {
+        this.probAcad = probAcad;
     }
 
     public CiclosEscolares getCiclo() {
