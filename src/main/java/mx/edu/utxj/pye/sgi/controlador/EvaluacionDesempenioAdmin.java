@@ -309,7 +309,7 @@ public class EvaluacionDesempenioAdmin implements Serializable {
         DesempenioEvaluaciones ultimaEvaluacion = evaluacionDesempenioEJB.getUltimaEvaluacionDesempenio();
         //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() la ultima evaluacion es : "+ ultimaEvaluacion);
         
-        directivoSeleccionado = (ListaPersonal) facade.find(Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
+        directivoSeleccionado =  facade.getEntityManager().find(ListaPersonal.class,logonMB.getPersonal().getClave());
         //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() el directivo es : "+ evaluador);
         
         listaSubordinados = evaluacionDesempenioEJB.getListaSubordinados(directivoSeleccionado);

@@ -77,7 +77,7 @@ public class EjbEvaluacionEstadia {
                         + "a.grupos.gruposPK.cvePeriodo = :periodo AND "
                         + "a.gradoActual = :grado", Alumnos.class);
         q.setParameter("estatus", 1);
-        q.setParameter("periodo", periodo);
+        q.setParameter("periodo", 50);
         q.setParameter("grado", grado);
         q.setParameter("matricula", matricula);
         //System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEncuestaServicios.obtenerAlumnos() se ejecuto la consulta");

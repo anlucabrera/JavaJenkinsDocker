@@ -52,10 +52,11 @@ public class NotificacionesControl implements Serializable {
 
     @PostConstruct
     public void init() {
+        contactoDestino = 0;
         mostrarContactosParaNotificacion();
         mostrarNotificacionesLogeado();
     }
-
+    
     public void mostrarContactosParaNotificacion() {
         try {
             nuevaListaPersonalContacto = new ArrayList<>();
@@ -127,6 +128,9 @@ public class NotificacionesControl implements Serializable {
 
     public void mostrarNotificacionesLogeado() {
         try {
+            if (nuevoOBJcontactosChatSelec == null) {
+                return;
+            }
             if (nuevoOBJcontactosChatSelec.getClave() == 0) {
                 contactoDestino = 0;
                 nombreContacto = "";
@@ -134,10 +138,9 @@ public class NotificacionesControl implements Serializable {
                 contactoDestino = nuevoOBJcontactosChatSelec.getClave();
                 nombreContacto = nuevoOBJcontactosChatSelec.getNombre();
             }
-
             notificacioneses = new ArrayList<>();
             notificacioneses.clear();
-            notificacioneses = ejbNotificacionesIncidencias.mostrarListaDenotificacionesPorConversacion(controladorEmpleado.getNuevoOBJListaPersonal().getClave(),contactoDestino);
+            notificacioneses = ejbNotificacionesIncidencias.mostrarListaDenotificacionesPorConversacion(controladorEmpleado.getNuevoOBJListaPersonal().getClave(), contactoDestino);
             if (!notificacioneses.isEmpty()) {
                 notificacioneses.forEach((n) -> {
                     if (Objects.equals(n.getClaveTRemitente().getClave(), contactoDestino)) {
@@ -146,7 +149,7 @@ public class NotificacionesControl implements Serializable {
                             ejbNotificacionesIncidencias.actualizarNotificaciones(n);
                         }
                     }
-                });                
+                });
             }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
