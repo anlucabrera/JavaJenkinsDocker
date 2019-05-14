@@ -356,7 +356,7 @@
                     </ul>
                 </li>
             </c:if>
-            <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Justifiación de asistencias</li>
+            <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Justificación de asistencias</li>
             <li class="treeview">
                 <a href="#">
                     <i class="fa fa-file-text-o"></i> <span>Justificación de Asistencia</span>
@@ -672,6 +672,13 @@
                         </p:link>
                     </li>
                 </c:if>
+            </c:if>
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+                <li>
+                    <p:link href="/capitalHumano/personal/perfilPersonalReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
+                        <span>Reporte de Registros</span>
+                    </p:link>
+                </li>
             </c:if>
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13}">
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Personal</li>

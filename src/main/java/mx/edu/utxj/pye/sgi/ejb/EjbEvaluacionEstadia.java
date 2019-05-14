@@ -66,17 +66,17 @@ public class EjbEvaluacionEstadia {
             Boolean acv = x.getActivo().equals(true);
             if (activo.equals(acv)) {
                 periodo = x.getPeriodosPK().getCvePeriodo();
-                System.out.println("Periodo:"+ periodo);
             }
         });
 //        TypedQuery<ViewAlumnos> q = f.getEntityManager().createQuery("SELECT a from Alumno a WHERE a.alumnoPK.periodo= 47 AND a.cuatrimestre=11 AND a.alumnoPK.matricula=:matricula", Alumno.class);
         TypedQuery<Alumnos> q = f2.getEntityManager()
                 .createQuery("SELECT a from Alumnos a " 
                         + "WHERE a.matricula=:matricula AND "
-                        + "a.cveStatus = :estatus AND "
+                        + "(a.cveStatus = :estatus or a.cveStatus = :estatus2) AND "
                         + "a.grupos.gruposPK.cvePeriodo = :periodo AND "
                         + "a.gradoActual = :grado", Alumnos.class);
         q.setParameter("estatus", 1);
+        q.setParameter("estatus2", 6);
         q.setParameter("periodo", 50);
         q.setParameter("grado", grado);
         q.setParameter("matricula", matricula);

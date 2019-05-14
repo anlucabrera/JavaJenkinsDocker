@@ -58,6 +58,7 @@
                                 <p:commandButton id="btnRSimbo2" actionListener="#{controladorPOARecurso.imprimirValores()}"
                                                  icon="fa fa-usd" styleClass="btn-success"/> 
 
+                                <p:spacer width="30px"/>
                                 <p:commandButton value="Finalizar registro de actividades" id="btnEnviaCorreo" 
                                                  actionListener="#{utilidadesPOA.enviarCorreo(3,'')}"
                                                  process="@this" disabled="#{controladorEmpleado.procesopoa.asiganacionRFinalizado}"
@@ -501,7 +502,7 @@
 
             </h:form>
 
-            <p:dialog header="Asignar recurso para: #{controladorPOARecurso.actividadesPoa.denominacion}" widgetVar="delRegistroProdustos" modal="true" 
+            <p:dialog id="delRegistroProdustos" header="Asignar recurso para: #{controladorPOARecurso.actividadesPoa.denominacion}" widgetVar="delRegistroProdustos" modal="true" 
                       showEffect="fade" hideEffect="fade" resizable="false" width="800" closeOnEscape="true">
                 <h:form id="frmAsignaRecurso">
                     <div class="row">

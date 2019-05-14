@@ -127,7 +127,7 @@ public class ControladorPersonalReporteRegistros implements Serializable {
                 tipo = "C";
             }
             listareporteRegistros = new reporteRegistros(
-                    nuevoOBJListaPersonal.getClave().toString() + " -- " + nuevoOBJListaPersonal.getNombre(),
+                    nuevoOBJListaPersonal,
                     listaFormacionAcademica.size(),
                     listaExperienciasLaborales.size(),
                     listaCapacitacionespersonal.size(),
@@ -170,9 +170,9 @@ public class ControladorPersonalReporteRegistros implements Serializable {
                         break;
                 }
             }
-            Collections.sort(listareporteRegistrosA, (x, y) -> x.getTt().compareTo(y.getTt()));
-            Collections.sort(listareporteRegistrosD, (x, y) -> x.getTt().compareTo(y.getTt()));
-            Collections.sort(listareporteRegistrosDyC, (x, y) -> x.getTt().compareTo(y.getTt()));
+//            Collections.sort(listareporteRegistrosA, (x, y) -> x.getTt().compareTo(y.getTt()));
+            Collections.sort(listareporteRegistrosD, (x, y) -> Short.compare(x.getPersona().getAreaSuperior(),y.getPersona().getAreaSuperior()));
+//            Collections.sort(listareporteRegistrosDyC, (x, y) -> x.getTt().compareTo(y.getTt()));
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorPersonalReporteRegistros.class.getName()).log(Level.SEVERE, null, ex);
@@ -181,12 +181,12 @@ public class ControladorPersonalReporteRegistros implements Serializable {
 
     public static class reporteRegistros {
 
-        @Getter        @Setter        private String nombre;
+        @Getter        @Setter        private ListaPersonal persona;
         @Getter        @Setter        private Integer fa, el, ca, id, dt, pr, lp, ap, mp, hi, li, in, ds, iv, co, tt;
         @Getter        @Setter        private String tipo;
 
-        public reporteRegistros(String nombre, Integer fa, Integer el, Integer ca, Integer id, Integer dt, Integer pr, Integer lp, Integer ap, Integer mp, Integer hi, Integer li, Integer in, Integer ds, Integer iv, Integer co, Integer tt, String tipo) {
-            this.nombre = nombre;
+        public reporteRegistros(ListaPersonal persona, Integer fa, Integer el, Integer ca, Integer id, Integer dt, Integer pr, Integer lp, Integer ap, Integer mp, Integer hi, Integer li, Integer in, Integer ds, Integer iv, Integer co, Integer tt, String tipo) {
+            this.persona = persona;
             this.fa = fa;
             this.el = el;
             this.ca = ca;
