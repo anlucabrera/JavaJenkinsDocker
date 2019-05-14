@@ -175,7 +175,7 @@ public class ControladorCuerposAcademicos implements Serializable{
                 inicializarListas();
 
                 dtoCuerposAcademicos.setLstDtoCuerposAcademicosR(ejbCuerposAcademicos.getFiltroCuerposAcademicosEjercicioMesArea(dtoCuerposAcademicos.getAnioConsulta(), dtoCuerposAcademicos.getArea().getArea()));
-                dtoCuerposAcademicos.setListaCuerposAcademicosIntLa(ejbCuerposAcademicos.getFiltroCuerposAcademicosEdicion(dtoCuerposAcademicos.getAnioConsulta(), dtoCuerposAcademicos.getAreaUniversidadPOA().getArea()));
+                dtoCuerposAcademicos.setListaCuerposAcademicosIntLa(ejbCuerposAcademicos.getFiltroCuerposAcademicosEdicion(dtoCuerposAcademicos.getAnioConsulta(), dtoCuerposAcademicos.getArea().getArea()));
                 dtoCuerposAcademicos.setLstDtoCuerpAcadIntegrantes(ejbCuerposAcademicos.getFiltroCuerpAcadIntegrantesEjercicioMesArea(dtoCuerposAcademicos.getAnioConsulta(), dtoCuerposAcademicos.getArea().getArea()));
                 dtoCuerposAcademicos.setLstCuerpAcadLineas(ejbCuerposAcademicos.getFiltroCuerpAcadLineasEjercicioMesArea(dtoCuerposAcademicos.getAnioConsulta(), dtoCuerposAcademicos.getArea().getArea()));
 

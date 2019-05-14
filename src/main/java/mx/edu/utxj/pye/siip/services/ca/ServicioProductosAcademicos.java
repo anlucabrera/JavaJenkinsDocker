@@ -704,5 +704,27 @@ public class ServicioProductosAcademicos implements EjbProductosAcademicos {
             return null;
         }
     }
+
+    @Override
+    public List<ProductosAcademicos> getReporteGeneralProductosAcademicosPorEjercicio() {
+        try {
+            return facadeCapitalHumano.getEntityManager().createQuery("SELECT p FROM ProductosAcademicos p INNER JOIN p.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY p.fechaInicio",ProductosAcademicos.class)
+                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<ProductosAcademicosPersonal> getReporteGeneralProductosAcademicosPersonalPorEjercicio() {
+        try {
+            return facadeCapitalHumano.getEntityManager().createQuery("SELECT p FROM ProductosAcademicosPersonal p INNER JOIN p.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY p.productoAcademico.fechaInicio",ProductosAcademicosPersonal.class)
+                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
     
 }

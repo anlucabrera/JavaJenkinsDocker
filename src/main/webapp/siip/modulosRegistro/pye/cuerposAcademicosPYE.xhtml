@@ -17,9 +17,9 @@
         <h:outputScript library="js" name="dialogs.js" />
         <h:outputScript library="js" name="calendario.js"/>
         <!-- Inicio estilos par proceso electoral -->
-            <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
-                <h:outputStylesheet library="css" name="procesoElectoral.css" />
-            </c:if>
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <h:outputStylesheet library="css" name="procesoElectoral.css" />
+        </c:if>
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
     <ui:define name="title">
@@ -43,11 +43,11 @@
             <div class="box-header with-border">
 
                 <div id="main-buttons" class="hidden-sm hidden-xs" >
-                    <h:form prependId="true" id="frmMainButtons" class="form-inline">
-                        <p:outputPanel >
-                            <p:autoUpdate/>
-                            <p:toolbar id="tb"> 
-                                <f:facet name="left">
+                    <p:outputPanel >
+                        <p:autoUpdate/>
+                        <p:toolbar id="tb"> 
+                            <f:facet name="left">
+                                <h:form prependId="true" id="frmMainButtons" class="form-inline">
                                     <p:spacer width="10" />
                                     <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
                                     <p:outputLabel value="Categoría " for="categoria"/>
@@ -139,15 +139,19 @@
                                                        itemLabel="#{mes}" />
                                         <p:ajax process="@this" listener="#{controladorCuerposAcademicosPYE.buscarCuerposAcademicos()}" update="@(form)" />
                                     </p:selectOneMenu>
-                                </f:facet>
-                                <f:facet name="right">
+                                </h:form>
+                            </f:facet>
+                            <f:facet name="right">
+                                <h:form id="frmReporte">
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasCA.descargarReporteCuerposAcademicos()}" target="_blank" title="Descargar Reporte de Excel Cuerpos Académicos"><i class="fa fa-file-excel-o" /></p:commandLink>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
-                                </f:facet>
-                            </p:toolbar>
-                            <p:sticky target="tb" />
-                        </p:outputPanel>
-                    </h:form>
+                                </h:form>
+                            </f:facet>
+                        </p:toolbar>
+                        <p:sticky target="tb" />
+                    </p:outputPanel>
                 </div>
                 <p:separator/>
 
@@ -1224,12 +1228,12 @@
                                     <p:outputLabel value="Edición del integrante: #{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerpAcadIntegrantes.cuerpoAcademicoIntegrantes.personal}"/>
                                 </div>
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
-                                
+
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
                                     <p:outputLabel id="mensaje" value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mensaje}"/>
                                     <br></br>
                                 </div>
-                                
+
                                 <!--Cuerpos Académicos-->
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 15px">
                                     <p:outputLabel value="Cuerpo Académico: " for="somCuerposAcademicosIntegrantes" />
@@ -1328,7 +1332,7 @@
                                     <p:outputLabel value="Edición de la línea de investigación: #{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerpAcadLineas.cuerpoAcademicoLineas.nombre}"/>
                                 </div>
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
-                                
+
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
                                     <p:outputLabel id="mensaje" value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mensaje}"/>
                                     <br></br>

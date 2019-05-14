@@ -1030,5 +1030,38 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
             return false;
         }
     }
+
+    @Override
+    public List<CuerposAcademicosRegistro> getReporteGeneralCuerposAcademicosPorEjercicio() {
+        try {
+            return facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerposAcademicosRegistro c INNER JOIN c.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY c.fechaInicio",CuerposAcademicosRegistro.class)
+                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<CuerpacadIntegrantes> getReporteGeneralCuerposAcademicosIntegrantesPorEjercicio() {
+        try {
+            return facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerpacadIntegrantes c INNER JOIN c.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY c.cuerpoAcademico.cuerpoAcademico",CuerpacadIntegrantes.class)
+                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<CuerpacadLineas> getReporteGeneralCuerposAcademicosLineasInvestigacionPorEjercicio() {
+        try {
+            return facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerpacadLineas c INNER JOIN c.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY c.cuerpoAcademico.cuerpoAcademico",CuerpacadLineas.class)
+                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
     
 }
