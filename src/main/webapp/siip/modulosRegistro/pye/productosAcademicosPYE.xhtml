@@ -17,9 +17,9 @@
         <h:outputScript library="js" name="dialogs.js" />
         <h:outputScript library="js" name="calendario.js"/>
         <!-- Inicio estilos par proceso electoral -->
-            <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
-                <h:outputStylesheet library="css" name="procesoElectoral.css" />
-            </c:if>
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <h:outputStylesheet library="css" name="procesoElectoral.css" />
+        </c:if>
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
     <ui:define name="title">
@@ -43,11 +43,11 @@
             <div class="box-header with-border">
 
                 <div id="main-buttons" class="hidden-sm hidden-xs" >
-                    <h:form prependId="true" id="frmMainButtons" class="form-inline">
-                        <p:outputPanel >
-                            <p:autoUpdate/>
-                            <p:toolbar id="tb"> 
-                                <f:facet name="left">
+                    <p:outputPanel >
+                        <p:autoUpdate/>
+                        <p:toolbar id="tb"> 
+                            <f:facet name="left">
+                                <h:form prependId="true" id="frmMainButtons" class="form-inline">
                                     <p:spacer width="10" />
                                     <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
                                     <p:outputLabel value="Categoría " for="categoria"/>
@@ -139,15 +139,19 @@
                                                        itemLabel="#{mes}" />
                                         <p:ajax process="@this" listener="#{controladorProductosAcademicosPYE.buscarProductosAcademicos()}" update="@(form)" />
                                     </p:selectOneMenu>
-                                </f:facet>
-                                <f:facet name="right">
+                                </h:form>
+                            </f:facet>
+                            <f:facet name="right">
+                                <h:form id="frmReporte">
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasCA.descargarReporteProductosAcademicos()}" target="_blank" title="Descargar Reporte de Excel Productos Académicos"><i class="fa fa-file-excel-o" /></p:commandLink>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
-                                </f:facet>
-                            </p:toolbar>
-                            <p:sticky target="tb" />
-                        </p:outputPanel>
-                    </h:form>
+                                </h:form>
+                            </f:facet>
+                        </p:toolbar>
+                        <p:sticky target="tb" />
+                    </p:outputPanel>
                 </div>
                 <p:separator/>
 
@@ -749,7 +753,7 @@
                                     <p:outputLabel value="Edición del producto académico #{controladorProductosAcademicosPYE.dtoProductoAcademico.registroProductoAcademico.productosAcademicos.productoAcademico}"/>
                                 </div>
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
-                                
+
                                 <!--Programa Educativo-->
                                 <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
                                     <p:outputLabel for="somProgramasEducativos" value="Areas Académicas: "/>
@@ -776,7 +780,7 @@
                                     </p:selectOneMenu>
                                     <p:message for="somProgramasEducativos" />
                                 </div>
-                                
+
                                 <!--Tipo-->
                                 <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
                                     <p:outputLabel for="somTipoProductoAcademico" value="Tipo: "/>
@@ -822,7 +826,7 @@
                                     </p:selectOneMenu>
                                     <p:message for="somTipoProductoAcademico" />
                                 </div>
-                                
+
                                 <!--Nombre producto académico-->
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
                                     <p:outputLabel value="Nombre: " for="iptNombreProductoAcademico"/>
@@ -836,7 +840,7 @@
                                     <p:watermark for="iptNombreProductoAcademico" value="Ejemplo de nombre de producto académico *" />
                                     <p:message for="iptNombreProductoAcademico" />
                                 </div>
-                                
+
                                 <!--Evento o revista de presentación-->
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
                                     <p:outputLabel value="Evento o revista de presentación: " for="iptEveRevPresentacion"/>
@@ -850,7 +854,7 @@
                                     <p:watermark for="iptEveRevPresentacion" value="Ejemplo de evento o revista de presentación *" />
                                     <p:message for="iptEveRevPresentacion" />
                                 </div>
-                                
+
                                 <!--Fecha de inicio-->
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
                                     <p:outputLabel value="Fecha de inicio: " for="iptFechaInicio" />
@@ -895,7 +899,7 @@
                                     <p:watermark for="iptFechaFin" value="2019-03-20 *" />
                                     <p:message for="iptFechaFin" />
                                 </div>
-                                
+
                                 <!--País-->
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;">
                                     <p:outputLabel for="pais" 
@@ -977,7 +981,7 @@
                                         <p:message for="municipio" />
                                     </p:selectOneMenu>
                                 </div>
-                                
+
                                 <!--Lugar de realización-->
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;">
                                     <p:outputLabel value="Lugar de realización: " for="itaLugarRealizacion" />
@@ -995,7 +999,7 @@
                                     <p:watermark for="itaLugarRealizacion" value="Ingrese el lugar de realización del producto académico *" />
                                     <p:message for="itaLugarRealizacion" />
                                 </div>
-                                
+
                                 <!--Descripción-->
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;">
                                     <p:outputLabel value="Descripción: " for="itaDescripcion" />
@@ -1013,7 +1017,7 @@
                                     <p:watermark for="itaDescripcion" value="Ingrese una descripción del producto académico *" />
                                     <p:message for="itaDescripcion" />
                                 </div>
-                                
+
                                 <!--ISSN-->
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
                                     <p:outputLabel value="ISSN ó ISBN: " for="iptISSN"/>
@@ -1027,7 +1031,7 @@
                                     <p:watermark for="iptISSN" value="ISSN-00001-01 *" />
                                     <p:message for="iptISSN" />
                                 </div>
-                                
+
                                 <!--Arbitrado/Indexado-->
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
                                     <p:outputLabel value="Arbitrado/Indexado: " for="sobArbitradoIndexado"/>
@@ -1044,7 +1048,7 @@
                                     </p:selectOneButton>
                                     <p:message for="sobArbitradoIndexado" />
                                 </div>
-                                
+
                                 <!--Guardar-->
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
@@ -1062,7 +1066,7 @@
                             </div>
                         </h:form>
                     </p:dialog>
-                    
+
                     <p:dialog id="modalEdicionProductoAcademicoPersonal" 
                               widgetVar="modalEdicionProductoAcademicoPersonal" 
                               width="700" 
@@ -1085,12 +1089,12 @@
                                     <p:outputLabel value="Edición del integrante: #{controladorProductosAcademicosPYE.dtoProductoAcademico.registroProductosAcademicosPersonal.productoAcademicoPersonal.personal}"/>
                                 </div>
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
-                                
+
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
                                     <p:outputLabel id="mensaje" value="#{controladorProductosAcademicosPYE.dtoProductoAcademico.mensaje}"/>
                                     <br></br>
                                 </div>
-                                
+
                                 <!--Productos Académicos-->
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 15px">
                                     <p:outputLabel value="Producto Académico: " for="somProductosAcademicos" />
@@ -1118,7 +1122,7 @@
                                         <p:message for="somProductosAcademicos" />
                                     </p:selectOneMenu>
                                 </div>
-                                
+
                                 <!--Personal-->
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
                                     <p:outputLabel value="Integrante (Busqueda por Clave, Nombre, Área): " for="acPersonal" />
@@ -1148,7 +1152,7 @@
                                         <p:message for="acPersonal" />
                                     </p:autoComplete>
                                 </div>
-                                
+
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
                                     <center>
@@ -1162,11 +1166,11 @@
                                                          />
                                     </center>
                                 </div>
-                                
+
                             </div>
                         </h:form>
                     </p:dialog>
-                    
+
                 </div>
             </div>
         </div>

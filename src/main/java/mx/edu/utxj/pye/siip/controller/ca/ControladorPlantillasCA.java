@@ -77,4 +77,14 @@ public class ControladorPlantillasCA implements Serializable{
         Faces.sendFile(f, true);
     }
     
+    public void descargarReporteCuerposAcademicos() throws IOException, Throwable{
+        File f = new File(ejbReportesCAExcel.getReporteCompletoCuerposAcademicos());
+        Faces.sendFile(f, true);
+    }
+    
+    public void descargarReporteProductosAcademicos() throws IOException, Throwable{
+        File f = new File(ejbReportesCAExcel.getReporteCompletoProductosAcademicos());
+        Faces.sendFile(f, true);
+    }
+    
 }

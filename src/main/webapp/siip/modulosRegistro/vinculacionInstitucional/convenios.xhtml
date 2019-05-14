@@ -17,9 +17,9 @@
         <h:outputScript library="js" name="dialogs.js" />
         <h:outputScript library="js" name="calendario.js"/>
         <!-- Inicio estilos par proceso electoral -->
-            <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
-                <h:outputStylesheet library="css" name="procesoElectoral.css" />
-            </c:if>
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <h:outputStylesheet library="css" name="procesoElectoral.css" />
+        </c:if>
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
     <ui:define name="title">
@@ -43,11 +43,11 @@
             <div class="box-header with-border">
 
                 <div id="main-buttons" class="hidden-sm hidden-xs" >
-                    <h:form prependId="true" id="frmMainButtons" class="form-inline">
-                        <p:outputPanel >
-                            <p:autoUpdate/>
-                            <p:toolbar id="tb"> 
-                                <f:facet name="left">
+                    <p:outputPanel >
+                        <p:autoUpdate/>
+                        <p:toolbar id="tb"> 
+                            <f:facet name="left">
+                                <h:form prependId="true" id="frmMainButtons" class="form-inline">
                                     <p:spacer width="10" />
                                     <c:if test="#{controladorArchivoConvenios.etapa eq etapa.MOSTRAR}">
                                         <!--Criterio de búsqueda dependiendo la naturaleza del registro--> 
@@ -78,8 +78,10 @@
                                             <p:ajax process="@this" listener="#{conveniosC.buscaConvenios()}" update="@(form)" />
                                         </p:selectOneMenu>
                                     </c:if>
-                                </f:facet>
-                                <f:facet name="right">
+                                </h:form>
+                            </f:facet>
+                            <f:facet name="right">
+                                <h:form id="frmReporte">
                                     <div class="btn-group">
                                         <p:commandButton value="Cargar Archivo de Excel" 
                                                          icon="fa fa-file-excel-o" 
@@ -93,14 +95,17 @@
                                         <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="convenios?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
                                         <p:spacer width="3" />
                                     </c:if>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasVIN.descargarReporteConvenios()}" target="_blank" title="Descargar Reporte de Excel Convenios"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                    <p:spacer width="3" />
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="#{controladorPlantillasVIN.descargarPlantillaConvenios()}" target="_blank" title="Descargar Plantilla Convenios"><i class="fa fa-download" /></p:commandLink>
                                     <p:spacer width="3" />
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
-                                </f:facet>
-                            </p:toolbar>
-                            <p:sticky target="tb" />
-                        </p:outputPanel>
-                    </h:form>
+                                </h:form>
+                            </f:facet>
+                        </p:toolbar>
+                        <p:sticky target="tb" />
+                    </p:outputPanel>
                 </div>
                 <p:separator/>
 
@@ -158,9 +163,9 @@
                                                                  icon="fa fa-cog"
                                                                  title="Alineación a POA." />
                                                 <p:commandButton actionListener="#{conveniosC.abrirEdicionConvenio(convenio)}"
-                                                                         class="btn btn-sm btn-info"
-                                                                         icon="fa fa-pencil-square-o"
-                                                                         title="Editar convenio"/>
+                                                                 class="btn btn-sm btn-info"
+                                                                 icon="fa fa-pencil-square-o"
+                                                                 title="Editar convenio"/>
                                             </div>
                                         </p:column>    
 
@@ -179,7 +184,7 @@
                                                 <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
                                             </h:outputText>
                                         </p:column>
-                                        
+
                                         <p:column>
                                             <h:outputText value="#{convenio.ebh}"/>
                                         </p:column>
@@ -237,7 +242,7 @@
                     </div>
 
                     <!-- Evidencias -->
-                    
+
                     <p:dialog id="modalCargaEvidencia" 
                               widgetVar="modalCargaEvidencia" 
                               width="700" 
@@ -345,9 +350,9 @@
                             </div>
                         </h:form>
                     </p:dialog>
-                    
+
                     <!-- Alineación -->
-                    
+
                     <p:dialog id="modalAlineacion" 
                               widgetVar="modalAlineacion" 
                               width="900" 
@@ -559,7 +564,7 @@
                                     <p:outputLabel value="Edición del convenio: #{conveniosC.dtoConvenios.registro.convenio.fechaFirma}"/>
                                 </div>
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
-                                
+
                                 <!--Organismo Vinculado-->
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
                                     <p:outputLabel value="Empresa: " for="acEmpresa" />
@@ -653,7 +658,7 @@
                                     <p:watermark for="itaObjetivoConvenio" value="Establecer la colaboración conjuntantamente en la consecución de sus fines, mediante el desarrollo conjuntode actividades que involucren y vinculen a los alumnos de la Institución para que estos realicen residencias profesionales en las labores cotidianas que se llevan acabo en la empresa, conforme a la operación diaria de la empresa y a lo pactado en este documento *" />
                                     <p:message for="itaObjetivoConvenio" />
                                 </div>
-                                
+
                                 <!--Descripción-->
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;">
                                     <p:outputLabel value="Descripción: " for="itaDescripcionConvenio" />
@@ -673,7 +678,7 @@
                                     <p:watermark for="itaDescripcionConvenio" value="Proveer de espacios de estadia a los alumnos de programa educativo de gastronómia y administración en sus dos niveles educativos. *" />
                                     <p:message for="itaDescripcionConvenio" />
                                 </div>
-                                
+
                                 <!--Impacto-->
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;">
                                     <p:outputLabel value="Impacto: " for="itaImpactoConvenio" />
@@ -693,7 +698,7 @@
                                     <p:watermark for="itaImpactoConvenio" value="Ampliar, aplicar y consolidar el conocimiento y habilidades desarrolladas a través de los cursos del área en que se especialice. *" />
                                     <p:message for="itaImpactoConvenio" />
                                 </div>
-                                
+
                                 <div class="col-sm-3 col-md-3" style="margin-bottom: 10px;">
                                     <p:outputLabel value="Estudiantes beneficiados hombres: " for="spnEBH" />
                                     <p:spacer width="5" />
@@ -708,7 +713,7 @@
                                     <p:watermark for="spnEBH" value="100 *" />
                                     <p:message for="spnEBH" />
                                 </div>
-                                
+
                                 <div class="col-sm-3 col-md-3" style="margin-bottom: 10px;">
                                     <p:outputLabel value="Estudiantes beneficiados mujeres " for="spnEBM" />
                                     <p:spacer width="5" />
@@ -723,7 +728,7 @@
                                     <p:watermark for="spnEBM" value="130 *" />
                                     <p:message for="spnEBM" />
                                 </div>                                
-                                
+
                                 <div class="col-sm-3 col-md-3" style="margin-bottom: 10px;">
                                     <p:outputLabel value="Docentes beneficiados hombres: " for="spnDBH" />
                                     <p:spacer width="5" />
@@ -738,7 +743,7 @@
                                     <p:watermark for="spnDBH" value="140 *" />
                                     <p:message for="spnDBH" />
                                 </div>
-                                
+
                                 <div class="col-sm-3 col-md-3" style="margin-bottom: 10px;">
                                     <p:outputLabel value="Docentes beneficiados mujeres: " for="spnDBM" />
                                     <p:spacer width="5" />
@@ -753,7 +758,7 @@
                                     <p:watermark for="spnDBM" value="250 *" />
                                     <p:message for="spnDBM" />
                                 </div>
-                                
+
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 10px; align-content: center;">
                                     <p:outputLabel value="Recursos obtenidos: " for="spnRecursosObtenidos" />
                                     <p:spacer width="5" />
@@ -771,7 +776,7 @@
                                     <p:watermark for="spnRecursosObtenidos" value="40550 *" />
                                     <p:message for="spnRecursosObtenidos" />
                                 </div>
-                                
+
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
                                     <center>
@@ -789,7 +794,7 @@
                             </div>
                         </h:form>
                     </p:dialog>
-                    
+
                 </div>
 
                 <p:dialog widgetVar="modalCargaArchivo" 

@@ -214,4 +214,10 @@ public interface EjbCuerposAcademicos {
     public Boolean buscaCuerpoAcademicoIntegranteExistente(CuerpacadIntegrantes cuerpacadIntegrante);
     
     public Boolean buscaCuerpoAcademicoLineaInvestigacionExistente(CuerpacadLineas cuerpacadLinea);
+    
+    public List<CuerposAcademicosRegistro> getReporteGeneralCuerposAcademicosPorEjercicio();
+    
+    public List<CuerpacadIntegrantes> getReporteGeneralCuerposAcademicosIntegrantesPorEjercicio();
+    
+    public List<CuerpacadLineas> getReporteGeneralCuerposAcademicosLineasInvestigacionPorEjercicio();
 }

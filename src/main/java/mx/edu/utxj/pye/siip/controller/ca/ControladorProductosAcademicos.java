@@ -157,7 +157,7 @@ public class ControladorProductosAcademicos implements Serializable{
         try {
             if (dtoProductoAcademico.getMesConsulta() != null && !dtoProductoAcademico.getMesesConsulta().isEmpty()) {
                 dtoProductoAcademico.setLstDtoProductosAcademicos(ejbProductosAcademicos.getFiltroProductosAcademicosEjercicioMesArea(dtoProductoAcademico.getAnioConsulta(), dtoProductoAcademico.getMesConsulta(), dtoProductoAcademico.getArea().getArea()));
-                dtoProductoAcademico.setListaProductosAcademicoInt(ejbProductosAcademicos.getFiltroProductosAcademicosEjercicioMesAreaInt(dtoProductoAcademico.getAnioConsulta(), dtoProductoAcademico.getMesConsulta(), dtoProductoAcademico.getAreaUniversidadPOA().getArea()));
+                dtoProductoAcademico.setListaProductosAcademicoInt(ejbProductosAcademicos.getFiltroProductosAcademicosEjercicioMesAreaInt(dtoProductoAcademico.getAnioConsulta(), dtoProductoAcademico.getMesConsulta(), dtoProductoAcademico.getArea().getArea()));
                 dtoProductoAcademico.setLstDtoProductosAcademicosPersonal(ejbProductosAcademicos.getFiltroProductosAcademicosPersonalEjercicioMesArea(dtoProductoAcademico.getAnioConsulta(), dtoProductoAcademico.getMesConsulta(), dtoProductoAcademico.getArea().getArea()));
 
                 dtoProductoAcademico.getLstDtoProductosAcademicos().stream().forEach((t) -> {

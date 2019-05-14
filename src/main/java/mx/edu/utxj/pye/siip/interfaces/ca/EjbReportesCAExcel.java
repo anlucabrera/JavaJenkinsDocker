@@ -20,4 +20,8 @@ public interface EjbReportesCAExcel {
     
     public String getReporteServiciosEnfermeria() throws Throwable;
     
+    public String getReporteCompletoCuerposAcademicos()  throws Throwable;
+    
+    public String getReporteCompletoProductosAcademicos() throws Throwable;
+    
 }
