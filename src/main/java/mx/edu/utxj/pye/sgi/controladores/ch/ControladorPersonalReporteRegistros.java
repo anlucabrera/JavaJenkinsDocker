@@ -170,9 +170,16 @@ public class ControladorPersonalReporteRegistros implements Serializable {
                         break;
                 }
             }
-//            Collections.sort(listareporteRegistrosA, (x, y) -> x.getTt().compareTo(y.getTt()));
+            Collections.sort(listareporteRegistrosA, (x, y) -> x.getTt().compareTo(y.getTt()));
+            Collections.sort(listareporteRegistrosA, (x, y) -> Short.compare(x.getPersona().getAreaSuperior(),y.getPersona().getAreaSuperior()));
+            
+            
+            Collections.sort(listareporteRegistrosD, (x, y) -> x.getTt().compareTo(y.getTt()));
             Collections.sort(listareporteRegistrosD, (x, y) -> Short.compare(x.getPersona().getAreaSuperior(),y.getPersona().getAreaSuperior()));
-//            Collections.sort(listareporteRegistrosDyC, (x, y) -> x.getTt().compareTo(y.getTt()));
+            
+            
+            Collections.sort(listareporteRegistrosDyC, (x, y) -> x.getTt().compareTo(y.getTt()));
+            Collections.sort(listareporteRegistrosDyC, (x, y) -> Short.compare(x.getPersona().getAreaSuperior(),y.getPersona().getAreaSuperior()));
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorPersonalReporteRegistros.class.getName()).log(Level.SEVERE, null, ex);

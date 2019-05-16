@@ -273,7 +273,7 @@
                                                                      value="#{linea.listaRecursoActividadeses}">
 
                                                             <p:column styleClass="#{actividad.actividadesPoa1.numeroS eq 0?'actividad':''}" style="width:2%">
-                                                                <p:rowToggler />
+                                                                <p:rowToggler rendered="#{actividad.recacts.size() ne 0}"/>
                                                             </p:column>
                                                             <p:column styleClass="#{actividad.actividadesPoa1.numeroS eq 0?'actividad':''}" style="text-align: justify; width: 20%; max-height: 10px;">    
                                                                 <h:outputText value="#{actividad.actividadesPoa1.numeroP}.#{actividad.actividadesPoa1.numeroS} #{actividad.actividadesPoa1.denominacion}" style="text-align: left"/> 
@@ -512,6 +512,7 @@
                                 <p:outputLabel value="#{controladorPOARecurso.actividadesPoa.denominacion}" style="height:100%; width: 100%;"/>
                             </div>
                         </p:outputPanel>
+                        <hr/>
                         <div class="col-sm-12 col-md-12 col-lg-12">
                             <p:outputLabel for="partida"  value="Partida" />
                             <p:selectOneMenu filter="true" filterMatchMode="contains" id="partida" value="#{controladorPOARecurso.partidas.partida}" valueChangeListener="#{controladorPOARecurso.asignaProductos}">
@@ -581,7 +582,7 @@
 
             <p:blockUI block="frmAlineacionEstratejica" widgetVar="buiRegistro1" blocked="#{controladorEmpleado.procesopoa.asiganacionRFinalizado}"/>
             <p:blockUI block="frm2" widgetVar="buiRegistro2" blocked="#{controladorEmpleado.procesopoa.asiganacionRFinalizado}">
-                Ha confirmado la culminación de este proceso, espere la respuesta por parte de la Dirección de Planeación y Evaluación, que indique si se realizaran, modificaciones o podrá pasar a la siguiente fase.
+                Ha confirmado la culminación de este proceso, espere la respuesta por parte de la Subdirección de Recursos Financieros, que indique si se realizaran, modificaciones o podrá pasar a la siguiente fase.
             </p:blockUI>            
             <p:blockUI block="frm" widgetVar="buiRegistro3" blocked="#{controladorEmpleado.procesopoa.asiganacionRFinalizado}"/>
         </c:if>

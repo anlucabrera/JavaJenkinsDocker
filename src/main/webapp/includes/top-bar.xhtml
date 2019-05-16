@@ -48,7 +48,7 @@
                             <span class="label label-warning">#{notificacionesTopBar.incrementoTotal}</span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li class="header align-center">Tienes #{notificacionesTopBar.incrementoTotal} notificaciones por atender.</li>
+                            <li class="header align-center">Tienes #{notificacionesTopBar.incrementoTotal}  notificaciones por atender.</li>
                             <li>
                                 <ul class="menu">
                                     <c:if test="#{notificacionesTopBar.tienePOA}">
@@ -78,13 +78,13 @@
                                             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 6 || controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 7 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
                                                 <c:if test="#{notificacionesTopBar.procesoPOAVar}">
                                                     <a href="poa/pye/validacionFinanzas.xhtml">
-                                                        Tiene #{notificacionesTopBar.incrementoRA} POA’s por validar la estapa de Presupuestación
+                                                        Tiene #{notificacionesTopBar.incrementoAR} POA’s por validar la estapa de Presupuestación
                                                     </a>
                                                 </c:if>
                                             </c:if>
                                             <c:if test="#{notificacionesTopBar.procesoPOAVjus}">
                                                 <a href="poa/pye/validacionPyeFinal.xhtml">
-                                                    Tiene #{notificacionesTopBar.incrementoRA} POA’s por validar la estapa de Registro de Justificaciones
+                                                    Tiene #{notificacionesTopBar.incrementoJU} POA’s por validar la estapa de Registro de Justificaciones
                                                 </a>
                                             </c:if>
                                         </c:if>

@@ -125,8 +125,8 @@ public class NotificacionesTopBar implements Serializable {
             }
             if (tienePOA) {
                 procesoPOARa = !procesopoa.getRegistroAFinalizado();
-                procesoPOAAr = procesopoa.getValidacionRegistroA();
-                procesoPOAJu = procesopoa.getValidacionRFFinalizado();
+                procesoPOAAr = !(procesopoa.getValidacionRegistroA() && procesopoa.getAsiganacionRFinalizado());
+                procesoPOAJu = !(procesopoa.getValidacionRFFinalizado() && procesopoa.getRegistroJustificacionFinalizado());
             }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
