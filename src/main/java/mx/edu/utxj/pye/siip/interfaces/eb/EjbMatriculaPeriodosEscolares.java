@@ -119,4 +119,6 @@ public interface EjbMatriculaPeriodosEscolares {
     
     public Boolean buscaMatriculaPeriodoEscolarExistente(MatriculaPeriodosEscolares matriculaPeriodoEscolar);
     
+    public List<MatriculaPeriodosEscolares> getReporteMatriculaPorEjercicio();
+    
 }

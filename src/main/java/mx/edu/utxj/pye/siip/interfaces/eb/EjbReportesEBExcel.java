@@ -16,4 +16,6 @@ public interface EjbReportesEBExcel {
     
     public String getReporteDistribucionEquipamiento() throws Throwable;
     
+    public String getReporteMatriculaPorEjercicio() throws Throwable;
+    
 }

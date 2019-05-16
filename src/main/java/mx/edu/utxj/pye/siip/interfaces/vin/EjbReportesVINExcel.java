@@ -18,4 +18,6 @@ public interface EjbReportesVINExcel {
     
     public String getReporteServiciosTecnologicos() throws Throwable;
     
+    public String getReporteGeneralEgresados() throws Throwable;
+    
 }
