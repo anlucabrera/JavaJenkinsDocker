@@ -54,4 +54,9 @@ public class ControladorPlantillasEB implements Serializable{
         File f = new File(ejbReportesEBExcel.getReporteDistribucionEquipamiento());
         Faces.sendFile(f, true);
     }
+    
+    public void descargarReporteEjercicioMatriculaPeriodoEscolar() throws IOException, Throwable{
+        File f = new File(ejbReportesEBExcel.getReporteMatriculaPorEjercicio());
+        Faces.sendFile(f, true);
+    }
 }

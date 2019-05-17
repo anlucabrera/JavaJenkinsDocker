@@ -16,9 +16,9 @@
         <h:outputStylesheet library="css" name="tablaDatos.css" />
         <h:outputScript library="js" name="dialogs.js" />
         <!-- Inicio estilos par proceso electoral -->
-            <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
-                <h:outputStylesheet library="css" name="procesoElectoral.css" />
-            </c:if>
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <h:outputStylesheet library="css" name="procesoElectoral.css" />
+        </c:if>
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
     <ui:define name="title">
@@ -41,13 +41,12 @@
         <div class="box box-primary">
             <div class="box-header with-border">
                 <div id="main-buttons" class="hidden-sm hidden-xs" >
-                    <h:form prependId="true" id="frmMainButtons" class="form-inline">
-                        <p:outputPanel >
-                            <p:autoUpdate/>
-                            <p:toolbar id="tb">
-                                <f:facet name="left">
+                    <p:outputPanel >
+                        <p:autoUpdate/>
+                        <p:toolbar id="tb">
+                            <f:facet name="left">
+                                <h:form prependId="true" id="frmMainButtons" class="form-inline">
                                     <p:spacer width="10" />
-
                                     <p:outputLabel value="Área " for="area" />
                                     <p:spacer width="3" />
                                     <p:selectOneMenu id="area"
@@ -108,14 +107,19 @@
                                                 listener="#{controladorMatriculaPeriodosEscolaresPYE.cargarListaPorEvento()}" 
                                                 update="@(form)" />
                                     </p:selectOneMenu>
-                                </f:facet>
-                                <f:facet name="right">
+                                </h:form>
+                            </f:facet>
+                            <f:facet name="right">
+                                <h:form id="frmReporte">
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasEB.descargarReporteEjercicioMatriculaPeriodoEscolar()}" target="_blank" title="Descargar Reporte de Matricula"><i class="fa fa-file-excel-o" /></p:commandLink>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
-                                </f:facet>
-                            </p:toolbar>
-                            <p:sticky target="tb" />
-                        </p:outputPanel>
+                                </h:form>
+                            </f:facet>
+                        </p:toolbar>
+                        <p:sticky target="tb" />
+                    </p:outputPanel>
                     </h:form>
                 </div>
                 <p:separator/>
@@ -170,9 +174,9 @@
                                                                  class="btn btn-sm #{!empty matricula.actividadAlineada?'btn-info':'btn-warning'}" icon="fa fa-cog"
                                                                  title="Alineación a POA." />
                                                 <p:commandButton actionListener="#{controladorMatriculaPeriodosEscolaresPYE.abrirEdicionMatriculaPeriodoEscolar(matricula.matricula)}"
-                                                                         class="btn btn-sm btn-info"
-                                                                         icon="fa fa-pencil-square-o"
-                                                                         title="Editar Matricula"/>
+                                                                 class="btn btn-sm btn-info"
+                                                                 icon="fa fa-pencil-square-o"
+                                                                 title="Editar Matricula"/>
                                             </div>
                                         </p:column>  
 
@@ -462,17 +466,17 @@
                               maximizable="false">
                         <h:form id="frmEdicionMatriculaPeriodoEscolar">
                             <div class="row">
-                                
+
                                 <div class="col-sm-12 col-md-12">
                                     <p:outputLabel value="Actualización de datos de la matricula: #{controladorMatriculaPeriodosEscolaresPYE.dto.registro.matricula.matricula}"/>
                                 </div>
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
-                                
+
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
                                     <p:outputLabel id="mensaje" value="#{controladorMatriculaPeriodosEscolaresPYE.dto.mensaje}"/>
                                     <br></br>
                                 </div>
-                                
+
                                 <!--Periodo Escolar-->
                                 <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
                                     <p:outputLabel for="somPeriodoEscolar" value="Periodo Escolar: "/>
@@ -496,7 +500,7 @@
                                     </p:selectOneMenu>
                                     <p:message for="somPeriodoEscolar" />
                                 </div>
-                                
+
                                 <!--Programa Educativo-->
                                 <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
                                     <p:outputLabel for="somProgramasEducativos" value="Programa Educativo: "/>
@@ -513,7 +517,7 @@
                                                      class="form-control"
                                                      style="padding-top: 0px; width: 30em;"
                                                      converter="entidadConverter2"
-                                                     
+
                                                      >
                                         <f:selectItems value="#{controladorMatriculaPeriodosEscolaresPYE.dto.programasEducativos}" 
                                                        var="proEdu"
@@ -524,7 +528,7 @@
                                     </p:selectOneMenu>
                                     <p:message for="somProgramasEducativos" />
                                 </div>
-                                
+
                                 <!--Matricula-->
                                 <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
                                     <p:outputLabel value="Matricula: " for="spnMatricula" />
@@ -542,7 +546,7 @@
                                     <p:watermark for="spnMatricula" value="161210 *" />
                                     <p:message for="spnMatricula" />
                                 </div>
-                                
+
                                 <!--Curp-->
                                 <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
                                     <p:outputLabel value="CURP: " for="iptCURP"/>
@@ -553,14 +557,14 @@
                                                  class="form-control"
                                                  requiredMessage="Ingrese el CURP del estudiante"
                                                  value="#{controladorMatriculaPeriodosEscolaresPYE.dto.registro.matricula.curp}"
-                                                 onkeyup="this.value=this.value.toUpperCase()"
+                                                 onkeyup="this.value = this.value.toUpperCase()"
                                                  >
                                         <f:validateRegex pattern="[A-Z]{1}[AEIOU]{1}[A-Z]{2}[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])[HM]{1}(AS|BC|BS|CC|CS|CH|CL|CM|DF|DG|GT|GR|HG|JC|MC|MN|MS|NT|NL|OC|PL|QT|QR|SP|SL|SR|TC|TS|TL|VZ|YN|ZS|NE)[B-DF-HJ-NP-TV-Z]{3}[0-9A-Z]{1}[0-9]{1}$" />
                                     </p:inputText>
                                     <p:watermark for="iptCURP" value="AAGL980223MPLMTZ08 *" />
                                     <p:message for="iptCURP" />
                                 </div>
-                                
+
                                 <!--Cuatrimestres-->
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
                                     <p:outputLabel value="Cuatrimestres: " for="somCuatrimestre"/>
@@ -587,7 +591,7 @@
                                         <p:message for="somCuatrimestre" />
                                     </p:selectOneMenu>
                                 </div>
-                                
+
                                 <!--Grupo-->
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
                                     <p:outputLabel value="Grupos: " for="somGrupos"/>
@@ -614,7 +618,7 @@
                                         <p:message for="somGrupos" />
                                     </p:selectOneMenu>
                                 </div>
-                                
+
                                 <!--Lengua Indigena-->
                                 <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
                                     <p:outputLabel value="Lengua Indígena: " for="iptLenguaIndigena"/>
@@ -628,7 +632,7 @@
                                     <p:watermark for="iptLenguaIndigena" value="Totonaca *" />
                                     <p:message for="iptLenguaIndigena" />
                                 </div>
-                                
+
                                 <!--Discapacidad-->
                                 <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
                                     <p:outputLabel value="Discapacidad: " for="iptDiscapacidad"/>
@@ -642,7 +646,7 @@
                                     <p:watermark for="iptDiscapacidad" value="Hipoacusia *" />
                                     <p:message for="iptDiscapacidad" />
                                 </div>
-                                
+
                                 <!--Comunidad Indigena-->
                                 <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
                                     <p:outputLabel value="Comunidad Indígena: " for="iptComunidadIndigena"/>
@@ -656,7 +660,7 @@
                                     <p:watermark for="iptComunidadIndigena" value="Aucatlan *" />
                                     <p:message for="iptComunidadIndigena" />
                                 </div>
-                                
+
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
                                     <center>
@@ -670,11 +674,11 @@
                                                          />
                                     </center>
                                 </div>
-                                
+
                             </div>
                         </h:form>
                     </p:dialog>
-                    
+
                 </div>
             </div>
         </div>
