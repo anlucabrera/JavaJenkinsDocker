@@ -50,19 +50,21 @@
 
                                 <div class="box-body">  
                                     <div class="row">
-                                        <p:commandButton value="Finalizar registro de actividades" id="btnEnviaCorreo" 
-                                                         actionListener="#{utilidadesPOA.enviarCorreo(5,'')}"
-                                                         process="@this" disabled="#{controladorEmpleado.procesopoa.registroJustificacionFinalizado}"
-                                                         icon="fa fa-info-circle" styleClass="btn-primary"/>
-                                        <div class="col-md-12 col-sm-12 col-xs-12">
+
+                                        <div class="col-md-10 col-sm-10 col-xs-10">
                                             <div class="info-box">
                                                 <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
-
                                                 <div class="info-box-content">
                                                     <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
                                                     <span class="info-box-number">En caso de que al guardar la justificación la información de la tabla se oculte solo presione la tecla F5 y de esta manera la información se volverá a mostrar.</span>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="col-md-2 col-sm-2 col-xs-2">
+                                        <p:commandButton value="Finalizar registro de actividades" id="btnEnviaCorreo" 
+                                                         actionListener="#{utilidadesPOA.enviarCorreo(5,'')}"
+                                                         process="@this" disabled="#{controladorEmpleado.procesopoa.registroJustificacionFinalizado}"
+                                                         icon="fa fa-info-circle" styleClass="btn-primary"/>
                                         </div>
                                     </div>  
                                 </div>
@@ -272,7 +274,8 @@
             </h:form>
 
             <h:form id="frmRecurso">
-                <p:dialog header="Consultar recurso" widgetVar="dlgRecurso" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="1000" closeOnEscape="true">
+                <p:dialog header="Consultar recurso" widgetVar="dlgRecurso" modal="true" showEffect="fade" 
+                          hideEffect="fade" resizable="false" width="1000" closeOnEscape="true" position="center" >
                     <p:panelGrid id="pnlRecurso" style="text-align:justify;" columns="1">
                         <p:dataTable id="dtbBajas" var="recurso"  sortBy="#{recurso.productoArea.partida.partida}" expandableRowGroups="true" 
                                      value="#{controladorPOAJustificacion.actividadesPoa.recursosActividadList}" emptyMessage="Sin recurso asignado">

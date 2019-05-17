@@ -64,7 +64,7 @@
                 <section class="content">
                     <div class="row">
                         <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
-                        <div class="col-md-9">
+                        <div class="col-md-10">
                             <div class="nav-tabs-custom">
                                 <div class="row">
                                     <div class="col-lg-10 col-xs-10"/>
@@ -82,7 +82,7 @@
                                                 <p:dataTable id="dtbmandosMediosDyC" var="rdrDyC" paginator="true" rows="10" lazy="true"
                                                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                              rowsPerPageTemplate="5,10,15,20,25,30" value="#{controladorPersonalReporteRegistros.listareporteRegistrosDyC}"
-                                                              rowStyleClass="#{rdrDyC.tipo eq 'C'?'denegado':rdrDyC.tipo eq 'B'?'pendiente':'aceptado'}">
+                                                             rowStyleClass="#{rdrDyC.tipo eq 'C'?'denegado':rdrDyC.tipo eq 'B'?'pendiente':'aceptado'}">
                                                     <f:facet name="header">
                                                         FA=Formación Académica <p:spacer width="5px"/>
                                                         EL=Experiencia Laboral<p:spacer width="5px"/>
@@ -101,9 +101,9 @@
                                                         CO=Congresos<p:spacer width="5px"/>
                                                         TT=Total de registros
                                                     </f:facet>
-
+                                                    
                                                     <p:column headerText="Empleado" sortBy="#{rdrDyC.persona.nombre}" filterBy="#{rdrDyC.persona.nombre}" filterMatchMode="contains"> <h:outputText value="#{rdrDyC.persona.nombre}" /> </p:column>
-
+                                                    <p:column headerText="Área" sortBy="#{rdrDyC.persona.areaOperativaNombre}" filterBy="#{rdrDyC.persona.areaOperativaNombre}" filterMatchMode="contains"><h:outputText value="#{rdrDyC.persona.areaOperativaNombre}" />                                                    </p:column>
                                                     <p:column headerText="FA" style="width: 4%"> <h:outputText value="#{rdrDyC.fa}" /> </p:column>
                                                     <p:column headerText="EL" style="width: 4%"> <h:outputText value="#{rdrDyC.el}" /> </p:column> 
                                                     <p:column headerText="CA" style="width: 4%"> <h:outputText value="#{rdrDyC.ca}" /> </p:column>
@@ -183,7 +183,8 @@
                                                 <p:dataTable id="dtbmandosMediosA" var="rdrA" paginator="true" rows="10" lazy="true"
                                                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                              rowsPerPageTemplate="5,10,15,20,25,30" value="#{controladorPersonalReporteRegistros.listareporteRegistrosA}"
-                                                              rowStyleClass="#{rdrA.tipo eq 'C'?'denegado':rdrA.tipo eq 'B'?'pendiente':'aceptado'}">
+                                                             rowStyleClass="#{rdrA.tipo eq 'C'?'denegado':rdrA.tipo eq 'B'?'pendiente':'aceptado'}"
+                                                             sortBy="#{rdrA.persona.areaOperativa}" expandableRowGroups="true">
                                                     <f:facet name="header">
                                                         FA=Formación Académica <p:spacer width="5px"/>
                                                         EL=Experiencia Laboral<p:spacer width="5px"/>
@@ -202,7 +203,11 @@
                                                         CO=Congresos<p:spacer width="5px"/>
                                                         TT=Total de registros
                                                     </f:facet>
-
+                                                    <p:headerRow>
+                                                        <p:column colspan="17">
+                                                            <h:outputText value="#{rdrA.persona.areaOperativaNombre}" />
+                                                        </p:column>
+                                                    </p:headerRow>
                                                     <p:column headerText="Empleado" sortBy="#{rdrA.persona.nombre}" filterBy="#{rdrA.persona.nombre}" filterMatchMode="contains"> <h:outputText value="#{rdrA.persona.nombre}" /> </p:column>
 
                                                     <p:column headerText="FA" style="width: 4%"> <h:outputText value="#{rdrA.fa}" /> </p:column>
