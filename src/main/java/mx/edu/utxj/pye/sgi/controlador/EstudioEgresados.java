@@ -83,12 +83,14 @@ public class EstudioEgresados implements Serializable {
             alumnos = ejb.getAlumnoPorMatricula(logonMB.getCurrentUser());
 //            System.out.println("alumnos = " + alumnos);
 //            System.out.println("alumnos.getGradoActual() = " + alumnos.getGradoActual());
-            if (alumnos.getGradoActual() == 11 && (alumnos.getCveStatus().equals(6) || alumnos.getCveStatus().equals(1)) && 
-                    alumnos.getCveGeneracion().equals(190)) {
+
+            if ((alumnos.getGradoActual() == 11 || alumnos.getCveStatus().equals(6)) || (alumnos.getCveStatus().equals(1) &&
+                    alumnos.getCveGeneracion().equals(190))) {
                 ING = true;
             } else  if (alumnos.getGradoActual() >=6 &&alumnos.getGradoActual() < 11) {
                 TSU = false;
             }
+            //System.out.println("ING = " + ING);
             try {
                 // modificar para aperturar a onceavos o sextos
 //                if(alumnos.getGradoActual() == 11){ //estudiantes egresadod de 11 vo
