@@ -43,6 +43,19 @@ public class EjbEvaluacionEstadia {
     @EJB private Facade f;
     @EJB private Facade2 f2;
     
+    public Evaluaciones evaluacionEstadiaPeridoActual(){
+        List<Evaluaciones> e = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones as e where e.periodo = :periodo and e.tipo = :tipo", Evaluaciones.class)
+                .setParameter("periodo", 51)
+                .setParameter("tipo", "Evaluación Estadía")
+                .getResultStream().collect(Collectors.toList());
+        if(e.isEmpty()){
+            return new Evaluaciones();
+        }else{
+            return e.get(0);
+        }
+        
+    }
+    
     public Evaluaciones getEvaluacionActiva(){
         List<Evaluaciones> e = f.getEntityManager()
                 .createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc",
