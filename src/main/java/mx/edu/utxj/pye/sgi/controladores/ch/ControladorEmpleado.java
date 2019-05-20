@@ -184,8 +184,17 @@ public class ControladorEmpleado implements Serializable {
                         break;
                 }
             });
-            if ((nuevoOBJListaPersonal.getActividadNombre().equals("Directivo") || nuevoOBJListaPersonal.getActividadNombre().equals("Coordinador")) && fechaLimiteCV == true) {
-                mandos = "Superiores";
+            switch (nuevoOBJListaPersonal.getActividadNombre()) {
+                case "Directivo":
+                case "Coordinador":
+                    mandos = "Superiores";
+                    break;
+                case "Docente":
+                    mandos = "Docente";
+                    break;
+                case "Administrativo":
+                    mandos = "Administrativo";
+                    break;
             }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());

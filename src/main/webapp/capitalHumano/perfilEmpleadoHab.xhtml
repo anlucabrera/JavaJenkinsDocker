@@ -60,32 +60,34 @@
                 Esta página está disponible solo para pantallas superiores a 1024px.
             </h1>
         </p:panel>
-        <c:if test="#{controladorEmpleado.mandos eq 'Otro'}">
-            <div class="box box-primary">
-                <div class="box box-solid">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">Fecha límite</h3>
-                        <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                            </button>
+        <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Docente'}">
+                <div class="box box-primary">
+                    <div class="box box-solid">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Fecha límite</h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="box-body">  
-                        <div class="row">
-                            <div class="col-md-12 col-sm-12 col-xs-12">
-                                <div class="info-box">
-                                    <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+                        <div class="box-body">  
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <div class="info-box">
+                                        <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
 
-                                    <div class="info-box-content">
-                                        <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                        <span class="info-box-number">#{controladorEmpleado.fechaLimiteCurriculumVitae}.</span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                            <span class="info-box-number">#{controladorEmpleado.fechaLimiteCurriculumVitae}.</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>                
+                            </div>                
+                        </div>
                     </div>
                 </div>
-            </div>
+            </c:if>
         </c:if>
         <p:panel id="informacion" class="hidden-xs hidden-sm">
             <section class="content">

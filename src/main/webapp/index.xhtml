@@ -337,6 +337,35 @@
                 </div> 
             </c:if>
 
+            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Docente'}">
+                    <div class="box box-primary">
+                        <div class="box box-solid">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Fecha límite</h3>
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="box-body">  
+                                <div class="row">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <div class="info-box">
+                                            <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                            <div class="info-box-content">
+                                                <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                <span class="info-box-number">#{controladorEmpleado.fechaLimiteCurriculumVitae}.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>                
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
+            </c:if>
 
 <!--c:if test="#{(controladorEmpleado.nuevoOBJListaPersonal.actividad eq 2 || controladorEmpleado.nuevoOBJListaPersonal.actividad eq 4) || (controladorEmpleado.tienePOA and controladorEmpleado.mensajeGeneral)}"--> 
             <div class="box box-primary">
