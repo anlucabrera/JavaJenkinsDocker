@@ -40,6 +40,8 @@ public interface EjbAdministracionEncuesta {
     public List<DatosGraficaEncuestaServicio> listaAvanceEncServ();
     
     public Grupos obtenerCuatriPorTutor(Integer cveMaestro);
+    
+    public Grupos getGrupodelTutor(Integer claveMaestro, Integer periodoActual);
     /**
      * obtiene todos los datos de la encuesta de servicios
      * @return 

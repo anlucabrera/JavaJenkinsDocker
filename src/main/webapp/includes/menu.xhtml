@@ -212,6 +212,7 @@
                             </p:link>
                         </li>
                     </c:if>
+                       
 
 
                     <!--************ administradores especiales********-->
@@ -673,6 +674,13 @@
                     </li>
                 </c:if>
             </c:if>
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+                <li>
+                    <p:link href="/capitalHumano/personal/perfilPersonalReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
+                        <span>Reporte de Registros</span>
+                    </p:link>
+                </li>
+            </c:if>
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13}">
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Personal</li>
                 <li class="treeview">
@@ -784,6 +792,15 @@
                     <span>Directorio de Correos</span>
                 </p:link>
             </li>
+            <c:if test="#{utilidadesAdministracionEvaluaciones.tutor}">
+                <li>
+                    <p:link href="/directorioCorreosAlumnosporTutor.xhtml">
+                         <i class="fa fa-envelope" />
+                        <span>Directorio Estudiantes Tutorados</span>
+                    </p:link>
+                </li>
+                
+            </c:if>
             <li>
                 <p:link href="/siiFaces.xhtml">
                     <i class="fa fa-comments"></i>
