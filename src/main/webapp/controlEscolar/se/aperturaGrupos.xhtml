@@ -50,9 +50,9 @@
                                                         <div class="form-group">
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                 <p:outputLabel for="periodo" style="font-size: large" value="Periodo"/>
-                                                                <p:selectOneMenu id="periodo">
+                                                                <p:selectOneMenu id="periodo" value="#{utilToolAcademicas.periodo}">
                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                    <f:selectItem itemValue="52" itemLabel="Sep-Dic 19"/>
+                                                                    <f:selectItems value="#{utilToolAcademicas.listaPeriodos}"/>
                                                                     <p:ajax update=":tabw1:frmListaGrupos" listener="#{utilToolAcademicas.listadoGrupos()}"/>
                                                                 </p:selectOneMenu>
                                                             </div>
@@ -117,23 +117,49 @@
                             </div>
                         </h:form>
                         <h:form id="frmListaGrupos">
-                            <p:dataTable var="grupo" value="#{utilToolAcademicas.listaGrupos}" sortBy="#{grupo.idPe}" expandableRowGroups="true" styleClass="box-primary 'no-border':''">
+                            <p:dataTable var="grupo" value="#{utilToolAcademicas.listaGrupos}" sortBy="#{grupo.idPe}" expandableRowGroups="true" styleClass="box-primary 'no-border':''" editable="true" editMode="cell" emptyMessage="No hay grupos resgistrados para este periodo">
                                 <p:headerRow>
-                                    <p:column colspan="4" style="background-color: #00b5ad;">
+                                    <p:column colspan="6" style="background-color: #00b5ad;">
                                         <h:outputText value="#{procesoInscripcion.nombrePE(grupo.idPe)}" />
                                     </p:column>
                                 </p:headerRow>
-                                <p:column headerText="Cuatrimestre">
+                                <p:ajax event="cellEdit" listener="#{utilToolAcademicas.onCellEdit}"/>
+                                <p:column style="text-align: center;width: 40px;">
+                                    <p:commandButton icon="fa fa-trash" styleClass="btn-warning" actionListener="#{utilToolAcademicas.eliminaGrupo(grupo)}" disabled="#{!(grupo.estudianteList.size() == 0)}" update="@form"/>
+                                </p:column>
+                                <p:column headerText="Cuatrimestre" style="width: 120px;text-align: center;">
                                     <h:outputText value="#{grupo.grado}"/>
                                 </p:column>
-                                <p:column headerText="Grupo">
+                                <p:column headerText="Grupo" style="width: 120px;text-align: center;">
                                     <h:outputText value="#{grupo.literal}"/>
                                 </p:column>
-                                <p:column headerText="Sistema">
-                                    <h:outputText value="#{grupo.idSistema.nombre}"/>
+                                <p:column headerText="Sistema" style="width: 120px;text-align: center;">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{grupo.idSistema.nombre}" /></f:facet>
+                                        <f:facet name="input">
+                                            <p:selectOneMenu id="sistema" value="#{grupo.idSistema}" converter="sistemaConverter">
+                                                <f:selectItem itemValue="#{null}"/>
+                                                <f:selectItems var="sistema" value="#{fichaAdm.listaSistema}" itemLabel="#{sistema.nombre}" itemValue="#{sistema}"/>
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                    </p:cellEditor>
                                 </p:column>
-                                <p:column headerText="Capacidad Maxima">
-                                    <h:outputText value="#{grupo.capMaxima}"/>
+                                <p:column headerText="Turno" style="width: 120px;text-align: center;">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{grupo.idTurno.nombre}" /></f:facet>
+                                        <f:facet name="input">
+                                            <p:selectOneMenu id="turno" value="#{grupo.idTurno}" converter="turnoConverter">
+                                                <f:selectItem itemValue="#{null}"/>
+                                                <f:selectItems var="turno" value="#{utilToolAcademicas.listaTurno}" itemLabel="#{turno.nombre}" itemValue="#{turno}"/>
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column headerText="Capacidad Maxima" style="width: 120px;text-align: center;">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{grupo.capMaxima}" /></f:facet>
+                                        <f:facet name="input"><p:inputText value="#{grupo.capMaxima}" style="width:96%" label="Year"/></f:facet>
+                                    </p:cellEditor>
                                 </p:column>
                             </p:dataTable>
                         </h:form>
