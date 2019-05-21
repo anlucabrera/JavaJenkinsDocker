@@ -8,7 +8,6 @@ package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -52,7 +51,7 @@ public class MedioDifusion implements Serializable {
     @NotNull
     @Column(name = "estatus")
     private boolean estatus;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "r13")
+    @OneToMany(mappedBy = "r15medioImpacto")
     private List<EncuestaAspirante> encuestaAspiranteList;
 
     public MedioDifusion() {

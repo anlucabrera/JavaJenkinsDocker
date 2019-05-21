@@ -13,7 +13,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -34,11 +33,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "ConfiguracionMateria.findAll", query = "SELECT c FROM ConfiguracionMateria c"),
     @NamedQuery(name = "ConfiguracionMateria.findByIdConfiguracionMateria", query = "SELECT c FROM ConfiguracionMateria c WHERE c.idConfiguracionMateria = :idConfiguracionMateria"),
-    @NamedQuery(name = "ConfiguracionMateria.findByCargaAcademica", query = "SELECT c FROM ConfiguracionMateria c WHERE c.cargaAcademica = :cargaAcademica"),
     @NamedQuery(name = "ConfiguracionMateria.findByFechaInicio", query = "SELECT c FROM ConfiguracionMateria c WHERE c.fechaInicio = :fechaInicio"),
     @NamedQuery(name = "ConfiguracionMateria.findByFechaFin", query = "SELECT c FROM ConfiguracionMateria c WHERE c.fechaFin = :fechaFin"),
     @NamedQuery(name = "ConfiguracionMateria.findByPorcentaje", query = "SELECT c FROM ConfiguracionMateria c WHERE c.porcentaje = :porcentaje"),
-    @NamedQuery(name = "ConfiguracionMateria.findByValidoDireccion", query = "SELECT c FROM ConfiguracionMateria c WHERE c.validoDireccion = :validoDireccion")})
+    @NamedQuery(name = "ConfiguracionMateria.findByValidoDireccion", query = "SELECT c FROM ConfiguracionMateria c WHERE c.validoDireccion = :validoDireccion"),
+    @NamedQuery(name = "ConfiguracionMateria.findByDocente", query = "SELECT c FROM ConfiguracionMateria c WHERE c.docente = :docente")})
 public class ConfiguracionMateria implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -47,10 +46,6 @@ public class ConfiguracionMateria implements Serializable {
     @NotNull
     @Column(name = "id_configuracion_materia")
     private Integer idConfiguracionMateria;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "carga_academica")
-    private int cargaAcademica;
     @Basic(optional = false)
     @NotNull
     @Column(name = "fecha_inicio")
@@ -69,17 +64,15 @@ public class ConfiguracionMateria implements Serializable {
     @NotNull
     @Column(name = "valido_direccion")
     private boolean validoDireccion;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "docente")
+    private int docente;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "configuracionMateria")
     private IndicadorConfiguracion indicadorConfiguracion;
     @JoinColumn(name = "id_unidad_materia", referencedColumnName = "id_unidad_materia")
     @ManyToOne(optional = false)
     private UnidadMateria idUnidadMateria;
-    @JoinColumns({
-        @JoinColumn(name = "grupo", referencedColumnName = "cve_grupo"),
-        @JoinColumn(name = "materia", referencedColumnName = "cve_materia"),
-        @JoinColumn(name = "id_configuracion_materia", referencedColumnName = "id_carga_academica", insertable = false, updatable = false)})
-    @ManyToOne(optional = false)
-    private CargaAcademica cargaAcademica1;
 
     public ConfiguracionMateria() {
     }
@@ -88,13 +81,13 @@ public class ConfiguracionMateria implements Serializable {
         this.idConfiguracionMateria = idConfiguracionMateria;
     }
 
-    public ConfiguracionMateria(Integer idConfiguracionMateria, int cargaAcademica, Date fechaInicio, Date fechaFin, int porcentaje, boolean validoDireccion) {
+    public ConfiguracionMateria(Integer idConfiguracionMateria, Date fechaInicio, Date fechaFin, int porcentaje, boolean validoDireccion, int docente) {
         this.idConfiguracionMateria = idConfiguracionMateria;
-        this.cargaAcademica = cargaAcademica;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
         this.porcentaje = porcentaje;
         this.validoDireccion = validoDireccion;
+        this.docente = docente;
     }
 
     public Integer getIdConfiguracionMateria() {
@@ -103,14 +96,6 @@ public class ConfiguracionMateria implements Serializable {
 
     public void setIdConfiguracionMateria(Integer idConfiguracionMateria) {
         this.idConfiguracionMateria = idConfiguracionMateria;
-    }
-
-    public int getCargaAcademica() {
-        return cargaAcademica;
-    }
-
-    public void setCargaAcademica(int cargaAcademica) {
-        this.cargaAcademica = cargaAcademica;
     }
 
     public Date getFechaInicio() {
@@ -145,6 +130,14 @@ public class ConfiguracionMateria implements Serializable {
         this.validoDireccion = validoDireccion;
     }
 
+    public int getDocente() {
+        return docente;
+    }
+
+    public void setDocente(int docente) {
+        this.docente = docente;
+    }
+
     public IndicadorConfiguracion getIndicadorConfiguracion() {
         return indicadorConfiguracion;
     }
@@ -159,14 +152,6 @@ public class ConfiguracionMateria implements Serializable {
 
     public void setIdUnidadMateria(UnidadMateria idUnidadMateria) {
         this.idUnidadMateria = idUnidadMateria;
-    }
-
-    public CargaAcademica getCargaAcademica1() {
-        return cargaAcademica1;
-    }
-
-    public void setCargaAcademica1(CargaAcademica cargaAcademica1) {
-        this.cargaAcademica1 = cargaAcademica1;
     }
 
     @Override

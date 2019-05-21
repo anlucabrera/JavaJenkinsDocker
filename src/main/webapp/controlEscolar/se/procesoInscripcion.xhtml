@@ -10,7 +10,6 @@
 
     <ui:define name="head-end">
         <ui:param name="renderBreadCrumb" value="false"/>
-        <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
          <!-- Inicio estilos par proceso electoral -->
         <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
@@ -72,7 +71,7 @@
                                                             </div>
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                 <p:outputLabel for="pe" style="font-size: large;text-align: right;" value="Carrera" />
-                                                                <p:inputText id="pe" class="form-control" value="#{procesoInscripcion.aspirante.datosAcademicos.primeraOpcion}" readonly="true"/>
+                                                                <p:inputText id="pe" class="form-control" value="#{procesoInscripcion.nombrePEPrimeraOpcion}" readonly="true"/>
                                                             </div>
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                 <p:outputLabel for="sistema" style="font-size: large;text-align: right;" value="Sistema" />
@@ -97,7 +96,7 @@
                                                             <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                             <div class="col-sm-4 col-md-4 col-lg-4">
                                                                 <p:commandButton id="btnBuscaRegistro" value="Validar Ficha Admisión" icon="fa fa-check-square"
-                                                                                 class="btn-primary btn-block col-md-3" process="@form" update="@form,:tabw1:frmListaA,:tabw1:frmConcentrado" actionListener="#{procesoInscripcion.validarFichaAdmision()}" disabled="#{(procesoInscripcion.aspirante.folioAspirante == null)}"/>
+                                                                                 class="btn-primary btn-block col-md-3" process="@form" update="@form,:tabw1:frmListaA,:tabw1:frmConcentrado" actionListener="#{procesoInscripcion.validarFichaAdmision()}" disabled="#{(procesoInscripcion.aspirante.folioAspirante == null or procesoInscripcion.aspirante.estudianteList.size() != 0)}"/>
                                                                 <br/>
                                                                 <br/>
                                                                 <p:commandButton id="btnClean" value="Limpiar Valores" icon="fa fa-trash"
@@ -161,14 +160,14 @@
                             <p:dataTable var="a" value="#{procesoInscripcion.listaAspirantesTSU}" sortBy="#{a.datosAcademicos.primeraOpcion}" expandableRowGroups="true" emptyMessage="No existen aspirantes registrados para esta carrera" paginator="true"
                                          rows="150" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="60,90,120">
                                 <p:headerRow>
-                                    <p:column colspan="10" style="background-color: #00b5ad;">
+                                    <p:column colspan="12" style="background-color: #00b5ad;">
                                         <h:outputText value="#{procesoInscripcion.nombrePE(a.datosAcademicos.primeraOpcion)}" />
                                     </p:column>
                                 </p:headerRow>
-                                <p:column headerText="Folio Ficha de Admisión">
+                                <p:column headerText="Folio Ficha de Admisión" filterBy="#{a.folioAspirante}">
                                     <h:outputText value="#{a.folioAspirante}"/>
                                 </p:column>
-                                <p:column headerText="Folio Ceneval">
+                                <p:column headerText="Folio Ceneval" filterBy="#{a.folioCeneval}">
                                     <h:outputText value="#{a.folioCeneval}"/>
                                 </p:column>
                                 <p:column headerText="Apellido Paterno">
@@ -186,19 +185,91 @@
                                 <p:column headerText="Sistema" style="width: 100px;">
                                     <h:outputText value="#{a.datosAcademicos.sistemaPrimeraOpcion.nombre}"/>
                                 </p:column>
-                                <p:column headerText="Carrera Segunda Opcion">
+                                <p:column headerText="Carrera Segunda Opción">
                                     <h:outputText value="#{procesoInscripcion.nombrePE(a.datosAcademicos.segundaOpcion)}"/>
                                 </p:column>
-                                <p:column headerText="Sistema Segunda Opcion" style="width: 100px;">
+                                <p:column headerText="Sistema Segunda Opción" style="width: 100px;">
                                     <h:outputText value="#{a.datosAcademicos.sistemaSegundaOpcion.nombre}"/>
                                 </p:column>
                                 <p:column headerText="Estatus" style="text-align: center;width: 85px;">
                                     <p:selectBooleanButton id="value2" onLabel="Si" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px" value="#{a.estatus}" disabled="true"/>
                                 </p:column>
+                                <p:column headerText="Ficha de Admisión" style="text-align: center;width: 90px;"> 
+                                    <p:commandButton  class="btn-primary" icon="fa fa-download" actionListener="#{procesoInscripcion.downloadFicha(a)}" ajax="false"/>
+                                </p:column>
+                                <p:column style="width: 65px;text-align: center;">
+                                    <p:commandButton icon="fa fa-refresh" class="btn-primary" onclick="PF('dglDatosAcademicos').show();" update=":tabw1:frmDatosAcademicos" actionListener="#{fichaAdm.muestraDatosAcademicos(a)}" disabled="#{!(a.estudianteList.size() == 0)}">
+                                    </p:commandButton>
+                                </p:column>
                             </p:dataTable>
                         </h:form>
                     </section>
                 </p:panel>
+                <p:dialog widgetVar="dglDatosAcademicos" header="Cambio datos academicos" modal="false" position="center center" showEffect="fade" hideEffect="fade" resizable="true" width="900px" height="400px">
+                    <h:form id="frmDatosAcademicos">
+                        <p:panelGrid columns="2" cellpadding="5" layout="grid" styleClass="no-border ui-fluid">
+                            
+                            <f:facet name="header">Carreras ficha de admisión</f:facet>
+                            
+                            <p:outputLabel for="folio" value="Folio Ficha"/>
+                            <p:outputLabel id="folio" value="#{fichaAdm.datosAcademicos.aspirante1.folioAspirante}"/>
+                            
+                            <p:outputLabel for="nombre" value="Nombre"/>
+                            <p:outputLabel id="nombre" value="#{fichaAdm.datosAcademicos.aspirante1.idPersona.nombre} #{fichaAdm.datosAcademicos.aspirante1.idPersona.apellidoPaterno} #{fichaAdm.datosAcademicos.aspirante1.idPersona.apellidoMaterno}"/>
+                            
+                            <p:separator/><p:separator/>
+                            
+                            <p:outputLabel for="areaAPO" value="Área Academica Primera Opción"/>
+                            <p:selectOneMenu id="areaAPO" value="#{fichaAdm.areaAcademicaPO}" class="form-control" required="true" requiredMessage="Debe de indicar la divición academica de la carrera de primera opción">
+                                <f:selectItem itemValue="#{null}"/>
+                                <f:selectItems value="#{fichaAdm.listaAreasSO}"/>
+                                <p:ajax listener="#{fichaAdm.selectPEPrincipal()}" update="pePO,sistemaPO"/>
+                            </p:selectOneMenu>                            
+                            
+                            <p:outputLabel for="pePO" value="Programa Educativo Primera Opción"/>
+                            <p:selectOneMenu id="pePO" required="true" class="form-control" value="#{fichaAdm.datosAcademicos.primeraOpcion}" style="width:  375px" requiredMessage="Debe de indicar el programa educativo de la carrera de primera opción">
+                                <f:selectItem itemValue="#{null}"/>
+                                <f:selectItems value="#{fichaAdm.listaPEP}"/>
+                            </p:selectOneMenu>
+                            
+                            <p:outputLabel for="sistemaPO" value="Sistema Primera Opción"/>
+                            <p:selectOneMenu id="sistemaPO" required="true" class="form-control" value="#{fichaAdm.datosAcademicos.sistemaPrimeraOpcion}" converter="sistemaConverter" requiredMessage="Debe de indicar el turno del programa educativo">
+                                <f:selectItem itemValue="#{null}"/>
+                                <f:selectItems value="#{fichaAdm.listaSistema}" var="sistemaPO" itemValue="#{sistemaPO}" itemLabel="#{sistemaPO.nombre}" itemDisabled="#{(sistemaPO.idSistema == 2 and fichaAdm.areaAcademicaPO == 25)}"/>
+                            </p:selectOneMenu>
+                            
+                            <p:separator/><p:separator/>
+                            
+                            <p:outputLabel for="areaASO" value="Área Academica Segunda Opción"/>
+                            <p:selectOneMenu id="areaASO" value="#{fichaAdm.areaAcademicaSO}" required="true" requiredMessage="Debe de indicar la divición academica de la carrera de primera opción">
+                                <f:selectItem itemValue="#{null}"/>
+                                <f:selectItems value="#{fichaAdm.listaAreasSO}"/>
+                                <p:ajax listener="#{fichaAdm.selectPEOpcional()}" update="peSO,sistemaSO"/>
+                            </p:selectOneMenu>                            
+                            
+                            <p:outputLabel for="peSO" value="Programa Educativo Segunda Opción"/>
+                            <p:selectOneMenu id="peSO" required="true" value="#{fichaAdm.datosAcademicos.segundaOpcion}" style="width:  375px" requiredMessage="Debe de indicar el programa educativo de la carrera de primera opción">
+                                <f:selectItem itemValue="#{null}"/>
+                                <f:selectItems value="#{fichaAdm.listaPES}"/>
+                            </p:selectOneMenu>
+                            
+                            <p:outputLabel for="sistemaSO" value="Sistema Segunda Opción"/>
+                            <p:selectOneMenu id="sistemaSO" required="true" value="#{fichaAdm.datosAcademicos.sistemaSegundaOpcion}" converter="sistemaConverter" requiredMessage="Debe de indicar el turno del programa educativo">
+                                <f:selectItem itemValue="#{null}"/>
+                                <f:selectItems value="#{fichaAdm.listaSistema}" var="sistemaPO" itemValue="#{sistemaPO}" itemLabel="#{sistemaPO.nombre}" itemDisabled="#{(sistemaSO.idSistema == 2 and fichaAdm.areaAcademicaSO == 25)}"/>
+                            </p:selectOneMenu>
+                            
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="2" style="align-content: center">
+                                        <center><p:commandButton id="btn" value="Actualiza Datos" icon="fa fa-search" styleClass="btn-primary" style="width: 30%;" actionListener="#{fichaAdm.actualizaDatosAcademicos()}" update=":tabw1:frmListaA">
+                                            </p:commandButton> </center>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
             </p:tab>
             <p:tab title="Incripción T.S.U.">
                 <p:panel id="inscripcion" class="hidden-xs hidden-sm" styleClass="box box-primary">
@@ -330,7 +401,8 @@
                                                                 <p:commandButton id="imprimeComprobanteIns" value="Comprobante de Inscripción" icon="fa fa-print" class="btn-primary btn-block col-md-3" onclick="target='_blank'"
                                                                          process="@form" update="@form" actionListener="#{procesoInscripcion.imprimirComprobateIns()}" ajax="false" disabled="#{(procesoInscripcion.estudiante.idEstudiante == null)}"/>
                                                                 <p:commandButton id="imprimeCartaCompromiso" value="Carta compromiso" icon="fa fa-print" class="btn-primary btn-block col-md-3" onclick="target='_blank'" 
-                                                                                 process="@form" update="@form" actionListener="#{procesoInscripcion.imprimirComprobateIns()}" ajax="false" disabled="#{(procesoInscripcion.estudiante.idEstudiante == null) or (procesoInscripcion.estudiante.documentosentregadosestudiante.actaNacimiento == true) or (procesoInscripcion.estudiante.documentosentregadosestudiante.certificadoIems == true)}"/>
+                                                                                 process="@form" update="@form" actionListener="#{procesoInscripcion.imprimirCartaCompromiso()}" ajax="false" disabled="#{!(procesoInscripcion.estudiante.documentosentregadosestudiante.actaNacimiento == false or procesoInscripcion.estudiante.documentosentregadosestudiante.certificadoIems == false)}"/>
+                                                                
                                                                 <span/>
                                                             </p:panelGrid>
                                                         </center>
@@ -341,8 +413,8 @@
                                                             <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                             <div class="col-sm-4 col-md-4 col-lg-4">
                                                                 <p:commandButton id="btnGuardaGrupos" value="Inscribir Estudiante" icon="fa fa-floppy-o"
-                                                                                 class="btn-primary btn-block col-md-3" process="@form" update="@form" actionListener="#{procesoInscripcion.guardarEstudiante()}" disabled="#{(procesoInscripcion.aspiranteValido.estatus == false)}"/>
-                                                                <p:commandButton id="btnClean" value="Nuevo" icon="fa fa-floppy-o"
+                                                                                 class="btn-primary btn-block col-md-3" process="@form" update="@form,:tabw1:frmListaEstudiantes" actionListener="#{procesoInscripcion.guardarEstudiante()}" disabled="#{(procesoInscripcion.aspiranteValido.estatus == false)}"/>
+                                                                <p:commandButton id="btnClean" value="Limpiar" icon="fa fa-trash"
                                                                                  class="btn-primary btn-block col-md-3" process="@form" update="@form" actionListener="#{procesoInscripcion.clearDatos()}" disabled="#{(procesoInscripcion.aspiranteValido.estatus == false)}"/>
                                                             </div>
                                                         </div>
@@ -353,6 +425,34 @@
                                     </div>
                                 </div>
                             </div>
+                        </h:form>
+                        <h:form id="frmListaEstudiantes">
+                            <p:dataTable var="estudiantes" value="#{procesoInscripcion.listaEstudiantes}" expandableRowGroups="true" 
+                                         emptyMessage="No hay estudiantes registrados para este proceso de inscripción" sortBy="#{estudiantes.carrera}">
+                                <p:headerRow>
+                                    <p:column colspan="6" style="background-color: #00b5ad;">
+                                        <h:outputText value="#{procesoInscripcion.nombrePE(estudiantes.carrera)}" />
+                                    </p:column>
+                                </p:headerRow>
+                                <p:column headerText="Matrícula">
+                                    <h:outputText value="#{estudiantes.matricula}"/>
+                                </p:column>
+                                <p:column headerText="Apellido Paterno">
+                                    <h:outputText value="#{estudiantes.aspirante.idPersona.apellidoPaterno}"/>
+                                </p:column>
+                                <p:column headerText="Apellido Materno">
+                                    <h:outputText value="#{estudiantes.aspirante.idPersona.apellidoMaterno}"/>
+                                </p:column>
+                                <p:column headerText="Nombre">
+                                    <h:outputText value="#{estudiantes.aspirante.idPersona.nombre}"/>
+                                </p:column>
+                                <p:column headerText="Grupo" style="text-align: center;">
+                                    <h:outputText value="#{estudiantes.grupo.literal}"/>
+                                </p:column>
+                                <p:column headerText="Cuatrimestre" style="text-align: center;">
+                                    <h:outputText value="#{estudiantes.grupo.grado}"/>
+                                </p:column>
+                            </p:dataTable>
                         </h:form>
                     </section>
                 </p:panel>

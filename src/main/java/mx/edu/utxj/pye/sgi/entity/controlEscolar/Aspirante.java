@@ -67,8 +67,8 @@ public class Aspirante implements Serializable {
     private DatosAcademicos datosAcademicos;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
     private DocumentoAspirante documentoAspirante;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "aspirante")
-    private List<EncuestaAspirante> encuestaAspiranteList;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante")
+    private EncuestaAspirante encuestaAspirante;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
     private DatosFamiliares datosFamiliares;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "aspirante")
@@ -153,13 +153,12 @@ public class Aspirante implements Serializable {
         this.documentoAspirante = documentoAspirante;
     }
 
-    @XmlTransient
-    public List<EncuestaAspirante> getEncuestaAspiranteList() {
-        return encuestaAspiranteList;
+    public EncuestaAspirante getEncuestaAspirante() {
+        return encuestaAspirante;
     }
 
-    public void setEncuestaAspiranteList(List<EncuestaAspirante> encuestaAspiranteList) {
-        this.encuestaAspiranteList = encuestaAspiranteList;
+    public void setEncuestaAspirante(EncuestaAspirante encuestaAspirante) {
+        this.encuestaAspirante = encuestaAspirante;
     }
 
     public DatosFamiliares getDatosFamiliares() {

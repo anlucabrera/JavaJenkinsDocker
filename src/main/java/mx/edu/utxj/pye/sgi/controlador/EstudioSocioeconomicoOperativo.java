@@ -22,11 +22,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.faces.component.UIComponent;
+import mx.edu.utxj.pye.sgi.dto.Apartado;
 
 @Named
 @ViewScoped
 public class EstudioSocioeconomicoOperativo extends Evaluacion<AlumnosEncuestas> implements Guardable {
-
+    
     @Getter protected EvaluacionesEstudioSocioeconomicoResultados resultado;
     @Getter private String valor;
     Comparador<EvaluacionesEstudioSocioeconomicoResultados> comparador;
@@ -43,7 +44,7 @@ public class EstudioSocioeconomicoOperativo extends Evaluacion<AlumnosEncuestas>
         ResultadoEJB<EvaluacionesEstudioSocioeconomicoResultados> actualizar = ejb.actualizar(id, valor, resultado);
     //        System.out.println("actualizar.getMensaje() = " + actualizar.getMensaje());
         ResultadoEJB<EvaluacionesEstudioSocioeconomicoResultados> guardar = ejb.guardar(resultado);
-//        System.out.println("guardar.getMensaje() = " + guardar.getMensaje());
+    //        System.out.println("guardar.getMensaje() = " + guardar.getMensaje());
         comprobar();
         Ajax.update("@form");
     }

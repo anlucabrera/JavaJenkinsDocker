@@ -178,6 +178,6 @@ public interface EjbFichaAdmision {
      */
     public void actualizaDocumentosAspirante(DocumentoAspirante documentoAspirante);
     
-    public void generaFichaAdmin(Persona persona,DatosAcademicos academicos,Domicilio domicilio,Aspirante aspirante,MedioComunicacion medioComunicacion) throws IOException, DocumentException;
+    public void generaFichaAdmin(Persona persona,DatosAcademicos academicos,Domicilio domicilio,Aspirante aspirante,MedioComunicacion medioComunicacion,String uso) throws IOException, DocumentException;
 
 }

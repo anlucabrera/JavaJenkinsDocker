@@ -20,32 +20,24 @@ public class CargaAcademicaPK implements Serializable {
 
     @Basic(optional = false)
     @NotNull
-    @Column(name = "id_carga_academica")
-    private int idCargaAcademica;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "cve_grupo")
     private int cveGrupo;
     @Basic(optional = false)
     @NotNull
     @Column(name = "cve_materia")
     private int cveMateria;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "docente")
+    private int docente;
 
     public CargaAcademicaPK() {
     }
 
-    public CargaAcademicaPK(int idCargaAcademica, int cveGrupo, int cveMateria) {
-        this.idCargaAcademica = idCargaAcademica;
+    public CargaAcademicaPK(int cveGrupo, int cveMateria, int docente) {
         this.cveGrupo = cveGrupo;
         this.cveMateria = cveMateria;
-    }
-
-    public int getIdCargaAcademica() {
-        return idCargaAcademica;
-    }
-
-    public void setIdCargaAcademica(int idCargaAcademica) {
-        this.idCargaAcademica = idCargaAcademica;
+        this.docente = docente;
     }
 
     public int getCveGrupo() {
@@ -64,12 +56,20 @@ public class CargaAcademicaPK implements Serializable {
         this.cveMateria = cveMateria;
     }
 
+    public int getDocente() {
+        return docente;
+    }
+
+    public void setDocente(int docente) {
+        this.docente = docente;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (int) idCargaAcademica;
         hash += (int) cveGrupo;
         hash += (int) cveMateria;
+        hash += (int) docente;
         return hash;
     }
 
@@ -80,13 +80,13 @@ public class CargaAcademicaPK implements Serializable {
             return false;
         }
         CargaAcademicaPK other = (CargaAcademicaPK) object;
-        if (this.idCargaAcademica != other.idCargaAcademica) {
-            return false;
-        }
         if (this.cveGrupo != other.cveGrupo) {
             return false;
         }
         if (this.cveMateria != other.cveMateria) {
+            return false;
+        }
+        if (this.docente != other.docente) {
             return false;
         }
         return true;
@@ -94,7 +94,7 @@ public class CargaAcademicaPK implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademicaPK[ idCargaAcademica=" + idCargaAcademica + ", cveGrupo=" + cveGrupo + ", cveMateria=" + cveMateria + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademicaPK[ cveGrupo=" + cveGrupo + ", cveMateria=" + cveMateria + ", docente=" + docente + " ]";
     }
     
 }

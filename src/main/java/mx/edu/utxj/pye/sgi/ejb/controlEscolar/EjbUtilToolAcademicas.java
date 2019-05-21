@@ -9,6 +9,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 
 import javax.ejb.Local;
 import java.util.List;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
 
 /**
  *
@@ -16,8 +17,11 @@ import java.util.List;
  */
 @Local
 public interface EjbUtilToolAcademicas {
-
-    public void guardaGrupo(Grupo grupo, Integer noGrupos);
+    
+    public Login autenticarUser(String usuario, String password);
+    public void guardaGrupo(Grupo grupo, Integer noGrupos,Integer periodo);
+    public void actualizaGrupo(Grupo grupo);
+    public void eliminaGrupo(Grupo grupo);
     public List<Grupo> listaByPeriodo(Integer cve_periodo);
     
 }

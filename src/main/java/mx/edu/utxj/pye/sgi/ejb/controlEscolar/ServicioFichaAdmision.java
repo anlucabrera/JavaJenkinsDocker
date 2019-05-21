@@ -398,7 +398,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     }
     
     @Override
-    public void generaFichaAdmin(Persona persona, DatosAcademicos academicos,Domicilio domicilio,Aspirante aspirante,MedioComunicacion medioComunicacion) throws IOException, DocumentException{
+    public void generaFichaAdmin(Persona persona, DatosAcademicos academicos,Domicilio domicilio,Aspirante aspirante,MedioComunicacion medioComunicacion, String uso) throws IOException, DocumentException{
         String ruta = "C://archivos//plantillas//formato_ficha_admision.pdf";
         FacesContext facesContext = FacesContext.getCurrentInstance();
         SimpleDateFormat sm = new SimpleDateFormat("dd-MM-yyyy");
@@ -504,28 +504,29 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
               facesContext.responseComplete();
         }
         
-        // El correo gmail de envío
-        String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";
-        String claveCorreo = "Serv.Escolares";
-        String mensaje = "Estimado(a) "+persona.getNombre()+"\n\n Gracias por elegir a la Universidad Tecnologica de Xicotepec de Juárez como opción para continuar con tus estudios de nivel superior." +
-                        "\n\n Para continuar descarga la ficha la admisión y asiste a las instalaciones de la UTXJ y entregar la documentación necesaria\n\n"
-                        + "* Formato de Ficha de Admisión.\n"
-                        + "* Copia de CURP (nuevo formato).\n"
-                        + "* Copia de Acta de Nacimiento.\n"
-                        + "* Copia de Certificado de Nivel Medio Superior o Constancia de Estudios Original reciente con tira de materias y calificaciones (aprobatorias) del 1o. al 5o. semestre; indicando el promedio general y firmado por el titular de la Institución\n"
-                        + "* Referencia bancaria del pago de ficha y examen de admisión.\n\n" +
-                        "ATENTAMENTE \n" +
-                        "Departamento de Servicios Escolares";
-        
-        String identificador = "Registro de Ficha de Admisión 2019 UTXJ";
-        String asunto = "Registro Exitoso";
-        
-        if(medioComunicacion.getEmail() != null){
-            try {
-                DataSource source = new ByteArrayDataSource(baos.toByteArray(), "application/pdf");
-                EnvioCorreos.EnviarCorreoArchivos(correoEnvia, claveCorreo,identificador,asunto,persona.getMedioComunicacion().getEmail(),mensaje,source,String.valueOf(aspirante.getFolioAspirante()));
-            }catch (Exception e){
-                e.printStackTrace();
+        if(uso.equals("Alumno")){
+            // El correo gmail de envío
+            String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";
+            String claveCorreo = "Serv.Escolares";
+            String mensaje = "Estimado(a) "+persona.getNombre()+"\n\n Gracias por elegir a la Universidad Tecnologica de Xicotepec de Juárez como opción para continuar con tus estudios de nivel superior." +
+                            "\n\n Para continuar descarga la ficha la admisión y asiste a las instalaciones de la UTXJ y entregar la documentación necesaria\n\n"
+                            + "* Formato de Ficha de Admisión.\n"
+                            + "* Copia de CURP (nuevo formato).\n"
+                            + "* Copia de Acta de Nacimiento.\n"
+                            + "* Copia de Certificado de Nivel Medio Superior o Constancia de Estudios Original reciente con tira de materias y calificaciones (aprobatorias) del 1o. al 5o. semestre; indicando el promedio general y firmado por el titular de la Institución\n"
+                            + "* Referencia bancaria del pago de ficha y examen de admisión.\n\n" +
+                            "ATENTAMENTE \n" +
+                            "Departamento de Servicios Escolares";
+
+            String identificador = "Registro de Ficha de Admisión 2019 UTXJ";
+            String asunto = "Registro Exitoso";
+            if(medioComunicacion.getEmail() != null){
+                try {
+                    DataSource source = new ByteArrayDataSource(baos.toByteArray(), "application/pdf");
+                    EnvioCorreos.EnviarCorreoArchivos(correoEnvia, claveCorreo,identificador,asunto,persona.getMedioComunicacion().getEmail(),mensaje,source,String.valueOf(aspirante.getFolioAspirante()));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         }
     }
