@@ -173,7 +173,6 @@ public class UtilidadesCH implements Serializable {
     }
 
     public String convertirRuta(String ruta) {
-        System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesCH.convertirRuta(ruta)"+ruta);
         //Se comprueba si la bao contiene la ruta de almacenamiento de la evidencia.
         if (ruta.isEmpty()) {
             mensajes("No fue posible cargar el archivo", "W", "C");
@@ -186,7 +185,7 @@ public class UtilidadesCH implements Serializable {
         //Se realiza la separación de la ruta obtenida y se coloca una máscara para poder mostrar los archivos sin exponer su ubicación real.
         return "evidencias2".concat(file.toURI().toString().split("archivos")[1]);
     }
-    
+
     public String creaRutaNombramiento(Integer claveP) {
         String rura="C:"+File.separator+"archivos"+File.separator+"evidenciasCapitalHumano"+File.separator+"nombramientos"+File.separator+claveP+".pdf";
         
