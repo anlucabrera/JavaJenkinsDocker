@@ -65,6 +65,7 @@ public class ServicioAdministracionEncuesta implements EjbAdministracionEncuesta
     }
 
     @Override
+    
     public List<AlumnosEncuestas> obtenerAlumno(String cveMaestro) {
 //        TypedQuery<ViewAlumnos> q = f.getEntityManager().createQuery("SELECT a from Alumno a WHERE a.alumnoPK.periodo= 47 AND a.cuatrimestre=11 AND a.alumnoPK.matricula=:matricula", Alumno.class);
         TypedQuery<AlumnosEncuestas> q = f2.getEntityManager().createQuery("SELECT a from AlumnosEncuestas a WHERE a.cveDirector=:cveMaestro", AlumnosEncuestas.class);
@@ -79,7 +80,7 @@ public class ServicioAdministracionEncuesta implements EjbAdministracionEncuesta
     
     @Override
     public List<AlumnosEncuestas> obtenerTodoAlumno(Integer cveTutor){
-        TypedQuery<AlumnosEncuestas> q=f2.getEntityManager().createQuery("SELECT a FROM AlumnosEncuestas a WHERE a.cveMaestro= :cveTutor",AlumnosEncuestas.class);
+        TypedQuery<AlumnosEncuestas> q=f2.getEntityManager().createQuery("SELECT a FROM AlumnosEncuestas a WHERE a.cveMaestro=:cveTutor",AlumnosEncuestas.class);
         q.setParameter("cveTutor", cveTutor);
         List<AlumnosEncuestas> l=q.getResultList();
         if(!l.isEmpty()){
@@ -137,6 +138,18 @@ public class ServicioAdministracionEncuesta implements EjbAdministracionEncuesta
     @Override
     public Grupos obtenerCuatriPorTutor(Integer cveMaestro){
         TypedQuery<Grupos> q=f2.getEntityManager().createQuery("SELECT g FROM Grupos g where g.gruposPK.cvePeriodo=47 AND g.cveMaestro=:cveMaestro",Grupos.class);
+        q.setParameter("cveMaestro", cveMaestro);
+        List<Grupos> l=q.getResultList();
+        if(l.isEmpty()){
+            return null;
+        }else{
+            return l.get(0);
+        }
+    }
+    @Override
+    public Grupos getGrupodelTutor(Integer cveMaestro, Integer periodoActual){
+        TypedQuery<Grupos> q=f2.getEntityManager().createQuery("SELECT g FROM Grupos g where g.gruposPK.cvePeriodo=:periodoActual AND g.cveMaestro=:cveMaestro",Grupos.class);
+        q.setParameter("periodoActual", periodoActual);
         q.setParameter("cveMaestro", cveMaestro);
         List<Grupos> l=q.getResultList();
         if(l.isEmpty()){

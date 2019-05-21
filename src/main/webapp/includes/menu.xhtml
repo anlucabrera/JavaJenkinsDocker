@@ -212,6 +212,7 @@
                             </p:link>
                         </li>
                     </c:if>
+                       
 
 
                     <!--************ administradores especiales********-->
@@ -791,6 +792,15 @@
                     <span>Directorio de Correos</span>
                 </p:link>
             </li>
+            <c:if test="#{utilidadesAdministracionEvaluaciones.tutor}">
+                <li>
+                    <p:link href="/directorioCorreosAlumnosporTutor.xhtml">
+                         <i class="fa fa-envelope" />
+                        <span>Directorio Estudiantes Tutorados</span>
+                    </p:link>
+                </li>
+                
+            </c:if>
             <li>
                 <p:link href="/siiFaces.xhtml">
                     <i class="fa fa-comments"></i>
