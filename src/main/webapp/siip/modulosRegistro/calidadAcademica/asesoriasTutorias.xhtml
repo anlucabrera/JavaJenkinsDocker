@@ -137,6 +137,7 @@
                                                 <p:commandButton actionListener="#{asesoriasTutoriasCicloEscolar.abrirEdicionAsesoriasTutoriasMensual(asesoriaTutoria.asesoriasTutoriasCicloPeriodos)}"
                                                                  class="btn btn-sm btn-info"
                                                                  icon="fa fa-pencil-square-o"
+                                                                 rendered="#{asesoriasTutoriasCicloEscolar.dto.periodoEscolarActivo.periodo eq asesoriaTutoria.asesoriasTutoriasCicloPeriodos.periodoEscolar}"
                                                                  title="Editar asesoría ó tutoría"/>
                                             </div>
                                         </p:column>

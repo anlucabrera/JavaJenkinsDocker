@@ -171,6 +171,7 @@
                                                             <p:commandButton actionListener="#{controladorServiciosTecnologicosAnioMes.abrirEdicionServicioTecnologico(servicioTecnologico)}"
                                                                              class="btn btn-sm btn-info"
                                                                              icon="fa fa-pencil-square-o"
+                                                                             rendered="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"
                                                                              title="Editar Servicio Tecnológico"/>
                                                         </div>
                                                     </p:column>
@@ -278,6 +279,7 @@
                                                             <p:commandButton actionListener="#{controladorServiciosTecnologicosAnioMes.abrirEdicionServicioTecnologicoParticipante(servicioTecnologicoPart.serviciosTecnologicosParticipantes)}"
                                                                              class="btn btn-sm btn-info"
                                                                              icon="fa fa-pencil-square-o"
+                                                                             rendered="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"
                                                                              title="Editar Servicio Tecnológico Participante"/>
                                                         </div>
                                                     </p:column>
@@ -346,7 +348,7 @@
                               maximizable="false" >
                         <div class="row">
                             <div class="col-md-12">
-                                <p:toolbar id="tb">
+                                <p:toolbar>
                                     <f:facet name="left">
                                         <p:spacer width="10" />
                                         <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px" />

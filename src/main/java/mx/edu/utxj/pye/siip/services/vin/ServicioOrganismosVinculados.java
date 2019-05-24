@@ -939,4 +939,67 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
         }
     }
 
+    @Override
+    public List<OrganismosVinculados> getReporteOrganismosVinculados() {
+        try {
+            return facadeProntuario.getEntityManager().createQuery("SELECT o FROM OrganismosVinculados o INNER JOIN o.registros r ORDER BY r.eventoRegistro.mes, o.nombre",OrganismosVinculados.class)
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<OrganismosVinculados> getReporteActividadesVinculacion() {
+        try {
+            return facadeProntuario.getEntityManager().createQuery("SELECT DISTINCT(ov) FROM OrganismosVinculados ov INNER JOIN ov.actividadesVinculacionList av ORDER BY ov.nombre",OrganismosVinculados.class)
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<ProgramasBeneficiadosVinculacion> getReporteProgramasBeneficiadosVinculacion() {
+        try {
+            return facadeProntuario.getEntityManager().createQuery("SELECT pb FROM ProgramasBeneficiadosVinculacion pb INNER JOIN pb.organismosVinculados ov ORDER BY ov.empresa",ProgramasBeneficiadosVinculacion.class)
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<TelefonosEmpresa> getReporteTelefonosEmpresa() {
+        try {
+            return facadeProntuario.getEntityManager().createQuery("SELECT te FROM TelefonosEmpresa te INNER JOIN te.empresa e ORDER BY e.empresa",TelefonosEmpresa.class)
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<CorreosEmpresa> getCorreosEmpresas() {
+        try {
+            return facadeProntuario.getEntityManager().createQuery("SELECT ce FROM CorreosEmpresa ce INNER JOIN ce.empresa e ORDER BY e.empresa",CorreosEmpresa.class)
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<ContactosEmpresa> getReporteContactosEmpresa() {
+        try {
+            return facadeProntuario.getEntityManager().createQuery("SELECT ce FROM ContactosEmpresa ce INNER JOIN ce.empresa e ORDER BY e.empresa",ContactosEmpresa.class)
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+    
+    
+    
+
 }

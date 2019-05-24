@@ -228,10 +228,10 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
                                 datosInvalidos.add("Dato incorrecto: CURP en la columna: " + (14 + 1) + " y fila: " + (i + 1));
                             }
                             
-                            if (fila.getCell(15).getCellTypeEnum() == CellType.STRING) {
-                                switch (fila.getCell(15).getCellTypeEnum()) {
-                                    case STRING:
-                                        matriculaPeriodoEscolar.setLenguaIndigena(fila.getCell(15).getStringCellValue());
+                            if (fila.getCell(16).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(16).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        matriculaPeriodoEscolar.setLenguaIndigena(fila.getCell(16).getStringCellValue());
                                         break;
                                     default:
                                         break;
@@ -241,10 +241,10 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
                                 datosInvalidos.add("Dato incorrecto: Lengua Indígena en la columna: " + (15 + 1) + " y fila: " + (i + 1));
                             }
                             
-                            if (fila.getCell(17).getCellTypeEnum() == CellType.STRING) {
-                                switch (fila.getCell(17).getCellTypeEnum()) {
-                                    case STRING:
-                                        matriculaPeriodoEscolar.setDiscapacidad(fila.getCell(17).getStringCellValue());
+                            if (fila.getCell(18).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(18).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        matriculaPeriodoEscolar.setDiscapacidad(fila.getCell(18).getStringCellValue());
                                         break;
                                     default:
                                         break;
@@ -254,10 +254,10 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
                                 datosInvalidos.add("Dato incorrecto: Discapacidad en la columna: " + (17 + 1) + " y fila: " + (i + 1));
                             }
                             
-                            if (fila.getCell(19).getCellTypeEnum() == CellType.STRING) {
-                                switch (fila.getCell(19).getCellTypeEnum()) {
-                                    case STRING:
-                                        matriculaPeriodoEscolar.setComunidadIndigena(fila.getCell(19).getStringCellValue());
+                            if (fila.getCell(20).getCellTypeEnum() == CellType.FORMULA) {
+                                switch (fila.getCell(20).getCellTypeEnum()) {
+                                    case FORMULA:
+                                        matriculaPeriodoEscolar.setComunidadIndigena(fila.getCell(20).getStringCellValue());
                                         break;
                                     default:
                                         break;

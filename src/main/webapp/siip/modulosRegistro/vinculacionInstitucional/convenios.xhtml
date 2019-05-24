@@ -165,6 +165,7 @@
                                                 <p:commandButton actionListener="#{conveniosC.abrirEdicionConvenio(convenio)}"
                                                                  class="btn btn-sm btn-info"
                                                                  icon="fa fa-pencil-square-o"
+                                                                 rendered="#{conveniosC.dtoConvenios.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and conveniosC.dtoConvenios.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"
                                                                  title="Editar convenio"/>
                                             </div>
                                         </p:column>    

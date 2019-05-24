@@ -159,6 +159,7 @@
                                                 <p:commandButton actionListener="#{actividadesVarias.abrirEdicionActividadVaria(actVar)}"
                                                                  class="btn btn-sm btn-info"
                                                                  icon="fa fa-pencil-square-o"
+                                                                 rendered="#{actividadesVarias.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and actividadesVarias.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"
                                                                  title="Editar Actividad Varia."/>
                                             </div>
                                         </p:column>                                                 

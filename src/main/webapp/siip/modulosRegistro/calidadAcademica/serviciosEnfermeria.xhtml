@@ -165,6 +165,7 @@
                                                     <p:commandButton actionListener="#{controladorServiciosEnfermeriaCicloPeriodos.abrirEdicionServicioEnfermeria(servicioEnfermeria.serviciosEnfermeriaCicloPeriodos)}"
                                                                          class="btn btn-sm btn-info"
                                                                          icon="fa fa-pencil-square-o"
+                                                                         rendered="#{controladorServiciosEnfermeriaCicloPeriodos.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosEnfermeriaCicloPeriodos.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"
                                                                          title="Editar servicio enfermeria"/>
                                                 </div>
                                             </p:column>

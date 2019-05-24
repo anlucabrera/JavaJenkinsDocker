@@ -176,6 +176,7 @@
                                                             <p:commandButton actionListener="#{controladorProductosAcademicos.abrirEdicionProductoAcademico(prodAcad.productosAcademicos)}"
                                                                              class="btn btn-sm btn-info"
                                                                              icon="fa fa-pencil-square-o"
+                                                                             rendered="#{controladorProductosAcademicos.dtoProductoAcademico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorProductosAcademicos.dtoProductoAcademico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"
                                                                              title="Editar producto académico"/>
                                                         </div>
                                                     </p:column>
@@ -289,6 +290,7 @@
                                                             <p:commandButton actionListener="#{controladorProductosAcademicos.abrirEdicionProductoAcademicoPersonal(productoAcademicoPersonal.productoAcademicoPersonal)}"
                                                                              class="btn btn-sm btn-info"
                                                                              icon="fa fa-pencil-square-o"
+                                                                             rendered="#{controladorProductosAcademicos.dtoProductoAcademico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorProductosAcademicos.dtoProductoAcademico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}"
                                                                              title="Editar producto académico personal"/>
                                                         </div>
                                                     </p:column>
