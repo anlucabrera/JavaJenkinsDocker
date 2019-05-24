@@ -97,7 +97,7 @@ public class FichaAdmision implements Serializable, Guardable{
     @Getter private List<SelectItem> respuestasPosiblesNivelEstudios,respuestasPosiblesRazonTrabajo,respuestasDependientesEconomicos,respuestasRangoDecision;
     @Getter @Setter private List<LenguaIndigena> listaLenguasIndigenas;
     @Getter @Setter private List<MedioDifusion> listaMedioDifusion;
-    @Getter private Boolean finalizado,mostrar = false;
+    @Getter private Boolean finalizado,mostrar = true;
     
 
     @EJB EJBSelectItems eJBSelectItems;
@@ -339,7 +339,7 @@ public class FichaAdmision implements Serializable, Guardable{
             df = false;
             index = 3;
         }else{
-            ejbFichaAdmision.actualizaCamunicacion(medioComunicacion);
+            ejbFichaAdmision.actualizaComunicacion(medioComunicacion);
             ejbFichaAdmision.actualizaDomicilio(domicilio);
             df = false;
             index = 3;
@@ -393,6 +393,7 @@ public class FichaAdmision implements Serializable, Guardable{
                 ejbFichaAdmision.guardaDatosAcademicos(datosAcademicos);
                 evif = false;
                 index = 5;
+                resultado = new EncuestaAspirante();
             }
             
         }else{
@@ -405,6 +406,7 @@ public class FichaAdmision implements Serializable, Guardable{
                 ejbFichaAdmision.actualizaDatosAcademicos(datosAcademicos);
                 evif = false;
                 index = 5;
+                resultado = new EncuestaAspirante();
             } 
         }
         
@@ -579,8 +581,34 @@ public class FichaAdmision implements Serializable, Guardable{
         if(resultado.getR19tratamientoMedico() == null) {finalizado = false; return;}
         
         mostrar = !resultado.getR1Lenguaindigena().equals("Sí");
-        
         finalizado = true;
+    }
+    
+    public void inicializarEncuesta(Aspirante aspirante_pi){
+        resultado = ejb.getResultado(aspirante_pi.getIdAspirante());
+        if(resultado != null){
+            comprobar();
+        }else{
+            resultado = new EncuestaAspirante();
+            aspirante = aspirante_pi;
+            finalizado = false;
+        }
+    }
+    
+    public String verificaEncuesta(Integer idAspirante){
+        resultado = ejb.getResultado(idAspirante);
+        String letrero = "";
+        if(resultado != null){
+            comprobar();
+            if(finalizado == true){
+                letrero = "Ha finalizado el cuestionario";
+            }else{
+                letrero = "Debe responder todas las preguntas";
+            }
+        }else{
+            letrero = "Debe responder todas las preguntas";
+        }
+        return letrero;
     }
     
     public List<String> getSiNo(){

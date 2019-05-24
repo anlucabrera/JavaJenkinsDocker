@@ -212,7 +212,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     }
 
     @Override
-    public void actualizaCamunicacion(MedioComunicacion comunicacion) {
+    public void actualizaComunicacion(MedioComunicacion comunicacion) {
         facadeCE.setEntityClass(MedioComunicacion.class);
         facadeCE.edit(comunicacion);
         facadeCE.flush();
