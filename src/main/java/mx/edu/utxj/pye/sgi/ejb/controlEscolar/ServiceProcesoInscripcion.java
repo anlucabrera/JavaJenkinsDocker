@@ -147,7 +147,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                 login.setModificado(false);
                 login.setUsuario(String.valueOf(matriculaUtilizable));
                 login.setPassword(encriptaPassword(contrasena));
-                login.setPersona(estudiante.getAspirante().getIdPersona());
+                login.setPersona(estudiante.getAspirante().getIdAspirante());
                 facadeCE.create(login);
                 facadeCE.create(estudiante);
                 documentosentregadosestudiante.setEstudiante(estudiante.getIdEstudiante());

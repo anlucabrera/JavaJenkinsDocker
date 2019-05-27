@@ -118,48 +118,48 @@
                                     </p:column>
                                 </p:headerRow>       
 
-                                <p:column>  
+                                <p:column style="padding: 0px 0px">  
                                     <p:rowExpansion>
                                         <p:dataTable id="dtbPoaEvaluacion" value="#{estrategiasRegistro.actividadesPoas}" var="poa" emptyMessage="No hay actividades a evaluar en este mes"
                                                      editable="true" editMode="row" rowStyleClass="#{poa.actividadesPoa.numeroS eq 0?'actividad':''}" 
                                                      widgetVar="dtbPoaEvaluacion" rowKey="#{poa.actividadesPoa.actividadPoa}" scrollable="true" 
                                                      sortBy="#{poa.actividadesPoa.cuadroMandoInt.lineaAccion.lineaAccion}" expandableRowGroups="true">
 
-                                            <p:columnGroup type="header">
+                                            <p:columnGroup type="header" class="hederTablesTitle">
                                                 <p:row class="success">
-                                                    <p:column rowspan="2" style="width:20px"/>
-                                                    <p:column rowspan="2" headerText="No." style="width: 30px;"/>
-                                                    <p:column rowspan="2" headerText="Actividad" style="width: 250px;"/>
-                                                    <p:column rowspan="2" headerText="Unidad de medida" style="width: 100px;"/>
-                                                    <p:column rowspan="2" headerText="Meta" style="width: 80px;"/>
-                                                    <p:column colspan="4" headerText="Calendarización de Metas: #{controladorPOAEvaluacionAreas.cuatrimestre eq 1?'Enero - Abril':(controladorPOAEvaluacionAreas.cuatrimestre eq 2?'Mayo - Agosto':'Septiembre - Diciembre')}" style="width: 280px;"/> 
-                                                    <p:column colspan="3" headerText="Avance general al mes de #{controladorPOAEvaluacionAreas.mesNombre}" style="width: 200px;"/>
-                                                    <p:column colspan="3" headerText="Avance cuatrimestral" style="width: 200px;"/> 
-                                                    <p:column rowspan="2" headerText="Evaluar" style="width:50px; "/>
-                                                    <p:column rowspan="2" headerText="Evidencia" style="width:50px; "/>
+                                                    <p:column rowspan="2" style="width:20px" styleClass="hederTablesTitle"/>
+                                                    <p:column rowspan="2" headerText="No." style="width: 30px;" styleClass="hederTablesTitle"/>
+                                                    <p:column rowspan="2" headerText="Actividad" style="width: 250px;" styleClass="hederTablesTitle"/>
+                                                    <p:column rowspan="2" headerText="Unidad de medida" style="width: 100px;" styleClass="hederTablesTitle"/>
+                                                    <p:column rowspan="2" headerText="Meta" style="width: 80px;" styleClass="hederTablesTitle"/>
+                                                    <p:column colspan="4" headerText="Calendarización de Metas: #{controladorPOAEvaluacionAreas.cuatrimestre eq 1?'Enero - Abril':(controladorPOAEvaluacionAreas.cuatrimestre eq 2?'Mayo - Agosto':'Septiembre - Diciembre')}" style="width: 280px;" styleClass="hederTablesTitle"/> 
+                                                    <p:column colspan="3" headerText="Avance general al mes de #{controladorPOAEvaluacionAreas.mesNombre}" style="width: 200px;" styleClass="hederTablesTitle"/>
+                                                    <p:column colspan="3" headerText="Avance cuatrimestral" style="width: 200px;" styleClass="hederTablesTitle"/> 
+                                                    <p:column rowspan="2" headerText="Evaluar" style="width:50px; " styleClass="hederTablesTitle"/>
+                                                    <p:column rowspan="2" headerText="Evidencia" style="width:50px; " styleClass="hederTablesTitle"/>
                                                     <p:column rowspan="2" headerText="Justificacion" style="width:50px;" rendered="#{controladorPOAEvaluacionAreas.mes eq 3?true:
                                                                                                                                      controladorPOAEvaluacionAreas.mes eq 7?true:
-                                                                                                                                     controladorPOAEvaluacionAreas.mes eq 11?true:false}"/>
+                                                                                                                                     controladorPOAEvaluacionAreas.mes eq 11?true:false}" styleClass="hederTablesTitle"/>
                                                 </p:row>
                                                 <p:row class="success">
-                                                    <p:column headerText="Ene"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 1?true:false}"/>
-                                                    <p:column headerText="Feb"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 1?true:false}"/>
-                                                    <p:column headerText="Mar"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 1?true:false}"/>
-                                                    <p:column headerText="Abr"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 1?true:false}"/>
-                                                    <p:column headerText="May"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 2?true:false}"/>                                                    
-                                                    <p:column headerText="Jun"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 2?true:false}"/>
-                                                    <p:column headerText="Jul"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 2?true:false}"/>
-                                                    <p:column headerText="Ago"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 2?true:false}"/>
-                                                    <p:column headerText="Sep"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 3?true:false}"/>
-                                                    <p:column headerText="Oct"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 3?true:false}"/>
-                                                    <p:column headerText="Nov"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 3?true:false}"/>
-                                                    <p:column headerText="Dic"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 3?true:false}"/>
-                                                    <p:column headerText="Total" />
-                                                    <p:column headerText="%" />
-                                                    <p:column headerText="Semáforo"  />
-                                                    <p:column headerText="Total" />
-                                                    <p:column headerText="%" />
-                                                    <p:column headerText="Semáforo"  />
+                                                    <p:column headerText="Ene"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 1?true:false}" styleClass="hederTablesTitle"/>
+                                                    <p:column headerText="Feb"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 1?true:false}" styleClass="hederTablesTitle"/>
+                                                    <p:column headerText="Mar"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 1?true:false}" styleClass="hederTablesTitle"/>
+                                                    <p:column headerText="Abr"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 1?true:false}" styleClass="hederTablesTitle"/>
+                                                    <p:column headerText="May"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 2?true:false}" styleClass="hederTablesTitle"/>                                                    
+                                                    <p:column headerText="Jun"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 2?true:false}" styleClass="hederTablesTitle"/>
+                                                    <p:column headerText="Jul"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 2?true:false}" styleClass="hederTablesTitle"/>
+                                                    <p:column headerText="Ago"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 2?true:false}" styleClass="hederTablesTitle"/>
+                                                    <p:column headerText="Sep"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 3?true:false}" styleClass="hederTablesTitle"/>
+                                                    <p:column headerText="Oct"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 3?true:false}" styleClass="hederTablesTitle"/>
+                                                    <p:column headerText="Nov"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 3?true:false}" styleClass="hederTablesTitle"/>
+                                                    <p:column headerText="Dic"  rendered="#{controladorPOAEvaluacionAreas.cuatrimestre eq 3?true:false}" styleClass="hederTablesTitle"/>
+                                                    <p:column headerText="Total"  styleClass="hederTablesTitle"/>
+                                                    <p:column headerText="%"  styleClass="hederTablesTitle"/>
+                                                    <p:column headerText="Semáforo"   styleClass="hederTablesTitle"/>
+                                                    <p:column headerText="Total"  styleClass="hederTablesTitle"/>
+                                                    <p:column headerText="%"  styleClass="hederTablesTitle"/>
+                                                    <p:column headerText="Semáforo"   styleClass="hederTablesTitle"/>
                                                 </p:row>
                                             </p:columnGroup>
 

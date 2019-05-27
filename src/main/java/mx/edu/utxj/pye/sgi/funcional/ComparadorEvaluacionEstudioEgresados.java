@@ -38,7 +38,7 @@ public class ComparadorEvaluacionEstudioEgresados implements Comparador<Evaluaci
                         if (obligatoriasGeneralesNull(resultado) && obligatoriasp60not7Null(resultado) && resultado.getR64a() == null && resultado.getR64b() == null && resultado.getR65() == null) {
                             return false;
                         } else {
-                            return !(obligatoriasGeneralesNotNull(resultado) && obligatoriasp60not7NotNull(resultado) && resultado.getR64a() != null && resultado.getR64b() != null && resultado.getR65() != null);
+                            return (obligatoriasGeneralesNotNull(resultado) && obligatoriasp60not7NotNull(resultado) && resultado.getR64a() != null && resultado.getR64b() != null && resultado.getR65() != null);
                         }
                 }
             }
@@ -46,6 +46,18 @@ public class ComparadorEvaluacionEstudioEgresados implements Comparador<Evaluaci
         return true;
     }
 
+    public boolean comparadorR94(EvaluacionEstudioEgresadosResultados resultado) {
+        if (resultado.getR94() == null) {
+            return true;
+        } else if (resultado.getR94().trim().isEmpty()) {
+            return true;
+        } else if (resultado.getR94().length() < 15) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     public boolean obligatoriasGeneralesNull(EvaluacionEstudioEgresadosResultados resultado) {
         return (resultado.getR1() == null
                 || resultado.getR4() == null
@@ -79,7 +91,7 @@ public class ComparadorEvaluacionEstudioEgresados implements Comparador<Evaluaci
                 || resultado.getR91m() == null
                 || resultado.getR92() == null
                 || resultado.getR93() == null
-                || resultado.getR94() == null);
+                || comparadorR94(resultado));
     }
 
     public boolean obligatoriasGeneralesNotNull(EvaluacionEstudioEgresadosResultados resultado) {
@@ -115,7 +127,7 @@ public class ComparadorEvaluacionEstudioEgresados implements Comparador<Evaluaci
                 || resultado.getR91m() == null
                 || resultado.getR92() == null
                 || resultado.getR93() == null
-                || resultado.getR94().length() < 15);
+                || comparadorR94(resultado));
     }
 
     public boolean obligatoriasp60not7Null(EvaluacionEstudioEgresadosResultados resultado) {
