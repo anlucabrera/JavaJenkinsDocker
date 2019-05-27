@@ -26,13 +26,18 @@ public class CalificacionesPK implements Serializable {
     @NotNull
     @Column(name = "grupo")
     private int grupo;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "materia")
+    private int materia;
 
     public CalificacionesPK() {
     }
 
-    public CalificacionesPK(int estudiante, int grupo) {
+    public CalificacionesPK(int estudiante, int grupo, int materia) {
         this.estudiante = estudiante;
         this.grupo = grupo;
+        this.materia = materia;
     }
 
     public int getEstudiante() {
@@ -51,11 +56,20 @@ public class CalificacionesPK implements Serializable {
         this.grupo = grupo;
     }
 
+    public int getMateria() {
+        return materia;
+    }
+
+    public void setMateria(int materia) {
+        this.materia = materia;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (int) estudiante;
         hash += (int) grupo;
+        hash += (int) materia;
         return hash;
     }
 
@@ -72,12 +86,15 @@ public class CalificacionesPK implements Serializable {
         if (this.grupo != other.grupo) {
             return false;
         }
+        if (this.materia != other.materia) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionesPK[ estudiante=" + estudiante + ", grupo=" + grupo + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionesPK[ estudiante=" + estudiante + ", grupo=" + grupo + ", materia=" + materia + " ]";
     }
     
 }

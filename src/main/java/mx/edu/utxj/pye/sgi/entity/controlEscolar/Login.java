@@ -9,13 +9,11 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -30,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Login.findAll", query = "SELECT l FROM Login l"),
-    @NamedQuery(name = "Login.findById", query = "SELECT l FROM Login l WHERE l.id = :id"),
+    @NamedQuery(name = "Login.findByPersona", query = "SELECT l FROM Login l WHERE l.persona = :persona"),
     @NamedQuery(name = "Login.findByUsuario", query = "SELECT l FROM Login l WHERE l.usuario = :usuario"),
     @NamedQuery(name = "Login.findByPassword", query = "SELECT l FROM Login l WHERE l.password = :password"),
     @NamedQuery(name = "Login.findByModificado", query = "SELECT l FROM Login l WHERE l.modificado = :modificado"),
@@ -39,10 +37,10 @@ public class Login implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id")
-    private Integer id;
+    @NotNull
+    @Column(name = "persona")
+    private Integer persona;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
@@ -61,31 +59,31 @@ public class Login implements Serializable {
     @NotNull
     @Column(name = "activo")
     private boolean activo;
-    @JoinColumn(name = "persona", referencedColumnName = "idpersona")
-    @ManyToOne(optional = false)
-    private Persona persona;
+    @JoinColumn(name = "persona", referencedColumnName = "idpersona", insertable = false, updatable = false)
+    @OneToOne(optional = false)
+    private Persona persona1;
 
     public Login() {
     }
 
-    public Login(Integer id) {
-        this.id = id;
+    public Login(Integer persona) {
+        this.persona = persona;
     }
 
-    public Login(Integer id, String usuario, String password, boolean modificado, boolean activo) {
-        this.id = id;
+    public Login(Integer persona, String usuario, String password, boolean modificado, boolean activo) {
+        this.persona = persona;
         this.usuario = usuario;
         this.password = password;
         this.modificado = modificado;
         this.activo = activo;
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getPersona() {
+        return persona;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setPersona(Integer persona) {
+        this.persona = persona;
     }
 
     public String getUsuario() {
@@ -120,18 +118,18 @@ public class Login implements Serializable {
         this.activo = activo;
     }
 
-    public Persona getPersona() {
-        return persona;
+    public Persona getPersona1() {
+        return persona1;
     }
 
-    public void setPersona(Persona persona) {
-        this.persona = persona;
+    public void setPersona1(Persona persona1) {
+        this.persona1 = persona1;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (persona != null ? persona.hashCode() : 0);
         return hash;
     }
 
@@ -142,7 +140,7 @@ public class Login implements Serializable {
             return false;
         }
         Login other = (Login) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.persona == null && other.persona != null) || (this.persona != null && !this.persona.equals(other.persona))) {
             return false;
         }
         return true;
@@ -150,7 +148,7 @@ public class Login implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Login[ id=" + id + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Login[ persona=" + persona + " ]";
     }
     
 }

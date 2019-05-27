@@ -32,12 +32,12 @@ public class CargaAcademica implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected CargaAcademicaPK cargaAcademicaPK;
-    @JoinColumn(name = "cve_grupo", referencedColumnName = "id_grupo", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
-    private Grupo grupo;
     @JoinColumn(name = "cve_materia", referencedColumnName = "id_materia", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Materia materia;
+    @JoinColumn(name = "cve_grupo", referencedColumnName = "id_grupo", insertable = false, updatable = false)
+    @ManyToOne(optional = false)
+    private Grupo grupo;
 
     public CargaAcademica() {
     }
@@ -58,20 +58,20 @@ public class CargaAcademica implements Serializable {
         this.cargaAcademicaPK = cargaAcademicaPK;
     }
 
-    public Grupo getGrupo() {
-        return grupo;
-    }
-
-    public void setGrupo(Grupo grupo) {
-        this.grupo = grupo;
-    }
-
     public Materia getMateria() {
         return materia;
     }
 
     public void setMateria(Materia materia) {
         this.materia = materia;
+    }
+
+    public Grupo getGrupo() {
+        return grupo;
+    }
+
+    public void setGrupo(Grupo grupo) {
+        this.grupo = grupo;
     }
 
     @Override

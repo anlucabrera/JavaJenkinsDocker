@@ -332,7 +332,7 @@
                                             </div>
                                         </h:form>
                                     </p:tab>
-                                    <p:tab title="Datos Medicos" disabled="#{fichaAdm.dm}">
+                                    <p:tab title="Datos Medicos y Medios Comunicación" disabled="#{fichaAdm.dm}">
                                         <h:form>
                                             <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                 <p style="color: red;">
@@ -403,12 +403,41 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block">
+                                                                    <label class="col-sm-12 control-label"><h3 style="text-align: center">Medios de comunicación</h3></label>
+                                                                    <p style="color: red">* Es importante que proporciones una dirección de correo electrónico ya que a través de este medio se te enviaran notificaciones</p>
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                                <p:outputLabel for="telFijo" style="font-size: large" value="Teléfono fijo"/>
+                                                                                <p:inputMask mask="(99)(999)999-9999" id="telFijo" class="form-control" placeholder="(99)(999)-999-9999" value="#{fichaAdm.medioComunicacion.telefonoFijo}"/>
+                                                                                <p:message for="telFijo"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                                <p:outputLabel for="telMovil" style="font-size: large" value="Teléfono Móvil"/>
+                                                                                <p:inputMask mask="(999)999-9999" id="telMovil" class="form-control" placeholder="(999)(999)-999-9999" value="#{fichaAdm.medioComunicacion.telefonoMovil}"/>
+                                                                                <p:message for="telMovil"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                                <p:outputLabel for="email" style="font-size: large" value="Correo Electrónico" />
+                                                                                <p:inputText id="email" class="form-control" placeholder="a@utxicotepec.edu.mx" value="#{fichaAdm.medioComunicacion.email}" validatorMessage="El email es incorrecto">
+                                                                                <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                                                                                </p:inputText>
+                                                                                <p:message for="email"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
                                                                     <hr/>
                                                                     <div class="row">
                                                                         <div class="form-group">
                                                                             <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                                             <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                <p:commandButton id="btnGuardaDatosMedicos" value="Guardar información" icon="fa fa-pencil-square-o"
+                                                                                <p:commandButton id="btnDatosMedicos" value="Guardar información" icon="fa fa-pencil-square-o"
                                                                                                  class="btn-primary btn-block col-md-3" update="@form,:tabw1" process="@form" actionListener="#{fichaAdm.guardaDatosMedicos()}"/>
                                                                             </div>
                                                                         </div>
@@ -421,7 +450,7 @@
                                             </div>
                                         </h:form>
                                     </p:tab>
-                                    <p:tab title="Domicio y medio de comunicación" disabled="#{fichaAdm.com}">
+                                    <p:tab title="Domicio de recidencia y procedencia" disabled="#{fichaAdm.com}">
                                         <h:form>
                                             <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                 <div class="col-md-12">
@@ -531,35 +560,6 @@
                                                                                 <p:outputLabel for="vives" style="font-size: large" value="Vives con*"/>
                                                                                 <p:inputText id="vives" class="form-control" placeholder="Padres,Tios.." value="#{fichaAdm.domicilio.vivesCon}" required="true" requiredMessage="Indicar el con que personas vives"/>
                                                                                 <p:message for="vives"><p:autoUpdate/></p:message>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-sm-12 border-right">
-                                                                <div class="description-block">
-                                                                    <label class="col-sm-12 control-label"><h3 style="text-align: center">Medios de comunicación</h3></label>
-                                                                    <p style="color: red">* Es importante que proporciones una dirección de correo electrónico ya que a través de este medio se te enviaran notificaciones</p>
-                                                                    <div class="row">
-                                                                        <div class="form-group">
-                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                                <p:outputLabel for="telFijo" style="font-size: large" value="Teléfono fijo"/>
-                                                                                <p:inputMask mask="(99)(999)999-9999" id="telFijo" class="form-control" placeholder="(99)(999)-999-9999" value="#{fichaAdm.medioComunicacion.telefonoFijo}"/>
-                                                                                <p:message for="telFijo"><p:autoUpdate/></p:message>
-                                                                            </div>
-                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                                <p:outputLabel for="telMovil" style="font-size: large" value="Teléfono Móvil"/>
-                                                                                <p:inputMask mask="(999)999-9999" id="telMovil" class="form-control" placeholder="(999)(999)-999-9999" value="#{fichaAdm.medioComunicacion.telefonoMovil}"/>
-                                                                                <p:message for="telMovil"><p:autoUpdate/></p:message>
-                                                                            </div>
-                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                                <p:outputLabel for="email" style="font-size: large" value="Correo Electrónico" />
-                                                                                <p:inputText id="email" class="form-control" placeholder="a@utxicotepec.edu.mx" value="#{fichaAdm.medioComunicacion.email}" validatorMessage="El email es incorrecto">
-                                                                                <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
-                                                                                </p:inputText>
-                                                                                <p:message for="email"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -899,16 +899,6 @@
                                                             <p:autoUpdate/>
                                                             <p:toolbar id="tb" >
                                                                 <f:facet name="right">
-                                                                    <!--
-                                                                    <h4>
-                                                                        <span class="label label-primary"><i class="fa fa-info-circle" />
-                                                                            Elija o ingrese la información que se le solicite.
-                                                                        </span>
-                                                                        <p:spacer width="15px"/>
-                                                                        <span class="label label-warning"><i class="fa fa-info-circle" />
-                                                                            Las preguntas marcadas con un <b><strong style="color : red;">*</strong></b> son obligatorias.
-                                                                        </span>
-                                                                    </h4>-->
                                                                     <c:if test="#{fichaAdm.finalizado}">
                                                                         <h4><span class="label aceptado"><i class="fa fa-check" />Ha finalizado el cuestionario.</span></h4>                                 
                                                                     </c:if>

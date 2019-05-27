@@ -71,7 +71,7 @@ public class Materia implements Serializable {
     private List<CargaAcademica> cargaAcademicaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "materia")
     private List<Asesoria> asesoriaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "materia")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "materia1")
     private List<Calificaciones> calificacionesList;
     @JoinColumn(name = "id_area_conocimiento", referencedColumnName = "id_area_conocimiento")
     @ManyToOne(optional = false)

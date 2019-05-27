@@ -147,7 +147,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                 login.setModificado(false);
                 login.setUsuario(String.valueOf(matriculaUtilizable));
                 login.setPassword(encriptaPassword(contrasena));
-                login.setPersona(estudiante.getAspirante().getIdPersona());
+                login.setPersona(estudiante.getAspirante().getIdPersona().getIdpersona());
                 facadeCE.create(login);
                 facadeCE.create(estudiante);
                 documentosentregadosestudiante.setEstudiante(estudiante.getIdEstudiante());
@@ -224,7 +224,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             Documentosentregadosestudiante documentosentregadosestudiante = new Documentosentregadosestudiante();
             Login login = new Login();
             documentosentregadosestudiante = facadeCE.getEntityManager().find(Documentosentregadosestudiante.class, estudiante.getIdEstudiante());
-            login = facadeCE.getEntityManager().createQuery("SELECT l FROM Login l WHERE l.persona.idpersona = :idPer", Login.class)
+            login = facadeCE.getEntityManager().createQuery("SELECT l FROM Login l WHERE l.persona = :idPer", Login.class)
                     .setParameter("idPer", estudiante.getAspirante().getIdPersona().getIdpersona())
                     .getResultList().stream().findFirst().orElse(null);
                     

@@ -41,6 +41,7 @@ import java.util.logging.Logger;
 import javax.activation.DataSource;
 import javax.faces.context.FacesContext;
 import javax.mail.util.ByteArrayDataSource;
+import javax.persistence.Query;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
@@ -48,6 +49,8 @@ import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
+import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
+import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 import mx.edu.utxj.pye.sgi.util.EnvioCorreos;
 
 /**
@@ -61,6 +64,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     @EJB FacadeCE facadeCE;
     @EJB EjbPersonal ejbPersonal;
     @EJB EjbProcesoInscripcion ejbProcesoInscripcion;
+    @EJB Facade2 f;
 
     @Override
     public void GuardaPersona(Persona persona) {
@@ -80,7 +84,6 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
         Persona p = new Persona();
         SimpleDateFormat sm = new SimpleDateFormat("dd-MM-yyyy");
         String rutaRelativa = "";
-
         try{
             System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.ServicioFichaAdmision");
             //Almacenamiento del archivo de la curp de la persona

@@ -66,6 +66,8 @@ public class PlanEstudio implements Serializable {
     @NotNull
     @Column(name = "id_pe")
     private short idPe;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planEstudios")
+    private List<Competencia> competenciaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlan")
     private List<Materia> materiaList;
 
@@ -122,6 +124,15 @@ public class PlanEstudio implements Serializable {
 
     public void setIdPe(short idPe) {
         this.idPe = idPe;
+    }
+
+    @XmlTransient
+    public List<Competencia> getCompetenciaList() {
+        return competenciaList;
+    }
+
+    public void setCompetenciaList(List<Competencia> competenciaList) {
+        this.competenciaList = competenciaList;
     }
 
     @XmlTransient

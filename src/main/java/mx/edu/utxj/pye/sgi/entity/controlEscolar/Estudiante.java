@@ -93,8 +93,8 @@ public class Estudiante implements Serializable {
     private Grupo grupo;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<DocumentoEstudiante> documentoEstudianteList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "estudiante1")
-    private Calificaciones calificaciones;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante1")
+    private List<Calificaciones> calificacionesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<ParticipantesTutoria> participantesTutoriaList;
 
@@ -229,12 +229,13 @@ public class Estudiante implements Serializable {
         this.documentoEstudianteList = documentoEstudianteList;
     }
 
-    public Calificaciones getCalificaciones() {
-        return calificaciones;
+    @XmlTransient
+    public List<Calificaciones> getCalificacionesList() {
+        return calificacionesList;
     }
 
-    public void setCalificaciones(Calificaciones calificaciones) {
-        this.calificaciones = calificaciones;
+    public void setCalificacionesList(List<Calificaciones> calificacionesList) {
+        this.calificacionesList = calificacionesList;
     }
 
     @XmlTransient
