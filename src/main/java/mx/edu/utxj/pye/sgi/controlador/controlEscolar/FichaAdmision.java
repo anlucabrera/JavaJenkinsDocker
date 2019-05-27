@@ -97,7 +97,7 @@ public class FichaAdmision implements Serializable, Guardable{
     @Getter private List<SelectItem> respuestasPosiblesNivelEstudios,respuestasPosiblesRazonTrabajo,respuestasDependientesEconomicos,respuestasRangoDecision;
     @Getter @Setter private List<LenguaIndigena> listaLenguasIndigenas;
     @Getter @Setter private List<MedioDifusion> listaMedioDifusion;
-    @Getter private Boolean finalizado,mostrar = false;
+    @Getter private Boolean finalizado,mostrar = true;
     
 
     @EJB EJBSelectItems eJBSelectItems;
@@ -254,7 +254,6 @@ public class FichaAdmision implements Serializable, Guardable{
     }
 
     public void GuardaDatosPesonales(){
-
         if(ejbFichaAdmision.buscaPersonaByCurp(persona.getCurp()) != null){
             persona = ejbFichaAdmision.actualizaPersona(persona);
             dm = false;
@@ -289,6 +288,8 @@ public class FichaAdmision implements Serializable, Guardable{
                     });
             datosMedicos.setCvePersona(persona.getIdpersona());
             ejbFichaAdmision.guardaDatosMedicos(datosMedicos);
+            medioComunicacion.setPersona(persona.getIdpersona());
+            ejbFichaAdmision.guardaComunicacion(medioComunicacion);
             com = false;
             index =2;
         }else{
@@ -310,6 +311,7 @@ public class FichaAdmision implements Serializable, Guardable{
                         }
                     });
             ejbFichaAdmision.actualizaDatosMedicos(datosMedicos);
+            ejbFichaAdmision.actualizaComunicacion(medioComunicacion);
             com = false;
             index =2;
         }
@@ -326,9 +328,7 @@ public class FichaAdmision implements Serializable, Guardable{
     }
 
     public void guardaComunicacionDomicilio(){
-        if(domicilio.getAspirante() == null){
-            medioComunicacion.setPersona(persona.getIdpersona());
-            ejbFichaAdmision.guardaComunicacion(medioComunicacion);
+        if(domicilio.getAspirante1() == null){
             aspirante.setIdPersona(persona);
             aspirante.setIdProcesoInscripcion(procesosInscripcion);
             aspirante.setEstatus(false);
@@ -339,7 +339,6 @@ public class FichaAdmision implements Serializable, Guardable{
             df = false;
             index = 3;
         }else{
-            ejbFichaAdmision.actualizaCamunicacion(medioComunicacion);
             ejbFichaAdmision.actualizaDomicilio(domicilio);
             df = false;
             index = 3;
@@ -393,6 +392,7 @@ public class FichaAdmision implements Serializable, Guardable{
                 ejbFichaAdmision.guardaDatosAcademicos(datosAcademicos);
                 evif = false;
                 index = 5;
+                resultado = new EncuestaAspirante();
             }
             
         }else{
@@ -405,6 +405,7 @@ public class FichaAdmision implements Serializable, Guardable{
                 ejbFichaAdmision.actualizaDatosAcademicos(datosAcademicos);
                 evif = false;
                 index = 5;
+                resultado = new EncuestaAspirante();
             } 
         }
         
@@ -414,6 +415,7 @@ public class FichaAdmision implements Serializable, Guardable{
         if (persona.getDatosMedicos() != null) {
             selectAM = new ArrayList<>();
             datosMedicos = persona.getDatosMedicos();
+            medioComunicacion = persona.getMedioComunicacion();
             if(datosMedicos.getFDiabetes() == true){
                 selectAM.add("Dia");
             }
@@ -428,17 +430,19 @@ public class FichaAdmision implements Serializable, Guardable{
             }
             dm = false;
             com = false;
-        }
-        if(persona.getMedioComunicacion() != null){
-            medioComunicacion = persona.getMedioComunicacion();
             aspirante = ejbFichaAdmision.buscaAspiranteByClave(persona.getIdpersona());
-            domicilio = aspirante.getDomicilio();
-            selectMunicipio();
-            selectAsentamiento();
-            selectMunicipioProcedencia();
-            selectAsentamientoProcedencia();
-            com = false;
-            df = false;
+        }
+        if(aspirante != null){
+            //aspirante = ejbFichaAdmision.buscaAspiranteByClave(persona.getIdpersona());
+            if(aspirante != null && aspirante.getDomicilio() != null){
+                domicilio = aspirante.getDomicilio();
+                selectMunicipio();
+                selectAsentamiento();
+                selectMunicipioProcedencia();
+                selectAsentamientoProcedencia();
+                com = false;
+                df = false;
+            }
         }
         if(aspirante.getDatosFamiliares() != null) {
             datosFamiliares = aspirante.getDatosFamiliares();
@@ -579,8 +583,34 @@ public class FichaAdmision implements Serializable, Guardable{
         if(resultado.getR19tratamientoMedico() == null) {finalizado = false; return;}
         
         mostrar = !resultado.getR1Lenguaindigena().equals("Sí");
-        
         finalizado = true;
+    }
+    
+    public void inicializarEncuesta(Aspirante aspirante_pi){
+        resultado = ejb.getResultado(aspirante_pi.getIdAspirante());
+        if(resultado != null){
+            comprobar();
+        }else{
+            resultado = new EncuestaAspirante();
+            aspirante = aspirante_pi;
+            finalizado = false;
+        }
+    }
+    
+    public String verificaEncuesta(Integer idAspirante){
+        resultado = ejb.getResultado(idAspirante);
+        String letrero = "";
+        if(resultado != null){
+            comprobar();
+            if(finalizado == true){
+                letrero = "Ha finalizado el cuestionario";
+            }else{
+                letrero = "Debe responder todas las preguntas";
+            }
+        }else{
+            letrero = "Debe responder todas las preguntas";
+        }
+        return letrero;
     }
     
     public List<String> getSiNo(){

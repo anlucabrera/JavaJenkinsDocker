@@ -87,7 +87,7 @@ public interface EjbFichaAdmision {
      * Método medial el cual el usuario actualiza sus medios de comunicación
      * @param comunicacion parámetro mediante el cual el usuario envía sus datos para su actualización
      */
-    public void actualizaCamunicacion(MedioComunicacion comunicacion);
+    public void actualizaComunicacion(MedioComunicacion comunicacion);
     /**
      * Método medial el cual el usuario guarda sus datos de aspirante
      * @param aspirante parámetro mediante el cual el usuario envía sus datos para su registro
@@ -177,7 +177,17 @@ public interface EjbFichaAdmision {
      * @param documentoAspirante parámetro mediante el cual se realiza la actualización del registro de requisitos
      */
     public void actualizaDocumentosAspirante(DocumentoAspirante documentoAspirante);
-    
+   /**
+    * Método mediante el cual el aspirante puede generar su documento pdf de ficha de admisión
+    * @param persona
+    * @param academicos
+    * @param domicilio
+    * @param aspirante
+    * @param medioComunicacion
+    * @param uso
+    * @throws IOException
+    * @throws DocumentException 
+    */
     public void generaFichaAdmin(Persona persona,DatosAcademicos academicos,Domicilio domicilio,Aspirante aspirante,MedioComunicacion medioComunicacion,String uso) throws IOException, DocumentException;
 
 }

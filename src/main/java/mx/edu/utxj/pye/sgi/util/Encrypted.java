@@ -38,12 +38,4 @@ public class Encrypted {
             byte[] decrypted = cipher.doFinal(enc);
             return new String(decrypted);
     }
-    
-    public static void main(String[] args) throws Exception {
-        String key = "92AE31A79FEEB2A3"; //llave
-        String iv = "0123456789ABCDEF"; // vector de inicialización
-        String cleartext = "hola";
-        System.out.println("Texto encriptado: "+encrypt(key, iv,cleartext));
-        System.out.println("Texto desencriptado: "+decrypt(key, iv,encrypt(key, iv,cleartext)));
-    }
 }

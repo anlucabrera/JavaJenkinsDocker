@@ -54,6 +54,7 @@ public class ProcesoInscripcion implements Serializable{
     @EJB EjbAreasLogeo ejbAreasLogeo;
     
     @Inject LogonMB login;
+    @Inject FichaAdmision admision;
     
     @PostConstruct
     public void init(){
@@ -76,6 +77,7 @@ public class ProcesoInscripcion implements Serializable{
             persona = aspirante.getIdPersona();
             nombrePEPrimeraOpcion = ejbProcesoInscripcion.buscaAreaByClave(aspirante.getDatosAcademicos().getPrimeraOpcion()).getNombre();
             nombreCarreraSO = ejbProcesoInscripcion.buscaAreaByClave(aspirante.getDatosAcademicos().getSegundaOpcion()).getNombre();
+            
             Messages.addGlobalInfo("Registro encontrado exitosamente de "+persona.getNombre()+" !");
         }else{
             Messages.addGlobalError("No se encuentra registro de ficha de admisión con este folio !");
@@ -109,6 +111,7 @@ public class ProcesoInscripcion implements Serializable{
         init();
         folioFicha = null;
         nombrePEPrimeraOpcion = null;
+        
     }
     
     public Long carlcularTotales(Short clavePe){
