@@ -65,4 +65,9 @@ public class ControladorPlantillasVIN implements Serializable {
         Faces.sendFile(f, true);
     }
     
+    public void descargarReporteOrganismosVinculados() throws Throwable{
+        File f = new File(ejbReportesVINExcel.getReporteOrganismosVinculados());
+        Faces.sendFile(f, true);
+    }
+    
 }

@@ -165,6 +165,8 @@
                                                             <p:commandButton actionListener="#{controladorDistribucionEquipamiento.abrirEdicionEquipoComputo(equipoComputo.equiposComputoCicloPeriodoEscolar)}"
                                                                          class="btn btn-sm btn-info"
                                                                          icon="fa fa-pencil-square-o"
+                                                                         rendered="#{controladorDistribucionEquipamiento.dto.periodoEscolarActivo.periodo eq equipoComputo.equiposComputoCicloPeriodoEscolar.periodoEscolar}"
+                                                                         disabled="#{controladorDistribucionEquipamiento.dto.visualiza}"
                                                                          title="Editar equipo de computo"/>
                                                         </div>
                                                     </p:column>
@@ -301,6 +303,8 @@
                                                             <p:commandButton actionListener="#{controladorDistribucionEquipamiento.abrirEdicionEquipoComputoInternet(equipoComputoInternet.equiposComputoInternetCicloPeriodoEscolar)}"
                                                                          class="btn btn-sm btn-info"
                                                                          icon="fa fa-pencil-square-o"
+                                                                         rendered="#{controladorDistribucionEquipamiento.dto.periodoEscolarActivo.periodo eq equipoComputoInternet.equiposComputoInternetCicloPeriodoEscolar.periodoEscolar}"
+                                                                         disabled="#{controladorDistribucionEquipamiento.dto.visualizaCInernet}"
                                                                          title="Editar equipo de computo con internet"/>
                                                         </div>
                                                     </p:column>

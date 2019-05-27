@@ -13,6 +13,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -26,14 +27,21 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadEconomicaEgresadoGeneracion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadEgresadoGeneracion;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesVinculacion;
+import mx.edu.utxj.pye.sgi.entity.pye2.ContactosEmpresa;
 import mx.edu.utxj.pye.sgi.entity.pye2.Convenios;
+import mx.edu.utxj.pye.sgi.entity.pye2.CorreosEmpresa;
 import mx.edu.utxj.pye.sgi.entity.pye2.NivelIngresosEgresadosGeneracion;
 import mx.edu.utxj.pye.sgi.entity.pye2.NivelOcupacionEgresadosGeneracion;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
+import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasBeneficiadosVinculacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosTecnologicosAnioMes;
 import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosTecnologicosParticipantes;
+import mx.edu.utxj.pye.sgi.entity.pye2.TelefonosEmpresa;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
+import mx.edu.utxj.pye.siip.dto.vin.DTOActividadesVinculacion;
+import mx.edu.utxj.pye.siip.dto.vin.DTOProgramasBeneficiadosVinculacion;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbConvenios;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbEgresados;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbOrganismosVinculados;
@@ -75,6 +83,10 @@ public class ServicioReporteVINExcel implements EjbReportesVINExcel{
     public static final String REPORTE_EGRESADOS_PLANTILLA = "reporte_egresados_plantilla.xlsx";
     public static final String REPORTE_EGRESADOS_COPIA = "reporte_egresados_copia.xlsx";
     public static final String REPORTE_EGRESADOS_ACTUALIZADO = "reporte_egresados_actualizado.xlsx";
+    
+    public static final String REPORTE_ORGANISMOS_VINCULADOS_PLANTILLA = "reporte_organismos_vinculados_plantilla.xlsx";
+    public static final String REPORTE_ORGANISMOS_VINCULADOS_COPIA = "reporte_organismos_vinculados_copia.xlsx";
+    public static final String REPORTE_ORGANISMOS_VINCULADOS_ACTUALIZADO = "reporte_organismos_vinculados_actualizado.xlsx";
     
     @Getter private final String[] ejes = ServicioArchivos.EJES;
 
@@ -899,6 +911,404 @@ public class ServicioReporteVINExcel implements EjbReportesVINExcel{
     
     public String getFuenteInformacion(Short areasUniversidad){
         return f.getEntityManager().find(AreasUniversidad.class, areasUniversidad).getNombre();
+    }
+
+    @Override
+    public String getReporteOrganismosVinculados() throws Throwable {
+        String plantilla = crearDirectorioReporte(ejes[2]).concat(REPORTE_ORGANISMOS_VINCULADOS_PLANTILLA );
+        String plantillaCopia = crearDirectorioReporteCompleto(ejes[2]).concat(REPORTE_ORGANISMOS_VINCULADOS_COPIA);
+        String plantillaCompleto = crearDirectorioReporteCompleto(ejes[2]).concat(REPORTE_ORGANISMOS_VINCULADOS_ACTUALIZADO);
+        
+        try {
+            Files.copy(FileSystems.getDefault().getPath(plantilla), FileSystems.getDefault().getPath(plantillaCopia), StandardCopyOption.REPLACE_EXISTING);
+            File archivoCopia = FileSystems.getDefault().getPath(plantillaCopia).toFile();
+            XSSFWorkbook reporteOrganismosVinculados = new XSSFWorkbook();
+            reporteOrganismosVinculados = (XSSFWorkbook) WorkbookFactory.create(archivoCopia);
+            XSSFSheet hojaOrganismosVinculados = reporteOrganismosVinculados.getSheetAt(0);
+            XSSFSheet hojaActividadesVinculacion = reporteOrganismosVinculados.getSheetAt(1);
+            XSSFSheet hojaProgramasBeneficiados = reporteOrganismosVinculados.getSheetAt(2);
+            XSSFSheet hojaTelefonosEmpresa = reporteOrganismosVinculados.getSheetAt(3);
+            XSSFSheet hojaCorreosEmpresa = reporteOrganismosVinculados.getSheetAt(4);
+            XSSFSheet hojaContactosEmpresa = reporteOrganismosVinculados.getSheetAt(5);
+            
+            XSSFRow fila;
+            XSSFCell celda;
+            
+            ejbOrganismosVinculados.getReporteActividadesVinculacion();
+            
+            List<OrganismosVinculados> organismosVinculados = ejbOrganismosVinculados.getReporteOrganismosVinculados();
+            List<OrganismosVinculados> actividadesVinculacion = ejbOrganismosVinculados.getReporteActividadesVinculacion();
+            List<DTOActividadesVinculacion> dtoAV = new ArrayList<>();
+            actividadesVinculacion.forEach((ov) -> {
+                List<ActividadesVinculacion> actVin = new ArrayList<>();
+                actVin.addAll(ov.getActividadesVinculacionList());
+                actVin.forEach((av) -> {
+                    dtoAV.add(new DTOActividadesVinculacion(av,ov));
+                });
+            });
+            List<ProgramasBeneficiadosVinculacion> programasBeneficiados = ejbOrganismosVinculados.getReporteProgramasBeneficiadosVinculacion();
+            List<TelefonosEmpresa> telefonosEmpresa = ejbOrganismosVinculados.getReporteTelefonosEmpresa();
+            List<CorreosEmpresa> correosEmpresa = ejbOrganismosVinculados.getCorreosEmpresas();
+            List<ContactosEmpresa> contactosEmpresa = ejbOrganismosVinculados.getReporteContactosEmpresa();
+            
+//            Organismos Vinculados
+            for (Integer listaOV = 0; listaOV < organismosVinculados.size(); listaOV++) {
+                Integer ubicacion = listaOV + 2;
+
+                fila = (XSSFRow) (Row) hojaOrganismosVinculados.getRow(ubicacion);
+                if (null == fila) {
+                    fila = hojaOrganismosVinculados.createRow(ubicacion);
+                }
+
+//                Ejercicio
+                celda = fila.getCell(0);
+                if (null == celda) {
+                    fila.createCell(0, CellType.NUMERIC);
+                }
+                fila.getCell(0).setCellValue(organismosVinculados.get(listaOV).getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+                
+//                Mes
+                celda = fila.getCell(1);
+                if (null == celda) {
+                    fila.createCell(1, CellType.STRING);
+                }
+                fila.getCell(1).setCellValue(organismosVinculados.get(listaOV).getRegistros().getEventoRegistro().getMes());
+                
+//                Fecha
+                celda = fila.getCell(2);
+                if (null == celda) {
+                    fila.createCell(2, CellType.STRING);
+                }
+                fila.getCell(2).setCellValue(new SimpleDateFormat("yyyy-MM-dd").format(organismosVinculados.get(listaOV).getFecha()));
+                
+//                Nombre Empresa
+                celda = fila.getCell(3);
+                if (null == celda) {
+                    fila.createCell(3, CellType.STRING);
+                }
+                fila.getCell(3).setCellValue(organismosVinculados.get(listaOV).getNombre());
+                
+//                Tipo de organismo
+                celda = fila.getCell(4);
+                if (null == celda) {
+                    fila.createCell(4, CellType.STRING);
+                }
+                fila.getCell(4).setCellValue(organismosVinculados.get(listaOV).getOrgTip().getDescripcion());
+                
+//                Tipo de empresa
+                celda = fila.getCell(5);
+                if (null == celda) {
+                    fila.createCell(5, CellType.STRING);
+                }
+                fila.getCell(5).setCellValue(organismosVinculados.get(listaOV).getEmpTip().getDescripcion());
+                
+//                Giro de la empresa
+                celda = fila.getCell(6);
+                if (null == celda) {
+                    fila.createCell(6, CellType.STRING);
+                }
+                fila.getCell(6).setCellValue(organismosVinculados.get(listaOV).getGiro().getDescripcion());
+                
+//                Giro Específico
+                celda = fila.getCell(7);
+                if (null == celda) {
+                    fila.createCell(7, CellType.STRING);
+                }
+                fila.getCell(7).setCellValue(organismosVinculados.get(listaOV).getGiroEspecifico());
+                
+//                Sector
+                celda = fila.getCell(8);
+                if (null == celda) {
+                    fila.createCell(8, CellType.STRING);
+                }
+                fila.getCell(8).setCellValue(organismosVinculados.get(listaOV).getSector().getDescripcion());
+                
+//                Sector específico
+                celda = fila.getCell(9);
+                if (null == celda) {
+                    fila.createCell(9, CellType.STRING);
+                }
+                fila.getCell(9).setCellValue(organismosVinculados.get(listaOV).getSector().getCorresponde());
+                
+//                Dirección
+                celda = fila.getCell(10);
+                if (null == celda) {
+                    fila.createCell(10, CellType.STRING);
+                }
+                fila.getCell(10).setCellValue(organismosVinculados.get(listaOV).getDireccion());
+                
+//                País
+                celda = fila.getCell(11);
+                if (null == celda) {
+                    fila.createCell(11, CellType.STRING);
+                }
+                fila.getCell(11).setCellValue(organismosVinculados.get(listaOV).getPais().getNombre());
+                
+//                Estado
+                celda = fila.getCell(12);
+                if (null == celda) {
+                    fila.createCell(12, CellType.STRING);
+                }
+                fila.getCell(12).setCellValue(organismosVinculados.get(listaOV).getLocalidad().getMunicipio().getEstado().getNombre());
+                
+//                Municipio
+                celda = fila.getCell(13);
+                if (null == celda) {
+                    fila.createCell(13, CellType.STRING);
+                }
+                fila.getCell(13).setCellValue(organismosVinculados.get(listaOV).getLocalidad().getMunicipio().getNombre());
+                
+//                Localidad
+                celda = fila.getCell(14);
+                if (null == celda) {
+                    fila.createCell(14, CellType.STRING);
+                }
+                fila.getCell(14).setCellValue(organismosVinculados.get(listaOV).getLocalidad().getNombre());
+                
+//                Codigo Postal
+                celda = fila.getCell(15);
+                if (null == celda) {
+                    fila.createCell(15, CellType.STRING);
+                }
+                fila.getCell(15).setCellValue(organismosVinculados.get(listaOV).getCp());
+                
+//                Representante principal
+                celda = fila.getCell(16);
+                if (null == celda) {
+                    fila.createCell(16, CellType.STRING);
+                }
+                fila.getCell(16).setCellValue(organismosVinculados.get(listaOV).getRepresentantePrincipal());
+                
+//                Cargo del representante principal
+                celda = fila.getCell(17);
+                if (null == celda) {
+                    fila.createCell(17, CellType.STRING);
+                }
+                fila.getCell(17).setCellValue(organismosVinculados.get(listaOV).getCargoRepresentantePrincipal());
+                
+//                Telefono Principal
+                celda = fila.getCell(18);
+                if (null == celda) {
+                    fila.createCell(18, CellType.STRING);
+                }
+                fila.getCell(18).setCellValue(organismosVinculados.get(listaOV).getTelefonoPrincipal());
+                
+//                Email Principal
+                celda = fila.getCell(19);
+                if (null == celda) {
+                    fila.createCell(19, CellType.STRING);
+                }
+                fila.getCell(19).setCellValue(organismosVinculados.get(listaOV).getEmailPrincipal());
+                
+//                Convenio
+                celda = fila.getCell(20);
+                if (null == celda) {
+                    fila.createCell(20, CellType.STRING);
+                }
+                fila.getCell(20).setCellValue(organismosVinculados.get(listaOV).getConvenio());
+                
+//                Estatus
+                celda = fila.getCell(21);
+                if (null == celda) {
+                    fila.createCell(21, CellType.STRING);
+                }
+                String estado;
+                if(organismosVinculados.get(listaOV).getEstatus()){
+                    estado = "Alta";
+                }else{
+                    estado = "Baja";
+                }
+                fila.getCell(21).setCellValue(estado);
+                
+            }
+            
+//            Actividades Vinculadas con el Organismo
+            for (Integer listAV = 0; listAV < dtoAV.size(); listAV++) {
+                Integer ubicacion = listAV + 2;
+
+                fila = (XSSFRow) (Row) hojaActividadesVinculacion.getRow(ubicacion);
+                if (null == fila) {
+                    fila = hojaActividadesVinculacion.createRow(ubicacion);
+                }
+                
+//                Identificador
+                celda = fila.getCell(0);
+                if (null == celda) {
+                    fila.createCell(0, CellType.NUMERIC);
+                }
+                fila.getCell(0).setCellValue(dtoAV.get(listAV).getOrganismoVinculado().getEmpresa());
+                
+//                Empresa
+                celda = fila.getCell(1);
+                if (null == celda) {
+                    fila.createCell(1, CellType.STRING);
+                }
+                fila.getCell(1).setCellValue(dtoAV.get(listAV).getOrganismoVinculado().getNombre());
+                
+//                Actividad para la que se vincula
+                celda = fila.getCell(2);
+                if (null == celda) {
+                    fila.createCell(2, CellType.STRING);
+                }
+                fila.getCell(2).setCellValue(dtoAV.get(listAV).getActividadVinculacion().getNombre());
+                
+            }
+
+//            Programas Beneficiados con la Vinculación del Organismo Vinculado
+            for (Integer listaPB = 0; listaPB < programasBeneficiados.size(); listaPB++) {
+                Integer ubicacion = listaPB + 2;
+
+                fila = (XSSFRow) (Row) hojaProgramasBeneficiados.getRow(ubicacion);
+                if (null == fila) {
+                    fila = hojaProgramasBeneficiados.createRow(ubicacion);
+                }
+                
+//                Identificador
+                celda = fila.getCell(0);
+                if (null == celda) {
+                    fila.createCell(0, CellType.NUMERIC);
+                }
+                fila.getCell(0).setCellValue(programasBeneficiados.get(listaPB).getOrganismosVinculados().getEmpresa());
+                
+//                Empresa
+                celda = fila.getCell(1);
+                if (null == celda) {
+                    fila.createCell(1, CellType.STRING);
+                }
+                fila.getCell(1).setCellValue(programasBeneficiados.get(listaPB).getOrganismosVinculados().getNombre());
+                
+                AreasUniversidad programaEducativo = new AreasUniversidad();
+                programaEducativo = getProgramaEducativo(programasBeneficiados.get(listaPB).getProgramasBeneficiadosVinculacionPK().getProgramaEducativo());
+                
+//                Siglas
+                celda = fila.getCell(2);
+                if (null == celda) {
+                    fila.createCell(2, CellType.STRING);
+                }
+                fila.getCell(2).setCellValue(programaEducativo.getSiglas());
+                
+//                Nombre programa educativo
+                celda = fila.getCell(3);
+                if (null == celda) {
+                    fila.createCell(3, CellType.STRING);
+                }
+                fila.getCell(3).setCellValue(programaEducativo.getNombre());
+                
+            }
+            
+//            Telefónos adicionales de la empresa
+            for (Integer listaTE = 0; listaTE < telefonosEmpresa.size(); listaTE++) {
+                Integer ubicacion = listaTE + 2;
+
+                fila = (XSSFRow) (Row) hojaTelefonosEmpresa.getRow(ubicacion);
+                if (null == fila) {
+                    fila = hojaTelefonosEmpresa.createRow(ubicacion);
+                }
+                
+//                Identificador
+                celda = fila.getCell(0);
+                if (null == celda) {
+                    fila.createCell(0, CellType.NUMERIC);
+                }
+                fila.getCell(0).setCellValue(telefonosEmpresa.get(listaTE).getEmpresa().getEmpresa());
+                
+//                Empresa
+                celda = fila.getCell(1);
+                if (null == celda) {
+                    fila.createCell(1, CellType.NUMERIC);
+                }
+                fila.getCell(1).setCellValue(telefonosEmpresa.get(listaTE).getEmpresa().getNombre());
+                                
+//                Identificador
+                celda = fila.getCell(2);
+                if (null == celda) {
+                    fila.createCell(2, CellType.NUMERIC);
+                }
+                fila.getCell(2).setCellValue(telefonosEmpresa.get(listaTE).getTelefonoPrincipal());
+            }
+            
+//            Correos adicionales de la empresa
+            for (Integer listaCE = 0; listaCE < correosEmpresa.size(); listaCE++) {
+                Integer ubicacion = listaCE + 2;
+
+                fila = (XSSFRow) (Row) hojaCorreosEmpresa.getRow(ubicacion);
+                if (null == fila) {
+                    fila = hojaCorreosEmpresa.createRow(ubicacion);
+                }
+                
+//                Identificador
+                celda = fila.getCell(0);
+                if (null == celda) {
+                    fila.createCell(0, CellType.NUMERIC);
+                }
+                fila.getCell(0).setCellValue(correosEmpresa.get(listaCE).getEmpresa().getEmpresa());
+                
+//                Empresa
+                celda = fila.getCell(1);
+                if (null == celda) {
+                    fila.createCell(1, CellType.NUMERIC);
+                }
+                fila.getCell(1).setCellValue(correosEmpresa.get(listaCE).getEmpresa().getNombre());
+                                
+//                Identificador
+                celda = fila.getCell(2);
+                if (null == celda) {
+                    fila.createCell(2, CellType.NUMERIC);
+                }
+                fila.getCell(2).setCellValue(correosEmpresa.get(listaCE).getEmail());
+            }
+            
+//            Contactos adicionales de la empresa
+            for (Integer listaCE = 0; listaCE < contactosEmpresa.size(); listaCE++) {
+                Integer ubicacion = listaCE + 2;
+
+                fila = (XSSFRow) (Row) hojaContactosEmpresa.getRow(ubicacion);
+                if (null == fila) {
+                    fila = hojaContactosEmpresa.createRow(ubicacion);
+                }
+                
+//                Identificador
+                celda = fila.getCell(0);
+                if (null == celda) {
+                    fila.createCell(0, CellType.NUMERIC);
+                }
+                fila.getCell(0).setCellValue(contactosEmpresa.get(listaCE).getEmpresa().getEmpresa());
+                
+//                Empresa
+                celda = fila.getCell(1);
+                if (null == celda) {
+                    fila.createCell(1, CellType.NUMERIC);
+                }
+                fila.getCell(1).setCellValue(contactosEmpresa.get(listaCE).getEmpresa().getNombre());
+                                
+//                Representante
+                celda = fila.getCell(2);
+                if (null == celda) {
+                    fila.createCell(2, CellType.NUMERIC);
+                }
+                fila.getCell(2).setCellValue(contactosEmpresa.get(listaCE).getRepresentante());
+                
+//                Cargo del representante
+                celda = fila.getCell(3);
+                if (null == celda) {
+                    fila.createCell(3, CellType.NUMERIC);
+                }
+                fila.getCell(3).setCellValue(contactosEmpresa.get(listaCE).getCargoRepresentante());
+            }
+
+            File archivoFinal = FileSystems.getDefault().getPath(plantillaCompleto).toFile();
+            FileOutputStream archivoSalida = new FileOutputStream(archivoFinal);
+            reporteOrganismosVinculados.write(archivoSalida);
+            reporteOrganismosVinculados.close();
+            archivoSalida.flush();
+            archivoSalida.close();
+            Files.deleteIfExists(FileSystems.getDefault().getPath(plantillaCopia));
+        } catch (FileNotFoundException ex) {
+            System.out.println("mx.edu.utxj.pye.siip.services.vin.ServicioReporteVINExcel.getReporteOrganismosVinculados() - Archivo no escontrado");
+        } catch (IOException ex) {
+            System.out.println("mx.edu.utxj.pye.siip.services.vin.ServicioReporteVINExcel.getReporteOrganismosVinculados() - Error de lectura o escritura (i/o)");
+        }
+        return plantillaCompleto;
     }
     
 }
