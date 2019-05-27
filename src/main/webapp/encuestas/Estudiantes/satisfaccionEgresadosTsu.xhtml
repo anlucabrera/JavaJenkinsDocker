@@ -7,8 +7,9 @@
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 template="#{layoutMB.template}">
-    <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+
     <ui:define name="head-end">
+        <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
         <style type="text/css">
             .ui-datatable .ui-datatable-header {
                 text-align: right !important;
@@ -16,7 +17,6 @@
             .description-block{
                 text-align: justify;
             }
-
             .description-header{
                 text-align: center;
             }
@@ -25,11 +25,14 @@
                 width: 100%;
             }
             .aceptado {
-                background-color: #00a7d0  !important;
+                background-color: #5C5C5C  !important;
                 text-align: left !important;
             }
             .denegado{
-                background-color: #f39c12 !important;
+                background-color: #808080 !important;
+            }
+            .ui-state-active{
+                background-color: #5C5C5C !important;
             }
             .ui-progressbar{
                 position: relative;
@@ -76,16 +79,16 @@
                                 <p:toolbar id="tb">
                                     <f:facet name="left">
                                         <h4>
-                                            <span class="label label-primary"><i class="fa fa-info-circle" />
+                                            <span class="label label-default"><i class="fa fa-info-circle" />
                                                 Escala de valores de satisfacción: Muy Bien = MB, Bien = B, Regular = R, Mal = M y Pésimo = P; o bien No Aplica NA=0.
                                             </span>
                                         </h4>
                                     </f:facet>
                                     <f:facet name="right">
-                                        <c:if test="#{encuestaSatisfaccionEgresadosTsu.finalizado}">
+                                        <c:if test="#{encuestaSatisfaccionEgresadosTsu.dto.finalizado}">
                                             <h4><span class="label aceptado"><i class="fa fa-check" />Ha finalizado el cuestionario.</span></h4>                                 
                                         </c:if>
-                                        <c:if test="#{!encuestaSatisfaccionEgresadosTsu.finalizado}">
+                                        <c:if test="#{!encuestaSatisfaccionEgresadosTsu.dto.finalizado}">
                                             <h4><span class="label denegado"><i class="fa fa-close" />Debe responder todas las preguntas.</span></h4>
                                         </c:if>
                                     </f:facet>
@@ -106,7 +109,7 @@
                             </div>
                             <div class="box-body">                            
                                 <c:set var="index" value="#{1}" />
-                                <c:forEach items="#{encuestaSatisfaccionEgresadosTsu.apartados}" var="apartado">
+                                <c:forEach items="#{encuestaSatisfaccionEgresadosTsu.dto.apartados}" var="apartado">
                                     <div class="row">
                                         <div class="panel panel-primary" style="max-width: 900px;margin: auto; font-size: large;">
                                             <div class="panel-heading aceptado">
@@ -130,8 +133,8 @@
                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                 <f:ajax execute="p#{index}">
                                                                     <c:set var="pos" value="#{'p'.concat(index)}" />
-                                                                    <p:selectOneButton id="p#{index}" value="#{encuestaSatisfaccionEgresadosTsu.respuestas[pos]}" valueChangeListener="#{encuestaSatisfaccionEgresadosTsu.guardarRespuesta}">
-                                                                        <f:selectItems value="#{encuestaSatisfaccionEgresadosTsu.respuestasPosibles}" />
+                                                                    <p:selectOneButton id="p#{index}" value="#{encuestaSatisfaccionEgresadosTsu.dto.respuestas[pos]}" valueChangeListener="#{encuestaSatisfaccionEgresadosTsu.guardarRespuesta}">
+                                                                        <f:selectItems value="#{encuestaSatisfaccionEgresadosTsu.dto.respuestasPosibles}" />
                                                                     </p:selectOneButton>
                                                                 </f:ajax>
                                                                 <c:set var="index" value="#{index+1}" />

@@ -21,10 +21,8 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
-import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuesta;
-import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuestaTsu;
-import mx.edu.utxj.pye.sgi.ejb.EjbSatisfaccionEgresadosIng;
-import mx.edu.utxj.pye.sgi.ejb.EjbSatisfaccionEgresadosTsu;
+import mx.edu.utxj.pye.sgi.dto.DtoEvaluaciones;
+import mx.edu.utxj.pye.sgi.ejb.*;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaSatisfaccionEgresadosIng;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.ResultadosEncuestaSatisfaccionTsu;
@@ -40,72 +38,53 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 public class EncuestaSatisfaccionEgresadosTsu implements Serializable {
 
     private static final long serialVersionUID = -8590148329530476409L;
-    
-    @Getter private Boolean cargada,finalizado;
-    @Getter @Setter private ResultadosEncuestaSatisfaccionTsu resultado;
-    
-    @Getter private Evaluaciones evaluacion;
-    @Getter private Boolean estSexto;
-    @Getter private String evaluador, valor;
-    @Getter private Integer evaluadorr;
-    @Getter @Setter Map<String, String> respuestas;
-    @Getter private List<SelectItem> respuestasPosibles;
-    @Getter private List<Apartado> apartados;
-    @Getter @Setter private Alumnos estudiante;
-    @Getter @Setter private PeriodosEscolares periodoEsc;
-    @Getter @Setter private ResultadosEncuestaSatisfaccionTsu objEncSatTsu;
-    
-    @EJB private EjbAdministracionEncuesta ejbAdmEncuesta;
-    @EJB private EjbAdministracionEncuestaTsu ejbAdmEncTsu;
+
+    @Getter @Setter private DtoEvaluaciones dto = new DtoEvaluaciones();
+
     @EJB private EjbSatisfaccionEgresadosTsu ejb;
+    @EJB private EjbEncuestaServicios ejbES;
     @Inject LogonMB logonMB;
     
     @PostConstruct
     public void init() {
-//        alumnosNoAccedieronEncuestaEgre();
         try {
-            finalizado = false;
-            respuestas = new HashMap<>();
-            respuestasPosibles = ejb.getRespuestasPosibles();
-            evaluacion = ejb.getEvaluacionActiva();
-            if (evaluacion != null) {
-                
-                evaluador = logonMB.getCurrentUser();
-                //System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaSatisfaccionEgresadosTsu.init()" + evaluador);
-                estudiante=ejbAdmEncTsu.getAlumnoEvaluadorTsu(evaluador);
-                if (estudiante.getGrupos().getGrado()==6) {
-                    estSexto=true;
-                    evaluadorr = Integer.parseInt(evaluador);
-                    //System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaSatisfaccionEgresadosTsu.init()" + estudiante);
-                    periodoEsc = ejbAdmEncuesta.getPeriodo(evaluacion);
-                    //System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaSatisfaccionEgresadosTsu.init()" + periodoEsc);
-                    if (estudiante != null) {
-                        resultado = ejb.getResultado(evaluacion, evaluadorr, respuestas);
-                        if (resultado != null) {
-                            apartados = ejb.getApartados();
-                            finalizado = ejb.actualizarResultado(resultado);
-                            cargada = true;
+            dto.finalizado = false;
+            dto.respuestas = new HashMap<>();
+            dto.respuestasPosibles = ejb.getRespuestasPosibles();
+            dto.evaluacion = ejb.getEvaluacionActiva();
+            if (dto.evaluacion != null) {
+                dto.evaluador = logonMB.getCurrentUser();
+                dto.alumno=ejbES.obtenerAlumnos(dto.evaluador);
+                if (dto.alumno.getGrupos().getGrado()==6) {
+                    dto.estSexto=true;
+                    dto.evaluadorr = Integer.parseInt(dto.evaluador);
+                    if (dto.alumno != null) {
+                        dto.resultadoREST = ejb.getResultado(dto.evaluacion, dto.evaluadorr, dto.respuestas);
+                        if (dto.resultadoREST != null) {
+                            dto.apartados = ejb.getApartados();
+                            dto.finalizado = ejb.actualizarResultado(dto.resultadoREST);
+                            dto.cargada = true;
                         }
                     }
                 }else{
-                    estSexto=false;
+                    dto.estSexto=false;
                 }
 
             }
         } catch (Exception e) {
-            cargada = false;
+            dto.cargada = false;
 //            System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaSatisfaccionEgresadosTsu.init() e: " + e.getMessage());
         }
     }
-    public void guardarRespuesta(ValueChangeEvent e) {
-        UIComponent origen = (UIComponent) e.getSource();
-        if(e.getNewValue() != null){
-            valor = e.getNewValue().toString();
+    public void guardarRespuesta(ValueChangeEvent cve) {
+        UIComponent origen = (UIComponent) cve.getSource();
+        if(cve.getNewValue().toString() != null){
+            dto.valor = cve.getNewValue().toString();
         }else{
-            valor = e.getOldValue().toString();
+            dto.valor = cve.getOldValue().toString();
         }
-        ejb.actualizarRespuestaPorPregunta(resultado, origen.getId(), valor, respuestas);
-        finalizado = ejb.actualizarResultado(resultado);
+        ejb.actualizarRespuestaPorPregunta(dto.resultadoREST, origen.getId(), dto.valor, dto.respuestas);
+        dto.finalizado = ejb.actualizarResultado(dto.resultadoREST);
     }
     
     

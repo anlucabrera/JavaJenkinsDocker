@@ -40,9 +40,9 @@
                 <c:if test="#{evaluacionDoncenteMateriaControler.cargada}"><li><p:link href="/evaluaciones/evaluacion/docentesMateria.xhtml"><i class="fa fa-group"></i><span>Docente</span></p:link></li></c:if>
                 <c:if test="#{evaluacionTutor2.cargada}"><li><p:link href="/evaluaciones/evaluacion/tutores2.xhtml"><i class="fa fa-legal"></i><span>Tutor</span></p:link></li></c:if>
                 <c:if test="#{estudioEgresados.cargada}"><li><p:link href="/evaluaciones/evaluacion/estudioEgresados.xhtml"><i class="fa fa-graduation-cap"></i><span>Estudio egresado</span></p:link></li></c:if>
-                <c:if test="#{encuestaSatisfaccionEgresadosIng.cargada}"><li><p:link href="/encuestas/Estudiantes/satisfaccionEgresadosIng.xhtml"><i class="fa fa-graduation-cap"></i><span>Satisfacción ING.</span></p:link></li></c:if>
-                <c:if test="#{encuestaSatisfaccionEgresadosTsu.cargada}"><li><p:link href="/encuestas/Estudiantes/satisfaccionEgresadosTsu.xhtml"><i class="fa fa-graduation-cap"></i><span>Satisfacción T.S.U.</span></p:link></li></c:if>
-                <c:if test="#{encuestaServicios.cargada}"><li><p:link href="/encuestas/Estudiantes/servicios.xhtml"><i class="fa fa-tty"></i><span>Servicios</span></p:link></li></c:if>
+                <c:if test="#{encuestaSatisfaccionEgresadosIng.dto.cargada}"><li><p:link href="/encuestas/Estudiantes/satisfaccionEgresadosIng.xhtml"><i class="fa fa-graduation-cap"></i><span>Satisfacción ING.</span></p:link></li></c:if>
+                <c:if test="#{encuestaSatisfaccionEgresadosTsu.dto.cargada}"><li><p:link href="/encuestas/Estudiantes/satisfaccionEgresadosTsu.xhtml"><i class="fa fa-graduation-cap"></i><span>Satisfacción T.S.U.</span></p:link></li></c:if>
+                <c:if test="#{encuestaServicios.dto.cargada}"><li><p:link href="/encuestas/Estudiantes/servicios.xhtml"><i class="fa fa-tty"></i><span>Servicios</span></p:link></li></c:if>
                 <c:if test="#{estudioSocioeconomicoOperativo.cargada}"><li><p:link href="/evaluaciones/evaluacion/estudioSocioeconomico.xhtml"><i class="fa fa-ticket"></i><span>Estudio socioeconómico</span></p:link></li></c:if>
                 <c:if test="#{evaluacionEstadia.cargada}"><li><p:link href="/encuestas/Estudiantes/evaluacionEstadia.xhtml"><i class="fa fa-user-circle-o"></i><span>Evaluación Estadia</span></p:link></li></c:if>
             </li>
@@ -117,7 +117,10 @@
                 <ul class="treeview-menu" style="display: none;">
                     <!--secretarÃ­a acadÃ©mica-->
                     <c:if test="#{utilidadesAdministracionEvaluaciones.secretariaAc}"><li><p:link href="/evaluaciones/administracion/administracionPersonalSA.xhtml" ><i class="fa fa-clipboard"></i><span>Evaluaciones por carrera</span></p:link></li></c:if>
-                    <c:if test="#{utilidadesAdministracionEvaluaciones.secretariaAc}">
+
+                    <!-- Seguimiento de Evaluacion y Encuestas por parte de: Dirección de Planeación, Secretaría Académica, Departamento de Información y Estadística,
+                           Directores Académicos y Tutores-->
+                    <c:if test="#{administracionEncuesta.dto.planeacion or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esDeIyE or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor}">
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-check-square-o"></i> <span>Seguimiento encuestas</span>
@@ -126,95 +129,20 @@
                                 </span>
                             </a>
                             <ul class="treeview-menu" style="display: none;">
-                                <c:if test="#{administracionAvanceEncSatTsu.aperturado and administracionAvanceEncSatTsu.esSecretario}">
-                                    <li><p:link href="/encuestas/seguimiento/admEncuestaEgresTsuSecretario.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción TSU</span></p:link></li>
-                                </c:if>
-                                <c:if test="#{administracionAvanceEncuestaSatIng.aperturado and administracionAvanceEncuestaSatIng.esSecretario}">
-                                    <li><p:link href="/encuestas/seguimiento/admEncuestaEgresSercretario.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción ING</span></p:link></li>
-                                </c:if>
-                                <c:if test="#{administracionAvanceEncuestaServicio.aperturado and administracionAvanceEncuestaServicio.esSecretario}">
-                                    <li><p:link href="/encuestas/seguimiento/admEncuestaServicioSecretario.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta servicios</span></p:link></li>
-                                </c:if>
-                                <c:if test="#{administracionAvanceEstudioSocioeconomico.aperturado and administracionAvanceEstudioSocioeconomico.esSecretario}">
-                                    <li><p:link href="/encuestas/seguimiento/admEstudioSocieconomicoSecretario.xhtml"><i class="fa fa-list-ol"></i><span>Estudio Socioeconómico</span></p:link></li>
-                                </c:if>
-                                <c:if test="#{administracionAvanceEvaluacionEstadia.esSecretario}">
-                                    <li><p:link href="/encuestas/seguimiento/admEvaluacionEstadiaSecretario.xhtml"><i class="fa fa-list-ol"></i><span>Evaluación Estadía</span></p:link></li>
-                                </c:if>
-                            </ul>
-
-                        </li>
-                    </c:if>
-
-                    <c:if test="#{(administracionAvanceEncSatTsu.aperturado and administracionAvanceEncSatTsu.planeacion) or
-                                  (administracionAvanceEncuestaSatIng.aperturado and administracionAvanceEncuestaSatIng.planeacion) or
-                                  (administracionAvanceEncuestaServicio.planeacion) or
-                                  (administracionAvanceEstudioSocioeconomico.aperturado and administracionAvanceEstudioSocioeconomico.planeacion)}">
-                        <li class="treeview">
-                            <a href="#">
-                                <i class="fa fa-check-square-o"></i> <span>Seguimiento encuestas</span>
-                                <span class="pull-right-container">
-                                    <i class="fa fa-angle-left pull-right"></i>
-                                </span>
-                            </a>
-                            <ul class="treeview-menu" style="display: none;">
-                                <c:if test="#{administracionAvanceEncSatTsu.aperturado and administracionAvanceEncSatTsu.planeacion}">
-                                    <li><p:link href="/encuestas/seguimiento/admEncuestaEgresTsuPlaneacion.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción TSU</span></p:link></li>
-                                </c:if>
-                                <li><p:link href="/encuestas/seguimiento/admEncuestaEgresPlaneacion.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción ING</span></p:link></li>
-                                <li><p:link href="/encuestas/seguimiento/admEncuestaServicioPlaneacion.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta servicios</span></p:link></li>
-                                <li><p:link href="/encuestas/seguimiento/admEvaluacionPlaneacion.xhtml"><i class="fa fa-list-ol"></i><span>Evaluación Estadía</span></p:link></li>
+                                <c:if test="#{administracionEncuesta.dto.ESTsuActiva}"><li><p:link href="/encuestas/seguimiento/administracionEncuestaTSU.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción TSU</span></p:link></li></c:if>
+                                <c:if test="#{administracionEncuesta.dto.ESIngActiva}"><li><p:link href="/encuestas/seguimiento/administracionEncuestaING.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción ING</span></p:link></li></c:if>
+                                <c:if test="#{administracionEncuesta.dto.ESActiva}"><li><p:link href="/encuestas/seguimiento/administracionEncuestaServicios.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta servicios</span></p:link></li></c:if>
+                                <c:if test="#{administracionEncuesta.dto.EEActiva}"><li><p:link href="/encuestas/seguimiento/administracionEvaluacionEstadia.xhtml"><i class="fa fa-list-ol"></i><span>Evaluación Estadía</span></p:link></li></c:if>
                             </ul>
                         </li>
                     </c:if>
+
                     <!--Directivos/Directores de carrera-->
                     <c:if test="#{utilidadesAdministracionEvaluaciones.directorDeCarrera}"><li><p:link href="/evaluaciones/administracion/administracionDirectivos.xhtml" ><i class="fa fa-bookmark"></i><span>Administración de evaluaciones</span></p:link></li></c:if>
                     <c:if test="#{utilidadesAdministracionEvaluaciones.directivo}"><li><p:link href="/evaluaciones/administracion/administracionDirectivos.xhtml" ><i class="fa fa-bookmark"></i><span>Resultados subordinados</span></p:link></li></c:if>
 
-                    <c:if test="#{administracionEncuestaTsu.director and administracionAvanceEncSatTsu.director and administracionEncuestaTsu.aperturas and administracionAvanceEncSatTsu.aperturado}">
-                        <li><p:link href="/encuestas/seguimiento/admEncuestaEgresTsuDirectores.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción TSU</span></p:link></li>
-                    </c:if>
-                    <c:if test="#{administracionEncuestaIng.director and administracionEncuestaIng.aperturas and administracionAvanceEncuestaSatIng.director and administracionAvanceEncuestaSatIng.aperturado}">
-                        <li><p:link href="/encuestas/seguimiento/admEncuestaEgresDirectores.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción ING</span></p:link></li>
-                    </c:if>
-                    <c:if test="#{administracionEncuestaServicios.director and administracionAvanceEncuestaServicio.director and administracionEncuestaServicios.aperturas and administracionAvanceEncuestaServicio.aperturado}">
-                        <li><p:link href="/encuestas/seguimiento/admEncuestaServicioDirectores.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta servicios</span></p:link></li>
-                    </c:if>
-                    <c:if test="#{administracionEstudioSocioeconomico.director and administracionAvanceEstudioSocioeconomico.director and administracionEstudioSocioeconomico.aperturas and administracionAvanceEstudioSocioeconomico.aperturado}">
-                        <li><p:link href="/encuestas/seguimiento/admEstudioSocieconomicoDirectores.xhtml"><i class="fa fa-list-ol"></i><span>Estudio SocioEconómico</span></p:link></li>
-                    </c:if>
-                    <c:if test="#{administracionEvaluacionEstadia.director and administracionAvanceEvaluacionEstadia.director}">
-                        <li><p:link href="/encuestas/seguimiento/admEvaluacionEstadiaDirectores.xhtml"><i class="fa fa-list-ol"></i><span>Evaluación Estadía</span></p:link></li>
-                    </c:if>
-
-
                     <!--tutores-->
                     <c:if test="#{utilidadesAdministracionEvaluaciones.tutor}"><li><p:link href="/evaluaciones/administracion/administracionTutores.xhtml"><i class="fa fa-clipboard"></i><span>Administración como tutor</span></p:link></li></c:if>
-
-                    <c:if test="#{administracionEncuestaIng.tutor and administracionEncuestaIng.aperturas }">
-                        <li>
-                            <p:link href="/encuestas/seguimiento/admTutoresEncuesta.xhtml">
-                                <i class="fa fa-list-ol"></i><span>Encuesta satisfacción ING</span>
-                            </p:link>
-                        </li>
-                    </c:if>
-                    <c:if test="#{administracionEncuestaServicios.tutor and administracionEncuestaServicios.aperturas}">
-                        <li>
-                            <p:link href="/encuestas/seguimiento/admTutoresporServicio.xhtml">
-                                <i class="fa fa-list-ol"></i><span>Encuesta servicios</span>
-                            </p:link>
-                        </li>
-                    </c:if>
-                    <c:if test="#{administracionEstudioSocioeconomico.tutor and administracionEstudioSocioeconomico.aperturas}">
-                        <li>
-                            <p:link href="/encuestas/seguimiento/admTutoresEstudioSocieconomico.xhtml">
-                                <i class="fa fa-list-ol"></i><span>Estudio Socioeconómico</span>
-                            </p:link>
-                        </li>
-                    </c:if>
-                       
-
-
                     <!--************ administradores especiales********-->
                     <!--Jefe de personal-->
                     <c:if test="#{utilidadesAdministracionEvaluaciones.personal}"><li><p:link href="/evaluaciones/administracion/admin360.xhtml" ><i class="fa fa-clipboard"></i><span>Genera Evaluaciones</span></p:link></li></c:if>
@@ -224,34 +152,6 @@
                     <!--Seguimiento a egresados-->
                     <c:if test="#{logonMB.personal.categoriaOperativa.categoria eq 19}"><li><p:link href="/evaluaciones/administracion/estudioEgresadosAdministrador.xhtml" ><i class="fa fa-clipboard"></i><span>Estudio egresado</span></p:link></li></c:if>
                     <c:if test="#{logonMB.personal.categoriaOperativa.categoria eq 19}"><li><p:link href="/evaluaciones/administracion/estudioEgresadosReportes.xhtml" ><i class="fa fa-clipboard"></i><span>Reporte egresados</span></p:link></li></c:if>
-                    <!--Equipo de Informacion y Estadistica-->
-                    <c:if test="#{administracionEncuestaTsu.esDeIyE and administracionAvanceEncSatTsu.esDeInformacionYEst and administracionEncuestaTsu.aperturas and administracionAvanceEncSatTsu.aperturado}">
-                        <li><p:link href="/encuestas/seguimiento/admEncuestaEgreTsu.xhtml" ><i class="fa fa-list-ol"></i><span>Encuesta satisfacción TSU</span></p:link></li>
-                    </c:if>
-                    <c:if test="#{administracionEvaluacionEstadia.esDeIyE and administracionAvanceEvaluacionEstadia.esDeInformacionYEst}">
-                        <li><p:link href="/encuestas/seguimiento/admEvaluacionEstadiaPyE.xhtml" ><i class="fa fa-list-ol"></i><span>Evaluación estadía</span></p:link></li>
-                    </c:if>
-                    <c:if test="#{administracionEncuestaIng.esDeIyE and administracionEncuestaIng.aperturas and administracionAvanceEncuestaSatIng.esDeInformacionYEst and administracionAvanceEncuestaSatIng.aperturado}">
-                        <li>
-                            <p:link href="/encuestas/seguimiento/resultadoEcuestaEgresadosIng.xhtml">
-                                <i class="fa fa-list-ol"></i><span>Encuesta satisfacción ING</span>
-                            </p:link>
-                        </li>
-                    </c:if>
-                    <c:if test="#{administracionEncuestaServicios.esDeIyE and administracionAvanceEncuestaServicio.esDeInformacionYEst and administracionEncuestaServicios.aperturas and administracionAvanceEncuestaServicio.aperturado}">
-                        <li>
-                            <p:link href="/encuestas/seguimiento/admEncuestaServicio.xhtml">
-                                <i class="fa fa-list-ol"></i><span>Encuesta servicios</span>
-                            </p:link>
-                        </li>
-                    </c:if>
-                    <c:if test="#{administracionEstudioSocioeconomico.esDeIyE and administracionAvanceEstudioSocioeconomico.esDeInformacionYEst and administracionEstudioSocioeconomico.aperturas and administracionAvanceEstudioSocioeconomico.aperturado}">
-                        <li>
-                            <p:link href="/encuestas/seguimiento/admEstudioSocieconomico.xhtml">
-                                <i class="fa fa-list-ol"></i><span>Estudio socioeconómico</span>
-                            </p:link>
-                        </li>
-                    </c:if>
                     <!--Visible para todos los trabajadores-->
                     <li><p:link href="/capitalHumano/perfilEmpleadoEvaluaciones.xhtml"><i class="fa fa-exclamation"></i><span>Resultados de evaluaciones</span></p:link></li>
                 </ul>

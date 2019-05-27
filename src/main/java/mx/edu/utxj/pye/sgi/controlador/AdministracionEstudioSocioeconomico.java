@@ -58,34 +58,6 @@ public class AdministracionEstudioSocioeconomico implements Serializable{
 
     @PostConstruct
     public void init(){
-        Long inicio= System.currentTimeMillis();
-        try {
-            if(logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)){
-                usuarioNomina=Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
-                cveTrabajador= logonMB.getListaUsuarioClaveNomina().getCvePersona();
-                cveDirector = cveTrabajador.toString();
-                Integer apertura = ejbAES.getAperturaActiva().getApertura();
-                if (apertura != null) {
-                    aperturas = true;
-                    if (!ejbAdmEncuesta.esDirectorDeCarrera(2, 2, 18, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
-                        director = true;
-                    }
-                    if (logonMB.getPersonal().getAreaOperativa() == 9 || usuarioNomina.equals(579)) {
-                        esDeIyE = true;
-                    }
-                    if(!ejbAdmTutor.estTutordeGrupo(cveTrabajador).isEmpty()){
-                        tutor = true;
-                    }
-                }
-            }
-        } catch (Throwable e) {
-            director = false;
-            esDeIyE = false;
-            aperturas = false;
-            Logger.getLogger(AdministracionEstudioSocioeconomico.class.getName()).log(Level.SEVERE, null, e);
-        }
-        Long fin= System.currentTimeMillis();
-        Long retardo = inicio-fin;
     }
 
     public void seguimientoEncuestaIyE() {

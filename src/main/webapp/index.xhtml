@@ -141,12 +141,12 @@
                                     </div>
                                 </div>                                
                             </c:if>
-                            <c:if test="#{encuestaSatisfaccionEgresadosIng.cargada}">
+                            <c:if test="#{encuestaSatisfaccionEgresadosIng.dto.cargada}">
                                 <div class="#{claseResumen}" style="max-height: 154px;">
                                     <div class="small-box bg-blue">
                                         <div class="inner" style="cursor: pointer;" onclick="satisfaccionEgresadosIng();">
                                             <h3>
-                                                <h:outputLabel value="#{encuestaSatisfaccionEgresadosIng.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="satisfaccionEgresadosIng();" />
+                                                <h:outputLabel value="#{encuestaSatisfaccionEgresadosIng.dto.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="satisfaccionEgresadosIng();" />
                                                 <sup style="font-size: 20px"></sup>
                                             </h3>
                                             <p>Satisfacción de egresados de ingeniería<br/></p>
@@ -202,12 +202,12 @@
                                     </div>
                                 </div>
                             </c:if>
-                            <c:if test="#{encuestaServicios.cargada}">
+                            <c:if test="#{encuestaServicios.dto.cargada}">
                                 <div class="#{claseResumen}" style="max-height: 154px;">
                                     <div class="small-box bg-blue">
                                         <div class="inner" style="cursor: pointer;" onclick="servicios();">
                                             <h3>
-                                                <h:outputLabel value="#{encuestaServicios.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="servicios();" />
+                                                <h:outputLabel value="#{encuestaServicios.dto.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="servicios();" />
                                                 <sup style="font-size: 20px"></sup>
                                             </h3>
                                             <p>Satisfacción de servicios<br/></p>
@@ -222,7 +222,7 @@
                                     </div>
                                 </div>                                
                             </c:if>
-                            <c:if test="#{estudioEgresados.cargada and false}">
+                            <!--c:if test="#{estudioEgresados.cargada eq false}">
                                 <div class="#{claseResumen}" style="max-height: 154px;">
                                     <div class="small-box bg-blue">
                                         <div class="inner" style="cursor: pointer;" onclick="estudioEgresados();">
@@ -241,15 +241,16 @@
                                         <h:form><p:remoteCommand name="estudioEgresados" action="evaluaciones/evaluacion/estudioEgresados" /></h:form>
                                     </div>
                                 </div>                                
-                            </c:if>
-                            <c:if test="#{encuestaSatisfaccionEgresadosTsu.cargada}">
+                            </c:if-->
+                            <c:if test="#{encuestaSatisfaccionEgresadosTsu.dto.cargada}">
                                 <div class="#{claseResumen}" style="max-height: 154px;">
                                     <div class="small-box bg-blue">
                                         <div class="inner" style="cursor: pointer;" onclick="satisfaccionEgresadosTsu();">
-                                            <h1>
-                                                <h:outputLabel value="#{encuestaSatisfaccionEgresadosTsu.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="satisfaccionEgresadosTsu();" />
+                                            <h3>
+                                                <h:outputLabel value="#{encuestaSatisfaccionEgresadosTsu.dto.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;"
+                                                               onclick="satisfaccionEgresadosTsu();" />
                                                 <sup style="font-size: 20px"></sup>
-                                            </h1>
+                                            </h3>
                                             <p>Encuesta satisfacción de egresados de TSU<br/></p>
                                         </div>
                                         <div class="icon">

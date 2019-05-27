@@ -18,8 +18,6 @@ import javax.persistence.TypedQuery;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
-import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
-import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultadosPK;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionEstadiaResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionEstadiaResultadosPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
@@ -93,12 +91,12 @@ public class EjbEvaluacionEstadia {
         q.setParameter("periodo", 50);
         q.setParameter("grado", grado);
         q.setParameter("matricula", matricula);
-        //System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEncuestaServicios.obtenerAlumnos() se ejecuto la consulta");
+        //System.out.println("mx.edu.utxj.pye.sgi.ejb.EjbEncuestaServicios.obtenerAlumnos() se ejecuto la consulta");
         List<Alumnos> l = q.getResultList();
         if(!l.isEmpty()){
             return l.get(0);
         }else{
-            return null;
+            return new Alumnos();
         }
     }
     

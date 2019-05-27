@@ -59,6 +59,7 @@
                 }
             }
         </script>
+
     </ui:define>
 
     <ui:define name="title">
@@ -74,7 +75,7 @@
         <div id="main-buttons"  >
             <p:toolbar id="tb">
                 <f:facet name="left">
-                    <p:outputLabel value="Administración de encuesta de satisfacción por servicios" />
+                    <p:outputLabel value="Administracion de encuestas, satisfacción de egresados de Ingeniería" />                            
                 </f:facet>
                 <f:facet name="right"></f:facet>
             </p:toolbar>
@@ -84,50 +85,11 @@
             <p:tab title="Porcentaje de avance por Programa Educativo">
                 <h:form>
                     <p:outputPanel>
-                        <p:dataTable id="tblAlumnosNoAccedieron" lazy="false" value="#{administracionAvanceEncuestaServicio.avanceEncServ}"   var="datosEncEgre" filterDelay="700"
-                                     paginator="true" rows="10"
-                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
-                                     rowsPerPageTemplate="10,20,30,40,50"
-                                     emptyMessage="No se encontraron registros"  >
-                            <p:column headerText="Carrera">
-                                <h:outputText value="#{datosEncEgre.siglas}"/>
-                            </p:column>
-                            <p:column headerText="Total matrícula">
-                                <h:outputText value="#{datosEncEgre.totalPorCarrera}"/>
-                            </p:column>
-                            <p:column headerText="Estudiantes que han finalizado encuesta">
-                                <h:outputText value="#{datosEncEgre.totalAlumnoEncTer}"/>
-                            </p:column>
-                            <p:column headerText="Estudiantes con encuesta incompleta">
-                                <h:outputText value="#{datosEncEgre.faltantesPorCont}"/>
-                            </p:column>
-                            <p:column headerText="Porcentaje de avance: Meta 100%">
-                                <div class="progress">
-                                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
-                                         aria-valuenow="#{datosEncEgre.porcentaje}" aria-valuemin="0" aria-valuemax="100"
-                                         style="background-color: #00a65a; width:#{datosEncEgre.porcentaje}%">
-                                    <span class="progress-completed">
-                                        <h:outputText value="#{datosEncEgre.porcentaje}" style="color: #0E0000; font-weight: bold">
-                                            <f:convertNumber type="number" pattern="0.00"/>
-                                        </h:outputText>
-                                    </span>
-                                    </div>
-
-                                </div>
-                            </p:column>
-
-                            <f:facet name="footer">
-                                <p:commandButton id="actualizar" value="Actualizar tabla" icon="fa fa-refresh" class="btn btn-primary"
-                                                 actionListener="#{administracionAvanceEncuestaServicio.mostrarAvanceEncServicios()}" process="@form" update="@form"/>
-                            </f:facet>
-                        </p:dataTable>
+                        <!--Aqui va el dataTable-->
                     </p:outputPanel>
 
                 </h:form>
-            </p:tab>
-
-
-
+            </p:tab>   
         </p:tabView>
     </ui:define>
 </ui:composition>

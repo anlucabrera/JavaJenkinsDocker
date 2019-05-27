@@ -29,6 +29,14 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author UTXJ
  */
+@NamedStoredProcedureQuery(
+        name = "buscarOnceavo",
+        resultClasses = Alumnos.class,
+        procedureName = "buscar_onceavo",
+        parameters = {
+                @StoredProcedureParameter(mode=javax.persistence.ParameterMode.IN, name="matricula", type=String.class)
+        }
+)
 @Entity
 @Table(name = "alumnos", catalog = "saiiut", schema = "SAIIUT")
 @XmlRootElement
