@@ -6,26 +6,57 @@
 package mx.edu.utxj.pye.sgi.ejb;
 
 import java.util.List;
-import javax.ejb.Local;
+import java.util.stream.Collectors;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.persistence.TypedQuery;
+
+import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.ResultadosEncuestaSatisfaccionTsu;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AperturaVisualizacionEncuestas;
-import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
- import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestasTsu;
+import mx.edu.utxj.pye.sgi.facade.Facade;
+import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 
 /**
  *
  * @author Planeacion
  */
-@Local
-public interface EjbAdministracionEncuestaTsu {
-    
-    public AperturaVisualizacionEncuestas getAperturaActiva();
-    
-    public ResultadosEncuestaSatisfaccionTsu getResultadoEncPorEvaluador(Integer matricula);
-    
-    public List<AlumnosEncuestasTsu> obtenerListaAlumnosNoAccedieron();
-    
-    public List<AlumnosEncuestasTsu> obtenerAlumnosPorDirector(String cveDirector);
-    
-    public Alumnos getAlumnoEvaluadorTsu(String matricula) ;
+@Stateless
+public class EjbAdministracionEncuestaTsu {
+
+
+    @EJB
+    private Facade f;
+    @EJB private Facade2 f2;
+    @EJB private EjbSatisfaccionEgresadosTsu ejbES;
+
+
+    public Evaluaciones evaluacionEstadiaPeridoActual() {
+        List<Evaluaciones> e = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones as e where e.periodo = :periodo and e.tipo = :tipo", Evaluaciones.class)
+                .setParameter("periodo", 51)
+                .setParameter("tipo", "Satisfacción de egresados de TSU")
+                .getResultStream().collect(Collectors.toList());
+        if (e.isEmpty()) {
+            return new Evaluaciones();
+        } else {
+            return e.get(0);
+        }
+    }
+
+
+    public ResultadosEncuestaSatisfaccionTsu getResultadoEncPorEvaluador(Integer matricula){
+        Integer evaluacionActiva = evaluacionEstadiaPeridoActual().getEvaluacion();
+        TypedQuery<ResultadosEncuestaSatisfaccionTsu> q = f.getEntityManager()
+                .createQuery("SELECT r FROM ResultadosEncuestaSatisfaccionTsu r " +
+                        "WHERE r.resultadosEncuestaSatisfaccionTsuPK.evaluador= :matricula and " +
+                        "r.resultadosEncuestaSatisfaccionTsuPK.evaluacion = :evaluacion",ResultadosEncuestaSatisfaccionTsu.class);
+        q.setParameter("evaluacion", evaluacionActiva);
+        q.setParameter("matricula", matricula);
+        List<ResultadosEncuestaSatisfaccionTsu> pr=q.getResultList();
+        if(pr.isEmpty()){
+            return new ResultadosEncuestaSatisfaccionTsu();
+        }else{
+            return pr.get(0);
+        }
+    }
+
 }

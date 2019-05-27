@@ -21,6 +21,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
+import mx.edu.utxj.pye.sgi.dto.DtoEvaluaciones;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuesta;
 import mx.edu.utxj.pye.sgi.ejb.EjbSatisfaccionEgresadosIng;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaSatisfaccionEgresadosIng;
@@ -37,72 +38,53 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 public class EncuestaSatisfaccionEgresados implements Serializable {
 
     private static final long serialVersionUID = -8590148329530476409L;
-    
-    @Getter private Boolean cargada,finalizado;
-    @Getter @Setter private EncuestaSatisfaccionEgresadosIng resultado;
-    
-    @Getter private Evaluaciones evaluacion;
-    @Getter private Boolean estOnceavo;
-    @Getter private String evaluador, valor;
-    @Getter private Integer evaluadorr;
-    @Getter @Setter Map<String, String> respuestas;
-    @Getter private List<SelectItem> respuestasPosibles;
-    @Getter private List<Apartado> apartados;
-    @Getter @Setter private Alumnos estudiante;
-    @Getter @Setter private PeriodosEscolares periodoEsc;
-    
-    @EJB private EjbAdministracionEncuesta ejbAdmEncuesta;
+    @Getter @Setter private DtoEvaluaciones dto = new DtoEvaluaciones();
     @EJB private EjbSatisfaccionEgresadosIng ejb;
     @Inject LogonMB logonMB;
     
     @PostConstruct
     public void init() {
-//        alumnosNoAccedieronEncuestaEgre();
         try {
-            finalizado = false;
-            respuestas = new HashMap<>();
-            respuestasPosibles = ejb.getRespuestasPosibles();
-            evaluacion = ejb.getEvaluacionActiva();
-            if (evaluacion != null) {
+            dto.finalizado = false;
+            dto.respuestas = new HashMap<>();
+            dto.respuestasPosibles = ejb.getRespuestasPosibles();
+            dto.evaluacion = ejb.getEvaluacionActiva();
+            if (dto.evaluacion != null) {
                 
-                evaluador = logonMB.getCurrentUser();
-                //System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaSatisfaccionEgresados.init()" + evaluador);
-                estudiante=ejb.obtenerAlumnos(evaluador);
+                dto.evaluador = logonMB.getCurrentUser();
+                dto.alumno=ejb.obtenerAlumnos(dto.evaluador);
                 Short grado = 11;
-                if (estudiante.getGradoActual().equals(grado)) {
-                    estOnceavo=true;
-                    evaluadorr = Integer.parseInt(evaluador);
-                    //System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaSatisfaccionEgresados.init()" + estudiante);
-                    periodoEsc = ejb.getPeriodo(evaluacion);
-                    //System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaSatisfaccionEgresados.init()" + periodoEsc);
-                    if (estudiante != null) {
-                        resultado = ejb.getResultado(evaluacion, evaluadorr, respuestas);
-                        if (resultado != null) {
-                            apartados = ejb.getApartados();
-                            finalizado = ejb.actualizarResultado(resultado);
-                            cargada = true;
+                if (dto.alumno.getGradoActual().equals(grado)) {
+                    dto.estOnceavo=true;
+                    dto.evaluadorr = Integer.parseInt(dto.evaluador);
+                    if (dto.alumno != null) {
+                        dto.resultadoESEI = ejb.getResultado(dto.evaluacion, dto.evaluadorr, dto.respuestas);
+                        if (dto.resultadoESEI != null) {
+                            dto.apartados = ejb.getApartados();
+                            dto.finalizado = ejb.actualizarResultado(dto.resultadoESEI);
+                            dto.cargada = true;
                         }
                     }
                 }else{
-                    estOnceavo=false;
+                    dto.estOnceavo=false;
                 }
 
             }
         } catch (Exception e) {
-            cargada = false;
+            dto.cargada = false;
 //            System.out.println("mx.edu.utxj.pye.sgi.controlador.EncuestaSatisfaccionEgresados.init() e: " + e.getMessage());
         }
     }
     public void guardarRespuesta(ValueChangeEvent e) {
         UIComponent origen = (UIComponent) e.getSource();
         if(e.getNewValue() != null){
-           valor = e.getNewValue().toString();
+           dto.valor = e.getNewValue().toString();
         }else{
-           valor = e.getOldValue().toString();
+           dto.valor = e.getOldValue().toString();
         }
         
-        ejb.actualizarRespuestaPorPregunta(resultado, origen.getId(), valor, respuestas);
-        finalizado = ejb.actualizarResultado(resultado);
+        ejb.actualizarRespuestaPorPregunta(dto.resultadoESEI, origen.getId(), dto.valor, dto.respuestas);
+        dto.finalizado = ejb.actualizarResultado(dto.resultadoESEI);
     }
     
     

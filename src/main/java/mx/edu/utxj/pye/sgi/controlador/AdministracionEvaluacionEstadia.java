@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.dto.DtoEvaluaciones;
 import mx.edu.utxj.pye.sgi.dto.ListadoEvaluacionEgresados;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuesta;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEvaluacionEstadia;
@@ -41,57 +42,26 @@ public class AdministracionEvaluacionEstadia implements Serializable{
 
     private static final long serialVersionUID = 4320030263170989982L;
     
-    @Getter @Setter private Boolean esDeIyE,director,aperturas, tutor;
-    @Getter @Setter Integer cveTrabajador,usuarioNomina;
-    @Getter @Setter String cveDirector, nombreCompletoTutor;
-    @Getter @Setter private List<ListadoEvaluacionEgresados> listaEvaCompleta, listaEvaIncompleta, listaEvaNA, listaFiltrado;
-    @Getter @Setter private List<ListadoEvaluacionEgresados> listEvaCompletaDir, listEvaIncompletaDir, listEvaNADir, listaFiltradoDir;
-    @Getter @Setter private List<ViewEstudianteAsesorAcademico> alumnosEncuesta;
-    @Inject private LogonMB logonMB;
+    @Getter @Setter private DtoEvaluaciones dto = new DtoEvaluaciones();
     @EJB private EjbAdministracionEvaluacionEstadia ejbAdminAES;
-    @EJB private EjbAdministracionEncuesta ejbAdmEncuesta;
-    @EJB private EjbAdministracionTutores ejbAdmTutor;
+    @Inject AdministracionEncuesta controlerAE;
     
     @PostConstruct
     public void init(){
-        Long inicio= System.currentTimeMillis();
-        try {
-            if(logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)){
-                usuarioNomina=Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
-                cveTrabajador= logonMB.getListaUsuarioClaveNomina().getCvePersona();
-                cveDirector = cveTrabajador.toString();
-                    if (!ejbAdmEncuesta.esDirectorDeCarrera(2, 2, 18, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
-                        director = true;
-                    }
-                    if (logonMB.getPersonal().getAreaOperativa() == 9 || usuarioNomina.equals(579)) {
-                        esDeIyE = true;
-                    }
-                    if(!ejbAdmTutor.estTutordeGrupo(cveTrabajador).isEmpty() && ejbAdmTutor.estTutordeGrupo(cveTrabajador).get(0).getGrado() == 11){
-                        tutor = true;
-                    }
-            }
-        } catch (Throwable e) {
-            director = false;
-            esDeIyE = false;
-            Logger.getLogger(AdministracionEvaluacionEstadia.class.getName()).log(Level.SEVERE, null, e);
-        }
-        Long fin= System.currentTimeMillis();
-        Long retardo = inicio-fin;
+        dto.listaEvaCompleta = new ArrayList<>();
+        dto.listaEvaIncompleta = new ArrayList<>();
+        dto.listaEvaNA = new ArrayList<>();
     }
     
     public void seguimientoEncuestaIyE() {
         try {
-            listaEvaCompleta = new ArrayList<>();
-            listaEvaIncompleta = new ArrayList<>();
-            listaEvaNA = new ArrayList<>();
-            alumnosEncuesta = ejbAdminAES.obtenerEstudiantesAsesorAcademico();
-            Comparador<EvaluacionEstadiaResultados> comparador = new ComparadorEvaluacionEstadia();
-            alumnosEncuesta.forEach(x -> {
+            dto.alumnosEncuestas = ejbAdminAES.obtenerEstudiantesAsesorAcademico();
+            dto.alumnosEncuestas.forEach(x -> {
                 try {
                     EvaluacionEstadiaResultados listaCompletaRes = ejbAdminAES.obtenerResultadosEvaluacionPorAlumno(x.getMatricula());
 
                     if (listaCompletaRes != null) {
-                        if (comparador.isCompleto(listaCompletaRes)) {
+                        if (dto.comparadorEE.isCompleto(listaCompletaRes)) {
                             String tutorAsignado = "No hay tutor asignado";
                             if (x.getNombreTutor() != null) {
                                 tutorAsignado = x.getNombreTutor() + " " + x.getApellidoPatTutor()+ " " + x.getApellidoMatTutor();
@@ -99,9 +69,9 @@ public class AdministracionEvaluacionEstadia implements Serializable{
                             ListadoEvaluacionEgresados encuestasCompletas = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()),
                                     x.getNombreAlumno()+ " " + x.getApellidoPaternoAlumno()+ " " + x.getApellidoMaternoAlumno(), 
                                     x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), tutorAsignado);
-                            listaEvaCompleta.add(encuestasCompletas);
+                            dto.listaEvaCompleta.add(encuestasCompletas);
                         }
-                        if (!comparador.isCompleto(listaCompletaRes)) {
+                        if (!dto.comparadorEE.isCompleto(listaCompletaRes)) {
                             String tutorAsignado = "No hay tutor asignado";
                             if (x.getNombreTutor() != null) {
                                 tutorAsignado = x.getNombreTutor() + " " + x.getApellidoPatTutor()+ " " + x.getApellidoMatTutor();
@@ -109,7 +79,7 @@ public class AdministracionEvaluacionEstadia implements Serializable{
                             ListadoEvaluacionEgresados encuestasIncompletas = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()),
                                     x.getNombreAlumno()+ " " + x.getApellidoPaternoAlumno()+ " " + x.getApellidoMaternoAlumno(), 
                                     x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), tutorAsignado);
-                            listaEvaIncompleta.add(encuestasIncompletas);
+                            dto.listaEvaIncompleta.add(encuestasIncompletas);
                         }
                     } else {
                         String tutorAsignado = "No hay tutor asignado";
@@ -119,7 +89,7 @@ public class AdministracionEvaluacionEstadia implements Serializable{
                         ListadoEvaluacionEgresados sinIngresar = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()),
                                     x.getNombreAlumno()+ " " + x.getApellidoPaternoAlumno()+ " " + x.getApellidoMaternoAlumno(), 
                                     x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), tutorAsignado);
-                        listaEvaNA.add(sinIngresar);
+                        dto.listaEvaNA.add(sinIngresar);
                     }
                 } catch (Throwable e) {
                     Logger.getLogger(AdministracionEvaluacionEstadia.class.getName()).log(Level.SEVERE, null, e);
@@ -134,16 +104,12 @@ public class AdministracionEvaluacionEstadia implements Serializable{
     
     public void seguimientoEncuestaDirectores(){
         try {
-            listEvaCompletaDir = new ArrayList<>();
-            listEvaIncompletaDir = new ArrayList<>();
-            listEvaNADir = new ArrayList<>();
-            alumnosEncuesta = ejbAdminAES.obtenerEstudiantesPorDirector(cveDirector).stream().collect(Collectors.toList());
-                Comparador<EvaluacionEstadiaResultados> comparador = new ComparadorEvaluacionEstadia();
-                alumnosEncuesta.forEach(x -> {
+            dto.alumnosEncuestas = ejbAdminAES.obtenerEstudiantesPorDirector(controlerAE.getDto().cveDirector);
+                dto.alumnosEncuestas.forEach(x -> {
                     try {
                         EvaluacionEstadiaResultados encuestasCompletas = ejbAdminAES.obtenerResultadosEvaluacionPorAlumno(x.getMatricula());
                         if (encuestasCompletas != null) {
-                            if (comparador.isCompleto(encuestasCompletas)) {
+                            if (dto.comparadorEE.isCompleto(encuestasCompletas)) {
                                 String tutorAsignado = "No hay tutor asignado";
                                 if (x.getNombreTutor() != null) {
                                     tutorAsignado = x.getNombreTutor() + " " + x.getApellidoPatTutor()+ " " + x.getApellidoMatTutor();
@@ -151,9 +117,9 @@ public class AdministracionEvaluacionEstadia implements Serializable{
                                 ListadoEvaluacionEgresados encuestaCOmpleta = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()),
                                     x.getNombreAlumno()+ " " + x.getApellidoPaternoAlumno()+ " " + x.getApellidoMaternoAlumno(), 
                                     x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), tutorAsignado);
-                                listEvaCompletaDir.add(encuestaCOmpleta);
+                                dto.listaEvaCompleta.add(encuestaCOmpleta);
                             }
-                            if (!comparador.isCompleto(encuestasCompletas)) {
+                            if (!dto.comparadorEE.isCompleto(encuestasCompletas)) {
                                 String tutorAsignado = "No hay tutor asignado";
                                 if (x.getNombreTutor() != null) {
                                     tutorAsignado = x.getNombreTutor() + " " + x.getApellidoPatTutor()+ " " + x.getApellidoMatTutor();
@@ -161,7 +127,7 @@ public class AdministracionEvaluacionEstadia implements Serializable{
                                 ListadoEvaluacionEgresados encuestaIncompleta = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()),
                                     x.getNombreAlumno()+ " " + x.getApellidoPaternoAlumno()+ " " + x.getApellidoMaternoAlumno(), 
                                     x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), tutorAsignado);
-                                listEvaIncompletaDir.add(encuestaIncompleta);
+                                dto.listaEvaIncompleta.add(encuestaIncompleta);
                             }
                         } else {
                             String tutorAsignado = "No hay tutor asignado";
@@ -171,7 +137,7 @@ public class AdministracionEvaluacionEstadia implements Serializable{
                             ListadoEvaluacionEgresados sinAccesar = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()),
                                     x.getNombreAlumno()+ " " + x.getApellidoPaternoAlumno()+ " " + x.getApellidoMaternoAlumno(), 
                                     x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), tutorAsignado);
-                            listEvaNADir.add(sinAccesar);
+                            dto.listaEvaNA.add(sinAccesar);
                         }
                     } catch (Throwable e) {
                         Logger.getLogger(AdministracionEvaluacionEstadia.class.getName()).log(Level.SEVERE, null, e);

@@ -7,17 +7,7 @@ package mx.edu.utxj.pye.sgi.saiiut.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -25,6 +15,14 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author UTXJ
  */
+@NamedStoredProcedureQuery(
+        name = "buscarOnceavo",
+        resultClasses = Alumnos.class,
+        procedureName = "buscar_onceavo",
+        parameters = {
+                @StoredProcedureParameter(mode=javax.persistence.ParameterMode.IN, name="matricula", type=String.class)
+        }
+)
 @Entity
 @Table(name = "alumnos", catalog = "saiiut", schema = "SAIIUT")
 @XmlRootElement

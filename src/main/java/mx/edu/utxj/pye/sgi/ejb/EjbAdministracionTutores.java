@@ -28,8 +28,7 @@ public interface EjbAdministracionTutores {
     public List<Alumnos> getListaDeAlumnosPorDocente (Integer grupo);
     
     public List<VistaAlumnosPye>findAllByMatricula(String matricula);
-    
-    public List<Grupos> estTutordeGrupo(Integer cvePersona);
+
     
 //    public List<String> getResultadosEvaluacion(String matricula, Integer periodo);
 //    

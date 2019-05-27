@@ -85,26 +85,5 @@ public class ServicioAdministracionTutores implements EjbAdministracionTutores {
         return q.getResultList();
     }
     
-    @Override
-    public List<Grupos> estTutordeGrupo(Integer cvePersona){
-        Short grado = 11;
-        TypedQuery<Periodos> periodoAct = f2.getEntityManager().createQuery("SELECT p FROM Periodos AS p",Periodos.class);
-        List<Periodos> periodos = periodoAct.getResultList();
-        periodos.stream().forEach(x -> {
-            Boolean activo = true;
-            Boolean acv = x.getActivo().equals(true);
-            if (activo.equals(acv)) {
-                periodo = x.getPeriodosPK().getCvePeriodo();
-                System.out.println("Periodo:"+ periodo);
-            }
-        });
-        //.setParameter("grado", grado) AND g.grado = :grado
-        List<Grupos> tutor = f2.getEntityManager().createQuery("SELECT g FROM Grupos as g WHERE g.gruposPK.cvePeriodo = :periodo "
-                + "AND g.cveMaestro = :cvePersona",Grupos.class)
-                .setParameter("periodo",periodo)
-                .setParameter("cvePersona", cvePersona)
-                
-                .getResultStream().collect(Collectors.toList());
-        return tutor;
-    }
+
 }

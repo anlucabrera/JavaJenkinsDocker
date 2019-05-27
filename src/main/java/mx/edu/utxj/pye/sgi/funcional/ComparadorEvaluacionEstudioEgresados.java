@@ -115,7 +115,7 @@ public class ComparadorEvaluacionEstudioEgresados implements Comparador<Evaluaci
                 || resultado.getR91m() == null
                 || resultado.getR92() == null
                 || resultado.getR93() == null
-                || resultado.getR94().length() < 15);
+                || resultado.getR94().length() < 15 );
     }
 
     public boolean obligatoriasp60not7Null(EvaluacionEstudioEgresadosResultados resultado) {

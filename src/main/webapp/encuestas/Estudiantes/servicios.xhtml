@@ -81,10 +81,10 @@
                                     </h4>
                                 </f:facet>
                                 <f:facet name="right">
-                                    <c:if test="#{encuestaServicios.finalizado}">
+                                    <c:if test="#{encuestaServicios.dto.finalizado}">
                                         <h4><span class="label aceptado"><i class="fa fa-check" />Ha finalizado el cuestionario.</span></h4>                                 
                                     </c:if>
-                                    <c:if test="#{!encuestaServicios.finalizado}">
+                                    <c:if test="#{!encuestaServicios.dto.finalizado}">
                                         <h4><span class="label denegado"><i class="fa fa-close" />Debe responder todas las preguntas.</span></h4>
                                     </c:if>
                                 </f:facet>
@@ -105,7 +105,7 @@
                         </div>
                         <div class="box-body">                            
                             <c:set var="index" value="#{1}" />
-                            <c:forEach items="#{encuestaServicios.apartados}" var="apartado">
+                            <c:forEach items="#{encuestaServicios.dto.apartados}" var="apartado">
                                 <div class="row">
                                     <div class="panel panel-primary" style="max-width: 900px;margin: auto; font-size: large;">
                                         <div class="panel-heading aceptado">
@@ -129,8 +129,8 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="p#{index}">
                                                                 <c:set var="pos" value="#{'p'.concat(index)}" />
-                                                                <p:selectOneButton  id="p#{index}" value="#{encuestaServicios.respuestas[pos]}" valueChangeListener="#{encuestaServicios.guardarRespuesta}">
-                                                                    <f:selectItems class="btn-primary" value="#{encuestaServicios.respuestasPosibles}" />
+                                                                <p:selectOneButton  id="p#{index}" value="#{encuestaServicios.dto.respuestas[pos]}" valueChangeListener="#{encuestaServicios.guardarRespuesta}">
+                                                                    <f:selectItems class="btn-primary" value="#{encuestaServicios.dto.respuestasPosibles}" />
                                                                 </p:selectOneButton>
                                                             </f:ajax>
                                                             <c:set var="index" value="#{index+1}" />

@@ -19,14 +19,15 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Planeacion
  */
 @Entity
-@Table(name = "apertura_visualizacion_encuestas", catalog = "prontuario", schema = "")
+@Table(name = "apertura_visualizacion_encuestas", schema = "", catalog = "prontuario")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "AperturaVisualizacionEncuestas.findAll", query = "SELECT a FROM AperturaVisualizacionEncuestas a")
@@ -44,8 +45,9 @@ public class AperturaVisualizacionEncuestas implements Serializable {
     private Integer apertura;
     @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "encuesta")
-    private int encuesta;
+    private String encuesta;
     @Basic(optional = false)
     @NotNull
     @Column(name = "fecha_inicial")
@@ -64,7 +66,7 @@ public class AperturaVisualizacionEncuestas implements Serializable {
         this.apertura = apertura;
     }
 
-    public AperturaVisualizacionEncuestas(Integer apertura, int encuesta, Date fechaInicial, Date fechaFinal) {
+    public AperturaVisualizacionEncuestas(Integer apertura, String encuesta, Date fechaInicial, Date fechaFinal) {
         this.apertura = apertura;
         this.encuesta = encuesta;
         this.fechaInicial = fechaInicial;
@@ -79,11 +81,11 @@ public class AperturaVisualizacionEncuestas implements Serializable {
         this.apertura = apertura;
     }
 
-    public int getEncuesta() {
+    public String getEncuesta() {
         return encuesta;
     }
 
-    public void setEncuesta(int encuesta) {
+    public void setEncuesta(String encuesta) {
         this.encuesta = encuesta;
     }
 
