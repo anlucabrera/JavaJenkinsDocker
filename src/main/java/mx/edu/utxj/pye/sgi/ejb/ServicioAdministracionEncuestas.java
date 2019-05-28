@@ -257,10 +257,10 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
     }
 
     @Override
-    public EvaluacionDocentesMaterias getEvaluacionDoncete(Integer periodo) {
-        TypedQuery<EvaluacionDocentesMaterias> q = f.getEntityManager().createQuery("SELECT e from EvaluacionDocentesMaterias e WHERE e.periodo = :periodo", EvaluacionDocentesMaterias.class);
+    public Evaluaciones getEvaluacionDoncete(Integer periodo) {
+        TypedQuery<Evaluaciones> q = f.getEntityManager().createQuery("SELECT e from Evaluaciones e WHERE e.periodo = :periodo and e.tipo='Docente materia'", Evaluaciones.class);
         q.setParameter("periodo", periodo);
-        List<EvaluacionDocentesMaterias> l = q.getResultList();
+        List<Evaluaciones> l = q.getResultList();
         if (l.isEmpty() || l == null) {
             return null;
         } else {
@@ -269,7 +269,7 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
     }
 
     @Override
-    public List<EvaluacionDocentesMateriaResultados> getEvaluacionDocentesResultadosPromedioGeneral(EvaluacionDocentesMaterias evaluacion, Integer evaluado) {
+    public List<EvaluacionDocentesMateriaResultados> getEvaluacionDocentesResultadosPromedioGeneral(Evaluaciones evaluacion, Integer evaluado) {
         TypedQuery<EvaluacionDocentesMateriaResultados> q = f.getEntityManager().createQuery("SELECT e from EvaluacionDocentesMateriaResultados e WHERE e.evaluaciones.evaluacion = :evaluacion AND e.evaluacionDocentesMateriaResultadosPK.evaluado = :evaluado ", EvaluacionDocentesMateriaResultados.class);
         q.setParameter("evaluacion", evaluacion.getEvaluacion());
         q.setParameter("evaluado", evaluado);
@@ -297,7 +297,7 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
     }
 
     @Override
-    public List<EvaluacionDocentesMateriaResultados> getEvaluacionDocentesResultadosPromedioMateria(EvaluacionDocentesMaterias evaluacion, Integer evaluado, String materia) {
+    public List<EvaluacionDocentesMateriaResultados> getEvaluacionDocentesResultadosPromedioMateria(Evaluaciones evaluacion, Integer evaluado, String materia) {
         TypedQuery<EvaluacionDocentesMateriaResultados> q = f.getEntityManager().createQuery("SELECT e from EvaluacionDocentesMateriaResultados e WHERE e.evaluaciones.evaluacion = :evaluacion AND e.evaluacionDocentesMateriaResultadosPK.evaluado = :evaluado AND e.evaluacionDocentesMateriaResultadosPK.cveMateria = :materia", EvaluacionDocentesMateriaResultados.class);
         q.setParameter("evaluacion", evaluacion.getEvaluacion());
         q.setParameter("evaluado", evaluado);

@@ -15,10 +15,12 @@ import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
+import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
 
@@ -27,6 +29,7 @@ import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +39,7 @@ import java.util.Map;
  */
 @Named
 @ViewScoped
-public class AsignacionAcademicaDirector extends ViewScopedRol {
+public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarrollable {
     @Getter @Setter AsignacionAcademicaRolDirector rol;
 
     @EJB EjbAsignacionAcademica ejb;
@@ -57,34 +60,51 @@ public class AsignacionAcademicaDirector extends ViewScopedRol {
      */
     @PostConstruct
     public void init(){
-        Filter<PersonalActivo> filtro = new Filter<>();
-        filtro.addParam(PersonalFiltro.AREA_SUPERIOR.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorAreaSuperior").orElse(2)));
-        filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorCategoriaOperativa").orElse(18)));
-
         try{
-            PersonalActivo director = ejbPersonalBean.pack(logon.getPersonal());
-            ResultadoEJB<ProgramasEducativos> resPrograma = ejb.areaAPrograma(director.getAreaOperativa());
-            if(resPrograma.getCorrecto()){
-                ProgramasEducativos programa = resPrograma.getValor();
-                rol = new AsignacionAcademicaRolDirector(filtro, director, programa);
-                tieneAcceso = rol.tieneAcceso(director);
+            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDirector(logon.getPersonal().getClave());//validar si es director
+            if(resAcceso.getCorrecto()){//si la validación se completó correctamente
+                ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validarDirector(logon.getPersonal().getClave());
+                if(resValidacion.getCorrecto()){
+                    Filter<PersonalActivo> filtro = resValidacion.getValor();//se obtiene el filtro resultado de la validación
+                    try{
+                        PersonalActivo director = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
+                        rol = new AsignacionAcademicaRolDirector(filtro, director, director.getAreaOficial());
+                        tieneAcceso = rol.tieneAcceso(director);
+                        if(tieneAcceso){//TODO: impedir ejecución de código si es una petición ajax
+                            rol.setDirector(director);
+                            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
+                            if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
+                            rol.setPeriodos(resPeriodos.getValor());
 
-                if(tieneAcceso){
-                    rol.setDirector(director);
-                    ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
-                    if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
+                            ResultadoEJB<Map<AreasUniversidad, List<Grupo>>> resProgramas = ejb.getProgramasActivos(rol.getDirector(), rol.getPeriodo());
+                            if(!resProgramas.getCorrecto()) mostrarMensajeResultadoEJB(resProgramas);
+                            rol.setProgramasGruposMap(resProgramas.getValor());
 
-                    ResultadoEJB<Map<ProgramasEducativos, List<Grupo>>> resProgramas = ejb.getProgramasActivos();
-                    if(!resProgramas.getCorrecto()) mostrarMensajeResultadoEJB(resProgramas);
-
-                    rol.setPeriodos(resPeriodos.getValor());
-                    rol.setProgramasGruposMap(resProgramas.getValor());
-                }else mostrarMensajeNoAcceso();
-            }else mostrarMensajeResultadoEJB(resPrograma);
+                            ResultadoEJB<List<Materia>> resMateriasPorAsignar = ejb.getMateriasPorAsignar(rol.getPrograma(), rol.getGrupo());
+                            if(!resMateriasPorAsignar.getCorrecto()) mostrarMensajeResultadoEJB(resMateriasPorAsignar);
+                            rol.setMateriasSinAsignar(resMateriasPorAsignar.getValor());
+                        }else mostrarMensajeNoAcceso();
+                    }catch (Exception e){
+                        mostrarExcepcion(e);
+                    }
+                }else{
+                    mostrarMensajeResultadoEJB(resValidacion);
+                }
+            }else{
+                mostrarMensajeResultadoEJB(resAcceso);
+            }
         }catch (Exception e){
-            mostrarExcepcion(e);
+            super.mostrarExcepcion(e);
         }
 
+    }
+
+    @Override
+    public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
+        String valor = "asignación académica";
+        Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
+//        map.entrySet().forEach(System.out::println);
+        return mostrar(request, map.containsValue(valor));
     }
 
     /**
@@ -109,7 +129,7 @@ public class AsignacionAcademicaDirector extends ViewScopedRol {
      */
     public void seleccionarPrograma(ValueChangeEvent e){
         if(e.getNewValue() instanceof ProgramasEducativos){
-            rol.setPrograma((ProgramasEducativos)e.getNewValue());
+            rol.setPrograma((AreasUniversidad) e.getNewValue());
             Ajax.update("grupo");//actualizaría al selector de grupos si lleva el id especificado
         }
     }

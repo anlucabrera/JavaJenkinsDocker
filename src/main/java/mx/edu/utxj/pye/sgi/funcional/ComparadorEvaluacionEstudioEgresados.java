@@ -15,11 +15,13 @@ public class ComparadorEvaluacionEstudioEgresados implements Comparador<Evaluaci
 
     @Override
     public boolean isCompleto(EvaluacionEstudioEgresadosResultados resultado) {
+        if(resultado.getR1() == null) return false;
+
         if (resultado.getR60() == null) {
-            System.out.println("mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionEstudioEgresados.isCompleto() aun no contesta toda la encuesta");
+//            System.out.println("mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionEstudioEgresados.isCompleto() aun no contesta toda la encuesta");
             return false;
         } else if (resultado.getR60() == 7) {
-            System.out.println("mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionEstudioEgresados.isCompleto() no trabaja");
+//            System.out.println("mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionEstudioEgresados.isCompleto() no trabaja");
             if (resultado.getR1() == null
                     || resultado.getR4() == null
                     || resultado.getR5() == null
@@ -33,12 +35,9 @@ public class ComparadorEvaluacionEstudioEgresados implements Comparador<Evaluaci
                     || resultado.getR17() == null
                     || resultado.getR18() == null
                     || resultado.getR19() == null
-                    
                     || resultado.getR34() == null
                     || resultado.getR42() == null
                     || resultado.getR43() == null
-                    
-                    || resultado.getR60() == null
                     || resultado.getR61() == null
                     || resultado.getR91a() == null
                     || resultado.getR91b() == null
@@ -55,7 +54,7 @@ public class ComparadorEvaluacionEstudioEgresados implements Comparador<Evaluaci
                     || resultado.getR91m() == null
                     || resultado.getR92() == null
                     || resultado.getR94() == null) {
-                return false;
+                return true;
             } else {
                 return !(resultado.getR1().trim().isEmpty()
                         || resultado.getR4().trim().isEmpty()

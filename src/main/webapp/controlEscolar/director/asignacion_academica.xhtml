@@ -42,10 +42,12 @@
                 <h:form id="frm" prependId="false" class="form-inline">
                     <div class="box box-primary">
                         <div class="box-header with-border">
+
                             <div id="main-buttons" class="hidden-sm hidden-xs">
                                 <p:toolbar id="tb">
-                                    <p:autoUpdate/>
                                     <f:facet name="left">
+
+                                        <p:spacer width="5" />
 
                                     </f:facet>
                                     <f:facet name="right">
@@ -54,6 +56,54 @@
                                 </p:toolbar>
                             </div>
                             <div class="box box-solid">
+                                <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                <c:set var="casilla2" value="#{'col-sm-12 col-md-6 col-lg-4'}" />
+                                <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                <div class="row" style="margin-top: 20px;">
+                                    <div class="#{casilla}">
+                                        <div class="ui-material">
+                                            <p:selectOneMenu id="periodo" value="#{asignacionAcademicaDirector.rol.periodo}" converter="entityConverter" styleClass="form-control" >
+                                                <f:selectItems value="#{asignacionAcademicaDirector.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                <p:ajax process="@this" update="@form" />
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Periodo" for="periodo"/>
+                                            <p:message for="periodo" />
+                                        </div>
+                                    </div>
+                                    <div class="#{casilla}">
+                                        <div class="ui-material">
+                                            <p:autoComplete id="docente" value="#{asignacionAcademicaDirector.rol.docente}" completeMethod="#{asignacionAcademicaDirector.completeDocentes}" queryDelay="800"
+                                                            var="docente" itemValue="#{docente}" itemLabel="#{docente.personal.nombre}" converter="entityConverter" forceSelection="true" size="35" >
+                                                <p:column>#{docente.personal.clave}</p:column>
+                                                <p:column>#{docente.personal.nombre}</p:column>
+                                                <p:ajax event="itemSelect" update="@this" process="@this" />
+                                            </p:autoComplete>
+                                            <p:outputLabel value="Docente" for="docente"/>
+                                            <p:message for="docente" />
+                                        </div>
+                                    </div>
+                                    <div class="#{casilla2}">
+                                        <div class="ui-material">
+                                            <p:selectOneMenu id="programa" value="#{asignacionAcademicaDirector.rol.programa}" converter="entityConverter">
+                                                <f:selectItems value="#{asignacionAcademicaDirector.rol.programas}" var="programa" itemValue="#{programa}" itemLabel="#{programa.nombre}" />
+                                                <p:ajax update="@this, grupo" process="@this" />
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Programa" for="programa"/>
+                                            <p:message for="programa" />
+                                        </div>
+                                    </div>
+                                    <div class="#{casilla3}">
+                                        <div class="ui-material">
+                                            <p:selectOneMenu id="grupo" value="#{asignacionAcademicaDirector.rol.grupo}" converter="entityConverter">
+                                                <f:selectItems value="#{asignacionAcademicaDirector.rol.grupos}" var="grupo"
+                                                               itemValue="#{grupo}" itemLabel="#{grupo.grado}#{grupo.literal}"/>
+                                                <p:ajax update="@this" process="@this" />
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Grupo" for="grupo"/>
+                                            <p:message for="grupo" />
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="box-body">
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 text-info text-center">

@@ -1,37 +1,48 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
+import com.github.adminfaces.starter.infra.model.Filter;
+import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
+import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
+import mx.edu.utxj.pye.sgi.facade.Facade;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Stateless(name = "EjbAsignacionAcademica")
 public class EjbAsignacionAcademica {
     @EJB EjbPersonalBean ejbPersonalBean;
+    @EJB EjbPropiedades ep;
+    @EJB Facade f;
     /**
      * Permite validar si el usuario autenticado es un director de área académica
      * @param clave Número de nómina del usuario autenticado
      * @return Resultado del proceso
      */
-    public ResultadoEJB<PersonalActivo> validarDirector(Integer clave){
+    public ResultadoEJB<Filter<PersonalActivo>> validarDirector(Integer clave){
         try{
             PersonalActivo p = ejbPersonalBean.pack(clave);
-            //:TODO comprobar si es director
-            return ResultadoEJB.crearCorrecto(p, "El usuario ha sido comprobado como un director.");
+            Filter<PersonalActivo> filtro = new Filter<>();
+            filtro.setEntity(p);
+            filtro.addParam(PersonalFiltro.AREA_SUPERIOR.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorAreaSuperior").orElse(2)));
+            filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorCategoriaOperativa").orElse(18)));
+            return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como un director.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "El director no se pudo validar.", e, PersonalActivo.class);
+            return ResultadoEJB.crearErroneo(1, "El director no se pudo validar.", e, null);
         }
     }
 
@@ -40,7 +51,7 @@ public class EjbAsignacionAcademica {
      * @param area Area operativa del directos
      * @return Resultado del proceso
      */
-    public ResultadoEJB<ProgramasEducativos> areaAPrograma(AreasUniversidad area){
+    /*public ResultadoEJB<ProgramasEducativos> areaAPrograma(AreasUniversidad area){
         try{
             ProgramasEducativos programa = new ProgramasEducativos();
             //:TODO hacer la conversion de area a programa
@@ -48,7 +59,7 @@ public class EjbAsignacionAcademica {
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "ENo se pudo convertir el area a programa.", e, ProgramasEducativos.class);
         }
-    }
+    }*/
 
     /**
      * Permite identificar a una lista de posibles docentes para asignar la materia
@@ -57,8 +68,13 @@ public class EjbAsignacionAcademica {
      */
     public ResultadoEJB<List<PersonalActivo>> buscarDocente(String pista){
         try{
-            //:TODO buscar lista de docentes operativos por nombre, nùmero de nómina o área  operativa segun la pista y ordener por nombre del docente
-            return ResultadoEJB.crearCorrecto(null, "Lista para mostrar en autocomplete");
+            //buscar lista de docentes operativos por nombre, nùmero de nómina o área  operativa segun la pista y ordener por nombre del docente
+            List<PersonalActivo> docentes = f.getEntityManager().createQuery("select p from Personal p where p.estado <> 'B' and concat(p.nombre, p.clave) like concat('%',:pista,'%')  ", Personal.class)
+                    .setParameter("pista", pista)
+                    .getResultStream()
+                    .map(p -> ejbPersonalBean.pack(p))
+                    .collect(Collectors.toList());
+            return ResultadoEJB.crearCorrecto(docentes, "Lista para mostrar en autocomplete");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo localizar la lista de docentes activos. (EjbAsignacionAcademica)", e, null);
         }
@@ -70,8 +86,9 @@ public class EjbAsignacionAcademica {
      */
     public ResultadoEJB<List<PeriodosEscolares>> getPeriodosDescendentes(){
         try{
-            List<PeriodosEscolares> periodos = Collections.emptyList();
-            //TODO: buscar lista de periodos escolares ordenados de forma descendente para que al elegir un periodo en la asignación docente aparezca primero el mas actual
+            //buscar lista de periodos escolares ordenados de forma descendente para que al elegir un periodo en la asignación docente aparezca primero el mas actual
+            final List<PeriodosEscolares> periodos = f.getEntityManager().createQuery("select p from PeriodosEscolares p order by p.periodo desc", PeriodosEscolares.class)
+                    .getResultList();
             return ResultadoEJB.crearCorrecto(periodos, "Periodos ordenados de forma descendente");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos escolares. (EjbAsignacionAcademica)", e, null);
@@ -83,14 +100,32 @@ public class EjbAsignacionAcademica {
      * área, nivel y nombre y los grupos por grado y letra
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Map<ProgramasEducativos, List<Grupo>>> getProgramasActivos(){
+    public ResultadoEJB<Map<AreasUniversidad, List<Grupo>>> getProgramasActivos(PersonalActivo director, PeriodosEscolares periodo){
         try{
-            Map<ProgramasEducativos, List<Grupo>> programasMap = Collections.EMPTY_MAP;
-            //TODO: buscar lista de programas educativos con plan de estudios vigentes y despues mapear cada programa con su lista de grupos
+            //Map<AreasUniversidad, List<Grupo>> programasMap = Collections.EMPTY_MAP;
+            // buscar lista de programas educativos con plan de estudios vigentes y despues mapear cada programa con su lista de grupos
+            Integer programaEducativoCategoria = ep.leerPropiedadEntera("programaEducativoCategoria").orElse(9);
+//            System.out.println("programaEducativoCategoria = " + programaEducativoCategoria);
+            List<AreasUniversidad> programas = f.getEntityManager().createQuery("select a from AreasUniversidad  a where a.areaSuperior=:areaPoa and a.categoria.categoria=:categoria and a.vigente = '1' order by a.nombre", AreasUniversidad.class)
+                    .setParameter("areaPoa", director.getAreaPOA().getArea())
+                    .setParameter("categoria", programaEducativoCategoria)
+                    .getResultList();
+//            System.out.println("programas = " + programas);
+            Map<AreasUniversidad, List<Grupo>> programasMap = programas.stream()
+                    .collect(Collectors.toMap(programa -> programa, programa -> generarGrupos(programa, periodo)));
+//            System.out.println("programasMap = " + programasMap);
             return ResultadoEJB.crearCorrecto(programasMap, "Mapa de programas y grupos");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo mapear los programas y sus grupos. (EjbAsignacionAcademica)", e, null);
         }
+    }
+
+    private List<Grupo> generarGrupos(AreasUniversidad programa, PeriodosEscolares periodo) {
+        System.out.println("programa = [" + programa + "], periodo = [" + periodo + "]");
+        return f.getEntityManager().createQuery("select g from Grupo g where g.idPe=:programa and g.periodo=:periodo", Grupo.class)
+                .setParameter("programa", programa.getArea())
+                .setParameter("periodo", periodo.getPeriodo())
+                .getResultList();
     }
 
     /**
@@ -99,11 +134,12 @@ public class EjbAsignacionAcademica {
      * @param grupo Grupo al que deben pertenecer las materias
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<Materia>> getMateriasPorAsignar(ProgramasEducativos programa, Grupo grupo){
+    public ResultadoEJB<List<Materia>> getMateriasPorAsignar(AreasUniversidad programa, Grupo grupo){
         try{
-            List<Materia> materias = Collections.EMPTY_LIST;
             //TODO: buscar lista de materias sin asignar que pertenecen al programa y grupo seleccionado
-            return ResultadoEJB.crearCorrecto(materias, "Lista de materias sin asignar por grupo y programa");
+            List<Materia> materiasSinAsignar = f.getEntityManager().createQuery("select m from Materia m inner join m.idPlan p left join m.cargaAcademicaList ca where p.idPe=:programaEducativo and ca.cargaAcademicaPK is null", Materia.class)
+                    .getResultList();
+            return ResultadoEJB.crearCorrecto(materiasSinAsignar, "Lista de materias sin asignar por grupo y programa");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias sin asignar por grupo y programa. (EjbAsignacionAcademica)", e, null);
         }

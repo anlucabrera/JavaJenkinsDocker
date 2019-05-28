@@ -23,6 +23,15 @@ public class ViewScopedRol implements Serializable {
     }
 
     public void mostrarExcepcion(Throwable e){
-        Messages.addGlobal(FacesMessage.SEVERITY_ERROR, "Ocurrió un error: " + e.getCause()!=null?e.getCause().getMessage():e.getMessage());
+        //e.printStackTrace();
+//        System.out.println("e = " + e);
+//        System.out.println("e.getMessage() = " + e.getMessage());
+//        System.out.println("e.getCause() = " + e.getCause());
+        if(e instanceof  NullPointerException){
+            Messages.addGlobal(FacesMessage.SEVERITY_ERROR, "Ocurrió un error: Objeto nulo.");
+        }else {
+            if (e != null)
+                Messages.addGlobal(FacesMessage.SEVERITY_ERROR, "Ocurrió un error: " + e.getCause() != null ? e.getCause().getMessage() : e.getMessage() == null ? " Objeto nulo. " : e.getMessage());
+        }
     }
 }

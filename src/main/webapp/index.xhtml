@@ -290,8 +290,7 @@
             </div> 
         </c:if>
 
-        <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">              
-
+        <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
             <c:if test="#{controladorEmpleado.tienePOA}">
                 <div class="box box-primary">
                     <div class="box box-solid">
@@ -477,7 +476,6 @@
                                         </div>
                                     </div>
                                 </c:if-->
-                                -#{evaluacionDesempenioAdmin.cargada}-
                                 <c:if test="#{evaluacionDesempenioAdmin.cargada}">
                                     <c:if test="#{evaluacionDesempenioAdmin.directivoSeleccionado.actividad eq 2 || evaluacionDesempenioAdmin.directivoSeleccionado.actividad eq 4 }">
                                         <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-sm-12'}" />

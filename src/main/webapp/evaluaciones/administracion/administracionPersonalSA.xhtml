@@ -11,7 +11,7 @@
 
     <ui:define name="head-end">
         <!-- Inicio estilos par proceso electoral -->
-        <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
         <!-- Fin estilos par proceso electoral -->
         <style type="text/css">
             .ui-datatable .ui-datatable-header {
@@ -39,7 +39,7 @@
     </ui:define>
 
     <ui:define name="body">
-        <adm:breadcrumb title="consulta de evaluaciones a personal"/>
+        <adm:breadcrumb title="Consulta de evaluaciones a personal"/>
         <h:form>
             <p:outputPanel >
                 <p:autoUpdate/>
@@ -174,9 +174,9 @@
                 </div>
             </p:outputPanel>
             <p:outputPanel >
-
                 <p:panel rendered="#{administrativoEvaluacion.utilAdmin.botoneraActiva}">
                     <f:ajax execute="btn_modalB">
+                        H
                         <p:remoteCommand name="rcr" update="@form" actionListener="#{administrativoEvaluacion.utilAdmin.reload()}"  />
                         <p:commandButton title="Visualiza el listado general de los docentes y su promedio" id="btn_modalB" value="Generar Reporte General" class="btn btn-primary"  
                                          icon="fa fa-file-text" process="@this" update="@form" actionListener="#{administrativoEvaluacion.utilAdmin.resultadosSAGeneral()}" 
@@ -368,7 +368,7 @@
                             </f:facet>
                             <f:facet name="header">
                                 <p:commandButton value="Exportar Excel" ajax="false" class="btn btn-primary " icon="fa fa-file-excel-o">
-                                    <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="csv" target="tblEvaluacionesCompletas" fileName="Reporte_evaluaciones_completas"/>
+                                    <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblEvaluacionesCompletas" fileName="Reporte_evaluaciones_completas"/>
                                 </p:commandButton>
                             </f:facet>
                             <p:column headerText="Nombre" filterBy="#{encuestaDocente.nombre}" filterMatchMode="contains" sortBy="#{encuestaDocente.nombre}"   >                           
@@ -404,7 +404,7 @@
                         </f:facet>
                         <f:facet name="header">
                             <p:commandButton value="Exportar Excel" ajax="false" class="btn btn-primary " icon="fa fa-file-excel-o">
-                                <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="csv" target="tblEvaluacionesCompletas" fileName="Reporte_evaluaciones_completas"/>
+                                <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblEvaluacionesCompletas" fileName="Reporte_evaluaciones_completas"/>
                             </p:commandButton>
                         </f:facet>
                         <p:column headerText="Nombre" filterBy="#{encuestaDocente.nombre}" filterMatchMode="contains" sortBy="#{encuestaDocente.nombre}"   >                           
