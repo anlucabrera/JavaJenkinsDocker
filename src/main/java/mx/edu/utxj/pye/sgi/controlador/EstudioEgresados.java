@@ -47,8 +47,7 @@ public class EstudioEgresados implements Serializable {
     @Getter private Evaluaciones evaluacion;
     @Getter private Integer evaluador;
     
-    @Getter @Setter private String tipoFiltro="", nivelGeneraciones="", valor;
-    @Getter @Setter private Short generacionSeleccionada;
+    @Getter @Setter private String  valor;
     @Getter @Setter private EvaluacionEstudioEgresadosResultados resultados;   
     @Getter @Setter private Generaciones generacion = new Generaciones();
     
@@ -61,7 +60,7 @@ public class EstudioEgresados implements Serializable {
     @Getter @Setter private List<EvaluacionEstudioEgresadosResultados> listaResultados, listaResultadosReporte, listaResultadosGeneralesReporte;
     
     // administracion del modulo
-    @Getter @Setter private String matricula = "", siglas;
+    @Getter @Setter private String matricula = "";
     @Getter @Setter private List<ListaEstudiantesDtoTutor> listaEstudiante;
     @Getter @Setter private ListaEstudiantesDtoTutor Estudiante;
     @Getter @Setter private Integer nivel =0;
@@ -81,15 +80,11 @@ public class EstudioEgresados implements Serializable {
         selectItemCarreras = ejb.selectItemsProgramasEducativos();
         listaGeneraciones = ejb.getGeneraciones();
         if (logonMB.getUsuarioTipo() == UsuarioTipo.ESTUDIANTE) {
-            alumnos = ejb.getAlumnoPorMatricula(logonMB.getCurrentUser());
-//            System.out.println("alumnos = " + alumnos);
-//            System.out.println("alumnos.getGradoActual() = " + alumnos.getGradoActual());
-            if (alumnos.getGradoActual() == 11 && (alumnos.getCveStatus().equals(6) || alumnos.getCveStatus().equals(1)) && 
-                    alumnos.getCveGeneracion().equals(190)) {
+            alumnos = ejb.procedimiento(logonMB.getCurrentUser());
+            if(alumnos != null){
                 ING = true;
-            } else  if (alumnos.getGradoActual() >=6 &&alumnos.getGradoActual() < 11) {
-                TSU = false;
             }
+
             try {
                 // modificar para aperturar a onceavos o sextos
 //                if(alumnos.getGradoActual() == 11){ //estudiantes egresadod de 11 vo
@@ -219,32 +214,25 @@ public class EstudioEgresados implements Serializable {
     public void validaReporte() {
         Integer evaluacion1;
         evaluacion1 = ejb.geteEvaluacionActiva().getEvaluacion();
-        
-        System.out.println("Siglas : " + siglas);
-        System.out.println("Generacion : " + generacionSeleccionada);
-        System.out.println("nivel generacion : " + nivelGeneraciones);
-        System.out.println("fuiltro btn : " + tipoFiltro);
+
         listaResultadosReporte = new ArrayList<>();
         listaResultadosReporte.clear();
         listaResultadosGeneralesReporte = ejb.getResultadosEvActiva(evaluacion1);
-        System.err.println("la lista original contiene : " + listaResultadosGeneralesReporte.size());
-      listaResultadosGeneralesReporte.forEach(x -> {
-                Comparador<EvaluacionEstudioEgresadosResultados> comparador = new ComparadorEvaluacionEstudioEgresados();
-                completo = comparador.isCompleto(x);
-                if(completo){
-                listaResultadosReporte.add(x);    
-                }                
-            });
-            System.err.println("la lista final contiene : " + listaResultadosReporte.size());
-            siglas = null;
-            generacionSeleccionada = null;
+        listaResultadosGeneralesReporte.forEach(x -> {
+            Comparador<EvaluacionEstudioEgresadosResultados> comparador = new ComparadorEvaluacionEstudioEgresados();
+            if (comparador.isCompleto(x)) {
+                listaResultadosReporte.add(x);
+            }
+        });
+
+        System.err.println("la lista final contiene : " + listaResultadosReporte.size());
 //                if (listaResultadosReporte == null || listaResultadosReporte.isEmpty()) {
 //                    listaResultadosReporte.clear();
 //                    Messages.addGlobalInfo("No se encontraron registros de este estudio, si considera esto un error contacte con el administador ");
 //                } else {
 //                    Messages.addGlobalInfo("Se encontraron los registros");
 //                }
-        
+
     }
 
     public void generaNuevaEvaluación() {        

@@ -58,6 +58,16 @@ public class ComparadorEvaluacionEstudioEgresados implements Comparador<Evaluaci
         }
     }
     
+     public boolean comparadoreTexto(String pregunta) {
+        if (pregunta == null) {
+            return true;
+        } else if (pregunta.trim().isEmpty()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     public boolean obligatoriasGeneralesNull(EvaluacionEstudioEgresadosResultados resultado) {
         return (resultado.getR1() == null
                 || resultado.getR4() == null
@@ -95,22 +105,22 @@ public class ComparadorEvaluacionEstudioEgresados implements Comparador<Evaluaci
     }
 
     public boolean obligatoriasGeneralesNotNull(EvaluacionEstudioEgresadosResultados resultado) {
-        return !(resultado.getR1().trim().isEmpty()
-                || resultado.getR4().trim().isEmpty()
+        return !(comparadoreTexto(resultado.getR1())
+                ||comparadoreTexto(resultado.getR4())
                 || resultado.getR5() == null
                 || resultado.getR6() == null
                 || resultado.getR7() == null
                 || resultado.getR8() == null
-                || resultado.getR10().trim().isEmpty()
-                || resultado.getR11().trim().isEmpty()
-                || resultado.getR15().trim().isEmpty()
-                || resultado.getR16().trim().isEmpty()
-                || resultado.getR17().trim().isEmpty()
-                || resultado.getR18().trim().isEmpty()
-                || resultado.getR19().trim().isEmpty()
-                || resultado.getR34().trim().isEmpty()
-                || resultado.getR42().trim().isEmpty()
-                || resultado.getR43().trim().isEmpty()
+                || comparadoreTexto(resultado.getR10())
+                || comparadoreTexto(resultado.getR11())
+                || comparadoreTexto(resultado.getR15())
+                || comparadoreTexto(resultado.getR16())
+                || comparadoreTexto(resultado.getR17())
+                || comparadoreTexto(resultado.getR18())
+                || comparadoreTexto(resultado.getR19())
+                || comparadoreTexto(resultado.getR34())
+                || comparadoreTexto(resultado.getR42())
+                || comparadoreTexto(resultado.getR43())
                 || resultado.getR60() == null
                 || resultado.getR91a() == null
                 || resultado.getR91b() == null
@@ -210,9 +220,9 @@ public class ComparadorEvaluacionEstudioEgresados implements Comparador<Evaluaci
                 || resultado.getR67d() == null
                 || resultado.getR67e() == null
                 || resultado.getR67f() == null
-                || resultado.getR68().trim().isEmpty()
-                || resultado.getR71().trim().isEmpty()
-                || resultado.getR72().trim().isEmpty()
+                || comparadoreTexto(resultado.getR68())
+                || comparadoreTexto(resultado.getR71())
+                || comparadoreTexto(resultado.getR72())
                 || resultado.getR78() == null
                 || resultado.getR79() == null
                 || resultado.getR80() == null
