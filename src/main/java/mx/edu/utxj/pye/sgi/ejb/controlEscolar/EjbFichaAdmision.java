@@ -92,7 +92,7 @@ public interface EjbFichaAdmision {
      * Método medial el cual el usuario guarda sus datos de aspirante
      * @param aspirante parámetro mediante el cual el usuario envía sus datos para su registro
      */
-    public void guardaAspirante(Aspirante aspirante);
+    public Aspirante guardaAspirante(Aspirante aspirante);
 
     /**
      *  Método mediante que realiza la busqueda de un aspirante mediante su clave primaria

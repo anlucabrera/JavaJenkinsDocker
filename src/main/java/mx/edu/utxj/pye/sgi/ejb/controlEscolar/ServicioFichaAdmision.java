@@ -222,10 +222,12 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     }
 
     @Override
-    public void guardaAspirante(Aspirante aspirante) {
+    public Aspirante guardaAspirante(Aspirante aspirante) {
         TipoAspirante tipoAspirante = new TipoAspirante((short)1, "Nuevo Ingreso");
         aspirante.setTipoAspirante(tipoAspirante);
         facadeCE.create(aspirante);
+        facadeCE.flush();
+        return aspirante;
     }
 
     @Override
@@ -264,15 +266,15 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
 
     @Override
     public void guardaDomicilo(Domicilio domicilio) {
-        domicilio.setCalle(ucFirst(domicilio.getCalle()));
-        domicilio.setCalleProcedencia(ucFirst(domicilio.getCalleProcedencia()));
+        domicilio.setCalle(ucFirst(domicilio.getCalle().trim()));
+        domicilio.setCalleProcedencia(ucFirst(domicilio.getCalleProcedencia().trim()));
         facadeCE.create(domicilio);
     }
 
     @Override
     public void actualizaDomicilio(Domicilio domicilio) {
-        domicilio.setCalle(ucFirst(domicilio.getCalle()));
-        domicilio.setCalleProcedencia(ucFirst(domicilio.getCalleProcedencia()));
+        domicilio.setCalle(ucFirst(domicilio.getCalle().trim()));
+        domicilio.setCalleProcedencia(ucFirst(domicilio.getCalleProcedencia().trim()));
         facadeCE.setEntityClass(Domicilio.class);
         facadeCE.edit(domicilio);
         facadeCE.flush();
@@ -280,20 +282,20 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
 
     @Override
     public void guardaTutorFamiliar(TutorFamiliar tutorFamiliar) {
-        tutorFamiliar.setNombre(ucFirst(tutorFamiliar.getNombre()));
-        tutorFamiliar.setApellidoPaterno(ucFirst(tutorFamiliar.getApellidoPaterno()));
-        tutorFamiliar.setApellidoMaterno(ucFirst(tutorFamiliar.getApellidoMaterno()));
-        tutorFamiliar.setCalle(ucFirst(tutorFamiliar.getCalle()));
+        tutorFamiliar.setNombre(ucFirst(tutorFamiliar.getNombre().trim()));
+        tutorFamiliar.setApellidoPaterno(ucFirst(tutorFamiliar.getApellidoPaterno().trim()));
+        tutorFamiliar.setApellidoMaterno(ucFirst(tutorFamiliar.getApellidoMaterno().trim()));
+        tutorFamiliar.setCalle(ucFirst(tutorFamiliar.getCalle().trim()));
         facadeCE.create(tutorFamiliar);
     }
 
     @Override
     public void actualizaTutorFamiliar(TutorFamiliar tutorFamiliar) {
-        tutorFamiliar.setNombre(ucFirst(tutorFamiliar.getNombre()));
-        tutorFamiliar.setApellidoPaterno(ucFirst(tutorFamiliar.getApellidoPaterno()));
-        tutorFamiliar.setApellidoMaterno(ucFirst(tutorFamiliar.getApellidoMaterno()));
-        tutorFamiliar.setCalle(ucFirst(tutorFamiliar.getCalle()));
-        tutorFamiliar.setParentesco(ucFirst(tutorFamiliar.getParentesco()));
+        tutorFamiliar.setNombre(ucFirst(tutorFamiliar.getNombre().trim()));
+        tutorFamiliar.setApellidoPaterno(ucFirst(tutorFamiliar.getApellidoPaterno().trim()));
+        tutorFamiliar.setApellidoMaterno(ucFirst(tutorFamiliar.getApellidoMaterno().trim()));
+        tutorFamiliar.setCalle(ucFirst(tutorFamiliar.getCalle().trim()));
+        tutorFamiliar.setParentesco(ucFirst(tutorFamiliar.getParentesco().trim()));
         facadeCE.setEntityClass(TutorFamiliar.class);
         facadeCE.edit(tutorFamiliar);
         facadeCE.flush();
@@ -302,15 +304,15 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
 
     @Override
     public void guardaDatosFamiliares(DatosFamiliares datosFamiliares) {
-        datosFamiliares.setNombrePadre(ucFirst(datosFamiliares.getNombrePadre()));
-        datosFamiliares.setNombreMadre(ucFirst(datosFamiliares.getNombreMadre()));
+        datosFamiliares.setNombrePadre(ucFirst(datosFamiliares.getNombrePadre().trim()));
+        datosFamiliares.setNombreMadre(ucFirst(datosFamiliares.getNombreMadre().trim()));
         facadeCE.create(datosFamiliares);
     }
 
     @Override
     public void actualizaDatosFamiliares(DatosFamiliares datosFamiliares) {
-        datosFamiliares.setNombrePadre(ucFirst(datosFamiliares.getNombrePadre()));
-        datosFamiliares.setNombreMadre(ucFirst(datosFamiliares.getNombreMadre()));
+        datosFamiliares.setNombrePadre(ucFirst(datosFamiliares.getNombrePadre().trim()));
+        datosFamiliares.setNombreMadre(ucFirst(datosFamiliares.getNombreMadre().trim()));
         facadeCE.setEntityClass(DatosFamiliares.class);
         facadeCE.edit(datosFamiliares);
         facadeCE.flush();

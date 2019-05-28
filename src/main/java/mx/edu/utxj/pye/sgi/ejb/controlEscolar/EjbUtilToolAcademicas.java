@@ -23,5 +23,6 @@ public interface EjbUtilToolAcademicas {
     public void actualizaGrupo(Grupo grupo);
     public void eliminaGrupo(Grupo grupo);
     public List<Grupo> listaByPeriodo(Integer cve_periodo);
+    public List<Grupo> listaByPeriodoCarrera(Short carrera, Integer periodo);
     
 }

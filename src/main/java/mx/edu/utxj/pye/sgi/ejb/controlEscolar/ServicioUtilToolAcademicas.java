@@ -86,4 +86,12 @@ public class ServicioUtilToolAcademicas implements EjbUtilToolAcademicas {
                 .setParameter("pass", encripta)
                 .getResultList().stream().findFirst().orElse(null);
     }
+
+    @Override
+    public List<Grupo> listaByPeriodoCarrera(Short carrera, Integer periodo) {
+        return facadeCE.getEntityManager().createQuery("SELECT g FROM Grupo g WHERE g.periodo = :idPeriodo AND g.idPe = :carrera", Grupo.class)
+                .setParameter("idPeriodo", periodo)
+                .setParameter("carrera", carrera)
+                .getResultList();
+    }
 }

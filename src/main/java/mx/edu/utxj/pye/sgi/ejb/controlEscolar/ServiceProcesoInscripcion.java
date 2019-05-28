@@ -385,4 +385,11 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
         
         return contraseñaDesencriptada;
     }
+
+    @Override
+    public void actualizaEstudiante(Estudiante estudiante) {
+        facadeCE.setEntityClass(Estudiante.class);
+        facadeCE.edit(estudiante);
+        facadeCE.flush();
+    }
 }
