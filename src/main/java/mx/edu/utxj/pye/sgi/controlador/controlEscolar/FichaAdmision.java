@@ -333,7 +333,7 @@ public class FichaAdmision implements Serializable, Guardable{
             aspirante.setIdProcesoInscripcion(procesosInscripcion);
             aspirante.setEstatus(false);
             aspirante.setFechaRegistro(new Date());
-            ejbFichaAdmision.guardaAspirante(aspirante);
+            aspirante = ejbFichaAdmision.guardaAspirante(aspirante);
             domicilio.setAspirante(aspirante.getIdAspirante());
             ejbFichaAdmision.guardaDomicilo(domicilio);
             df = false;
@@ -430,10 +430,13 @@ public class FichaAdmision implements Serializable, Guardable{
             }
             dm = false;
             com = false;
+            
             aspirante = ejbFichaAdmision.buscaAspiranteByClave(persona.getIdpersona());
+            if(aspirante == null){
+                aspirante = new Aspirante();
+            }
         }
         if(aspirante != null){
-            //aspirante = ejbFichaAdmision.buscaAspiranteByClave(persona.getIdpersona());
             if(aspirante != null && aspirante.getDomicilio() != null){
                 domicilio = aspirante.getDomicilio();
                 selectMunicipio();

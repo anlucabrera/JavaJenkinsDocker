@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.model.SelectItem;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -17,6 +18,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbFichaAdmision;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbProcesoInscripcion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSelectItemCE;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbUtilToolAcademicas;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documentosentregadosestudiante;
@@ -42,19 +44,22 @@ public class ProcesoInscripcion implements Serializable{
     @Getter @Setter private List<AreasUniversidad> listaPe;
     @Getter @Setter private List<AreasUniversidad> listaAreasUniversidad = new ArrayList<>();
     @Getter @Setter private List<Estudiante> listaEstudiantes = new ArrayList<>();
+    @Getter @Setter private List<SelectItem> listaPEInsc;
+    @Getter @Setter private List<Grupo> listaGrupos;
     @Getter @Setter private Integer folioFicha,folioFichaInscripcion;
     @Getter @Setter private long totalRegistroSemanal,totalRegistroSabatino,totalRegistroSemanalValido,totalRegistroSabatinoValido;
     @Getter @Setter private String nombreCarreraPO,nombreCarreraSO, carreraInscrito,nombrePEPrimeraOpcion;
     @Getter @Setter private Boolean opcionIncripcion = null;
+    @Getter @Setter private Short areaIncripcion;
 
     
     @EJB EjbFichaAdmision ejbFichaAdmision;
     @EJB EjbProcesoInscripcion ejbProcesoInscripcion;
     @EJB EjbSelectItemCE ejbSelectItemCE;
     @EJB EjbAreasLogeo ejbAreasLogeo;
+    @EJB EjbUtilToolAcademicas ejbToolAcademicas;
     
     @Inject LogonMB login;
-    @Inject FichaAdmision admision;
     
     @PostConstruct
     public void init(){
@@ -238,6 +243,26 @@ public class ProcesoInscripcion implements Serializable{
     public void actualizaListadoAspirantesTSU(){
         listaAspirantesTSU = new ArrayList<>();
         listaAspirantesTSU = ejbProcesoInscripcion.listaAspirantesTSU(procesosInscripcion.getIdProcesosInscripcion());
+    }
+    
+    public void getEstudiante(Estudiante e){
+        areaIncripcion = ejbFichaAdmision.buscaPEByClave((short)e.getCarrera()).getAreaSuperior();
+        estudiante = e;
+        selectPE();
+        selectGrupo();
+    }
+    
+    public void selectPE(){
+        listaPEInsc = ejbSelectItemCE.itemProgramEducativoPorArea(this.areaIncripcion);
+    }
+    
+    public void selectGrupo(){
+        listaGrupos = ejbToolAcademicas.listaByPeriodoCarrera((short)estudiante.getCarrera(), procesosInscripcion.getIdPeriodo());
+    }
+    
+    public void cambiaCarrera(){
+        ejbProcesoInscripcion.actualizaEstudiante(estudiante);
+        listaEstudiantes = ejbProcesoInscripcion.listaEstudiantesXPeriodo(procesosInscripcion.getIdPeriodo());
     }
     
     public static Integer gruposElegibles(List<Grupo> grupos){

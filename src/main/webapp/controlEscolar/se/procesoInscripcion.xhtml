@@ -750,7 +750,7 @@
                             <p:dataTable var="estudiantes" value="#{procesoInscripcion.listaEstudiantes}" expandableRowGroups="true" 
                                          emptyMessage="No hay estudiantes registrados para este proceso de inscripción" sortBy="#{estudiantes.carrera}">
                                 <p:headerRow>
-                                    <p:column colspan="6" style="background-color: #00b5ad;">
+                                    <p:column colspan="7" style="background-color: #00b5ad;">
                                         <h:outputText value="#{procesoInscripcion.nombrePE(estudiantes.carrera)}" />
                                     </p:column>
                                 </p:headerRow>
@@ -772,10 +772,58 @@
                                 <p:column headerText="Cuatrimestre" style="text-align: center;">
                                     <h:outputText value="#{estudiantes.grupo.grado}"/>
                                 </p:column>
+                                <p:column style="text-align: center;">
+                                    <p:commandButton id="btn" icon="fa fa-refresh" alt="Cambio de Carrera" styleClass="btn-primary" style="width: 30%;" onclick="PF('dglCambioCarrera').show();" actionListener="#{procesoInscripcion.getEstudiante(estudiantes)}" update=":tabw1:frmCambioCarrera"/>
+                                </p:column>
                             </p:dataTable>
                         </h:form>
                     </section>
                 </p:panel>
+                <p:dialog widgetVar="dglCambioCarrera" header="Cambio de Carrera Estudiante" modal="false" position="center center" showEffect="fade" hideEffect="fade" resizable="true" width="900px" height="300px">
+                    <h:form id="frmCambioCarrera">
+                        <p:messages><p:autoUpdate/></p:messages>
+                        <p:panelGrid columns="2" cellpadding="5" layout="grid" styleClass="no-border ui-fluid">
+                            <f:facet name="header">Carreras ficha de admisión</f:facet>
+                            
+                            <p:outputLabel for="nombre" value="Nombre"/>
+                            <p:outputLabel id="nombre" value="#{procesoInscripcion.estudiante.aspirante.idPersona.apellidoPaterno} #{procesoInscripcion.estudiante.aspirante.idPersona.apellidoMaterno} #{procesoInscripcion.estudiante.aspirante.idPersona.nombre}"/>
+                            
+                            <p:outputLabel for="folio" value="Folio Ficha"/>
+                            <p:outputLabel id="folio" value="#{procesoInscripcion.estudiante.aspirante.folioAspirante}"/>
+                            
+                            <p:outputLabel for="matricula" value="Matrícula"/>
+                            <p:outputLabel id="matricula" value="#{procesoInscripcion.estudiante.matricula}"/>
+                            
+                            <p:outputLabel for="areaInscrito" value="Área Academica Inscripción"/>
+                            <p:selectOneMenu id="areaInscrito" value="#{procesoInscripcion.areaIncripcion}" class="form-control" required="true" requiredMessage="Debe de indicar la divición academica de la carrera de primera opción">
+                                <f:selectItem itemValue="#{null}"/>
+                                <f:selectItems value="#{fichaAdm.listaAreasSO}"/>
+                                <p:ajax listener="#{procesoInscripcion.selectPE()}" update="peInscrito,grupo"/>
+                            </p:selectOneMenu>                            
+                            
+                            <p:outputLabel for="peInscrito" value="Programa Educativo Inscripción"/>
+                            <p:selectOneMenu id="peInscrito" required="true" class="form-control" value="#{procesoInscripcion.estudiante.carrera}" style="width:  375px" requiredMessage="Debe de indicar el programa educativo de la carrera de primera opción">
+                                <f:selectItem itemValue="#{null}"/>
+                                <f:selectItems value="#{procesoInscripcion.listaPEInsc}"/>
+                                <p:ajax listener="#{procesoInscripcion.selectGrupo()}" update="grupo"/>
+                            </p:selectOneMenu>
+                            
+                            <p:outputLabel for="grupo" value="Grupo"/>
+                            <p:selectOneMenu id="grupo" required="true" class="form-control" value="#{procesoInscripcion.estudiante.grupo}" converter="grupoConverter" requiredMessage="Debe de indicar el grupo del/la estudiante">
+                                <f:selectItem itemValue="#{null}"/>
+                                <f:selectItems value="#{procesoInscripcion.listaGrupos}" var="g" itemLabel="#{g.literal}-#{g.idSistema.nombre}" itemValue="#{g}"/>
+                            </p:selectOneMenu>
+                            
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="2" style="align-content: center">
+                                        <center><p:commandButton id="btnUpdateCarrera" value="Actualiza Datos" icon="fa fa-search" styleClass="btn-primary" style="width: 30%;" actionListener="#{procesoInscripcion.cambiaCarrera()}" update=":tabw1:frmListaEstudiantes"/></center>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
             </p:tab>
         </p:tabView>
     </ui:define>
