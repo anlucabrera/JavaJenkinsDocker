@@ -18,6 +18,7 @@ import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import org.omnifaces.util.Faces;
 
 @Named
@@ -28,7 +29,7 @@ public class UtilidadesPOA implements Serializable {
     @Getter    @Setter    private Integer mes=0;
     @Getter    @Setter    private Procesopoa procesopoa=new Procesopoa();
     
-    @EJB    EjbCarga carga;
+    @EJB    EjbCarga ejbUtilidadesCH;
     @EJB    private EjbUtilidadesCH euch;
     @Inject ControladorEmpleado ce;
     @Inject UtilidadesCorreosElectronicos correosElectronicos;
@@ -98,79 +99,156 @@ public class UtilidadesPOA implements Serializable {
             return "";
         }
     }
-   
-    public void enviarCorreo(Integer tipo, String cdestino) {
-        String pwd="fp6inrls3";
-        Integer tipoDcorreo=1;
-        String correoRemitente = "", contrasenia = "", correoDestino = "", titulo = "", asunto = "", mensaje = "";
-        procesopoa=ce.getProcesopoa();
-        correoRemitente = ce.getNuevaAreasUniversidad().getCorreoInstitucional();
-        contrasenia = pwd;
+
+    public void enviarCorreo(String tipo, String rol, Boolean aceptado, String observaciones, AreasUniversidad areaDestino) {
+        Integer tipoDcorreo = 1;
+        Boolean refi = false, pye = false;
+        String mensajeArea = "", mensajeRefi = "", mensajePye = "", titulo = "", asunto = "";
+        try {
+            procesopoa = euch.mostrarEtapaPOA(areaDestino.getArea());
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         titulo = "Informe de avance del Plan de Trabajo Anual";
+        /*
+        *titulo = titulo del correo 
+        *asunto = asunto del correo 
+        *mensajeArea = mensaje que se envia al área en proceso de POA
+        *mensajeRefi = mensaje que se envia a la Sub direccion de Recursos Financieros
+        *mensajePye = mensaje que se envia a la Direccion de Planeación y evaluación
+        *procesopoa.set........(valor) = Actualizacion del estatus en el proceso POA
+        *tipo = A: Registro de actividades
+        *       R: Asignación de Recurso
+        *       J: Registro de Justificaciones 
+        *rol=   Us: Área en Proceso de POA
+        *       Ad: Administrador
+         */
         switch (tipo) {
-            case 1:
-                System.out.println("Finalización de Registro de Actividades");
-                correoDestino = "zabdi_end@hotmail.com";// correo de planeacion
-                asunto = "Confirmación de finalización de Registro de actividades";
-                mensaje = "Por medio del presente le informo que el área "+ ce.getNuevaAreasUniversidad().getNombre() +" concluyó satisfactoriamente la etapa de Registro de Actividades. \n"
-                        + "Quedo en espera de sus observaciones, al correo: "+ce.getNuevaAreasUniversidad().getCorreoInstitucional();
-                procesopoa.setRegistroAFinalizado(true);
+            case "A":
+                switch (rol) {
+                    case "Us":
+                        asunto = "Confirmación de finalización de Registro de actividades";
+                        mensajePye = "Por medio del presente le informo que el área " + areaDestino.getNombre() + " concluyó satisfactoriamente la etapa de Registro de Actividades. \n"
+                                + "Quedo en espera de sus observaciones, al correo: " + areaDestino.getCorreoInstitucional();
+                        mensajeArea = "Por medio del presente se le informa que se ha enviado a revisión su Registro de Actividades. \n"
+                                + "Espere las observaciones o la apertura de la etapa de Asignación de Recurso";
+                        procesopoa.setRegistroAFinalizado(true);
+                        refi = false;
+                        break;
+                    case "Ad":
+                        if (aceptado) {
+                            asunto = "Confirmación de Validación de Registro de actividades";
+                            mensajeArea = "Por medio del presente le informo que su área concluyó satisfactoriamente la etapa de Registro de Actividades. \n"
+                                    + "Puede continuar con la etapa de Presupuestación";
+                            mensajePye = "Por medio del presente se le informa que ha aceptado el Registro de Actividades del área." + areaDestino.getNombre() + "\n"
+                                    + "Por lo cual se le ha aperturado la etapa de Asignación de Recurso";
+                            mensajeRefi = "Por medio del presente se le informa que el área." + areaDestino.getNombre() + " ha iniciado con la etapa de Asignación de Recurso";
+                            procesopoa.setValidacionRegistroA(true);
+                            refi = true;
+                        } else {
+                            asunto = "Denegacion de Registro de actividades";
+                            mensajeArea = "Por medio del presente le informo que su Registro de actividades cuenta con las siguintes observaciones \n"
+                                    + observaciones
+                                    + "\n Enviar comentarios al correo de planeacion.evaluacion@utxicotepec.edu.mx";
+                            mensajePye = "Por medio del presente se le informa que ha denegado el Registro de Actividades del área." + areaDestino.getNombre() + " con las siguintes observaciones \n"
+                                    + observaciones
+                                    + "Por lo cual se le ha re-aperturado la etapa de Registro de actividades";
+                            procesopoa.setRegistroAFinalizado(false);
+                            refi = false;
+                        }
+                        break;
+                }
+                pye = true;
                 break;
-            case 2:
-                System.out.println("Validación de Registro de Actividades");
-                correoDestino = cdestino;
-                asunto = "Confirmación de Validación de Registro de actividades";
-                mensaje = "Por medio del presente le informo que su área concluyó satisfactoriamente la etapa de Registro de Actividades. \n"
-                        + "Puede continuar con la etapa de Presupuestación";
-                procesopoa.setValidacionRegistroA(true);
+            case "R":
+                switch (rol) {
+                    case "Us":
+                        asunto = "Confirmación de finalización de Asignación de Recurso";
+                        mensajeRefi = "Por medio del presente le informo que el área " + areaDestino.getNombre() + " concluyó satisfactoriamente la etapa de Presupuestación. \n"
+                                + "Quedo en espera de sus observaciones, al correo: " + areaDestino.getCorreoInstitucional();
+                        mensajeArea = "Por medio del presente se le informa que se ha enviado a revisión su Asignación de Recurso. \n"
+                                + "Espere las observaciones o la apertura de la etapa de Registro de Justificaciones";
+                        procesopoa.setAsiganacionRFinalizado(true);
+                        pye = false;
+                        break;
+                    case "Ad":
+                        if (aceptado) {
+                            asunto = "Confirmación de Validación de Asignación de Recurso";
+                            mensajeArea = "Por medio del presente le informo que su área concluyó satisfactoriamente la etapa de Presupuestación. \n"
+                                    + "Puede continuar con la etapa de Justificacione";
+                            mensajeRefi = "Por medio del presente se le informa que ha aceptado la Asignación de Recurso del área." + areaDestino.getNombre() + "\n"
+                                    + "Por lo cual se le ha aperturado la etapa de Registro de Justificaciones";
+                            mensajePye = "Por medio del presente se le informa que el área." + areaDestino.getNombre() + " ha iniciado con la etapa de Registro de Justificaciones";
+                            procesopoa.setValidacionRFFinalizado(true);
+                            pye = true;
+                        } else {
+                            asunto = "Denegacion de Asignación de Recurso";
+                            mensajeArea = "Por medio del presente le informo que su Asignación de Recurso cuenta con las siguintes observaciones \n"
+                                    + observaciones
+                                    + "\n Enviar comentarios al correo de recursos.financieros@utxicotepec.edu.mx";
+                            mensajeRefi = "Por medio del presente se le informa que ha denegado la Asignación de Recurso del área." + areaDestino.getNombre() + " con las siguintes observaciones \n"
+                                    + observaciones
+                                    + "Por lo cual se le ha re-aperturado la etapa de Asignación de Recurso";
+                            procesopoa.setAsiganacionRFinalizado(false);
+                            pye = false;
+                        }
+                        break;
+                }
+                refi = true;
                 break;
-            case 3:
-                System.out.println("Finalización de Asignación de Recurso");
-                correoDestino = "zabdi_end@hotmail.com";//correo de recursos financiaeros
-                asunto = "Confirmación de finalización de Asignación de Recurso";
-                mensaje = "Por medio del presente le informo que el área "+ ce.getNuevaAreasUniversidad().getNombre() +" concluyó satisfactoriamente la etapa de Presupuestación. \n"
-                        + "Quedo en espera de sus observaciones, al correo: "+ce.getNuevaAreasUniversidad().getCorreoInstitucional();
-                procesopoa.setAsiganacionRFinalizado(true);
-                break;
-            case 4:
-                System.out.println("Validación de Asignación de Recursos");
-                correoDestino = cdestino;
-                asunto = "Confirmación de Validación de Asignación de Recurso";
-                mensaje = "Por medio del presente le informo que su área concluyó satisfactoriamente la etapa de Presupuestación. \n"
-                        + "Puede continuar con la etapa de Justificacione";
-                procesopoa.setValidacionRFFinalizado(true);
-                break;
-            case 5:
-                System.out.println("Finalización de Registro de Justificaciones");
-                correoDestino = "zabdi_end@hotmail.com";//correo de recursos financiaeros
-                asunto = "Confirmación de Finalización de Registro de Justificaciones";
-                mensaje = "Por medio del presente le informo que el área "+ ce.getNuevaAreasUniversidad().getNombre() +" concluyó satisfactoriamente la etapa de Registro de Justificaciones. \n"
-                        + "Quedo en espera de sus observaciones, al correo: "+ce.getNuevaAreasUniversidad().getCorreoInstitucional();
-                procesopoa.setRegistroJustificacionFinalizado(true);
-                break;
-            case 6:
-                System.out.println("Validación de Registro de Justificaciones");
-                correoDestino = cdestino;
-                asunto = "Confirmación de finalización del proceso POA";
-                mensaje = "Por medio del presente le informo que su área concluyó satisfactoriamente la etapa de Registro de Justificaciones. \n"
-                        + "Felicidades ha finalizado la primera fase del Plan Anual de Trabajo. \n"
-                        + "Quedamos a la espera de inicio del periodo de evaluación en el mes de enero. \n"
-                        + "Gracias por su colaboración.";
-                procesopoa.setValidacionJustificacion(true);
-                tipoDcorreo=2;
+            case "J":
+                switch (rol) {
+                    case "Us":
+                        asunto = "Confirmación de Finalización de Registro de Justificaciones";
+                        mensajeRefi = "Por medio del presente le informo que el área " + areaDestino.getNombre() + " concluyó satisfactoriamente la etapa de Registro de Justificaciones. \n"
+                                + "Quedo en espera de sus observaciones, al correo: " + areaDestino.getCorreoInstitucional();
+                        mensajeArea = "Por medio del presente se le informa que se ha enviado a revisión su Registro de Justificaciones. \n"
+                                + "Espere las observaciones o la confirmación de finalización del proceso POA fase 1(Programación, presupuestación, Justificación)";
+                        procesopoa.setRegistroJustificacionFinalizado(true);
+                        pye = false;
+                        break;
+                    case "Ad":
+                        if (aceptado) {
+                            asunto = "Confirmación de finalización del proceso POA";
+                            mensajeArea = "Por medio del presente le informo que su área concluyó satisfactoriamente la etapa de Registro de Justificaciones. \n"
+                                    + "Felicidades ha finalizado la primera fase del Plan Anual de Trabajo. \n"
+                                    + "Quedamos a la espera de inicio del periodo de evaluación en el mes de enero. \n"
+                                    + "Gracias por su colaboración.";
+                            mensajeRefi = "Por medio del presente se le informa que ha aceptado el Registro de Justificaciones del área." + areaDestino.getNombre() + "\n"
+                                    + "Por lo cual ha concluido satisfactoriamente el proceso POA fase 1(Programación, presupuestación, Justificación)";
+                            mensajePye = "Por medio del presente se le informa que el área." + areaDestino.getNombre() + " ha concluido satisfactoriamente el proceso POA fase 1(Programación, presupuestación, Justificación)";
+                            procesopoa.setValidacionJustificacion(true);
+                            pye = true;
+                        } else {
+                            asunto = "Denegacion de Registro de Justificaciones";
+                            mensajeArea = "Por medio del presente le informo que su Registro de Justificaciones cuenta con las siguintes observaciones \n"
+                                    + observaciones
+                                    + "\n Enviar comentarios al correo de recursos.financieros@utxicotepec.edu.mx";
+                            mensajeRefi = "Por medio del presente se le informa que ha denegado el Registro de Justificaciones del área." + areaDestino.getNombre() + " con las siguintes observaciones \n"
+                                    + observaciones
+                                    + "Por lo cual se le ha re-aperturado la etapa de Registro de Justificaciones";
+                            procesopoa.setValidacionJustificacion(true);
+                            pye = false;
+                        }
+                        break;
+                }
+                refi = true;
                 break;
         }
-        System.out.println("correoRemitente: " + correoRemitente);
-        System.out.println("contrasenia: " + contrasenia);
-        System.out.println("correoDestino: " + correoDestino);
-        System.out.println("titulo: " + titulo);
-        System.out.println("asunto: " + asunto);
-        System.out.println("mensaje: " + mensaje);
-        correosElectronicos.enviarConfirmacionCorreoElectronico(correoRemitente, contrasenia, correoDestino, titulo, asunto, mensaje,tipoDcorreo);
+
+        correosElectronicos.enviarConfirmacionCorreoElectronico(areaDestino.getCorreoInstitucional(), titulo, asunto, mensajeArea, tipoDcorreo);
+        if (refi) {
+            correosElectronicos.enviarConfirmacionCorreoElectronico("zabdi_end@hotmail.com", titulo, asunto, mensajeRefi, tipoDcorreo);
+        }
+        if (pye) {
+            correosElectronicos.enviarConfirmacionCorreoElectronico("zabimg@gmail.com", titulo, asunto, mensajePye, tipoDcorreo);
+        }
         actualizarProcesopoa();
         recargarPag();
     }
-  
+
     public void actualizarProcesopoa() {
         try {
             euch.actualizarEtapaPOA(procesopoa);
@@ -180,9 +258,9 @@ public class UtilidadesPOA implements Serializable {
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void recargarPag(){        
-            Faces.refresh();
+
+    public void recargarPag() {
+        Faces.refresh();
     }
 
 }

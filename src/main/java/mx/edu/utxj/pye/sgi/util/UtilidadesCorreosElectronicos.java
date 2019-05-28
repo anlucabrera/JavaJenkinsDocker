@@ -17,10 +17,10 @@ import org.omnifaces.cdi.ViewScoped;
 @ViewScoped
 public class UtilidadesCorreosElectronicos implements Serializable {
 
-    public void enviarConfirmacionCorreoElectronico(String correoRemitente, String contrasenia, String correoDestino, String titulo, String asunto, String mensaje, Integer tipo) {
+    public void enviarConfirmacionCorreoElectronico(String correoDestino, String titulo, String asunto, String mensaje, Integer tipo) {
         // El correo gmail de envío
-        String correoEnvia = correoRemitente;
-        String claveCorreo = contrasenia;
+        String correoEnvia = "zabdiel.perez@utxicotepec.edu.mx";//correo del arrea de desarrollo
+        String claveCorreo = "fp6inrls3";//contraseña del correo del arrea de desarrollo
         Properties properties = new Properties();
 
         properties.put("mail.smtp.host", "smtp.gmail.com");

@@ -126,47 +126,48 @@
                                         <h:form id="frmEventosAreas"> 
                                             <p:outputPanel id="incidenciasReporte">
                                             <p:remoteCommand name="actualizarTabla" actionListener="#{administracionControl.imprimirValores()}" update="tblEvenAre" />
-                                            <p:dataTable id="tblEvenAre"  value="#{administracionControl.procesopoas}"  var="procesoPoa" scrollable="true"
+                                            <p:dataTable id="tblEvenAre"  value="#{administracionControl.procesopoas}"  var="procesoPoa" rowStyleClass="#{procesoPoa.validacionJustificacion eq true ?'denegado':'aceptado'}"
                                                             style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
 
-                                                    <p:column headerText="Área" style="width: 50%;text-align: justify;"
+                                                <p:column headerText="Área" 
+                                                          style="width: 50%;text-align: justify;"
                                                               sortBy="#{administracionControl.buscarAreaEventosA(procesoPoa.area)}" 
                                                               filterBy="#{administracionControl.buscarAreaEventosA(procesoPoa.area)}" 
                                                               filterMatchMode="contains">
                                                         <h:outputText value="#{administracionControl.buscarAreaEventosA(procesoPoa.area)}" />
                                                     </p:column>   
 
-                                                    <p:column headerText="Registro de Actividades" style="width: 20%;text-align: justify;background: #{procesoPoa.registroAFinalizado eq true ?'#374850':'#808080'}"
+                                                    <p:column headerText="Registro de Actividades" style="width: 20%;text-align: justify;"
                                                               sortBy="#{procesoPoa.registroAFinalizado}" 
                                                               filterBy="#{procesoPoa.registroAFinalizado}" 
                                                               filterMatchMode="contains">
                                                         <h:outputText value="#{procesoPoa.registroAFinalizado eq true ?'Finalizado':'Pendiente'}" />
                                                     </p:column>   
-                                                    <p:column headerText="Validación de Registro de Actividades" style="width: 20%;text-align: justify;background: #{procesoPoa.validacionRegistroA eq true ?'#374850':'#808080'}"
+                                                    <p:column headerText="Validación de Registro de Actividades" style="width: 20%;text-align: justify;"
                                                               sortBy="#{procesoPoa.validacionRegistroA}" 
                                                               filterBy="#{procesoPoa.validacionRegistroA}" 
                                                               filterMatchMode="contains">
                                                         <h:outputText value="#{procesoPoa.validacionRegistroA eq true ?'Aprobado':'Pendiente'}" />
                                                     </p:column>   
-                                                    <p:column headerText="Asignación de Recurso" style="width: 20%;text-align: justify;background: #{procesoPoa.asiganacionRFinalizado eq true ?'#374850':'#808080'}"
+                                                    <p:column headerText="Asignación de Recurso" style="width: 20%;text-align: justify;"
                                                               sortBy="#{procesoPoa.asiganacionRFinalizado}" 
                                                               filterBy="#{procesoPoa.asiganacionRFinalizado}" 
                                                               filterMatchMode="contains">
                                                         <h:outputText value="#{procesoPoa.asiganacionRFinalizado eq true ?'Finalizado':'Pendiente'}" />
                                                     </p:column>   
-                                                    <p:column headerText="Validación de Asignación de Recurso" style="width: 20%;text-align: justify;background: #{procesoPoa.validacionRFFinalizado eq true ?'#374850':'#808080'}"
+                                                    <p:column headerText="Validación de Asignación de Recurso" style="width: 20%;text-align: justify;"
                                                               sortBy="#{procesoPoa.validacionRFFinalizado}" 
                                                               filterBy="#{procesoPoa.validacionRFFinalizado}" 
                                                               filterMatchMode="contains">
                                                         <h:outputText value="#{procesoPoa.validacionRFFinalizado eq true ?'Aprobado':'Pendiente'}" />
                                                     </p:column>   
-                                                    <p:column headerText="Registro de Justificaciones" style="width: 20%;text-align: justify;background: #{procesoPoa.registroJustificacionFinalizado eq true ?'#374850':'#808080'}"
+                                                    <p:column headerText="Registro de Justificaciones" style="width: 20%;text-align: justify;"
                                                               sortBy="#{procesoPoa.registroJustificacionFinalizado}" 
                                                               filterBy="#{procesoPoa.registroJustificacionFinalizado}" 
                                                               filterMatchMode="contains">
                                                         <h:outputText value="#{procesoPoa.registroJustificacionFinalizado eq true ?'Finalizado':'Pendiente'}" />
                                                     </p:column>   
-                                                    <p:column headerText="Validación de Registro de Justificaciones" style="width: 20%;text-align: justify;background: #{procesoPoa.validacionJustificacion eq true ?'#374850':'#808080'}"
+                                                    <p:column headerText="Validación de Registro de Justificaciones" style="width: 20%;text-align: justify;"
                                                               sortBy="#{procesoPoa.validacionJustificacion}" 
                                                               filterBy="#{procesoPoa.validacionJustificacion}" 
                                                               filterMatchMode="contains">

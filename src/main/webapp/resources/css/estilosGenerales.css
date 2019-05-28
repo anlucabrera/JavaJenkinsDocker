@@ -181,6 +181,11 @@ button, input, optgroup, select, textarea{
     color: #fff !important;
     background-color: #666666 !important;
 }
+.hederSubTablesTitle{
+    border: 1px solid #000000;
+    color: #000000 !important;
+    background-color: #9F9E9E !important;
+}
 
 .ui-state-highlight {
     text-shadow: none !important;

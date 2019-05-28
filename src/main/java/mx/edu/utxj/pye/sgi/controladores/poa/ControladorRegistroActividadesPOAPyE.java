@@ -35,6 +35,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Partidas;
 import mx.edu.utxj.pye.sgi.entity.pye2.PretechoFinanciero;
 import mx.edu.utxj.pye.sgi.entity.pye2.RecursosActividad;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import mx.edu.utxj.pye.sgi.util.UtilidadesPOA;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.RowEditEvent;
 
@@ -59,7 +60,7 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
     @Getter    @Setter    private Date fechaActual=new Date();
     
     @Getter    @Setter    private Boolean ecxiste=false,liberado=true;
-    @Getter    @Setter    private String claseP1="",claseP2="",claseP3="",claseP4="",clasePC="",clasePT="";
+    @Getter    @Setter    private String claseP1="",claseP2="",claseP3="",claseP4="",clasePC="",clasePT="",mss="";
     @Getter    @Setter    private List<PretechoFinanciero> pretechoFinancieros = new ArrayList<>();
     @Getter    @Setter    private List<RecursosActividad> recursosActividads2 = new ArrayList<>(),recursosActividads3 = new ArrayList<>(),recursosActividads4 = new ArrayList<>(),recursosActividads5 = new ArrayList<>(),recursosActividadscdh = new ArrayList<>();
     @Getter    @Setter    private Double pretecho2000=0D,pretecho3000=0D,pretecho4000=0D,pretecho5000=0D,pretechoCPDD=0D,totalPretecho=0D;
@@ -78,10 +79,11 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
     
     @EJB    EjbPoaSelectec poaSelectec;
     @EJB    EjbPresupuestacion presupuestacion;
-    @Inject    ControladorEmpleado controladorEmpleado;
     @EJB    EjbAreasLogeo ejbAreasLogeo;
     @EJB    EjbUtilidadesCH ejbUtilidadesCH;
     @EJB    Facade f;
+    @Inject    ControladorEmpleado controladorEmpleado;
+    @Inject    UtilidadesPOA utilidadesPOA;
 
     @PostConstruct
     public void init() {
@@ -149,6 +151,7 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
     
     public void areaSeleccionada(ValueChangeEvent event) {
         try {
+            mss="";
             claveArea = 0;
             areaPOASeleccionada = new AreasUniversidad();
             procesopoa = new Procesopoa();
@@ -480,6 +483,12 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
             this.ejess = ejess;
             this.listaEstrategiases1 = listaEstrategiases1;
         }        
+    }
+    
+    public void enviarmensajes(String proceso) {
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOAPyE.enviarmensajes(proceso)"+proceso);
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOAPyE.enviarmensajes(mss)"+mss);
+        utilidadesPOA.enviarCorreo(proceso, "Ad", false, mss, areaPOASeleccionada);
     }
     
     public static class listaEstrategiaActividades {

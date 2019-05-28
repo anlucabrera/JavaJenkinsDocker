@@ -81,9 +81,14 @@
                             <f:facet name="right">
                                 <p:outputPanel>            
                                     <p:autoUpdate/>
-                                    <p:commandButton value="Finalizar validacion de registro de actividades" id="btnEnviaCorreo" 
-                                                     actionListener="#{utilidadesPOA.enviarCorreo(2,controladorRegistroActividadesPOAPyE.areaPOASeleccionada.correoInstitucional)}"
-                                                     process="@this" disabled="#{controladorRegistroActividadesPOAPyE.procesopoa.validacionRegistroA}"
+                                    <p:commandButton value="Liberar Programación" id="btnEnviaCorreoConfirmacion" 
+                                                     actionListener="#{utilidadesPOA.enviarCorreo('A', 'Ad',true,'',controladorRegistroActividadesPOAPyE.areaPOASeleccionada)}"
+                                                     process="@this" disabled="#{controladorRegistroActividadesPOAPyE.procesopoa.validacionRegistroA || !controladorRegistroActividadesPOAPyE.procesopoa.registroAFinalizado}"
+                                                     icon="fa fa-info-circle" styleClass="btn-primary"/>
+                                    <p:commandButton value="Denagar Programación" id="btnEnviaCorreoNegacion" 
+                                                     actionListener="#{controladorRegistroActividadesPOAPyE.imprimirValores()}"
+                                                     oncomplete="PF('dlgComentario').show()"
+                                                     process="@this" disabled="#{controladorRegistroActividadesPOAPyE.procesopoa.validacionRegistroA || !controladorRegistroActividadesPOAPyE.procesopoa.registroAFinalizado}"
                                                      icon="fa fa-info-circle" styleClass="btn-primary"/>
                                 </p:outputPanel>
                             </f:facet>
@@ -231,7 +236,22 @@
                 </div>
             </div>
         </h:form>
-
+        <h:form id="frmComentario">
+            <p:dialog header="Agregar Justificación" widgetVar="dlgComentario" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
+                <p:panelGrid id="pnlAgregarComentario" style="text-align:justify;" columns="1">
+                    <p:outputLabel value="Observaciones" />
+                    <p:inputTextarea id="txtComentario" value="#{controladorRegistroActividadesPOAPyE.mss}" 
+                                     rows="5" cols="95" counter="display" maxlength="2000" counterTemplate="{0} caracteres restantes." 
+                                     styleClass="form-control" autoResize="true" />
+                    <p:message for="txtComentario" />
+                    <h:outputText id="display" />
+                    <p:commandButton id="btnAceptarComentario" value="Aceptar"
+                                     actionListener="#{controladorRegistroActividadesPOAPyE.enviarmensajes('A')}"
+                                     icon="fa fa-chek" styleClass="btn-primary"  update=":frm:dtbBajas" onsuccess="actualizarTabla2()"
+                                     oncomplete="PF('dlgComentario').hide()" />
+                </p:panelGrid>
+            </p:dialog>
+        </h:form>
 
 
     </ui:define>

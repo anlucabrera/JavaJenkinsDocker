@@ -82,10 +82,16 @@
 
                                 <p:outputPanel>            
                                     <p:autoUpdate/>
-                                    <p:commandButton value="Finalizar validacion de registro de actividades" id="btnEnviaCorreo" 
-                                                     actionListener="#{utilidadesPOA.enviarCorreo(6,controladorRegistroActividadesPOAPyE.areaPOASeleccionada.correoInstitucional)}"
-                                                     process="@this" disabled="#{controladorRegistroActividadesPOAPyE.procesopoa.validacionJustificacion}"
+                                    <p:commandButton value="Liberar POA" id="btnEnviaCorreoConfirmacion" 
+                                                     actionListener="#{utilidadesPOA.enviarCorreo('J', 'Ad',true,'',controladorRegistroActividadesPOAPyE.areaPOASeleccionada)}"
+                                                     process="@this" disabled="#{controladorRegistroActividadesPOAPyE.procesopoa.validacionJustificacion || !controladorRegistroActividadesPOAPyE.procesopoa.registroJustificacionFinalizado}"
                                                      icon="fa fa-info-circle" styleClass="btn-primary"/>
+                                    <p:commandButton value="Denagar POA" id="btnEnviaCorreoNegacion" 
+                                                     actionListener="#{controladorRegistroActividadesPOAPyE.imprimirValores()}"
+                                                     oncomplete="PF('dlgObservacion').show()"
+                                                     process="@this" disabled="#{controladorRegistroActividadesPOAPyE.procesopoa.validacionJustificacion || !controladorRegistroActividadesPOAPyE.procesopoa.registroJustificacionFinalizado}"
+                                                     icon="fa fa-info-circle" styleClass="btn-primary"/>
+                                    
                                 </p:outputPanel>
                             </f:facet>
                         </p:toolbar>
@@ -104,9 +110,7 @@
                                                 <h:outputText value="#{ejesRegistro.ejeA.eje}.#{ejesRegistro.ejeA.nombre}" style="text-align: left"/>
                                             </p:column>
                                         </p:headerRow>
-                                        <p:column colspan="1">
-
-
+                                        <p:column colspan="1" style="padding: 0px 0px">
                                             <p:dataTable var="estrategiasRegistro"  sortBy="#{estrategiasRegistro.estrategias.estrategia}" expandableRowGroups="true"
                                                          value="#{ejesRegistro.listalistaEstrategiaLaAp}">
 
@@ -115,7 +119,7 @@
                                                         <h:outputText value="#{ejesRegistro.ejeA.eje}.#{estrategiasRegistro.estrategias.numero} -- #{estrategiasRegistro.estrategias.nombre}" style="text-align: left"/>
                                                     </p:column>
                                                 </p:headerRow>
-                                                <p:column colspan="1">
+                                                <p:column colspan="1" style="padding: 0px 0px">
                                                     <p:dataTable value="#{estrategiasRegistro.actividadesPoas}" 
                                                                  var="pOa" sortBy="#{pOa.cuadroMandoInt.lineaAccion.lineaAccion}" 
                                                                  rowStyleClass="#{pOa.numeroS eq 0?'actividad':''}" 
@@ -131,26 +135,26 @@
 
                                                         <p:columnGroup type="header">
                                                             <p:row class="success">
-                                                                <p:column colspan="2" rowspan="2" headerText="No." style="width: 3%; background-color: #cccccc; color: #000000;"/>
-                                                                <p:column rowspan="2" headerText="Actividad" style="width: 15%; background-color: #cccccc; color: #000000;"/>
-                                                                <p:column rowspan="2" headerText="Unidad de medida" style="width:6%; background-color: #cccccc; color: #000000;"/>
-                                                                <p:column colspan="12" headerText="Calendarización de Metas" style="width: 60%; background-color: #cccccc; color: #000000;"/>  
-                                                                <p:column rowspan="2" headerText="Total" style="width: 5%; background-color: #cccccc; color: #000000;"/>
-                                                                <p:column rowspan="2" headerText="Opciones" style="width:8%; background-color: #cccccc; color: #000000;"/>
+                                                                <p:column colspan="2" rowspan="2" headerText="No." style="width: 3%;" styleClass="hederTablesTitle"/>
+                                                                <p:column rowspan="2" headerText="Actividad" style="width: 15%;" styleClass="hederTablesTitle"/>
+                                                                <p:column rowspan="2" headerText="Unidad de medida" style="width:6%;" styleClass="hederTablesTitle"/>
+                                                                <p:column colspan="12" headerText="Calendarización de Metas" style="width: 60%;" styleClass="hederTablesTitle"/>  
+                                                                <p:column rowspan="2" headerText="Total" style="width: 5%;" styleClass="hederTablesTitle"/>
+                                                                <p:column rowspan="2" headerText="Opciones" style="width:8%;" styleClass="hederTablesTitle"/>
                                                             </p:row>
                                                             <p:row class="success">
-                                                                <p:column headerText="Enero" style="background-color: #cccccc; color: #000000;"/>
-                                                                <p:column headerText="Febrero" style="background-color: #cccccc; color: #000000;"/>
-                                                                <p:column headerText="Marzo" style="background-color: #cccccc; color: #000000;"/>
-                                                                <p:column headerText="Abril" style="background-color: #cccccc; color: #000000;"/>
-                                                                <p:column headerText="Mayo" style="background-color: #cccccc; color: #000000;"/>                                                    
-                                                                <p:column headerText="Junio" style="background-color: #cccccc; color: #000000;"/>
-                                                                <p:column headerText="Julio" style="background-color: #cccccc; color: #000000;"/>
-                                                                <p:column headerText="Agosto" style="background-color: #cccccc; color: #000000;"/>
-                                                                <p:column headerText="Septiembre" style="background-color: #cccccc; color: #000000;"/>
-                                                                <p:column headerText="Octubre" style="background-color: #cccccc; color: #000000;"/>
-                                                                <p:column headerText="Noviembre" style="background-color: #cccccc; color: #000000;"/>
-                                                                <p:column headerText="Diciembre" style="background-color: #cccccc; color: #000000;"/>
+                                                                <p:column headerText="Enero" styleClass="hederTablesTitle"/>
+                                                                <p:column headerText="Febrero" styleClass="hederTablesTitle"/>
+                                                                <p:column headerText="Marzo" styleClass="hederTablesTitle"/>
+                                                                <p:column headerText="Abril" styleClass="hederTablesTitle"/>
+                                                                <p:column headerText="Mayo" styleClass="hederTablesTitle"/>                                                    
+                                                                <p:column headerText="Junio" styleClass="hederTablesTitle"/>
+                                                                <p:column headerText="Julio" styleClass="hederTablesTitle"/>
+                                                                <p:column headerText="Agosto" styleClass="hederTablesTitle"/>
+                                                                <p:column headerText="Septiembre" styleClass="hederTablesTitle"/>
+                                                                <p:column headerText="Octubre" styleClass="hederTablesTitle"/>
+                                                                <p:column headerText="Noviembre" styleClass="hederTablesTitle"/>
+                                                                <p:column headerText="Diciembre" styleClass="hederTablesTitle"/>
                                                             </p:row>
                                                         </p:columnGroup>
 
@@ -254,23 +258,23 @@
 
                             <p:columnGroup type="header">
                                 <p:row class="success">
-                                    <p:column rowspan="2" headerText="Producto" />
-                                    <p:column colspan="12" headerText="Calendarización de Metas" style="width: 700px;"/>  
-                                    <p:column rowspan="2" headerText="Total" style="width: 80px;"/>
+                                    <p:column rowspan="2" headerText="Producto" styleClass="hederSubTablesTitle"/>
+                                    <p:column colspan="12" headerText="Calendarización de Metas" style="width: 700px;" styleClass="hederSubTablesTitle"/>  
+                                    <p:column rowspan="2" headerText="Total" style="width: 80px;" styleClass="hederSubTablesTitle"/>
                                 </p:row>
                                 <p:row class="success">
-                                    <p:column headerText="Ene" />
-                                    <p:column headerText="Feb" />
-                                    <p:column headerText="Mar" />
-                                    <p:column headerText="Abr" />
-                                    <p:column headerText="May" />                                                    
-                                    <p:column headerText="Jun" />
-                                    <p:column headerText="Jul" />
-                                    <p:column headerText="Ago" />
-                                    <p:column headerText="Sep" />
-                                    <p:column headerText="Oct" />
-                                    <p:column headerText="Nov" />
-                                    <p:column headerText="Dic" />
+                                    <p:column headerText="Ene" styleClass="hederSubTablesTitle"/>
+                                    <p:column headerText="Feb" styleClass="hederSubTablesTitle"/>
+                                    <p:column headerText="Mar" styleClass="hederSubTablesTitle"/>
+                                    <p:column headerText="Abr" styleClass="hederSubTablesTitle"/>
+                                    <p:column headerText="May" styleClass="hederSubTablesTitle"/>                                                    
+                                    <p:column headerText="Jun" styleClass="hederSubTablesTitle"/>
+                                    <p:column headerText="Jul" styleClass="hederSubTablesTitle"/>
+                                    <p:column headerText="Ago" styleClass="hederSubTablesTitle"/>
+                                    <p:column headerText="Sep" styleClass="hederSubTablesTitle"/>
+                                    <p:column headerText="Oct" styleClass="hederSubTablesTitle"/>
+                                    <p:column headerText="Nov" styleClass="hederSubTablesTitle"/>
+                                    <p:column headerText="Dic" styleClass="hederSubTablesTitle"/>
                                 </p:row>
                             </p:columnGroup>
 
@@ -332,5 +336,24 @@
             </p:dialog>
         </h:form>
 
+        
+        <h:form id="frmObservaciones">
+            <p:dialog header="Agregar Justificación" widgetVar="dlgObservacion" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
+                <p:panelGrid id="pnlAgregarObservacion" style="text-align:justify;" columns="1">
+                    <p:outputLabel value="Observaciones" />
+                    <p:inputTextarea id="txtComentario" value="#{controladorRegistroActividadesPOAPyE.mss}" 
+                                     rows="5" cols="95" counter="display" maxlength="2000" counterTemplate="{0} caracteres restantes." 
+                                     styleClass="form-control" autoResize="true" />
+                    <p:message for="txtComentario" />
+                    <h:outputText id="display" />
+                    <p:commandButton id="btnAceptarComentario" value="Aceptar"
+                                     actionListener="#{controladorRegistroActividadesPOAPyE.enviarmensajes('J')}"
+                                     icon="fa fa-chek" styleClass="btn-primary"  update=":frm:dtbBajas" onsuccess="actualizarTabla2()"
+                                     oncomplete="PF('dlgObservacion').hide()" />
+                </p:panelGrid>
+            </p:dialog>
+        </h:form>
+        
+        
     </ui:define>
 </ui:composition>

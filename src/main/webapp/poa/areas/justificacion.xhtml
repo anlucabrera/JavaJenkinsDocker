@@ -62,7 +62,7 @@
                                         </div>
                                         <div class="col-md-2 col-sm-2 col-xs-2">
                                         <p:commandButton value="Finalizar registro de actividades" id="btnEnviaCorreo" 
-                                                         actionListener="#{utilidadesPOA.enviarCorreo(5,'')}"
+                                                 actionListener="#{utilidadesPOA.enviarCorreo('J', 'Us',true,'',controladorEmpleado.nuevaAreasUniversidad)}"
                                                          process="@this" disabled="#{controladorEmpleado.procesopoa.registroJustificacionFinalizado}"
                                                          icon="fa fa-info-circle" styleClass="btn-primary"/>
                                         </div>
