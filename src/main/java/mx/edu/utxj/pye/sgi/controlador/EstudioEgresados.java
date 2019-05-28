@@ -76,6 +76,7 @@ public class EstudioEgresados implements Serializable {
     
     @PostConstruct
     public void init() {
+        validaReporte();
         cargada = false;
         selectItemCarreras = ejb.selectItemsProgramasEducativos();
         listaGeneraciones = ejb.getGeneraciones();
@@ -216,18 +217,18 @@ public class EstudioEgresados implements Serializable {
     }
 
     public void validaReporte() {
+        Integer evaluacion1;
+        evaluacion1 = ejb.geteEvaluacionActiva().getEvaluacion();
+        
         System.out.println("Siglas : " + siglas);
         System.out.println("Generacion : " + generacionSeleccionada);
         System.out.println("nivel generacion : " + nivelGeneraciones);
         System.out.println("fuiltro btn : " + tipoFiltro);
         listaResultadosReporte = new ArrayList<>();
         listaResultadosReporte.clear();
-        if (tipoFiltro.equalsIgnoreCase("completo")) {
-            System.out.println("Entra como reporte completo");
-//            listaResultadosReporte = ejb.getRestultadosEgresados();
-            listaResultadosGeneralesReporte = ejb.getRestultadosEgresados();
-            System.err.println("la lista original contiene : " + listaResultadosGeneralesReporte.size());
-            listaResultadosGeneralesReporte.forEach(x -> {
+        listaResultadosGeneralesReporte = ejb.getResultadosEvActiva(evaluacion1);
+        System.err.println("la lista original contiene : " + listaResultadosGeneralesReporte.size());
+      listaResultadosGeneralesReporte.forEach(x -> {
                 Comparador<EvaluacionEstudioEgresadosResultados> comparador = new ComparadorEvaluacionEstudioEgresados();
                 completo = comparador.isCompleto(x);
                 if(completo){
@@ -243,126 +244,7 @@ public class EstudioEgresados implements Serializable {
 //                } else {
 //                    Messages.addGlobalInfo("Se encontraron los registros");
 //                }
-        } else if (siglas != null) {
-            generacionSeleccionada = null;
-            System.out.println(" entra como siglas y las siglas son: " + siglas);
-            listaResultadosGeneralesReporte = ejb.getResultadosPorSilgas(siglas);
-            
-            listaResultadosGeneralesReporte.forEach(x -> {
-                Comparador<EvaluacionEstudioEgresadosResultados> comparador = new ComparadorEvaluacionEstudioEgresados();
-                completo = comparador.isCompleto(x);
-                if(completo){
-                listaResultadosReporte.add(x);    
-                }                
-            });
-            
-            siglas = null;
-            generacionSeleccionada = null;
-//            if (listaResultadosReporte == null || listaResultadosReporte.isEmpty()) {
-//                listaResultadosReporte.clear();
-//                Messages.addGlobalInfo("No se encontraron registros de este estudio pertenecientes a la carrera : " + siglas);
-//            } else {
-//                Messages.addGlobalInfo("Se encontraron los registros");
-//            }
-        } else if (generacionSeleccionada != null) {
-            siglas = "";
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.obtieneResultadosReporte() entra como generacion y la generacion es : " + generacionSeleccionada);
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.obtieneResultadosReporte() el nivel es : " + nivelGeneraciones);
-            if (nivelGeneraciones.equalsIgnoreCase("tsu")) {
-                System.out.println("Entra como tsu");
-                listaResultadosGeneralesReporte = ejb.getResultadosPorGeneracionTSU(generacionSeleccionada.toString());
-                
-                listaResultadosGeneralesReporte.forEach(x -> {
-                    Comparador<EvaluacionEstudioEgresadosResultados> comparador = new ComparadorEvaluacionEstudioEgresados();
-                    completo = comparador.isCompleto(x);
-                    if (completo) {
-                        listaResultadosReporte.add(x);
-                    }
-                });
-                siglas = null;
-                generacionSeleccionada = null;
-//                if (listaResultadosReporte == null || listaResultadosReporte.isEmpty()) {
-//                    listaResultadosReporte.clear();
-//                    Messages.addGlobalInfo("No se encontraron registros de este estudio en la generacion : " + generacion);
-//                } else {
-//                    Messages.addGlobalInfo("Se encontraron los registros");
-//                }
-
-            } else if (nivelGeneraciones.equalsIgnoreCase("ing")) {
-                System.out.println("Entra como ing");
-                listaResultadosGeneralesReporte = ejb.getResultadosPorGeneracionING(generacionSeleccionada.toString());
-                
-                listaResultadosGeneralesReporte.forEach(x -> {
-                    Comparador<EvaluacionEstudioEgresadosResultados> comparador = new ComparadorEvaluacionEstudioEgresados();
-                    completo = comparador.isCompleto(x);
-                    if (completo) {
-                        listaResultadosReporte.add(x);
-                    }
-                });
-                
-                
-                siglas = null;
-                generacionSeleccionada = null;
-//                if (listaResultadosReporte == null || listaResultadosReporte.isEmpty()) {
-//                    listaResultadosReporte.clear();
-//                    Messages.addGlobalInfo("No se encontraron registros de este estudio en la generacion : " + generacion);
-//                } else {
-//                    Messages.addGlobalInfo("Se encontraron los registros");
-//                }
-            } else {
-                Messages.addGlobalWarn("Debe seleccionar el nivel de la evaluacion");
-            }
-
-        } else {
-            Messages.addGlobalWarn("Debe completar correctamente el formulario");
-        }
-    }
-    
-    public void buscarRespuestas(){
         
-        
-        System.err.println("La matricula que entra es : " + matricula + " y la evaluacion activa es : " + evaluacion);
-        if (matricula == null) {
-            Messages.addGlobalInfo("Es necesario llenar el campo Matricula para poder continuar con la busqueda");
-        } else {
-             resultados = ejb.getResultadoIndividual(matricula);
-            if (resultados != null) {
-                ejb.vaciarRespuestas(resultados, respuestas);
-//                        System.out.println("Se crearon los resultados " + resultados);
-                iniciada = true;
-            }
-            finalizado = ejb.actualizarResultado(resultados);
-            Comparador<EvaluacionEstudioEgresadosResultados> comparador = new ComparadorEvaluacionEstudioEgresados();
-            completo = comparador.isCompleto(resultados);
-        }
-        
-//        if (!matricula.equals("")) {
-////            Alumnos a = ejb.getAlumnoPorMatricula(matricula);
-////            
-////            Personas p = ejb.getDatosPersonalesAlumnos(a.getAlumnosPK().getCveAlumno());
-////            Estudiante = new ListaEstudiantesDtoTutor(Integer.parseInt(matricula), p.getNombre() + " " + p.getApellidoPat() + " " + p.getApellidoMat(), Integer.parseInt(a.getGradoActual().toString()), a.getGrupos().getIdGrupo(), "");
-//            resultados = ejb.getResultadoIndividual(matricula);
-//            if (resultados != null) {
-//                respuestas = new HashMap<>();
-//                generaciones = ejb.getGeneraciones();
-//                resultados = ejb.getResultadoIndividual(matricula);
-//                finalizado = ejb.actualizarResultado(resultados);
-//                Comparador<EvaluacionEstudioEgresadosResultados> comparador = new ComparadorEvaluacionEstudioEgresados();
-//                completo = comparador.isCompleto(resultados);
-//                iniciada = true;
-////                if (resultados == null) {
-////                    sinRespuestas = true;
-////                    Messages.addGlobalWarn("Este usuario no cuenta con respuestas para mostrar");
-////                } else if (respuestas.containsKey("p0001") && respuestas.containsValue("")) {
-////
-////                } else {
-////                    sinRespuestas = false;
-////                }
-//            } else {
-//                iniciada = false;
-//                Messages.addGlobalWarn("Este usuario no cuenta con respuestas para mostrar, por favor inicie una nueva evaluacion");
-//            }
-//        }
     }
 
     public void generaNuevaEvaluación() {        

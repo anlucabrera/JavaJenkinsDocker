@@ -41,6 +41,9 @@ public interface EjbEstudioEgresados {
     /*
      *Generacion de reportes estudio egresados 
      */
+    
+   // Regresa lista de resultados de la evelaucion activa
+    public List<EvaluacionEstudioEgresadosResultados> getResultadosEvActiva(Integer evaluacion);
     public List<EvaluacionEstudioEgresadosResultados> getRestultadosEgresados();
     
     public List<EvaluacionEstudioEgresadosResultados> getResultadosPorGeneracionTSU(String generacion);

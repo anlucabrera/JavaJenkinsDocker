@@ -28,7 +28,7 @@
     </ui:define>
 
     <ui:define name="title">
-        Estudio egresados
+        Resultados de Estudios de Egresados
     </ui:define>
     <ui:define name="description">
 
@@ -38,52 +38,7 @@
         <h:form id="frm" prependId="false" class="form-inline">
             <div class="box box-primary">
                 <div class="box-header with-border">
-                    <div id="main-buttons" class="hidden-sm hidden-xs" >
-                        <p:outputPanel >
-                            <p:autoUpdate/>
-                            <p:toolbar id="tb">
-                                <f:facet name="right">
-                                    <h:panelGrid columns="12">
-                                        <h:outputText value="Combinacion de reporte " />
-                                        <p:spacer width="15"/>
-                                        <h:outputText value="Tipo: "/>
-                                        <p:spacer width="15"/>
-                                        <f:ajax execute="sobTipo">
-                                            <p:selectOneButton value="#{estudioEgresados.tipoFiltro}" id="sobTipo" style="margin-top: 4; margin-bottom: -3;">
-                                                <f:selectItem itemValue="G" itemLabel="Generación" itemDescription="Seleccion de filtro por generaciones"/>
-                                                <f:selectItem itemValue="C" itemLabel="Carrera" itemDescription="Seleccion de filtro por Carrera"/>
-                                                <f:selectItem itemValue="completo" itemLabel="Completo" itemDescription="Seleccion de filtro Completo"/>
-                                            </p:selectOneButton>
-                                        </f:ajax>
-                                        <f:ajax execute="somCarrera">
-                                            <p:selectOneMenu value="#{estudioEgresados.siglas}" id="somCarrera"  rendered="#{estudioEgresados.tipoFiltro eq ('C')}" >
-                                                <f:selectItem itemValue="" itemLabel="Seleccione una carrera" itemDescription=""/>
-                                                <f:selectItems value="#{estudioEgresados.selectItemCarreras}" var="carrera" itemValue="#{carrera.value}" itemLabel="#{carrera.label}" />
-                                            </p:selectOneMenu>
-                                        </f:ajax>
-                                        <f:ajax execute="somGeneracion">
-                                            <p:selectOneButton value="#{estudioEgresados.nivelGeneraciones}" id="sobNivel" style="margin-top: 4; margin-bottom: -3;" rendered="#{estudioEgresados.tipoFiltro eq ('G')}" >
-                                                <f:selectItem itemValue="TSU" itemLabel="TSU" itemDescription="Seleccion de filtro por generaciones tsu"/>
-                                                <f:selectItem itemValue="ING" itemLabel="ING" itemDescription="Seleccion de filtro por generaciones ing"/>
-                                            </p:selectOneButton>
-                                            <p:selectOneMenu value="#{estudioEgresados.generacionSeleccionada}" id="somGeneracion"  rendered="#{estudioEgresados.tipoFiltro eq ('G')}" >
-                                                <f:selectItem itemValue="" itemLabel="Seleccione una Generacion" itemDescription=""/>
-                                                <f:selectItems value="#{estudioEgresados.listaGeneraciones}" var="generacion" itemValue="#{generacion.generacion}" itemLabel="#{generacion.inicio} - #{generacion.fin}" />
-                                            </p:selectOneMenu>
-                                        </f:ajax>
-                                        <f:ajax execute="btnGenera">
-                                            <p:commandButton id="btnGenera" value="Generar resultados" icon="fa fa-refresh" class="btn btn-primary"
-                                                             actionListener="#{estudioEgresados.validaReporte()}"
-                                                             process="@form" update="tblReporte" 
-                                                             oncomplete="location.reload(true)"
-                                                             rendered="#{ estudioEgresados.tipoFiltro eq ('completo') ||   estudioEgresados.tipoFiltro eq ('C') ||  estudioEgresados.tipoFiltro eq ('G') }"/>
-                                        </f:ajax>
-                                    </h:panelGrid>
-                                </f:facet>
-                            </p:toolbar>
-                            <p:sticky target="tb" />
-                        </p:outputPanel>
-                    </div>
+                    
                     <div class="box box-solid">
                         <!--                        <div class="box-header">
                                                     <div class="well well-md">
@@ -828,5 +783,7 @@
                 </div>
             </div>
         </h:form>
+        
+ 
     </ui:define>
 </ui:composition>

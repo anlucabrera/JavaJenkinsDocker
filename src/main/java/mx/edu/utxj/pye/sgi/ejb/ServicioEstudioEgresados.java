@@ -40,17 +40,20 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
 
     @Override
     public Evaluaciones geteEvaluacionActiva() {
-//        TypedQuery<Evaluaciones> q = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class);
-//        q.setParameter("tipo", "Estudio egresados");
-//        q.setParameter("fecha", new Date());
+        TypedQuery<Evaluaciones> q = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class);
+        q.setParameter("tipo", "Estudio egresados");
+        q.setParameter("fecha", new Date());
+       
 
-        StoredProcedureQuery q = f.getEntityManager().createStoredProcedureQuery("buscar_evaluacion_estudio_egresados", Evaluaciones.class);
+      //  StoredProcedureQuery q = f.getEntityManager().createStoredProcedureQuery("buscar_evaluacion_estudio_egresados", Evaluaciones.class);
 
         List<Evaluaciones> l = q.getResultList();
+        System.out.println("Evaluacion activa de Seguimiento de Egresados es" + l.get(0).getEvaluacion());
         if (l.isEmpty()) {
             return null;
         } else {
             return l.get(0);
+
         }
     }
 
@@ -553,6 +556,21 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
         q.setParameter("siglas", siglas);
         List<EvaluacionEstudioEgresadosResultados> l = q.getResultList();
         if(l.isEmpty() || l == null){
+            return null;
+        }else{
+            return l;
+        }
+    }
+
+    @Override
+    public List<EvaluacionEstudioEgresadosResultados> getResultadosEvActiva(Integer evaluacion) {
+        System.out.println("Evalaucion a buscar" + evaluacion);
+        TypedQuery<EvaluacionEstudioEgresadosResultados> q = f.getEntityManager().createQuery("SELECT e FROM EvaluacionEstudioEgresadosResultados e WHERE e.evaluacionEstudioEgresadosResultadosPK.evaluacion=:evaluacion", EvaluacionEstudioEgresadosResultados.class);
+        q.setParameter("evaluacion", evaluacion);
+        List<EvaluacionEstudioEgresadosResultados> l = new ArrayList<>();
+        l = q.getResultList();
+        System.out.println("Tamaño de la lista en ejb de resultados de la evaluacion activa");
+        if(l.isEmpty()|| l == null){
             return null;
         }else{
             return l;
