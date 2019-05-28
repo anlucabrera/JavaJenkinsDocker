@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
@@ -18,10 +17,8 @@ import javax.inject.Inject;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
-import mx.edu.utxj.pye.sgi.dto.DtoAlumnos;
 import mx.edu.utxj.pye.sgi.dto.ListaEstudiantesDtoTutor;
 import mx.edu.utxj.pye.sgi.ejb.EjbEstudioEgresados;
-import mx.edu.utxj.pye.sgi.ejb.EjbEvaluacionEstadia;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionEstudioEgresadosResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
@@ -30,7 +27,6 @@ import mx.edu.utxj.pye.sgi.funcional.Comparador;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionEstudioEgresados;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Personas;
-import mx.edu.utxj.pye.sgi.saiiut.entity.ViewEstudianteAsesorAcademico;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 
@@ -80,19 +76,24 @@ public class EstudioEgresados implements Serializable {
     
     @PostConstruct
     public void init() {
+        validaReporte();
         cargada = false;
         selectItemCarreras = ejb.selectItemsProgramasEducativos();
         listaGeneraciones = ejb.getGeneraciones();
         if (logonMB.getUsuarioTipo() == UsuarioTipo.ESTUDIANTE) {
-            alumnos = ejb.procedimiento(logonMB.getCurrentUser());
-            if(alumnos != null){
+            alumnos = ejb.getAlumnoPorMatricula(logonMB.getCurrentUser());
+//            System.out.println("alumnos = " + alumnos);
+//            System.out.println("alumnos.getGradoActual() = " + alumnos.getGradoActual());
+            if (alumnos.getGradoActual() == 11 && (alumnos.getCveStatus().equals(6) || alumnos.getCveStatus().equals(1)) && 
+                    alumnos.getCveGeneracion().equals(190)) {
                 ING = true;
+            } else  if (alumnos.getGradoActual() >=6 &&alumnos.getGradoActual() < 11) {
+                TSU = false;
             }
-            //System.out.println("ING = " + ING);
             try {
                 // modificar para aperturar a onceavos o sextos
 //                if(alumnos.getGradoActual() == 11){ //estudiantes egresadod de 11 vo
-                if (ING) {   //Estudiantes egresados de 6to grado
+                if(ING){   //Estudiantes egresados de 6to grado
 //                if ( alumnos.getGradoActual() == 11 || alumnos.getGradoActual() >=6 &&alumnos.getGradoActual() <=7) { //Estudiantes egresados de 6to y 11vo grado
                     finalizado = false;
                     respuestas = new HashMap<>();
@@ -216,18 +217,18 @@ public class EstudioEgresados implements Serializable {
     }
 
     public void validaReporte() {
+        Integer evaluacion1;
+        evaluacion1 = ejb.geteEvaluacionActiva().getEvaluacion();
+        
         System.out.println("Siglas : " + siglas);
         System.out.println("Generacion : " + generacionSeleccionada);
         System.out.println("nivel generacion : " + nivelGeneraciones);
         System.out.println("fuiltro btn : " + tipoFiltro);
         listaResultadosReporte = new ArrayList<>();
         listaResultadosReporte.clear();
-        if (tipoFiltro.equalsIgnoreCase("completo")) {
-            System.out.println("Entra como reporte completo");
-//            listaResultadosReporte = ejb.getRestultadosEgresados();
-            listaResultadosGeneralesReporte = ejb.getRestultadosEgresados();
-            System.err.println("la lista original contiene : " + listaResultadosGeneralesReporte.size());
-            listaResultadosGeneralesReporte.forEach(x -> {
+        listaResultadosGeneralesReporte = ejb.getResultadosEvActiva(evaluacion1);
+        System.err.println("la lista original contiene : " + listaResultadosGeneralesReporte.size());
+      listaResultadosGeneralesReporte.forEach(x -> {
                 Comparador<EvaluacionEstudioEgresadosResultados> comparador = new ComparadorEvaluacionEstudioEgresados();
                 completo = comparador.isCompleto(x);
                 if(completo){
@@ -237,79 +238,13 @@ public class EstudioEgresados implements Serializable {
             System.err.println("la lista final contiene : " + listaResultadosReporte.size());
             siglas = null;
             generacionSeleccionada = null;
-        } else if (siglas != null) {
-            generacionSeleccionada = null;
-            System.out.println(" entra como siglas y las siglas son: " + siglas);
-            listaResultadosGeneralesReporte = ejb.getResultadosPorSilgas(siglas);
-            
-            listaResultadosGeneralesReporte.forEach(x -> {
-                Comparador<EvaluacionEstudioEgresadosResultados> comparador = new ComparadorEvaluacionEstudioEgresados();
-                completo = comparador.isCompleto(x);
-                if(completo){
-                listaResultadosReporte.add(x);    
-                }                
-            });
-            
-            siglas = null;
-            generacionSeleccionada = null;
-        } else if (generacionSeleccionada != null) {
-            siglas = "";
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.obtieneResultadosReporte() entra como generacion y la generacion es : " + generacionSeleccionada);
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.EstudioEgresados.obtieneResultadosReporte() el nivel es : " + nivelGeneraciones);
-            if (nivelGeneraciones.equalsIgnoreCase("tsu")) {
-                System.out.println("Entra como tsu");
-                listaResultadosGeneralesReporte = ejb.getResultadosPorGeneracionTSU(generacionSeleccionada.toString());
-                
-                listaResultadosGeneralesReporte.forEach(x -> {
-                    Comparador<EvaluacionEstudioEgresadosResultados> comparador = new ComparadorEvaluacionEstudioEgresados();
-                    completo = comparador.isCompleto(x);
-                    if (completo) {
-                        listaResultadosReporte.add(x);
-                    }
-                });
-                siglas = null;
-                generacionSeleccionada = null;
-            } else if (nivelGeneraciones.equalsIgnoreCase("ing")) {
-                System.out.println("Entra como ing");
-                listaResultadosGeneralesReporte = ejb.getResultadosPorGeneracionING(generacionSeleccionada.toString());
-                
-                listaResultadosGeneralesReporte.forEach(x -> {
-                    Comparador<EvaluacionEstudioEgresadosResultados> comparador = new ComparadorEvaluacionEstudioEgresados();
-                    completo = comparador.isCompleto(x);
-                    if (completo) {
-                        listaResultadosReporte.add(x);
-                    }
-                });
-                
-                
-                siglas = null;
-                generacionSeleccionada = null;
-            } else {
-                Messages.addGlobalWarn("Debe seleccionar el nivel de la evaluacion");
-            }
-
-        } else {
-            Messages.addGlobalWarn("Debe completar correctamente el formulario");
-        }
-    }
-    
-    public void buscarRespuestas(){
+//                if (listaResultadosReporte == null || listaResultadosReporte.isEmpty()) {
+//                    listaResultadosReporte.clear();
+//                    Messages.addGlobalInfo("No se encontraron registros de este estudio, si considera esto un error contacte con el administador ");
+//                } else {
+//                    Messages.addGlobalInfo("Se encontraron los registros");
+//                }
         
-        
-        System.err.println("La matricula que entra es : " + matricula + " y la evaluacion activa es : " + evaluacion);
-        if (matricula == null) {
-            Messages.addGlobalInfo("Es necesario llenar el campo Matricula para poder continuar con la busqueda");
-        } else {
-             resultados = ejb.getResultadoIndividual(matricula);
-            if (resultados != null) {
-                ejb.vaciarRespuestas(resultados, respuestas);
-//                        System.out.println("Se crearon los resultados " + resultados);
-                iniciada = true;
-            }
-            finalizado = ejb.actualizarResultado(resultados);
-            Comparador<EvaluacionEstudioEgresadosResultados> comparador = new ComparadorEvaluacionEstudioEgresados();
-            completo = comparador.isCompleto(resultados);
-        }
     }
 
     public void generaNuevaEvaluación() {        

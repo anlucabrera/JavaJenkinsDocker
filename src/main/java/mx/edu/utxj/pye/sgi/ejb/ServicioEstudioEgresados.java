@@ -4,24 +4,22 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.faces.model.SelectItem;
-import javax.persistence.*;
-
+import javax.persistence.StoredProcedureQuery;
+import javax.persistence.TypedQuery;
 import lombok.NonNull;
-import mx.edu.utxj.pye.sgi.dto.DtoAlumnos;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionEstudioEgresadosResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionEstudioEgresadosResultadosPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
-import mx.edu.utxj.pye.sgi.entity.sescolares.Alumno;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionEstudioEgresados;
-import mx.edu.utxj.pye.sgi.saiiut.entity.*;
+import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
+import mx.edu.utxj.pye.sgi.saiiut.entity.Personas;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 
 @Stateful
@@ -42,24 +40,27 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
 
     @Override
     public Evaluaciones geteEvaluacionActiva() {
-//        TypedQuery<Evaluaciones> q = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class);
-//        q.setParameter("tipo", "Estudio egresados");
-//        q.setParameter("fecha", new Date());
+        TypedQuery<Evaluaciones> q = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class);
+        q.setParameter("tipo", "Estudio egresados");
+        q.setParameter("fecha", new Date());
+       
 
-        StoredProcedureQuery q = f.getEntityManager().createStoredProcedureQuery("buscar_evaluacion_estudio_egresados", Evaluaciones.class);
+      //  StoredProcedureQuery q = f.getEntityManager().createStoredProcedureQuery("buscar_evaluacion_estudio_egresados", Evaluaciones.class);
 
         List<Evaluaciones> l = q.getResultList();
+        System.out.println("Evaluacion activa de Seguimiento de Egresados es" + l.get(0).getEvaluacion());
         if (l.isEmpty()) {
             return null;
         } else {
             return l.get(0);
+
         }
     }
 
     @Override
     public Alumnos getAlumnoPorMatricula(String matricula) {
         TypedQuery<Alumnos> q = f2.getEntityManager().createQuery("SELECT a from Alumnos as a WHERE a.matricula = :matricula ORDER BY a.gradoActual DESC", Alumnos.class);
-        q.setParameter("matricula", matricula);
+        q.setParameter("matricula", matricula.toString());
         List<Alumnos> l = q.getResultList();
         if (l.isEmpty()) {
             return new Alumnos();
@@ -562,23 +563,17 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
     }
 
     @Override
-    public Alumnos procedimiento(String matricula){
-        Short grado = 11;
-        List<Alumnos> a = f2.getEntityManager()
-                .createQuery("select a from Alumnos as a " +
-                        "inner join Grupos as g on a.grupos.gruposPK.cveGrupo = g.gruposPK.cveGrupo " +
-                        "where g.gruposPK.cvePeriodo = :periodo and (a.cveStatus = :estatus1 or a.cveStatus = :estatus2) and a.matricula = :matricula and a.gradoActual = :grado", Alumnos.class)
-                .setParameter("periodo", 50)
-                .setParameter("estatus1", 1)
-                .setParameter("estatus2", 6)
-                .setParameter("matricula", matricula)
-                .setParameter("grado", grado)
-                .getResultStream().collect(Collectors.toList());
-        a.forEach(x -> System.out.println(x.getMatricula()+"-"+x.getGrupos().getGruposPK().getCvePeriodo()));
-        if(!a.isEmpty()){
-            return a.get(0);
-        }else {
+    public List<EvaluacionEstudioEgresadosResultados> getResultadosEvActiva(Integer evaluacion) {
+        System.out.println("Evalaucion a buscar" + evaluacion);
+        TypedQuery<EvaluacionEstudioEgresadosResultados> q = f.getEntityManager().createQuery("SELECT e FROM EvaluacionEstudioEgresadosResultados e WHERE e.evaluacionEstudioEgresadosResultadosPK.evaluacion=:evaluacion", EvaluacionEstudioEgresadosResultados.class);
+        q.setParameter("evaluacion", evaluacion);
+        List<EvaluacionEstudioEgresadosResultados> l = new ArrayList<>();
+        l = q.getResultList();
+        System.out.println("Tamaño de la lista en ejb de resultados de la evaluacion activa");
+        if(l.isEmpty()|| l == null){
             return null;
+        }else{
+            return l;
         }
     }
 

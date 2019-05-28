@@ -4,15 +4,12 @@ import java.util.List;
 import java.util.Map;
 import javax.ejb.Local;
 import javax.faces.model.SelectItem;
-
-import mx.edu.utxj.pye.sgi.dto.DtoAlumnos;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionEstudioEgresadosResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.sescolares.Alumno;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Personas;
-import mx.edu.utxj.pye.sgi.saiiut.entity.ViewEstudianteAsesorAcademico;
 
 @Local
 public interface EjbEstudioEgresados {
@@ -44,6 +41,9 @@ public interface EjbEstudioEgresados {
     /*
      *Generacion de reportes estudio egresados 
      */
+    
+   // Regresa lista de resultados de la evelaucion activa
+    public List<EvaluacionEstudioEgresadosResultados> getResultadosEvActiva(Integer evaluacion);
     public List<EvaluacionEstudioEgresadosResultados> getRestultadosEgresados();
     
     public List<EvaluacionEstudioEgresadosResultados> getResultadosPorGeneracionTSU(String generacion);
@@ -51,7 +51,5 @@ public interface EjbEstudioEgresados {
     public List<EvaluacionEstudioEgresadosResultados> getResultadosPorGeneracionING(String generacion);
     
     public List<EvaluacionEstudioEgresadosResultados> getResultadosPorSilgas(String siglas);
-
-    public Alumnos procedimiento(String matricula);
-
+    
 }
