@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -24,12 +25,16 @@ import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.pye2.CapacidadInstaladaCiclosEscolares;
+import mx.edu.utxj.pye.sgi.entity.pye2.DistribucionAulasCicloPeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.pye2.DistribucionLabtallCicloPeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.EquiposComputoCicloPeriodoEscolar;
 import mx.edu.utxj.pye.sgi.entity.pye2.EquiposComputoInternetCicloPeriodoEscolar;
 import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbDistribucionEquipamiento;
+import mx.edu.utxj.pye.siip.interfaces.eb.EjbDistribucionInstalaciones;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbMatriculaPeriodosEscolares;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbReportesEBExcel;
 import org.apache.poi.ss.usermodel.CellType;
@@ -54,6 +59,7 @@ public class ServicioReporteEBExcel implements EjbReportesEBExcel{
     
     @EJB    EjbDistribucionEquipamiento             ejbDistribucionEquipamiento;
     @EJB    EjbMatriculaPeriodosEscolares           ejbMatriculaPeriodosEscolares;
+    @EJB    EjbDistribucionInstalaciones            ejbDistribucionInstalaciones;
     
     public static final String REPORTE_DISTRIBUCION_EQUIPAMIENTO_PLANTILLA = "reporte_distribucion_equipamiento_plantilla.xlsx";
     public static final String REPORTE_DISTRIBUCION_EQUIPAMIENTO_COPIA = "reporte_distribucion_equipamiento_copia.xlsx";
@@ -62,6 +68,10 @@ public class ServicioReporteEBExcel implements EjbReportesEBExcel{
     public static final String REPORTE_MATRICULA_PLANTILLA = "reporte_matricula_plantilla.xlsx";
     public static final String REPORTE_MATRICULA_COPIA = "reporte_matricula_copia.xlsx";
     public static final String REPORTE_MATRICULA_ACTUALIZADO = "reporte_matricula_actualizado.xlsx";
+    
+    public static final String REPORTE_DISTRIBUCION_INSTALACIONES_PLANTILLA = "reporte_distribucion_instalaciones_plantilla.xlsx";
+    public static final String REPORTE_DISTRIBUCION_INSTALACIONES_COPIA = "reporte_distribucion_instalaciones_copia.xlsx";
+    public static final String REPORTE_DISTRIBUCION_INSTALACIONES_ACTUALIZADO = "reporte_distribucion_instalaciones_actualizado.xlsx";
     
     @Getter private final String[] ejes = ServicioArchivos.EJES;
 
@@ -569,6 +579,271 @@ public class ServicioReporteEBExcel implements EjbReportesEBExcel{
     
     public String getFuenteInformacion(Short areasUniversidad){
         return f.getEntityManager().find(AreasUniversidad.class, areasUniversidad).getNombre();
+    }
+
+    @Override
+    public String getReportePorPeriodoEscolarDistribucionInstalaciones(PeriodosEscolares periodoEscolar, AreasUniversidad areaUniversidad) throws Throwable {
+        String plantilla = crearDirectorioReporte(ejes[0]).concat(REPORTE_DISTRIBUCION_INSTALACIONES_PLANTILLA );
+        String plantillaCopia = crearDirectorioReporteCompleto(ejes[0]).concat(REPORTE_DISTRIBUCION_INSTALACIONES_COPIA);
+        String plantillaCompleto = crearDirectorioReporteCompleto(ejes[0]).concat(REPORTE_DISTRIBUCION_INSTALACIONES_ACTUALIZADO);
+        
+        try {
+            Files.copy(FileSystems.getDefault().getPath(plantilla), FileSystems.getDefault().getPath(plantillaCopia), StandardCopyOption.REPLACE_EXISTING);
+            File archivoCopia = FileSystems.getDefault().getPath(plantillaCopia).toFile();
+            XSSFWorkbook reporteDistribucionInstalaciones = new XSSFWorkbook();
+            reporteDistribucionInstalaciones = (XSSFWorkbook) WorkbookFactory.create(archivoCopia);
+            XSSFSheet hojaCapacidadInstalada = reporteDistribucionInstalaciones.getSheetAt(0);
+            XSSFSheet hojaDistribucionInstalaciones = reporteDistribucionInstalaciones.getSheetAt(1);
+            XSSFSheet hojaDistribucionLaboratoriosTalleres = reporteDistribucionInstalaciones.getSheetAt(2);
+
+            XSSFRow fila;
+            XSSFCell celda;
+            
+            List<CapacidadInstaladaCiclosEscolares> capacidadInstalada = ejbDistribucionInstalaciones.getReporteCuatrimestralCapacidadInstaladaCicloPeriodosEscolares(periodoEscolar, areaUniversidad);
+            List<DistribucionAulasCicloPeriodosEscolares> distribucionAulas = ejbDistribucionInstalaciones.getReporteCuatrimestralDistribucionAulas(periodoEscolar, areaUniversidad);
+            List<DistribucionLabtallCicloPeriodosEscolares> distribucionLabTall = ejbDistribucionInstalaciones.getReporteCuatrimestralDistribucionLaboratoriosTalleres(periodoEscolar, areaUniversidad);
+            
+//            Capacidad Instalada
+            for(Integer listaCI = 0; listaCI < capacidadInstalada.size(); listaCI++){
+                Integer ubicacion = listaCI + 3;
+                
+                fila = (XSSFRow) (Row) hojaCapacidadInstalada.getRow(ubicacion);
+                if(null == fila){
+                    fila = hojaCapacidadInstalada.createRow(ubicacion);
+                }
+                
+//                Ejercicio
+                celda = fila.getCell(0);
+                if (null == celda) {
+                    fila.createCell(0, CellType.NUMERIC);
+                }
+                fila.getCell(0).setCellValue(capacidadInstalada.get(listaCI).getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+                
+//                Mes
+                celda = fila.getCell(1);
+                if (null == celda) {
+                    fila.createCell(1, CellType.STRING);
+                }
+                fila.getCell(1).setCellValue(capacidadInstalada.get(listaCI).getRegistros().getEventoRegistro().getMes());
+                
+                CiclosEscolares cicloEscolarTemporal = new CiclosEscolares();
+                cicloEscolarTemporal = f.getEntityManager().find(CiclosEscolares.class, capacidadInstalada.get(listaCI).getCicloEscolar());
+                
+//                Ciclo Escolar
+                celda = fila.getCell(2);
+                if (null == celda) {
+                    fila.createCell(2, CellType.STRING);
+                }
+                fila.getCell(2).setCellValue(dateToCalendar(cicloEscolarTemporal.getInicio()).get(Calendar.YEAR) + "-" + dateToCalendar(cicloEscolarTemporal.getFin()).get(Calendar.YEAR));
+                
+//                Descripción
+                celda = fila.getCell(3);
+                if (null == celda) {
+                    fila.createCell(3, CellType.STRING);
+                }
+                fila.getCell(3).setCellValue(capacidadInstalada.get(listaCI).getInstalacion().getDescripcion());
+                
+//                Capacidad
+                celda = fila.getCell(4);
+                if (null == celda) {
+                    fila.createCell(4, CellType.STRING);
+                }
+                fila.getCell(4).setCellValue(capacidadInstalada.get(listaCI).getInstalacion().getCapacidad());
+                
+//                Unidades
+                celda = fila.getCell(5);
+                if (null == celda) {
+                    fila.createCell(5, CellType.STRING);
+                }
+                fila.getCell(5).setCellValue(capacidadInstalada.get(listaCI).getUnidades());
+                
+//                Fuente de información
+                celda = fila.getCell(6);
+                if (null == celda) {
+                    fila.createCell(6, CellType.STRING);
+                }
+                fila.getCell(6).setCellValue(getFuenteInformacion(capacidadInstalada.get(listaCI).getRegistros().getArea()));
+            }
+            
+//            Distribución de aulas
+            for(Integer listaDA = 0; listaDA < distribucionAulas.size(); listaDA++){
+                Integer ubicacion = listaDA + 3;
+                
+                fila = (XSSFRow) (Row) hojaDistribucionInstalaciones.getRow(ubicacion);
+                if(null == fila){
+                    fila = hojaDistribucionInstalaciones.createRow(ubicacion);
+                }
+                
+//                Ejercicio
+                celda = fila.getCell(0);
+                if (null == celda) {
+                    fila.createCell(0, CellType.NUMERIC);
+                }
+                fila.getCell(0).setCellValue(distribucionAulas.get(listaDA).getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+                
+//                Mes
+                celda = fila.getCell(1);
+                if (null == celda) {
+                    fila.createCell(1, CellType.STRING);
+                }
+                fila.getCell(1).setCellValue(distribucionAulas.get(listaDA).getRegistros().getEventoRegistro().getMes());
+                
+                CiclosEscolares cicloEscolarTemporal = new CiclosEscolares();
+                cicloEscolarTemporal = f.getEntityManager().find(CiclosEscolares.class, distribucionAulas.get(listaDA).getCicloEscolar());
+                
+//                Ciclo Escolar
+                celda = fila.getCell(2);
+                if (null == celda) {
+                    fila.createCell(2, CellType.STRING);
+                }
+                fila.getCell(2).setCellValue(dateToCalendar(cicloEscolarTemporal.getInicio()).get(Calendar.YEAR) + "-" + dateToCalendar(cicloEscolarTemporal.getFin()).get(Calendar.YEAR));
+                
+                PeriodosEscolares periodoEscolarDA = new PeriodosEscolares();
+                periodoEscolarDA = f.getEntityManager().find(PeriodosEscolares.class, distribucionAulas.get(listaDA).getPeriodoEscolar());
+                
+//                Periodo Escolar
+                celda = fila.getCell(3);
+                if (null == celda) {
+                    fila.createCell(3, CellType.STRING);
+                }
+                fila.getCell(3).setCellValue(periodoEscolarDA.getMesInicio().getMes()+"-"+periodoEscolarDA.getMesFin().getMes());
+                
+//                Nombre
+                celda = fila.getCell(4);
+                if (null == celda) {
+                    fila.createCell(4, CellType.STRING);
+                }
+                fila.getCell(4).setCellValue(distribucionAulas.get(listaDA).getAula().getNombre());
+                
+//                Capacidad Turno
+                celda = fila.getCell(5);
+                if (null == celda) {
+                    fila.createCell(5, CellType.STRING);
+                }
+                fila.getCell(5).setCellValue(distribucionAulas.get(listaDA).getAula().getCapacidadTurno());
+                
+//                Número
+                celda = fila.getCell(6);
+                if (null == celda) {
+                    fila.createCell(6, CellType.NUMERIC);
+                }
+                fila.getCell(6).setCellValue(distribucionAulas.get(listaDA).getNumero());
+                
+//                Acondicionados
+                celda = fila.getCell(7);
+                if (null == celda) {
+                    fila.createCell(7, CellType.NUMERIC);
+                }
+                fila.getCell(7).setCellValue(distribucionAulas.get(listaDA).getAcondicionadas());
+                
+//                Fuente de información
+                celda = fila.getCell(8);
+                if (null == celda) {
+                    fila.createCell(8, CellType.STRING);
+                }
+                fila.getCell(8).setCellValue(getFuenteInformacion(distribucionAulas.get(listaDA).getRegistros().getArea()));
+            }
+            
+//            Distribución de laboratorios y talleres
+            for(Integer listaDLT = 0; listaDLT < distribucionLabTall.size(); listaDLT++){
+                Integer ubicacion = listaDLT + 3;
+                
+                fila = (XSSFRow) (Row) hojaDistribucionLaboratoriosTalleres.getRow(ubicacion);
+                if(null == fila){
+                    fila = hojaDistribucionLaboratoriosTalleres.createRow(ubicacion);
+                }
+                
+//                Ejercicio
+                celda = fila.getCell(0);
+                if (null == celda) {
+                    fila.createCell(0, CellType.NUMERIC);
+                }
+                fila.getCell(0).setCellValue(distribucionLabTall.get(listaDLT).getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+                
+//                Mes
+                celda = fila.getCell(1);
+                if (null == celda) {
+                    fila.createCell(1, CellType.STRING);
+                }
+                fila.getCell(1).setCellValue(distribucionLabTall.get(listaDLT).getRegistros().getEventoRegistro().getMes());
+                
+                CiclosEscolares cicloEscolarTemporal = new CiclosEscolares();
+                cicloEscolarTemporal = f.getEntityManager().find(CiclosEscolares.class, distribucionLabTall.get(listaDLT).getCicloEscolar());
+                
+//                Ciclo Escolar
+                celda = fila.getCell(2);
+                if (null == celda) {
+                    fila.createCell(2, CellType.STRING);
+                }
+                fila.getCell(2).setCellValue(dateToCalendar(cicloEscolarTemporal.getInicio()).get(Calendar.YEAR) + "-" + dateToCalendar(cicloEscolarTemporal.getFin()).get(Calendar.YEAR));
+                
+                PeriodosEscolares periodoEscolarDLT = new PeriodosEscolares();
+                periodoEscolarDLT = f.getEntityManager().find(PeriodosEscolares.class, distribucionLabTall.get(listaDLT).getPeriodoEscolar());
+                
+//                Periodo Escolar
+                celda = fila.getCell(3);
+                if (null == celda) {
+                    fila.createCell(3, CellType.STRING);
+                }
+                fila.getCell(3).setCellValue(periodoEscolarDLT.getMesInicio().getMes()+"-"+periodoEscolarDLT.getMesFin().getMes());
+                
+//                Aula
+                celda = fila.getCell(4);
+                if (null == celda) {
+                    fila.createCell(4, CellType.STRING);
+                }
+                fila.getCell(4).setCellValue(distribucionLabTall.get(listaDLT).getAulaTipo().getNombre());
+                
+//                Nombre
+                celda = fila.getCell(5);
+                if (null == celda) {
+                    fila.createCell(5, CellType.STRING);
+                }
+                fila.getCell(5).setCellValue(distribucionLabTall.get(listaDLT).getNombre());
+                
+//                Capacidad
+                celda = fila.getCell(6);
+                if (null == celda) {
+                    fila.createCell(6, CellType.STRING);
+                }
+                fila.getCell(6).setCellValue(distribucionLabTall.get(listaDLT).getCapacidad());
+                
+//                Área responsable
+                celda = fila.getCell(7);
+                if (null == celda) {
+                    fila.createCell(7, CellType.STRING);
+                }
+                fila.getCell(7).setCellValue(getFuenteInformacion(distribucionLabTall.get(listaDLT).getAreaResponsable()));
+                
+//                Fecha de habilitación
+                celda = fila.getCell(8);
+                if (null == celda) {
+                    fila.createCell(8, CellType.STRING);
+                }
+                fila.getCell(8).setCellValue(new SimpleDateFormat("yyyy-MM-dd").format(distribucionLabTall.get(listaDLT).getFechaHabilitacion()));
+                
+//                Fuente de información
+                celda = fila.getCell(9);
+                if (null == celda) {
+                    fila.createCell(9, CellType.STRING);
+                }
+                fila.getCell(9).setCellValue(getFuenteInformacion(distribucionLabTall.get(listaDLT).getRegistros().getArea()));
+                
+            }
+            
+            File archivoFinal = FileSystems.getDefault().getPath(plantillaCompleto).toFile();
+            FileOutputStream archivoSalida = new FileOutputStream(archivoFinal);
+            reporteDistribucionInstalaciones.write(archivoSalida);
+            reporteDistribucionInstalaciones.close();
+            archivoSalida.flush();
+            archivoSalida.close();
+            Files.deleteIfExists(FileSystems.getDefault().getPath(plantillaCopia));
+        } catch (FileNotFoundException ex) {
+            System.out.println("mx.edu.utxj.pye.siip.services.eb.ServicioReporteEBExcel.getReportePorPeriodoEscolarDistribucionInstalaciones() - Archivo no escontrado");
+        } catch (IOException ex) {
+            System.out.println("mx.edu.utxj.pye.siip.services.eb.ServicioReporteEBExcel.getReportePorPeriodoEscolarDistribucionInstalaciones() - Error de lectura o escritura (i/o)");
+        }
+        return plantillaCompleto;
     }
     
 }
