@@ -56,16 +56,19 @@
                                             <a href="poa/areas/registroActividades.xhtml">
                                                 EL proceso de Registro de Actividades ya está disponible
                                             </a>
+                                            <br/>
                                         </c:if>
                                         <c:if test="#{notificacionesTopBar.procesoPOAAr}">
                                             <a href="poa/areas/recursoActividad.xhtml">
                                                 EL proceso de Presupuestación ya está disponible
                                             </a>
+                                            <br/>
                                         </c:if>
                                         <c:if test="#{notificacionesTopBar.procesoPOAJu}">
                                             <a href="poa/areas/justificacion.xhtml">
                                                 EL proceso de Registro de Justificaciones ya está disponible
                                             </a>
+                                            <br/>
                                         </c:if>
                                     </c:if>
                                     <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 6 || controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 7 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
@@ -74,18 +77,21 @@
                                                 <a href="poa/pye/validacionProgramacionActividades.xhtml">
                                                     Tiene #{notificacionesTopBar.incrementoRA} POA’s por validar la estapa de Registro de Actividades 
                                                 </a>
+                                            <br/>
                                             </c:if>
                                             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 6 || controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 7 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
                                                 <c:if test="#{notificacionesTopBar.procesoPOAVar}">
                                                     <a href="poa/pye/validacionFinanzas.xhtml">
                                                         Tiene #{notificacionesTopBar.incrementoAR} POA’s por validar la estapa de Presupuestación
                                                     </a>
+                                            <br/>
                                                 </c:if>
                                             </c:if>
                                             <c:if test="#{notificacionesTopBar.procesoPOAVjus}">
                                                 <a href="poa/pye/validacionPyeFinal.xhtml">
                                                     Tiene #{notificacionesTopBar.incrementoJU} POA’s por validar la estapa de Registro de Justificaciones
                                                 </a>
+                                            <br/>
                                             </c:if>
                                         </c:if>
                                     </c:if>

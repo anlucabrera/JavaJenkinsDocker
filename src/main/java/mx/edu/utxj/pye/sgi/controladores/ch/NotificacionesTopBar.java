@@ -116,7 +116,9 @@ public class NotificacionesTopBar implements Serializable {
                         tienePOA = true;
                         procesopoa = ejbUtilidadesCH.mostrarEtapaPOA(nuevoOBJListaPersonal.getAreaOperativa());
                     } else {
-                        if (nuevaAreasUniversidad.getArea() == 6) {
+                        if (controladorEmpleado.getNuevoOBJListaPersonal().getClave() == 284 ||
+                                controladorEmpleado.getNuevoOBJListaPersonal().getClave() == 613 ||
+                                controladorEmpleado.getNuevoOBJListaPersonal().getClave() == 564) {
                             procesopoa = ejbUtilidadesCH.mostrarEtapaPOA(nuevoOBJListaPersonal.getAreaOperativa());
                         }
                         tienePOA = false;
@@ -125,8 +127,8 @@ public class NotificacionesTopBar implements Serializable {
             }
             if (tienePOA) {
                 procesoPOARa = !procesopoa.getRegistroAFinalizado();
-                procesoPOAAr = !(procesopoa.getValidacionRegistroA() && procesopoa.getAsiganacionRFinalizado());
-                procesoPOAJu = !(procesopoa.getValidacionRFFinalizado() && procesopoa.getRegistroJustificacionFinalizado());
+                procesoPOAAr = (procesopoa.getValidacionRegistroA() && !procesopoa.getAsiganacionRFinalizado());
+                procesoPOAJu = (procesopoa.getValidacionRFFinalizado() && !procesopoa.getRegistroJustificacionFinalizado());
             }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -136,7 +138,11 @@ public class NotificacionesTopBar implements Serializable {
 
     public void buscarProcesosPOAAdministrador() {
         try {
-            if (nuevoOBJListaPersonal.getAreaOperativa() == 6) {
+            if (controladorEmpleado.getNuevoOBJListaPersonal().getClave() == 148
+                    || controladorEmpleado.getNuevoOBJListaPersonal().getClave() == 284
+                    || controladorEmpleado.getNuevoOBJListaPersonal().getClave() == 564
+                    || controladorEmpleado.getNuevoOBJListaPersonal().getClave() == 613
+                    || controladorEmpleado.getNuevoOBJListaPersonal().getClave() == 619) {
                 incrementoRA = 0;
                 incrementoAR = 0;
                 incrementoJU = 0;

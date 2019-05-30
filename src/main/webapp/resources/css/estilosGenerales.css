@@ -175,16 +175,24 @@ button, input, optgroup, select, textarea{
     background-color: #cdd5e0;
     color: #000000;
 }
+body .ui-datatable th[role="columnheader"].ui-state-default, body .ui-treetable th[role="columnheader"].ui-state-default{
+    /*background-color: #cccccc;*/
+}
 
 .hederTablesTitle{
     border: 1px solid #000000;
     color: #fff !important;
     background-color: #666666 !important;
 }
+
 .hederSubTablesTitle{
     border: 1px solid #000000;
     color: #000000 !important;
     background-color: #9F9E9E !important;
+}
+
+.ui-steps .ui-steps-item {
+    width: 24%;
 }
 
 .ui-state-highlight {
