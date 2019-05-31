@@ -22,4 +22,11 @@ import lombok.ToString;
 public class ListadoGraficaEncuestaServicios {
     @Getter @Setter @NotNull private String siglas;
     @Getter @Setter private Long totalPorCarrera;
+
+    @EqualsAndHashCode(of = {"siglas"}) @RequiredArgsConstructor @AllArgsConstructor @ToString
+    public static class graficaEncuestaServiciosPorTutor{
+        @Getter @Setter @NotNull private String siglas;
+        @Getter @Setter private String cveGrupo;
+        @Getter @Setter private Long totalPorCarrera;
+    }
 }
