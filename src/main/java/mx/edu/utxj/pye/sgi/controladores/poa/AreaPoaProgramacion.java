@@ -31,7 +31,7 @@ import org.omnifaces.util.Faces;
 @Named
 @ManagedBean
 @ViewScoped
-public class ControladorPOARegistro implements Serializable {
+public class AreaPoaProgramacion implements Serializable {
 // Listas de entities optimizadas
     @Getter    @Setter    private List<EjesRegistro> consultaListaEjesRegistro = new ArrayList<>();
     @Getter    @Setter    private List<Estrategias> consultaListaEstrategias = new ArrayList<>();

@@ -34,7 +34,7 @@ import org.primefaces.event.RowEditEvent;
 @Named
 @ManagedBean
 @ViewScoped
-public class ControladorPOARecurso implements Serializable {
+public class AreaPoaPresupuestacion implements Serializable {
 // Listas de entitys desde BD 
     @Getter    @Setter    private List<Estrategias> consultaListaEstrategias = new ArrayList<>();
     @Getter    @Setter    private List<Partidas> consultaListaPartidas = new ArrayList<>();

@@ -42,7 +42,7 @@ import org.primefaces.model.StreamedContent;
 @Named
 @ManagedBean
 @ViewScoped
-public class ControladorPOAEvaluacionAreas implements Serializable {
+public class AreaPoaEvaluacion implements Serializable {
 
     private static final long serialVersionUID = -473305993584095094L;
 
@@ -636,7 +636,7 @@ public class ControladorPOAEvaluacionAreas implements Serializable {
             files.clear();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorPOAEvaluacionAreas.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AreaPoaEvaluacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     

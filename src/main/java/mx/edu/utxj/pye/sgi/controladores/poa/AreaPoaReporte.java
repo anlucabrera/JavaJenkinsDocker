@@ -23,7 +23,7 @@ import org.omnifaces.cdi.ViewScoped;
 @Named
 @ManagedBean
 @ViewScoped
-public class ConsultarPOAReporte implements Serializable {
+public class AreaPoaReporte implements Serializable {
     
     @Getter    @Setter    private Short ejercicioFiscal = 0;
     @Getter    @Setter    private Date fechaActual=new Date();
