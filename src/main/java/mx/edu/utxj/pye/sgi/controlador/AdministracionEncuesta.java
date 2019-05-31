@@ -42,7 +42,7 @@ public class AdministracionEncuesta implements Serializable{
                 dto.usuarioNomina=Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
                 dto.cveTrabajador= logonMB.getListaUsuarioClaveNomina().getCvePersona();
                 dto.cveDirector = dto.cveTrabajador.toString();
-                    if (!ejbAdmEncuesta.esDirectorDeCarrera(2, 2, 18, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
+                    if (!ejbAdmEncuesta.esDirectorDeCarrera(2, 2, 18, 48, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
                         dto.director = true;
                         aperturarEncuestas();
                     }

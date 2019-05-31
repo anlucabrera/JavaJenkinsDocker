@@ -26,14 +26,13 @@ public class DtoAlumnosEncuesta {
     @Getter @Setter private String segundoAp;
     @Getter @Setter private String siglas;
     @Getter @Setter private Short grado;
-    @Getter @Setter private Integer idgrupo;
     @Getter @Setter private String grupo;
     @Getter @Setter private Integer cveStatus;
     @Getter @Setter private Integer cvetutor;
     @Getter @Setter private String nombreTutor;
     @Getter @Setter private String primerApTutor;
     @Getter @Setter private String segundoApTutor;
-    @Getter @Setter private Integer cveDirector;
+    @Getter @Setter private String cveDirector;
     
     @RequiredArgsConstructor @AllArgsConstructor @ToString
     public static class DtoAlumnos{

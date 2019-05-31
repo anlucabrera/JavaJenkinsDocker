@@ -20,8 +20,20 @@ import lombok.ToString;
 @EqualsAndHashCode(of = {"siglas"}) @RequiredArgsConstructor @AllArgsConstructor @ToString
 public class ListaDatosAvanceEncuestaServicio {
     @Getter @Setter @NotNull private String siglas;
-    @Getter @Setter private Long totalPorCarrera;
-    @Getter @Setter private Long totalAlumnoEncTer;
-    @Getter @Setter private Long faltantesPorCont;
+    @Getter @Setter private Integer totalPorCarrera;
+    @Getter @Setter private Integer totalAlumnoEncTer;
+    @Getter @Setter private Integer faltantesPorCont;
     @Getter @Setter private Double porcentaje;
+
+
+    @EqualsAndHashCode(of = {"siglas"}) @RequiredArgsConstructor @AllArgsConstructor @ToString
+    public static class AvanceEncuestaServiciosPorGrupo{
+        @Getter @Setter @NotNull private String siglas;
+        @Getter @Setter private String cveGrupo;
+        @Getter @Setter private Short grado;
+        @Getter @Setter private Integer totalPorCarrera;
+        @Getter @Setter private Integer totalAlumnoEncTer;
+        @Getter @Setter private Integer faltantesPorCont;
+        @Getter @Setter private Double porcentaje;
+    }
 }
