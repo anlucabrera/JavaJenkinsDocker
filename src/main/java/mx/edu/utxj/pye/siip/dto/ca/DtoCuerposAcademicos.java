@@ -38,6 +38,7 @@ public final class DtoCuerposAcademicos {
     @Getter @Setter List<CuerposAcademicosRegistro> listaCuerposAcademicosIntLa;
     @Getter @Setter ListaPersonal persona;
     @Getter @Setter String mensaje;
+    @Getter @Setter private Boolean nuevoRegistro;
     
     /************************** Lista áreas ****************************************/
     @Getter private List<Categorias> listaCategoriasPOA;

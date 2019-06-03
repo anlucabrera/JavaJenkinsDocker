@@ -6,6 +6,8 @@
 package mx.edu.utxj.pye.siip.interfaces.eb;
 
 import javax.ejb.Local;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 /**
  *
@@ -17,5 +19,7 @@ public interface EjbReportesEBExcel {
     public String getReporteDistribucionEquipamiento() throws Throwable;
     
     public String getReporteMatriculaPorEjercicio() throws Throwable;
+    
+    public String getReportePorPeriodoEscolarDistribucionInstalaciones(PeriodosEscolares periodoEscolar, AreasUniversidad areaUniversidad) throws Throwable;
     
 }

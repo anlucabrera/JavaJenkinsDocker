@@ -338,6 +338,7 @@ public class ControladorConvenios implements Serializable {
         DTOConvenio dtoCon = new DTOConvenio();
         dtoCon.setConvenio(convenio);
         dtoConvenios.setRegistro(dtoCon);
+        dtoConvenios.getRegistro().getConvenio().setEmpresa(dtoCon.getConvenio().getEmpresa());
         dtoConvenios.setMensaje("");
         actualizaInterfazEdicionConvenio();
     }

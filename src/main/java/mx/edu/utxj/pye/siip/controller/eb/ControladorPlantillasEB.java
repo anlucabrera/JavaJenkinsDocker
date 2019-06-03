@@ -11,6 +11,8 @@ import java.io.Serializable;
 import javax.annotation.ManagedBean;
 import javax.ejb.EJB;
 import javax.inject.Named;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbPlantillasEBExcel;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbReportesEBExcel;
 import org.omnifaces.cdi.ViewScoped;
@@ -57,6 +59,11 @@ public class ControladorPlantillasEB implements Serializable{
     
     public void descargarReporteEjercicioMatriculaPeriodoEscolar() throws IOException, Throwable{
         File f = new File(ejbReportesEBExcel.getReporteMatriculaPorEjercicio());
+        Faces.sendFile(f, true);
+    }
+    
+    public void descargarReporteCuatrimestralDistribucionInstalaciones(PeriodosEscolares periodoEscolar, AreasUniversidad areaUniversidad) throws IOException, Throwable{
+        File f = new File(ejbReportesEBExcel.getReportePorPeriodoEscolarDistribucionInstalaciones(periodoEscolar, areaUniversidad));
         Faces.sendFile(f, true);
     }
 }
