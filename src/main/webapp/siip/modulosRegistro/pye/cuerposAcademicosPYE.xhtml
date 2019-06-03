@@ -157,6 +157,13 @@
 
                 <div class="box-body">
 
+                    <h:form id="abrirNuevoRegistroInfo">
+                        <div class="callout callout-info">
+                            <h4>¡Aviso!</h4>
+                            <p>Ahora ya puedes dar de alta nuevos Cuerpos Académicos mediante un formulario de registro: <code><p:commandLink ajax="false" action="#{controladorCuerposAcademicosPYE.nuevoRegistro()}" style="color:#4185A0;text-decoration:none;" title="Nuevo registro">Nuevo Registro</p:commandLink></code></p>
+                        </div>
+                    </h:form>
+
                     <!-- Sección de visualización y eliminación -->
                     <div class="row">
                         <div class="col-lg-12 col-md-12">
@@ -1044,148 +1051,154 @@
 
                                 <!--Fecha de inicio-->
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
-                                    <p:outputLabel value="Fecha de inicio: " for="iptFechaInicio" />
-                                    <br></br>
-                                    <p:spacer width="5" />
-                                    <p:calendar id="iptFechaInicio"
-                                                label="iptFechaInicio"
-                                                required="true"
-                                                requiredMessage="Ingrese Fecha de Inicio"
-                                                value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.fechaInicio}"
-                                                valueChangeListener="#{controladorCuerposAcademicosPYE.validaFechaInicio}"
-                                                pattern="yyyy-MM-dd" 
-                                                mask="true"
-                                                locale="es"
-                                                styleClass="campo2Partes"
-                                                >
-                                        <p:ajax event="dateSelect" process="iptFechaInicio" update="iptFechaTermino"/>
-                                        <p:ajax event="change" process="iptFechaInicio" update="iptFechaTermino"/>
-                                    </p:calendar>
-                                    <p:watermark for="iptFechaInicio" value="2019-03-19 *" />
-                                    <p:message for="iptFechaInicio" />
+                                    <div class="ui-material">
+                                        <p:calendar id="iptFechaInicio"
+                                                    label="iptFechaInicio"
+                                                    required="true"
+                                                    requiredMessage="Ingrese Fecha de Inicio"
+                                                    value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.fechaInicio}"
+                                                    valueChangeListener="#{controladorCuerposAcademicosPYE.validaFechaInicio}"
+                                                    pattern="yyyy-MM-dd" 
+                                                    mask="true"
+                                                    locale="es"
+                                                    styleClass="campo2Partes"
+                                                    showOn="both"
+                                                    >
+                                            <p:ajax event="dateSelect" process="iptFechaInicio" update="iptFechaTermino"/>
+                                            <p:ajax event="change" process="iptFechaInicio" update="iptFechaTermino"/>
+                                        </p:calendar>
+                                        <p:watermark for="iptFechaInicio" value="2019-03-19 *" />
+                                        <p:message for="iptFechaInicio" />
+                                        <p:outputLabel value="Fecha de inicio: " for="iptFechaInicio" />
+                                    </div>
                                 </div>
                                 <!--Fecha de termino-->
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
-                                    <p:outputLabel value="Fecha de termino: " for="iptFechaTermino" />
-                                    <br></br>
-                                    <p:spacer width="5" />
-                                    <p:calendar id="iptFechaTermino"
-                                                label="iptFechaTermino"
-                                                required="true"
-                                                requiredMessage="Ingrese Fecha de Termino"
-                                                value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.fechaTermino}"
-                                                valueChangeListener="#{controladorCuerposAcademicosPYE.validaFechaTermino}"
-                                                pattern="yyyy-MM-dd" 
-                                                mask="true"
-                                                styleClass="campo2Partes"
-                                                locale="es"
-                                                >
-                                        <p:ajax event="dateSelect" process="iptFechaTermino" update="iptFechaInicio"/>
-                                        <p:ajax event="change" process="iptFechaTermino" update="iptFechaInicio"/>
-                                    </p:calendar>
-                                    <p:watermark for="iptFechaTermino" value="2019-03-20 *" />
-                                    <p:message for="iptFechaTermino" />
+                                    <div class="ui-material">
+                                        <p:calendar id="iptFechaTermino"
+                                                    label="iptFechaTermino"
+                                                    required="true"
+                                                    requiredMessage="Ingrese Fecha de Termino"
+                                                    value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.fechaTermino}"
+                                                    valueChangeListener="#{controladorCuerposAcademicosPYE.validaFechaTermino}"
+                                                    pattern="yyyy-MM-dd" 
+                                                    mask="true"
+                                                    styleClass="campo2Partes"
+                                                    locale="es"
+                                                    showOn="both"
+                                                    >
+                                            <p:ajax event="dateSelect" process="iptFechaTermino" update="iptFechaInicio"/>
+                                            <p:ajax event="change" process="iptFechaTermino" update="iptFechaInicio"/>
+                                        </p:calendar>
+                                        <p:watermark for="iptFechaTermino" value="2019-03-20 *" />
+                                        <p:message for="iptFechaTermino" />
+                                        <p:outputLabel value="Fecha de termino: " for="iptFechaTermino" />
+                                    </div>
                                 </div>
 
                                 <!--Nombre del cuerpo académico-->
                                 <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
-                                    <p:outputLabel value="Nombre del cuerpo académico: " for="iptNombreCuerpoAcademico"/>
-                                    <p:inputText id="iptNombreCuerpoAcademico"
-                                                 label="iptNombreCuerpoAcademico"
-                                                 maxlength="250"
-                                                 required="true"
-                                                 class="form-control"
-                                                 requiredMessage="Ingrese el nombre del servicio tecnológico"
-                                                 value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.nombre}"/>
-                                    <p:watermark for="iptNombreCuerpoAcademico" value="Innovación tecnológica y/o sistemas bioelectrónicos *" />
-                                    <p:message for="iptNombreCuerpoAcademico" />
+                                    <div class="ui-material">
+                                        <p:inputText id="iptNombreCuerpoAcademico"
+                                                     label="iptNombreCuerpoAcademico"
+                                                     maxlength="250"
+                                                     required="true"
+                                                     class="form-control"
+                                                     requiredMessage="Ingrese el nombre del servicio tecnológico"
+                                                     value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.nombre}"/>
+                                        <p:watermark for="iptNombreCuerpoAcademico" value="Innovación tecnológica y/o sistemas bioelectrónicos *" />
+                                        <p:outputLabel value="Nombre del cuerpo académico: " for="iptNombreCuerpoAcademico"/>
+                                        <p:message for="iptNombreCuerpoAcademico" />
+                                    </div>
                                 </div>
 
                                 <!--Nivel de prodep-->
                                 <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
-                                    <p:outputLabel value="Nivel Prodep: " for="somNivelProdep"/>
-                                    <p:spacer width="5" />
-                                    <br></br>
-                                    <p:selectOneMenu id="somNivelProdep"
-                                                     required="true"
-                                                     requiredMessage="Seleccione nivel prodep"
-                                                     value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.nivelProdep}"
-                                                     filter="true"
-                                                     filterPlaceholder="Buscar"
-                                                     filterMatchMode="contains"
-                                                     class="form-control"
-                                                     style="padding-top: 0px; width: 14em;"
-                                                     >
-                                        <f:selectItem itemLabel=" - Seleccione - " 
-                                                      itemValue="#{null}"/>
-                                        <f:selectItem itemValue="En formación"
-                                                      itemLabel="En formación"
-                                                      itemDescription="En formación"/>
-                                        <f:selectItem itemValue="En cosolidación"
-                                                      itemLabel="En cosolidación"
-                                                      itemDescription="En cosolidación"/>
-                                        <f:selectItem itemValue="Consolidado"
-                                                      itemLabel="Consolidado"
-                                                      itemDescription="Consolidado"/>
-                                        <f:selectItem itemValue="Sin reconocimiento"
-                                                      itemLabel="Sin reconocimiento"
-                                                      itemDescription="Sin reconocimiento"/>
-                                        <p:message for="somNivelProdep" />
-                                    </p:selectOneMenu>
+                                    <div class="ui-material">
+                                        <p:selectOneMenu id="somNivelProdep"
+                                                         required="true"
+                                                         requiredMessage="Seleccione nivel prodep"
+                                                         value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.nivelProdep}"
+                                                         filter="true"
+                                                         filterPlaceholder="Buscar"
+                                                         filterMatchMode="contains"
+                                                         class="form-control"
+                                                         style="padding-top: 0px; width: 14em;"
+                                                         >
+                                            <f:selectItem itemLabel=" - Seleccione - " 
+                                                          itemValue="#{null}"/>
+                                            <f:selectItem itemValue="En formación"
+                                                          itemLabel="En formación"
+                                                          itemDescription="En formación"/>
+                                            <f:selectItem itemValue="En cosolidación"
+                                                          itemLabel="En cosolidación"
+                                                          itemDescription="En cosolidación"/>
+                                            <f:selectItem itemValue="Consolidado"
+                                                          itemLabel="Consolidado"
+                                                          itemDescription="Consolidado"/>
+                                            <f:selectItem itemValue="Sin reconocimiento"
+                                                          itemLabel="Sin reconocimiento"
+                                                          itemDescription="Sin reconocimiento"/>
+                                            <p:message for="somNivelProdep" />
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Nivel Prodep: " for="somNivelProdep"/>
+                                    </div>
                                 </div>
 
                                 <!--Area de estudio-->
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 15px">
-                                    <p:outputLabel value="Área de estudio: " for="somAreasEstudio" />
-                                    <p:spacer width="5" />
-                                    <p:selectOneMenu id="somAreasEstudio"
-                                                     required="true"
-                                                     requiredMessage="Seleccione el área de estudio"
-                                                     value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.areaEstudio}"
-                                                     filter="true"
-                                                     filterPlaceholder="Buscar"
-                                                     filterMatchMode="contains"
-                                                     class="form-control"
-                                                     converter="entidadConverter2"
-                                                     style="padding-top: 0px"
-                                                     styleClass="campo2Partes"
-                                                     >
-                                        <f:selectItem itemLabel=" - Seleccione - "
-                                                      itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.listaAreasEstudio}"
-                                                       var="areaestudio"
-                                                       itemValue="#{areaestudio}"
-                                                       itemLabel="#{areaestudio.nombre}"
-                                                       itemDescription="#{areaestudio.nombre}"/>
-                                        <p:message for="somAreasEstudio" />
-                                    </p:selectOneMenu>
+                                    <div class="ui-material">
+                                        <p:selectOneMenu id="somAreasEstudio"
+                                                         required="true"
+                                                         requiredMessage="Seleccione el área de estudio"
+                                                         value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.areaEstudio}"
+                                                         filter="true"
+                                                         filterPlaceholder="Buscar"
+                                                         filterMatchMode="contains"
+                                                         class="form-control"
+                                                         converter="entidadConverter2"
+                                                         style="padding-top: 0px"
+                                                         styleClass="campo2Partes"
+                                                         >
+                                            <f:selectItem itemLabel=" - Seleccione - "
+                                                          itemValue="#{null}"/>
+                                            <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.listaAreasEstudio}"
+                                                           var="areaestudio"
+                                                           itemValue="#{areaestudio}"
+                                                           itemLabel="#{areaestudio.nombre}"
+                                                           itemDescription="#{areaestudio.nombre}"/>
+                                            <p:message for="somAreasEstudio" />
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Área de estudio: " for="somAreasEstudio" />
+                                    </div>
                                 </div>
 
                                 <!--Disciplina-->
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 15px">
-                                    <p:outputLabel value="Disciplina: " for="somDisciplinas" />
-                                    <p:spacer width="5" />
-                                    <p:selectOneMenu id="somDisciplinas"
-                                                     required="true"
-                                                     requiredMessage="Seleccione la disciplina"
-                                                     value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.disciplina}"
-                                                     filter="true"
-                                                     filterPlaceholder="Buscar"
-                                                     filterMatchMode="contains"
-                                                     class="form-control"
-                                                     converter="entidadConverter2"
-                                                     style="padding-top: 0px"
-                                                     styleClass="campo2Partes"
-                                                     >
-                                        <f:selectItem itemLabel=" - Seleccione - "
-                                                      itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.listaDisciplinas}"
-                                                       var="disciplina"
-                                                       itemValue="#{disciplina}"
-                                                       itemLabel="#{disciplina.nombre}"
-                                                       itemDescription="#{disciplina.nombre}"/>
-                                        <p:message for="somDisciplinas" />
-                                    </p:selectOneMenu>
+                                    <div class="ui-material">
+                                        <p:selectOneMenu id="somDisciplinas"
+                                                         required="true"
+                                                         requiredMessage="Seleccione la disciplina"
+                                                         value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.disciplina}"
+                                                         filter="true"
+                                                         filterPlaceholder="Buscar"
+                                                         filterMatchMode="contains"
+                                                         class="form-control"
+                                                         converter="entidadConverter2"
+                                                         style="padding-top: 0px"
+                                                         styleClass="campo2Partes"
+                                                         >
+                                            <f:selectItem itemLabel=" - Seleccione - "
+                                                          itemValue="#{null}"/>
+                                            <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.listaDisciplinas}"
+                                                           var="disciplina"
+                                                           itemValue="#{disciplina}"
+                                                           itemLabel="#{disciplina.nombre}"
+                                                           itemDescription="#{disciplina.nombre}"/>
+                                            <p:message for="somDisciplinas" />
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Disciplina: " for="somDisciplinas" />
+                                    </div>
                                 </div>
 
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
@@ -1236,60 +1249,61 @@
 
                                 <!--Cuerpos Académicos-->
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 15px">
-                                    <p:outputLabel value="Cuerpo Académico: " for="somCuerposAcademicosIntegrantes" />
-                                    <p:spacer width="5" />
-                                    <br></br>
-                                    <p:selectOneMenu id="somCuerposAcademicosIntegrantes"
-                                                     required="true"
-                                                     requiredMessage="Seleccione el cuerpo académico"
-                                                     value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerpAcadIntegrantes.cuerpoAcademicoIntegrantes.cuerpoAcademico}"
-                                                     filter="true"
-                                                     filterPlaceholder="Buscar"
-                                                     filterMatchMode="contains"
-                                                     class="form-control"
-                                                     converter="entidadConverter2"
-                                                     style="padding-top: 0px"
-                                                     styleClass="campo2Partes"
-                                                     >
-                                        <f:selectItem itemLabel=" - Seleccione - "
-                                                      itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.listaCuerposAcademicosIntLa}"
-                                                       var="ca"
-                                                       itemValue="#{ca}"
-                                                       itemLabel="#{ca.cuerpoAcademico} - #{ca.nombre}"
-                                                       itemDescription="#{ca.cuerpoAcademico}"/>
-                                        <p:message for="somCuerposAcademicosIntegrantes" />
-                                    </p:selectOneMenu>
+                                    <div class="ui-material">
+                                        <p:selectOneMenu id="somCuerposAcademicosIntegrantes"
+                                                         required="true"
+                                                         requiredMessage="Seleccione el cuerpo académico"
+                                                         value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerpAcadIntegrantes.cuerpoAcademicoIntegrantes.cuerpoAcademico}"
+                                                         filter="true"
+                                                         filterPlaceholder="Buscar"
+                                                         filterMatchMode="contains"
+                                                         class="form-control"
+                                                         converter="entidadConverter2"
+                                                         style="padding-top: 0px"
+                                                         styleClass="campo2Partes"
+                                                         >
+                                            <f:selectItem itemLabel=" - Seleccione - "
+                                                          itemValue="#{null}"/>
+                                            <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.listaCuerposAcademicosIntLa}"
+                                                           var="ca"
+                                                           itemValue="#{ca}"
+                                                           itemLabel="#{ca.cuerpoAcademico} - #{ca.nombre}"
+                                                           itemDescription="#{ca.cuerpoAcademico}"/>
+                                            <p:message for="somCuerposAcademicosIntegrantes" />
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Cuerpo Académico: " for="somCuerposAcademicosIntegrantes" />
+                                    </div>
                                 </div>
 
                                 <!--Personal-->
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
-                                    <p:outputLabel value="Integrante (Busqueda por Clave, Nombre, Área): " for="acPersonal" />
-                                    <p:spacer width="5" />
-                                    <br></br>
-                                    <p:autoComplete id="acPersonal"
-                                                    value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.persona}"
-                                                    completeMethod="#{controladorCuerposAcademicosPYE.completeListaPersonal}"
-                                                    styleClass="campo2Partes"
-                                                    queryDelay="1000"
-                                                    var="persona"
-                                                    itemLabel="#{persona.nombre}"
-                                                    itemValue="#{persona}"
-                                                    converter="listaPersonalConverter"
-                                                    forceSelection="true"
-                                                    minQueryLength="3"
-                                                    scrollHeight="300"
-                                                    placeholder="Escriba el nombre y seleccione."
-                                                    valueChangeListener="#{controladorCuerposAcademicosPYE.seleccionaListaPersonal}"
-                                                    required="true"
-                                                    requiredMessage="Seleccione una opción"
-                                                    >
-                                        <p:column><h:outputText value="#{persona.clave}" /></p:column>
-                                        <p:column><h:outputText value="#{persona.nombre}" /></p:column>
-                                        <p:column><h:outputText value="#{persona.areaOperativaNombre}" /></p:column> 
-                                        <p:ajax event="itemSelect" process="acPersonal"/>
-                                        <p:message for="acPersonal" />
-                                    </p:autoComplete>
+                                    <div class="ui-material">
+                                        <p:autoComplete id="acPersonal"
+                                                        value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.persona}"
+                                                        completeMethod="#{controladorCuerposAcademicosPYE.completeListaPersonal}"
+                                                        styleClass="campo2Partes"
+                                                        queryDelay="1000"
+                                                        var="persona"
+                                                        itemLabel="#{persona.nombre}"
+                                                        itemValue="#{persona}"
+                                                        converter="listaPersonalConverter"
+                                                        forceSelection="true"
+                                                        minQueryLength="3"
+                                                        scrollHeight="300"
+                                                        placeholder="Escriba el nombre y seleccione."
+                                                        valueChangeListener="#{controladorCuerposAcademicosPYE.seleccionaListaPersonal}"
+                                                        required="true"
+                                                        requiredMessage="Seleccione una opción"
+                                                        dropdown="true"
+                                                        >
+                                            <p:column><h:outputText value="#{persona.clave}" /></p:column>
+                                            <p:column><h:outputText value="#{persona.nombre}" /></p:column>
+                                            <p:column><h:outputText value="#{persona.areaOperativaNombre}" /></p:column> 
+                                            <p:ajax event="itemSelect" process="@this" update="@this"/>
+                                            <p:message for="acPersonal" />
+                                        </p:autoComplete>
+                                        <p:outputLabel value="Integrante (Busqueda por Clave, Nombre, Área): " for="acPersonal" />
+                                    </div>
                                 </div>
 
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>

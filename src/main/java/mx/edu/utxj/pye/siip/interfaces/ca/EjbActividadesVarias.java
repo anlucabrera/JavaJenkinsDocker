@@ -48,4 +48,7 @@ public interface EjbActividadesVarias {
     public Boolean buscaActividadVariaExistente(ActividadesVariasRegistro actividadVaria);
     
     public List<ActividadesVariasRegistro> reporteActividadesVariasPorEjercicio();
+    
+    public void guardaActividadVaria(ActividadesVariasRegistro actividadVaria, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros);
+    
 }

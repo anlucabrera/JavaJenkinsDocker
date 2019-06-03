@@ -1381,7 +1381,7 @@
                                         <p:column><h:outputText value="#{persona.clave}" /></p:column>
                                         <p:column><h:outputText value="#{persona.nombre}" /></p:column>
                                         <p:column><h:outputText value="#{persona.areaOperativaNombre}" /></p:column> 
-                                        <p:ajax event="itemSelect" process="acPersonal"/>
+                                        <p:ajax event="itemSelect" process="@this" update="@this"/>
                                         <p:message for="acPersonal" />
                                     </p:autoComplete>
                                 </div>
