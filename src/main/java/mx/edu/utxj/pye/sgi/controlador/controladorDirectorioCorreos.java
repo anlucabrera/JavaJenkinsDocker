@@ -71,6 +71,7 @@ public class controladorDirectorioCorreos implements Serializable {
         listCorrreosAreas.add(new dtoCorreosAreas("Actividades Deportivas","actividades.deportivas@utxicotepec.edu.mx","marco.leon@utxicotepec.edu.mx"));
         listCorrreosAreas.add(new dtoCorreosAreas("Contraloria","contraloria@utxicotepec.edu.mx","lorena.albin@utxicotepec.edu.mx"));
         listCorrreosAreas.add(new dtoCorreosAreas("Coordinación de Titulación","coordinacion.titulacion@utxicotepec.edu.mx","andrea.rivera@utxicotepec.edu.mx"));
+        listCorrreosAreas.add(new dtoCorreosAreas("Coordinación de Desarrollo de Software","sistemas@utxicotepec.edu.mx","jonny.valderrabano@utxicotepec.edu.mx"));
 
 
         return listCorrreosAreas;
