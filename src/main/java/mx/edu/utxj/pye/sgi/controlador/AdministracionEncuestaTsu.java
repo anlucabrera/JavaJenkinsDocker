@@ -8,7 +8,6 @@ package mx.edu.utxj.pye.sgi.controlador;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -24,7 +23,6 @@ import mx.edu.utxj.pye.sgi.dto.ListadoEvaluacionEgresados;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuestaServicios;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuestaTsu;
 import mx.edu.utxj.pye.sgi.entity.ch.ResultadosEncuestaSatisfaccionTsu;
-import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestas;
 import org.omnifaces.util.Messages;
 
 /**
@@ -113,12 +111,10 @@ public class AdministracionEncuestaTsu implements Serializable{
 
     public void seguimientoEncuestaTutor(){
         try {
-            dto.grado = 6;
             dto.listaEvaCompleta = new ArrayList<>();
             dto.listaEvaIncompleta = new ArrayList<>();
             dto.listaEvaNA = new ArrayList<>();
-            List<AlumnosEncuestas> ae = ejbES.obtenerResultadosXTutor(controlerAE.getDto().cveTrabajador);
-            dto.alumnosEncuesta = ae.stream().filter(x -> x.getGrado().equals(dto.grado)).collect(Collectors.toList());
+            dto.alumnosEncuesta = ejbES.obtenerResultadosXTutor(controlerAE.getDto().cveMaestro).stream().filter(x -> x.getGrado() == 6).collect(Collectors.toList());
             dto.alumnosEncuesta.forEach(x -> {
                 try {
                     ResultadosEncuestaSatisfaccionTsu encuestasCompletas = ejbAdminEncTsu.getResultadoEncPorEvaluador(Integer.parseInt(x.getMatricula()));

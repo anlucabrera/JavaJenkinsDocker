@@ -7,8 +7,14 @@ package mx.edu.utxj.pye.sgi.controlador;
 
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -17,8 +23,21 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.DtoEvaluaciones;
+import mx.edu.utxj.pye.sgi.dto.ListadoEncuestaServicios;
+import mx.edu.utxj.pye.sgi.dto.ListadoEvaluacionEgresados;
+import mx.edu.utxj.pye.sgi.dto.ListadoGraficaEncuestaServicios;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuesta;
+import mx.edu.utxj.pye.sgi.entity.ch.DatosGraficaEncuestaEgresados;
+import mx.edu.utxj.pye.sgi.entity.ch.DatosGraficaEncuestaServicio;
+import mx.edu.utxj.pye.sgi.entity.ch.EncuestaSatisfaccionEgresadosIng;
+import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import mx.edu.utxj.pye.sgi.funcional.Comparador;
+import mx.edu.utxj.pye.sgi.funcional.ComparadorEncuestaSatisfaccionEgresadosIng;
+import mx.edu.utxj.pye.sgi.funcional.ComparadorEncuestaServicios;
+import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestas;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -42,7 +61,7 @@ public class AdministracionEncuesta implements Serializable{
                 dto.usuarioNomina=Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
                 dto.cveTrabajador= logonMB.getListaUsuarioClaveNomina().getCvePersona();
                 dto.cveDirector = dto.cveTrabajador.toString();
-                    if (!ejbAdmEncuesta.esDirectorDeCarrera(2, 2, 18, 48, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
+                    if (!ejbAdmEncuesta.esDirectorDeCarrera(2, 2, 18, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
                         dto.director = true;
                         aperturarEncuestas();
                     }

@@ -34,13 +34,11 @@ public class EjbAdministracionEncuesta {
     @EJB Facade2 f2;
     @Getter private Integer periodo;
 
-    public List<Personal> esDirectorDeCarrera(Integer areaSup, Integer actividad, Integer catOp, Integer catOp1, Integer clave){
-        TypedQuery<Personal> q = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE  p.areaSuperior = :areaSuperior and p.actividad.actividad = :actividad and " +
-                " (p.categoriaOperativa.categoria= :categoria or p.categoriaOperativa.categoria = :categoria1) AND p.clave = :clave", Personal.class);
+    public List<Personal> esDirectorDeCarrera(Integer areaSup, Integer actividad, Integer catOp, Integer clave){
+        TypedQuery<Personal> q = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE  p.areaSuperior = :areaSuperior and p.actividad.actividad = :actividad and  p.categoriaOperativa.categoria= :categoria AND p.clave = :clave", Personal.class);
         q.setParameter("areaSuperior", areaSup);
         q.setParameter("actividad", actividad);
         q.setParameter("categoria", catOp);
-        q.setParameter("categoria1", catOp1);
         q.setParameter("clave", clave);
         return q.getResultList();
     }

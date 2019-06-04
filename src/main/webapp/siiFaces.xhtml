@@ -19,6 +19,7 @@
         </c:if> 
         <script type="text/javascript">
             function scrollDiv() {
+                console.log("Se ejecuto el scrip");
                 var objDiv = document.getElementById("chat");
                 objDiv.scrollTop = objDiv.scrollHeight;
             }
@@ -151,7 +152,7 @@
                                                                     </div>
                                                                 </div>
                                                             </p:outputPanel>
-                                                            <p:poll interval="30" listener="#{notificacionesControl.mostrarNotificacionesLogeado}" update="mesnajesChat" oncomplete="scrollDiv()" global="false"/>
+                                                            <p:poll interval="30" listener="#{notificacionesControl.mostrarNotificacionesLogeado}" update="mesnajesChat" oncomplete="scrollDiv()"/>
                                                         </div>
                                                     </div>
                                                 </div>

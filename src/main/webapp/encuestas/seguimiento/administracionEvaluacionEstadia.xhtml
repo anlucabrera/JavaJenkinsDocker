@@ -87,12 +87,12 @@
                     <h:form id="fr1">
                         <p:outputPanel>
                             <p:dataTable id="tblResEncIngTer" value="#{administracionEvaluacionEstadia.dto.listaEvaCompleta}"
-                                         paginator="true" rows="10" emptyMessage="No se encontraron registros" paginatorPosition="top"
-                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+                                         paginator="true" rows="10" emptyMessage="No se encontraron registros"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                          rowsPerPageTemplate="10,20,30,40,50"
                                          var="encuestaRes" filteredValue="#{administracionEvaluacionEstadia.dto.listaFiltrado}">
 
-                                <f:facet name="{Exporters}">
+                                <f:facet name="header">
                                     <p:commandLink  ajax="false">
                                         <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
                                         <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblResEncIngTer"
@@ -157,16 +157,16 @@
 
                     </h:form>
                 </p:tab>
-                <p:tab id="noCompletos" title="Estudiantes con encuesta no terminada">
+                <p:tab id="noCompletos" title="Resultado encuestas no terminadas">
                     <h:form id="fr2">
                         <p:outputPanel>
                             <p:dataTable id="tblResEncIngIncom" value="#{administracionEvaluacionEstadia.dto.listaEvaIncompleta}"
-                                         paginator="true" rows="10" emptyMessage="No se encontraron registros" paginatorPosition="top"
-                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+                                         paginator="true" rows="10" emptyMessage="No se encontraron registros"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                                          rowsPerPageTemplate="10,20,30,40,50"
                                          var="encuestaRes" filteredValue="#{administracionEvaluacionEstadia.dto.listaFiltrado}">
 
-                                <f:facet name="{Exporters}">
+                                <f:facet name="header">
                                     <p:commandLink  ajax="false">
                                         <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
                                         <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblResEncIngIncom"
@@ -216,11 +216,11 @@
                     </h:form>
                 </p:tab>
             </c:if>
-            <c:if test="#{administracionEncuesta.dto.planeacion or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.director or administracionEncuesta.dto.esDeIyE}">
+            <c:if test="#{!administracionEncuesta.dto.tutor}">
                 <p:tab title="Porcentaje de avance por Programa Educativo">
                     <h:form id="fr4">
                         <p:outputPanel>
-                            <p:dataTable id="avanceEncIng" lazy="false" value="#{administracionAvanceEncuestas.dto.dtoLDAES2}" var="datosEncEgre"
+                            <p:dataTable id="avanceEncIng" lazy="false" value="#{administracionAvanceEncuestas.dto.avanceEncServ}" var="datosEncEgre"
                                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                                          rowsPerPageTemplate="10,20,30,40,50"
                                          emptyMessage="No se encontraron registros"  >
@@ -260,18 +260,6 @@
                         </p:outputPanel>
 
                     </h:form>
-                </p:tab>
-            </c:if>
-            <c:if test="#{logonMB.usuarioTipo eq 'ESTUDIANTE' or administracionEncuesta.dto.tutor}">
-                <p:tab title="Error">
-                    <p:outputPanel>
-                        <div class="row">
-                            <center><span><i style="align-content: center" class="fa fa-exclamation-triangle fa-5x"></i></span></center>
-                        </div>
-                        <div class="row">
-                            <center><h2>Información no disponible</h2></center>
-                        </div>
-                    </p:outputPanel>
                 </p:tab>
             </c:if>
         </p:tabView>

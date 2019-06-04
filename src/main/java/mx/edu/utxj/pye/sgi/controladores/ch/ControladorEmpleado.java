@@ -140,11 +140,6 @@ public class ControladorEmpleado implements Serializable {
                 Messages.addGlobalFatal("Sin datos para la clave " + empleadoLogeado);
             }
 
-            if(nuevoOBJListaPersonal.getClave()==97){
-                nuevoOBJListaPersonal.setAreaOperativa(Short.parseShort("21"));
-                nuevoOBJListaPersonal.setAreaOperativaNombre("Centro de Emprendimiento y Desarrollo Empresarial");
-            }
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.mostrarPerfilLogeado()"+nuevoOBJListaPersonal.getAreaOperativa());
             fechasModulos();
 
         } catch (Throwable ex) {

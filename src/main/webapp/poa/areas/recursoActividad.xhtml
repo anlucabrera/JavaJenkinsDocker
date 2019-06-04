@@ -51,11 +51,11 @@
                         <div id="main-buttons" class="hidden-sm hidden-xs" >
                             <p:panel header="Simbología">
                                 <p:outputLabel value="Actividades que no cuentan con recurso="/>
-                                <p:commandButton id="btnRSimbo1" actionListener="#{areaPoaPresupuestacion.imprimirValores()}"
+                                <p:commandButton id="btnRSimbo1" actionListener="#{controladorPOARecurso.imprimirValores()}"
                                                  icon="fa fa-usd" styleClass="btn-primary"/> 
                                 <p:spacer width="30px"/>
                                 <p:outputLabel value="Actividades que ya cuentan con recurso="/>
-                                <p:commandButton id="btnRSimbo2" actionListener="#{areaPoaPresupuestacion.imprimirValores()}"
+                                <p:commandButton id="btnRSimbo2" actionListener="#{controladorPOARecurso.imprimirValores()}"
                                                  icon="fa fa-usd" styleClass="btn-success"/> 
 
                                 <p:spacer width="30px"/>
@@ -76,18 +76,18 @@
                                 <div class="col-sm-12 col-md-3 col-lg-3">            
                                     <p:autoUpdate/>
                                     <p:outputLabel value="Eje rector:" />
-                                    <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{areaPoaPresupuestacion.asignarParametrosRegistro}">
-                                        <f:selectItems value="#{areaPoaPresupuestacion.consultaListaEjesRegistros}" var="eje" itemValue="#{eje.eje}" itemLabel="#{eje.eje} -- #{eje.nombre}" />
-                                        <p:ajax update="estra" listener="#{areaPoaPresupuestacion.imprimirValores()}"/>
+                                    <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorPOARecurso.asignarParametrosRegistro}">
+                                        <f:selectItems value="#{controladorPOARecurso.consultaListaEjesRegistros}" var="eje" itemValue="#{eje.eje}" itemLabel="#{eje.eje} -- #{eje.nombre}" />
+                                        <p:ajax update="estra" listener="#{controladorPOARecurso.imprimirValores()}"/>
                                     </p:selectOneMenu> 
                                     <p:message for="eje" display="tooltip" />
                                 </div>
                                 <div class="col-sm-12 col-md-9 col-lg-9">
                                     <p:outputPanel id="estra">
                                         <p:outputLabel value="Estrategia:" /> 
-                                        <p:selectOneMenu filter="true" filterMatchMode="contains" id="estrategia" value="#{areaPoaPresupuestacion.estrategias.numero}" valueChangeListener="#{areaPoaPresupuestacion.asignarParametrosRegistro}">
-                                            <f:selectItems value="#{areaPoaPresupuestacion.consultaListaEstrategias}" var="estrategia" itemValue="#{estrategia.estrategia}" itemLabel="#{estrategia.numero} -- #{estrategia.nombre}" />
-                                            <p:ajax update=":frm" listener="#{areaPoaPresupuestacion.imprimirValores()}"/>
+                                        <p:selectOneMenu filter="true" filterMatchMode="contains" id="estrategia" value="#{controladorPOARecurso.estrategias.numero}" valueChangeListener="#{controladorPOARecurso.asignarParametrosRegistro}">
+                                            <f:selectItems value="#{controladorPOARecurso.consultaListaEstrategias}" var="estrategia" itemValue="#{estrategia.estrategia}" itemLabel="#{estrategia.numero} -- #{estrategia.nombre}" />
+                                            <p:ajax update=":frm" listener="#{controladorPOARecurso.imprimirValores()}"/>
                                         </p:selectOneMenu>
                                     </p:outputPanel>
                                 </div>
@@ -122,7 +122,7 @@
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
                                         <p:outputLabel value="Capítulo 5000"/>                            
                                     </div>
-                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{areaPoaPresupuestacion.capituloCD.rendered eq true?'collapse':'visible'};">
+                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorPOARecurso.capituloCD.rendered eq true?'collapse':'visible'};">
                                         <p:outputLabel value="Captación de derechos"/>                            
                                     </div>
                                     <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center;">
@@ -134,32 +134,32 @@
                                         <p:outputLabel value="Pretecho"/>                            
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{areaPoaPresupuestacion.capitulo2m.totalPretecho}">
+                                        <p:outputLabel value="#{controladorPOARecurso.capitulo2m.totalPretecho}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{areaPoaPresupuestacion.capitulo3m.totalPretecho}">
+                                        <p:outputLabel value="#{controladorPOARecurso.capitulo3m.totalPretecho}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{areaPoaPresupuestacion.capitulo4m.totalPretecho}">
+                                        <p:outputLabel value="#{controladorPOARecurso.capitulo4m.totalPretecho}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{areaPoaPresupuestacion.capitulo5m.totalPretecho}">
+                                        <p:outputLabel value="#{controladorPOARecurso.capitulo5m.totalPretecho}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
-                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{areaPoaPresupuestacion.capituloCD.rendered eq true?'collapse':'visible'};">
-                                        <p:outputLabel value="#{areaPoaPresupuestacion.capituloCD.totalPretecho}">
+                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorPOARecurso.capituloCD.rendered eq true?'collapse':'visible'};">
+                                        <p:outputLabel value="#{controladorPOARecurso.capituloCD.totalPretecho}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
-                                        <p:outputLabel value="#{areaPoaPresupuestacion.capituloTT.totalPretecho}">
+                                        <p:outputLabel value="#{controladorPOARecurso.capituloTT.totalPretecho}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
@@ -169,32 +169,32 @@
                                         <p:outputLabel value="Programado"/>                            
                                     </div>                                
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{areaPoaPresupuestacion.capitulo2m.totalProgramado}">
+                                        <p:outputLabel value="#{controladorPOARecurso.capitulo2m.totalProgramado}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{areaPoaPresupuestacion.capitulo3m.totalProgramado}">
+                                        <p:outputLabel value="#{controladorPOARecurso.capitulo3m.totalProgramado}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{areaPoaPresupuestacion.capitulo4m.totalProgramado}">
+                                        <p:outputLabel value="#{controladorPOARecurso.capitulo4m.totalProgramado}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel value="#{areaPoaPresupuestacion.capitulo5m.totalProgramado}">
+                                        <p:outputLabel value="#{controladorPOARecurso.capitulo5m.totalProgramado}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
-                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{areaPoaPresupuestacion.capituloCD.rendered eq true?'collapse':'visible'};">
-                                        <p:outputLabel value="#{areaPoaPresupuestacion.capituloCD.totalProgramado}">
+                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorPOARecurso.capituloCD.rendered eq true?'collapse':'visible'};">
+                                        <p:outputLabel value="#{controladorPOARecurso.capituloCD.totalProgramado}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
-                                        <p:outputLabel value="#{areaPoaPresupuestacion.capituloTT.totalProgramado}">
+                                        <p:outputLabel value="#{controladorPOARecurso.capituloTT.totalProgramado}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
@@ -204,32 +204,32 @@
                                         <p:outputLabel value="Disponible"/>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel style="color: #{areaPoaPresupuestacion.capitulo2m.colorClase}" value="#{areaPoaPresupuestacion.capitulo2m.totalDisponible}">    
+                                        <p:outputLabel style="color: #{controladorPOARecurso.capitulo2m.colorClase}" value="#{controladorPOARecurso.capitulo2m.totalDisponible}">    
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel style="color: #{areaPoaPresupuestacion.capitulo3m.colorClase}" value="#{areaPoaPresupuestacion.capitulo3m.totalDisponible}">    
+                                        <p:outputLabel style="color: #{controladorPOARecurso.capitulo3m.colorClase}" value="#{controladorPOARecurso.capitulo3m.totalDisponible}">    
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel style="color: #{areaPoaPresupuestacion.capitulo4m.colorClase}" value="#{areaPoaPresupuestacion.capitulo4m.totalDisponible}">    
+                                        <p:outputLabel style="color: #{controladorPOARecurso.capitulo4m.colorClase}" value="#{controladorPOARecurso.capitulo4m.totalDisponible}">    
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
-                                        <p:outputLabel style="color: #{areaPoaPresupuestacion.capitulo5m.colorClase}" value="#{areaPoaPresupuestacion.capitulo5m.totalDisponible}">
+                                        <p:outputLabel style="color: #{controladorPOARecurso.capitulo5m.colorClase}" value="#{controladorPOARecurso.capitulo5m.totalDisponible}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
-                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{areaPoaPresupuestacion.capituloCD.rendered eq true?'collapse':'visible'};">
-                                        <p:outputLabel style="color: #{areaPoaPresupuestacion.capituloCD.colorClase}" value="#{areaPoaPresupuestacion.capituloCD.totalDisponible}">    
+                                    <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{controladorPOARecurso.capituloCD.rendered eq true?'collapse':'visible'};">
+                                        <p:outputLabel style="color: #{controladorPOARecurso.capituloCD.colorClase}" value="#{controladorPOARecurso.capituloCD.totalDisponible}">    
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
                                     <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
-                                        <p:outputLabel style="color: #{areaPoaPresupuestacion.capituloTT.colorClase}" value="#{areaPoaPresupuestacion.capituloTT.totalDisponible}">
+                                        <p:outputLabel style="color: #{controladorPOARecurso.capituloTT.colorClase}" value="#{controladorPOARecurso.capituloTT.totalDisponible}">
                                             <f:convertNumber pattern="$ ###,###,###.00"/>
                                         </p:outputLabel>
                                     </div>
@@ -244,9 +244,9 @@
                     <div class="box-body">
                         <div class="row">
                             <div class="col-lg-12 col-md-12 text-info text-center">
-                                <p:remoteCommand name="actualizarTabla" actionListener="#{areaPoaPresupuestacion.imprimirValores()}" update="frm" />
+                                <p:remoteCommand name="actualizarTabla" actionListener="#{controladorPOARecurso.imprimirValores()}" update="frm" />
                                 <p:dataTable id="dtbEje" widgetVar="dtbEje" var="eje" sortBy="#{eje.ejeA.eje}" expandableRowGroups="true" 
-                                             value="#{areaPoaPresupuestacion.listaEstrategiases}">
+                                             value="#{controladorPOARecurso.listaEstrategiases}">
                                     <p:headerRow>
                                         <p:column colspan="1" styleClass="eje" style="text-align: left; color: #FFFFFF;">
                                             <h:outputText value="#{eje.ejeA.eje}.#{eje.ejeA.nombre}" style="text-align: left"/>
@@ -334,7 +334,7 @@
                                                                 <p> <h:outputText value="#{actividad.actividadesPoa1.total}" />  </p>
                                                             </p:column>
                                                             <p:column styleClass="#{actividad.actividadesPoa1.numeroS eq 0?'actividad':''}" style="text-align: center; width: 3%;"> 
-                                                                <p:commandButton id="btnRecurso" actionListener="#{areaPoaPresupuestacion.asignarRecursoActividad(actividad.actividadesPoa1)}"
+                                                                <p:commandButton id="btnRecurso" actionListener="#{controladorPOARecurso.asignarRecursoActividad(actividad.actividadesPoa1)}"
                                                                                  process="@this" icon="fa fa-usd" 
                                                                                  styleClass="#{actividad.actividadesPoa1.recursosActividadList.size() eq 0?'btn-primary':'btn-success'}" title="Agregar recurso" onsuccess="actualizarTabla()"/> 
                                                             </p:column>
@@ -379,8 +379,8 @@
                                                                         </p:column>
                                                                     </p:headerRow>
 
-                                                                    <p:ajax event="rowEdit" listener="#{areaPoaPresupuestacion.onCellEditProductos}" update="@this" oncomplete="actualizarTabla()"/>
-                                                                    <p:ajax event="rowEditCancel" listener="#{areaPoaPresupuestacion.onRowCancel}" update="@this" oncomplete="actualizarTabla()"/>
+                                                                    <p:ajax event="rowEdit" listener="#{controladorPOARecurso.onCellEditProductos}" update="@this" oncomplete="actualizarTabla()"/>
+                                                                    <p:ajax event="rowEditCancel" listener="#{controladorPOARecurso.onRowCancel}" update="@this" oncomplete="actualizarTabla()"/>
 
                                                                     <p:column> 
                                                                         <h:outputText value="#{recurso.productoArea.productos.productosPK.producto} -- #{recurso.productoArea.productos.descripcion}" />
@@ -476,7 +476,7 @@
                                                                         </div> 
                                                                     </p:column>
                                                                     <p:column>
-                                                                        <p:commandButton actionListener="#{areaPoaPresupuestacion.eliminarRecursoActividad(recurso)}" process="@this" update="frm" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar recurso">
+                                                                        <p:commandButton actionListener="#{controladorPOARecurso.eliminarRecursoActividad(recurso)}" process="@this" update="frm" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar recurso">
                                                                             <p:confirm header="Confirmación" message="¿Confirma la eliminación del producto #{recurso.productoArea.productos.descripcion} ?" icon="ui-icon-alert" />
                                                                         </p:commandButton>
                                                                     </p:column>
@@ -502,34 +502,34 @@
 
             </h:form>
 
-            <p:dialog id="delRegistroProdustos" header="Asignar recurso para: #{areaPoaPresupuestacion.actividadesPoa.denominacion}" widgetVar="delRegistroProdustos" modal="true" 
+            <p:dialog id="delRegistroProdustos" header="Asignar recurso para: #{controladorPOARecurso.actividadesPoa.denominacion}" widgetVar="delRegistroProdustos" modal="true" 
                       showEffect="fade" hideEffect="fade" resizable="false" width="800" closeOnEscape="true">
                 <h:form id="frmAsignaRecurso">
                     <div class="row">
                         <p:outputPanel>
                             <p:autoUpdate/>
                             <div class="col-sm-12 col-md-12 col-lg-12">
-                                <p:outputLabel value="#{areaPoaPresupuestacion.actividadesPoa.denominacion}" style="height:100%; width: 100%;"/>
+                                <p:outputLabel value="#{controladorPOARecurso.actividadesPoa.denominacion}" style="height:100%; width: 100%;"/>
                             </div>
                         </p:outputPanel>
                         <hr/>
                         <div class="col-sm-12 col-md-12 col-lg-12">
                             <p:outputLabel for="partida"  value="Partida" />
-                            <p:selectOneMenu filter="true" filterMatchMode="contains" id="partida" value="#{areaPoaPresupuestacion.partidas.partida}" valueChangeListener="#{areaPoaPresupuestacion.asignaProductos}">
-                                <f:selectItems value="#{areaPoaPresupuestacion.consultaListaPartidas}" var="partidasList" itemValue="#{partidasList.partida}" itemLabel="#{partidasList.partida} -- #{partidasList.denominacion}" />
-                                <p:ajax update="producto" listener="#{areaPoaPresupuestacion.imprimirValores()}" global="false"/>
+                            <p:selectOneMenu filter="true" filterMatchMode="contains" id="partida" value="#{controladorPOARecurso.partidas.partida}" valueChangeListener="#{controladorPOARecurso.asignaProductos}">
+                                <f:selectItems value="#{controladorPOARecurso.consultaListaPartidas}" var="partidasList" itemValue="#{partidasList.partida}" itemLabel="#{partidasList.partida} -- #{partidasList.denominacion}" />
+                                <p:ajax update="producto" listener="#{controladorPOARecurso.imprimirValores()}" global="false"/>
                             </p:selectOneMenu>  
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-12">
                             <p:outputLabel for="producto"  value="Producto" />
-                            <p:selectOneMenu filter="true" filterMatchMode="contains" id="producto" valueChangeListener="#{areaPoaPresupuestacion.asignaRecursoProductos}">
-                                <f:selectItems value="#{areaPoaPresupuestacion.consltaListaProductos}" var="productos" itemValue="#{productos.productosPK.producto}" itemLabel="#{productos.descripcion}" />
+                            <p:selectOneMenu filter="true" filterMatchMode="contains" id="producto" valueChangeListener="#{controladorPOARecurso.asignaRecursoProductos}">
+                                <f:selectItems value="#{controladorPOARecurso.consltaListaProductos}" var="productos" itemValue="#{productos.productosPK.producto}" itemLabel="#{productos.descripcion}" />
                                 <p:ajax update="producto mensejeError"/>
                             </p:selectOneMenu> 
                         </div>
                         <p:outputPanel>
                             <p:autoUpdate/>
-                            <div class="col-sm-12 col-md-12 col-lg-12" style="#{areaPoaPresupuestacion.contenido eq true?'visibility: visible':'visibility: hidden'}">
+                            <div class="col-sm-12 col-md-12 col-lg-12" style="#{controladorPOARecurso.contenido eq true?'visibility: visible':'visibility: hidden'}">
                                 <p:outputLabel id="mensejeError" value="El producto ya está asignado a la actividad, favor de seleccionar otro" style="height:100%; width: 100%; color: #D82B00"/>
                             </div>
                         </p:outputPanel>
@@ -539,40 +539,40 @@
                                 <p:autoUpdate/>
                                 <p:outputLabel value="Calendarización" style="height:100%; width: 100%;"/>
                                 <p:panelGrid id="dtbCalendarizacion" columns="6">
-                                    <p:row> Enero:      <br/> <p:outputLabel value="#{areaPoaPresupuestacion.actividadesPoa.NPEnero}"/> </p:row>                          
-                                    <p:row> <p:outputLabel value="Enero:" style="height:100%; width: 100%;"/>       <p:inputNumber id="mes1" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{areaPoaPresupuestacion.asignarRecursoProgramados}" value="#{areaPoaPresupuestacion.numPm1}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{areaPoaPresupuestacion.imprimirValores()}" /></p:inputNumber> </p:row>
-                                    <p:row> Febrero:    <br/> <p:outputLabel value="#{areaPoaPresupuestacion.actividadesPoa.NPFebrero}" /> </p:row>
-                                    <p:row> <p:outputLabel value="Febrero:" style="height:100%; width: 100%;"/>     <p:inputNumber id="mes2" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{areaPoaPresupuestacion.asignarRecursoProgramados}" value="#{areaPoaPresupuestacion.numPm2}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{areaPoaPresupuestacion.imprimirValores()}"/></p:inputNumber> </p:row>
-                                    <p:row> Marzo:      <br/> <p:outputLabel value="#{areaPoaPresupuestacion.actividadesPoa.NPMarzo}" /> </p:row>
-                                    <p:row> <p:outputLabel value="Marzo:" style="height:100%; width: 100%;"/>       <p:inputNumber id="mes3" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{areaPoaPresupuestacion.asignarRecursoProgramados}" value="#{areaPoaPresupuestacion.numPm3}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{areaPoaPresupuestacion.imprimirValores()}" /></p:inputNumber> </p:row>
-                                    <p:row> Abril:      <br/> <p:outputLabel value="#{areaPoaPresupuestacion.actividadesPoa.NPAbril}" /> </p:row>
-                                    <p:row> <p:outputLabel value="Abril:" style="height:100%; width: 100%;"/>       <p:inputNumber id="mes4" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{areaPoaPresupuestacion.asignarRecursoProgramados}" value="#{areaPoaPresupuestacion.numPm4}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{areaPoaPresupuestacion.imprimirValores()}" /></p:inputNumber> </p:row>
-                                    <p:row> Mayo:       <br/> <p:outputLabel value="#{areaPoaPresupuestacion.actividadesPoa.NPMayo}" /> </p:row>
-                                    <p:row> <p:outputLabel value="Mayo:" style="height:100%; width: 100%;"/>        <p:inputNumber id="mes5" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{areaPoaPresupuestacion.asignarRecursoProgramados}" value="#{areaPoaPresupuestacion.numPm5}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{areaPoaPresupuestacion.imprimirValores()}" /></p:inputNumber> </p:row>
-                                    <p:row> Junio:      <br/> <p:outputLabel value="#{areaPoaPresupuestacion.actividadesPoa.NPJunio}" /> </p:row>
-                                    <p:row> <p:outputLabel value="Junio:" style="height:100%; width: 100%;"/>       <p:inputNumber id="mes6" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{areaPoaPresupuestacion.asignarRecursoProgramados}" value="#{areaPoaPresupuestacion.numPm6}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{areaPoaPresupuestacion.imprimirValores()}" /></p:inputNumber> </p:row>
-                                    <p:row> Julio:      <br/> <p:outputLabel value="#{areaPoaPresupuestacion.actividadesPoa.NPJulio}" /> </p:row>
-                                    <p:row> <p:outputLabel value="Julio:" style="height:100%; width: 100%;"/>       <p:inputNumber id="mes7" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{areaPoaPresupuestacion.asignarRecursoProgramados}" value="#{areaPoaPresupuestacion.numPm7}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{areaPoaPresupuestacion.imprimirValores()}" /></p:inputNumber> </p:row>
-                                    <p:row> Agosto:     <br/> <p:outputLabel value="#{areaPoaPresupuestacion.actividadesPoa.NPAgosto}" /> </p:row>
-                                    <p:row> <p:outputLabel value="Agosto:" style="height:100%; width: 100%;"/>      <p:inputNumber id="mes8" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{areaPoaPresupuestacion.asignarRecursoProgramados}" value="#{areaPoaPresupuestacion.numPm8}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{areaPoaPresupuestacion.imprimirValores()}" /></p:inputNumber> </p:row>
-                                    <p:row> Septiembre: <br/> <p:outputLabel value="#{areaPoaPresupuestacion.actividadesPoa.NPSeptiembre}" /> </p:row>
-                                    <p:row> <p:outputLabel value="Septiembre:" style="height:100%; width: 100%;"/>  <p:inputNumber id="mes9" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{areaPoaPresupuestacion.asignarRecursoProgramados}" value="#{areaPoaPresupuestacion.numPm9}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{areaPoaPresupuestacion.imprimirValores()}" /></p:inputNumber> </p:row>
-                                    <p:row> Octubre:    <br/> <p:outputLabel value="#{areaPoaPresupuestacion.actividadesPoa.NPOctubre}" /> </p:row>
-                                    <p:row> <p:outputLabel value="Octubre:" style="height:100%; width: 100%;"/>     <p:inputNumber id="mes10" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{areaPoaPresupuestacion.asignarRecursoProgramados}" value="#{areaPoaPresupuestacion.numPm10}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{areaPoaPresupuestacion.imprimirValores()}" /></p:inputNumber> </p:row>
-                                    <p:row> Noviembre:  <br/> <p:outputLabel value="#{areaPoaPresupuestacion.actividadesPoa.NPNoviembre}" /> </p:row>
-                                    <p:row> <p:outputLabel value="Noviembre:" style="height:100%; width: 100%;"/>   <p:inputNumber id="mes11" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{areaPoaPresupuestacion.asignarRecursoProgramados}" value="#{areaPoaPresupuestacion.numPm11}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{areaPoaPresupuestacion.imprimirValores()}" /></p:inputNumber> </p:row>
-                                    <p:row> Diciembre:  <br/> <p:outputLabel value="#{areaPoaPresupuestacion.actividadesPoa.NPDiciembre}" /> </p:row>
-                                    <p:row> <p:outputLabel value="Diciembre:" style="height:100%; width: 100%;"/>   <p:inputNumber id="mes12" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{areaPoaPresupuestacion.asignarRecursoProgramados}" value="#{areaPoaPresupuestacion.numPm12}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{areaPoaPresupuestacion.imprimirValores()}" /></p:inputNumber> </p:row>
+                                    <p:row> Enero:      <br/> <p:outputLabel value="#{controladorPOARecurso.actividadesPoa.NPEnero}"/> </p:row>                          
+                                    <p:row> <p:outputLabel value="Enero:" style="height:100%; width: 100%;"/>       <p:inputNumber id="mes1" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARecurso.asignarRecursoProgramados}" value="#{controladorPOARecurso.numPm1}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{controladorPOARecurso.imprimirValores()}" /></p:inputNumber> </p:row>
+                                    <p:row> Febrero:    <br/> <p:outputLabel value="#{controladorPOARecurso.actividadesPoa.NPFebrero}" /> </p:row>
+                                    <p:row> <p:outputLabel value="Febrero:" style="height:100%; width: 100%;"/>     <p:inputNumber id="mes2" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARecurso.asignarRecursoProgramados}" value="#{controladorPOARecurso.numPm2}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{controladorPOARecurso.imprimirValores()}"/></p:inputNumber> </p:row>
+                                    <p:row> Marzo:      <br/> <p:outputLabel value="#{controladorPOARecurso.actividadesPoa.NPMarzo}" /> </p:row>
+                                    <p:row> <p:outputLabel value="Marzo:" style="height:100%; width: 100%;"/>       <p:inputNumber id="mes3" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARecurso.asignarRecursoProgramados}" value="#{controladorPOARecurso.numPm3}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{controladorPOARecurso.imprimirValores()}" /></p:inputNumber> </p:row>
+                                    <p:row> Abril:      <br/> <p:outputLabel value="#{controladorPOARecurso.actividadesPoa.NPAbril}" /> </p:row>
+                                    <p:row> <p:outputLabel value="Abril:" style="height:100%; width: 100%;"/>       <p:inputNumber id="mes4" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARecurso.asignarRecursoProgramados}" value="#{controladorPOARecurso.numPm4}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{controladorPOARecurso.imprimirValores()}" /></p:inputNumber> </p:row>
+                                    <p:row> Mayo:       <br/> <p:outputLabel value="#{controladorPOARecurso.actividadesPoa.NPMayo}" /> </p:row>
+                                    <p:row> <p:outputLabel value="Mayo:" style="height:100%; width: 100%;"/>        <p:inputNumber id="mes5" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARecurso.asignarRecursoProgramados}" value="#{controladorPOARecurso.numPm5}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{controladorPOARecurso.imprimirValores()}" /></p:inputNumber> </p:row>
+                                    <p:row> Junio:      <br/> <p:outputLabel value="#{controladorPOARecurso.actividadesPoa.NPJunio}" /> </p:row>
+                                    <p:row> <p:outputLabel value="Junio:" style="height:100%; width: 100%;"/>       <p:inputNumber id="mes6" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARecurso.asignarRecursoProgramados}" value="#{controladorPOARecurso.numPm6}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{controladorPOARecurso.imprimirValores()}" /></p:inputNumber> </p:row>
+                                    <p:row> Julio:      <br/> <p:outputLabel value="#{controladorPOARecurso.actividadesPoa.NPJulio}" /> </p:row>
+                                    <p:row> <p:outputLabel value="Julio:" style="height:100%; width: 100%;"/>       <p:inputNumber id="mes7" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARecurso.asignarRecursoProgramados}" value="#{controladorPOARecurso.numPm7}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{controladorPOARecurso.imprimirValores()}" /></p:inputNumber> </p:row>
+                                    <p:row> Agosto:     <br/> <p:outputLabel value="#{controladorPOARecurso.actividadesPoa.NPAgosto}" /> </p:row>
+                                    <p:row> <p:outputLabel value="Agosto:" style="height:100%; width: 100%;"/>      <p:inputNumber id="mes8" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARecurso.asignarRecursoProgramados}" value="#{controladorPOARecurso.numPm8}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{controladorPOARecurso.imprimirValores()}" /></p:inputNumber> </p:row>
+                                    <p:row> Septiembre: <br/> <p:outputLabel value="#{controladorPOARecurso.actividadesPoa.NPSeptiembre}" /> </p:row>
+                                    <p:row> <p:outputLabel value="Septiembre:" style="height:100%; width: 100%;"/>  <p:inputNumber id="mes9" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARecurso.asignarRecursoProgramados}" value="#{controladorPOARecurso.numPm9}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{controladorPOARecurso.imprimirValores()}" /></p:inputNumber> </p:row>
+                                    <p:row> Octubre:    <br/> <p:outputLabel value="#{controladorPOARecurso.actividadesPoa.NPOctubre}" /> </p:row>
+                                    <p:row> <p:outputLabel value="Octubre:" style="height:100%; width: 100%;"/>     <p:inputNumber id="mes10" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARecurso.asignarRecursoProgramados}" value="#{controladorPOARecurso.numPm10}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{controladorPOARecurso.imprimirValores()}" /></p:inputNumber> </p:row>
+                                    <p:row> Noviembre:  <br/> <p:outputLabel value="#{controladorPOARecurso.actividadesPoa.NPNoviembre}" /> </p:row>
+                                    <p:row> <p:outputLabel value="Noviembre:" style="height:100%; width: 100%;"/>   <p:inputNumber id="mes11" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARecurso.asignarRecursoProgramados}" value="#{controladorPOARecurso.numPm11}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{controladorPOARecurso.imprimirValores()}" /></p:inputNumber> </p:row>
+                                    <p:row> Diciembre:  <br/> <p:outputLabel value="#{controladorPOARecurso.actividadesPoa.NPDiciembre}" /> </p:row>
+                                    <p:row> <p:outputLabel value="Diciembre:" style="height:100%; width: 100%;"/>   <p:inputNumber id="mes12" placeholder="0" decimalPlaces="0" minValue="0" valueChangeListener="#{controladorPOARecurso.asignarRecursoProgramados}" value="#{controladorPOARecurso.numPm12}" inputStyle="width: 80px;"><p:ajax update="@this" process="@this" event="keyup" global="false" listener="#{controladorPOARecurso.imprimirValores()}" /></p:inputNumber> </p:row>
                                     <f:facet name="footer">
-                                        <h4>Total: #{areaPoaPresupuestacion.recursosActividad.total} </h4>
+                                        <h4>Total: #{controladorPOARecurso.recursosActividad.total} </h4>
                                     </f:facet>                   
                                 </p:panelGrid>        
                             </p:outputPanel>
                         </div>
                         <p:outputPanel>            
                             <p:autoUpdate/>
-                            <p:commandButton value="Aceptar" id="btnAgregarRecurso" actionListener="#{areaPoaPresupuestacion.agregarRecursoActividad()}"
-                                             disabled="#{!areaPoaPresupuestacion.productoSeleccionado}" title="Seleccione una Partida y un Producto"
+                            <p:commandButton value="Aceptar" id="btnAgregarRecurso" actionListener="#{controladorPOARecurso.agregarRecursoActividad()}"
+                                             disabled="#{!controladorPOARecurso.productoSeleccionado}" title="Seleccione una Partida y un Producto"
                                              icon="fa fa-chek" styleClass="btn-primary"  update=":frm" process=":frmAsignaRecurso"
                                              onsuccess="actualizarTabla()" oncomplete="PF('delRegistroProdustos').hide()"/>       
                         </p:outputPanel>
