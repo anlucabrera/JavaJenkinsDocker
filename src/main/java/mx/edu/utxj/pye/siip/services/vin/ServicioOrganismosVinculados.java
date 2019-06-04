@@ -471,6 +471,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
                     .setParameter("anio", ejercicio)
                     .setParameter("area", area)
                     .setParameter("estatus", true)
+                    .setMaxResults(500)
                     .getResultList();
         } catch (NoResultException ex) {
             return Collections.EMPTY_LIST;

@@ -590,7 +590,7 @@
                                                     >
                                         <p:column><h:outputText value="#{empresa.empresa}" /></p:column>
                                         <p:column><h:outputText value="#{empresa.nombre}"/></p:column>
-                                        <p:ajax event="itemSelect" process="acEmpresa"/>
+                                        <p:ajax event="itemSelect" process="@this" update="@this"/>
                                         <p:message for="acEmpresa" />
                                     </p:autoComplete>
                                 </div>

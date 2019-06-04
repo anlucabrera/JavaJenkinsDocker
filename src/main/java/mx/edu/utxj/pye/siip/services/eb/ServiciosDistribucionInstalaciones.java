@@ -866,4 +866,40 @@ public class ServiciosDistribucionInstalaciones implements EjbDistribucionInstal
         return map.entrySet().iterator().next();
     }
 
+    @Override
+    public List<CapacidadInstaladaCiclosEscolares> getReporteCuatrimestralCapacidadInstaladaCicloPeriodosEscolares(PeriodosEscolares periodoEscolar, AreasUniversidad areasUniversidad) {
+        try {
+            return facadeServGen.getEntityManager().createQuery("SELECT c FROM CapacidadInstaladaCiclosEscolares c INNER JOIN c.registros r WHERE r.area = :area AND c.cicloEscolar = :cicloEscolar ORDER BY r.eventoRegistro.mes",CapacidadInstaladaCiclosEscolares.class)
+                    .setParameter("area", areasUniversidad.getArea())
+                    .setParameter("cicloEscolar", periodoEscolar.getCiclo().getCiclo())
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<DistribucionAulasCicloPeriodosEscolares> getReporteCuatrimestralDistribucionAulas(PeriodosEscolares periodoEscolar, AreasUniversidad areasUniversidad) {
+        try {
+            return facadeServGen.getEntityManager().createQuery("SELECT d FROM DistribucionAulasCicloPeriodosEscolares d INNER JOIN d.registros r WHERE r.area = :area AND d.periodoEscolar = :periodoEscolar ORDER BY r.eventoRegistro.mes",DistribucionAulasCicloPeriodosEscolares.class)
+                    .setParameter("area", areasUniversidad.getArea())
+                    .setParameter("periodoEscolar", periodoEscolar.getPeriodo())
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<DistribucionLabtallCicloPeriodosEscolares> getReporteCuatrimestralDistribucionLaboratoriosTalleres(PeriodosEscolares periodoEscolar, AreasUniversidad areasUniversidad) {
+        try {
+            return facadeServGen.getEntityManager().createQuery("SELECT d FROM DistribucionLabtallCicloPeriodosEscolares d INNER JOIN d.registros r WHERE r.area = :area AND d.periodoEscolar = :periodoEscolar ORDER BY r.eventoRegistro.mes",DistribucionLabtallCicloPeriodosEscolares.class)
+                    .setParameter("area", areasUniversidad.getArea())
+                    .setParameter("periodoEscolar", periodoEscolar.getPeriodo())
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
 }
