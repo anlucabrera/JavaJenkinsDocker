@@ -3,8 +3,10 @@ package mx.edu.utxj.pye.sgi.ejb.poa;
 import java.util.List;
 import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
+import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
+import mx.edu.utxj.pye.sgi.entity.pye2.Proyectos;
 
 @Local
 public interface EjbRegistroActividades {
@@ -26,5 +28,25 @@ public interface EjbRegistroActividades {
     public List<ActividadesPoa> mostrarActividadesPoasEje(Short area, Short ejerciciosFiscales, EjesRegistro ejesRegistro);
 
     public List<ActividadesPoa> getActividadesPoasEstarategias(Estrategias estrategia, EjesRegistro eje, Short ejercicio, Short area);
+
+    public List<ActividadesPoa> getActividadesPoasporProyecto(Estrategias estrategia, EjesRegistro eje, Proyectos proyectos, Short ejercicio, Short area);
+
+    public List<ActividadesPoa> mostrarActividadesPoasUniversidadaEjercicioFiscal(Short ejerciciosFiscales);
+
+    public List<ActividadesPoa> mostrarActividadesPoasUniversidadaEjeyEjercicioFiscal(Short ejerciciosFiscales, EjesRegistro ejesRegistro);
+
+    public List<ActividadesPoa> getActividadesPoasProyectoGrfica(EjesRegistro eje, Proyectos proyectos, Short ejercicio);
+
+    public List<ActividadesPoa> getActividadesPoasProyecto(Estrategias estrategia, EjesRegistro eje, Proyectos proyectos, Short ejercicio);
+
+    public List<ActividadesPoa> getActividadesEvaluacionMadre(CuadroMandoIntegral cuadroDmando, Short numeroP, Short area);
+
+    public List<ActividadesPoa> mostrarActividadesPoasArea(Short area);
+
+    public List<ActividadesPoa> mostrarActividadesPoaCuadroDeMandoRecurso(Short area, Short ejercicioFiscal, CuadroMandoIntegral cuadroMando);
+
+    public List<ActividadesPoa> getActividadesPoasporEstarategias(Estrategias estrategia, EjesRegistro eje, Short ejercicio, Short area);
+
+    public List<ActividadesPoa> mostrarAreasQueRegistraronActividades();
 
 }

@@ -53,9 +53,9 @@
                                 <p:autoUpdate/>
                                 <p:outputLabel value="Área:" />
 
-                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorRegistroActividadesPOAPyE.areaSeleccionada}">
-                                    <f:selectItems value="#{controladorRegistroActividadesPOAPyE.areasUniversidadsRegistros}" var="area" itemValue="#{area.area}" itemLabel="#{area.area} -- #{area.nombre}" />
-                                    <p:ajax update=":frm" listener="#{controladorRegistroActividadesPOAPyE.imprimirValores()}"/>
+                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{adminPoaValidacionJustificacion.areaSeleccionada}">
+                                    <f:selectItems value="#{adminPoaValidacionJustificacion.areasUniversidadsRegistros}" var="area" itemValue="#{area.area}" itemLabel="#{area.area} -- #{area.nombre}" />
+                                    <p:ajax update=":frm" listener="#{adminPoaValidacionJustificacion.imprimirValores()}"/>
                                 </p:selectOneMenu> 
                                 <p:message for="eje" display="tooltip" />
                             </div>
@@ -71,7 +71,7 @@
                         <p:toolbar id="tb">
                             <f:facet name="left">
                                 <p:outputPanel>     
-                                    <p:outputLabel value="Área: #{controladorRegistroActividadesPOAPyE.areaPOASeleccionada.nombre}" />
+                                    <p:outputLabel value="Área: #{adminPoaValidacionJustificacion.areaPOASeleccionada.nombre}" />
                                     <p:autoUpdate/>
                                 </p:outputPanel>
                             </f:facet>
@@ -83,13 +83,13 @@
                                 <p:outputPanel>            
                                     <p:autoUpdate/>
                                     <p:commandButton value="Liberar POA" id="btnEnviaCorreoConfirmacion" 
-                                                     actionListener="#{utilidadesPOA.enviarCorreo('J', 'Ad',true,'',controladorRegistroActividadesPOAPyE.areaPOASeleccionada)}"
-                                                     process="@this" disabled="#{controladorRegistroActividadesPOAPyE.procesopoa.validacionJustificacion || !controladorRegistroActividadesPOAPyE.procesopoa.registroJustificacionFinalizado}"
+                                                     actionListener="#{utilidadesPOA.enviarCorreo('J', 'Ad',true,'',adminPoaValidacionJustificacion.areaPOASeleccionada)}"
+                                                     process="@this" disabled="#{adminPoaValidacionJustificacion.procesopoa.validacionJustificacion || !adminPoaValidacionJustificacion.procesopoa.registroJustificacionFinalizado}"
                                                      icon="fa fa-info-circle" styleClass="btn-primary"/>
                                     <p:commandButton value="Denagar POA" id="btnEnviaCorreoNegacion" 
-                                                     actionListener="#{controladorRegistroActividadesPOAPyE.imprimirValores()}"
+                                                     actionListener="#{adminPoaValidacionJustificacion.imprimirValores()}"
                                                      oncomplete="PF('dlgObservacion').show()"
-                                                     process="@this" disabled="#{controladorRegistroActividadesPOAPyE.procesopoa.validacionJustificacion || !controladorRegistroActividadesPOAPyE.procesopoa.registroJustificacionFinalizado}"
+                                                     process="@this" disabled="#{adminPoaValidacionJustificacion.procesopoa.validacionJustificacion || !adminPoaValidacionJustificacion.procesopoa.registroJustificacionFinalizado}"
                                                      icon="fa fa-info-circle" styleClass="btn-primary"/>
                                     
                                 </p:outputPanel>
@@ -101,9 +101,9 @@
                         <div class="box-body">
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 text-info text-center">
-                                    <p:remoteCommand name="actualizarTabla2" actionListener="#{controladorRegistroActividadesPOAPyE.imprimirValores()}" update=":frm:dtbBajas" />
+                                    <p:remoteCommand name="actualizarTabla2" actionListener="#{adminPoaValidacionJustificacion.imprimirValores()}" update=":frm:dtbBajas" />
                                     <p:dataTable id="dtbBajas" widgetVar="dtbBajas" var="ejesRegistro" sortBy="#{ejesRegistro.ejeA.eje}" expandableRowGroups="true"
-                                                 value="#{controladorRegistroActividadesPOAPyE.ejesEsLaAp}">
+                                                 value="#{adminPoaValidacionJustificacion.ejesEsLaAp}">
 
                                         <p:headerRow>
                                             <p:column colspan="1" styleClass="eje" style="text-align: left; color: #FFFFFF;">
@@ -213,14 +213,14 @@
                                                             <p:column>
                                                                 <p:commandButton icon="fa fa-usd" styleClass="btn-primary" rendered="#{pOa.recursosActividadList.isEmpty()?false:true}"
                                                                                  oncomplete="PF('dlgRecurso').show()" process="@this" update=":frmRecurso:pnlRecurso">
-                                                                    <f:setPropertyActionListener target="#{controladorRegistroActividadesPOAPyE.actividadesPoaEditando}" value="#{pOa}" />
+                                                                    <f:setPropertyActionListener target="#{adminPoaValidacionJustificacion.actividadesPoaEditando}" value="#{pOa}" />
                                                                 </p:commandButton>
                                                             </p:column>
                                                             <p:spacer width="10px"/>
                                                             <p:column>
                                                                 <p:commandButton icon="fa fa-comment" styleClass="btn-primary" rendered="#{pOa.recursosActividadList.isEmpty()?false:true}"
                                                                                  oncomplete="PF('dlgComentario').show()" process="@this" update=":frmComentario:pnlAgregarComentario">
-                                                                    <f:setPropertyActionListener target="#{controladorRegistroActividadesPOAPyE.actividadesPoaEditando}" value="#{pOa}" />
+                                                                    <f:setPropertyActionListener target="#{adminPoaValidacionJustificacion.actividadesPoaEditando}" value="#{pOa}" />
                                                                 </p:commandButton>
                                                             </p:column>
                                                         </p:column>                                                       
@@ -241,9 +241,9 @@
         <h:form id="frmComentario">
             <p:dialog header="Justificacion" widgetVar="dlgComentario" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" height="100%" closeOnEscape="true">
                 <p:outputPanel id="pnlAgregarComentario" style="text-align:justify;" >
-                    <p:outputLabel value="Actividad: #{controladorRegistroActividadesPOAPyE.actividadesPoaEditando.denominacion}" />
+                    <p:outputLabel value="Actividad: #{adminPoaValidacionJustificacion.actividadesPoaEditando.denominacion}" />
                     <hr/>
-                    <p:outputLabel id="txtComentario" value="#{controladorRegistroActividadesPOAPyE.actividadesPoaEditando.descripcion}" styleClass="form-control" />
+                    <p:outputLabel id="txtComentario" value="#{adminPoaValidacionJustificacion.actividadesPoaEditando.descripcion}" styleClass="form-control" />
                 </p:outputPanel>
             </p:dialog>
         </h:form>
@@ -252,7 +252,7 @@
             <p:dialog header="Consultar recurso" widgetVar="dlgRecurso" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="1000" closeOnEscape="true">
                 <p:panelGrid id="pnlRecurso" style="text-align:justify;" columns="1">
                     <p:outputPanel>
-                        <p:dataTable id="dtbBajas" var="recurso"  sortBy="#{recurso.productoArea.partida.partida}" expandableRowGroups="true" value="#{controladorRegistroActividadesPOAPyE.actividadesPoaEditando.recursosActividadList}">
+                        <p:dataTable id="dtbBajas" var="recurso"  sortBy="#{recurso.productoArea.partida.partida}" expandableRowGroups="true" value="#{adminPoaValidacionJustificacion.actividadesPoaEditando.recursosActividadList}">
 
                             <f:facet name="header"></f:facet>
 
@@ -341,13 +341,13 @@
             <p:dialog header="Agregar Justificación" widgetVar="dlgObservacion" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
                 <p:panelGrid id="pnlAgregarObservacion" style="text-align:justify;" columns="1">
                     <p:outputLabel value="Observaciones" />
-                    <p:inputTextarea id="txtComentario" value="#{controladorRegistroActividadesPOAPyE.mss}" 
+                    <p:inputTextarea id="txtComentario" value="#{adminPoaValidacionJustificacion.mss}" 
                                      rows="5" cols="95" counter="display" maxlength="2000" counterTemplate="{0} caracteres restantes." 
                                      styleClass="form-control" autoResize="true" />
                     <p:message for="txtComentario" />
                     <h:outputText id="display" />
                     <p:commandButton id="btnAceptarComentario" value="Aceptar"
-                                     actionListener="#{controladorRegistroActividadesPOAPyE.enviarmensajes('J')}"
+                                     actionListener="#{adminPoaValidacionJustificacion.enviarmensajes('J')}"
                                      icon="fa fa-chek" styleClass="btn-primary"  update=":frm:dtbBajas" onsuccess="actualizarTabla2()"
                                      oncomplete="PF('dlgObservacion').hide()" />
                 </p:panelGrid>

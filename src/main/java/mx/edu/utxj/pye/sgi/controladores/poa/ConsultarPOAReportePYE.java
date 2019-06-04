@@ -3,7 +3,6 @@ package mx.edu.utxj.pye.sgi.controladores.poa;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
-import mx.edu.utxj.pye.sgi.ejb.poa.EjbPoaSelectec;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.pye2.*;
 import org.omnifaces.cdi.ViewScoped;
@@ -22,6 +21,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbRegistroActividades;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import org.omnifaces.util.Ajax;
@@ -43,7 +44,8 @@ public class ConsultarPOAReportePYE implements Serializable {
     @Getter    @Setter    private List<ListaEstrategias> estrategiases=new ArrayList<>();
     @Getter    @Setter    private List<ListaLineasAccion> lineasAccions = new ArrayList<>();
     
-    @EJB    EjbPoaSelectec poaSelectec;
+    @EJB    EjbCatalogosPoa ejbCatalogosPoa;
+    @EJB    EjbRegistroActividades ejbRegistroActividades;
     @EJB    EjbAreasLogeo ejbAreasLogeo;
     @EJB    EjbPersonal ejbPersonal;
     @Inject    ControladorEmpleado controladorEmpleado;
@@ -86,7 +88,7 @@ public class ConsultarPOAReportePYE implements Serializable {
             consultarListasValidacionFinal();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorRegistroActividadesPOAPyE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorEvaluacionActividadesPyE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -100,25 +102,25 @@ public class ConsultarPOAReportePYE implements Serializable {
         lineasAccions.clear();
 
         List<EjesRegistro> ejesRegistros = new ArrayList<>();
-        ejesRegistros = poaSelectec.mostrarEjesRegistrosAreas(areasUniversidad.getArea(), ejercicioFiscal);
+        ejesRegistros = ejbCatalogosPoa.mostrarEjesRegistrosAreas(areasUniversidad.getArea(), ejercicioFiscal);
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ConsultarPOAReportePYE.consultarListasValidacionFinal()"+ejesRegistros.size());
         if (!ejesRegistros.isEmpty()) {
             ejesRegistros.forEach((ej) -> {
                 List<Estrategias> listEstrategias = new ArrayList<>();
-                listEstrategias = poaSelectec.getEstarategiasPorEje(ej, ejercicioFiscal, areasUniversidad.getArea());
+                listEstrategias = ejbCatalogosPoa.getEstarategiasPorEje(ej, ejercicioFiscal, areasUniversidad.getArea());
                 if (!listEstrategias.isEmpty()) {
                     estrategiases = new ArrayList<>();
                     estrategiases.clear();
                     listEstrategias.forEach((es) -> {
                         List<LineasAccion> listLineasAccions = new ArrayList<>();
-                        listLineasAccions = poaSelectec.mostrarLineasAccionRegistroParametros(areasUniversidad.getArea(), ejercicioFiscal, ej, es);
+                        listLineasAccions = ejbCatalogosPoa.mostrarLineasAccionRegistroParametros(areasUniversidad.getArea(), ejercicioFiscal, ej, es);
                         if (!listLineasAccions.isEmpty()) {
                             lineasAccions = new ArrayList<>();
                             lineasAccions.clear();
                             listLineasAccions.forEach((li) -> {
-                                CuadroMandoIntegral cmi = poaSelectec.mostrarCuadroMandoIntegralRegistrpo(ejercicioFiscal, ej, es, li).get(0);
+                                CuadroMandoIntegral cmi = ejbCatalogosPoa.mostrarCuadroMandoIntegralRegistrpo(ejercicioFiscal, ej, es, li).get(0);
                                 List<ActividadesPoa> listActividadesPoas = new ArrayList<>();
-                                listActividadesPoas = poaSelectec.mostrarActividadesPoaCuadroDeMandoRecurso(areasUniversidad.getArea(), ejercicioFiscal, cmi);
+                                listActividadesPoas = ejbRegistroActividades.mostrarActividadesPoaCuadroDeMandoRecurso(areasUniversidad.getArea(), ejercicioFiscal, cmi);
                                 lineasAccions.add(new ListaLineasAccion(li, listActividadesPoas));
                             });
                         }

@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.sgi.ejb.poa;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
@@ -7,14 +8,19 @@ import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
+import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
+import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.sgi.entity.pye2.Proyectos;
+import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.entity.pye2.UnidadMedidas;
 
 @Stateful
-public class ServiciosCatalogos implements EjbCatalogos {
+public class ServiciosCatalogosPOA implements EjbCatalogosPoa {
 
     @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb-pye2_ejb_1.0PU")
     private EntityManager em;
@@ -91,6 +97,29 @@ public class ServiciosCatalogos implements EjbCatalogos {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<Estrategias> getEstrategiaPorProyectos(Proyectos proyectos, Short ejercicio, Short area) {
+        return facadePoa.getEntityManager().createQuery("SELECT e FROM Estrategias e INNER JOIN e.cuadroMandoIntegralList cm INNER JOIN cm.proyecto p INNER JOIN cm.ejercicioFiscal ef INNER JOIN cm.actividadesPoaList ap WHERE p.proyecto=:proyecto AND ef.ejercicioFiscal=:ejercicioFiscal AND ap.area=:area ORDER BY e.estrategia", Estrategias.class)
+                .setParameter("proyecto", proyectos.getProyecto())
+                .setParameter("ejercicioFiscal", ejercicio)
+                .setParameter("area", area)
+                .getResultList()
+                .stream()
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Estrategias> getEstrategiaProyectos(Proyectos proyectos, Short ejercicio) {
+        return facadePoa.getEntityManager().createQuery("SELECT e FROM Estrategias e INNER JOIN e.cuadroMandoIntegralList cm INNER JOIN cm.proyecto p INNER JOIN cm.ejercicioFiscal ef WHERE p.proyecto=:proyecto AND ef.ejercicioFiscal=:ejercicioFiscal ORDER BY e.estrategia", Estrategias.class)
+                .setParameter("proyecto", proyectos.getProyecto())
+                .setParameter("ejercicioFiscal", ejercicio)
+                .getResultList()
+                .stream()
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
     //  -------------------------------------------- Lineas Accion -------------------------------------------------
     @Override
     public LineasAccion mostrarLineaAccion(Short clave) {
@@ -138,7 +167,7 @@ public class ServiciosCatalogos implements EjbCatalogos {
         facadePoa.flush();
         return nuevaUnidadMedidas;
     }
-    
+
 //  ------------------------------------------CuadroMandoIntegral -----------------------------------------------
     @Override
     public List<CuadroMandoIntegral> mostrarCuadroMandoIntegralRegistrpo(Short ejercicioFiscal, EjesRegistro ejesRegistro, Estrategias estrategias, LineasAccion lineasAccion) {
@@ -156,6 +185,39 @@ public class ServiciosCatalogos implements EjbCatalogos {
         TypedQuery<CuadroMandoIntegral> q = em.createQuery("SELECT c FROM CuadroMandoIntegral c INNER JOIN c.ejercicioFiscal e WHERE e.ejercicioFiscal = :ejercicioFiscal", CuadroMandoIntegral.class);
         q.setParameter("ejercicioFiscal", ejercicioFiscal);
         List<CuadroMandoIntegral> pr = q.getResultList();
+        return pr;
+    }
+
+//  ------------------------------------------Proyectos -----------------------------------------------    
+    @Override
+    public List<Proyectos> getProyectosPorEje(EjesRegistro eje, Short ejercicio, Short area) {
+        return facadePoa.getEntityManager().createQuery("SELECT p FROM Proyectos p INNER JOIN p.cuadroMandoIntegralList cm INNER JOIN cm.eje ej INNER JOIN cm.ejercicioFiscal ef INNER JOIN cm.actividadesPoaList ap WHERE ej.eje=:eje AND ef.ejercicioFiscal=:ejercicioFiscal AND ap.area=:area ORDER BY p.proyecto", Proyectos.class)
+                .setParameter("eje", eje.getEje())
+                .setParameter("ejercicioFiscal", ejercicio)
+                .setParameter("area", area)
+                .getResultList()
+                .stream()
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Proyectos> getProyectos(EjesRegistro eje, Short ejercicio) {
+        return facadePoa.getEntityManager().createQuery("SELECT p FROM Proyectos p INNER JOIN p.cuadroMandoIntegralList cm INNER JOIN cm.eje ej INNER JOIN cm.ejercicioFiscal ef WHERE ej.eje=:eje AND ef.ejercicioFiscal=:ejercicioFiscal ORDER BY p.proyecto", Proyectos.class)
+                .setParameter("eje", eje.getEje())
+                .setParameter("ejercicioFiscal", ejercicio)
+                .getResultList()
+                .stream()
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+//  ------------------------------------------Registros -----------------------------------------------
+    @Override
+    public List<Registros> mostrarRegistrosActividad(ActividadesPoa actividadesPoa) {
+        TypedQuery<Registros> q = em.createQuery("SELECT r FROM Registros r INNER JOIN r.actividadesPoaList a WHERE a.actividadPoa=:actividadPoa", Registros.class);
+        q.setParameter("actividadPoa", actividadesPoa.getActividadPoa());
+        List<Registros> pr = q.getResultList();
         return pr;
     }
 }

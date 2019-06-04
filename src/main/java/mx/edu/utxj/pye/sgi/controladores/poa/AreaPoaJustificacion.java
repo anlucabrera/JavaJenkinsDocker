@@ -14,7 +14,8 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
-import mx.edu.utxj.pye.sgi.ejb.poa.EjbPoaSelectec;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbRegistroActividades;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
@@ -43,7 +44,8 @@ public class AreaPoaJustificacion implements Serializable {
     @Getter    @Setter    private List<listaEjeEstrategia> listaListaEjeEstrategia = new ArrayList<>();
     @Getter    @Setter    private List<listaEstrategiaActividades> listaEstrategiaActividadesesEje = new ArrayList<>();
     
-    @EJB    EjbPoaSelectec poaSelectec;
+    @EJB    EjbCatalogosPoa ejbCatalogosPoa;
+    @EJB    EjbRegistroActividades ejbRegistroActividades;
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesPOA pOAUtilidades;
 
@@ -62,11 +64,11 @@ public class AreaPoaJustificacion implements Serializable {
 
         listaEstrategias.add(new Estrategias(Short.parseShort("0"), Short.parseShort("0"), "Selecciones Uno"));
         listaEjesRegistros.add(new EjesRegistro(0, "Selecciones Uno", "Selecciones Uno", "Selecciones Uno", "Selecciones Uno"));
-        poaSelectec.mostrarEjesRegistrosAreas(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal).forEach((t) -> {
+        ejbCatalogosPoa.mostrarEjesRegistrosAreas(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal).forEach((t) -> {
             listaEjesRegistros.add(t);
         });
 
-        listaActividadesPoas = poaSelectec.mostrarActividadesPoasReporteArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
+        listaActividadesPoas = ejbRegistroActividades.mostrarActividadesPoasTotalArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
         
 
         listaEstrategiaActividadesesEje = new ArrayList<>();
@@ -76,17 +78,17 @@ public class AreaPoaJustificacion implements Serializable {
         ejesEsLaAp = new ArrayList<>();
         ejesEsLaAp.clear();
 
-        if (!poaSelectec.mostrarEjesRegistrosAreas(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal).isEmpty()) {
-            poaSelectec.mostrarEjesRegistrosAreas(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal).forEach((ej) -> {
+        if (!ejbCatalogosPoa.mostrarEjesRegistrosAreas(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal).isEmpty()) {
+            ejbCatalogosPoa.mostrarEjesRegistrosAreas(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal).forEach((ej) -> {
                 listaListaEjeEstrategia = new ArrayList<>();
                 listaListaEjeEstrategia.clear();
-                listaListaEjeEstrategia.add(new listaEjeEstrategia(ej, poaSelectec.getEstarategiasPorEje(ej, ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa())));
+                listaListaEjeEstrategia.add(new listaEjeEstrategia(ej, ejbCatalogosPoa.getEstarategiasPorEje(ej, ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa())));
                 if (!listaListaEjeEstrategia.isEmpty()) {
                     listaListaEjeEstrategia.forEach((e) -> {
                         e.getListaEstrategiases1().forEach((t) -> {
                             List<ActividadesPoa> listaActividadesPoasFiltradas = new ArrayList<>();
                             listaActividadesPoasFiltradas.clear();
-                            listaActividadesPoasFiltradas = poaSelectec.getActividadesPoasporEstarategias(t, e.getEjess(), ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                            listaActividadesPoasFiltradas = ejbRegistroActividades.getActividadesPoasEstarategias(t, e.getEjess(), ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
                             listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(t, listaActividadesPoasFiltradas));
                             Collections.sort(listaEstrategiaActividadesesEje, (x, y) -> Short.compare(x.getEstrategias().getEstrategia(), y.getEstrategias().getEstrategia()));
 
@@ -112,7 +114,7 @@ public class AreaPoaJustificacion implements Serializable {
         listaActividadesPoas = new ArrayList();
         listaActividadesPoas.clear();
 
-        listaActividadesPoas = poaSelectec.mostrarActividadesPoasAreaEjeyEjercicioFiscal(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, ejesRegistro);
+        listaActividadesPoas = ejbRegistroActividades.mostrarActividadesPoasEje(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, ejesRegistro);
         
 
         listaEstrategiaActividadesesEje = new ArrayList<>();
@@ -122,7 +124,7 @@ public class AreaPoaJustificacion implements Serializable {
          
         List<ActividadesPoa> listaActividadesPoasFiltradas = new ArrayList<>();
         listaActividadesPoasFiltradas.clear();
-        listaActividadesPoasFiltradas = poaSelectec.getActividadesPoasporEstarategias(estrategias, ejesRegistro, ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        listaActividadesPoasFiltradas = ejbRegistroActividades.getActividadesPoasEstarategias(estrategias, ejesRegistro, ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
         Collections.sort(listaActividadesPoasFiltradas, (x, y) -> (x.getNumeroP() + "." + x.getNumeroS()).compareTo(y.getNumeroP() + "." + y.getNumeroS()));
         listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(estrategias, listaActividadesPoasFiltradas));
 
@@ -140,11 +142,11 @@ public class AreaPoaJustificacion implements Serializable {
                 case "eje":
                     ejesRegistro = new EjesRegistro();
                     estrategias = new Estrategias();
-                    ejesRegistro = poaSelectec.mostrarEjeRegistro(Integer.parseInt(event.getNewValue().toString()));
+                    ejesRegistro = ejbCatalogosPoa.mostrarEjeRegistro(Integer.parseInt(event.getNewValue().toString()));
                     if (ejesRegistro != null) {
                         listaEstrategias.clear();
                         listaEstrategias.add(new Estrategias(Short.parseShort("0"), Short.parseShort("0"), "Selecciones Uno"));
-                        poaSelectec.getEstarategiasPorEje(ejesRegistro,ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).forEach((t) -> {
+                        ejbCatalogosPoa.getEstarategiasPorEje(ejesRegistro,ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).forEach((t) -> {
                             listaEstrategias.add(t);
                         });
                     }
@@ -152,7 +154,7 @@ public class AreaPoaJustificacion implements Serializable {
                     break;
                 case "estrategia":
                     estrategias = new Estrategias();
-                    estrategias = poaSelectec.mostrarEstrategia(Short.parseShort(event.getNewValue().toString()));
+                    estrategias = ejbCatalogosPoa.mostrarEstrategia(Short.parseShort(event.getNewValue().toString()));
                     if (ejesRegistro != null) {
                         alineacionActiva = true;
                         consultarListas();
@@ -169,7 +171,7 @@ public class AreaPoaJustificacion implements Serializable {
     }
 
     public void actualizarNuavActividad() {
-        actividadesPoa = poaSelectec.actualizaActividadesPoa(actividadesPoa);
+        actividadesPoa = ejbRegistroActividades.actualizaActividadesPoa(actividadesPoa);
         if(alineacionActiva=false){
             consultarListasInit();
         }else{

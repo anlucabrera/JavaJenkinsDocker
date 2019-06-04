@@ -34,13 +34,13 @@ import org.primefaces.event.RowEditEvent;
 @Named
 @ManagedBean
 @ViewScoped
-public class AdminPoaValidacionProgramacion implements Serializable {
+public class AdminPoaValidacionJustificacion implements Serializable {
 
     private static final long serialVersionUID = -473305993584095094L;
-
-    @Getter    @Setter    private List<AreasUniversidad> areasUniversidadsRegistros = new ArrayList<>();
+ @Getter    @Setter    private List<AreasUniversidad> areasUniversidadsRegistros = new ArrayList<>();
     @Getter    @Setter    private AreasUniversidad areaPOASeleccionada = new AreasUniversidad();
     @Getter    @Setter    private Procesopoa procesopoa=new Procesopoa();
+    @Getter    @Setter    private ActividadesPoa actividadesPoaEditando=new ActividadesPoa();
     @Getter    @Setter    private List<ListaEjesEsLaAp> ejesEsLaAp=new ArrayList<>();
     @Getter    @Setter    private List<ListaEjeEstrategia> listaListaEjeEstrategia=new ArrayList<>();
     @Getter    @Setter    private String mss="";

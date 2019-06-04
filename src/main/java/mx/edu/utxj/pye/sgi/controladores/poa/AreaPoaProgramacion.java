@@ -15,7 +15,6 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
-import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogos;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbRegistroActividades;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
@@ -27,6 +26,7 @@ import mx.edu.utxj.pye.sgi.util.UtilidadesPOA;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
 
 @Named
 @ManagedBean
@@ -63,7 +63,7 @@ public class AreaPoaProgramacion implements Serializable {
     @Getter    @Setter    private List<ListaEstrategiaActividades> listaEstrategiaActividadesesEje = new ArrayList<>();
 
     @EJB    EjbRegistroActividades registroActividades;
-    @EJB    EjbCatalogos catalogos;
+    @EJB    EjbCatalogosPoa catalogos;
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesPOA pOAUtilidades;
 

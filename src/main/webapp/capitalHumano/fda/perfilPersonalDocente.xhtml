@@ -86,10 +86,12 @@
             </h1>
         </p:panel>
         <p:panel id="informacion" class="hidden-xs hidden-sm">
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 12}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 53}">
+
                 <section class="content">
                     <div class="row">
-                        <div class="col-md-12">
+                        <ui:include src="/includes/plantillaPerfilFDA.xhtml"/>
+                        <div class="col-md-9">
                             <div class="nav-tabs-custom">
                                 <div class="row">
                                     <div class="col-lg-10 col-xs-10"/>
@@ -100,27 +102,22 @@
                                         </p:link>
                                     </div>      
                                 </div>
-                                <p:tabView>
-                                    <p:tab title="Currículum vitae">
-                                        <h:form> 
-                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                <div class="col-sm-6">
-                                                    <p:outputLabel for="ptc" value="Docentes" />
-                                                    <p:selectOneMenu  id="ptc" value="#{controladorDocentesActivos.docenteBusqueda}" valueChangeListener="#{controladorDocentesActivos.mostrarPerfilDocente}" filter="true" filterMatchMode="contains" style = "height:100%; width: 100%; object-fit: contain;" class="control-label">
-                                                        <f:selectItem itemValue="0" itemLabel=" Regresar "/>
-                                                        <f:selectItems value="#{controladorDocentesActivos.personalsD}" var="personal" itemValue="#{personal.clave}" itemLabel="#{personal.clave} - #{personal.nombre} - #{personal.categoriaOperativaNombre}" />
-                                                        <p:ajax listener="#{controladorIncidenciasGeneral.imprimirValores()}" process="ptc" update="@(form)"/>
-                                                    </p:selectOneMenu >                          
-                                                    <p:message for="ptc"/>
-                                                    <hr/>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <p:commandButton value="Imprimir currículum vitae" icon="fa fa-print" class="btn-success">                                        
-                                                        <p:printer target="CV" />
-                                                    </p:commandButton>
-                                                    <hr/>
-                                                </div>
-                                            </div>
+
+                                <h:form>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <p:outputLabel for="ptc" value="Docentes" />
+                                            <p:selectOneMenu  id="ptc" value="#{controladorDocentesActivos.docenteBusqueda}" valueChangeListener="#{controladorDocentesActivos.mostrarPerfilDocente}" filter="true" filterMatchMode="contains" style = "height:100%; width: 100%; object-fit: contain;" class="control-label">
+                                                <f:selectItem itemValue="0" itemLabel=" Regresar "/>
+                                                <f:selectItems value="#{controladorDocentesActivos.personalsD}" var="personal" itemValue="#{personal.clave}" itemLabel="#{personal.clave} - #{personal.nombre} - #{personal.categoriaOperativaNombre}" />
+                                                <p:ajax listener="#{controladorIncidenciasGeneral.imprimirValores()}" process="@this" update="@form"/>
+                                            </p:selectOneMenu >                          
+                                            <p:message for="ptc"/>
+                                            <hr/>
+                                        </div>    
+                                    </div>
+                                    <p:tabView>
+                                        <p:tab title="Currículum vitae">
                                             <p:panel id="CV" >
                                                 <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                     <div class="col-md-12">
@@ -156,13 +153,12 @@
                                                                             <div class="box-header with-border">                                                                    
                                                                                 <div class="col-sm-12">
                                                                                     <div class="row">
-                                                                                        <div  id="fotoPersonal" class="col-sm-2 pull-left">
-                                                                                            <div class="description-block" style="text-align: center" >
+                                                                                        <div  id="fotoPersonal" class="col-sm-2">                                                                        <div class="description-block" style="text-align: center" >
                                                                                                 <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{controladorDocentesActivos.listaPersonal.clave}.jpg" alt="#{controladorDocentesActivos.listaPersonal.clave}" title="Personal #{controladorDocentesActivos.listaPersonal.clave}" style="width: 140px; height: 140px; align-content: center;"/>
                                                                                             </div>  
                                                                                         </div>
-                                                                                        <div class="col-sm-6">
-                                                                                            <div  id="dstoasPerosonalesPersonal1" class="col-sm-3 pull-left" style="width: 250px;">        
+                                                                                        <div class="col-sm-10">
+                                                                                            <div  class="col-sm-4">        
                                                                                                 <div class="description-block" style="text-align: justify">
                                                                                                     <strong>Nombre completo</strong>
                                                                                                     <p class="text-muted">
@@ -171,7 +167,7 @@
                                                                                                     <hr/>
                                                                                                 </div>
                                                                                             </div>
-                                                                                            <div  id="dstoasPerosonalesPersonal2" class="col-sm-3 pull-left" style="width: 200px;"> 
+                                                                                            <div  class="col-sm-4"> 
                                                                                                 <div class="description-block" style="text-align: justify">
                                                                                                     <strong>CURP</strong>
                                                                                                     <p class="text-muted" style="text-transform: uppercase">
@@ -181,7 +177,7 @@
                                                                                                 </div>
                                                                                             </div>
 
-                                                                                            <div  id="dstoasPerosonalesPersonal1" class="col-sm-3 pull-left" style="width: 250px;">        
+                                                                                            <div  class="col-sm-4">        
                                                                                                 <div class="description-block" style="text-align: justify">
                                                                                                     <strong>Lugar de nacimiento</strong>
                                                                                                     <p class="text-muted">
@@ -190,7 +186,7 @@
                                                                                                     <hr/>
                                                                                                 </div>
                                                                                             </div>
-                                                                                            <div  id="dstoasPerosonalesPersonal2" class="col-sm-3 pull-left" style="width: 200px;"> 
+                                                                                            <div  class="col-sm-4"> 
                                                                                                 <div class="description-block" style="text-align: justify">
                                                                                                     <strong>RFC</strong>
                                                                                                     <p class="text-muted" style="text-transform: uppercase">
@@ -199,28 +195,26 @@
                                                                                                     <hr/>
                                                                                                 </div>
                                                                                             </div>
-                                                                                        </div>
-                                                                                        <div  id="dstoasPerosonalesPersonal3" class="col-sm-2 pull-left" style="width: 150px;"> 
-                                                                                            <div class="description-block" style="text-align: justify">
-                                                                                                <strong>Edad</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{controladorDocentesActivos.informacionAdicionalPersonal.edad} años
-                                                                                                </p>                                                             
-                                                                                                <hr/>
+                                                                                            <div  class="col-sm-4" > 
+                                                                                                <div class="description-block" style="text-align: justify">
+                                                                                                    <strong>Edad</strong>
+                                                                                                    <p class="text-muted">
+                                                                                                        #{controladorDocentesActivos.informacionAdicionalPersonal.edad} años
+                                                                                                    </p>                                                             
+                                                                                                    <hr/>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div  class="col-sm-4" > 
+                                                                                                <div class="description-block" style="text-align: justify">
+                                                                                                    <strong>Estado civil</strong>
+                                                                                                    <p class="text-muted">
+                                                                                                        #{controladorDocentesActivos.informacionAdicionalPersonal.estadoCivil}
+                                                                                                    </p>
+                                                                                                    <hr/>
+                                                                                                </div>
                                                                                             </div>
                                                                                         </div>
-                                                                                        <div  id="dstoasPerosonalesPersonal4" class="col-sm-2 pull-left" style="width: 180px;"> 
-                                                                                            <div class="description-block" style="text-align: justify">
-                                                                                                <strong>Estado civil</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{controladorDocentesActivos.informacionAdicionalPersonal.estadoCivil}
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                            </div>
-                                                                                        </div>
-
-
-                                                                                        <div  id="dstoasPerosonalesPersonal3" class="col-sm-2 pull-left" style="width: 150px;"> 
+                                                                                        <div  class="col-sm-3" > 
                                                                                             <div class="description-block" style="text-align: justify">
                                                                                                 <strong>Sexo</strong>
                                                                                                 <p class="text-muted">
@@ -229,7 +223,7 @@
                                                                                                 <hr/>
                                                                                             </div>
                                                                                         </div>
-                                                                                        <div  id="dstoasPerosonalesPersonal4" class="col-sm-2 pull-left" style="width: 180px;"> 
+                                                                                        <div  class="col-sm-3" > 
                                                                                             <div class="description-block" style="text-align: justify">
                                                                                                 <strong>Fecha de nacimiento</strong>
                                                                                                 <p class="text-muted">
@@ -238,18 +232,18 @@
                                                                                                 <hr/>
                                                                                             </div>
                                                                                         </div>
-
-                                                                                    </div> 
-                                                                                    <div class="row">
-                                                                                        <div  id="dstoasPerosonalesPersonal5" class="col-sm-4 pull-left" style="width: 250px;">        
+                                                                                        <div  class="col-sm-6">        
                                                                                             <div class="description-block" style="text-align: justify">
                                                                                                 <strong>Dirección</strong>
                                                                                                 <p class="text-muted">
                                                                                                     #{controladorDocentesActivos.informacionAdicionalPersonal.direccion}
                                                                                                 </p>
-                                                                                            </div>
+                                                                                            </div>                                                              
+                                                                                                <hr/>
                                                                                         </div>
-                                                                                        <div  id="dstoasPerosonalesPersonal6" class="col-sm-4 pull-left" style="width: 200px;">        
+                                                                                    </div> 
+                                                                                    <div class="row">
+                                                                                        <div  class="col-sm-6">        
                                                                                             <div class="description-block" style="text-align: justify">
                                                                                                 <strong>Correo electrónico</strong>
                                                                                                 <ul style="list-style-type: square">
@@ -261,7 +255,7 @@
                                                                                                 </ul>
                                                                                             </div>
                                                                                         </div>
-                                                                                        <div  id="dstoasPerosonalesPersonal7" class="col-sm-4 pull-left" style="width: 200px;">        
+                                                                                        <div  class="col-sm-6">        
                                                                                             <div class="description-block" style="text-align: justify">
                                                                                                 <strong>Número de teléfono</strong>
                                                                                                 <ul style="list-style-type: square">
@@ -378,24 +372,33 @@
                                                                 <div class="row" style="display: #{controladorDocentesActivos.investigacioneses.size() != 0?'inline':'none'} ">
                                                                     <div class="col-sm-12 border-right">
                                                                         <div class="description-block">
-                                                                            <p:dataTable id="tblInvest" value="#{controladorDocentesActivos.investigacioneses}" var="inves"
+                                                                            <p:dataTable id="tblInvest" value="#{controladorDocentesActivos.investigacioneses}" var="invest"
                                                                                          emptyMessage="No se encontraron datos registrados." rendered="#{controladorDocentesActivos.investigacioneses.size() != 0?true:false}">
 
                                                                                 <f:facet name="header">
-                                                                                    <h4 style="font-weight: bold">Investigaciones</h4>
+                                                                                    <h4 style="font-weight: bold">Investigación</h4>
                                                                                 </f:facet>
 
-                                                                                <p:column style="width: 20%" headerText="Nombre">
-                                                                                    <h:outputText value="#{inves.nombreInvestigacion}"/>
+                                                                                <p:column style="width: 10%" headerText="Tipo de Investigación">
+                                                                                    <h:outputText value="#{invest.tipo}"/>
                                                                                 </p:column>
-                                                                                <p:column style="width: 15%" headerText="Tipo">
-                                                                                    <h:outputText value="#{inves.tipo}"/>
+                                                                                <p:column style="width: 25%" headerText="Nombre de la Investigación" >
+                                                                                    <h:outputText value="#{invest.nombreInvestigacion}" />
                                                                                 </p:column>
-                                                                                <p:column style="width: 15%" headerText="Institucion">
-                                                                                    <h:outputText value="#{inves.institucion}"/>
+                                                                                <p:column style="width: 30%" headerText="Descripción" >
+                                                                                    <h:outputText value="#{invest.decripcion}" />
                                                                                 </p:column>
-                                                                                <p:column style="width: 50%" headerText="Descripcion">
-                                                                                    <h:outputText value="#{inves.decripcion}"/>
+                                                                                <p:column style="width: 20%" headerText="Fechas" >   
+                                                                                    <h:outputLabel value="del "/>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="#{invest.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="al "/>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="#{invest.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                </p:column>  
+                                                                                <p:column style="width: 15%" headerText="Institución">
+                                                                                    <h:outputText value="#{invest.institucion}"/>
                                                                                 </p:column>
                                                                             </p:dataTable>
                                                                         </div>
@@ -643,7 +646,6 @@
                                                                                 </f:facet>
 
                                                                                 <p:column style="width: 29%" headerText="Título de memoria">
-                                                                                    <h:outputText value="#{memoria.estatus eq 'Denegado'?'*':''}" style="font-size: large; color: red"/>
                                                                                     <h:outputText value="#{memoria.tituloDeMemoria}"/>
                                                                                 </p:column>
                                                                                 <p:column style="width: 29%" headerText="Título de publicación">
@@ -685,21 +687,21 @@
                                                                             </p:dataTable>
                                                                         </div>
                                                                     </div>
-                                                                </div>
+                                                                </div>                                                                
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </p:panel>
-                                        </h:form>
-                                    </p:tab>
-                                </p:tabView>
+                                        </p:tab>
+                                    </p:tabView>   
+                                </h:form>                         
                             </div>
                         </div>
                     </div>
                 </section>
             </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa != 12}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave ne 53}">
                 <h1>
                     Esta página está disponible solo para personal adscrito al área de Fortalecimiento de Desarrollo Académico
                 </h1>

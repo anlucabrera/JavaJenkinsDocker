@@ -9,7 +9,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.ManagedBean;
-import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
@@ -18,140 +17,83 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
-import mx.edu.utxj.pye.sgi.controladores.ch.ControladorSubordinados;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
-import mx.edu.utxj.pye.sgi.ejb.poa.EjbPoaSelectec;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbPresupuestacion;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbRegistroActividades;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
-import mx.edu.utxj.pye.sgi.entity.ch.Incapacidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
-import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
-import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Partidas;
 import mx.edu.utxj.pye.sgi.entity.pye2.PretechoFinanciero;
 import mx.edu.utxj.pye.sgi.entity.pye2.RecursosActividad;
-import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.UtilidadesPOA;
 import org.omnifaces.util.Messages;
-import org.primefaces.event.RowEditEvent;
 
 @Named
 @ManagedBean
 @ViewScoped
-public class ControladorRegistroActividadesPOAPyE implements Serializable {
+public class AdminPoaValidacionPresupuestacion implements Serializable {
 
     private static final long serialVersionUID = -473305993584095094L;
-    @Getter    @Setter    private List<ActividadesPoa> actividadesPoasAreas = new ArrayList<>(), actividadesPoasAreasEjes = new ArrayList<>(),actividadesPoasAreasConRegistros=new ArrayList<>();
-    @Getter    @Setter    private ActividadesPoa actividadesPoaEditando = new ActividadesPoa();
-    @Getter    @Setter    private AreasUniversidad areaPOASeleccionada = new AreasUniversidad();    
-    @Getter    @Setter    private List<AreasUniversidad> areasUniversidads = new ArrayList<>(),areasUniversidadsRegistros = new ArrayList<>();
-    @Getter    @Setter    private List<EjesRegistro> ejesesFiltrado = new ArrayList<>(),ejeses = new ArrayList<>();
-    @Getter    @Setter    private EjesRegistro ejes;
-    @Getter    @Setter    private List<CuadroMandoIntegral> cuadroMandoIntegrals = new ArrayList<>();
-    @Getter    @Setter    private List<Estrategias> estrategiases = new ArrayList<>();
-    @Getter    @Setter    private List<LineasAccion> lineasAccions = new ArrayList<>();
-    @Getter    @Setter    private List<listaEstrategiaActividades> listaEstrategiaActividadesesEje = new ArrayList<>();
-    @Getter    @Setter    private Short claveArea = 0, ejercicioFiscal = 0;
-    @Getter    @Setter    private Integer claveEje=0;
-    @Getter    @Setter    private Date fechaActual=new Date();
+
+    @Getter    @Setter    private List<AreasUniversidad> areasUniversidadsRegistros = new ArrayList<>();
+    @Getter    @Setter    private AreasUniversidad areaPOASeleccionada = new AreasUniversidad();
+    @Getter    @Setter    private Procesopoa procesopoa=new Procesopoa();
+    @Getter    @Setter    private List<ListaEjesEsLaAp> ejesEsLaAp=new ArrayList<>();
+    @Getter    @Setter    private List<ListaEjeEstrategia> listaListaEjeEstrategia=new ArrayList<>();
+    @Getter    @Setter    private String mss="";
+    @Getter    @Setter    private Short claveArea = 0, ejercicioFiscal = 0; 
+    @Getter    @Setter    private List<ListaEstrategiaActividades> listaEstrategiaActividadesesEje = new ArrayList<>();
     
-    @Getter    @Setter    private Boolean ecxiste=false,liberado=true;
-    @Getter    @Setter    private String claseP1="",claseP2="",claseP3="",claseP4="",clasePC="",clasePT="",mss="";
+    @Getter    @Setter    private Boolean ecxiste=false;
+    @Getter    @Setter    private String claseP1="",claseP2="",claseP3="",claseP4="",clasePC="",clasePT="";
     @Getter    @Setter    private List<PretechoFinanciero> pretechoFinancieros = new ArrayList<>();
     @Getter    @Setter    private List<RecursosActividad> recursosActividads2 = new ArrayList<>(),recursosActividads3 = new ArrayList<>(),recursosActividads4 = new ArrayList<>(),recursosActividads5 = new ArrayList<>(),recursosActividadscdh = new ArrayList<>();
     @Getter    @Setter    private Double pretecho2000=0D,pretecho3000=0D,pretecho4000=0D,pretecho5000=0D,pretechoCPDD=0D,totalPretecho=0D;
     @Getter    @Setter    private Double totalCaptitulos=0D,totalCaptitulo2000 = 0D,totalCaptitulo3000 = 0D,totalCaptitulo4000 = 0D,totalCaptitulo5000 = 0D,totalCaptituloCPDD = 0D;
     
-    @Getter    @Setter    private List<capitulosLista> capitulo2000 = new ArrayList<>();
-    @Getter    @Setter    private List<capitulosLista> capitulo3000 = new ArrayList<>();
-    @Getter    @Setter    private List<capitulosLista> capitulo4000 = new ArrayList<>();
-    @Getter    @Setter    private List<capitulosLista> capitulo5000 = new ArrayList<>();
-    @Getter    @Setter    private List<capitulosLista> capituloCPDD = new ArrayList<>();
+    @Getter    @Setter    private List<CapitulosLista> capitulo2000 = new ArrayList<>();
+    @Getter    @Setter    private List<CapitulosLista> capitulo3000 = new ArrayList<>();
+    @Getter    @Setter    private List<CapitulosLista> capitulo4000 = new ArrayList<>();
+    @Getter    @Setter    private List<CapitulosLista> capitulo5000 = new ArrayList<>();
+    @Getter    @Setter    private List<CapitulosLista> capituloCPDD = new ArrayList<>();
     
-    @Getter    @Setter    private Procesopoa procesopoa=new Procesopoa();
     
-    @Getter    @Setter    private List<listaEjesEsLaAp> ejesEsLaAp=new ArrayList<>();
-    @Getter    @Setter    private List<listaEjeEstrategia> listaListaEjeEstrategia=new ArrayList<>();
     
-    @EJB    EjbPoaSelectec poaSelectec;
-    @EJB    EjbPresupuestacion presupuestacion;
+   @EJB    EjbCatalogosPoa ejbCatalogosPoa;
+    @EJB    EjbRegistroActividades ejbRegistroActividades;
+    @EJB    EjbPresupuestacion ejbPresupuestacion;
     @EJB    EjbAreasLogeo ejbAreasLogeo;
     @EJB    EjbUtilidadesCH ejbUtilidadesCH;
-    @EJB    Facade f;
+    
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesPOA utilidadesPOA;
 
     @PostConstruct
     public void init() {
-        System.out.println("ControladorHabilidadesIIL Inicio: " + System.currentTimeMillis());
-        ejeses.clear();
-        ejesesFiltrado.clear();
-        actividadesPoasAreas.clear();
-        actividadesPoasAreasEjes.clear();
-        actividadesPoasAreas.clear();
-        ejes = new EjesRegistro(0);
-
-        claveArea = 0;
-        ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 101));
-
-        consultarListas();
-
-        System.out.println(" ControladorHabilidadesIIL Fin: " + System.currentTimeMillis());
+        ejercicioFiscal=controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa1();
+        buscarAreasQueTienenPOA();
     }
-
-//     @PreDestroy
-//    public void fin(){
-//        actividadesPoasAreas.forEach((t) -> {
-//            f.getEntityManager().detach(t);
-//        });
-//    }
     
-    public void consultarListas() {
+    public void buscarAreasQueTienenPOA() {
         try {
-            actividadesPoasAreasConRegistros.clear();
+            areasUniversidadsRegistros = new ArrayList<>();
             areasUniversidadsRegistros.clear();
-            areasUniversidads.clear();
-            actividadesPoasAreas.clear();
-
-            actividadesPoasAreasConRegistros = poaSelectec.mostrarAreasQueRegistraronActividades();
-            areasUniversidads = ejbAreasLogeo.mostrarAreasUniversidadActivas();
             areasUniversidadsRegistros.add(new AreasUniversidad(Short.parseShort("0"), "Seleccione uno", "Seleccione uno", "1", false));
-            if (!actividadesPoasAreasConRegistros.isEmpty()) {
-                actividadesPoasAreasConRegistros.forEach((t) -> {
-                    areasUniversidads.forEach((a) -> {
-                        if (t.getArea() == a.getArea()) {
-                            areasUniversidadsRegistros.add(a);
-                        }
-                    });
-                });
-            }
+            areasUniversidadsRegistros.addAll(ejbAreasLogeo.getAreasUniversidadConPoa());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorEvaluacionActividadesPyE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    // ---------------------------------------------------------------- Listas -------------------------------------------------------------
-    public void consultarListas(ValueChangeEvent event) {
-        ejesesFiltrado.clear();
-        ejesesFiltrado.add(new EjesRegistro(0, "Seleccione uno", "Seleccione uno", "", ""));
-
-        claveArea = Short.parseShort(event.getNewValue().toString());
-
-        if (!poaSelectec.mostrarEjesRegistrosAreas(claveArea, ejercicioFiscal).isEmpty()) {
-            ejesesFiltrado.addAll(poaSelectec.mostrarEjesRegistrosAreas(claveArea, ejercicioFiscal));
-            Collections.sort(ejesesFiltrado, (x, y) -> Integer.compare(x.getEje(), y.getEje()));
-        }
-        
-    }
-    
     public void areaSeleccionada(ValueChangeEvent event) {
         try {
-            mss="";
+            mss = "";
             claveArea = 0;
             areaPOASeleccionada = new AreasUniversidad();
             procesopoa = new Procesopoa();
@@ -161,44 +103,33 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
             consultarListasValidacionFinal();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorRegistroActividadesPOAPyE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AdminPoaValidacionPresupuestacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void consultarListasValidacionFinal() {
-        ejeses.clear();
-        ejesesFiltrado.clear();
-        cuadroMandoIntegrals.clear();
+        listaListaEjeEstrategia=new ArrayList<>();
         listaListaEjeEstrategia.clear();
 
         ejesEsLaAp = new ArrayList<>();
         ejesEsLaAp.clear();
 
-        actividadesPoasAreas = poaSelectec.mostrarActividadesPoasArea(claveArea);
-        if (!actividadesPoasAreas.isEmpty()) {
-            actividadesPoasAreas.forEach((t) -> {
-                if (!t.getValidadpPyeFinal()) {
-                    liberado = false;
-                }
-            });
-        }
-
-        if (!poaSelectec.mostrarEjesRegistrosAreas(claveArea, ejercicioFiscal).isEmpty()) {
-            poaSelectec.mostrarEjesRegistrosAreas(claveArea, ejercicioFiscal).forEach((ej) -> {
+        if (!ejbCatalogosPoa.mostrarEjesRegistrosAreas(claveArea, ejercicioFiscal).isEmpty()) {
+            ejbCatalogosPoa.mostrarEjesRegistrosAreas(claveArea, ejercicioFiscal).forEach((ej) -> {
                 listaListaEjeEstrategia = new ArrayList<>();
                 listaListaEjeEstrategia.clear();
-                listaListaEjeEstrategia.add(new listaEjeEstrategia(ej, poaSelectec.getEstarategiasPorEje(ej, ejercicioFiscal, claveArea)));
+                listaListaEjeEstrategia.add(new ListaEjeEstrategia(ej, ejbCatalogosPoa.getEstarategiasPorEje(ej, ejercicioFiscal, claveArea)));
                 if (!listaListaEjeEstrategia.isEmpty()) {
                     listaListaEjeEstrategia.forEach((e) -> {
                         e.getListaEstrategiases1().forEach((t) -> {
                             List<ActividadesPoa> listaActividadesPoasFiltradas = new ArrayList<>();
                             listaActividadesPoasFiltradas.clear();
-                            listaActividadesPoasFiltradas = poaSelectec.getActividadesPoasporEstarategias(t, e.getEjess(), ejercicioFiscal, claveArea);
-                            listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(t, listaActividadesPoasFiltradas));
+                            listaActividadesPoasFiltradas = ejbRegistroActividades.getActividadesPoasEstarategias(t, e.getEjess(), ejercicioFiscal, claveArea);
+                            listaEstrategiaActividadesesEje.add(new ListaEstrategiaActividades(t, listaActividadesPoasFiltradas));
                             Collections.sort(listaEstrategiaActividadesesEje, (x, y) -> Short.compare(x.getEstrategias().getEstrategia(), y.getEstrategias().getEstrategia()));
 
                         });
-                        ejesEsLaAp.add(new listaEjesEsLaAp(ej, listaEstrategiaActividadesesEje));
+                        ejesEsLaAp.add(new ListaEjesEsLaAp(ej, listaEstrategiaActividadesesEje));
                         listaEstrategiaActividadesesEje = new ArrayList<>();
                         listaEstrategiaActividadesesEje.clear();
                     });
@@ -212,30 +143,17 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
         obteneroTotalesCapitulosDesglosado();
     }
 
-    public void consultarEje(ValueChangeEvent event) {
-        ejesesFiltrado.forEach((t) -> {
-            if(t.getEje()==Integer.parseInt(event.getNewValue().toString())){
-                ejes=t;
-            }
-        });
-        claveEje=ejes.getEje();
-    }
-
-    public void generaListaActividades() {
-        actividadesPoasAreasEjes.clear();
-        actividadesPoasAreas.forEach((t) -> {
-            if (t.getCuadroMandoInt().getEje().equals(ejes)) {
-                if (!actividadesPoasAreasEjes.contains(t)) {
-                    actividadesPoasAreasEjes.add(t);
-                }
-            }
-        });
+    public void enviarmensajes(String proceso) {
+        utilidadesPOA.enviarCorreo(proceso, "Ad", false, mss, areaPOASeleccionada);
     }
     
-    ////////////////////////////////////////////////////////////////////////////////
+    public void imprimirValores() {
+        System.out.println("mx.edu.utxj.pye.sgi.poa.controladores.imprimirValores()");
+    }
+
     public void obtenerPretechos() {
         pretechoFinancieros.clear();
-        pretechoFinancieros = poaSelectec.mostrarPretechoFinancieros(claveArea, ejercicioFiscal);
+        pretechoFinancieros = ejbPresupuestacion.mostrarPretechoFinancieros(claveArea, ejercicioFiscal);
         pretechoFinancieros.forEach((t) -> {
             switch (t.getCapituloTipo().getCapituloTipo()) {
                 case 2:
@@ -267,11 +185,11 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
         recursosActividads4.clear();        recursosActividads5.clear();
         recursosActividadscdh.clear();
 
-        recursosActividads2=presupuestacion.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("2"));
-        recursosActividads3=presupuestacion.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("3"));
-        recursosActividads4=presupuestacion.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("4"));
-        recursosActividads5=presupuestacion.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("5"));
-        recursosActividadscdh=presupuestacion.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("6"));
+        recursosActividads2=ejbPresupuestacion.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("2"));
+        recursosActividads3=ejbPresupuestacion.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("3"));
+        recursosActividads4=ejbPresupuestacion.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("4"));
+        recursosActividads5=ejbPresupuestacion.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("5"));
+        recursosActividadscdh=ejbPresupuestacion.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("6"));
         
         totalCaptitulo2000 = 0D;
         totalCaptitulo3000 = 0D;
@@ -322,12 +240,12 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
                             }
                         });
                         if (!ecxiste) {
-                            capitulo2000.add(new capitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
+                            capitulo2000.add(new CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
                         }
                         ecxiste = false;
                     } else {
                         ecxiste = false;
-                        capitulo2000.add(new capitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
+                        capitulo2000.add(new CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
                     }
                 }
             });
@@ -344,12 +262,12 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
                             }
                         });
                         if (!ecxiste) {
-                            capitulo3000.add(new capitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
+                            capitulo3000.add(new CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
                         }
                         ecxiste = false;
                     } else {
                         ecxiste = false;
-                        capitulo3000.add(new capitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
+                        capitulo3000.add(new CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
                     }
                 }
             });
@@ -366,12 +284,12 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
                             }
                         });
                         if (!ecxiste) {
-                            capitulo4000.add(new capitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
+                            capitulo4000.add(new CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
                         }
                         ecxiste = false;
                     } else {
                         ecxiste = false;
-                        capitulo4000.add(new capitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
+                        capitulo4000.add(new CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
                     }
                 }
             });
@@ -388,12 +306,12 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
                             }
                         });
                         if (!ecxiste) {
-                            capitulo5000.add(new capitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
+                            capitulo5000.add(new CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
                         }
                         ecxiste = false;
                     } else {
                         ecxiste = false;
-                        capitulo5000.add(new capitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
+                        capitulo5000.add(new CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
                     }
                 }
             });
@@ -410,104 +328,58 @@ public class ControladorRegistroActividadesPOAPyE implements Serializable {
                             }
                         });
                         if (!ecxiste) {
-                            capituloCPDD.add(new capitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
+                            capituloCPDD.add(new CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
                         }
                         ecxiste = false;
                     } else {
                         ecxiste = false;
-                        capituloCPDD.add(new capitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
+                        capituloCPDD.add(new CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
                     }
                 }
             });
         }
     }
 
-       public void onRowEditAc(RowEditEvent event) {
-        try {
-            ActividadesPoa ap = (ActividadesPoa) event.getObject();
-            poaSelectec.actualizaActividadesPoa(ap);            
-            consultarListasValidacionFinal();
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-     public void onRowCancel(RowEditEvent event) {
-        Messages.addGlobalInfo("¡Operación cancelada!");
-    }
-    
-    public void validarPlaneacion() {
-         actividadesPoasAreas.forEach((t) -> {
-            t.setValidadoPyE(true);
-            poaSelectec.actualizaActividadesPoa(t);
-        });
-        liberado=true;
-    }
-
-    public void validarFinanzas(ActividadesPoa actividadesPoa) {
-        actividadesPoa.setValidadoFinanzas(!actividadesPoa.getValidadoFinanzas());
-        poaSelectec.actualizaActividadesPoa(actividadesPoa);
-        consultarListasValidacionFinal();
-    }
-
-    public void validarPyEFinal() {
-        actividadesPoasAreas.forEach((t) -> {
-            t.setValidadpPyeFinal(true);
-            poaSelectec.actualizaActividadesPoa(t);
-        });
-        liberado=true;
-    }
-
-    public void imprimirValores() {
-        System.out.println("mx.edu.utxj.pye.sgi.poa.controladores.imprimirValores()");
-    }
-
-    public static class listaEjesEsLaAp {
+    public static class ListaEjesEsLaAp {
 
         @Getter        @Setter        private EjesRegistro ejeA;
-        @Getter        @Setter        private List<listaEstrategiaActividades> listalistaEstrategiaLaAp;
+        @Getter        @Setter        private List<ListaEstrategiaActividades> listalistaEstrategiaLaAp;
 
-        public listaEjesEsLaAp(EjesRegistro ejeA, List<listaEstrategiaActividades> listalistaEstrategiaLaAp) {
+        public ListaEjesEsLaAp(EjesRegistro ejeA, List<ListaEstrategiaActividades> listalistaEstrategiaLaAp) {
             this.ejeA = ejeA;
             this.listalistaEstrategiaLaAp = listalistaEstrategiaLaAp;
         }
     }
     
-    public static class listaEjeEstrategia {
+    public static class ListaEjeEstrategia {
 
         @Getter        @Setter        private EjesRegistro ejess;
         @Getter        @Setter        private List<Estrategias> listaEstrategiases1;
 
-        public listaEjeEstrategia(EjesRegistro ejess, List<Estrategias> listaEstrategiases1) {
+        public ListaEjeEstrategia(EjesRegistro ejess, List<Estrategias> listaEstrategiases1) {
             this.ejess = ejess;
             this.listaEstrategiases1 = listaEstrategiases1;
         }        
     }
     
-    public void enviarmensajes(String proceso) {
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOAPyE.enviarmensajes(proceso)"+proceso);
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOAPyE.enviarmensajes(mss)"+mss);
-        utilidadesPOA.enviarCorreo(proceso, "Ad", false, mss, areaPOASeleccionada);
-    }
     
-    public static class listaEstrategiaActividades {
+    public static class ListaEstrategiaActividades {
 
         @Getter        @Setter        private Estrategias estrategias;
         @Getter        @Setter        private List<ActividadesPoa> actividadesPoas;
 
-        public listaEstrategiaActividades(Estrategias estrategias, List<ActividadesPoa> actividadesPoas) {
+        public ListaEstrategiaActividades(Estrategias estrategias, List<ActividadesPoa> actividadesPoas) {
             this.estrategias = estrategias;
             this.actividadesPoas = actividadesPoas;
         }       
     }
 
-    public static class capitulosLista {
+    public static class CapitulosLista {
 
         @Getter        @Setter        private Partidas partidas1;
         @Getter        @Setter        private Double total;
 
-        public capitulosLista(Partidas partidas1, Double total) {
+        public CapitulosLista(Partidas partidas1, Double total) {
             this.partidas1 = partidas1;
             this.total = total;
         }

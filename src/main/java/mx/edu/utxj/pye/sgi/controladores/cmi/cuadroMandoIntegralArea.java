@@ -17,7 +17,8 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
-import mx.edu.utxj.pye.sgi.ejb.poa.EjbPoaSelectec;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbRegistroActividades;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
@@ -63,8 +64,10 @@ public class cuadroMandoIntegralArea implements Serializable {
     @Getter    @Setter    private List<listaEjeProyectos> ejeProyectoses = new ArrayList<>();
     @Getter    @Setter    private List<listaEstrategiaActividades> listaEstrategiaActividadesesEje = new ArrayList<>();
 
-    @EJB    EjbPoaSelectec poaSelectec;
+    @EJB    EjbRegistroActividades ejbRegistroActividades;
     @EJB    EjbAreasLogeo areasLogeo;
+    @EJB    EjbCatalogosPoa ejbCatalogosPoa;
+    
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesPOA poau;
 
@@ -101,7 +104,7 @@ public class cuadroMandoIntegralArea implements Serializable {
     public void cmiEnGeneral() {
         actividadesPoas = new ArrayList<>();
         actividadesPoas.clear();
-        actividadesPoas = poaSelectec.mostrarActividadesPoasReporteArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
+        actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasTotalArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
         cmiGeneral = new ResultadosCMI(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativaNombre(), 0, 0, 0.0, graf, new MeterGaugeChartModel(), false);
         if (!actividadesPoas.isEmpty()) {
             List<ActividadesPoa> actividadesPoasFiltradas = new ArrayList<>();
@@ -125,7 +128,7 @@ public class cuadroMandoIntegralArea implements Serializable {
     public void cmiPorEje() {
         ejesRegistros = new ArrayList<>();
         ejesRegistros.clear();
-        ejesRegistros = poaSelectec.mostrarEjesRegistrosAreas(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
+        ejesRegistros = ejbCatalogosPoa.mostrarEjesRegistrosAreas(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
         
         if (!ejesRegistros.isEmpty()) {
             ejesRegistros.forEach((t) -> {
@@ -143,7 +146,7 @@ public class cuadroMandoIntegralArea implements Serializable {
     public ResultadosCMI cmiEje(EjesRegistro er) {
         actividadesPoas = new ArrayList<>();
         actividadesPoas.clear();
-        actividadesPoas = poaSelectec.mostrarActividadesPoasAreaEjeyEjercicioFiscal(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, er);
+        actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasEje(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, er);
         List<ActividadesPoa> actividadesPoasFiltradas = new ArrayList<>();
         actividadesPoasFiltradas.clear();
         actividadesPoasFiltradas = actividadesFiltradas(actividadesPoas);
@@ -285,22 +288,22 @@ public class cuadroMandoIntegralArea implements Serializable {
 
         ejesRegistros = new ArrayList<>();
         ejesRegistros.clear();
-        ejesRegistros = poaSelectec.mostrarEjesRegistrosAreas(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
+        ejesRegistros = ejbCatalogosPoa.mostrarEjesRegistrosAreas(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
         if (!ejesRegistros.isEmpty()) {
             ejesRegistros.forEach((ej) -> {
                 proyectoses = new ArrayList<>();
                 proyectoses.clear();
-                proyectoses = poaSelectec.getProyectosPorEje(ej, ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                proyectoses = ejbCatalogosPoa.getProyectosPorEje(ej, ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
                 if (!proyectoses.isEmpty()) {
                     proyectoses.forEach((pr) -> {
                         estrategiases = new ArrayList<>();
                         estrategiases.clear();
-                        estrategiases = poaSelectec.getEstrategiaPorProyectos(pr, ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                        estrategiases = ejbCatalogosPoa.getEstrategiaPorProyectos(pr, ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
                         if (!estrategiases.isEmpty()) {
                             estrategiases.forEach((es) -> {
                                 List<ActividadesPoa> listaActividadesPoasFiltradas = new ArrayList<>();
                                 listaActividadesPoasFiltradas.clear();
-                                listaActividadesPoasFiltradas = actividadesFiltradas(poaSelectec.getActividadesPoasporProyecto(es, ej, pr, ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                                listaActividadesPoasFiltradas = actividadesFiltradas(ejbRegistroActividades.getActividadesPoasporProyecto(es, ej, pr, ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
                                 if (!listaActividadesPoasFiltradas.isEmpty()) {
                                     Collections.sort(listaActividadesPoasFiltradas, (x, y) -> (x.getNumeroP() + "." + x.getNumeroS()).compareTo(y.getNumeroP() + "." + y.getNumeroS()));
                                     listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(es, listaActividadesPoasFiltradas));

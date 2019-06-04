@@ -12,7 +12,6 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
-import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogos;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbPresupuestacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
@@ -30,6 +29,7 @@ import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.RowEditEvent;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
 
 @Named
 @ManagedBean
@@ -65,7 +65,7 @@ public class AreaPoaPresupuestacion implements Serializable {
     @Getter    @Setter    private Double totalRecursoActividad = 0D, total=0D;
     @Getter    @Setter    private Boolean contenido = false, alineacionSeleccionada = false,productoSeleccionado=false;
 
-    @EJB    EjbCatalogos catalogos;
+    @EJB    EjbCatalogosPoa catalogos;
     @EJB    EjbPresupuestacion presupuestacion;
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesPOA pOAUtilidades;

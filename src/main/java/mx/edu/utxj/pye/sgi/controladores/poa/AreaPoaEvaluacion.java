@@ -21,7 +21,9 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
-import mx.edu.utxj.pye.sgi.ejb.poa.EjbPoaSelectec;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbEvidenciasPoa;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbRegistroActividades;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -83,7 +85,9 @@ public class AreaPoaEvaluacion implements Serializable {
     @Getter    private String ruta;
     @Getter    StreamedContent content;
     
-    @EJB    EjbPoaSelectec poaSelectec;
+    @EJB    EjbRegistroActividades ejbRegistroActividades;
+    @EJB    EjbCatalogosPoa ejbCatalogosPoa;
+    @EJB    EjbEvidenciasPoa ejbEvidenciasPoa;
     @EJB    EjbCarga carga;
     @EJB    EjbAreasLogeo ejbAreasLogeo;
 
@@ -116,7 +120,7 @@ public class AreaPoaEvaluacion implements Serializable {
             siglaArea = areaPOASeleccionada.getSiglas();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorRegistroActividadesPOAPyE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AreaPoaEvaluacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -125,8 +129,8 @@ public class AreaPoaEvaluacion implements Serializable {
         ejesesFiltrado.clear();
         ejesesFiltrado.add(new EjesRegistro(0, "Seleccione uno", "Seleccione uno", "", ""));
 
-        actividadesPoasAreas = poaSelectec.mostrarActividadesPoasArea(claveArea);
-        ejeses = poaSelectec.mostrarEjesRegistros();
+        actividadesPoasAreas = ejbRegistroActividades.mostrarActividadesPoasArea(claveArea);
+        ejeses = ejbCatalogosPoa.mostrarEjesRegistros();
 
         if (!actividadesPoasAreas.isEmpty()) {
             actividadesPoasAreas.forEach((t) -> {
@@ -155,11 +159,11 @@ public class AreaPoaEvaluacion implements Serializable {
                 case "eje":
                     ejes = new EjesRegistro();
                     estrategias = new Estrategias();
-                    ejes = poaSelectec.mostrarEjeRegistro(Integer.parseInt(event.getNewValue().toString()));
+                    ejes = ejbCatalogosPoa.mostrarEjeRegistro(Integer.parseInt(event.getNewValue().toString()));
                     if (ejes != null) {
                         estrategiases.clear();
                         estrategiases.add(new Estrategias(Short.parseShort("0"), Short.parseShort("0"), "Selecciones Uno"));
-                        poaSelectec.getEstarategiasPorEje(ejes,ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).forEach((t) -> {
+                        ejbCatalogosPoa.getEstarategiasPorEje(ejes,ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).forEach((t) -> {
                             estrategiases.add(t);
                         });
                     }
@@ -167,7 +171,7 @@ public class AreaPoaEvaluacion implements Serializable {
                     break;
                 case "estrategia":
                     estrategias = new Estrategias();
-                    estrategias = poaSelectec.mostrarEstrategia(Short.parseShort(event.getNewValue().toString()));
+                    estrategias = ejbCatalogosPoa.mostrarEstrategia(Short.parseShort(event.getNewValue().toString()));
                     resetearValores();
                     if (ejes != null) {
                         if (general) {
@@ -220,7 +224,7 @@ public class AreaPoaEvaluacion implements Serializable {
         listaListaEjeEstrategia.clear();
         listaEstrategiaActividadesesEje.clear();
         
-        listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(estrategias, aconsultarTotales(poaSelectec.getActividadesPoasporEstarategias(estrategias,ejes, ejercicioFiscal, claveArea))));
+        listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(estrategias, aconsultarTotales(ejbRegistroActividades.getActividadesPoasEstarategias(estrategias,ejes, ejercicioFiscal, claveArea))));
               
         if (mes <= 3) {
             cuatrimestre = 1;
@@ -261,7 +265,7 @@ public class AreaPoaEvaluacion implements Serializable {
         listaListaEjeEstrategia.clear();
         listaEstrategiaActividadesesEje.clear();
 
-        listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(estrategias, aconsultarTotales(poaSelectec.getActividadesPoasporEstarategias(estrategias, ejes, ejercicioFiscal, claveArea))));
+        listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(estrategias, aconsultarTotales(ejbRegistroActividades.getActividadesPoasEstarategias(estrategias, ejes, ejercicioFiscal, claveArea))));
             
         if (mes <= 3) {
             cuatrimestre = 1;
@@ -433,7 +437,7 @@ public class AreaPoaEvaluacion implements Serializable {
     }
     
     public void actualizarNuavActividad() {
-        actividadesPoaEditando = poaSelectec.actualizaActividadesPoa(actividadesPoaEditando);
+        actividadesPoaEditando = ejbRegistroActividades.actualizaActividadesPoa(actividadesPoaEditando);
         if (mostradaL == 1) {
             generaListaActividadesEje();
         } else {
@@ -452,14 +456,14 @@ public class AreaPoaEvaluacion implements Serializable {
         actividad nuevaactividad = (actividad) event.getObject();
         ActividadesPoa modificada = nuevaactividad.getActividadesPoa();
         ultimaEstrategiaExpandida = modificada.getCuadroMandoInt().getEstrategia();
-        poaSelectec.actualizaActividadesPoa(modificada);
+        ejbRegistroActividades.actualizaActividadesPoa(modificada);
 
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(2)" + ultimaEstrategiaExpandida.getEstrategia());
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(3)" + modificada.getCuadroMandoInt().getCuadroMandoInt());
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(4)"+modificada.getNumeroP());
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(5)"+modificada.getNumeroS());
         if (modificada.getNumeroS() != 0) {
-            actividads = poaSelectec.getActividadesEvaluacionMadre(modificada.getCuadroMandoInt(), modificada.getNumeroP(),controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+            actividads = ejbRegistroActividades.getActividadesEvaluacionMadre(modificada.getCuadroMandoInt(), modificada.getNumeroP(),controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
             System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(6)"+actividads.size());
             if (!actividads.isEmpty()) {
                 actividads.forEach((t) -> {
@@ -500,7 +504,7 @@ public class AreaPoaEvaluacion implements Serializable {
                 actividadMadre.setNANoviembre(Short.parseShort(mes11.toString()));
                 actividadMadre.setNADiciembre(Short.parseShort(mes12.toString()));
             }
-            poaSelectec.actualizaActividadesPoa(actividadMadre);
+            ejbRegistroActividades.actualizaActividadesPoa(actividadMadre);
         }
        
         if (mostradaL==1) {
@@ -567,17 +571,17 @@ public class AreaPoaEvaluacion implements Serializable {
         ultimaEstrategiaExpandida = new Estrategias();
         ultimaEstrategiaExpandida = actividadesPoaEvidencias.getCuadroMandoInt().getEstrategia();
         List<Registros> rs = new ArrayList<>();
-        rs = poaSelectec.mostrarRegistrosActividad(actividadesPoaEvidencias);
+        rs = ejbCatalogosPoa.mostrarRegistrosActividad(actividadesPoaEvidencias);
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOAEvaluacionAreas.consultarEvidencias(1)" + actividadesPoaEvidencias.getActividadPoa());
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOAEvaluacionAreas.consultarEvidencias(2)" + rs.size());
 
-        evidenciases = poaSelectec.mostrarEvidenciases(actividadesPoaEvidencias, rs);
+        evidenciases = ejbEvidenciasPoa.mostrarEvidenciasesRegistros(actividadesPoaEvidencias, rs);
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOAEvaluacionAreas.consultarEvidencias(3)" + evidenciases.size());
         if (!evidenciases.isEmpty()) {
             evidenciases.forEach((t) -> {
                 evidenciasesDe = new ArrayList<>();
                 evidenciasesDe.clear();
-                evidenciasesDe = poaSelectec.mostrarEvidenciases(t);
+                evidenciasesDe = ejbEvidenciasPoa.mostrarEvidenciases(t);
                 if (!evidenciasesDe.isEmpty()) {
                     evidenciasesDe.forEach((e) -> {
                         if(mesNombre.equals(e.getMes())){                            
@@ -607,7 +611,7 @@ public class AreaPoaEvaluacion implements Serializable {
                     evidencias.setCategoria("Múltiple");
                 }
 
-                poaSelectec.agregarEvidenciases(evidencias, actividadesPoaEditando);
+                ejbEvidenciasPoa.agregarEvidenciases(evidencias, actividadesPoaEditando);
                 for (Part file : files) {
 
                     System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(3)");
@@ -623,7 +627,7 @@ public class AreaPoaEvaluacion implements Serializable {
                         evidenciasDetalle.setMime(type);
                         evidenciasDetalle.setTamanioBytes(size);
                         evidenciasDetalle.setMes(mesNombre);
-                        poaSelectec.agregarEvidenciasesEvidenciasDetalle(evidenciasDetalle);
+                        ejbEvidenciasPoa.agregarEvidenciasesEvidenciasDetalle(evidenciasDetalle);
                     } else {
                         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(4.1)");
                     }
@@ -648,14 +652,14 @@ public class AreaPoaEvaluacion implements Serializable {
         Evidencias evidencias = new Evidencias();
         evidencias = evidenciasDetalle.getEvidencia();
         List<EvidenciasDetalle> evidenciasDetallesComparacion = new ArrayList<>();
-        evidenciasDetallesComparacion = poaSelectec.mostrarEvidenciases(evidencias);
-        poaSelectec.eliminarEvidenciasDetalle(evidenciasDetalle);
+        evidenciasDetallesComparacion = ejbEvidenciasPoa.mostrarEvidenciases(evidencias);
+        ejbEvidenciasPoa.eliminarEvidenciasDetalle(evidenciasDetalle);
         if(evidenciasDetallesComparacion.size() == 2){
             evidencias.setCategoria("Única");
-             poaSelectec.actualizarEvidenciases(evidencias);
+             ejbEvidenciasPoa.actualizarEvidenciases(evidencias);
         }
         if (evidenciasDetallesComparacion.size() == 1) {
-            poaSelectec.eliminarEvidencias(evidencias);
+            ejbEvidenciasPoa.eliminarEvidencias(evidencias);
         }
 
         consultarEvidencias(actividadesPoaEditando);

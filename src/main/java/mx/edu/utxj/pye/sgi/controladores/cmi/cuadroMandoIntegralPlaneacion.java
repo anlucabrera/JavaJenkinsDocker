@@ -16,7 +16,8 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
-import mx.edu.utxj.pye.sgi.ejb.poa.EjbPoaSelectec;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbRegistroActividades;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
@@ -55,8 +56,9 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
     @Getter    @Setter    private String mes = "", mesNombre = "", valores = "";
     @Getter    @Setter    private DecimalFormat df = new DecimalFormat("#.00");
 
-    @EJB    EjbPoaSelectec poaSelectec;
+    @EJB    EjbRegistroActividades ejbRegistroActividades;
     @EJB    EjbAreasLogeo areasLogeo;
+    @EJB    EjbCatalogosPoa ejbCatalogosPoa;
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesPOA poau;
 
@@ -109,9 +111,9 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
         actividadesPoas = new ArrayList<>();
         actividadesPoas.clear();
         if (au.getArea() != 0) {
-            actividadesPoas = poaSelectec.mostrarActividadesPoasReporteArea(au.getArea(), ejercicioFiscal);
+            actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasTotalArea(au.getArea(), ejercicioFiscal);
         } else {
-            actividadesPoas = poaSelectec.mostrarActividadesPoasUniversidadaEjercicioFiscal(ejercicioFiscal);
+            actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasUniversidadaEjercicioFiscal(ejercicioFiscal);
         }
         cmiGeneral = new ResultadosCMI(au.getNombre(), 0, 0, 0.0, graf, new MeterGaugeChartModel(), false);
         if (!actividadesPoas.isEmpty()) {
@@ -137,9 +139,9 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
         ejesRegistros = new ArrayList<>();
         ejesRegistros.clear();
         if (au.getArea() != 0) {
-            ejesRegistros = poaSelectec.mostrarEjesRegistrosAreas(au.getArea(), ejercicioFiscal);
+            ejesRegistros = ejbCatalogosPoa.mostrarEjesRegistrosAreas(au.getArea(), ejercicioFiscal);
         } else {
-            ejesRegistros = poaSelectec.mostrarEjesRegistros();
+            ejesRegistros = ejbCatalogosPoa.mostrarEjesRegistros();
         }
         if (!ejesRegistros.isEmpty()) {
             ejesRegistros.forEach((t) -> {
@@ -158,9 +160,9 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
         actividadesPoas = new ArrayList<>();
         actividadesPoas.clear();
         if (au.getArea() != 0) {
-            actividadesPoas = poaSelectec.mostrarActividadesPoasAreaEjeyEjercicioFiscal(au.getArea(), ejercicioFiscal, er);
+            actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasEje(au.getArea(), ejercicioFiscal, er);
         } else {
-            actividadesPoas = poaSelectec.mostrarActividadesPoasUniversidadaEjeyEjercicioFiscal(ejercicioFiscal, er);
+            actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasUniversidadaEjeyEjercicioFiscal(ejercicioFiscal, er);
         }
         List<ActividadesPoa> actividadesPoasFiltradas = new ArrayList<>();
         actividadesPoasFiltradas.clear();

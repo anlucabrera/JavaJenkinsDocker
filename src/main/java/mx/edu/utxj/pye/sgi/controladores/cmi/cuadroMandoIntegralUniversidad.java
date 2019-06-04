@@ -17,7 +17,8 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
-import mx.edu.utxj.pye.sgi.ejb.poa.EjbPoaSelectec;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbRegistroActividades;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
@@ -64,8 +65,9 @@ public class cuadroMandoIntegralUniversidad implements Serializable {
     @Getter    @Setter    private List<listaEjeProyectos> ejeProyectoses = new ArrayList<>();
     @Getter    @Setter    private List<listaEstrategiaActividades> listaEstrategiaActividadesesEje = new ArrayList<>();
 
-    @EJB    EjbPoaSelectec poaSelectec;
     @EJB    EjbAreasLogeo areasLogeo;
+    @EJB    EjbRegistroActividades ejbRegistroActividades;
+    @EJB    EjbCatalogosPoa ejbCatalogosPoa;
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesPOA poau;
 
@@ -106,7 +108,7 @@ public class cuadroMandoIntegralUniversidad implements Serializable {
         actividadesPoas.clear();
         
         
-            actividadesPoas = poaSelectec.mostrarActividadesPoasUniversidadaEjercicioFiscal(ejercicioFiscal);
+            actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasUniversidadaEjercicioFiscal(ejercicioFiscal);
         
         cmiGeneral = new ResultadosCMI(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativaNombre(), 0, 0, 0.0, graf, new MeterGaugeChartModel(), false);
         
@@ -133,7 +135,7 @@ public class cuadroMandoIntegralUniversidad implements Serializable {
         ejesRegistros = new ArrayList<>();
         ejesRegistros.clear();
         
-        ejesRegistros = poaSelectec.mostrarEjesRegistros();
+        ejesRegistros = ejbCatalogosPoa.mostrarEjesRegistros();
                 
         if (!ejesRegistros.isEmpty()) {
             ejesRegistros.forEach((t) -> {
@@ -152,7 +154,7 @@ public class cuadroMandoIntegralUniversidad implements Serializable {
         actividadesPoas = new ArrayList<>();
         actividadesPoas.clear();
         
-        actividadesPoas = poaSelectec.mostrarActividadesPoasUniversidadaEjeyEjercicioFiscal(ejercicioFiscal, er);
+        actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasUniversidadaEjeyEjercicioFiscal(ejercicioFiscal, er);
                 
         List<ActividadesPoa> actividadesPoasFiltradas = new ArrayList<>();
         actividadesPoasFiltradas.clear();
@@ -278,7 +280,7 @@ public class cuadroMandoIntegralUniversidad implements Serializable {
         graficaProyecto = new ArrayList<>();
         graficaProyecto.clear();
         List<ActividadesPoa> aps = new ArrayList<>();
-        aps = actividadesFiltradas(poaSelectec.getActividadesPoasProyectoGrfica(er, proyectos, ejercicioFiscal));
+        aps = actividadesFiltradas(ejbRegistroActividades.getActividadesPoasProyectoGrfica(er, proyectos, ejercicioFiscal));
         calculosCMI(aps);
         graficaProyecto = graf;
     }
@@ -309,22 +311,22 @@ public class cuadroMandoIntegralUniversidad implements Serializable {
         ejesRegistros.clear();
         proyectoses.clear();
         ejesEsLaAp.clear();
-        ejesRegistros = poaSelectec.mostrarEjesRegistros();
+        ejesRegistros = ejbCatalogosPoa.mostrarEjesRegistros();
         if (!ejesRegistros.isEmpty()) {
             ejesRegistros.forEach((ej) -> {
                 proyectoses = new ArrayList<>();
                 proyectoses.clear();
-                proyectoses = poaSelectec.getProyectos(ej, ejercicioFiscal);
+                proyectoses = ejbCatalogosPoa.getProyectos(ej, ejercicioFiscal);
                 if (!proyectoses.isEmpty()) {
                     proyectoses.forEach((pr) -> {
                         estrategiases = new ArrayList<>();
                         estrategiases.clear();
-                        estrategiases = poaSelectec.getEstrategiaProyectos(pr, ejercicioFiscal);
+                        estrategiases = ejbCatalogosPoa.getEstrategiaProyectos(pr, ejercicioFiscal);
                         if (!estrategiases.isEmpty()) {
                             estrategiases.forEach((es) -> {
                                 List<ActividadesPoa> listaActividadesPoasFiltradas = new ArrayList<>();
                                 listaActividadesPoasFiltradas.clear();
-                                listaActividadesPoasFiltradas = actividadesFiltradas(poaSelectec.getActividadesPoasProyecto(es, ej, pr, ejercicioFiscal));
+                                listaActividadesPoasFiltradas = actividadesFiltradas(ejbRegistroActividades.getActividadesPoasProyecto(es, ej, pr, ejercicioFiscal));
                                 if (!listaActividadesPoasFiltradas.isEmpty()) {
                                     listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(es, listaActividadesPoasFiltradas));
                                     Collections.sort(listaEstrategiaActividadesesEje, (x, y) -> Short.compare(x.getEstrategias().getEstrategia(), y.getEstrategias().getEstrategia()));
