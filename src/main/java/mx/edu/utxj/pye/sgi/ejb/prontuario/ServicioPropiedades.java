@@ -7,9 +7,11 @@ package mx.edu.utxj.pye.sgi.ejb.prontuario;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ConfiguracionPropiedades;
@@ -81,4 +83,14 @@ public class ServicioPropiedades implements EjbPropiedades {
         return Optional.empty();
 //        throw new PropiedadNoEncontradaException(clave);
     }
+
+    @Override
+    public Map<Integer, String> leerPropiedadMapa(String clave, String valor) {
+        return f.getEntityManager().createQuery("select cp from ConfiguracionPropiedades cp where cp.clave like concat(:clave, '%') and cp.valorCadena=:valor and cp.tipo='Lista'", ConfiguracionPropiedades.class)
+                .setParameter("clave", clave)
+                .setParameter("valor", valor)
+                .getResultStream()
+                .collect(Collectors.toMap(cp -> Integer.parseInt(cp.getClave().replaceAll(clave, "")), cp-> cp.getValorCadena()));
+    }
+
 }

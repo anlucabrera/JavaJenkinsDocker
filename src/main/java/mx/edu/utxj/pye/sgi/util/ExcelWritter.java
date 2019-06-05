@@ -17,11 +17,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -120,7 +116,7 @@ public class ExcelWritter implements Serializable {
 
     public void editarLibro() {
         int index = 1;
-        System.out.println("mx.edu.utxj.pye.sgi.util.ExcelWritter.editarLibro() periodo escolar : " + periodoEscolar.getPeriodo());
+//        System.out.println("mx.edu.utxj.pye.sgi.util.ExcelWritter.editarLibro() periodo escolar : " + periodoEscolar.getPeriodo());
         if (tipo == EvaluacionesTipo.EVALUACION_DESEMPENIO) {
             for (ListaPersonalDesempenioEvaluacion rd : resultadosDesempenio.stream().filter(item -> item.isCompleto()).collect(Collectors.toList())) {
                 libro.cloneSheet(0, String.valueOf(rd.getPk().getEvaluado()));
@@ -212,9 +208,9 @@ public class ExcelWritter implements Serializable {
                 escribirCelda(hoja.getRow(32), 7, redondear(lpe.getR15()));
                 escribirCelda(hoja.getRow(33), 7, redondear(lpe.getR16()));
                 // apartado de comentarios editado 29/08/2018
-                escribirCelda(hoja.getRow(38), 2, lpe.getR32());
+                escribirCelda(hoja.getRow(39), 2, lpe.getR32());
 //                System.err.println("El comentario es r32: " + lpe.getR32());
-                escribirCelda(hoja.getRow(43), 2, lpe.getR33());
+                escribirCelda(hoja.getRow(44), 2, lpe.getR33());
 //                System.err.println("El comentario es  r33: " + lpe.getR33());
 //                System.out.println("mx.edu.utxj.pye.sgi.util.ExcelWritter.editarLibro() lpe: " + lpe);
                 int index2 =18;
@@ -277,7 +273,7 @@ public class ExcelWritter implements Serializable {
 
             ServicioArchivos.addCarpetaRelativa(base);
             salida = nombre;
-
+            System.out.println("base.concat(salida) = " + base.concat(salida));
             ServicioArchivos.eliminarArchivo(base.concat(salida));
 
             out = new FileOutputStream(new File(base.concat(salida)));
@@ -291,10 +287,10 @@ public class ExcelWritter implements Serializable {
     }
 
     public String enviarLibro() {
-        System.err.println("jvv.aldesa.sgot.util.ExcelWritter.enviarLibro() ruta: " + base.concat(salida));
+//        System.err.println("jvv.aldesa.sgot.util.ExcelWritter.enviarLibro() ruta: " + base.concat(salida));
         File file = new File(base.concat(salida));
         String ruta = "/sii2/media".concat(file.toURI().toString().split("archivos")[1]);
-        System.err.println("jvv.aldesa.sgot.util.ExcelWritter.enviarLibro() ruta 2: " + ruta);
+//        System.err.println("jvv.aldesa.sgot.util.ExcelWritter.enviarLibro() ruta 2: " + ruta);
         return ruta;
 //        return new File(base.concat(salida));
     }

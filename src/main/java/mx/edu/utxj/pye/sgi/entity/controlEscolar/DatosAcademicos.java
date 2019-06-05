@@ -24,15 +24,15 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author UTXJ
  */
 @Entity
-@Table(name = "datos_academicos")
+@Table(name = "datos_academicos", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "DatosAcademicos.findAll", query = "SELECT d FROM DatosAcademicos d"),
-    @NamedQuery(name = "DatosAcademicos.findByAspirante", query = "SELECT d FROM DatosAcademicos d WHERE d.aspirante = :aspirante"),
-    @NamedQuery(name = "DatosAcademicos.findByPrimeraOpcion", query = "SELECT d FROM DatosAcademicos d WHERE d.primeraOpcion = :primeraOpcion"),
-    @NamedQuery(name = "DatosAcademicos.findBySegundaOpcion", query = "SELECT d FROM DatosAcademicos d WHERE d.segundaOpcion = :segundaOpcion"),
-    @NamedQuery(name = "DatosAcademicos.findByPromedio", query = "SELECT d FROM DatosAcademicos d WHERE d.promedio = :promedio"),
-    @NamedQuery(name = "DatosAcademicos.findByInstitucionAcademica", query = "SELECT d FROM DatosAcademicos d WHERE d.institucionAcademica = :institucionAcademica")})
+    @NamedQuery(name = "DatosAcademicos.findAll", query = "SELECT d FROM DatosAcademicos d")
+    , @NamedQuery(name = "DatosAcademicos.findByAspirante", query = "SELECT d FROM DatosAcademicos d WHERE d.aspirante = :aspirante")
+    , @NamedQuery(name = "DatosAcademicos.findByPrimeraOpcion", query = "SELECT d FROM DatosAcademicos d WHERE d.primeraOpcion = :primeraOpcion")
+    , @NamedQuery(name = "DatosAcademicos.findBySegundaOpcion", query = "SELECT d FROM DatosAcademicos d WHERE d.segundaOpcion = :segundaOpcion")
+    , @NamedQuery(name = "DatosAcademicos.findByPromedio", query = "SELECT d FROM DatosAcademicos d WHERE d.promedio = :promedio")
+    , @NamedQuery(name = "DatosAcademicos.findByInstitucionAcademica", query = "SELECT d FROM DatosAcademicos d WHERE d.institucionAcademica = :institucionAcademica")})
 public class DatosAcademicos implements Serializable {
 
     private static final long serialVersionUID = 1L;

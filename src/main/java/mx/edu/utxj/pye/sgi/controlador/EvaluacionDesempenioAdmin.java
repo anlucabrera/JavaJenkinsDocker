@@ -96,9 +96,9 @@ public class EvaluacionDesempenioAdmin implements Serializable {
 
             //paso 3 obtener la lista de subordnados del directivo elegido
             listaSubordinados = evaluacionDesempenioEJB.getListaSubordinados(directivoSeleccionado);
-            listaSubordinados.forEach(s -> {
-                //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() subordinado 1: " + s.getClave());
-            });
+            /*listaSubordinados.forEach(s -> {
+                System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() subordinado 1: " + s.getClave());
+            });*/
 //        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() subordinados: " + listaSubordinados.size());
 
             //paso 4 obtener las fotos de los subordinados
@@ -122,9 +122,9 @@ public class EvaluacionDesempenioAdmin implements Serializable {
 
                     //paso8 inicializar claves de opciones
                     clavesOpciones.clear();
-                    for (int i = 0; (i < maxEvaluando && i < listaSubordinados.size()); i++) {
+                    /*for (int i = 0; (i < maxEvaluando && i < listaSubordinados.size()); i++) {
                         clavesOpciones.add(listaSubordinados.get(i).getClave());
-                    }
+                    }*/
 
                     //paso 9 inicializar opciones
                     initOpciones();

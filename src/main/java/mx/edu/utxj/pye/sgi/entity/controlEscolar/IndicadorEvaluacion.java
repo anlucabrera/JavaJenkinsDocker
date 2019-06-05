@@ -29,13 +29,13 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author UTXJ
  */
 @Entity
-@Table(name = "indicador_evaluacion")
+@Table(name = "indicador_evaluacion", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "IndicadorEvaluacion.findAll", query = "SELECT i FROM IndicadorEvaluacion i"),
-    @NamedQuery(name = "IndicadorEvaluacion.findByIdIndicadorEvaluacion", query = "SELECT i FROM IndicadorEvaluacion i WHERE i.idIndicadorEvaluacion = :idIndicadorEvaluacion"),
-    @NamedQuery(name = "IndicadorEvaluacion.findByNombre", query = "SELECT i FROM IndicadorEvaluacion i WHERE i.nombre = :nombre"),
-    @NamedQuery(name = "IndicadorEvaluacion.findByEstatus", query = "SELECT i FROM IndicadorEvaluacion i WHERE i.estatus = :estatus")})
+    @NamedQuery(name = "IndicadorEvaluacion.findAll", query = "SELECT i FROM IndicadorEvaluacion i")
+    , @NamedQuery(name = "IndicadorEvaluacion.findByIdIndicadorEvaluacion", query = "SELECT i FROM IndicadorEvaluacion i WHERE i.idIndicadorEvaluacion = :idIndicadorEvaluacion")
+    , @NamedQuery(name = "IndicadorEvaluacion.findByNombre", query = "SELECT i FROM IndicadorEvaluacion i WHERE i.nombre = :nombre")
+    , @NamedQuery(name = "IndicadorEvaluacion.findByEstatus", query = "SELECT i FROM IndicadorEvaluacion i WHERE i.estatus = :estatus")})
 public class IndicadorEvaluacion implements Serializable {
 
     private static final long serialVersionUID = 1L;

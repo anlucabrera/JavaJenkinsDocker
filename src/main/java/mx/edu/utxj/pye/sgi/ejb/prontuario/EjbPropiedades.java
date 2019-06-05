@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.sgi.ejb.prontuario;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
@@ -34,4 +35,6 @@ public interface EjbPropiedades extends Serializable{
     public OptionalDouble leerPropiedadDecimal(String clave);
     
     public Optional<LocalDate> leerPropiedadFecha(String clave);
+
+    public Map<Integer,String> leerPropiedadMapa(String clave, String valor);
 }

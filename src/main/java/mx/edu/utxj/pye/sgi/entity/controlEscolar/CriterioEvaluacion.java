@@ -25,14 +25,14 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author UTXJ
  */
 @Entity
-@Table(name = "criterio_evaluacion")
+@Table(name = "criterio_evaluacion", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "CriterioEvaluacion.findAll", query = "SELECT c FROM CriterioEvaluacion c"),
-    @NamedQuery(name = "CriterioEvaluacion.findByIdCriterioEvaluacion", query = "SELECT c FROM CriterioEvaluacion c WHERE c.idCriterioEvaluacion = :idCriterioEvaluacion"),
-    @NamedQuery(name = "CriterioEvaluacion.findByNombre", query = "SELECT c FROM CriterioEvaluacion c WHERE c.nombre = :nombre"),
-    @NamedQuery(name = "CriterioEvaluacion.findByPorcentaje", query = "SELECT c FROM CriterioEvaluacion c WHERE c.porcentaje = :porcentaje"),
-    @NamedQuery(name = "CriterioEvaluacion.findByEstatus", query = "SELECT c FROM CriterioEvaluacion c WHERE c.estatus = :estatus")})
+    @NamedQuery(name = "CriterioEvaluacion.findAll", query = "SELECT c FROM CriterioEvaluacion c")
+    , @NamedQuery(name = "CriterioEvaluacion.findByIdCriterioEvaluacion", query = "SELECT c FROM CriterioEvaluacion c WHERE c.idCriterioEvaluacion = :idCriterioEvaluacion")
+    , @NamedQuery(name = "CriterioEvaluacion.findByNombre", query = "SELECT c FROM CriterioEvaluacion c WHERE c.nombre = :nombre")
+    , @NamedQuery(name = "CriterioEvaluacion.findByPorcentaje", query = "SELECT c FROM CriterioEvaluacion c WHERE c.porcentaje = :porcentaje")
+    , @NamedQuery(name = "CriterioEvaluacion.findByEstatus", query = "SELECT c FROM CriterioEvaluacion c WHERE c.estatus = :estatus")})
 public class CriterioEvaluacion implements Serializable {
 
     private static final long serialVersionUID = 1L;

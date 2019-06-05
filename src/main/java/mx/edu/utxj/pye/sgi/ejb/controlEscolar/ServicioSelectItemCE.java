@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
 import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
@@ -14,15 +15,7 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.faces.model.SelectItem;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Escolaridad;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.EspecialidadCentro;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.LenguaIndigena;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.MedioDifusion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Ocupacion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Sistema;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoDiscapacidad;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoSangre;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Turno;
+
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 
 /**

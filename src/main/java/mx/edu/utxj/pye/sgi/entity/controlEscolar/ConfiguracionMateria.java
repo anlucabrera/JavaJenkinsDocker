@@ -28,16 +28,16 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author UTXJ
  */
 @Entity
-@Table(name = "configuracion_materia")
+@Table(name = "configuracion_materia", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "ConfiguracionMateria.findAll", query = "SELECT c FROM ConfiguracionMateria c"),
-    @NamedQuery(name = "ConfiguracionMateria.findByIdConfiguracionMateria", query = "SELECT c FROM ConfiguracionMateria c WHERE c.idConfiguracionMateria = :idConfiguracionMateria"),
-    @NamedQuery(name = "ConfiguracionMateria.findByFechaInicio", query = "SELECT c FROM ConfiguracionMateria c WHERE c.fechaInicio = :fechaInicio"),
-    @NamedQuery(name = "ConfiguracionMateria.findByFechaFin", query = "SELECT c FROM ConfiguracionMateria c WHERE c.fechaFin = :fechaFin"),
-    @NamedQuery(name = "ConfiguracionMateria.findByPorcentaje", query = "SELECT c FROM ConfiguracionMateria c WHERE c.porcentaje = :porcentaje"),
-    @NamedQuery(name = "ConfiguracionMateria.findByValidoDireccion", query = "SELECT c FROM ConfiguracionMateria c WHERE c.validoDireccion = :validoDireccion"),
-    @NamedQuery(name = "ConfiguracionMateria.findByDocente", query = "SELECT c FROM ConfiguracionMateria c WHERE c.docente = :docente")})
+    @NamedQuery(name = "ConfiguracionMateria.findAll", query = "SELECT c FROM ConfiguracionMateria c")
+    , @NamedQuery(name = "ConfiguracionMateria.findByIdConfiguracionMateria", query = "SELECT c FROM ConfiguracionMateria c WHERE c.idConfiguracionMateria = :idConfiguracionMateria")
+    , @NamedQuery(name = "ConfiguracionMateria.findByFechaInicio", query = "SELECT c FROM ConfiguracionMateria c WHERE c.fechaInicio = :fechaInicio")
+    , @NamedQuery(name = "ConfiguracionMateria.findByFechaFin", query = "SELECT c FROM ConfiguracionMateria c WHERE c.fechaFin = :fechaFin")
+    , @NamedQuery(name = "ConfiguracionMateria.findByPorcentaje", query = "SELECT c FROM ConfiguracionMateria c WHERE c.porcentaje = :porcentaje")
+    , @NamedQuery(name = "ConfiguracionMateria.findByValidoDireccion", query = "SELECT c FROM ConfiguracionMateria c WHERE c.validoDireccion = :validoDireccion")
+    , @NamedQuery(name = "ConfiguracionMateria.findByDocente", query = "SELECT c FROM ConfiguracionMateria c WHERE c.docente = :docente")})
 public class ConfiguracionMateria implements Serializable {
 
     private static final long serialVersionUID = 1L;

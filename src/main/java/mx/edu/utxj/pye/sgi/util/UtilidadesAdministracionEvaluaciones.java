@@ -378,7 +378,7 @@ try {
      */
     public void obtenerResultadosEvaluacionDocente() {
         listaDocentesPromedioGeneral = new ArrayList<>();
-        EvaluacionDocentesMaterias evaluacionObtenida = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoSeleccionado);
+        Evaluaciones evaluacionObtenida = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoSeleccionado);
         ListaSubordinadosAdmin.forEach(subordinado -> {
             List<EvaluacionDocentesMateriaResultados> l = eJBAdministracionEncuestas.getEvaluacionDocentesResultadosPromedioGeneral(evaluacionObtenida, subordinado.getClave());
             if (l != null) {
@@ -407,7 +407,7 @@ try {
         List<VistaEvaluacionDocenteMateriaPye> listaMaterias = eJBAdministracionEncuestas.getMateriasPorDocente(clave.getClave(), periodoSeleccionado);
        //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerResultadoEvaluacionDocentePorMateria() la lista de materias es "+ listaMaterias);
        //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerResultadoEvaluacionDocentePorMateria() el periodo seleccionado es : " + periodoSeleccionado);
-        EvaluacionDocentesMaterias evaluacion = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoSeleccionado);
+        Evaluaciones evaluacion = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoSeleccionado);
        //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerResultadoEvaluacionDocentePorMateria() la evaluacion es :" + evaluacion);
         Map<String, Long> lm = listaMaterias.stream().collect(
                 Collectors.groupingBy(VistaEvaluacionDocenteMateriaPye::getCveMateria, Collectors.counting()));
@@ -452,7 +452,7 @@ try {
      */
     public void obtenerDatosEvaluacionDocente() {
         listaCarreras = new ArrayList<>();
-        EvaluacionDocentesMaterias evaluacionDocente = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoSeleccionado);
+        Evaluaciones evaluacionDocente = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoSeleccionado);
         listaDeResultadosEvaluacionDocente = new ArrayList<>();
         desempenioAdmin.getDirectivoSeleccionado();
         Short area = desempenioAdmin.getDirectivoSeleccionado().getAreaOperativa();
@@ -472,7 +472,7 @@ try {
     public void resultadosSA() {
         listadoDocentesPromedioSa = new ArrayList<>();
         
-        EvaluacionDocentesMaterias evaluacionDocenteSeleccionada = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoSeleccionado);
+        Evaluaciones evaluacionDocenteSeleccionada = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoSeleccionado);
        //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.resultadosSA() el periodo : " + periodoSeleccionado);
        //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.resultadosSA() la evaluacuion : " + evaluacionDocenteSeleccionada);
         List<ListaPersonal> lp = eJBAdministracionEncuestas.getListadoDocentesPorArea(areaEducativa);
@@ -501,11 +501,12 @@ try {
         listadoDocentesPromedioSaGeneral.clear();
        //System.out.println("Evaluaciones generales");
         if (!docente) {
-            Messages.addFlashGlobalWarn("Seleccione una evaluacion");
+            Messages.addFlashGlobalWarn("Seleccione una evaluación");
         } else if (periodoSeleccionado < 0) {
             Messages.addFlashGlobalWarn("Seleccione un periodo");
         } else {
-            EvaluacionDocentesMaterias evaluacionObtenida = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoSeleccionado);
+            Evaluaciones evaluacionObtenida = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoSeleccionado);
+            System.out.println("evaluacionObtenida = " + evaluacionObtenida);
             List<ListaPersonal> lpG = eJBAdministracionEncuestas.personalGeneral();
             lpG.forEach(persona -> {
                 List<EvaluacionDocentesMateriaResultados> l = eJBAdministracionEncuestas.getEvaluacionDocentesResultadosPromedioGeneral(evaluacionObtenida, persona.getClave());
@@ -533,7 +534,7 @@ try {
         } else {
             listaCarreras = new ArrayList<>();
             listaChartEvaluacionDocentes = new ArrayList<>();
-            EvaluacionDocentesMaterias evaluacionDocente = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoSeleccionado);
+            Evaluaciones evaluacionDocente = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoSeleccionado);
            //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerDatosGrafica() el periodo seleccionado es : " + periodoSeleccionado);
             listaCarreras = eJBAdministracionEncuestas.obtenerAreasDirector(areaEducativa, "Vigente");
            //System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesAdministracionEvaluaciones.obtenerDatosGrafica() la lista de carreras es : " + listaCarreras);
@@ -684,7 +685,7 @@ try {
     public void resultadoEvaluacionDocentePersonal() {
         listadoDocentesPromedioSaGeneral = new ArrayList<>();
         listadoDocentesPromedioSaGeneral.clear();
-            EvaluacionDocentesMaterias evaluacionObtenida = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoSeleccionado);
+            Evaluaciones evaluacionObtenida = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoSeleccionado);
             listaPersonalGeneral.forEach(persona -> {
                 List<EvaluacionDocentesMateriaResultados> l = eJBAdministracionEncuestas.getEvaluacionDocentesResultadosPromedioGeneral(evaluacionObtenida, persona.getClave());
                 if (l != null) {
@@ -713,7 +714,8 @@ try {
         Integer periodoAnterior =  periodoActual - 1;
         Evaluaciones360 evaluacion360 = eJBAdministracionEncuestas.getEvaluacion360Administracion(periodoAnterior);
         DesempenioEvaluaciones evaluacionDesempenio = eJBAdministracionEncuestas.getEvaluacionDesempenioAdministracion(periodoAnterior);
-        EvaluacionDocentesMaterias evaluacionDocente = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoAnterior);
+        Evaluaciones evaluacionDocente = eJBAdministracionEncuestas.getEvaluacionDoncete(periodoAnterior);
+        System.out.println("evaluacionDocente = " + evaluacionDocente);
         listaPersonalGeneral.forEach(persona -> {
             Integer sumatoriaPromedios = 0;
             Double promedioDocente, promedio360, promedioGeneralPersonal, promedioB10;

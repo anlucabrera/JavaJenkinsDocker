@@ -6,15 +6,18 @@ import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AsignacionAcademicaRolDirector extends AbstractRol {
 
@@ -22,6 +25,11 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
      * Representa la referencia hacia el personal director
      */
     @Getter @NonNull private PersonalActivo director;
+
+    /**
+     * Representa la referencia al evento activo de asignación academica
+     */
+    @Getter @NonNull private EventoEscolar eventoActivo;
 
     /**
      * Total de horas asignadas al docente seleccionado
@@ -51,7 +59,7 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
     /**
      * Programa educativo seleccionado para asignar
      */
-    @Getter @NonNull private ProgramasEducativos programa;
+    @Getter @NonNull private AreasUniversidad programa;
 
     /**
      * Grupo seleccionado para asignar
@@ -89,9 +97,14 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
     @Getter @NonNull private List<PeriodosEscolares> periodos;
 
     /**
+     * Lista de programas educativos vigentes y ordenados por nombre que dependen del area con POA del director identificado
+     */
+    @Getter @NonNull private List<AreasUniversidad> programas;
+
+    /**
      * Mapeo de programas educativos y sus grupos
      */
-    @Getter @NonNull private Map<ProgramasEducativos, List<Grupo>> programasGruposMap;
+    @Getter @NonNull private Map<AreasUniversidad, List<Grupo>> programasGruposMap;
 
     /**
      * Lista de materias sin asignar
@@ -103,7 +116,7 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
      */
     @Getter @NonNull private List<CargaAcademica> cargas;
 
-    public AsignacionAcademicaRolDirector(Filter<PersonalActivo> filtro, PersonalActivo director, ProgramasEducativos programa) {
+    public AsignacionAcademicaRolDirector(Filter<PersonalActivo> filtro, PersonalActivo director, AreasUniversidad programa) {
         super(filtro);
         this.director = director;
         this.totalHorasAsignadas = 0;
@@ -112,6 +125,10 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
 
     public void setDirector(PersonalActivo director) {
         this.director = director;
+    }
+
+    public void setEventoActivo(EventoEscolar eventoActivo) {
+        this.eventoActivo = eventoActivo;
     }
 
     public void setTotalHorasAsignadas(Integer totalHorasAsignadas) {
@@ -135,7 +152,7 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
      * al primer grupo en la lista
      * @param programa Programa seleccionado del cual se van a establecer los grupos
      */
-    public void setPrograma(ProgramasEducativos programa) {
+    public void setPrograma(AreasUniversidad programa) {
         this.programa = programa;
         if(programa != null && programasGruposMap.containsKey(programa)){
             this.grupos = programasGruposMap.get(programa);
@@ -186,8 +203,11 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
      * Sincroniza los grupos del programa seleccionado y el primer grupo como seleccionado
      * @param programasGruposMap
      */
-    public void setProgramasGruposMap(Map<ProgramasEducativos, List<Grupo>> programasGruposMap) {
+    public void setProgramasGruposMap(Map<AreasUniversidad, List<Grupo>> programasGruposMap) {
         this.programasGruposMap = programasGruposMap;
+        if(programasGruposMap != null){
+            this.programas = programasGruposMap.keySet().stream().sorted(Comparator.comparing(AreasUniversidad::getNombre)).collect(Collectors.toList());
+        }
         if(programasGruposMap != null && programa != null && programasGruposMap.containsKey(programa)) {
             this.grupos = programasGruposMap.get(programa);
             if(grupos!=null){

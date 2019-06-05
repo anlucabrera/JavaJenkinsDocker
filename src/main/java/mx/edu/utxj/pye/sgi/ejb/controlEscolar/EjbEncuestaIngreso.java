@@ -34,7 +34,7 @@ public class EjbEncuestaIngreso implements Serializable{
         try {
             switch (id){
                 case "p0": resultado.setR1Lenguaindigena(valor.toString()); break;
-                case "p1": resultado.setR2tipoLenguaIndigena((LenguaIndigena)valor); break;
+                case "p1": resultado.setR2tipoLenguaIndigena((LenguaIndigena) valor); break;
                 case "p2": resultado.setR3comunidadIndigena(valor.toString()); break;
                 case "p3": resultado.setR4programaBienestar(valor.toString()); break;
                 case "p4": resultado.setR5ingresoMensual(Double.parseDouble(valor.toString())); break;

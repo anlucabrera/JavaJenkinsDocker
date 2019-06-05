@@ -42,10 +42,12 @@
                 <h:form id="frm" prependId="false" class="form-inline">
                     <div class="box box-primary">
                         <div class="box-header with-border">
+
                             <div id="main-buttons" class="hidden-sm hidden-xs">
                                 <p:toolbar id="tb">
-                                    <p:autoUpdate/>
                                     <f:facet name="left">
+
+                                        <p:spacer width="5" />
 
                                     </f:facet>
                                     <f:facet name="right">
@@ -55,17 +57,82 @@
                             </div>
                             <div class="box box-solid">
                                 <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                    <p:remoteCommand id="cmdActualizarmaterias" name="actualizarmaterias" actionListener="#{asignacionAcademicaDirector.actualizarMaterias}" update="tbl" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="periodo" value="#{asignacionAcademicaDirector.rol.periodo}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{asignacionAcademicaDirector.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                    <p:ajax process="@this" update="@form" oncomplete="actualizarmaterias();" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Periodo" for="periodo"/>
+                                                <p:message for="periodo" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="programa" value="#{asignacionAcademicaDirector.rol.programa}" converter="entityConverter">
+                                                    <f:selectItems value="#{asignacionAcademicaDirector.rol.programas}" var="programa" itemValue="#{programa}" itemLabel="#{programa.nombre}" />
+                                                    <p:ajax update="@this, grupo" process="@this" oncomplete="actualizarmaterias();" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Programa" for="programa"/>
+                                                <p:message for="programa" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla3}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="grupo" value="#{asignacionAcademicaDirector.rol.grupo}" converter="entityConverter">
+                                                    <f:selectItems value="#{asignacionAcademicaDirector.rol.grupos}" var="grupo"
+                                                                   itemValue="#{grupo}" itemLabel="#{grupo.grado}#{grupo.literal}"/>
+                                                    <p:ajax update="@this" process="@this" oncomplete="actualizarmaterias();" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Grupo" for="grupo"/>
+                                                <p:message for="grupo" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:autoComplete id="docente" value="#{asignacionAcademicaDirector.rol.docente}" completeMethod="#{asignacionAcademicaDirector.completeDocentes}" queryDelay="800"
+                                                                var="docente" itemValue="#{docente}" itemLabel="#{docente.personal.nombre}" converter="entityConverter" forceSelection="true" size="35" >
+                                                    <p:column>#{docente.personal.clave}</p:column>
+                                                    <p:column>#{docente.personal.nombre}</p:column>
+                                                    <p:ajax event="itemSelect" update="@this" process="@this" oncomplete="actualizarmaterias();" />
+                                                </p:autoComplete>
+                                                <p:outputLabel value="Docente" for="docente"/>
+                                                <p:message for="docente" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row margin-bottom">
+
+                                    </div>
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 text-info text-center">
                                             <p:remoteCommand name="actualizar" update="tbl"/>
-                                            <p:dataTable var="tramite" rendered="false"
+                                            <p:dataTable var="materia" rendered="true"
                                                          emptyMessage="Sin registros."
+                                                         value="#{asignacionAcademicaDirector.rol.materiasSinAsignar}"
                                                          id="tbl" rowIndexVar="rowIndex"
                                                          paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50"
                                                          paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
                                                          tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                          tableStyle="vertical-align: middle;">
-
+                                                <p:column headerText="Clave"><h:outputText value="#{materia.claveMateria}"/></p:column>
+                                                <p:column headerText="Materia"><h:outputText value="#{materia.nombre}"/></p:column>
+                                                <p:column headerText="Estado"><h:outputText value="#{empty materia.cargaAcademicaList?'Por asignar':'Asignada'}"/></p:column>
+                                                <p:column headerText="Materia">
+                                                    <p:commandLink
+                                                            class="#{true?'btn btn-info btn-sm':'btn btn-warning btn-sm'}"
+                                                            rendered="#{!empty asignacionAcademicaDirector.rol.docente}"
+                                                            actionListener="#{asignacionAcademicaDirector.asignarMateria(materia)}"
+                                                            oncomplete="actualizarmaterias();"
+                                                            title="Asignar materia al docente."><i
+                                                            class="fa fa-check"/>
+                                                    </p:commandLink>
+                                                </p:column>
                                             </p:dataTable>
                                             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
                                                              styleClass="panel panel-primary" width="500"

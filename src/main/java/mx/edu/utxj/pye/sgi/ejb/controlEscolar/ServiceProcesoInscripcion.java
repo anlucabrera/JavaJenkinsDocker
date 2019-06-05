@@ -30,12 +30,8 @@ import javax.faces.context.FacesContext;
 import javax.persistence.TypedQuery;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documentosentregadosestudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoEstudiante;
+
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
 import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
@@ -90,7 +86,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
     }
 
     @Override
-    public Estudiante guardaEstudiante(Estudiante estudiante,Documentosentregadosestudiante documentosentregadosestudiante,Boolean opcionIns) {
+    public Estudiante guardaEstudiante(Estudiante estudiante, Documentosentregadosestudiante documentosentregadosestudiante, Boolean opcionIns) {
         List<Grupo> grupos = new ArrayList<>();
         List<Grupo> gruposElegibles = new ArrayList<>();
         Grupo gps = new Grupo();

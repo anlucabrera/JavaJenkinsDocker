@@ -29,16 +29,16 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author UTXJ
  */
 @Entity
-@Table(name = "grupo")
+@Table(name = "grupo", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Grupo.findAll", query = "SELECT g FROM Grupo g"),
-    @NamedQuery(name = "Grupo.findByIdGrupo", query = "SELECT g FROM Grupo g WHERE g.idGrupo = :idGrupo"),
-    @NamedQuery(name = "Grupo.findByLiteral", query = "SELECT g FROM Grupo g WHERE g.literal = :literal"),
-    @NamedQuery(name = "Grupo.findByGrado", query = "SELECT g FROM Grupo g WHERE g.grado = :grado"),
-    @NamedQuery(name = "Grupo.findByCapMaxima", query = "SELECT g FROM Grupo g WHERE g.capMaxima = :capMaxima"),
-    @NamedQuery(name = "Grupo.findByIdPe", query = "SELECT g FROM Grupo g WHERE g.idPe = :idPe"),
-    @NamedQuery(name = "Grupo.findByPeriodo", query = "SELECT g FROM Grupo g WHERE g.periodo = :periodo")})
+    @NamedQuery(name = "Grupo.findAll", query = "SELECT g FROM Grupo g")
+    , @NamedQuery(name = "Grupo.findByIdGrupo", query = "SELECT g FROM Grupo g WHERE g.idGrupo = :idGrupo")
+    , @NamedQuery(name = "Grupo.findByLiteral", query = "SELECT g FROM Grupo g WHERE g.literal = :literal")
+    , @NamedQuery(name = "Grupo.findByGrado", query = "SELECT g FROM Grupo g WHERE g.grado = :grado")
+    , @NamedQuery(name = "Grupo.findByCapMaxima", query = "SELECT g FROM Grupo g WHERE g.capMaxima = :capMaxima")
+    , @NamedQuery(name = "Grupo.findByIdPe", query = "SELECT g FROM Grupo g WHERE g.idPe = :idPe")
+    , @NamedQuery(name = "Grupo.findByPeriodo", query = "SELECT g FROM Grupo g WHERE g.periodo = :periodo")})
 public class Grupo implements Serializable {
 
     private static final long serialVersionUID = 1L;

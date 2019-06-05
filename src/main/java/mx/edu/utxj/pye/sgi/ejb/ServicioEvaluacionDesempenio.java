@@ -129,6 +129,7 @@ public class ServicioEvaluacionDesempenio implements EjbEvaluacionDesempenio {
 
     @Override
     public List<ListaPersonal> getListaSubordinados(ListaPersonal directivo) {
+//        System.out.println("directivo = [" + directivo + "]");
 //        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDesempenio.getListaEvaluados(): " + (directivo.getActividad() == 2));
         if (directivo.getActividad() == 2 || directivo.getActividad() == 4) {
             TypedQuery<ListaPersonal> q = f.getEntityManager().createQuery("select lp from ListaPersonal lp where (lp.areaOperativa = :areaOperativa and lp.actividad <> 2 and lp.status <> :status and lp.clave <> :dir) or (lp.areaSuperior = :areaOperativa and lp.status <> :status and lp.clave <> :dir) or (lp.areaOperativa = :areaOperativa and lp.actividad <> 4 and lp.status <> :status and lp.clave <> :dir) order by lp.categoriaOperativaNombre, lp.nombre", ListaPersonal.class);
