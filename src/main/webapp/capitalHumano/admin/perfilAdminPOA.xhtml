@@ -122,15 +122,33 @@
                                         </h:form>
                                     </p:tab>
                                     <p:tab title="Proceso POA">
-                                        
+
                                         <h:form id="frmEventosAreas"> 
                                             <p:outputPanel id="incidenciasReporte">
-                                            <p:remoteCommand name="actualizarTabla" actionListener="#{administracionControl.imprimirValores()}" update="tblEvenAre" />
-                                            <p:dataTable id="tblEvenAre"  value="#{administracionControl.procesopoas}"  var="procesoPoa" rowStyleClass="#{procesoPoa.validacionJustificacion eq true ?'denegado':'aceptado'}"
-                                                            style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
+                                                <p:remoteCommand name="actualizarTabla" actionListener="#{administracionControl.imprimirValores()}" update="tblEvenAre" />
+                                                <p:dataTable id="tblEvenAre"  value="#{administracionControl.procesopoas}"  var="procesoPoa" rowStyleClass="#{procesoPoa.validacionJustificacion eq true ?'denegado':'aceptado'}"
+                                                             style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
 
-                                                <p:column headerText="Área" 
-                                                          style="width: 50%;text-align: justify;"
+
+                                                    <p:columnGroup type="header" class="hederTablesTitle">
+                                                        <p:row class="success">
+                                                            <p:column rowspan="2" headerText="Área" style="width: 50%;" styleClass="hederTablesTitle"/>
+                                                            <p:column colspan="3" headerText="Registros" style="width: 25%;" styleClass="hederTablesTitle"/>
+                                                            <p:column colspan="3" headerText="Validaciones" style="width: 25%;" styleClass="hederTablesTitle"/>
+                                                        </p:row>
+                                                        <p:row class="success">
+                                                            <p:column headerText="Actividades"  styleClass="hederTablesTitle"/>
+                                                            <p:column headerText="Recurso"  styleClass="hederTablesTitle"/>
+                                                            <p:column headerText="Justificaciones"   styleClass="hederTablesTitle"/>
+                                                            <p:column headerText="Programacion"  styleClass="hederTablesTitle"/>
+                                                            <p:column headerText="Presupuestacion"  styleClass="hederTablesTitle"/>
+                                                            <p:column headerText="Justificacion"   styleClass="hederTablesTitle"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+
+
+                                                    <p:column headerText="Área" 
+                                                              style="width: 50%;text-align: justify;"
                                                               sortBy="#{administracionControl.buscarAreaEventosA(procesoPoa.area)}" 
                                                               filterBy="#{administracionControl.buscarAreaEventosA(procesoPoa.area)}" 
                                                               filterMatchMode="contains">
@@ -174,7 +192,7 @@
                                                         <h:outputText value="#{procesoPoa.validacionJustificacion eq true ?'Aprobado':'Pendiente'}" />
                                                     </p:column>   
 
-                                                
+
                                                 </p:dataTable>  
                                             </p:outputPanel> 
 

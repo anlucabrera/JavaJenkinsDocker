@@ -335,11 +335,11 @@ public class CvEducacion implements Serializable {
         switch (evidencia) {
             case "Cedula":
                 //Se invoca el método agregarEvidencias en el cual se envía ciertos parámetros (descritos dentro del método) el cual regresara la ruta del archivo ya almacenado en el servidor.
-                nuevoOBJFormacionAcademica.setEvidenciaCedula(utilidadesCH.agregarEvidencias(file, usuario.toString(), "experienciaLaboral", evidencia));
+                nuevoOBJFormacionAcademica.setEvidenciaCedula(utilidadesCH.agregarEvidencias(file, usuario.toString(), "formacionAcademica", evidencia));
                 break;
             case "EvidenciaTitulacion":
                 //Se invoca el método agregarEvidencias en el cual se envía ciertos parámetros (descritos dentro del método) el cual regresara la ruta del archivo ya almacenado en el servidor.
-                nuevoOBJFormacionAcademica.setEvidenciaTitulo(utilidadesCH.agregarEvidencias(file, usuario.toString(), "experienciaLaboral", evidencia));
+                nuevoOBJFormacionAcademica.setEvidenciaTitulo(utilidadesCH.agregarEvidencias(file, usuario.toString(), "formacionAcademica", evidencia));
                 break;
             default:
                 //En caso de no seleccionar el tipo de evidencia a cargar se le informa el usuario un mensaje de error
