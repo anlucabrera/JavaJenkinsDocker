@@ -41,7 +41,6 @@ import java.util.logging.Logger;
 import javax.activation.DataSource;
 import javax.faces.context.FacesContext;
 import javax.mail.util.ByteArrayDataSource;
-import javax.persistence.Query;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
@@ -49,7 +48,6 @@ import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
-import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 import mx.edu.utxj.pye.sgi.util.EnvioCorreos;
 

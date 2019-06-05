@@ -12,6 +12,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documentosentregadosestudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
 
 /**
  *
@@ -31,4 +32,5 @@ public interface EjbProcesoInscripcion {
     public List<Grupo> listaGruposXPeriodoByCarrera(Short periodo, Short carrera, Short sistema, Integer grado);
     public List<Estudiante> listaEstudiantesXPeriodo(Integer perido);
     public void actualizaEstudiante(Estudiante estudiante);
+    public Iems buscaIemsByClave(Integer id);
 }

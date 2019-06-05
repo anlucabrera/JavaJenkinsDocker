@@ -9,6 +9,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Sistema;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoSangre;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;

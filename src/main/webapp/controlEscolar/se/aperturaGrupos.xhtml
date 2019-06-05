@@ -10,7 +10,7 @@
 
     <ui:define name="head-end">
         <ui:param name="renderBreadCrumb" value="false"/>
-         <!-- Inicio estilos par proceso electoral -->
+        <!-- Inicio estilos par proceso electoral -->
         <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
         </c:if>  
@@ -61,7 +61,16 @@
                                                                 <p:selectOneMenu id="pe" class="form-control" style="width: 100%;" value="#{utilToolAcademicas.grupo.idPe}">
                                                                     <f:selectItem itemValue="#{null}"/>
                                                                     <f:selectItems var="pe" value="#{procesoInscripcion.listaAreasUniversidad}" itemLabel="#{pe.nombre}" itemValue="#{pe.area}"/>
+                                                                    <p:ajax listener="#{utilToolAcademicas.getPlanesEstudioXCarrera()}" update="planEstudio"/>
                                                                 </p:selectOneMenu>
+                                                            </div>
+                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                <p:outputLabel for="planEstudio" style="font-size: large" value="Plan de Estudios"/>
+                                                                <p:selectOneMenu id="planEstudio" class="form-control" style="width: 100%;" value="#{utilToolAcademicas.planSelect}" converter="entidadCEConverter" required="true" requiredMessage="Es necesario elegir un plan de estudios">
+                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                    <f:selectItems var="plan" value="#{utilToolAcademicas.planesEstudio}" itemLabel="#{plan.descripcion}" itemValue="#{plan}"/>
+                                                                </p:selectOneMenu>
+                                                                <p:messages for="planEstudio"><p:autoUpdate/> </p:messages>
                                                             </div>
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                 <p:outputLabel for="cuatrimestre" style="font-size: large" value="Cuatrimestre"/>
@@ -81,10 +90,10 @@
                                                                 </p:selectOneMenu>
                                                             </div>
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                <p:outputLabel for="sistema" style="font-size: large" value="Sistema"/>
-                                                                <p:selectOneMenu id="sistema" value="#{utilToolAcademicas.grupo.idSistema}" converter="sistemaConverter">
+                                                                <p:outputLabel for="sistema1" style="font-size: large" value="Sistema"/>
+                                                                <p:selectOneMenu id="sistema1" value="#{utilToolAcademicas.grupo.idSistema}" converter="entidadCEConverter">
                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                    <f:selectItems var="sistema" value="#{fichaAdm.listaSistema}" itemLabel="#{sistema.nombre}" itemValue="#{sistema}"/>
+                                                                    <f:selectItems var="sistema" value="#{FichaAdmision.listaSistema}" itemLabel="#{sistema.nombre}" itemValue="#{sistema}"/>
                                                                 </p:selectOneMenu>
                                                             </div>
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
@@ -137,7 +146,7 @@
                                     <p:cellEditor>
                                         <f:facet name="output"><h:outputText value="#{grupo.idSistema.nombre}" /></f:facet>
                                         <f:facet name="input">
-                                            <p:selectOneMenu id="sistema" value="#{grupo.idSistema}" converter="sistemaConverter">
+                                            <p:selectOneMenu id="sistema1" value="#{grupo.idSistema}" converter="entidadCEConverter">
                                                 <f:selectItem itemValue="#{null}"/>
                                                 <f:selectItems var="sistema" value="#{fichaAdm.listaSistema}" itemLabel="#{sistema.nombre}" itemValue="#{sistema}"/>
                                             </p:selectOneMenu>
@@ -148,7 +157,7 @@
                                     <p:cellEditor>
                                         <f:facet name="output"><h:outputText value="#{grupo.idTurno.nombre}" /></f:facet>
                                         <f:facet name="input">
-                                            <p:selectOneMenu id="turno" value="#{grupo.idTurno}" converter="turnoConverter">
+                                            <p:selectOneMenu id="turno" value="#{grupo.idTurno}" converter="entidadCEConverter">
                                                 <f:selectItem itemValue="#{null}"/>
                                                 <f:selectItems var="turno" value="#{utilToolAcademicas.listaTurno}" itemLabel="#{turno.nombre}" itemValue="#{turno}"/>
                                             </p:selectOneMenu>

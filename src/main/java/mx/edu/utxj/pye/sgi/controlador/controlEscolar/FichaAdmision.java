@@ -53,7 +53,7 @@ import org.omnifaces.util.Ajax;
 
 import org.omnifaces.util.Faces;
 
-@Named(value = "fichaAdm")
+@Named(value = "FichaAdmision")
 @ViewScoped
 public class FichaAdmision implements Serializable, Guardable{
 

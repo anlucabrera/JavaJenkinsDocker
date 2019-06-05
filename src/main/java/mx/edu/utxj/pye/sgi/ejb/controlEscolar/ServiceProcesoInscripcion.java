@@ -37,6 +37,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoEstudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
 import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
 import mx.edu.utxj.pye.sgi.util.Encrypted;
 
@@ -150,6 +151,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                 login.setPersona(estudiante.getAspirante().getIdPersona().getIdpersona());
                 facadeCE.create(login);
                 facadeCE.create(estudiante);
+                facadeCE.flush();
                 documentosentregadosestudiante.setEstudiante(estudiante.getIdEstudiante());
                 facadeCE.create(documentosentregadosestudiante);
                 facadeCE.flush();
@@ -391,5 +393,12 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
         facadeCE.setEntityClass(Estudiante.class);
         facadeCE.edit(estudiante);
         facadeCE.flush();
+    }
+
+    @Override
+    public Iems buscaIemsByClave(Integer id) {
+        return facadeCE.getEntityManager().createQuery("SELECT i FROM Iems i WHERE i.iems = :idIems", Iems.class)
+                .setParameter("idIems", id)
+                .getResultList().stream().findFirst().orElse(null);
     }
 }
