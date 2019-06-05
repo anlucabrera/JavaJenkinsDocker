@@ -571,18 +571,19 @@
                                                     requiredMessage="Ingrese Fecha de Inicio"
                                                     value="#{controladorActividadesVariasPYE.dto.registro.actividadVaria.fechaInicio}"
                                                     valueChangeListener="#{controladorActividadesVariasPYE.validaFechaInicio}"
-                                                    pattern="yyyy-MM-dd" 
-                                                    mask="true"
-                                                    locale="es"
+                                                    pattern="yyyy-MM-dd"
                                                     styleClass="campo2Partes"
+                                                    locale="es"
+                                                    showOn="both"
+                                                    placeholder="2019-03-20 *"
                                                     >
-                                            <p:ajax event="dateSelect" process="iptFechaInicio" update="iptFechaTermino"/>
-                                            <p:ajax event="change" process="iptFechaInicio" update="iptFechaTermino"/>
+                                            <p:ajax event="dateSelect" global="false" process="@this" update="@form:iptFechaTermino"/>
+                                            <p:ajax event="change" global="false" process="@this" update="@form:iptFechaTermino"/>
                                         </p:calendar>
                                         <p:watermark for="iptFechaInicio" value="2019-03-19 *" />
                                         <p:message for="iptFechaInicio" />
-                                        <p:outputLabel value="Fecha de inicio: " for="iptFechaInicio" />
                                     </div>
+                                    <p>Fecha de inicio</p>
                                 </div>
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
                                     <div class="ui-material">
@@ -592,18 +593,19 @@
                                                     requiredMessage="Ingrese Fecha de Termino"
                                                     value="#{controladorActividadesVariasPYE.dto.registro.actividadVaria.fechaFin}" 
                                                     valueChangeListener="#{controladorActividadesVariasPYE.validaFechaFin}"
-                                                    pattern="yyyy-MM-dd" 
-                                                    mask="true"
+                                                    pattern="yyyy-MM-dd"
                                                     styleClass="campo2Partes"
                                                     locale="es"
+                                                    showOn="both"
+                                                    placeholder="2019-03-20 *"
                                                     >
-                                            <p:ajax event="dateSelect" process="iptFechaTermino" update="iptFechaInicio"/>
-                                            <p:ajax event="change" process="iptFechaTermino" update="iptFechaInicio"/>
+                                            <p:ajax event="dateSelect" global="false" process="@this" update="@form:iptFechaInicio"/>
+                                            <p:ajax event="change" global="false" process="@this" update="@form:iptFechaInicio"/>
                                         </p:calendar>
                                         <p:watermark for="iptFechaTermino" value="2019-03-20 *" />
                                         <p:message for="iptFechaTermino" />
-                                        <p:outputLabel value="Fecha de termino: " for="iptFechaTermino" />
                                     </div>
+                                    <p>Fecha de termino</p>
                                 </div>
 
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
