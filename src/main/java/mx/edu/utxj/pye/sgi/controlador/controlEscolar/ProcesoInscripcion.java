@@ -268,6 +268,7 @@ public class ProcesoInscripcion implements Serializable{
     public static Integer gruposElegibles(List<Grupo> grupos){
         List<Grupo> listaGrupos = new ArrayList<>();
         grupos.forEach((Grupo g) ->{
+            System.out.println("tamaño de la lista"+g.getEstudianteList().size()+", capacidadMaxima"+g.getCapMaxima());
             if(g.getEstudianteList().size() != g.getCapMaxima()){
                 listaGrupos.add(g);
             }

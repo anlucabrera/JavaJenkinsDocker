@@ -64,7 +64,7 @@ public class Estudiante implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "carrera")
-    private int carrera;
+    private short carrera;
     @Basic(optional = false)
     @NotNull
     @Column(name = "opcionIncripcion")
@@ -105,7 +105,7 @@ public class Estudiante implements Serializable {
         this.idEstudiante = idEstudiante;
     }
 
-    public Estudiante(Integer idEstudiante, int matricula, int periodo, int carrera, boolean opcionIncripcion, int trabajadorInscribe) {
+    public Estudiante(Integer idEstudiante, int matricula, int periodo, short carrera, boolean opcionIncripcion, int trabajadorInscribe) {
         this.idEstudiante = idEstudiante;
         this.matricula = matricula;
         this.periodo = periodo;
@@ -138,11 +138,11 @@ public class Estudiante implements Serializable {
         this.periodo = periodo;
     }
 
-    public int getCarrera() {
+    public short getCarrera() {
         return carrera;
     }
 
-    public void setCarrera(int carrera) {
+    public void setCarrera(short carrera) {
         this.carrera = carrera;
     }
 
