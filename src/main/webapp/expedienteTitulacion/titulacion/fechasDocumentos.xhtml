@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <c:if test="#{!controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+        <h:outputScript library="js" name="calendario.js" />
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <section class="content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="nav-tabs-custom">
+                            <div class="row">
+                                <div class="col-lg-10 col-xs-10"/>
+                                <div class="col-lg-2 col-xs-2">
+                                    <p:link  href="../../index.xhtml">
+                                        <i class="fa fa-reply"></i>
+                                        <span>Regresar a mi perfil</span>
+                                    </p:link>
+                                </div> 
+                                <br />
+                                <br />
+                                <div class="col-lg-12 col-xs-12">
+                                     <div class="box-body">
+                                         <div class="row">
+                                             <div class="col-lg-12 col-md-12">
+                                                 <div id="main-buttons" class="hidden-sm hidden-xs" >
+                                                     <h:form prependId="true" id="frmMainButtons" class="form-inline">
+                                                         <p:outputPanel >
+                                                             <p:autoUpdate/>
+                                                             <p:toolbar id="tb">
+                                                                 <f:facet name="left">
+                                                                     <p:spacer width="10" />
+                                                                     <p:outputLabel value="Generación " for="generacion" />
+                                                                     <p:spacer width="3" />
+                                                                     <p:selectOneMenu id="generacion" value="#{controladorFecDocs.generacionSeleccionada}" converter="entityConverter" class="form-control" style="padding-top: 0px;">
+                                                                         <f:selectItems value="#{controladorFecDocs.generacionesRegistradas}" var="genReg" itemValue="#{genReg}" itemLabel="#{caster.generacionToString(genReg)}" itemDescription="#{caster.generacionToString(genReg)}"  />
+                                                                         <p:ajax process="@this" listener="#{controladorFecDocs.cargarListaFecDocs()}" update="@(form)" />
+                                                                     </p:selectOneMenu>
+                                                                 </f:facet>
+                                                                 <f:facet name="right">
+                                                                     <p:commandButton actionListener="#{controladorFecDocs.nuevoRegistro()}" class="btn btn-sm btn-primary" 
+                                                                                    icon="fa fa-plus" title="Agregar nuevo" value="Agregar nuevo" />  
+                                                                 </f:facet>
+                                                             </p:toolbar>
+                                                             <p:sticky target="tb" />
+                                                         </p:outputPanel>
+                                                     </h:form>
+                                                 </div>
+                                                 <p:separator/>
+                                                 <center>
+                                                     <h:form id="formMuestraDatosActivos">
+                                                         <p:remoteCommand name="actualizar" update="@form:dtbFechasDocsGen" />
+                                                         <p:dataTable id="dtbFechasDocsGen" emptyMessage="No existe información registrada" value="#{controladorFecDocs.listaFecDocs}" var="fecDocs"
+                                                                      paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                                      resizeMode="expand"
+                                                                      tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                            
+                                                             <p:column headerText="Opciones" style="width: 200px; text-align: center;">
+                                                                 <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{controladorFecDocs.eliminarFecDoc(fecDocs)}" onsuccess="actualizar();" title="Eliminar documento.">
+                                                                     <p:confirm header="Eliminar documento" message="¿Está seguro de eliminar el registro?" icon="ui-icon-alert" />
+                                                                 </p:commandButton>
+                                                                 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                     <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                                                                     <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+                                                                 </p:confirmDialog> 
+                                                                 
+                                                                 <p:commandButton actionListener="#{controladorFecDocs.editarRegistro(fecDocs)}"
+                                                                                                 class="btn btn-sm btn-primary" 
+                                                                                                 icon="fa fa-edit"
+                                                                                                 title="Editar"/>
+                                                             </p:column>
+                                                             <p:column headerText="No." style="width: 80px; text-align: center;">
+                                                                 <h:outputText value="#{fecDocs.fechasDocumentos.fechaDoc}"/>
+                                                             </p:column>
+
+                                                             <p:column headerText="Generación" style="width: 100px; text-align: center;">
+                                                                 <h:outputText value="#{fecDocs.generaciones.inicio} - #{fecDocs.generaciones.fin}" />
+                                                             </p:column>
+
+                                                             <p:column headerText="Programa Educativo" style="width: 250px; text-align: justify;">
+                                                                 <h:outputText value="#{fecDocs.areasUniversidad.nombre}"/>
+                                                             </p:column>
+                                                             
+                                                             <p:column headerText="Fecha de Inicio" style="width: 100px; text-align: center;">
+                                                                 <h:outputText value="#{fecDocs.fechasDocumentos.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                             </p:column>
+                                                             
+                                                             <p:column headerText="Fecha de Terminación" style="width: 100px; text-align: center;">
+                                                                 <h:outputText value="#{fecDocs.fechasDocumentos.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                             </p:column>
+                                                             
+                                                             <p:column headerText="Fecha de Acta de Exención de Examen Profesional" style="width: 150px; text-align: center;">
+                                                                 <h:outputText value="#{fecDocs.fechasDocumentos.actaExencion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                             </p:column>
+                                                             
+                                                         </p:dataTable>
+                                                         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
+                                                             <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
+                                                             <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
+                                                         </p:confirmDialog>
+                                                     </h:form> 
+                                                 </center>
+                                             </div>
+                                         </div>
+                                     </div>
+                                </div> 
+                            </div>
+                    <!-- Modal para editar registro seleccionado -->
+                    <p:dialog id="modalEdicion" 
+                              widgetVar="modalEdicion" 
+                              width="1200" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{controladorFecDocs.aperturaDialogoEdicion}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Editar" 
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        
+                             <h:form id="frmModalEdicion" enctype="multipart/form-data"> 
+                                        <p:outputPanel>
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-md-12">
+                                                    <div class="box box-widget widget-user-2">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="claveFecDoc" value="No." style="text-align: center;"/>
+                                                                    <p:inputText id="claveFecDoc" class="form-control" disabled="true" value="#{controladorFecDocs.dtoFecDocs.fechasDocumentos.fechaDoc}"/>
+                                                                    <p:message for="claveFecDoc" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel value="Generación" for="generacion" style="text-align: center;"/>
+                                                                    <p:inputText id="generacion" disabled="true" class="form-control" value="#{controladorFecDocs.dtoFecDocs.generaciones.inicio} - #{controladorFecDocs.dtoFecDocs.generaciones.fin}"/>
+                                                                    <p:message for="generacion" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="progEdu" value="Programa Educativo" style="text-align: center;"/>
+                                                                    <p:inputText id="progEdu" class="form-control" disabled="true" value="#{controladorFecDocs.dtoFecDocs.areasUniversidad.nombre}"/>
+                                                                    <p:message for="progEdu" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="fechaInicio" value="Fecha de Inicio" style="text-align: center;"/>
+                                                                    <p:calendar locale="es" id="fechaInicio" value="#{controladorFecDocs.dtoFecDocs.fechasDocumentos.fechaInicio}" pattern="dd-MM-yyyy" mask="true" style="height:100%; width: 100%; object-fit: contain;" required="true"/>
+                                                                    <p:message for="fechaInicio" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="fechaTermino" value="Fecha de Terminación" style="text-align: center;"/>
+                                                                    <p:calendar locale="es" id="fechaTermino" value="#{controladorFecDocs.dtoFecDocs.fechasDocumentos.fechaFin}" pattern="dd-MM-yyyy" mask="true" style="height:100%; width: 100%; object-fit: contain;" required="true"/>
+                                                                    <p:message for="fechaTermino" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>  
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="fechaActaExencion" value="Fecha Acta de Exención" style="text-align: center;"/>
+                                                                    <p:calendar locale="es" id="fechaActaExencion" value="#{controladorFecDocs.dtoFecDocs.fechasDocumentos.actaExencion}" pattern="dd-MM-yyyy" mask="true" style="height:100%; width: 100%; object-fit: contain;" required="true"/>
+                                                                    <p:message for="fechaActaExencion" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>  
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                    <p:commandButton id="btnGuardarEdicion" value="Guardar" actionListener="#{controladorFecDocs.guardarEdicion()}" 
+                                                                                     icon="fa fa-save" class="btn-primary btn-block col-md-3" oncomplete="PF('frmModalEdicion')update();"
+                                                                                     update="@form"  process="@form" />
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                </div>  
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </p:outputPanel>
+                                    </h:form>
+                    </p:dialog>
+                    <!-- Modal para guardar nuevo registro -->
+                    <p:dialog id="modalNuevo" 
+                              widgetVar="modalNuevo" 
+                              width="1200" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{controladorFecDocs.aperturaDialogoNuevo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Editar" 
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        
+                             <h:form id="frmModalNuevo" enctype="multipart/form-data"> 
+                                        <p:outputPanel>
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-md-12">
+                                                    <div class="box box-widget widget-user-2">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                    <p:outputLabel for="generacion" style="object-fit: contain;" value="Generación: "/>
+                                                                    <p:selectOneMenu id="generacion" value="#{controladorFecDocs.genFecDoc}" required="true" requiredMessage="Es necesario que seleccione el estado" style="object-fit: contain;">
+                                                                        <f:selectItem itemValue="#{null}"/>
+                                                                        <f:selectItems value="#{controladorFecDocs.listaGeneraciones}"/>
+                                                                    </p:selectOneMenu>
+                                                                    <p:message for="generacion"><p:autoUpdate/></p:message>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                   <p:outputLabel for="progEdu" style="object-fit: contain;" value="Programas Educativos "/>
+                                                                   <p:selectOneMenu id="progEdu" value="#{controladorFecDocs.progEduFecDoc}" required="true" requiredMessage="Es necesario que seleccione el estado" style="object-fit: contain;">
+                                                                        <f:selectItem itemValue="#{null}"/>
+                                                                        <f:selectItems value="#{controladorFecDocs.listaProgramasEducativos}"/>
+                                                                    </p:selectOneMenu>
+                                                                    <p:message for="progEdu"><p:autoUpdate/></p:message>
+                                                                    <hr/>
+                                                                </div>
+                                                                  
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="fechaActa" value="Fecha Acta de Exención" style="text-align: center;"/>
+                                                                    <p:calendar locale="es" id="fechaActa" value="#{controladorFecDocs.actaExencion}" pattern="dd-MM-yyyy" mask="true" required="true"/>
+                                                                    <p:message for="fechaActa" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>  
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="fechaInicio" value="Fecha de Inicio" style="text-align: center;"/>
+                                                                    <p:calendar locale="es" id="fechaInicio" value="#{controladorFecDocs.fechaInicio}" pattern="dd-MM-yyyy" mask="true" required="true"/>
+                                                                    <p:message for="fechaInicio" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="fechaTermino" value="Fecha de Terminación" style="text-align: center;"/>
+                                                                    <p:calendar locale="es" id="fechaTermino" value="#{controladorFecDocs.fechaFin}" pattern="dd-MM-yyyy" mask="true" required="true"/>
+                                                                    <p:message for="fechaTermino" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                    <p:commandButton id="btnGuardarNuevo" value="Guardar" actionListener="#{controladorFecDocs.guardarNuevo()}" 
+                                                                                     icon="fa fa-save" class="btn-primary btn-block col-md-3" oncomplete="PF('frmModalNuevo')update();"
+                                                                                     update="@form"  process="@form" />
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                </div>  
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </p:outputPanel>
+                                    </h:form>
+                    </p:dialog>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </p:panel>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

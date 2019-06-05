@@ -94,4 +94,22 @@ public interface EjbCarga extends Serializable {
      * @return Retorna la ruta del directorio
      */
     public String crearDirectorioReporteCompleto(String eje);
+    
+     /**
+     * Método de subida de archivos en el servidor para el módulo de titulación
+     * el cual recibe los siguiente parámetros:
+     *
+     * @param file Archivo de excel
+     * @param tipoDoc Parámetro que clasifica el tipo de documento del archivo
+     * @param rutaRelativa Parámetro de la ruta relativa del archivo
+     * @return Devuelve la ruta completa del archivo
+     */
+    public String subirDocExpTit(Part file, String tipoDoc, File rutaRelativa);
+    
+    /**
+     * Método que crea o comprueba si el directorio de los reportes de titulación
+     * @param generacion Es ocupado para crear o comprobar de que generacion es el reporte que se está generando
+     * @return Retorna la ruta del directorio
+     */
+    public String crearDirectorioReporteCompletoTit(String generacion);
 }
