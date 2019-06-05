@@ -7,15 +7,11 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 
 
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Escolaridad;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.EspecialidadCentro;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Ocupacion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Turno;
-
 import javax.ejb.Local;
 import javax.faces.model.SelectItem;
 import java.util.List;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Sistema;
+
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 
 /**
@@ -37,4 +33,6 @@ public interface EjbSelectItemCE {
     public List<AreasUniversidad> itemPEAll();
     public List<Turno> itemTurno();
     public List<Sistema> itemSistema();
+    public List<LenguaIndigena> itemLenguaIndigena();
+    public List<MedioDifusion> itemMedioDifusion();
 }

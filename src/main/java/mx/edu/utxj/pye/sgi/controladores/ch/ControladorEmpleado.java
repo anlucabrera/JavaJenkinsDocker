@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -69,6 +70,7 @@ public class ControladorEmpleado implements Serializable {
     @Getter    @Setter    private AreasUniversidad nuevaAreasUniversidad = new AreasUniversidad();
 
     @Getter    @Setter    private LocalDate fechaActual = LocalDate.now();
+    @Getter    @Setter    private LocalDateTime fechaActualHora = LocalDateTime.now();
     @Getter    @Setter    private DateFormat dateFormat = new SimpleDateFormat("EEEE d MMMM yyyy");
     @Getter    @Setter    private DateFormat dateFormatHora = new SimpleDateFormat("h:mm a");
     @Getter    @Setter    private LocalDate fechaI = LocalDate.now();
@@ -173,7 +175,8 @@ public class ControladorEmpleado implements Serializable {
             nuevaListaModulosregistro.forEach((t) -> {
                 switch (t.getNombre()) {
                     case "CV":
-                        fechaLimiteCV = fechaActual.isBefore(uch.castearDaLD(t.getFechaFin()));
+                        fechaActualHora = LocalDateTime.now();
+                        fechaLimiteCV = fechaActualHora.isBefore(uch.castearDaLDT(t.getFechaFin()));
                         fechaCVBencimiento = dateFormat.format(t.getFechaFin());
                         fechaLimiteCurriculumVitae = "La fecha límite para la actualización de currículum vitae es el día " + dateFormat.format(t.getFechaFin()) + " a las " + dateFormatHora.format(t.getFechaFin());
                         break;
@@ -184,8 +187,17 @@ public class ControladorEmpleado implements Serializable {
                         break;
                 }
             });
-            if ((nuevoOBJListaPersonal.getActividadNombre().equals("Directivo") || nuevoOBJListaPersonal.getActividadNombre().equals("Coordinador")) && fechaLimiteCV == true) {
-                mandos = "Superiores";
+            switch (nuevoOBJListaPersonal.getActividadNombre()) {
+                case "Directivo":
+                case "Coordinador":
+                    mandos = "Superiores";
+                    break;
+                case "Docente":
+                    mandos = "Docente";
+                    break;
+                case "Administrativo":
+                    mandos = "Administrativo";
+                    break;
             }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -212,7 +224,6 @@ public class ControladorEmpleado implements Serializable {
                     }
                 }
             }
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.areaPoa()"+tienePOA);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);

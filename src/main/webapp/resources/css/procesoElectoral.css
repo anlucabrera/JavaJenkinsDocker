@@ -39,6 +39,14 @@ box-primary{
 .aceptado{
     background-color:#666666  !important;
 }
+.mp{
+    background: #666666 !important;
+    color: #ffffff
+}
+.ci{
+    background: #374850 !important;
+    color: #ffffff
+}
 .pendiente{
     background-color: #cccccc !important;
 }
@@ -244,6 +252,10 @@ div.ui-messages-fatal{
 }
 
 body .ui-datatable th[role="columnheader"].ui-state-default, body .ui-treetable th[role="columnheader"].ui-state-default{
+    color: #ffffff !important;
+}
+
+.hederTablesTitle{
     border: 1px solid #000000;
     color: #fff !important;
     background-color: #666666 !important;

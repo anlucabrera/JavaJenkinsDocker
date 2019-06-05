@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.sgi.entity.prontuario;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -25,12 +26,12 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author UTXJ
  */
 @Entity
-@Table(name = "programas_educativos_niveles",catalog = "prontuario", schema = "")
+@Table(name = "programas_educativos_niveles", catalog = "prontuario", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "ProgramasEducativosNiveles.findAll", query = "SELECT p FROM ProgramasEducativosNiveles p"),
-    @NamedQuery(name = "ProgramasEducativosNiveles.findByNivel", query = "SELECT p FROM ProgramasEducativosNiveles p WHERE p.nivel = :nivel"),
-    @NamedQuery(name = "ProgramasEducativosNiveles.findByNombre", query = "SELECT p FROM ProgramasEducativosNiveles p WHERE p.nombre = :nombre")})
+    @NamedQuery(name = "ProgramasEducativosNiveles.findAll", query = "SELECT p FROM ProgramasEducativosNiveles p")
+    , @NamedQuery(name = "ProgramasEducativosNiveles.findByNivel", query = "SELECT p FROM ProgramasEducativosNiveles p WHERE p.nivel = :nivel")
+    , @NamedQuery(name = "ProgramasEducativosNiveles.findByNombre", query = "SELECT p FROM ProgramasEducativosNiveles p WHERE p.nombre = :nombre")})
 public class ProgramasEducativosNiveles implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -45,6 +46,8 @@ public class ProgramasEducativosNiveles implements Serializable {
     @Size(min = 1, max = 50)
     @Column(name = "nombre")
     private String nombre;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "nivel")
+    private List<ProgramasEducativos> programasEducativosList;
     @OneToMany(mappedBy = "nivelEducativo")
     private List<AreasUniversidad> areasUniversidadList;
 
@@ -74,6 +77,15 @@ public class ProgramasEducativosNiveles implements Serializable {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    @XmlTransient
+    public List<ProgramasEducativos> getProgramasEducativosList() {
+        return programasEducativosList;
+    }
+
+    public void setProgramasEducativosList(List<ProgramasEducativos> programasEducativosList) {
+        this.programasEducativosList = programasEducativosList;
     }
 
     @XmlTransient

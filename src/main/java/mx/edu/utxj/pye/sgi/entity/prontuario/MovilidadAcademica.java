@@ -44,7 +44,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "MovilidadAcademica.findByChile", query = "SELECT m FROM MovilidadAcademica m WHERE m.chile = :chile")
     , @NamedQuery(name = "MovilidadAcademica.findByPanama", query = "SELECT m FROM MovilidadAcademica m WHERE m.panama = :panama")
     , @NamedQuery(name = "MovilidadAcademica.findByJapon", query = "SELECT m FROM MovilidadAcademica m WHERE m.japon = :japon")
-    , @NamedQuery(name = "MovilidadAcademica.findByArgentina", query = "SELECT m FROM MovilidadAcademica m WHERE m.argentina = :argentina")})
+    , @NamedQuery(name = "MovilidadAcademica.findByArgentina", query = "SELECT m FROM MovilidadAcademica m WHERE m.argentina = :argentina")
+    , @NamedQuery(name = "MovilidadAcademica.findByBolivia", query = "SELECT m FROM MovilidadAcademica m WHERE m.bolivia = :bolivia")})
 public class MovilidadAcademica implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -110,6 +111,10 @@ public class MovilidadAcademica implements Serializable {
     @NotNull
     @Column(name = "argentina")
     private int argentina;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "bolivia")
+    private int bolivia;
     @JoinColumn(name = "ciclo", referencedColumnName = "ciclo", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private CiclosEscolares ciclosEscolares;
@@ -127,7 +132,7 @@ public class MovilidadAcademica implements Serializable {
         this.movilidadAcademicaPK = movilidadAcademicaPK;
     }
 
-    public MovilidadAcademica(MovilidadAcademicaPK movilidadAcademicaPK, int nacional, int colombia, int ecuador, int canada, int cuba, int espania, int usa, int venezuela, int peru, int grecia, int francia, int chile, int panama, int japon, int argentina) {
+    public MovilidadAcademica(MovilidadAcademicaPK movilidadAcademicaPK, int nacional, int colombia, int ecuador, int canada, int cuba, int espania, int usa, int venezuela, int peru, int grecia, int francia, int chile, int panama, int japon, int argentina, int bolivia) {
         this.movilidadAcademicaPK = movilidadAcademicaPK;
         this.nacional = nacional;
         this.colombia = colombia;
@@ -144,6 +149,7 @@ public class MovilidadAcademica implements Serializable {
         this.panama = panama;
         this.japon = japon;
         this.argentina = argentina;
+        this.bolivia = bolivia;
     }
 
     public MovilidadAcademica(int ciclo, int periodo, String siglas) {
@@ -276,6 +282,14 @@ public class MovilidadAcademica implements Serializable {
 
     public void setArgentina(int argentina) {
         this.argentina = argentina;
+    }
+
+    public int getBolivia() {
+        return bolivia;
+    }
+
+    public void setBolivia(int bolivia) {
+        this.bolivia = bolivia;
     }
 
     public CiclosEscolares getCiclosEscolares() {

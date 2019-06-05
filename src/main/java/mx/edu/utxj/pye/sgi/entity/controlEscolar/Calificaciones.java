@@ -14,7 +14,6 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -29,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Calificaciones.findAll", query = "SELECT c FROM Calificaciones c")
     , @NamedQuery(name = "Calificaciones.findByEstudiante", query = "SELECT c FROM Calificaciones c WHERE c.calificacionesPK.estudiante = :estudiante")
     , @NamedQuery(name = "Calificaciones.findByGrupo", query = "SELECT c FROM Calificaciones c WHERE c.calificacionesPK.grupo = :grupo")
+    , @NamedQuery(name = "Calificaciones.findByMateria", query = "SELECT c FROM Calificaciones c WHERE c.calificacionesPK.materia = :materia")
     , @NamedQuery(name = "Calificaciones.findByCf", query = "SELECT c FROM Calificaciones c WHERE c.cf = :cf")
     , @NamedQuery(name = "Calificaciones.findByCU1", query = "SELECT c FROM Calificaciones c WHERE c.cU1 = :cU1")
     , @NamedQuery(name = "Calificaciones.findByCU2", query = "SELECT c FROM Calificaciones c WHERE c.cU2 = :cU2")
@@ -80,11 +80,11 @@ public class Calificaciones implements Serializable {
     @JoinColumns({
         @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante", insertable = false, updatable = false)
         , @JoinColumn(name = "grupo", referencedColumnName = "grupo", insertable = false, updatable = false)})
-    @OneToOne(optional = false)
-    private Estudiante estudiante1;
-    @JoinColumn(name = "materia", referencedColumnName = "id_materia")
     @ManyToOne(optional = false)
-    private Materia materia;
+    private Estudiante estudiante1;
+    @JoinColumn(name = "materia", referencedColumnName = "id_materia", insertable = false, updatable = false)
+    @ManyToOne(optional = false)
+    private Materia materia1;
 
     public Calificaciones() {
     }
@@ -93,8 +93,8 @@ public class Calificaciones implements Serializable {
         this.calificacionesPK = calificacionesPK;
     }
 
-    public Calificaciones(int estudiante, int grupo) {
-        this.calificacionesPK = new CalificacionesPK(estudiante, grupo);
+    public Calificaciones(int estudiante, int grupo, int materia) {
+        this.calificacionesPK = new CalificacionesPK(estudiante, grupo, materia);
     }
 
     public CalificacionesPK getCalificacionesPK() {
@@ -225,12 +225,12 @@ public class Calificaciones implements Serializable {
         this.estudiante1 = estudiante1;
     }
 
-    public Materia getMateria() {
-        return materia;
+    public Materia getMateria1() {
+        return materia1;
     }
 
-    public void setMateria(Materia materia) {
-        this.materia = materia;
+    public void setMateria1(Materia materia1) {
+        this.materia1 = materia1;
     }
 
     @Override

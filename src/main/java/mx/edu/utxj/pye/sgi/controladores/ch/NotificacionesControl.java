@@ -52,10 +52,11 @@ public class NotificacionesControl implements Serializable {
 
     @PostConstruct
     public void init() {
+        contactoDestino = 0;
         mostrarContactosParaNotificacion();
         mostrarNotificacionesLogeado();
     }
-
+    
     public void mostrarContactosParaNotificacion() {
         try {
             nuevaListaPersonalContacto = new ArrayList<>();
@@ -127,6 +128,9 @@ public class NotificacionesControl implements Serializable {
 
     public void mostrarNotificacionesLogeado() {
         try {
+            if (nuevoOBJcontactosChatSelec == null) {
+                return;
+            }
             if (nuevoOBJcontactosChatSelec.getClave() == 0) {
                 contactoDestino = 0;
                 nombreContacto = "";
@@ -134,25 +138,18 @@ public class NotificacionesControl implements Serializable {
                 contactoDestino = nuevoOBJcontactosChatSelec.getClave();
                 nombreContacto = nuevoOBJcontactosChatSelec.getNombre();
             }
-
             notificacioneses = new ArrayList<>();
             notificacioneses.clear();
-            notificacioneses = ejbNotificacionesIncidencias.mostrarListaDenotificacionesPorUsuario(controladorEmpleado.getNuevoOBJListaPersonal().getClave());
+            notificacioneses = ejbNotificacionesIncidencias.mostrarListaDenotificacionesPorConversacion(controladorEmpleado.getNuevoOBJListaPersonal().getClave(), contactoDestino);
             if (!notificacioneses.isEmpty()) {
-                nIterator = notificacioneses.iterator();
-                while (nIterator.hasNext()) {
-                    Notificaciones n = nIterator.next();
-                    if (Objects.equals(n.getClaveTDestino().getClave(), contactoDestino)) {
-
-                    } else if (Objects.equals(n.getClaveTRemitente().getClave(), contactoDestino)) {
+                notificacioneses.forEach((n) -> {
+                    if (Objects.equals(n.getClaveTRemitente().getClave(), contactoDestino)) {
                         if (n.getStatus() == 0) {
                             n.setStatus(1);
                             ejbNotificacionesIncidencias.actualizarNotificaciones(n);
                         }
-                    } else {
-                        nIterator.remove();
                     }
-                }
+                });
             }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());

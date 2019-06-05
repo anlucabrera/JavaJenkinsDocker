@@ -13,6 +13,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.persistence.NoResultException;
@@ -49,7 +51,8 @@ public class ServicioActividadesVarias implements EjbActividadesVarias {
     @EJB    EjbFiscalizacion ejbFiscalizacion;
     
     public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
+    private static final Logger LOG = Logger.getLogger(ServicioActividadesVarias.class.getName());
+    
     @Override
     public List<ActividadesVariasRegistro> getListaActividadesVarias(String rutaArchivo) throws Throwable {
         if (Files.exists(Paths.get(rutaArchivo))) {
@@ -326,6 +329,47 @@ public class ServicioActividadesVarias implements EjbActividadesVarias {
             } else {
                 return Collections.EMPTY_LIST;
             }
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public ActividadesVariasRegistro editaActividadesVarias(ActividadesVariasRegistro actividadVariaEditada) {
+        try {
+           f.setEntityClass(ActividadesVariasRegistro.class);
+           f.edit(actividadVariaEditada);
+           f.flush();
+           return actividadVariaEditada;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo actualizar el registro: " + actividadVariaEditada.getNombre(), e);
+            return null;
+        }
+    }
+
+    @Override
+    public Boolean buscaActividadVariaExistente(ActividadesVariasRegistro actividadVaria) {
+        try {
+            ActividadesVariasRegistro actVar = new ActividadesVariasRegistro();
+            actVar = f.getEntityManager().createQuery("SELECT a FROM ActividadesVariasRegistro a WHERE a.nombre = :nombre AND a.registro <> :registro",ActividadesVariasRegistro.class)
+                .setParameter("nombre", actividadVaria.getNombre())
+                .getSingleResult();
+            if(actVar != null){
+                return true;
+            }else{
+                return false;
+            }
+        } catch (NoResultException | NonUniqueResultException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public List<ActividadesVariasRegistro> reporteActividadesVariasPorEjercicio() {
+        try {
+            return f.getEntityManager().createQuery("SELECT a FROM ActividadesVariasRegistro a INNER JOIN a.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY a.fechaInicio",ActividadesVariasRegistro.class)
+                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;
         }

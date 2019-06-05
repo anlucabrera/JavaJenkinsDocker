@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -23,12 +24,21 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
+import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
+import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
+import mx.edu.utxj.pye.sgi.entity.pye2.MunicipioPK;
+import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAcademicos;
+import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAcademicosPersonal;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.ca.DtoProductoAcademico;
@@ -54,9 +64,11 @@ public class ControladorProductosAcademicos implements Serializable{
     
     @Getter @Setter DtoProductoAcademico dtoProductoAcademico;
     
-    @EJB    EjbProductosAcademicos ejbProductosAcademicos;
-    @EJB    EjbModulos ejbModulos;
-    @EJB    EjbFiscalizacion ejbFiscalizacion;
+    @EJB    EjbProductosAcademicos      ejbProductosAcademicos;
+    @EJB    EjbModulos                  ejbModulos;
+    @EJB    EjbFiscalizacion            ejbFiscalizacion;
+    @EJB    EjbPersonal                 ejbPersonal;
+    @EJB    EjbCatalogos                ejbCatalogos;
     
     @Inject ControladorEmpleado controladorEmpleado;
     @Inject ControladorModulosRegistro controladorModulosRegistro;
@@ -65,6 +77,10 @@ public class ControladorProductosAcademicos implements Serializable{
     public void init(){
         dtoProductoAcademico = new DtoProductoAcademico();
         dtoProductoAcademico.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short)controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        
+        dtoProductoAcademico.setListaAreasAcademicas(ejbCatalogos.getAreasAcademicas());
+        Faces.setSessionAttribute("programasEducativos", dtoProductoAcademico.getListaAreasAcademicas());
+        
         filtros();
     }
     
@@ -137,22 +153,30 @@ public class ControladorProductosAcademicos implements Serializable{
         buscarProductosAcademicos();
     }
     
-    public void buscarProductosAcademicos(){
+    public void buscarProductosAcademicos() {
         try {
-            dtoProductoAcademico.setLstDtoProductosAcademicos(ejbProductosAcademicos.getFiltroProductosAcademicosEjercicioMesArea(dtoProductoAcademico.getAnioConsulta(), dtoProductoAcademico.getMesConsulta(), dtoProductoAcademico.getArea().getArea()));
-            dtoProductoAcademico.setLstDtoProductosAcademicosPersonal(ejbProductosAcademicos.getFiltroProductosAcademicosPersonalEjercicioMesArea(dtoProductoAcademico.getAnioConsulta(), dtoProductoAcademico.getMesConsulta(), dtoProductoAcademico.getArea().getArea()));
-            
-            dtoProductoAcademico.getLstDtoProductosAcademicos().stream().forEach((t) -> {
-                t.getProductosAcademicos().setRegistros(ejbModulos.buscaRegistroPorClave(t.getProductosAcademicos().getRegistro()));
-            });
-            dtoProductoAcademico.getLstDtoProductosAcademicosPersonal().stream().forEach((t) -> {
-                t.getProductoAcademicoPersonal().setRegistros(ejbModulos.buscaRegistroPorClave(t.getProductoAcademicoPersonal().getRegistro()));
-            });
+            if (dtoProductoAcademico.getMesConsulta() != null && !dtoProductoAcademico.getMesesConsulta().isEmpty()) {
+                dtoProductoAcademico.setLstDtoProductosAcademicos(ejbProductosAcademicos.getFiltroProductosAcademicosEjercicioMesArea(dtoProductoAcademico.getAnioConsulta(), dtoProductoAcademico.getMesConsulta(), dtoProductoAcademico.getArea().getArea()));
+                dtoProductoAcademico.setListaProductosAcademicoInt(ejbProductosAcademicos.getFiltroProductosAcademicosEjercicioMesAreaInt(dtoProductoAcademico.getAnioConsulta(), dtoProductoAcademico.getMesConsulta(), dtoProductoAcademico.getArea().getArea()));
+                dtoProductoAcademico.setLstDtoProductosAcademicosPersonal(ejbProductosAcademicos.getFiltroProductosAcademicosPersonalEjercicioMesArea(dtoProductoAcademico.getAnioConsulta(), dtoProductoAcademico.getMesConsulta(), dtoProductoAcademico.getArea().getArea()));
+
+                dtoProductoAcademico.getLstDtoProductosAcademicos().stream().forEach((t) -> {
+                    t.getProductosAcademicos().setRegistros(ejbModulos.buscaRegistroPorClave(t.getProductosAcademicos().getRegistro()));
+                });
+                dtoProductoAcademico.getLstDtoProductosAcademicosPersonal().stream().forEach((t) -> {
+                    t.getProductoAcademicoPersonal().setRegistros(ejbModulos.buscaRegistroPorClave(t.getProductoAcademicoPersonal().getRegistro()));
+                });
+            } else {
+                dtoProductoAcademico.setLstDtoProductosAcademicos(Collections.EMPTY_LIST);
+                dtoProductoAcademico.setLstDtoProductosAcademicosPersonal(Collections.EMPTY_LIST);
+            }
+            Faces.setSessionAttribute("productosAcademicos", dtoProductoAcademico.getListaProductosAcademicoInt());
+
             Ajax.update("formMuestraDatosActivos");
         } catch (Throwable ex) {
             Logger.getLogger(ControladorProductosAcademicos.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
     
     public void eliminarRegistro(Integer registro, ProductosAcademicos productoAcademico) {
@@ -421,6 +445,181 @@ public class ControladorProductosAcademicos implements Serializable{
             cargarAlineacionXActividad();
             Ajax.update("frmAlineacionProdAcadPersonal");
         }else Messages.addGlobalError("La alineación no pudo eliminarse.");
+    }
+    
+    /*************************************************** Edición ***********************************************************/
+    public void inicializarUbicacion(){
+        dtoProductoAcademico.setPais(new Pais(42));
+        dtoProductoAcademico.setEstado(new Estado(21));
+        dtoProductoAcademico.setMunicipio(new Municipio(new MunicipioPK(21, 197)));
+        dtoProductoAcademico.setPaises(ejbFiscalizacion.getPaises());
+        dtoProductoAcademico.setEstados(ejbFiscalizacion.getEstadosPorPais(dtoProductoAcademico.getPais()));
+        dtoProductoAcademico.setMunicipios(ejbFiscalizacion.getMunicipiosPorEstado(dtoProductoAcademico.getEstado()));
+    }
+    
+    public void actualizarEstados(ValueChangeEvent event){
+        dtoProductoAcademico.setPais((Pais)event.getNewValue());
+        dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().setPais(dtoProductoAcademico.getPais());
+        dtoProductoAcademico.setEstados(ejbFiscalizacion.getEstadosPorPais(dtoProductoAcademico.getPais()));
+        if(dtoProductoAcademico.getPais().getIdpais()!=42){
+            dtoProductoAcademico.setMunicipio(null);
+        }
+        Faces.setSessionAttribute("estados", dtoProductoAcademico.getEstados());
+    }
+    
+    public void actualizarMunicipios(ValueChangeEvent event){
+        dtoProductoAcademico.setEstado((Estado)event.getNewValue());
+        dtoProductoAcademico.setMunicipios(ejbFiscalizacion.getMunicipiosPorEstado(dtoProductoAcademico.getEstado()));
+        Faces.setSessionAttribute("municipios", dtoProductoAcademico.getMunicipios());
+    }
+    
+    public void actualizaMunicipio(ValueChangeEvent event){
+        dtoProductoAcademico.setMunicipio((Municipio)event.getNewValue());
+        dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().setMunicipio(dtoProductoAcademico.getMunicipio());
+    }
+
+    public void cargarUbicacionXProductoAcademico(){
+        if(dtoProductoAcademico.getMunicipio()!= null && dtoProductoAcademico.getPais()!= null){
+            dtoProductoAcademico.setPaises(ejbFiscalizacion.getPaises());
+            dtoProductoAcademico.setPais(dtoProductoAcademico.getPais());
+            Faces.setSessionAttribute("paises", dtoProductoAcademico.getPaises());
+            
+            dtoProductoAcademico.setEstados(ejbFiscalizacion.getEstadosPorPais(dtoProductoAcademico.getPais()));
+            dtoProductoAcademico.setEstado(dtoProductoAcademico.getMunicipio().getEstado());
+            Faces.setSessionAttribute("estados", dtoProductoAcademico.getEstados());
+            
+            dtoProductoAcademico.setMunicipios(ejbFiscalizacion.getMunicipiosPorEstado(dtoProductoAcademico.getEstado()));
+            Faces.setSessionAttribute("municipios", dtoProductoAcademico.getMunicipios());
+        }else{
+            dtoProductoAcademico.setPais(null);
+            dtoProductoAcademico.nulificarPais();
+        }
+    }
+    
+    public void actualizarAreaAcademica(ValueChangeEvent event){
+        dtoProductoAcademico.setAreaAcademica(((AreasUniversidad)event.getNewValue()));
+        dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().setAreaAcademica(dtoProductoAcademico.getAreaAcademica().getArea());
+    }
+    
+    public void forzarAperturaEdicionProductosAcademicos(){
+        if(dtoProductoAcademico.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEdicionProductosAcademicos').show();");
+            dtoProductoAcademico.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void actualizaInterfazEdicionProductosAcademicos(){
+        Ajax.update("frmEdicionProductosAcademicos");
+        Ajax.oncomplete("skin();");
+        dtoProductoAcademico.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionProductosAcademicos();
+    }
+    
+    public void abrirEdicionProductoAcademico(ProductosAcademicos productoAcademico) {
+        DTOProductosAcademicos dtoProAcad = new DTOProductosAcademicos();
+        dtoProAcad.setProductosAcademicos(productoAcademico);
+        dtoProductoAcademico.setRegistroProductoAcademico(dtoProAcad);
+        dtoProductoAcademico.setMensaje("");
+        dtoProductoAcademico.setAreaAcademica(ejbModulos.buscaProgramaEducativoEspecifico(dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().getAreaAcademica()));
+        if(ejbProductosAcademicos.getPaisProductoAcademico(productoAcademico) == null){
+            inicializarUbicacion();
+        }else{
+            dtoProductoAcademico.setPais(ejbProductosAcademicos.getPaisProductoAcademico(productoAcademico));
+            dtoProductoAcademico.setMunicipio(ejbProductosAcademicos.getMunicipioProductoAcademico(productoAcademico));
+            cargarUbicacionXProductoAcademico();
+        }
+        actualizaInterfazEdicionProductosAcademicos();
+    }
+    
+    public void editaProductoAcademico(){
+        if(ejbProductosAcademicos.buscaProductoAcademicoExistente(dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos())){
+            dtoProductoAcademico.setMensaje("No se ha podido actualizar el registro, el producto académico que ha ingresado ya existe.");
+        }else{
+            dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().setMunicipio(dtoProductoAcademico.getMunicipio());
+            dtoProductoAcademico.getRegistroProductoAcademico().setProductosAcademicos(ejbProductosAcademicos.editaProductoAcademico(dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos()));
+            dtoProductoAcademico.setMensaje("El Producto Académico se ha actualizado");
+            actualizaInterfazEdicionProductosAcademicos();
+        }
+        Ajax.update("mensaje");
+    }
+    
+    public void validaFechaInicio(ValueChangeEvent event) {
+        dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().setFechaInicio((Date)event.getNewValue());
+        if (dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().getFechaInicio().before(dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().getFechaFin())) {
+        } else {
+            if (dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().getFechaFin().before(dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().getFechaInicio())) {
+                dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().setFechaFin(null);
+                dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().setFechaFin(dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().getFechaInicio());
+            } else {
+            }
+        }
+    }
+    
+    public void validaFechaFin(ValueChangeEvent event) {
+        dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().setFechaFin((Date)event.getNewValue());
+        if (dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().getFechaFin().after(dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().getFechaInicio())) {
+        } else {
+            if (dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().getFechaInicio().after(dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().getFechaFin())) {
+                dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().setFechaInicio(null);
+                dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().setFechaInicio(dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().getFechaFin());
+            } else {
+            }
+        }
+    }
+    
+    /**************************************** Edición Producto Académico Participante **************************************************/
+    public void forzarAperturaEdicionProductoAcademicoPersonal(){
+        if(dtoProductoAcademico.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEdicionProductoAcademicoPersonal').show();");
+            dtoProductoAcademico.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void actualizaInterfazEdicionProductoAcademicoPersonal(){
+        Ajax.update("frmEdicionProductoAcademicoPersonal");
+        Ajax.oncomplete("skin();");
+        dtoProductoAcademico.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionProductoAcademicoPersonal();
+    }
+    
+    public void abrirEdicionProductoAcademicoPersonal(ProductosAcademicosPersonal productoAcademicoPersonal) {
+        try {
+            DTOProductosAcademicosPersonal dtoProdAcadPer = new DTOProductosAcademicosPersonal();
+            dtoProdAcadPer.setProductoAcademicoPersonal(productoAcademicoPersonal);
+            dtoProductoAcademico.setRegistroProductosAcademicosPersonal(dtoProdAcadPer);
+            
+            dtoProductoAcademico.setPersona(ejbPersonal.mostrarListaPersonal(dtoProductoAcademico.getRegistroProductosAcademicosPersonal().getProductoAcademicoPersonal().getPersonal()));
+            dtoProductoAcademico.setListaPersonal(ejbPersonal.buscaCoincidenciasListaPersonal(String.valueOf(dtoProductoAcademico.getRegistroProductosAcademicosPersonal().getProductoAcademicoPersonal().getPersonal())));
+            Faces.setSessionAttribute("listaPersonal", dtoProductoAcademico.getListaPersonal());
+            
+            dtoProductoAcademico.setMensaje("");
+            actualizaInterfazEdicionProductoAcademicoPersonal();
+        } catch (Throwable ex) {
+            Logger.getLogger(ControladorProductosAcademicos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void editaProductoAcademicoPersonal(){
+        if(ejbProductosAcademicos.buscaProductoAcademicoPersonalExistente(dtoProductoAcademico.getRegistroProductosAcademicosPersonal().getProductoAcademicoPersonal())){
+            dtoProductoAcademico.setMensaje("El personal que intenta agregar actualmente ya se encuentra dado de alta, intente asignando otro producto académico o bien otro participante");
+        }else{
+            dtoProductoAcademico.getRegistroProductosAcademicosPersonal().setProductoAcademicoPersonal(ejbProductosAcademicos.editaProductoAcademicoPersonal(dtoProductoAcademico.getRegistroProductosAcademicosPersonal().getProductoAcademicoPersonal()));
+            dtoProductoAcademico.setMensaje("El participante del producto académico se ha actualizado correctamente");
+            buscarProductosAcademicos();
+            actualizaInterfazEdicionProductoAcademicoPersonal();
+        }
+        Ajax.update("mensaje");
+    }
+    
+    public List<ListaPersonal> completeListaPersonal(String parametro) { 
+        dtoProductoAcademico.setListaPersonal(ejbPersonal.buscaCoincidenciasListaPersonal(parametro));
+        Faces.setSessionAttribute("listaPersonal", dtoProductoAcademico.getListaPersonal());
+        return dtoProductoAcademico.getListaPersonal();
+    }
+    
+    public void seleccionaListaPersonal(ValueChangeEvent event){
+        ListaPersonal listaPersonal = (ListaPersonal)event.getNewValue();
+        dtoProductoAcademico.getRegistroProductosAcademicosPersonal().getProductoAcademicoPersonal().setPersonal(listaPersonal.getClave());
     }
     
 }

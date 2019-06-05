@@ -10,6 +10,8 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -40,7 +42,7 @@ public class MarcoNormativo implements Serializable {
     private Integer marcoNormativo;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 255)
+    @Size(min = 1, max = 400)
     @Column(name = "reglamento")
     private String reglamento;
     @Basic(optional = false)
@@ -53,6 +55,12 @@ public class MarcoNormativo implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "libro")
     private String libro;
+    @JoinColumn(name = "clasificacion", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private MarcoClasificacion clasificacion;
+    @JoinColumn(name = "tipo", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private MarcoTipo tipo;
 
     public MarcoNormativo() {
     }
@@ -98,6 +106,22 @@ public class MarcoNormativo implements Serializable {
 
     public void setLibro(String libro) {
         this.libro = libro;
+    }
+
+    public MarcoClasificacion getClasificacion() {
+        return clasificacion;
+    }
+
+    public void setClasificacion(MarcoClasificacion clasificacion) {
+        this.clasificacion = clasificacion;
+    }
+
+    public MarcoTipo getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(MarcoTipo tipo) {
+        this.tipo = tipo;
     }
 
     @Override

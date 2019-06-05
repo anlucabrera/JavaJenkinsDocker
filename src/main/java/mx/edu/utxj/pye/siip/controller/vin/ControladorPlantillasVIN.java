@@ -12,6 +12,7 @@ import javax.annotation.ManagedBean;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbPlantillasVINExcel;
+import mx.edu.utxj.pye.siip.interfaces.vin.EjbReportesVINExcel;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Faces;
 
@@ -26,8 +27,8 @@ public class ControladorPlantillasVIN implements Serializable {
 
     private static final long serialVersionUID = 2726149017850038684L;
 
-    @EJB
-    EjbPlantillasVINExcel ejbPlantillasVINExcel;
+    @EJB    EjbPlantillasVINExcel   ejbPlantillasVINExcel;
+    @EJB    EjbReportesVINExcel     ejbReportesVINExcel;
 
     public void descargarPlantillaConvenios() throws IOException, Throwable {
         File f = new File(ejbPlantillasVINExcel.getPlantillaConvenios());
@@ -46,6 +47,26 @@ public class ControladorPlantillasVIN implements Serializable {
     
     public void descargarPlantillaEgresados() throws IOException, Throwable {
         File f = new File(ejbPlantillasVINExcel.getPlantillaEgresados());
+        Faces.sendFile(f, true);
+    }
+    
+    public void descargarReporteConvenios() throws IOException, Throwable{
+        File f = new File(ejbReportesVINExcel.getReporteConvenios());
+        Faces.sendFile(f, true);
+    }
+    
+    public void descargarReporteServiciosTecnologicos() throws IOException, Throwable{
+        File f = new File(ejbReportesVINExcel.getReporteServiciosTecnologicos());
+        Faces.sendFile(f, true);
+    }
+    
+    public void descargarReporteEgresados() throws IOException, Throwable{
+        File f = new File(ejbReportesVINExcel.getReporteGeneralEgresados());
+        Faces.sendFile(f, true);
+    }
+    
+    public void descargarReporteOrganismosVinculados() throws Throwable{
+        File f = new File(ejbReportesVINExcel.getReporteOrganismosVinculados());
         Faces.sendFile(f, true);
     }
     

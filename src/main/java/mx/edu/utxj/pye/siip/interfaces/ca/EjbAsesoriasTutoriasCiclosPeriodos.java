@@ -53,6 +53,8 @@ public interface EjbAsesoriasTutoriasCiclosPeriodos {
      */
     public List<DTOAsesoriasTutoriasCicloPeriodos> getListaRegistrosPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo, RegistrosTipo registrosTipo, Short actividad, Integer claveTutor, Short claveAreaEmpleado);
     
+    public List<AsesoriasTutoriasMensualPeriodosEscolares> getListaReporteGeneralAsesoriasTutorias();
+    
     /**
      * Comprueba si el periodo del evento actual se encuentra en el periodo mas reciente, en caso de no encontrarlo obtiene el periodo correspondiente.
      * @param periodos Lista de periodos obtenidos con registros.
@@ -111,4 +113,8 @@ public interface EjbAsesoriasTutoriasCiclosPeriodos {
     public Boolean alinearRegistroActividad(ActividadesPoa actividad, DTOAsesoriasTutoriasCicloPeriodos registro);
     
     public Boolean eliminarAlineacion(DTOAsesoriasTutoriasCicloPeriodos registro);
+    
+    public AsesoriasTutoriasMensualPeriodosEscolares editaAsesoriaTutoriaMensualPeriodoEscolar(AsesoriasTutoriasMensualPeriodosEscolares asesoriaTutoriaMensual);
+    
+    public Boolean buscaAsesoriaTutoriaExistente(AsesoriasTutoriasMensualPeriodosEscolares asesoriaTutoria);
 }

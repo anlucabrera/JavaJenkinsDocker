@@ -96,6 +96,8 @@ public interface EjbCuerposAcademicos {
      */
     public List<DTOCuerposAcademicosR> getFiltroCuerposAcademicosEjercicioMesArea(Short ejercicio, Short area) throws Throwable;
     
+    public List<CuerposAcademicosRegistro> getFiltroCuerposAcademicosEdicion(Short ejercicio, Short area) throws Throwable;
+    
     /**
      *  Método que filtra el registro de DTOCuerpAcadIntegrantes por medio de Ejercicio, Mes y Área el cual es mostrado para la consulta y eliminación
      * @param ejercicio Ejercicio actual que deberá venir de la tabla eventos_registro
@@ -202,4 +204,20 @@ public interface EjbCuerposAcademicos {
      * @return 
      */
     public Boolean altaCuerpacadLineas(CuerpacadLineas cuerpacadLineas);
+    
+    public CuerposAcademicosRegistro editaCuerpoAcademicoRegistro(CuerposAcademicosRegistro cuerpoAcademicoRegistro);
+    
+    public CuerpacadIntegrantes editaCuerpoAcademicoIntegrante(CuerpacadIntegrantes cuerpoAcademicoIntegrante);
+    
+    public CuerpacadLineas editaCuerpoAcademicoLineaInvestigacion(CuerpacadLineas cuerpoAcademicoLinea);
+    
+    public Boolean buscaCuerpoAcademicoIntegranteExistente(CuerpacadIntegrantes cuerpacadIntegrante);
+    
+    public Boolean buscaCuerpoAcademicoLineaInvestigacionExistente(CuerpacadLineas cuerpacadLinea);
+    
+    public List<CuerposAcademicosRegistro> getReporteGeneralCuerposAcademicosPorEjercicio();
+    
+    public List<CuerpacadIntegrantes> getReporteGeneralCuerposAcademicosIntegrantesPorEjercicio();
+    
+    public List<CuerpacadLineas> getReporteGeneralCuerposAcademicosLineasInvestigacionPorEjercicio();
 }

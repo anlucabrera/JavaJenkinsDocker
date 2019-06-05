@@ -17,6 +17,14 @@
         <c:if test="#{!controladorEmpleado.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="resources/css/estilosGenerales.css" media="screen" />
         </c:if> 
+        <script type="text/javascript">
+            function scrollDiv() {
+                console.log("Se ejecuto el scrip");
+                var objDiv = document.getElementById("chat");
+                objDiv.scrollTop = objDiv.scrollHeight;
+            }
+            
+        </script>
     </ui:define>
 
     <ui:define name="title"/>
@@ -33,15 +41,6 @@
 
             .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
                 width: 100%;
-            }
-            .aceptado{
-                background-color: #00a65a !important;
-            }
-            .pendiente{
-                background-color: #f39c12 !important;
-            }
-            .denegado{
-                background-color: #dd4b39 !important
             }
 
         </style>
@@ -81,9 +80,9 @@
                                                                     <p:ajax event="rowSelect" listener="#{notificacionesControl.mostrarNotificacionesLogeado()}" process="tblChats" />
 
                                                                     <f:facet name="header">
-                                                                        <p:outputLabel value="Mensajes pendientes" style="background: #00a65a !important; font-weight: bold"/>  
+                                                                        <p:outputLabel value="Mensajes pendientes" style="background: #666666 !important; font-weight: bold;color: #ffffff"/>  
                                                                         <p:spacer width="15px"/>
-                                                                        <p:outputLabel value="Conversación activa" style="background: #00a7d0 !important; font-weight: bold"/> 
+                                                                        <p:outputLabel value="Conversación activa" style="background: #374850 !important; font-weight: bold;color: #ffffff"/> 
                                                                     </f:facet>
 
                                                                     <p:column width="70" headerText="Empleado">
@@ -99,20 +98,20 @@
                                                             </p:outputPanel>
                                                         </div>
                                                         <div class="col-sm-8 border-right">
-                                                            <p:outputPanel>
+                                                            <p:outputPanel id="mesnajesChat">
                                                                 <p:autoUpdate/>
-                                                                <c:if test="#{notificacionesControl.contactoDestino ne 0}">
-                                                                    <div class="description-block">
-                                                                        <div class="box box-primary direct-chat direct-chat-primary">
-                                                                            <div class="box-header with-border">
-                                                                                <h3 class="box-title">#{notificacionesControl.nombreContacto}</h3>
-                                                                                <div class="box-tools pull-right">
-                                                                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"/></button>
-                                                                                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"/></button>
-                                                                                </div>
+                                                                <div class="description-block">
+                                                                    <div class="box box-primary direct-chat direct-chat-primary">
+                                                                        <div class="box-header with-border">
+                                                                            <h3 class="box-title">#{notificacionesControl.nombreContacto}</h3>
+                                                                            <div class="box-tools pull-right">
+                                                                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"/></button>
+                                                                                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"/></button>
                                                                             </div>
-                                                                            <div class="box-body">
-                                                                                <div class="direct-chat-messages" style="height: 480px">
+                                                                        </div>
+                                                                        <div class="box-body" >
+                                                                            <div class="direct-chat-messages" id="chat" style="height: 480px;" onmouseover="scrollDiv()">
+                                                                                <c:if test="#{notificacionesControl.contactoDestino ne 0}">
                                                                                     <c:forEach var="i" begin="0" end="#{notificacionesControl.notificacioneses.size()-1}">
                                                                                         <c:set var="mensaje" value="#{notificacionesControl.notificacioneses.get(i)}" />
                                                                                         <c:if test="#{mensaje.claveTRemitente.clave eq notificacionesControl.contactoDestino}">
@@ -136,20 +135,24 @@
                                                                                             </div>
                                                                                         </c:if>
                                                                                     </c:forEach>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="box-footer">
-                                                                                <div class="input-group">
-                                                                                    <p:inputText id="notificacionTexto" value="#{notificacionesControl.mensajeDNotificacion}" class="form-control"/>                                                                            
-                                                                                    <span class="input-group-btn">
-                                                                                        <p:commandButton id="btnBuscarActiuvidades" widgetVar="sms" actionListener="#{notificacionesControl.enviarNotificacion()}" icon="fa fa-arrow-circle-o-right" class="btn-primary btn-flat btn-block col-md-3" update="@form" process="@form" />
-                                                                                    </span>
-                                                                                </div>                                                                    
+                                                                                </c:if>
+                                                                                <div onload="" />
                                                                             </div>
                                                                         </div>
+                                                                        <div id="final" class="box-footer">
+                                                                            <div class="input-group">
+                                                                                <p:inputText id="notificacionTexto" value="#{notificacionesControl.mensajeDNotificacion}" class="form-control" onfocus="scrollDiv()"/>                                                                            
+                                                                                <span class="input-group-btn">
+                                                                                    <p:commandButton id="btnBuscarActiuvidades" widgetVar="sms" oncomplete="scrollDiv()"
+                                                                                                     actionListener="#{notificacionesControl.enviarNotificacion()}" icon="fa fa-arrow-circle-o-right"
+                                                                                                     class="btn-primary btn-flat btn-block col-md-3" update="@form" process="@form" />
+                                                                                </span>
+                                                                            </div>                                                                    
+                                                                        </div>
                                                                     </div>
-                                                                </c:if>
+                                                                </div>
                                                             </p:outputPanel>
+                                                            <p:poll interval="30" listener="#{notificacionesControl.mostrarNotificacionesLogeado}" update="mesnajesChat" oncomplete="scrollDiv()"/>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -162,8 +165,7 @@
                     </div>
                 </div>
             </section>
-        </p:panel>
+        </p:panel>        
     </ui:define>
     <h:outputScript library="js" name="funciones.js" />
-
 </ui:composition>

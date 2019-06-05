@@ -30,13 +30,11 @@ import javax.faces.context.FacesContext;
 import javax.persistence.TypedQuery;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documentosentregadosestudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoEstudiante;
+
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
+import mx.edu.utxj.pye.sgi.util.Encrypted;
 
 /**
  *
@@ -87,7 +85,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
     }
 
     @Override
-    public Estudiante guardaEstudiante(Estudiante estudiante,Documentosentregadosestudiante documentosentregadosestudiante,Boolean opcionIns) {
+    public Estudiante guardaEstudiante(Estudiante estudiante, Documentosentregadosestudiante documentosentregadosestudiante, Boolean opcionIns) {
         List<Grupo> grupos = new ArrayList<>();
         List<Grupo> gruposElegibles = new ArrayList<>();
         Grupo gps = new Grupo();
@@ -98,49 +96,62 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
         Short cve_sistema = 0;
         
         if(estudiante.getIdEstudiante() == null){
-            if(opcionIns == true){
-                cve_pe = estudiante.getAspirante().getDatosAcademicos().getPrimeraOpcion();
-                cve_sistema = estudiante.getAspirante().getDatosAcademicos().getSistemaPrimeraOpcion().getIdSistema();
-            }else{
-                cve_pe = estudiante.getAspirante().getDatosAcademicos().getSegundaOpcion();
-                cve_sistema = estudiante.getAspirante().getDatosAcademicos().getSistemaSegundaOpcion().getIdSistema();
-            }
-            grupos = facadeCE.getEntityManager().createQuery("SELECT g FROM Grupo g WHERE g.grado = :grado AND g.idPe = :cvePe AND g.idSistema.idSistema = :idSistema AND g.periodo = :idPeriodo", Grupo.class)
-                    .setParameter("grado", 1)
-                    .setParameter("cvePe", cve_pe)
-                    .setParameter("idSistema", cve_sistema)
-                    .setParameter("idPeriodo", 50)
-                    .getResultList();
+            try {
+                Login login = new Login();
+                String contrasena="";
+                int generador;
+                for(int i=0;i<6;i++){
+                    generador = (int)(Math.random()*10);
+                    contrasena+= generador;
+                }
+                
+                if(opcionIns == true){
+                    cve_pe = estudiante.getAspirante().getDatosAcademicos().getPrimeraOpcion();
+                    cve_sistema = estudiante.getAspirante().getDatosAcademicos().getSistemaPrimeraOpcion().getIdSistema();
+                }else{
+                    cve_pe = estudiante.getAspirante().getDatosAcademicos().getSegundaOpcion();
+                    cve_sistema = estudiante.getAspirante().getDatosAcademicos().getSistemaSegundaOpcion().getIdSistema();
+                }
+                grupos = listaGruposXPeriodoByCarrera((short)estudiante.getAspirante().getIdProcesoInscripcion().getIdPeriodo(), cve_pe,cve_sistema,1);
                 grupos.forEach(g ->{
                     if(g.getEstudianteList().size() != g.getCapMaxima()){
                         gruposElegibles.add(g);
                     }
                 });
-            //Asignar Matricula
-            String anyo2 = new SimpleDateFormat("yy").format(new Date());
-            folio = anyo2.concat("0000");
-
-            TypedQuery<Integer> v = (TypedQuery<Integer>) facadeCE.getEntityManager().createQuery("SELECT MAX(e.matricula) FROM Estudiante e WHERE e.periodo = :idPeriodo")
-                    .setParameter("idPeriodo", estudiante.getAspirante().getIdProcesoInscripcion().getIdPeriodo());
-
-            if(v.getSingleResult() == 0){
-                matriculaUtilizable = Integer.valueOf(folio);
-            }else{
-                matriculaUtilizable = v.getSingleResult() + 1;
+                //Asignar Matricula
+                String anyo2 = new SimpleDateFormat("yy").format(new Date());
+                folio = anyo2.concat("0000");
+                
+                TypedQuery<Integer> v = (TypedQuery<Integer>) facadeCE.getEntityManager().createQuery("SELECT MAX(e.matricula) FROM Estudiante e WHERE e.periodo = :idPeriodo")
+                        .setParameter("idPeriodo", estudiante.getAspirante().getIdProcesoInscripcion().getIdPeriodo());
+                
+                if(v.getSingleResult() == 0){
+                    matriculaUtilizable = Integer.valueOf(folio);
+                }else{
+                    matriculaUtilizable = v.getSingleResult() + 1;
+                }
+                //Elige grupos aleatorio
+                int numero = (int) (Math.random() * gruposElegibles.size());
+                gps = gruposElegibles.get(numero);
+                //Guarda estudiante
+                estudiante.setGrupo(gps);
+                estudiante.setCarrera(gps.getIdPe());
+                estudiante.setMatricula(matriculaUtilizable);
+                estudiante.setTipoEstudiante(tipoEstudiante);
+                estudiante.setOpcionIncripcion(opcionIns);
+                login.setActivo(true);
+                login.setModificado(false);
+                login.setUsuario(String.valueOf(matriculaUtilizable));
+                login.setPassword(encriptaPassword(contrasena));
+                login.setPersona(estudiante.getAspirante().getIdPersona().getIdpersona());
+                facadeCE.create(login);
+                facadeCE.create(estudiante);
+                documentosentregadosestudiante.setEstudiante(estudiante.getIdEstudiante());
+                facadeCE.create(documentosentregadosestudiante);
+                facadeCE.flush();
+            } catch (Exception ex) {
+                Logger.getLogger(ServiceProcesoInscripcion.class.getName()).log(Level.SEVERE, null, ex);
             }
-            //Elige grupos aleatorio   
-            int numero = (int) (Math.random() * gruposElegibles.size()); 
-            gps = gruposElegibles.get(numero);
-            //Guarda estudiante
-            estudiante.setGrupo(gps);
-            estudiante.setCarrera(gps.getIdPe());
-            estudiante.setMatricula(matriculaUtilizable);
-            estudiante.setTipoEstudiante(tipoEstudiante);
-            estudiante.setOpcionIncripcion(opcionIns);
-            facadeCE.create(estudiante);
-            facadeCE.flush();
-            documentosentregadosestudiante.setEstudiante(estudiante.getIdEstudiante());
-            facadeCE.create(documentosentregadosestudiante); 
         }else{
             if(estudiante.getOpcionIncripcion() != opcionIns){
                 if(opcionIns == true){
@@ -150,12 +161,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                     cve_pe = estudiante.getAspirante().getDatosAcademicos().getSegundaOpcion();
                     cve_sistema = estudiante.getAspirante().getDatosAcademicos().getSistemaSegundaOpcion().getIdSistema();
                 }
-                grupos = facadeCE.getEntityManager().createQuery("SELECT g FROM Grupo g WHERE g.grado = :grado AND g.idPe = :cvePe AND g.idSistema.idSistema = :idSistema AND g.periodo = :idPeriodo", Grupo.class)
-                    .setParameter("grado", 1)
-                    .setParameter("cvePe", cve_pe)
-                    .setParameter("idSistema", cve_sistema)
-                    .setParameter("idPeriodo", 50)
-                    .getResultList();
+                grupos = listaGruposXPeriodoByCarrera((short)estudiante.getAspirante().getIdProcesoInscripcion().getIdPeriodo(), cve_pe,cve_sistema,1);
                
                 grupos.forEach(g ->{
                     if(g.getEstudianteList().size() != g.getCapMaxima()){
@@ -169,7 +175,6 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                 //Guarda estudiante
                 estudiante.setGrupo(gps);
                 estudiante.setCarrera(gps.getIdPe());
-                estudiante.setMatricula(matriculaUtilizable);
                 estudiante.setTipoEstudiante(tipoEstudiante);
                 estudiante.setOpcionIncripcion(opcionIns);
                 facadeCE.edit(estudiante);
@@ -213,7 +218,11 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             FacesContext facesContext = FacesContext.getCurrentInstance();
             SimpleDateFormat sm = new SimpleDateFormat("dd-MM-yyyy");
             Documentosentregadosestudiante documentosentregadosestudiante = new Documentosentregadosestudiante();
+            Login login = new Login();
             documentosentregadosestudiante = facadeCE.getEntityManager().find(Documentosentregadosestudiante.class, estudiante.getIdEstudiante());
+            login = facadeCE.getEntityManager().createQuery("SELECT l FROM Login l WHERE l.persona = :idPer", Login.class)
+                    .setParameter("idPer", estudiante.getAspirante().getIdPersona().getIdpersona())
+                    .getResultList().stream().findFirst().orElse(null);
                     
             InputStream is = new FileInputStream(ruta);
             PdfReader pdfReader = new PdfReader(is,null);
@@ -235,6 +244,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             areasUniversidad = buscaAreaByClave((short)estudiante.getCarrera());
             String nombreCarrera = areasUniversidad.getNombre();
             String siglas = areasUniversidad.getSiglas();
+            
             fields.setField("txtAP", estudiante.getAspirante().getIdPersona().getApellidoPaterno());
             fields.setField("txtAM", estudiante.getAspirante().getIdPersona().getApellidoMaterno());
             fields.setField("txtNombre", estudiante.getAspirante().getIdPersona().getNombre());
@@ -242,7 +252,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             fields.setField("txtMatricula", String.valueOf(estudiante.getMatricula()));
             fields.setField("txtGrupo", String.valueOf(estudiante.getGrupo().getGrado()).concat("-").concat(String.valueOf(estudiante.getGrupo().getLiteral())));
             fields.setField("txtTurno", grupo.getIdSistema().getNombre());
-            fields.setField("txtPassword", "12345");
+            fields.setField("txtPassword", desencriptaPassword(login.getPassword()));
             fields.setField("txtCAbreviatura", siglas);
             fields.setField("txtFicha", String.valueOf(estudiante.getAspirante().getFolioAspirante()));
             fields.setField("txtNombreEstudiante", estudiante.getAspirante().getIdPersona().getApellidoPaterno().concat(" ").concat(estudiante.getAspirante().getIdPersona().getApellidoMaterno().concat(" ").concat(estudiante.getAspirante().getIdPersona().getNombre())));
@@ -282,6 +292,93 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             Logger.getLogger(ServiceProcesoInscripcion.class.getName()).log(Level.SEVERE, null, ex);
         } catch (DocumentException ex) {
             Logger.getLogger(ServiceProcesoInscripcion.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(ServiceProcesoInscripcion.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    @Override
+    public void generaCartaCompromiso(Estudiante estudiante) {
+        try {
+            String ruta = "C://archivos//plantillas//cartaCompromiso.pdf";
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            AreasUniversidad areasUniversidad = new AreasUniversidad();
+            areasUniversidad = buscaAreaByClave((short)estudiante.getCarrera());
+            String nombreCarrera = areasUniversidad.getNombre();
+            
+            InputStream is = new FileInputStream(ruta);
+            PdfReader pdfReader = new PdfReader(is,null);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PdfStamper pdfStamper = new PdfStamper(pdfReader, baos);
+            
+            AcroFields fields = pdfStamper.getAcroFields();
+            fields.setField("txtNombreCC", estudiante.getAspirante().getIdPersona().getApellidoPaterno()+" "+estudiante.getAspirante().getIdPersona().getApellidoMaterno()+" "+estudiante.getAspirante().getIdPersona().getNombre());
+            fields.setField("txtMatriculaCC", String.valueOf(estudiante.getMatricula()));
+            fields.setField("txtCarreraCC", nombreCarrera);
+            
+            if(estudiante.getDocumentosentregadosestudiante().getActaNacimiento() == false){
+                fields.setField("txtActaCC", "Acta de Nacimiento (Original)");
+            }
+            
+            if(estudiante.getDocumentosentregadosestudiante().getCertificadoIems() == false){
+                fields.setField("txtCertCC", "Certificado de Bachillerato (Original)");
+            }
+            
+            pdfStamper.close();
+            
+            Object response = facesContext.getExternalContext().getResponse();
+            if (response instanceof HttpServletResponse) {
+                HttpServletResponse hsr = (HttpServletResponse) response;
+                hsr.setContentType("application/pdf");
+                hsr.setHeader("Content-disposition", "inline; filename=\""+estudiante.getMatricula()+".pdf\"");
+                hsr.setContentLength(baos.size());
+                try {
+                    ServletOutputStream out = hsr.getOutputStream();
+                    baos.writeTo(out);
+                    out.flush();
+                    out.close();
+                } catch (IOException ex) {
+                    System.out.println("Error:  " + ex.getMessage());
+                }
+                facesContext.responseComplete();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public List<Grupo> listaGruposXPeriodoByCarrera(Short periodo, Short carrera, Short sistema, Integer grado) {
+        return facadeCE.getEntityManager().createQuery("SELECT g FROM Grupo g WHERE g.grado = :grado AND g.idPe = :cvePe AND g.idSistema.idSistema = :idSistema AND g.periodo = :idPeriodo", Grupo.class)
+                    .setParameter("grado", 1)
+                    .setParameter("cvePe", carrera)
+                    .setParameter("idSistema", sistema)
+                    .setParameter("idPeriodo", periodo)
+                    .getResultList();
+    }
+
+    @Override
+    public List<Estudiante> listaEstudiantesXPeriodo(Integer perido) {
+        return facadeCE.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.periodo = :idPeriodo", Estudiante.class)
+                .setParameter("idPeriodo", perido)
+                .getResultList();
+    }
+    
+    public static String encriptaPassword(String password) throws Exception{
+        String contraseñaEncriptada = "";
+        String key = "92AE31A79FEEB2A3"; 
+        String iv = "0123456789ABCDEF";
+        contraseñaEncriptada = Encrypted.encrypt(key, iv, password);
+        
+        return contraseñaEncriptada;
+    }
+    
+    public static String desencriptaPassword(String password) throws Exception{
+        String contraseñaDesencriptada = "";
+        String key = "92AE31A79FEEB2A3"; 
+        String iv = "0123456789ABCDEF";
+        contraseñaDesencriptada = Encrypted.decrypt(key, iv, password);
+        
+        return contraseñaDesencriptada;
     }
 }

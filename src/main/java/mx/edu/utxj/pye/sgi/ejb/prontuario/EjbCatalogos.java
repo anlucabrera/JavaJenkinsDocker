@@ -33,6 +33,13 @@ public interface EjbCatalogos {
     public List<AreasUniversidad> getProgramasEducativos();
     
     /**
+     * Método que permite la consulta de programas educativo que no se encuentran actualmente vigentes en la base de datos
+     * Utilidad en módulos de registro: ServiciosTecnoligicosParticipantes
+     * @return Devuelve una lista de tipo AreasUniversidad
+     */
+    public List<AreasUniversidad> getProgramasEducativosGeneral();
+    
+    /**
      * Obtiene el catalogo de programas educativos del área académica que le corresponde
      * @param area
      * @return  Lista de entidades de AreasUniversidad

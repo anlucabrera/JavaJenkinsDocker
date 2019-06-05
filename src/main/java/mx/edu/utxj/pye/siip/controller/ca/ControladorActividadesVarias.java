@@ -304,5 +304,73 @@ public class ControladorActividadesVarias implements Serializable {
             }
         }else Messages.addGlobalError("La alineación no pudo eliminarse.");
     }
+    
+    public void forzarAperturaEdicionActividadVaria(){
+        if(dto.getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEdicionActividadVaria').show();");
+            dto.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
+    public void actualizaInterfazEdicionActividadVaria(){
+        Ajax.update("frmEdicionActividadVaria");
+        Ajax.oncomplete("skin();");
+        dto.setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaEdicionActividadVaria(); 
+    }
+    
+    public void abrirEdicionActividadVaria(ActividadesVariasRegistro actividadVariaRegistroEditada) {
+        DTOActividadVaria dtoAvre = new DTOActividadVaria();
+        dtoAvre.setActividadVaria(actividadVariaRegistroEditada);
+        dto.setRegistro(dtoAvre);
+        dto.setMensaje("");
+        actualizaInterfazEdicionActividadVaria();
+    }
+    
+    public void editaActividadVaria(ActividadesVariasRegistro actividadVaria){
+        DTOActividadVaria dtoAvre = new DTOActividadVaria();
+        if(ejbActividadesVarias.buscaActividadVariaExistente(dto.getRegistro().getActividadVaria())){
+            dto.setMensaje("El nombre asignado ya esta siendo utilizado por otra actividad, favor de especificar nombre de la actividad");
+        }else{
+            dtoAvre.setActividadVaria(ejbActividadesVarias.editaActividadesVarias(actividadVaria));
+            dto.setRegistro(dtoAvre);
+            dto.setMensaje("El registro ha sido actualizado");
+            buscaActividadesVarias();
+            actualizaInterfazEdicionActividadVaria();
+        }
+        Ajax.update("mensaje");
+    }
+    
+    public void validaFechaInicio(ValueChangeEvent event) {
+        dto.getRegistro().getActividadVaria().setFechaInicio((Date)event.getNewValue());
+        if (dto.getRegistro().getActividadVaria().getFechaInicio().before(dto.getRegistro().getActividadVaria().getFechaFin())) {
+//            System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() true");          
+        } else {
+            if (dto.getRegistro().getActividadVaria().getFechaFin().before(dto.getRegistro().getActividadVaria().getFechaInicio())) {
+//                System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() false");
+                dto.getRegistro().getActividadVaria().setFechaFin(null);
+                dto.getRegistro().getActividadVaria().setFechaFin(dto.getRegistro().getActividadVaria().getFechaInicio());
+//                Ajax.update("iptFechaTermino");
+            } else {
+//                System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() true");               
+            }
+        }
+    }
+    
+    public void validaFechaFin(ValueChangeEvent event) {
+        dto.getRegistro().getActividadVaria().setFechaFin((Date)event.getNewValue());
+        if (dto.getRegistro().getActividadVaria().getFechaFin().after(dto.getRegistro().getActividadVaria().getFechaInicio())) {
+//            System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() true");
+        } else {
+            if (dto.getRegistro().getActividadVaria().getFechaInicio().after(dto.getRegistro().getActividadVaria().getFechaFin())) {
+//                System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() false");
+                dto.getRegistro().getActividadVaria().setFechaInicio(null);
+                dto.getRegistro().getActividadVaria().setFechaInicio(dto.getRegistro().getActividadVaria().getFechaFin());
+//                Ajax.update("iptFechaInicio");
+            } else {
+//                System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() true");
+            }
+        }
+    }
 
 }

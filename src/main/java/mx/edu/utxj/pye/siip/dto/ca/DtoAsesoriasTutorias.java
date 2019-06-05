@@ -1,5 +1,7 @@
 package mx.edu.utxj.pye.siip.dto.ca;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import javax.servlet.http.Part;
@@ -20,6 +22,15 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
  * @author UTXJ
  */
 public final class DtoAsesoriasTutorias {
+    /************************** Edición ****************************************/
+    @Getter @Setter private PeriodosEscolares       periodoEscolarAsesoriaTutoria;
+    @Getter @Setter private List<AreasUniversidad>  programasEducativos;
+    @Getter @Setter private AreasUniversidad        programaEducativoAsesTut;
+    @Getter @Setter private List<String>            cuatrimestresTSU;
+    @Getter @Setter private List<String>            cuatrimestresING;
+    @Getter @Setter private List<String>            grupos;
+    @Getter @Setter private String                  mensaje;
+    
     /************************** Lista áreas ****************************************/
     @Getter @Setter private List<AreasUniversidad> listaAreasPOA; 
     
@@ -59,6 +70,9 @@ public final class DtoAsesoriasTutorias {
 //        evidencias = new HashMap<>();
         tieneEvidencia = false;
         forzarAperturaDialogo = false;
+        setCuatrimestresTSU(new ArrayList<>(Arrays.asList("1","2","3","4","5","6")));
+        setCuatrimestresING(new ArrayList<>(Arrays.asList("7","8","9","10","11")));
+        setGrupos(new ArrayList<>(Arrays.asList("A","B","C","D","E","F","G","H","I","J","K")));
     }   
 
     public void setEje(EjesRegistro eje) {

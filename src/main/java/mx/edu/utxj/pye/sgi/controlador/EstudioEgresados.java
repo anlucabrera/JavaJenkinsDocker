@@ -47,7 +47,7 @@ public class EstudioEgresados implements Serializable {
     @Getter private Evaluaciones evaluacion;
     @Getter private Integer evaluador;
     
-    @Getter @Setter private String tipoFiltro="", nivelGeneraciones="";
+    @Getter @Setter private String tipoFiltro="", nivelGeneraciones="", valor;
     @Getter @Setter private Short generacionSeleccionada;
     @Getter @Setter private EvaluacionEstudioEgresadosResultados resultados;   
     @Getter @Setter private Generaciones generacion = new Generaciones();
@@ -83,15 +83,17 @@ public class EstudioEgresados implements Serializable {
             alumnos = ejb.getAlumnoPorMatricula(logonMB.getCurrentUser());
 //            System.out.println("alumnos = " + alumnos);
 //            System.out.println("alumnos.getGradoActual() = " + alumnos.getGradoActual());
-            if (alumnos.getGradoActual() == 11) {
+
+            if ((alumnos.getGradoActual() == 11 ) && (alumnos.getCveStatus().equals(6) || (alumnos.getCveStatus().equals(1)))) {
                 ING = true;
-            } else  if (alumnos.getGradoActual() >=6 &&alumnos.getGradoActual() < 11) {
+            } else if (alumnos.getGradoActual() >= 6 && alumnos.getGradoActual() < 11) {
                 TSU = false;
             }
+            //System.out.println("ING = " + ING);
             try {
                 // modificar para aperturar a onceavos o sextos
 //                if(alumnos.getGradoActual() == 11){ //estudiantes egresadod de 11 vo
-                if(ING){   //Estudiantes egresados de 6to grado
+                if (ING) {   //Estudiantes egresados de 6to grado
 //                if ( alumnos.getGradoActual() == 11 || alumnos.getGradoActual() >=6 &&alumnos.getGradoActual() <=7) { //Estudiantes egresados de 6to y 11vo grado
                     finalizado = false;
                     respuestas = new HashMap<>();
@@ -151,14 +153,17 @@ public class EstudioEgresados implements Serializable {
 
     public void guardarRespuesta(ValueChangeEvent e) {
         UIComponent origen = (UIComponent) e.getSource();
-        String valor = e.getNewValue().toString();
+        if(e.getNewValue()==null){
+        valor = "";            
+        }else{
+        valor = e.getNewValue().toString();
+        }
         ejb.actualizarRespuestaPorPregunta(resultados, origen.getId(), valor);
         finalizado = ejb.actualizarResultado(resultados);
         
     }  
     
     public void guardarRespuestaRemota(){
-        
         String id = Faces. getRequestParameter("id");
         String valor = Faces.getRequestParameter("valor");
         respuestas.put(id, valor);

@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -26,12 +27,18 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "CargaAcademica.findAll", query = "SELECT c FROM CargaAcademica c")
     , @NamedQuery(name = "CargaAcademica.findByCveGrupo", query = "SELECT c FROM CargaAcademica c WHERE c.cargaAcademicaPK.cveGrupo = :cveGrupo")
     , @NamedQuery(name = "CargaAcademica.findByCveMateria", query = "SELECT c FROM CargaAcademica c WHERE c.cargaAcademicaPK.cveMateria = :cveMateria")
-    , @NamedQuery(name = "CargaAcademica.findByDocente", query = "SELECT c FROM CargaAcademica c WHERE c.cargaAcademicaPK.docente = :docente")})
+    , @NamedQuery(name = "CargaAcademica.findByDocente", query = "SELECT c FROM CargaAcademica c WHERE c.cargaAcademicaPK.docente = :docente")
+    , @NamedQuery(name = "CargaAcademica.findByHorasSemana", query = "SELECT c FROM CargaAcademica c WHERE c.horasSemana = :horasSemana")})
 public class CargaAcademica implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected CargaAcademicaPK cargaAcademicaPK;
+    @Column(name = "horas_semana")
+    private Integer horasSemana;
+    @JoinColumn(name = "evento", referencedColumnName = "evento")
+    @ManyToOne(optional = false)
+    private EventoEscolar evento;
     @JoinColumn(name = "cve_grupo", referencedColumnName = "id_grupo", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Grupo grupo;
@@ -56,6 +63,22 @@ public class CargaAcademica implements Serializable {
 
     public void setCargaAcademicaPK(CargaAcademicaPK cargaAcademicaPK) {
         this.cargaAcademicaPK = cargaAcademicaPK;
+    }
+
+    public Integer getHorasSemana() {
+        return horasSemana;
+    }
+
+    public void setHorasSemana(Integer horasSemana) {
+        this.horasSemana = horasSemana;
+    }
+
+    public EventoEscolar getEvento() {
+        return evento;
+    }
+
+    public void setEvento(EventoEscolar evento) {
+        this.evento = evento;
     }
 
     public Grupo getGrupo() {

@@ -26,70 +26,126 @@
     </c:if>
 
     <!--  -->
-
-    <ul class="nav navbar-nav">
+    <h:form prependId="false">
         <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
-            <li class="dropdown messages-menu">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
-                    <i class="fa fa-envelope-o"></i>
-                    <span class="label label-success">#{controladorEmpleado.listaNotificaciones.size()}</span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li class="header align-center">Tienes #{controladorEmpleado.listaNotificaciones.size()} #{controladorEmpleado.listaNotificaciones.size() eq 1?"mensaje pendiente":"mensajes pendientes"}</li>
-                    <c:if test="#{controladorEmpleado.listaNotificaciones.size() != 0}">
-                        <li class="footer"><a href="../sii2/perfiEmpleado.xhtml">Ver todos los mensajes </a></li>
-                    </c:if>
-                </ul>
-            </li>
-            <!--li class="dropdown notifications-menu">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
-                    <i class="fa fa-bell-o"></i>
-                    <span class="label label-warning">2</span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li class="header align-center">You have 2 notifications.</li>
-                    <li>
-                        <ul class="menu">
+            <p:outputPanel id="panelNotificaciones">
+                <ul id="listasTop" class="nav navbar-nav">
+                    <li class="dropdown messages-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                            <i class="fa fa-envelope-o"></i>
+                            <span class="label label-success">#{notificacionesTopBar.listaNotificaciones.size()}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="header align-center">Tienes #{notificacionesTopBar.listaNotificaciones.size()} #{notificacionesTopBar.listaNotificaciones.size() eq 1?"mensaje pendiente":"mensajes pendientes"}</li>
+                            <c:if test="#{notificacionesTopBar.listaNotificaciones.size() != 0}">
+                                <li class="footer"><a href="siiFaces.xhtml">Ver todos los mensajes </a></li>
+                            </c:if>
+                        </ul>
+                    </li>
+                    <li class="dropdown notifications-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                            <i class="fa fa-bell-o"></i>
+                            <span class="label label-warning">#{notificacionesTopBar.incrementoTotal}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="header align-center">Tienes #{notificacionesTopBar.incrementoTotal}  notificaciones por atender.</li>
                             <li>
-                                Notification 1
+                                <ul class="menu">
+                                    <c:if test="#{notificacionesTopBar.tienePOA}">
+                                        <c:if test="#{notificacionesTopBar.procesoPOARa}">
+                                            <a href="poa/areas/registroActividades.xhtml">
+                                                EL proceso de Registro de Actividades ya está disponible
+                                            </a>
+                                        </c:if>
+                                        <c:if test="#{notificacionesTopBar.procesoPOAAr}">
+                                            <a href="poa/areas/recursoActividad.xhtml">
+                                                EL proceso de Presupuestación ya está disponible
+                                            </a>
+                                        </c:if>
+                                        <c:if test="#{notificacionesTopBar.procesoPOAJu}">
+                                            <a href="poa/areas/justificacion.xhtml">
+                                                EL proceso de Registro de Justificaciones ya está disponible
+                                            </a>
+                                        </c:if>
+                                    </c:if>
+                                    <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 6 || controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 7 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+                                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 6}">
+                                            <c:if test="#{notificacionesTopBar.procesoPOAVra}">
+                                                <a href="poa/pye/validacionProgramacionActividades.xhtml">
+                                                    Tiene #{notificacionesTopBar.incrementoRA} POA’s por validar la estapa de Registro de Actividades 
+                                                </a>
+                                            </c:if>
+                                            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 6 || controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 7 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+                                                <c:if test="#{notificacionesTopBar.procesoPOAVar}">
+                                                    <a href="poa/pye/validacionFinanzas.xhtml">
+                                                        Tiene #{notificacionesTopBar.incrementoAR} POA’s por validar la estapa de Presupuestación
+                                                    </a>
+                                                </c:if>
+                                            </c:if>
+                                            <c:if test="#{notificacionesTopBar.procesoPOAVjus}">
+                                                <a href="poa/pye/validacionPyeFinal.xhtml">
+                                                    Tiene #{notificacionesTopBar.incrementoJU} POA’s por validar la estapa de Registro de Justificaciones
+                                                </a>
+                                            </c:if>
+                                        </c:if>
+                                    </c:if>
+
+                                    <c:if test="#{notificacionesTopBar.nuevoOBJListaPersonal.actividad eq 2 || notificacionesTopBar.nuevoOBJListaPersonal.actividad eq 4}"> 
+                                        <c:if test="#{notificacionesTopBar.incidenciasPendientes}">
+                                            <li>
+                                                <a href="capitalHumano/directivos/perfilSubordinadosIn.xhtml">
+                                                    Tiene #{notificacionesTopBar.incidenciases.size()} incidencias por validar
+                                                </a>
+                                            </li>
+                                        </c:if>
+                                    </c:if>
+                                </ul>
                             </li>
-    
-                            <li>
-                                Notification 2
+                        </ul>
+                    </li>  
+                    <li class="dropdown user user-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <img id="userImage" src="https://www.gravatar.com/avatar/2813f85cc7212a31f7f2cfd4ce1eca3c.jpg" style="-webkit-filter: grayscale(100%);filter: grayscale(100%);"/>
+                            <span class="hidden-xs">#{logonMB.usuarioAutenticado.personas.apellidoPat.concat(' ')}#{logonMB.usuarioAutenticado.personas.apellidoMat.concat(' ')}#{logonMB.usuarioAutenticado.personas.nombre.concat(' ')}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="user-header">
+                                <div class="hidden-xs"><img id="j_idt20" class="img-circle"  style="width: 100px; height: 100px;" src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{controladorEmpleado.nuevoOBJListaPersonal.clave}.jpg" />
+                                </div>
+                                <p>
+                                    #{logonMB.usuarioAutenticado.personas.apellidoPat.concat(' ')}#{logonMB.usuarioAutenticado.personas.apellidoMat.concat(' ')}#{logonMB.usuarioAutenticado.personas.nombre.concat(' ')}
+                                    <small> Numero de trabajador  #{controladorEmpleado.nuevoOBJListaPersonal.clave} </small>
+                                </p>
                             </li>
                         </ul>
                     </li>
-                    <li class="footer"><a href="#">See all notifications</a></li>
-                </ul>
-            </li-->
+                    <li class="dropdown user user-menu" style="margin-top: 15px">
+                        <p:commandLink actionListener="#{logoutMB.doLogout}" class="dropdown-toggle" pt:data-toggle="dropdown">
+                            <i class="fa fa-sign-out fa-lg" title="Cerrar sesión"></i>
+                        </p:commandLink>
+                    </li>   
+                </ul>    
+                <p:poll interval="30" listener="#{notificacionesTopBar.init}" ignoreAutoUpdate="true" update="@form" global="false" />
+            </p:outputPanel>
         </c:if>
-        <li class="dropdown user user-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <img id="userImage" src="https://www.gravatar.com/avatar/2813f85cc7212a31f7f2cfd4ce1eca3c.jpg" style="-webkit-filter: grayscale(100%);filter: grayscale(100%);"/>
-                <span class="hidden-xs">#{logonMB.usuarioAutenticado.personas.apellidoPat.concat(' ')}#{logonMB.usuarioAutenticado.personas.apellidoMat.concat(' ')}#{logonMB.usuarioAutenticado.personas.nombre.concat(' ')}</span>
-            </a>
-            <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
-                <ul class="dropdown-menu">
-                    <li class="user-header">
-                        <div class="hidden-xs"><img id="j_idt20" class="img-circle"  style="width: 100px; height: 100px;" src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{controladorEmpleado.nuevoOBJListaPersonal.clave}.jpg" />
-                        </div>
-                        <p>
-                            #{logonMB.usuarioAutenticado.personas.apellidoPat.concat(' ')}#{logonMB.usuarioAutenticado.personas.apellidoMat.concat(' ')}#{logonMB.usuarioAutenticado.personas.nombre.concat(' ')}
-                            <small> Numero de trabajador  #{controladorEmpleado.nuevoOBJListaPersonal.clave} </small>
-                        </p>
-                    </li>
-                </ul>
-            </c:if>
-        </li>
-        <li class="dropdown user user-menu" style="margin-top: 15px">
-            <h:form prependId="false">
-                <p:commandLink actionListener="#{logoutMB.doLogout}" class="dropdown-toggle" pt:data-toggle="dropdown">
-                    <i class="fa fa-sign-out fa-lg" title="Cerrar sesión"></i>
-                </p:commandLink>
-            </h:form>
-        </li> 
-    </ul>
 
+
+        <c:if test="#{logonMB.usuarioTipo ne 'TRABAJADOR'}">
+            <ul id="listasTop" class="nav navbar-nav">
+                <li class="dropdown user user-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <img id="userImage" src="https://www.gravatar.com/avatar/2813f85cc7212a31f7f2cfd4ce1eca3c.jpg" style="-webkit-filter: grayscale(100%);filter: grayscale(100%);"/>
+                        <span class="hidden-xs">#{logonMB.usuarioAutenticado.personas.apellidoPat.concat(' ')}#{logonMB.usuarioAutenticado.personas.apellidoMat.concat(' ')}#{logonMB.usuarioAutenticado.personas.nombre.concat(' ')}</span>
+                    </a>
+                </li>
+                <li class="dropdown user user-menu" style="margin-top: 15px">
+                    <p:commandLink actionListener="#{logoutMB.doLogout}" class="dropdown-toggle" pt:data-toggle="dropdown">
+                        <i class="fa fa-sign-out fa-lg" title="Cerrar sesión"></i>
+                    </p:commandLink>
+                </li> 
+            </ul>
+        </c:if>
+    </h:form>
     <!--li class="dropdown user user-menu">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
             <span class="hidden-xs">#{logonMB.usuarioAutenticado.personas.apellidoPat.concat(' ')}#{logonMB.usuarioAutenticado.personas.apellidoMat.concat(' ')}#{logonMB.usuarioAutenticado.personas.nombre.concat(' ')}</span>

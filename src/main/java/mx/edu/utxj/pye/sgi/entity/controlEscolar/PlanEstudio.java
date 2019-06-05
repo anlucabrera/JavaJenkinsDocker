@@ -62,8 +62,12 @@ public class PlanEstudio implements Serializable {
     @NotNull
     @Column(name = "estatus")
     private boolean estatus;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "id_pe")
-    private Integer idPe;
+    private short idPe;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planEstudios")
+    private List<Competencia> competenciaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlan")
     private List<Materia> materiaList;
 
@@ -74,11 +78,12 @@ public class PlanEstudio implements Serializable {
         this.idPlanEstudio = idPlanEstudio;
     }
 
-    public PlanEstudio(Integer idPlanEstudio, String descripcion, Date anio, boolean estatus) {
+    public PlanEstudio(Integer idPlanEstudio, String descripcion, Date anio, boolean estatus, short idPe) {
         this.idPlanEstudio = idPlanEstudio;
         this.descripcion = descripcion;
         this.anio = anio;
         this.estatus = estatus;
+        this.idPe = idPe;
     }
 
     public Integer getIdPlanEstudio() {
@@ -113,12 +118,21 @@ public class PlanEstudio implements Serializable {
         this.estatus = estatus;
     }
 
-    public Integer getIdPe() {
+    public short getIdPe() {
         return idPe;
     }
 
-    public void setIdPe(Integer idPe) {
+    public void setIdPe(short idPe) {
         this.idPe = idPe;
+    }
+
+    @XmlTransient
+    public List<Competencia> getCompetenciaList() {
+        return competenciaList;
+    }
+
+    public void setCompetenciaList(List<Competencia> competenciaList) {
+        this.competenciaList = competenciaList;
     }
 
     @XmlTransient

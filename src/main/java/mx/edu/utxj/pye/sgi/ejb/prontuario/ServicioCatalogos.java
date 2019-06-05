@@ -37,7 +37,6 @@ import org.omnifaces.util.Messages;
  */
 @Stateful
 public class ServicioCatalogos implements EjbCatalogos{
-    
     @EJB    Facade  facadeServGen;
 
     @Override
@@ -62,11 +61,23 @@ public class ServicioCatalogos implements EjbCatalogos{
         try {
             genLst = query.getResultList();
         } catch (NoResultException | NonUniqueResultException ex) {
-            genLst = null;
+            genLst = Collections.EMPTY_LIST;
 
         }  
         return genLst;
     }
+    
+    @Override
+    public List<AreasUniversidad> getProgramasEducativosGeneral() {
+        try {
+            return facadeServGen.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a JOIN a.categoria c WHERE c.categoria = :categoria ORDER BY a.nombre ASC", AreasUniversidad.class)
+                    .setParameter("categoria", 9)
+                    .getResultList();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
 
     @Override
     public List<CiclosEscolares> getCiclosEscolaresAct() {

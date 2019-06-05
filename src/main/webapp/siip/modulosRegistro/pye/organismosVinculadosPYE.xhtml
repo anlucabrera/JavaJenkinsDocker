@@ -15,6 +15,12 @@
         <ui:param name="renderBreadCrumb" value="true"/>        
         <h:outputStylesheet library="css" name="tablaDatos.css" />
         <h:outputScript library="js" name="dialogs.js" />
+        <h:outputScript library="js" name="calendario.js"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <h:outputStylesheet library="css" name="procesoElectoral.css" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
     </ui:define>
     <ui:define name="title">
         Organismos Vinculados
@@ -37,11 +43,11 @@
             <div class="box-header with-border">
 
                 <div id="main-buttons" class="hidden-sm hidden-xs" >
-                    <h:form prependId="true" id="frmMainButtons" class="form-inline">
-                        <p:outputPanel >
-                            <p:autoUpdate/>
-                            <p:toolbar id="tb"> 
-                                <f:facet name="left">
+                    <p:outputPanel >
+                        <p:autoUpdate/>
+                        <p:toolbar id="tb"> 
+                            <f:facet name="left">
+                                <h:form prependId="true" id="frmMainButtons" class="form-inline">
                                     <p:spacer width="10" />
                                     <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
                                     <p:outputLabel value="Categoría " for="categoria"/>
@@ -133,16 +139,20 @@
                                                        itemLabel="#{mes}" />
                                         <p:ajax process="@this" listener="#{controladorOrganismosVinculadosPYE.buscaOrganismosVinculados()}" update="@(form)" />
                                     </p:selectOneMenu>
-                                </f:facet>
-                                
-                                <f:facet name="right">
+                                </h:form>
+                            </f:facet>
+
+                            <f:facet name="right">
+                                <h:form id="frmReporte">
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasVIN.descargarReporteOrganismosVinculados()}" target="_blank" title="Descargar Reporte de Organismos Vinculados"><i class="fa fa-file-excel-o" /></p:commandLink>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
-                                </f:facet>
+                                </h:form>
+                            </f:facet>
                             </p:toolbar>
-                            <p:sticky target="tb" />
-                        </p:outputPanel>
-                    </h:form>
+                        <p:sticky target="tb" />
+                    </p:outputPanel>
                 </div>
                 <p:separator/>
 
@@ -166,13 +176,13 @@
                                              tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                     <p:columnGroup type="header">
                                         <p:row>
-                                            <p:column headerText="Opciones" width="160"/>
+                                            <p:column headerText="Opciones" width="190"/>
                                             <p:column headerText="Fecha" width="100"/>
-                                            <p:column headerText="Nombre" width="300"/>
+                                            <p:column headerText="Nombre" width="500"/>
                                             <p:column headerText="Tipo de Organización" width="100"/>
                                             <p:column headerText="Tipo de Empresa" width="130"/>
                                             <p:column headerText="Giro" width="300"/>
-                                            <p:column headerText="Actividad Principal" width="300"/>
+                                            <p:column headerText="Actividad Principal" width="500"/>
                                             <p:column headerText="Sector" width="100"/>
                                             <p:column headerText="Dirección" width="250"/>
                                             <p:column headerText="Localidad" width="80"/>
@@ -216,6 +226,10 @@
                                                              class="btn btn-sm btn-info"
                                                              icon="fa fa-check-circle"
                                                              title="Programas Educativos Beneficiados"/>
+                                            <p:commandButton actionListener="#{controladorOrganismosVinculadosPYE.abrirEdicionOrganismoVinculado(organismoVinculado)}"
+                                                             class="btn btn-sm btn-info"
+                                                             icon="fa fa-pencil-square-o"
+                                                             title="Editar Organismo Vinculado"/>
                                         </div>
                                     </p:column>         
                                     <p:column>
@@ -308,7 +322,7 @@
                                     <p:column>
                                         <h:outputText value="#{organismoVinculado.convenio}"/>
                                     </p:column>
-                                    
+
                                     <f:facet name="footer">
                                         En el mes de: #{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.mesConsulta} hay un total de: #{fn:length(controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.lstOrganismosVinculados)} registros de Organismos Vinculados.
                                     </f:facet>
@@ -983,8 +997,305 @@
                         </h:form>
                     </p:dialog>
 
-                </div>
+                    <p:dialog id="modalEdicionOrganismoVinculado" 
+                              widgetVar="modalEdicionOrganismoVinculado" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Edición de Organismo Vinculado" 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmEdicionOrganismoVinculado">
 
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12">
+                                    <p:outputLabel value="Edición de la empresa: #{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.registro.organismoVinculado.nombre}"/>
+                                </div>
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
+                                    <p:outputLabel id="mensaje" value="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.mensaje}"/>
+                                    <br></br>
+                                </div>
+
+                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Fecha: " for="iptFecha" />
+                                    <p:spacer width="5" />
+                                    <p:calendar id="iptFecha"
+                                                label="iptFecha"
+                                                required="true"
+                                                requiredMessage="Ingrese Fecha"
+                                                value="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.registro.organismoVinculado.fecha}" 
+                                                pattern="yyyy-MM-dd" 
+                                                mask="true"
+                                                locale="es"
+                                                styleClass="campo3Partes"
+                                                >
+                                    </p:calendar>
+                                    <p:watermark for="iptFecha" value="2018-10-31 *" />
+                                    <p:message for="iptFecha" />
+                                </div>
+
+                                <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Nombre: " for="iptNombreEmpresa"/>
+                                    <p:inputText id="iptNombreEmpresa"
+                                                 label="iptNombreEmpresa"
+                                                 maxlength="250"
+                                                 required="true"
+                                                 class="form-control"
+                                                 requiredMessage="Ingrese el nombre de la empresa"
+                                                 value="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.registro.organismoVinculado.nombre}"/>
+                                    <p:watermark for="iptNombreEmpresa" value="Administración de Servicios Técnicos e Industriales del Envase, S.A. de C.V. *" />
+                                    <p:message for="iptNombreEmpresa" />
+                                </div>
+
+                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Tipo de organismo: " for="somOrganismoTipo"/>
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="somOrganismoTipo"
+                                                     required="true"
+                                                     requiredMessage="Seleccione el tipo de organismo"
+                                                     value="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.registro.organismoVinculado.orgTip}"
+                                                     valueChangeListener="#{controladorOrganismosVinculadosPYE.actualizarOrganismoTipo}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     converter="entidadConverter2"
+                                                     style="padding-top: 0px">
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.organismoTipos}" 
+                                                       var="ot" 
+                                                       itemValue="#{ot}" 
+                                                       itemLabel="#{ot.descripcion}"
+                                                       itemDescription="#{ot.descripcion}"/>
+                                        <p:ajax process="somOrganismoTipo" />
+                                        <p:message for="somOrganismoTipo" />
+                                    </p:selectOneMenu>
+                                </div>
+
+                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px">
+                                    <p:outputLabel value="Tipo de empresa: " for="somEmpresaTipo" />
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="somEmpresaTipo"
+                                                     required="true"
+                                                     requiredMessage="Seleccione el tipo de empresa"
+                                                     value="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.registro.organismoVinculado.empTip}"
+                                                     valueChangeListener="#{controladorOrganismosVinculadosPYE.actualizarEmpresasTipo}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     converter="entidadConverter2"
+                                                     style="padding-top: 0px">
+                                        <f:selectItem itemLabel=" - Seleccione - "
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.empresaTipos}"
+                                                       var="et"
+                                                       itemValue="#{et}"
+                                                       itemLabel="#{et.descripcion}"
+                                                       itemDescription="#{et.descripcion}"/>
+                                        <p:ajax process="somEmpresaTipo" />
+                                        <p:message for="somEmpresaTipo" />
+                                    </p:selectOneMenu>
+                                </div>
+
+                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px">
+                                    <p:outputLabel value="Tipo de sector: " for="somSector" />
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="somSector"
+                                                     required="true"
+                                                     requiredMessage="Seleccione el tipo de sector"
+                                                     value="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.registro.organismoVinculado.sector}"
+                                                     valueChangeListener="#{controladorOrganismosVinculadosPYE.actualizarSectoresTipo}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     converter="entidadConverter2"
+                                                     style="padding-top: 0px">
+                                        <f:selectItem itemLabel=" - Seleccione - "
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.sectorTipos}"
+                                                       var="sect"
+                                                       itemValue="#{sect}"
+                                                       itemLabel="#{sect.descripcion}"
+                                                       itemDescription="#{sect.descripcion}"/>
+                                        <p:ajax process="somSector" />
+                                        <p:message for="somSector" />
+                                    </p:selectOneMenu>
+                                </div>
+
+                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px">
+                                    <p:outputLabel value="Tipo de giro: " for="somGiro" />
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="somGiro"
+                                                     required="true"
+                                                     requiredMessage="Seleccione el tipo de giro"
+                                                     value="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.registro.organismoVinculado.giro}"
+                                                     valueChangeListener="#{controladorOrganismosVinculadosPYE.actualizarGirosTipo}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     converter="entidadConverter2"
+                                                     style="padding-top: 0px; width: 15.5em">
+                                        <f:selectItem itemLabel=" - Seleccione - "
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.giroTipos}"
+                                                       var="girot"
+                                                       itemValue="#{girot}"
+                                                       itemLabel="#{girot.descripcion}"
+                                                       itemDescription="#{girot.descripcion}"/>
+                                        <p:ajax process="somGiro" />
+                                        <p:message for="somGiro" />
+                                    </p:selectOneMenu>
+                                </div>
+
+                                <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Actividad Principal (Giro Específico): " for="iptGiroEspecifico"/>
+                                    <p:inputText id="iptGiroEspecifico"
+                                                 label="iptGiroEspecifico"
+                                                 maxlength="500"
+                                                 required="true"
+                                                 class="form-control"
+                                                 requiredMessage="Ingrese el giro específico de la empresa"
+                                                 value="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.registro.organismoVinculado.giroEspecifico}"/>
+                                    <p:watermark for="iptGiroEspecifico" value="Fabricación de Envases de Plástico. *" />
+                                    <p:message for="iptGiroEspecifico" />
+                                </div>
+
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Dirección: " for="iptDireccion"/>
+                                    <p:inputText id="iptDireccion"
+                                                 label="iptDireccion"
+                                                 maxlength="250"
+                                                 required="true"
+                                                 class="form-control"
+                                                 requiredMessage="Ingrese la dirección de la empresa"
+                                                 value="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.registro.organismoVinculado.direccion}"/>
+                                    <p:watermark for="iptDireccion" value="Calz. De Guadalupe No. 504. *" />
+                                    <p:message for="iptDireccion" />
+                                </div>
+
+                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Codigo Postal: " for="iptCodigoPostal"/>
+                                    <p:inputText id="iptCodigoPostal"
+                                                 label="iptCodigoPostal"
+                                                 maxlength="10"
+                                                 required="true"
+                                                 class="form-control"
+                                                 requiredMessage="Ingrese el codigo postal"
+                                                 value="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.registro.organismoVinculado.cp}">
+                                        <f:validateRegex pattern="([0-9])\w+" />
+                                    </p:inputText>
+                                    <p:watermark for="iptCodigoPostal" value="54800 *" />
+                                    <p:message for="iptCodigoPostal" />
+                                </div>
+
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Nombre de el o la representante principal: " for="iptRepresentante"/>
+                                    <p:inputText id="iptRepresentante"
+                                                 label="iptRepresentante"
+                                                 maxlength="500"
+                                                 required="true"
+                                                 class="form-control"
+                                                 requiredMessage="Ingrese el nombre de el o la representante"
+                                                 value="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.registro.organismoVinculado.representantePrincipal}"/>
+                                    <p:watermark for="iptRepresentante" value="Lic. Mariela Villa García. *" />
+                                    <p:message for="iptRepresentante" />
+                                </div>
+
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Cargo de el o la representante: " for="iptCargoRepresentante"/>
+                                    <p:inputText id="iptCargoRepresentante"
+                                                 label="iptCargoRepresentante"
+                                                 maxlength="500"
+                                                 required="true"
+                                                 class="form-control"
+                                                 requiredMessage="Ingrese el cargo del o de la Representante"
+                                                 value="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.registro.organismoVinculado.cargoRepresentantePrincipal}"/>
+                                    <p:watermark for="iptCargoRepresentante" value="Coordinadora de Atracción al Talento. *" />
+                                    <p:message for="iptCargoRepresentante" />
+                                </div>
+
+                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px">
+                                    <p:outputLabel value="Número Télefonico: " for="imTelefonoPrincipal" />
+                                    <p:inputMask id="imTelefonoPrincipal" 
+                                                 label="imTelefonoPrincipal"
+                                                 required="true"
+                                                 class="form-control" 
+                                                 mask="(999) 999-9999"
+                                                 requiredMessage="Ingrese un número telefónico"
+                                                 value="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.registro.organismoVinculado.telefonoPrincipal}"/>
+                                    <p:watermark for="imTelefonoPrincipal" value="Ej.- (555) 899-4900 *" />
+                                    <p:message for="imTelefonoPrincipal" />
+                                </div>
+
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px">
+                                    <p:outputLabel value="Correo Electrónico " for="iptCorreoElectronico" />
+                                    <p:inputText id="iptCorreoElectronico" 
+                                                 required="true" 
+                                                 label="iptCorreoElectronico" 
+                                                 class="form-control"
+                                                 requiredMessage="Ingrese un correo electrónico."
+                                                 validatorMessage="Correo electrónico invalido"
+                                                 value="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.registro.organismoVinculado.emailPrincipal}">
+                                        <f:validateRegex
+                                            pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                                    </p:inputText>
+                                    <p:watermark for="iptCorreoElectronico" value="mariela.villa@envasesuniversales.com *" />
+                                    <p:message for="iptCorreoElectronico" />
+                                </div>
+
+                                <div class="col-sm-2 col-md-2" style="margin-bottom: 15px">
+                                    <p:outputLabel value="Convenio: " for="sbbConvenio" />
+                                    <p:selectBooleanButton id="sbbConvenio"
+                                                           required="true"
+                                                           requiredMessage="Seleccione si existe convenio"
+                                                           value="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.tieneConvenio}"
+                                                           valueChangeListener="#{controladorOrganismosVinculadosPYE.actualizaTieneConvenio}"
+                                                           onLabel="Si"
+                                                           offLabel="No"
+                                                           onIcon="ui-icon-check"
+                                                           offIcon="ui-icon-close"
+                                                           class="btn-sm"
+                                                           style="text-align: left">
+                                        <p:ajax process="sbbConvenio"/>
+                                        <p:message for="sbbConvenio" />
+                                    </p:selectBooleanButton>
+                                </div>
+
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <center>
+                                        <p:commandButton id="btnEditaOrganismoVinculado"
+                                                         value="Actualizar Cambios"
+                                                         icon="fa fa-save"
+                                                         class="btn-primary"
+                                                         actionListener="#{controladorOrganismosVinculadosPYE.editaOrganismoVinculado}"
+                                                         update="@form:frmEdicionOrganismoVinculado" 
+                                                         process="@form:frmEdicionOrganismoVinculado"
+                                                         />
+                                    </center>
+                                </div>
+
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                </div>
             </div>
         </div>
     </ui:define>

@@ -142,6 +142,9 @@
                                 <c:if test="#{administracionAvanceEstudioSocioeconomico.aperturado and administracionAvanceEstudioSocioeconomico.esSecretario}">
                                     <li><p:link href="/encuestas/seguimiento/admEstudioSocieconomicoSecretario.xhtml"><i class="fa fa-list-ol"></i><span>Estudio Socioeconómico</span></p:link></li>
                                 </c:if>
+                                <c:if test="#{administracionAvanceEvaluacionEstadia.esSecretario}">
+                                    <li><p:link href="/encuestas/seguimiento/admEvaluacionEstadiaSecretario.xhtml"><i class="fa fa-list-ol"></i><span>Evaluación Estadía</span></p:link></li>
+                                </c:if>
                             </ul>
 
                         </li>
@@ -184,6 +187,9 @@
                     <c:if test="#{administracionEstudioSocioeconomico.director and administracionAvanceEstudioSocioeconomico.director and administracionEstudioSocioeconomico.aperturas and administracionAvanceEstudioSocioeconomico.aperturado}">
                         <li><p:link href="/encuestas/seguimiento/admEstudioSocieconomicoDirectores.xhtml"><i class="fa fa-list-ol"></i><span>Estudio SocioEconómico</span></p:link></li>
                     </c:if>
+                    <c:if test="#{administracionEvaluacionEstadia.director and administracionAvanceEvaluacionEstadia.director}">
+                        <li><p:link href="/encuestas/seguimiento/admEvaluacionEstadiaDirectores.xhtml"><i class="fa fa-list-ol"></i><span>Evaluación Estadía</span></p:link></li>
+                    </c:if>
 
 
                     <!--tutores-->
@@ -210,6 +216,7 @@
                             </p:link>
                         </li>
                     </c:if>
+                       
 
 
                     <!--************ administradores especiales********-->
@@ -354,7 +361,7 @@
                     </ul>
                 </li>
             </c:if>
-            <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Justifiación de asistencias</li>
+            <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Justificación de asistencias</li>
             <li class="treeview">
                 <a href="#">
                     <i class="fa fa-file-text-o"></i> <span>Justificación de Asistencia</span>
@@ -429,115 +436,184 @@
                     </ul>
                 </li>  
             </c:if>
-            <c:if test="#{controladorEmpleado.tienePOA}">
-                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Formatos del SGI</li>
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-file-text-o"></i> <span>Formatos SGI</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu" style="display: none;">
-                        <li>
 
-                            <p:link href="/sgi/AccionesCorrectivas.docx">
-                                <span>Acciones Correctivas</span>
-                            </p:link>
-                        </li>      
-                        <li>
-                            <p:link href="/sgi/ListadoRegistros.xls">
-                                <span>Listado de Registros</span>
-                            </p:link>
+
+            <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">SGI</li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-file-text-o"></i> <span>Procesos</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu" style="display: none;">
+                    <li>
+                        <p:link href="/sgi/procesos.xhtml">
+                            <span>Proceso estadía técnica</span>
+                        </p:link>
+                    </li>   
+                </ul>
+            </li>
+
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-archive"></i> <span>Formatos</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu" style="display: none;">
+
+                    <c:if test="#{controladorEmpleado.tienePOA}">
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-file"></i> <span>Generales</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/generales/AccionesCorrectivas.docx">
+                                        <span>Acciones Correctivas</span>
+                                    </p:link>
+                                </li>      
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/generales/ListadoRegistros.xls">
+                                        <span>Listado de Registros</span>
+                                    </p:link>
+                                </li>   
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/generales/ListaMaestraDocumentosExternos.xls">
+                                        <span>Lista Maestra Docs. Externos</span>
+                                    </p:link>
+                                </li>
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/generales/ListaMaestraDocumentosInternos.xls">
+                                        <span>Lista Maestra Docs. Internos</span>
+                                    </p:link>
+                                </li>      
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/generales/RegistroSalidaNoConforme.docx">
+                                        <span>Registro de Salida No Conforme</span>
+                                    </p:link>
+                                </li>   
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/generales/RevisionAprobacionDocumentos.xlsx">
+                                        <span>Revisión y Aprobación de Docs</span>
+                                    </p:link>
+                                </li>
+                            </ul>
                         </li>   
-                        <li>
-                            <p:link href="/sgi/ListaMaestraDocumentosExternos.xls">
-                                <span>Lista Maestra Docs. Externos</span>
-                            </p:link>
+                    </c:if>
+                    <c:if test="#{(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.areaSuperior ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaSuperior le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.clave eq 43 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 394 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 30)}">
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-file-o"></i> <span>Formatos estadía</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/formatosEstadia/1. ESPACIOS CONCERTADOS DE ESTADÍA.xlsx">
+                                        <span>1. Espacios concertados</span>
+                                    </p:link>
+                                </li>      
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/formatosEstadia/2. CONCENTRADO DE ESTADÍAS.xlsx">
+                                        <span>2. Concentrado de estadías</span>
+                                    </p:link>
+                                </li>       
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/formatosEstadia/3. CARTA DE PRESENTACIÓN.docx">
+                                        <span>3. Carta de presentación</span>
+                                    </p:link>
+                                </li>       
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/formatosEstadia/4. CARTA DE ACEPTACIÓN.docx">
+                                        <span>4. Carta de aceptación</span>
+                                    </p:link>
+                                </li>   
+                                <c:if test="#{(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.areaSuperior ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaSuperior le 29) || controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
+                                    <li>
+                                        <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/formatosEstadia/5. Seguimiento de la Estadía Técnica.xls">
+                                            <span>5. Seguimiento de la estadía</span>
+                                        </p:link>
+                                    </li>       
+                                    <li>
+                                        <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/formatosEstadia/6. INFORME MENSUAL DE ESTADÍA.doc">
+                                            <span>6. Informe mensual</span>
+                                        </p:link>
+                                    </li>       
+                                    <li>
+                                        <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/formatosEstadia/7. EVALUACIÓN DE ESTADIA POR ASESOR EMPRESARIAL.xls">
+                                            <span>7. Evaluación asesor <br/>empresarial</span>
+                                        </p:link>
+                                    </li>       
+                                    <li>
+                                        <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/formatosEstadia/8. CARTA DE LIBERACIÓN.docx">
+                                            <span>8. Carta de liberación <br/>empresarial</span>
+                                        </p:link>
+                                    </li>       
+                                    <li>
+                                        <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/formatosEstadia/9. Carta de evaluación y acreditación de estadia (4).doc">
+                                            <span>9. Evaluación, acreditación <br/>estadía</span>
+                                        </p:link>
+                                    </li> 
+                                </c:if>
+                            </ul>
                         </li>
-                        <li>
-                            <p:link href="/sgi/ListaMaestraDocumentosInternos.xls">
-                                <span>Lista Maestra Docs. Internos</span>
-                            </p:link>
-                        </li>      
-                        <li>
-                            <p:link href="/sgi/RegistroSalidaNoConforme.docx">
-                                <span>Registro de Salida No Conforme</span>
-                            </p:link>
-                        </li>   
-                        <li>
-                            <p:link href="/sgi/RevisionAprobacionDocumentos.xlsx">
-                                <span>Revisión y Aprobación de Docs</span>
-                            </p:link>
+                    </c:if>
+                    <c:if test="#{(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.areaSuperior ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaSuperior le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 18 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 30)}">
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-file-text-o"></i> <span>Tutorías y Asesorías</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/Tutorias y Asesorias/2. Plan Acción Tutorial modif.docx">
+                                        <span>2. Plan Acción Tutorial</span>
+                                    </p:link>
+                                </li>      
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/Tutorias y Asesorias/3. Cédula de Identificacion del Tutorado modif.xlsx">
+                                        <span>3. Cédula de Identificacion del<br/>Tutorado </span>
+                                    </p:link>
+                                </li>       
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/Tutorias y Asesorias/4. Tutoría Grupal.xls">
+                                        <span>4. Tutoría Grupal</span>
+                                    </p:link>
+                                </li>       
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/Tutorias y Asesorias/5. Tutoria Indiv y Casos Critícos modif.xlsx">
+                                        <span>5. Tutoria Indiv y Casos Critícos</span>
+                                    </p:link>
+                                </li>   
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/Tutorias y Asesorias/6. Justificante modif.xls">
+                                        <span>6. Justificante</span>
+                                    </p:link>
+                                </li>      
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/Tutorias y Asesorias/7. Asesorias.xlsx">
+                                        <span>7. Asesorias</span>
+                                    </p:link>
+                                </li>       
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/Tutorias y Asesorias/8. Citatorio modif.doc">
+                                        <span>8. Citatorio</span>
+                                    </p:link>
+                                </li>  
+                            </ul>
                         </li>
-                    </ul>
-                </li>
-            </c:if>            
-            <c:if test="#{(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.areaSuperior ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaSuperior le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.clave eq 43 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 394)}">
-                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Registros de estadía</li>
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-file-text-o"></i> <span>Formatos estadía</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu" style="display: none;">
-                        <li>
-                            <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/1. ESPACIOS CONCERTADOS DE ESTADÍA.xlsx">
-                                <span>1. Espacios concertados</span>
-                            </p:link>
-                        </li>      
-                        <li>
-                            <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/2. CONCENTRADO DE ESTADÍAS.xlsx">
-                                <span>2. Concentrado de estadías</span>
-                            </p:link>
-                        </li>       
-                        <li>
-                            <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/3. CARTA DE PRESENTACIÓN DE ESTADÍA.docx">
-                                <span>3. Carta de presentación</span>
-                            </p:link>
-                        </li>       
-                        <li>
-                            <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/4. Carta de Aceptacion de Estadía.docx">
-                                <span>4. Carta de aceptación</span>
-                            </p:link>
-                        </li>       
-                        <c:if test="#{(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.areaSuperior ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaSuperior le 29 )}">
-                            <li>
-                                <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/5. Seguimiento de la Estadía Técnica.xls">
-                                    <span>5. Seguimiento de la estadía</span>
-                                </p:link>
-                            </li>       
-                            <li>
-                                <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/6. INFORME MENSUAL DE ESTADÍA.doc">
-                                    <span>6. Informe mensual</span>
-                                </p:link>
-                            </li>       
-                            <li>
-                                <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/7. EVALUACIÓN DE ESTADIA POR ASESOR EMPRESARIAL.xls">
-                                    <span>7. Evaluación asesor empresarial</span>
-                                </p:link>
-                            </li>       
-                            <li>
-                                <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/8. CARTA DE LIBERACIÓN EMPRESARIAL.docx">
-                                    <span>8. Carta de liberación empresarial</span>
-                                </p:link>
-                            </li>       
-                            <li>
-                                <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/9. Carta de evaluación y acreditación de estadia (4).doc">
-                                    <span>9. evaluación, acreditación estadía</span>
-                                </p:link>
-                            </li>  
-                        </c:if>      
-                        <li>
-                            <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/formatosEstadia/PROCESO ESTADIA TECNICA.pdf">
-                                <span>Proceso estadía técnica</span>
-                            </p:link>
-                        </li> 
-                    </ul>
-                </li>
-            </c:if>    
+                    </c:if>
+                </ul>
+            </li>   
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 || controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 7 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 148 ||controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 6 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 300}">
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Administrador</li>
             </c:if>
@@ -601,6 +677,13 @@
                         </p:link>
                     </li>
                 </c:if>
+            </c:if>
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+                <li>
+                    <p:link href="/capitalHumano/personal/perfilPersonalReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
+                        <span>Reporte de Registros</span>
+                    </p:link>
+                </li>
             </c:if>
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13}">
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Personal</li>
@@ -693,7 +776,7 @@
                     <ul class="treeview-menu" style="display: none;">
                         <li>
                             <p:link href="/controlEscolar/se/procesoInscripcion.xhtml"><i class="fa fa-check"></i>
-                                <span>Validación Ficha</span>
+                                <span>Inscripción NI</span>
                             </p:link>
                         </li>
                         <li>
@@ -713,17 +796,24 @@
                     <span>Directorio de Correos</span>
                 </p:link>
             </li>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+            <c:if test="#{utilidadesAdministracionEvaluaciones.tutor}">
                 <li>
-                    <p:link href="/siiFaces.xhtml">
-                        <i class="fa fa-comments"></i>
-                        <span>Mensajería</span>
-                        <span class="pull-right-container">
-                            <small class="label pull-right bg-green">Nuevo</small>
-                        </span>
+                    <p:link href="/directorioCorreosAlumnosporTutor.xhtml">
+                         <i class="fa fa-envelope" />
+                        <span>Directorio Estudiantes Tutorados</span>
                     </p:link>
                 </li>
+                
             </c:if>
+            <li>
+                <p:link href="/siiFaces.xhtml">
+                    <i class="fa fa-comments"></i>
+                    <span>Mensajería</span>
+                    <span class="pull-right-container">
+                        <small class="label pull-right bg-green">Nuevo</small>
+                    </span>
+                </p:link>
+            </li>
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Documentacion</li>
             <li>
                 <p:link href="/manuales.xhtml">
@@ -767,7 +857,7 @@
                             <span>Logon</span>
                         </p:link>
                     </li>
-
+    
                     <li>
                         <p:link href="/soporteTecnico.xhtml" title="Logon page">
                             <i class="fa fa-user-circle"></i>

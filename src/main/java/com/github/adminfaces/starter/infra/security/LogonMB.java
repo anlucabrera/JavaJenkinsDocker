@@ -21,6 +21,7 @@ import javax.ejb.EJB;
 import javax.inject.Inject;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbUtilToolAcademicas;
 import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulos;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisos;
@@ -73,7 +74,8 @@ public class LogonMB extends AdminSession implements Serializable {
     @Getter @Setter private User listaUsuarioClaveNominaShiro;
 
     @EJB private EjbLogin ejbLogin;
-    @EJB private Facade f;    
+    @EJB private Facade f;   
+    @EJB private EjbUtilToolAcademicas ejbUtilToolAcademicas;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbUtilidadesCH;
  //accede al controlador que da permisos a los usuarios
     @Inject permisosUsuarios pUsuarios;
@@ -102,7 +104,13 @@ public class LogonMB extends AdminSession implements Serializable {
             addDetailMessage("Bienvenido y bienvenida <b>" + "Aspirante" + "</b>");
             Faces.getExternalContext().getFlash().setKeepMessages(true);
             Faces.redirect("controlEscolar/fichaAdmision.xhtml");
-        } else {
+        }else if(ejbUtilToolAcademicas.autenticarUser(email, password) != null){
+            currentUser = email;
+            usuarioTipo = UsuarioTipo.ASPIRANTE;
+            addDetailMessage("Bienvenido");
+            Faces.getExternalContext().getFlash().setKeepMessages(true);
+            Faces.redirect("index.xhtml");
+        }else {
             Usuarios res = ejbLogin.getUsuarioPorLogin(email);
             Usuarios usuario = ejbLogin.autenticar(email, password);
 //            User resShiro = ejbLogin.getUsuarioPorLoginShiro(email);

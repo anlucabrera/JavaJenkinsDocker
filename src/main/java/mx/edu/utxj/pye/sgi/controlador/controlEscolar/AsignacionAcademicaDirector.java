@@ -13,16 +13,18 @@ import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionAcademica;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodoEscolarFechas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
-import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
+import org.omnifaces.util.Faces;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -62,41 +64,35 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
     public void init(){
         try{
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDirector(logon.getPersonal().getClave());//validar si es director
-            if(resAcceso.getCorrecto()){//si la validación se completó correctamente
-                ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validarDirector(logon.getPersonal().getClave());
-                if(resValidacion.getCorrecto()){
-                    Filter<PersonalActivo> filtro = resValidacion.getValor();//se obtiene el filtro resultado de la validación
-                    try{
-                        PersonalActivo director = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
-                        rol = new AsignacionAcademicaRolDirector(filtro, director, director.getAreaOficial());
-                        tieneAcceso = rol.tieneAcceso(director);
-                        if(tieneAcceso){//TODO: impedir ejecución de código si es una petición ajax
-                            rol.setDirector(director);
-                            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
-                            if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
-                            rol.setPeriodos(resPeriodos.getValor());
+            if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
 
-                            ResultadoEJB<Map<AreasUniversidad, List<Grupo>>> resProgramas = ejb.getProgramasActivos(rol.getDirector(), rol.getPeriodo());
-                            if(!resProgramas.getCorrecto()) mostrarMensajeResultadoEJB(resProgramas);
-                            rol.setProgramasGruposMap(resProgramas.getValor());
+            ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validarDirector(logon.getPersonal().getClave());
+            if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
 
-                            ResultadoEJB<List<Materia>> resMateriasPorAsignar = ejb.getMateriasPorAsignar(rol.getPrograma(), rol.getGrupo());
-                            if(!resMateriasPorAsignar.getCorrecto()) mostrarMensajeResultadoEJB(resMateriasPorAsignar);
-                            rol.setMateriasSinAsignar(resMateriasPorAsignar.getValor());
-                        }else mostrarMensajeNoAcceso();
-                    }catch (Exception e){
-                        mostrarExcepcion(e);
-                    }
-                }else{
-                    mostrarMensajeResultadoEJB(resValidacion);
-                }
-            }else{
-                mostrarMensajeResultadoEJB(resAcceso);
-            }
-        }catch (Exception e){
-            super.mostrarExcepcion(e);
-        }
+            Filter<PersonalActivo> filtro = resValidacion.getValor();//se obtiene el filtro resultado de la validación
+            PersonalActivo director = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
+            rol = new AsignacionAcademicaRolDirector(filtro, director, director.getAreaOficial());
+            tieneAcceso = rol.tieneAcceso(director);
+            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
 
+            // ----------------------------------------------------------------------------------------------------------------------------------------------------------
+            if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+
+            rol.setDirector(director);
+            ResultadoEJB<EventoEscolar> resEvento = ejb.verificarEvento(rol.getDirector());
+            if(!resEvento.getCorrecto()) mostrarMensajeResultadoEJB(resEvento);
+            rol.setEventoActivo(resEvento.getValor());
+
+            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
+            if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
+            rol.setPeriodos(resPeriodos.getValor());
+
+            ResultadoEJB<Map<AreasUniversidad, List<Grupo>>> resProgramas = ejb.getProgramasActivos(rol.getDirector(), rol.getPeriodo());
+            if(!resProgramas.getCorrecto()) mostrarMensajeResultadoEJB(resProgramas);
+            rol.setProgramasGruposMap(resProgramas.getValor());
+
+            actualizarMaterias();
+        }catch (Exception e){mostrarExcepcion(e); }
     }
 
     @Override
@@ -152,5 +148,18 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
         rol.setMateria(materia);
         ResultadoEJB<CargaAcademica> resAsignacion = ejb.asignarMateriaDocente(rol.getMateria(), rol.getDocente(), rol.getGrupo(), rol.getPeriodo(), Operacion.PERSISTIR);
         mostrarMensajeResultadoEJB(resAsignacion);
+    }
+
+    public void actualizarMaterias(){
+        if(rol.getPeriodo() == null) return;
+        if(rol.getPrograma() == null) return;
+        if(rol.getGrupo() == null) return;
+
+        ResultadoEJB<List<Materia>> res = ejb.getMateriasPorAsignar(rol.getPrograma(), rol.getGrupo());
+        if(res.getCorrecto()){
+            rol.setMateriasSinAsignar(res.getValor());
+        }else mostrarMensajeResultadoEJB(res);
+
+        repetirUltimoMensaje();
     }
 }

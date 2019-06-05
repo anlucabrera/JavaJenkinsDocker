@@ -7,9 +7,11 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import java.util.List;
 import javax.ejb.Local;
+
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documentosentregadosestudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 
 /**
@@ -23,7 +25,10 @@ public interface EjbProcesoInscripcion {
     public Aspirante buscaAspiranteByFolio(Integer folio);
     public Aspirante buscaAspiranteByFolioValido(Integer folio);
     public AreasUniversidad buscaAreaByClave(Short area);
-    public Estudiante guardaEstudiante(Estudiante estudiante,Documentosentregadosestudiante documentosentregadosestudiante,Boolean opcionIns);
+    public Estudiante guardaEstudiante(Estudiante estudiante, Documentosentregadosestudiante documentosentregadosestudiante, Boolean opcionIns);
     public Estudiante findByIdAspirante(Integer idAspirante);
     public void generaComprobanteInscripcion(Estudiante estudiante);
+    public void generaCartaCompromiso(Estudiante estudiante);
+    public List<Grupo> listaGruposXPeriodoByCarrera(Short periodo, Short carrera, Short sistema, Integer grado);
+    public List<Estudiante> listaEstudiantesXPeriodo(Integer perido);
 }

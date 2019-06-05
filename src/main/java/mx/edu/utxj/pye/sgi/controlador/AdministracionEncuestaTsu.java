@@ -77,7 +77,7 @@ public class AdministracionEncuestaTsu implements Serializable{
             } catch (Throwable e) {
                 director = false;
                 esDeIyE = false;
-                Logger.getLogger(AdministracionEncuestaTsu.class.getName()).log(Level.SEVERE, null, e);
+                //Logger.getLogger(AdministracionEncuestaTsu.class.getName()).log(Level.SEVERE, null, e);
             }
 
             Long fin = System.currentTimeMillis();

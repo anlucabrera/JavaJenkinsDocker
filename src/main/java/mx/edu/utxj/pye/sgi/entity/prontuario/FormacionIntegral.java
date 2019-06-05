@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "FormacionIntegral.findByCiclo", query = "SELECT f FROM FormacionIntegral f WHERE f.formacionIntegralPK.ciclo = :ciclo")
     , @NamedQuery(name = "FormacionIntegral.findByPeriodo", query = "SELECT f FROM FormacionIntegral f WHERE f.formacionIntegralPK.periodo = :periodo")
     , @NamedQuery(name = "FormacionIntegral.findBySiglas", query = "SELECT f FROM FormacionIntegral f WHERE f.formacionIntegralPK.siglas = :siglas")
+    , @NamedQuery(name = "FormacionIntegral.findByTotPart", query = "SELECT f FROM FormacionIntegral f WHERE f.totPart = :totPart")
     , @NamedQuery(name = "FormacionIntegral.findByActDeportivas", query = "SELECT f FROM FormacionIntegral f WHERE f.actDeportivas = :actDeportivas")
     , @NamedQuery(name = "FormacionIntegral.findByActCulturales", query = "SELECT f FROM FormacionIntegral f WHERE f.actCulturales = :actCulturales")
     , @NamedQuery(name = "FormacionIntegral.findByActComunitarias", query = "SELECT f FROM FormacionIntegral f WHERE f.actComunitarias = :actComunitarias")
@@ -43,6 +44,10 @@ public class FormacionIntegral implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected FormacionIntegralPK formacionIntegralPK;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "tot_part")
+    private int totPart;
     @Basic(optional = false)
     @NotNull
     @Column(name = "act_deportivas")
@@ -90,8 +95,9 @@ public class FormacionIntegral implements Serializable {
         this.formacionIntegralPK = formacionIntegralPK;
     }
 
-    public FormacionIntegral(FormacionIntegralPK formacionIntegralPK, int actDeportivas, int actCulturales, int actComunitarias, int actSalud, int actPsicopedagogicas, int actEmprendedores, int actInnovtecnologica) {
+    public FormacionIntegral(FormacionIntegralPK formacionIntegralPK, int totPart, int actDeportivas, int actCulturales, int actComunitarias, int actSalud, int actPsicopedagogicas, int actEmprendedores, int actInnovtecnologica) {
         this.formacionIntegralPK = formacionIntegralPK;
+        this.totPart = totPart;
         this.actDeportivas = actDeportivas;
         this.actCulturales = actCulturales;
         this.actComunitarias = actComunitarias;
@@ -111,6 +117,14 @@ public class FormacionIntegral implements Serializable {
 
     public void setFormacionIntegralPK(FormacionIntegralPK formacionIntegralPK) {
         this.formacionIntegralPK = formacionIntegralPK;
+    }
+
+    public int getTotPart() {
+        return totPart;
+    }
+
+    public void setTotPart(int totPart) {
+        this.totPart = totPart;
     }
 
     public int getActDeportivas() {

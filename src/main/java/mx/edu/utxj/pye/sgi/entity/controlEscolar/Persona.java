@@ -100,6 +100,8 @@ public class Persona implements Serializable {
     private DatosMedicos datosMedicos;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona1")
     private MedioComunicacion medioComunicacion;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona1")
+    private Login login;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "idPersona")
     private Aspirante aspirante;
 
@@ -231,6 +233,14 @@ public class Persona implements Serializable {
 
     public void setMedioComunicacion(MedioComunicacion medioComunicacion) {
         this.medioComunicacion = medioComunicacion;
+    }
+
+    public Login getLogin() {
+        return login;
+    }
+
+    public void setLogin(Login login) {
+        this.login = login;
     }
 
     public Aspirante getAspirante() {

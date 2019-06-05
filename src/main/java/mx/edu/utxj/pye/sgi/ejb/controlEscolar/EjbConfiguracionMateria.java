@@ -10,7 +10,6 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 import javax.ejb.Stateless;
 import java.util.List;
-import java.util.Map;
 import java.util.SortedMap;
 
 @Stateless(name = "EjbConfiguracionMateria")

@@ -81,5 +81,5 @@ public class CuerpoAreasAcademicasPK implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.pye2.CuerpoAreasAcademicasPK[ cuerpoAcademico=" + cuerpoAcademico + ", areaAcademica=" + areaAcademica + " ]";
     }
-    
+
 }

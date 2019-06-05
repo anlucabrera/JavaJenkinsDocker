@@ -68,12 +68,9 @@ import org.omnifaces.util.Messages;
 @MultipartConfig
 public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
 
-    @EJB
-    Facade facadeProntuario;
-    @EJB
-    EjbModulos ejbModulos;
-    @EJB Facade f;
-    @Inject LogonMB logonMB;
+    @EJB        EjbModulos  ejbModulos;
+    @EJB        Facade      facadeProntuario;
+    @Inject     LogonMB     logonMB;
     
     @EJB
     EjbFiscalizacion ejbFiscalizacion;
@@ -879,7 +876,7 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
             }
             return true;
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "No se pudo asginar el programa al convenio.", e);
+            LOG.log(Level.SEVERE, "No se pudo asignar el programa al convenio.", e);
             return false;
         }
     }
@@ -898,5 +895,111 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
             return false;
         }
     }
+
+    @Override
+    public OrganismosVinculados editaOrganismoVinculado(OrganismosVinculados organismoVinculado) {
+        try {
+            facadeProntuario.setEntityClass(OrganismosVinculados.class);
+            facadeProntuario.edit(organismoVinculado);
+            facadeProntuario.flush();
+            return organismoVinculado;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo actualizar el registro: " + organismoVinculado.getNombre(), e);
+            return null;
+        }
+    }
+
+    @Override
+    public List<OrganismosVinculados> buscaCoincidenciasOrganismosVinculados(String parametro) {
+        try {
+            return facadeProntuario.getEntityManager().createQuery("SELECT o FROM OrganismosVinculados o WHERE o.nombre like concat('%',:parametro,'%') AND o.estatus = :estatus ORDER BY o.nombre", OrganismosVinculados.class)
+                    .setParameter("parametro", parametro)
+                    .setParameter("estatus", true)
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public Boolean buscaOrganismoVinculadoExistente(OrganismosVinculados organismoVinculado) {
+        try {
+            OrganismosVinculados orgVin = new OrganismosVinculados();
+            orgVin = facadeProntuario.getEntityManager().createQuery("SELECT o FROM OrganismosVinculados o WHERE o.nombre = :nombre AND o.registro <> :registro",OrganismosVinculados.class)
+                .setParameter("nombre", organismoVinculado.getNombre())
+                .setParameter("registro", organismoVinculado.getRegistro())
+                .getSingleResult();
+            if(orgVin != null){
+                return true;
+            }else{
+                return false;
+            }
+        } catch (NoResultException | NonUniqueResultException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public List<OrganismosVinculados> getReporteOrganismosVinculados() {
+        try {
+            return facadeProntuario.getEntityManager().createQuery("SELECT o FROM OrganismosVinculados o INNER JOIN o.registros r ORDER BY r.eventoRegistro.mes, o.nombre",OrganismosVinculados.class)
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<OrganismosVinculados> getReporteActividadesVinculacion() {
+        try {
+            return facadeProntuario.getEntityManager().createQuery("SELECT DISTINCT(ov) FROM OrganismosVinculados ov INNER JOIN ov.actividadesVinculacionList av ORDER BY ov.nombre",OrganismosVinculados.class)
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<ProgramasBeneficiadosVinculacion> getReporteProgramasBeneficiadosVinculacion() {
+        try {
+            return facadeProntuario.getEntityManager().createQuery("SELECT pb FROM ProgramasBeneficiadosVinculacion pb INNER JOIN pb.organismosVinculados ov ORDER BY ov.empresa",ProgramasBeneficiadosVinculacion.class)
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<TelefonosEmpresa> getReporteTelefonosEmpresa() {
+        try {
+            return facadeProntuario.getEntityManager().createQuery("SELECT te FROM TelefonosEmpresa te INNER JOIN te.empresa e ORDER BY e.empresa",TelefonosEmpresa.class)
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<CorreosEmpresa> getCorreosEmpresas() {
+        try {
+            return facadeProntuario.getEntityManager().createQuery("SELECT ce FROM CorreosEmpresa ce INNER JOIN ce.empresa e ORDER BY e.empresa",CorreosEmpresa.class)
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<ContactosEmpresa> getReporteContactosEmpresa() {
+        try {
+            return facadeProntuario.getEntityManager().createQuery("SELECT ce FROM ContactosEmpresa ce INNER JOIN ce.empresa e ORDER BY e.empresa",ContactosEmpresa.class)
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+    
+    
+    
 
 }

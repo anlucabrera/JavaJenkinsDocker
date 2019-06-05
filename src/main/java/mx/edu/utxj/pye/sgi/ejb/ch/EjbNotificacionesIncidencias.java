@@ -13,7 +13,7 @@ public interface EjbNotificacionesIncidencias {
 /////////////////////////////////////////////////////////////////////////Personal\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 // ------------------------------------------------------------- Notificaciones -------------------------------------------------------------
-    public List<Notificaciones> mostrarListaDenotificacionesPorUsuario(Integer clave) throws Throwable;
+    public List<Notificaciones> mostrarListaDenotificacionesPorConversacion(Integer claveR,Integer claveD) throws Throwable;
 
     public List<Notificaciones> mostrarListaDenotificacionesPorUsuariosyEstatus(Integer claveD, Integer claveR, Integer estaus);
 

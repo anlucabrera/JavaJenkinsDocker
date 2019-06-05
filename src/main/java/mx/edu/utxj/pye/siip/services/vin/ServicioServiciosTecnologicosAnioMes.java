@@ -13,6 +13,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -63,6 +65,8 @@ public class ServicioServiciosTecnologicosAnioMes implements EjbServiciosTecnolo
     @EJB    EjbOrganismosVinculados ejbOrganismosVinculados;
     
     @Inject Caster caster;
+    
+    private static final Logger LOG = Logger.getLogger(ServicioOrganismosVinculados.class.getName());
 
     @Override
     public List<ServiciosTecnologicosAnioMes> getListaServiciosTecnologicosAnioMes(String rutaArchivo) throws Throwable {
@@ -676,6 +680,54 @@ public class ServicioServiciosTecnologicosAnioMes implements EjbServiciosTecnolo
             return facadeVinculacion.getEntityManager().createQuery("SELECT s FROM ServiciosTipos s ORDER BY s.descripcion", ServiciosTipos.class)
                     .getResultList();
         } catch (NoResultException ex) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public ServiciosTecnologicosAnioMes editaServicioTecnologicoAnioMes(ServiciosTecnologicosAnioMes servicioTecnologicoAnioMes) {
+        try {
+            facadeVinculacion.setEntityClass(ServiciosTecnologicosAnioMes.class);
+            facadeVinculacion.edit(servicioTecnologicoAnioMes);
+            facadeVinculacion.flush();
+            return servicioTecnologicoAnioMes;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo actualizar el registro: " + servicioTecnologicoAnioMes.getNombre(), e);
+            return null;
+        }
+    }
+
+    @Override
+    public ServiciosTecnologicosParticipantes editaServicioTecnologicoParticipante(ServiciosTecnologicosParticipantes servicioTecnologicoParticipante) {
+        try {
+            facadeVinculacion.setEntityClass(ServiciosTecnologicosParticipantes.class);
+            facadeVinculacion.edit(servicioTecnologicoParticipante);
+            facadeVinculacion.flush();
+            return servicioTecnologicoParticipante;
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "No se pudo actualizar el registro: " + servicioTecnologicoParticipante.getNombre(), e);
+            return null;
+        }
+    }
+
+    @Override
+    public List<ServiciosTecnologicosAnioMes> getReporteGeneralServiciosTecnologicos() {
+        try {
+            return facadeVinculacion.getEntityManager().createQuery("SELECT s FROM ServiciosTecnologicosAnioMes s INNER JOIN s.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY s.fechaInicio",ServiciosTecnologicosAnioMes.class)
+                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public List<ServiciosTecnologicosParticipantes> getReporteGeneralServiciosTecnologicoParticipantes() {
+        try {
+            return facadeVinculacion.getEntityManager().createQuery("SELECT s FROM ServiciosTecnologicosParticipantes s INNER JOIN s.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY s.servicioTecnologico.fechaInicio",ServiciosTecnologicosParticipantes.class)
+                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .getResultList();
+        } catch (NoResultException e) {
             return Collections.EMPTY_LIST;
         }
     }

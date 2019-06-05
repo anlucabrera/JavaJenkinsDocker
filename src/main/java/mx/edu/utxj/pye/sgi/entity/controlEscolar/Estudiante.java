@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -22,6 +23,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -39,7 +42,9 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Estudiante.findByMatricula", query = "SELECT e FROM Estudiante e WHERE e.matricula = :matricula")
     , @NamedQuery(name = "Estudiante.findByPeriodo", query = "SELECT e FROM Estudiante e WHERE e.periodo = :periodo")
     , @NamedQuery(name = "Estudiante.findByCarrera", query = "SELECT e FROM Estudiante e WHERE e.carrera = :carrera")
-    , @NamedQuery(name = "Estudiante.findByOpcionIncripcion", query = "SELECT e FROM Estudiante e WHERE e.opcionIncripcion = :opcionIncripcion")})
+    , @NamedQuery(name = "Estudiante.findByOpcionIncripcion", query = "SELECT e FROM Estudiante e WHERE e.opcionIncripcion = :opcionIncripcion")
+    , @NamedQuery(name = "Estudiante.findByFechaAlta", query = "SELECT e FROM Estudiante e WHERE e.fechaAlta = :fechaAlta")
+    , @NamedQuery(name = "Estudiante.findByTrabajadorInscribe", query = "SELECT e FROM Estudiante e WHERE e.trabajadorInscribe = :trabajadorInscribe")})
 public class Estudiante implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -59,11 +64,18 @@ public class Estudiante implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "carrera")
-    private int carrera;
+    private short carrera;
     @Basic(optional = false)
     @NotNull
     @Column(name = "opcionIncripcion")
     private boolean opcionIncripcion;
+    @Column(name = "fecha_alta")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaAlta;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "trabajador_inscribe")
+    private int trabajadorInscribe;
     @ManyToMany(mappedBy = "estudianteList")
     private List<Asesoria> asesoriaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
@@ -81,8 +93,8 @@ public class Estudiante implements Serializable {
     private Grupo grupo;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<DocumentoEstudiante> documentoEstudianteList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "estudiante1")
-    private Calificaciones calificaciones;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante1")
+    private List<Calificaciones> calificacionesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<ParticipantesTutoria> participantesTutoriaList;
 
@@ -93,12 +105,13 @@ public class Estudiante implements Serializable {
         this.idEstudiante = idEstudiante;
     }
 
-    public Estudiante(Integer idEstudiante, int matricula, int periodo, int carrera, boolean opcionIncripcion) {
+    public Estudiante(Integer idEstudiante, int matricula, int periodo, short carrera, boolean opcionIncripcion, int trabajadorInscribe) {
         this.idEstudiante = idEstudiante;
         this.matricula = matricula;
         this.periodo = periodo;
         this.carrera = carrera;
         this.opcionIncripcion = opcionIncripcion;
+        this.trabajadorInscribe = trabajadorInscribe;
     }
 
     public Integer getIdEstudiante() {
@@ -125,11 +138,11 @@ public class Estudiante implements Serializable {
         this.periodo = periodo;
     }
 
-    public int getCarrera() {
+    public short getCarrera() {
         return carrera;
     }
 
-    public void setCarrera(int carrera) {
+    public void setCarrera(short carrera) {
         this.carrera = carrera;
     }
 
@@ -139,6 +152,22 @@ public class Estudiante implements Serializable {
 
     public void setOpcionIncripcion(boolean opcionIncripcion) {
         this.opcionIncripcion = opcionIncripcion;
+    }
+
+    public Date getFechaAlta() {
+        return fechaAlta;
+    }
+
+    public void setFechaAlta(Date fechaAlta) {
+        this.fechaAlta = fechaAlta;
+    }
+
+    public int getTrabajadorInscribe() {
+        return trabajadorInscribe;
+    }
+
+    public void setTrabajadorInscribe(int trabajadorInscribe) {
+        this.trabajadorInscribe = trabajadorInscribe;
     }
 
     @XmlTransient
@@ -200,12 +229,13 @@ public class Estudiante implements Serializable {
         this.documentoEstudianteList = documentoEstudianteList;
     }
 
-    public Calificaciones getCalificaciones() {
-        return calificaciones;
+    @XmlTransient
+    public List<Calificaciones> getCalificacionesList() {
+        return calificacionesList;
     }
 
-    public void setCalificaciones(Calificaciones calificaciones) {
-        this.calificaciones = calificaciones;
+    public void setCalificacionesList(List<Calificaciones> calificacionesList) {
+        this.calificacionesList = calificacionesList;
     }
 
     @XmlTransient

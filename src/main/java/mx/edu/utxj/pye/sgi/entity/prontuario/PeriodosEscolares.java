@@ -19,6 +19,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -58,8 +59,10 @@ public class PeriodosEscolares implements Serializable {
     private List<MovilidadAcademica> movilidadAcademicaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "periodosEscolares")
     private List<EducacionContinua> educacionContinuaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "periodo")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "periodosEscolares")
     private List<EquiposComputo> equiposComputoList;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "periodosEscolares")
+    private PeriodoEscolarFechas periodoEscolarFechas;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "periodosEscolares")
     private List<AprovechamientoEscolar> aprovechamientoEscolarList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "periodo")
@@ -166,6 +169,14 @@ public class PeriodosEscolares implements Serializable {
 
     public void setEquiposComputoList(List<EquiposComputo> equiposComputoList) {
         this.equiposComputoList = equiposComputoList;
+    }
+
+    public PeriodoEscolarFechas getPeriodoEscolarFechas() {
+        return periodoEscolarFechas;
+    }
+
+    public void setPeriodoEscolarFechas(PeriodoEscolarFechas periodoEscolarFechas) {
+        this.periodoEscolarFechas = periodoEscolarFechas;
     }
 
     @XmlTransient
@@ -359,11 +370,15 @@ public class PeriodosEscolares implements Serializable {
             return false;
         }
         PeriodosEscolares other = (PeriodosEscolares) object;
-        return !((this.periodo == null && other.periodo != null) || (this.periodo != null && !this.periodo.equals(other.periodo)));
+        if ((this.periodo == null && other.periodo != null) || (this.periodo != null && !this.periodo.equals(other.periodo))) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public String toString() {
-        return "PeriodosEscolares{" + "periodo=" + periodo + ", anio=" + anio + ", tipo=" + tipo + ", ciclo=" + ciclo + ", mesFin=" + mesFin + '}';
+        return "mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares[ periodo=" + periodo + " ]";
     }
+    
 }

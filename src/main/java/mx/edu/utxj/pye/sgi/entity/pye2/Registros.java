@@ -96,6 +96,8 @@ public class Registros implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private MatriculaPeriodosEscolares matriculaPeriodosEscolares;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private SesionIndividualMensualPsicopedogia sesionIndividualMensualPsicopedogia;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private EquiposComputoInternetCicloPeriodoEscolar equiposComputoInternetCicloPeriodoEscolar;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private EficienciaTerminalTitulacionRegistro eficienciaTerminalTitulacionRegistro;
@@ -344,6 +346,14 @@ public class Registros implements Serializable {
 
     public void setMatriculaPeriodosEscolares(MatriculaPeriodosEscolares matriculaPeriodosEscolares) {
         this.matriculaPeriodosEscolares = matriculaPeriodosEscolares;
+    }
+
+    public SesionIndividualMensualPsicopedogia getSesionIndividualMensualPsicopedogia() {
+        return sesionIndividualMensualPsicopedogia;
+    }
+
+    public void setSesionIndividualMensualPsicopedogia(SesionIndividualMensualPsicopedogia sesionIndividualMensualPsicopedogia) {
+        this.sesionIndividualMensualPsicopedogia = sesionIndividualMensualPsicopedogia;
     }
 
     public EquiposComputoInternetCicloPeriodoEscolar getEquiposComputoInternetCicloPeriodoEscolar() {

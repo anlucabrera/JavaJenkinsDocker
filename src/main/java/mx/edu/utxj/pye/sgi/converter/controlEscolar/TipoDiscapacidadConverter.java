@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.sgi.converter.controlEscolar;
 
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoDiscapacidad;
 import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
 
 import javax.ejb.EJB;
@@ -9,7 +10,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoDiscapacidad;
 
 @FacesConverter("tipoDiscapacidadConverter")
 public class TipoDiscapacidadConverter implements Converter {

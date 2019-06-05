@@ -6,6 +6,7 @@ import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -24,6 +25,11 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
      * Representa la referencia hacia el personal director
      */
     @Getter @NonNull private PersonalActivo director;
+
+    /**
+     * Representa la referencia al evento activo de asignación academica
+     */
+    @Getter @NonNull private EventoEscolar eventoActivo;
 
     /**
      * Total de horas asignadas al docente seleccionado
@@ -119,6 +125,10 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
 
     public void setDirector(PersonalActivo director) {
         this.director = director;
+    }
+
+    public void setEventoActivo(EventoEscolar eventoActivo) {
+        this.eventoActivo = eventoActivo;
     }
 
     public void setTotalHorasAsignadas(Integer totalHorasAsignadas) {

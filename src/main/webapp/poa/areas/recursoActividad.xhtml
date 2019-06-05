@@ -58,6 +58,7 @@
                                 <p:commandButton id="btnRSimbo2" actionListener="#{controladorPOARecurso.imprimirValores()}"
                                                  icon="fa fa-usd" styleClass="btn-success"/> 
 
+                                <p:spacer width="30px"/>
                                 <p:commandButton value="Finalizar registro de actividades" id="btnEnviaCorreo" 
                                                  actionListener="#{utilidadesPOA.enviarCorreo(3,'')}"
                                                  process="@this" disabled="#{controladorEmpleado.procesopoa.asiganacionRFinalizado}"
@@ -244,14 +245,14 @@
                         <div class="row">
                             <div class="col-lg-12 col-md-12 text-info text-center">
                                 <p:remoteCommand name="actualizarTabla" actionListener="#{controladorPOARecurso.imprimirValores()}" update="frm" />
-                                <p:dataTable id="dtbEje" widgetVar="dtbEje" var="eje" sortBy="#{eje.ejeA.eje}" expandableRowGroups="true"
+                                <p:dataTable id="dtbEje" widgetVar="dtbEje" var="eje" sortBy="#{eje.ejeA.eje}" expandableRowGroups="true" 
                                              value="#{controladorPOARecurso.listaEstrategiases}">
                                     <p:headerRow>
                                         <p:column colspan="1" styleClass="eje" style="text-align: left; color: #FFFFFF;">
                                             <h:outputText value="#{eje.ejeA.eje}.#{eje.ejeA.nombre}" style="text-align: left"/>
                                         </p:column>
                                     </p:headerRow>
-                                    <p:column colspan="1">
+                                    <p:column colspan="1" style="padding: 0px 0px">
                                         <p:dataTable id="dtbEstra" var="estrategia" sortBy="#{estrategia.etra.estrategia}" expandableRowGroups="true"
                                                      value="#{eje.listaLineasAccions}">
                                             <p:headerRow>
@@ -259,7 +260,7 @@
                                                     <h:outputText value="#{eje.ejeA.eje}.#{estrategia.etra.numero}.#{estrategia.etra.nombre}" style="text-align: left"/>
                                                 </p:column>
                                             </p:headerRow>
-                                            <p:column colspan="1">
+                                            <p:column colspan="1" style="padding: 0px 0px">
                                                 <p:dataTable id="dtbLinea" var="linea" sortBy="#{linea.lineasAccion.lineaAccion}" expandableRowGroups="true"
                                                              value="#{estrategia.listalistaEstrategiaLaAp}">
                                                     <p:headerRow>
@@ -267,12 +268,12 @@
                                                             <h:outputText value="#{eje.ejeA.eje}.#{estrategia.etra.numero}.#{linea.lineasAccion.numero}.#{linea.lineasAccion.nombre}" style="text-align: left"/>
                                                         </p:column>
                                                     </p:headerRow>
-                                                    <p:column colspan="1">
+                                                    <p:column colspan="1" style="padding: 0px 0px">
                                                         <p:dataTable id="dtbActividad" var="actividad" expandableRowGroups="true" rowExpandMode="single" expandedRow="false"
-                                                                     value="#{linea.listaRecursoActividadeses}">
+                                                                     value="#{linea.listaRecursoActividadeses}" > 
 
-                                                            <p:column styleClass="#{actividad.actividadesPoa1.numeroS eq 0?'actividad':''}" style="width:2%">
-                                                                <p:rowToggler />
+                                                            <p:column styleClass="#{actividad.actividadesPoa1.numeroS eq 0?'actividad':''}" style="width:2%" >
+                                                                <p:rowToggler rendered="#{actividad.recacts.size() ne 0}"/>
                                                             </p:column>
                                                             <p:column styleClass="#{actividad.actividadesPoa1.numeroS eq 0?'actividad':''}" style="text-align: justify; width: 20%; max-height: 10px;">    
                                                                 <h:outputText value="#{actividad.actividadesPoa1.numeroP}.#{actividad.actividadesPoa1.numeroS} #{actividad.actividadesPoa1.denominacion}" style="text-align: left"/> 
@@ -501,7 +502,7 @@
 
             </h:form>
 
-            <p:dialog header="Asignar recurso para: #{controladorPOARecurso.actividadesPoa.denominacion}" widgetVar="delRegistroProdustos" modal="true" 
+            <p:dialog id="delRegistroProdustos" header="Asignar recurso para: #{controladorPOARecurso.actividadesPoa.denominacion}" widgetVar="delRegistroProdustos" modal="true" 
                       showEffect="fade" hideEffect="fade" resizable="false" width="800" closeOnEscape="true">
                 <h:form id="frmAsignaRecurso">
                     <div class="row">
@@ -511,6 +512,7 @@
                                 <p:outputLabel value="#{controladorPOARecurso.actividadesPoa.denominacion}" style="height:100%; width: 100%;"/>
                             </div>
                         </p:outputPanel>
+                        <hr/>
                         <div class="col-sm-12 col-md-12 col-lg-12">
                             <p:outputLabel for="partida"  value="Partida" />
                             <p:selectOneMenu filter="true" filterMatchMode="contains" id="partida" value="#{controladorPOARecurso.partidas.partida}" valueChangeListener="#{controladorPOARecurso.asignaProductos}">
@@ -580,7 +582,7 @@
 
             <p:blockUI block="frmAlineacionEstratejica" widgetVar="buiRegistro1" blocked="#{controladorEmpleado.procesopoa.asiganacionRFinalizado}"/>
             <p:blockUI block="frm2" widgetVar="buiRegistro2" blocked="#{controladorEmpleado.procesopoa.asiganacionRFinalizado}">
-                Ha confirmado la culminación de este proceso, espere la respuesta por parte de la Dirección de Planeación y Evaluación, que indique si se realizaran, modificaciones o podrá pasar a la siguiente fase.
+                Ha confirmado la culminación de este proceso, espere la respuesta por parte de la Subdirección de Recursos Financieros, que indique si se realizaran, modificaciones o podrá pasar a la siguiente fase.
             </p:blockUI>            
             <p:blockUI block="frm" widgetVar="buiRegistro3" blocked="#{controladorEmpleado.procesopoa.asiganacionRFinalizado}"/>
         </c:if>

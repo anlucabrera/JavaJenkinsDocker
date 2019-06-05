@@ -43,3 +43,19 @@ table[role="grid"]{
 .ui-selectonemenu{
     padding-top: 0px !important;
 }
+
+.campo2Partes input {
+   width: 20.5em;
+}
+
+.campo3Partes input {
+   width: 14em;
+}
+
+.campo4Partes input {
+   width: 10.5em;
+}
+
+.campoRecursosObtenidos input{
+    width: 45.5em
+}

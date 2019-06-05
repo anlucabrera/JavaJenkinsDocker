@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.sgi.converter.controlEscolar;
 
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Sistema;
 import org.omnifaces.util.Faces;
 
 import javax.faces.application.FacesMessage;
@@ -9,7 +10,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 import java.util.List;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Sistema;
 
 @FacesConverter("sistemaConverter")
 public class SistemaConverter implements Converter {

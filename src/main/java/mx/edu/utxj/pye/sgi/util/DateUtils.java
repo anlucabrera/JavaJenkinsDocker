@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 /**
@@ -45,6 +46,14 @@ public class DateUtils {
         }
         
         return fin;
+    }
+
+    public static Long toWeeks(Date start, Date end){
+        return toWeeks(asLocalDate(start), asLocalDate(end));
+    }
+
+    public static Long toWeeks(LocalDate start, LocalDate end){
+        return ChronoUnit.WEEKS.between(start, end);
     }
     
     public static void main(String[] args) {

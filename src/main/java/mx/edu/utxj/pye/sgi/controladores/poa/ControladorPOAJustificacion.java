@@ -20,6 +20,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.util.UtilidadesPOA;
 import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Faces;
 
 @Named
 @ManagedBean
@@ -174,6 +175,7 @@ public class ControladorPOAJustificacion implements Serializable {
         }else{
         consultarListas();
         }
+        Faces.refresh();
     }
     
     public static class listaEjesEsLaAp {

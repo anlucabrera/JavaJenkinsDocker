@@ -43,6 +43,19 @@ public class EjbEvaluacionEstadia {
     @EJB private Facade f;
     @EJB private Facade2 f2;
     
+    public Evaluaciones evaluacionEstadiaPeridoActual(){
+        List<Evaluaciones> e = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones as e where e.periodo = :periodo and e.tipo = :tipo", Evaluaciones.class)
+                .setParameter("periodo", 51)
+                .setParameter("tipo", "Evaluación Estadía")
+                .getResultStream().collect(Collectors.toList());
+        if(e.isEmpty()){
+            return new Evaluaciones();
+        }else{
+            return e.get(0);
+        }
+        
+    }
+    
     public Evaluaciones getEvaluacionActiva(){
         List<Evaluaciones> e = f.getEntityManager()
                 .createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc",
@@ -66,18 +79,18 @@ public class EjbEvaluacionEstadia {
             Boolean acv = x.getActivo().equals(true);
             if (activo.equals(acv)) {
                 periodo = x.getPeriodosPK().getCvePeriodo();
-                System.out.println("Periodo:"+ periodo);
             }
         });
 //        TypedQuery<ViewAlumnos> q = f.getEntityManager().createQuery("SELECT a from Alumno a WHERE a.alumnoPK.periodo= 47 AND a.cuatrimestre=11 AND a.alumnoPK.matricula=:matricula", Alumno.class);
         TypedQuery<Alumnos> q = f2.getEntityManager()
                 .createQuery("SELECT a from Alumnos a " 
                         + "WHERE a.matricula=:matricula AND "
-                        + "a.cveStatus = :estatus AND "
+                        + "(a.cveStatus = :estatus or a.cveStatus = :estatus2) AND "
                         + "a.grupos.gruposPK.cvePeriodo = :periodo AND "
                         + "a.gradoActual = :grado", Alumnos.class);
         q.setParameter("estatus", 1);
-        q.setParameter("periodo", periodo);
+        q.setParameter("estatus2", 6);
+        q.setParameter("periodo", 50);
         q.setParameter("grado", grado);
         q.setParameter("matricula", matricula);
         //System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEncuestaServicios.obtenerAlumnos() se ejecuto la consulta");

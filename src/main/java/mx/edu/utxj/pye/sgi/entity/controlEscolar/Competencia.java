@@ -14,6 +14,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -33,7 +35,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Competencia.findAll", query = "SELECT c FROM Competencia c")
     , @NamedQuery(name = "Competencia.findByIdCompetencia", query = "SELECT c FROM Competencia c WHERE c.idCompetencia = :idCompetencia")
-    , @NamedQuery(name = "Competencia.findByNombre", query = "SELECT c FROM Competencia c WHERE c.nombre = :nombre")})
+    , @NamedQuery(name = "Competencia.findByNombre", query = "SELECT c FROM Competencia c WHERE c.nombre = :nombre")
+    , @NamedQuery(name = "Competencia.findByTipo", query = "SELECT c FROM Competencia c WHERE c.tipo = :tipo")})
 public class Competencia implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -47,6 +50,14 @@ public class Competencia implements Serializable {
     @Size(min = 1, max = 500)
     @Column(name = "nombre")
     private String nombre;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 12)
+    @Column(name = "tipo")
+    private String tipo;
+    @JoinColumn(name = "plan_estudios", referencedColumnName = "id_plan_estudio")
+    @ManyToOne(optional = false)
+    private PlanEstudio planEstudios;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idCompetencia")
     private List<Materia> materiaList;
 
@@ -57,9 +68,10 @@ public class Competencia implements Serializable {
         this.idCompetencia = idCompetencia;
     }
 
-    public Competencia(Integer idCompetencia, String nombre) {
+    public Competencia(Integer idCompetencia, String nombre, String tipo) {
         this.idCompetencia = idCompetencia;
         this.nombre = nombre;
+        this.tipo = tipo;
     }
 
     public Integer getIdCompetencia() {
@@ -76,6 +88,22 @@ public class Competencia implements Serializable {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public PlanEstudio getPlanEstudios() {
+        return planEstudios;
+    }
+
+    public void setPlanEstudios(PlanEstudio planEstudios) {
+        this.planEstudios = planEstudios;
     }
 
     @XmlTransient

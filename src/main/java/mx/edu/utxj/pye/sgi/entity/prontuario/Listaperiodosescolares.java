@@ -43,8 +43,8 @@ public class Listaperiodosescolares implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "ciclo")
-    private int ciclo;
     @Id
+    private int ciclo;
     @Basic(optional = false)
     @NotNull
     @Column(name = "periodo")
@@ -71,13 +71,13 @@ public class Listaperiodosescolares implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "inicio")
-//    @Temporal(TemporalType.DATE)
-    private int inicio;
+    @Temporal(TemporalType.DATE)
+    private Date inicio;
     @Basic(optional = false)
     @NotNull
     @Column(name = "fin")
-//    @Temporal(TemporalType.DATE)
-    private int fin;
+    @Temporal(TemporalType.DATE)
+    private Date fin;
 
     public Listaperiodosescolares() {
     }
@@ -130,25 +130,20 @@ public class Listaperiodosescolares implements Serializable {
         this.mesFin = mesFin;
     }
 
-    public int getInicio() {
+    public Date getInicio() {
         return inicio;
     }
 
-    public void setInicio(int inicio) {
+    public void setInicio(Date inicio) {
         this.inicio = inicio;
     }
 
-    public int getFin() {
+    public Date getFin() {
         return fin;
     }
 
-    public void setFin(int fin) {
+    public void setFin(Date fin) {
         this.fin = fin;
-    }
-
-    @Override
-    public String toString() {
-        return "Listaperiodosescolares{" + "ciclo=" + ciclo + ", periodo=" + periodo + ", anio=" + anio + ", tipo=" + tipo + ", mesInicio=" + mesInicio + ", mesFin=" + mesFin + ", inicio=" + inicio + ", fin=" + fin + '}';
     }
     
 }

@@ -114,4 +114,11 @@ public interface EjbMatriculaPeriodosEscolares {
     public Boolean alinearRegistroActividad(ActividadesPoa actividad, DTOMatriculaPeriodosEscolares registro);
     
     public Boolean eliminarAlineacion(DTOMatriculaPeriodosEscolares registro);
+    
+    public MatriculaPeriodosEscolares editaMatriculaPeriodoEscolar(MatriculaPeriodosEscolares mpe);
+    
+    public Boolean buscaMatriculaPeriodoEscolarExistente(MatriculaPeriodosEscolares matriculaPeriodoEscolar);
+    
+    public List<MatriculaPeriodosEscolares> getReporteMatriculaPorEjercicio();
+    
 }

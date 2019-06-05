@@ -8,13 +8,12 @@ package mx.edu.utxj.pye.sgi.entity.prontuario;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -28,7 +27,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "EquiposComputo.findAll", query = "SELECT e FROM EquiposComputo e")
-    , @NamedQuery(name = "EquiposComputo.findByCiclo", query = "SELECT e FROM EquiposComputo e WHERE e.ciclo = :ciclo")
+    , @NamedQuery(name = "EquiposComputo.findByCiclo", query = "SELECT e FROM EquiposComputo e WHERE e.equiposComputoPK.ciclo = :ciclo")
+    , @NamedQuery(name = "EquiposComputo.findByPeriodo", query = "SELECT e FROM EquiposComputo e WHERE e.equiposComputoPK.periodo = :periodo")
     , @NamedQuery(name = "EquiposComputo.findByDtcEsc", query = "SELECT e FROM EquiposComputo e WHERE e.dtcEsc = :dtcEsc")
     , @NamedQuery(name = "EquiposComputo.findByDtcPor", query = "SELECT e FROM EquiposComputo e WHERE e.dtcPor = :dtcPor")
     , @NamedQuery(name = "EquiposComputo.findByDasigEsc", query = "SELECT e FROM EquiposComputo e WHERE e.dasigEsc = :dasigEsc")
@@ -45,11 +45,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class EquiposComputo implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ciclo")
-    private Integer ciclo;
+    @EmbeddedId
+    protected EquiposComputoPK equiposComputoPK;
     @Basic(optional = false)
     @NotNull
     @Column(name = "dtc_esc")
@@ -103,21 +100,21 @@ public class EquiposComputo implements Serializable {
     @Column(name = "total")
     private short total;
     @JoinColumn(name = "ciclo", referencedColumnName = "ciclo", insertable = false, updatable = false)
-    @OneToOne(optional = false)
-    private CiclosEscolares ciclosEscolares;
-    @JoinColumn(name = "periodo", referencedColumnName = "periodo")
     @ManyToOne(optional = false)
-    private PeriodosEscolares periodo;
+    private CiclosEscolares ciclosEscolares;
+    @JoinColumn(name = "periodo", referencedColumnName = "periodo", insertable = false, updatable = false)
+    @ManyToOne(optional = false)
+    private PeriodosEscolares periodosEscolares;
 
     public EquiposComputo() {
     }
 
-    public EquiposComputo(Integer ciclo) {
-        this.ciclo = ciclo;
+    public EquiposComputo(EquiposComputoPK equiposComputoPK) {
+        this.equiposComputoPK = equiposComputoPK;
     }
 
-    public EquiposComputo(Integer ciclo, short dtcEsc, short dtcPor, short dasigEsc, short dasigPor, short estEsc, short estPor, short admEsc, short admPor, short mmysEsc, short mmysPor, short totalEsc, short totalPor, short total) {
-        this.ciclo = ciclo;
+    public EquiposComputo(EquiposComputoPK equiposComputoPK, short dtcEsc, short dtcPor, short dasigEsc, short dasigPor, short estEsc, short estPor, short admEsc, short admPor, short mmysEsc, short mmysPor, short totalEsc, short totalPor, short total) {
+        this.equiposComputoPK = equiposComputoPK;
         this.dtcEsc = dtcEsc;
         this.dtcPor = dtcPor;
         this.dasigEsc = dasigEsc;
@@ -133,12 +130,16 @@ public class EquiposComputo implements Serializable {
         this.total = total;
     }
 
-    public Integer getCiclo() {
-        return ciclo;
+    public EquiposComputo(int ciclo, int periodo) {
+        this.equiposComputoPK = new EquiposComputoPK(ciclo, periodo);
     }
 
-    public void setCiclo(Integer ciclo) {
-        this.ciclo = ciclo;
+    public EquiposComputoPK getEquiposComputoPK() {
+        return equiposComputoPK;
+    }
+
+    public void setEquiposComputoPK(EquiposComputoPK equiposComputoPK) {
+        this.equiposComputoPK = equiposComputoPK;
     }
 
     public short getDtcEsc() {
@@ -253,18 +254,18 @@ public class EquiposComputo implements Serializable {
         this.ciclosEscolares = ciclosEscolares;
     }
 
-    public PeriodosEscolares getPeriodo() {
-        return periodo;
+    public PeriodosEscolares getPeriodosEscolares() {
+        return periodosEscolares;
     }
 
-    public void setPeriodo(PeriodosEscolares periodo) {
-        this.periodo = periodo;
+    public void setPeriodosEscolares(PeriodosEscolares periodosEscolares) {
+        this.periodosEscolares = periodosEscolares;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (ciclo != null ? ciclo.hashCode() : 0);
+        hash += (equiposComputoPK != null ? equiposComputoPK.hashCode() : 0);
         return hash;
     }
 
@@ -275,7 +276,7 @@ public class EquiposComputo implements Serializable {
             return false;
         }
         EquiposComputo other = (EquiposComputo) object;
-        if ((this.ciclo == null && other.ciclo != null) || (this.ciclo != null && !this.ciclo.equals(other.ciclo))) {
+        if ((this.equiposComputoPK == null && other.equiposComputoPK != null) || (this.equiposComputoPK != null && !this.equiposComputoPK.equals(other.equiposComputoPK))) {
             return false;
         }
         return true;
@@ -283,7 +284,7 @@ public class EquiposComputo implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.prontuario.EquiposComputo[ ciclo=" + ciclo + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.prontuario.EquiposComputo[ equiposComputoPK=" + equiposComputoPK + " ]";
     }
     
 }

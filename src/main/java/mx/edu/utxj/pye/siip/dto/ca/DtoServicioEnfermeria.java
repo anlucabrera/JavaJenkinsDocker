@@ -14,19 +14,28 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
+import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
+import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosEnfermeriaTipo;
 
 /**
  *
  * @author UTXJ
  */
 public final class DtoServicioEnfermeria {
-
+    /************************** Edición ****************************************/
+    @Getter @Setter List<ServiciosEnfermeriaTipo> listaServiciosEnfermeriaTipos;
+    @Getter @Setter CiclosEscolares cicloEscolar;
+    @Getter @Setter PeriodosEscolares periodoEscolar;
+    @Getter @Setter Integer cicloInicio, cicloFin;
+    @Getter @Setter String mensaje;
+    
     /************************** Lista áreas ****************************************/
     @Getter private List<Categorias> listaCategoriasPOA;
     @Getter private List<AreasUniversidad> listaAreasPOA; 

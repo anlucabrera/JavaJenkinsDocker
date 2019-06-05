@@ -36,7 +36,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Presupuestos.findByPresupuestoOperacion", query = "SELECT p FROM Presupuestos p WHERE p.presupuestoOperacion = :presupuestoOperacion")
     , @NamedQuery(name = "Presupuestos.findByPresupuestoTipo", query = "SELECT p FROM Presupuestos p WHERE p.presupuestoTipo = :presupuestoTipo")
     , @NamedQuery(name = "Presupuestos.findByMonto", query = "SELECT p FROM Presupuestos p WHERE p.monto = :monto")
-    , @NamedQuery(name = "Presupuestos.findByFechaAplicacion", query = "SELECT p FROM Presupuestos p WHERE p.fechaAplicacion = :fechaAplicacion")})
+    , @NamedQuery(name = "Presupuestos.findByFechaAplicacion", query = "SELECT p FROM Presupuestos p WHERE p.fechaAplicacion = :fechaAplicacion")
+    , @NamedQuery(name = "Presupuestos.findByObservaciones", query = "SELECT p FROM Presupuestos p WHERE p.observaciones = :observaciones")})
 public class Presupuestos implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -81,15 +82,14 @@ public class Presupuestos implements Serializable {
         this.registro = registro;
     }
 
-    public Presupuestos(Integer registro, String presupuestoOperacion, String presupuestoTipo, double monto, Date fechaAplicacion, String observaciones, CapitulosTipos capituloTipo, Registros registros) {
+    public Presupuestos(Integer registro, String presupuestoOperacion, String presupuestoTipo, double monto, Date fechaAplicacion) {
         this.registro = registro;
         this.presupuestoOperacion = presupuestoOperacion;
         this.presupuestoTipo = presupuestoTipo;
         this.monto = monto;
         this.fechaAplicacion = fechaAplicacion;
-        this.observaciones = observaciones;
     }
-    
+
     public Integer getRegistro() {
         return registro;
     }
