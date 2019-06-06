@@ -46,6 +46,18 @@
                 <c:if test="#{estudioSocioeconomicoOperativo.cargada}"><li><p:link href="/evaluaciones/evaluacion/estudioSocioeconomico.xhtml"><i class="fa fa-ticket"></i><span>Estudio socioeconómico</span></p:link></li></c:if>
                 <c:if test="#{evaluacionEstadia.cargada}"><li><p:link href="/encuestas/Estudiantes/evaluacionEstadia.xhtml"><i class="fa fa-user-circle-o"></i><span>Evaluación Estadia</span></p:link></li></c:if>
             </li>
+            <c:if test="#{controladorEstReg.cargada}">
+            <li class="header" style="color: #040404;background: #ffffff">Titulación</li>
+            <li class="treeview ">
+                <a href="#">
+                    <i class="fa fa-list-alt"></i> <span>Expediente Titulación</span>
+                    <span class="pull-right-container">
+                        <i class=""></i>
+                    </span>
+                </a>
+                <li><p:link href="/expedienteTitulacion/estudiante/registroExpediente.xhtml"><i class="fa fa-pencil-square-o"></i><span>Registro e Integración</span></p:link></li>
+            </li>
+            </c:if>
         </c:if>
 <!--        <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
             <c:forEach items="#{logonMB.listaModulos}" var="catModulo" >
@@ -579,6 +591,34 @@
                     <p:link href="/capitalHumano/personal/perfilPersonalReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
                         <span>Reporte de Registros</span>
                     </p:link>
+                </li>
+            </c:if>
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 60}">
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Titulación</li>
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-users"></i><span>Expedientes</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                         <li>
+                             <p:link href="/expedienteTitulacion/titulacion/seguimientoExpMatricula.xhtml"><i class="fa fa-user-o"></i>
+                                 <span>Seguimiento por Matricula</span>
+                             </p:link>
+                         </li>      
+                         <li>
+                             <p:link href="/expedienteTitulacion/titulacion/seguimientoExpGeneracion.xhtml"><i class="fa fa-group"></i>
+                                 <span>Seguimiento por Generación</span>
+                             </p:link>
+                         </li> 
+                         <li>
+                             <p:link href="/expedienteTitulacion/titulacion/fechasDocumentos.xhtml"><i class="fa fa-folder-open"></i>
+                                 <span>Catálogo Fechas Documentos</span>
+                             </p:link>
+                         </li> 
+                    </ul>
                 </li>
             </c:if>
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13}">

@@ -83,4 +83,6 @@ public interface EJBSelectItems {
     
     public List<SelectItem> itemGeneraciones();
     
+    public List<SelectItem> itemProgramasEducativos();
+    
 }
