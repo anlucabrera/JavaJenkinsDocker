@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
@@ -691,7 +691,7 @@
                     </ul>
                 </li>
             </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 53}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 53 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Fortalecimiento</li>
                 <li>
                     <p:link href="/capitalHumano/fda/perfilPersonalDocente.xhtml">
