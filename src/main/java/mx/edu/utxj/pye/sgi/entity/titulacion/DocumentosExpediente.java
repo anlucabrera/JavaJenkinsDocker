@@ -49,7 +49,7 @@ public class DocumentosExpediente implements Serializable {
     private Integer docExpediente;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 150)
+    @Size(min = 1, max = 500)
     @Column(name = "ruta")
     private String ruta;
     @Basic(optional = false)
