@@ -104,7 +104,7 @@ public interface EjbCarga extends Serializable {
      * @param rutaRelativa Parámetro de la ruta relativa del archivo
      * @return Devuelve la ruta completa del archivo
      */
-    public String subirDocExpTit(Part file, String tipoDoc, File rutaRelativa);
+    public String subirDocExpTit(Part file, String tipoDoc, File rutaRelativa, String matricula);
     
     /**
      * Método que crea o comprueba si el directorio de los reportes de titulación
