@@ -134,7 +134,7 @@ public class ControladorArchivosTitulacion implements Serializable{
 
             String nombreEstMat = nuevoOBJegresado.getApellidoPaterno() + "_" + nuevoOBJegresado.getApellidoMaterno() + "_" + nuevoOBJegresado.getNombre() + "_" + nuevoOBJegresado.getMatricula();
 
-            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileC, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura()));
+            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileC, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura(), expediente.getMatricula().getMatricula()));
             nuevoOBJdocExp.setFechaCarga(new Date());
             nuevoOBJdocExp.setObservaciones("Sin revisar");
             nuevoOBJdocExp.setFechaValidacion(null);
@@ -177,7 +177,7 @@ public class ControladorArchivosTitulacion implements Serializable{
 
             String nombreEstMat = nuevoOBJegresado.getApellidoPaterno() + "_" + nuevoOBJegresado.getApellidoMaterno() + "_" + nuevoOBJegresado.getNombre() + "_" + nuevoOBJegresado.getMatricula();
 
-            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileAN, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura()));
+            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileAN, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura(), expediente.getMatricula().getMatricula()));
             nuevoOBJdocExp.setFechaCarga(new Date());
             nuevoOBJdocExp.setObservaciones("Sin revisar");
             nuevoOBJdocExp.setFechaValidacion(null);
@@ -220,7 +220,7 @@ public class ControladorArchivosTitulacion implements Serializable{
 
             String nombreEstMat = nuevoOBJegresado.getApellidoPaterno() + "_" + nuevoOBJegresado.getApellidoMaterno() + "_" + nuevoOBJegresado.getNombre() + "_" + nuevoOBJegresado.getMatricula();
 
-            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileCB, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura()));
+            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileCB, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura(), expediente.getMatricula().getMatricula()));
             nuevoOBJdocExp.setFechaCarga(new Date());
             nuevoOBJdocExp.setObservaciones("Sin revisar");
             nuevoOBJdocExp.setFechaValidacion(null);
@@ -263,7 +263,7 @@ public class ControladorArchivosTitulacion implements Serializable{
 
             String nombreEstMat = nuevoOBJegresado.getApellidoPaterno() + "_" + nuevoOBJegresado.getApellidoMaterno() + "_" + nuevoOBJegresado.getNombre() + "_" + nuevoOBJegresado.getMatricula();
 
-            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileAE, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura()));
+            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileAE, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura(), expediente.getMatricula().getMatricula()));
             nuevoOBJdocExp.setFechaCarga(new Date());
             nuevoOBJdocExp.setObservaciones("Sin revisar");
             nuevoOBJdocExp.setFechaValidacion(null);
@@ -307,7 +307,7 @@ public class ControladorArchivosTitulacion implements Serializable{
 
             String nombreEstMat = nuevoOBJegresado.getApellidoPaterno() + "_" + nuevoOBJegresado.getApellidoMaterno() + "_" + nuevoOBJegresado.getNombre() + "_" + nuevoOBJegresado.getMatricula();
 
-            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileFotoIL, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura()));
+            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileFotoIL, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura(), expediente.getMatricula().getMatricula()));
             nuevoOBJdocExp.setFechaCarga(new Date());
             nuevoOBJdocExp.setObservaciones("Sin revisar");
             nuevoOBJdocExp.setFechaValidacion(null);
@@ -351,7 +351,7 @@ public class ControladorArchivosTitulacion implements Serializable{
 
             String nombreEstMat = nuevoOBJegresado.getApellidoPaterno() + "_" + nuevoOBJegresado.getApellidoMaterno() + "_" + nuevoOBJegresado.getNombre() + "_" + nuevoOBJegresado.getMatricula();
 
-            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileAEE, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura()));
+            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileAEE, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura(), expediente.getMatricula().getMatricula()));
             nuevoOBJdocExp.setFechaCarga(new Date());
             nuevoOBJdocExp.setObservaciones("Sin revisar");
             nuevoOBJdocExp.setFechaValidacion(null);
@@ -395,7 +395,7 @@ public class ControladorArchivosTitulacion implements Serializable{
 
             String nombreEstMat = nuevoOBJegresado.getApellidoPaterno() + "_" + nuevoOBJegresado.getApellidoMaterno() + "_" + nuevoOBJegresado.getNombre() + "_" + nuevoOBJegresado.getMatricula();
 
-            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileCSS, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura()));
+            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileCSS, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura(), expediente.getMatricula().getMatricula()));
             nuevoOBJdocExp.setFechaCarga(new Date());
             nuevoOBJdocExp.setObservaciones("Sin revisar");
             nuevoOBJdocExp.setFechaValidacion(null);
@@ -439,7 +439,7 @@ public class ControladorArchivosTitulacion implements Serializable{
 
             String nombreEstMat = nuevoOBJegresado.getApellidoPaterno() + "_" + nuevoOBJegresado.getApellidoMaterno() + "_" + nuevoOBJegresado.getNombre() + "_" + nuevoOBJegresado.getMatricula();
 
-            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileCEIL, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura()));
+            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileCEIL, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura(), expediente.getMatricula().getMatricula()));
             nuevoOBJdocExp.setFechaCarga(new Date());
             nuevoOBJdocExp.setObservaciones("Sin revisar");
             nuevoOBJdocExp.setFechaValidacion(null);
@@ -483,7 +483,7 @@ public class ControladorArchivosTitulacion implements Serializable{
 
             String nombreEstMat = nuevoOBJegresado.getApellidoPaterno() + "_" + nuevoOBJegresado.getApellidoMaterno() + "_" + nuevoOBJegresado.getNombre() + "_" + nuevoOBJegresado.getMatricula();
 
-            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileCTTSU, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura()));
+            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileCTTSU, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura(), expediente.getMatricula().getMatricula()));
             nuevoOBJdocExp.setFechaCarga(new Date());
             nuevoOBJdocExp.setObservaciones("Sin revisar");
             nuevoOBJdocExp.setFechaValidacion(null);
@@ -527,7 +527,7 @@ public class ControladorArchivosTitulacion implements Serializable{
 
             String nombreEstMat = nuevoOBJegresado.getApellidoPaterno() + "_" + nuevoOBJegresado.getApellidoMaterno() + "_" + nuevoOBJegresado.getNombre() + "_" + nuevoOBJegresado.getMatricula();
 
-            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileLibSCLTF, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura()));
+            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileLibSCLTF, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura(), expediente.getMatricula().getMatricula()));
             nuevoOBJdocExp.setFechaCarga(new Date());
             nuevoOBJdocExp.setObservaciones("Sin revisar");
             nuevoOBJdocExp.setFechaValidacion(null);

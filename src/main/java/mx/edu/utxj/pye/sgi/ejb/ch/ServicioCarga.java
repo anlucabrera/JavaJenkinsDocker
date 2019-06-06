@@ -35,7 +35,7 @@ public class ServicioCarga implements EjbCarga {
 
     @Getter
     @Setter
-    private String aleatorio = "", nombreArchivo;
+    private String aleatorio = "", nombreArchivo, extension;
     @Getter
     @Setter
     private Boolean caracteresEspeciales, valida;
@@ -266,35 +266,39 @@ public class ServicioCarga implements EjbCarga {
     }
 
     @Override
-    public String subirDocExpTit(Part file, String tipoDoc, File rutaRelativa) {
+    public String subirDocExpTit(Part file, String tipoDoc, File rutaRelativa, String matricula) {
         System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServicioCarga.subirDocExpTit(): " + rutaRelativa);
         try {
             byte[] content = Utils.toByteArray(file.getInputStream());
             File carpeta = new File("C:/archivos/expedientesTitulacion/".concat(rutaRelativa.toString()));
             addCarpetaRelativa(carpeta.toString());
             nombreArchivo = file.getSubmittedFileName();
-//            System.out.println("mx.edu.utxj.pye.sgi.ch.servicio.ServicioCarga.subir() nombreArchivoInico " + nombreArchivo);
+            //extrae la extension y el nombre de archivo por separado
+            String tipo = file.getContentType();
+                if ("image/jpg".equals(tipo) || "image/jpeg".equals(tipo)) {
+                    extension = ".jpg";
+                }
+                else if("image/png".equals(tipo)){
+                    extension = ".png";
+                }
+                if("application/pdf".equals(tipo)){
+                    extension = ".pdf";
+                }
             Pattern p = Pattern.compile("[^A-Za-z0-9-_.() ]+");
             Matcher m = p.matcher(nombreArchivo);
             StringBuffer sb = new StringBuffer();
             valida = m.find();
-//            System.out.println("mx.edu.utxj.pye.sgi.ch.servicio.ServicioCarga.subir()" + caracteresEspeciales);
             while (valida) {
                 m.appendReplacement(sb, "");
                 valida = m.find();
-//                System.out.println("mx.edu.utxj.pye.sgi.ch.servicio.ServicioCarga.subir() nombreArchivo " + nombreArchivo);
             }
             m.appendTail(sb);
             nombreArchivo = sb.toString();
-//            System.out.println("mx.edu.utxj.pye.sgi.ch.servicio.ServicioCarga.subir() nombreArchivoFinal " + nombreArchivo);
                 for (int i = 1; i <= 10; i++) {
                     int numero = (int) Math.round(Math.random() * 35);
-//                    System.out.println("mx.edu.utxj.pye.sgi.ch.servicio.ServicioCarga.subir() numero: " + numero);
                     aleatorio = aleatorio + abecedario[numero];
                 }
-//                System.out.println("mx.edu.utxj.pye.sgi.ch.servicio.ServicioCarga.subir() aleatorio: " + aleatorio);
-                String name = carpeta.toString().concat(File.separator).concat(tipoDoc).concat("_").concat(aleatorio).concat(nombreArchivo);
-//                System.out.println("mx.edu.utxj.pye.sgi.ch.servicio.ServicioCarga.subir() name: " + name);
+                String name = carpeta.toString().concat(File.separator).concat(tipoDoc).concat("_").concat(matricula).concat(extension);
                 FileOutputStream fos = new FileOutputStream(name);
                 FileCopyUtils.copy(content, fos);
                 aleatorio = ""; 
