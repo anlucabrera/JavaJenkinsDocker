@@ -13,7 +13,9 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
 
     <ui:define name="head-end">
-        <!--link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" /-->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
         <style type="text/css">
             .ui-datatable .ui-datatable-header {
                 text-align: right !important;
@@ -245,11 +247,11 @@
                                         <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
                                              aria-valuenow="#{datosEncEgre.porcentaje}" aria-valuemin="0" aria-valuemax="100"
                                              style="background-color: #00a65a; width:#{datosEncEgre.porcentaje}%">
-                                                        <span class="progress-completed">
-                                                        <h:outputText value="#{datosEncEgre.porcentaje}" style="color: #0E0000; font-weight: bold">
-                                                            <f:convertNumber type="number" pattern="0.00"/>
-                                                        </h:outputText>
-                                                    </span>
+                                            <span class="progress-completed">
+                                                <h:outputText value="#{datosEncEgre.porcentaje}" style="color: #0E0000; font-weight: bold">
+                                                    <f:convertNumber type="number" pattern="0.00"/>
+                                                </h:outputText>
+                                            </span>
                                         </div>
 
                                     </div>

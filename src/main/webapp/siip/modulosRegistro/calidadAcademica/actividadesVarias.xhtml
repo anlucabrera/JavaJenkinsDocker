@@ -17,7 +17,7 @@
         <h:outputScript library="js" name="dialogs.js" />
         <h:outputScript library="js" name="calendario.js"/>
         <!-- Inicio estilos par proceso electoral -->
-            <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
                 <h:outputStylesheet library="css" name="procesoElectoral.css" />
             </c:if>
         <!-- Fin estilos par proceso electoral -->

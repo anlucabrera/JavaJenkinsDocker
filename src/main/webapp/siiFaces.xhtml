@@ -9,12 +9,12 @@
 
     <ui:define name="head-end">
         <ui:param name="renderBreadCrumb" value="false"/>
-        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <!-- Inicio estilos par proceso electoral -->
             <link rel="stylesheet" type="text/css" href="resources/css/procesoElectoral.css" media="screen" />
             <!-- Fin estilos par proceso electoral -->
         </c:if>
-        <c:if test="#{!controladorEmpleado.procesoElectoralActivo}">
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="resources/css/estilosGenerales.css" media="screen" />
         </c:if> 
         <script type="text/javascript">

@@ -9,7 +9,9 @@
 
     <ui:define name="head-end">
         <!-- Inicio estilos par proceso electoral -->
-        <!--<link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />-->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
         <!-- Fin estilos par proceso electoral -->
         <style type="text/css">
             .ui-datatable .ui-datatable-header {
@@ -84,8 +86,8 @@
                                     </p:selectOneMenu>
                                 </f:ajax>
                                 <f:ajax execute="somPeriodoDesempenio">
-                                    
-                                    
+
+
                                     <p:selectOneMenu id="somPeriodoDesempenio" value="#{administrativoEvaluacion.utilAdmin.periodoSeleccionado}"  autoWidth="true" effect="fade" rendered="#{administrativoEvaluacion.utilAdmin.desempenio}">
                                         <f:selectItem itemLabel="Elija un periodo:  " itemValue="" />
                                         <f:selectItems value="#{administrativoEvaluacion.utilAdmin.selectItemPeriodoDesempenio}" 
