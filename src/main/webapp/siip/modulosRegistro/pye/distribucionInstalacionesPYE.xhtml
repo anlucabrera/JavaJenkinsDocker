@@ -105,8 +105,11 @@
                                     
                                 </f:facet>
                                 <f:facet name="right">
+                                    <c:if test="#{controladorDistribucionInstalacionesPYE.dto.eventoSeleccionado ne null}">
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasEB.descargarReporteCuatrimestralDistribucionInstalaciones(controladorDistribucionInstalacionesPYE.dto.periodo, controladorDistribucionInstalacionesPYE.dto.areaUniversidadPOA)}" target="_blank" title="Descargar Reporte Cuatrimestral - Distribución de Instalaciones"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                    </c:if>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
                                 </f:facet>
                             </p:toolbar>

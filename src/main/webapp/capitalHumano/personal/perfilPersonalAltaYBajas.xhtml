@@ -11,7 +11,7 @@
     <ui:define name="head-end">
         <ui:param name="renderBreadCrumb" value="false"/>
         <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
         </c:if>
         <!-- Fin estilos par proceso electoral -->
@@ -98,7 +98,7 @@
                                                                             <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                 <label for="pais" class="col-sm-12 control-label">País</label>
                                                                                 <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" id="pais" value="#{controladorPersonalAltasYBajas.nuevOBJPersonalSubordinado.pais}">
-                                                                                    <f:selectItems value="#{controladorEmpleado.listaPaises}" var="paises" itemValue="#{paises}" itemLabel="#{paises}" />
+                                                                                    <f:selectItems value="#{utilidadesAcceso.listaPaises}" var="paises" itemValue="#{paises}" itemLabel="#{paises}" />
                                                                                 </p:selectOneMenu> 
                                                                                 <hr/>                                                                     
                                                                             </div>

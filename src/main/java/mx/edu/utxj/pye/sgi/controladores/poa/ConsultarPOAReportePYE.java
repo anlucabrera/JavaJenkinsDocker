@@ -75,7 +75,7 @@ public class ConsultarPOAReportePYE implements Serializable {
             System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ConsultarPOAReportePYE.mostrarAreasTienenPOA()" + areasUniversidads.size());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEvaluacionActividadesPyE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ConsultarPOAReportePYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -88,7 +88,7 @@ public class ConsultarPOAReportePYE implements Serializable {
             consultarListasValidacionFinal();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEvaluacionActividadesPyE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ConsultarPOAReportePYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

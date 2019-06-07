@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
@@ -11,7 +11,7 @@
     <ui:define name="head-end">
         <ui:param name="renderBreadCrumb" value="false"/>
         <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
         </c:if>        
         <!-- Fin estilos par proceso electoral -->
@@ -86,7 +86,7 @@
             </h1>
         </p:panel>
         <p:panel id="informacion" class="hidden-xs hidden-sm">
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 53}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 53 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
 
                 <section class="content">
                     <div class="row">
@@ -701,7 +701,7 @@
                     </div>
                 </section>
             </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave ne 53}">
+            <c:if test="#{!(controladorEmpleado.nuevoOBJListaPersonal.clave eq 53 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 30)}">
                 <h1>
                     Esta página está disponible solo para personal adscrito al área de Fortalecimiento de Desarrollo Académico
                 </h1>

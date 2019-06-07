@@ -17,7 +17,7 @@
         <h:outputScript library="js" name="dialogs.js" />
         <h:outputScript library="js" name="calendario.js"/>
         <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <h:outputStylesheet library="css" name="procesoElectoral.css" />
         </c:if>
         <!-- Fin estilos par proceso electoral -->
@@ -437,7 +437,7 @@
                                                     <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
                                                 </p:commandButton>
                                                 <p:spacer width="5" />
-                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorProductosAcademicosPYE.dtoProductoAcademico.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorProductosAcademicosPYE.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
                                             </div>
                                         </p:column>
                                         <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
@@ -537,7 +537,7 @@
                                                     <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
                                                 </p:commandButton>
                                                 <p:spacer width="5" />
-                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorProductosAcademicosPYE.dtoProductoAcademico.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorProductosAcademicosPYE.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
                                             </div>
                                         </p:column>
                                         <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
@@ -1148,7 +1148,7 @@
                                         <p:column><h:outputText value="#{persona.clave}" /></p:column>
                                         <p:column><h:outputText value="#{persona.nombre}" /></p:column>
                                         <p:column><h:outputText value="#{persona.areaOperativaNombre}" /></p:column> 
-                                        <p:ajax event="itemSelect" process="acPersonal"/>
+                                        <p:ajax event="itemSelect" process="@this" update="@this"/>
                                         <p:message for="acPersonal" />
                                     </p:autoComplete>
                                 </div>

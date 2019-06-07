@@ -17,7 +17,7 @@
         <h:outputScript library="js" name="dialogs.js" />
         <h:outputScript library="js" name="calendario.js"/>
         <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <h:outputStylesheet library="css" name="procesoElectoral.css" />
         </c:if>
         <!-- Fin estilos par proceso electoral -->
@@ -590,7 +590,7 @@
                                                     >
                                         <p:column><h:outputText value="#{empresa.empresa}" /></p:column>
                                         <p:column><h:outputText value="#{empresa.nombre}"/></p:column>
-                                        <p:ajax event="itemSelect" process="acEmpresa"/>
+                                        <p:ajax event="itemSelect" process="@this" update="@this"/>
                                         <p:message for="acEmpresa" />
                                     </p:autoComplete>
                                 </div>

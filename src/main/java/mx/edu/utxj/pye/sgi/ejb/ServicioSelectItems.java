@@ -565,5 +565,26 @@ public class ServicioSelectItems implements EJBSelectItems {
         }
         return lse;
     }
+    
+    public List<AreasUniversidad> getProgramasEducativos() {
+        TypedQuery<AreasUniversidad> q = f.getEntityManager().createQuery("SELECT a from AreasUniversidad a WHERE a.categoria.categoria = :categoria AND a.vigente = :vigente ORDER BY a.nivelEducativo.nivel DESC, a.nombre ASC", AreasUniversidad.class);
+        q.setParameter("categoria", 9);
+        q.setParameter("vigente", "1");
+        List<AreasUniversidad> l = q.getResultList();
+        if (l.isEmpty() || l == null) {
+            return null;
+        } else {
+            return l;
+        }
+    }
+
+    @Override
+    public List<SelectItem> itemProgramasEducativos() {
+        List<SelectItem> lpe = new ArrayList<>();
+        for(AreasUniversidad a: getProgramasEducativos()){
+            lpe.add(new SelectItem(a.getArea(), a.getNombre(), a.getNombre()));
+        }
+        return lpe;
+    }
 
 }

@@ -10,11 +10,11 @@
 
     <ui:define name="head-end">
         <ui:param name="renderBreadCrumb" value="false"/>
-         <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
         </c:if>  
-        <c:if test="#{!controladorEmpleado.procesoElectoralActivo}">
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
         </c:if>
          
@@ -198,9 +198,9 @@
                                     <p:commandButton  class="btn-primary" icon="fa fa-download" actionListener="#{procesoInscripcion.downloadFicha(a)}" ajax="false"/>
                                 </p:column>
                                 <p:column style="width: 130px;text-align: center;">
-                                    <p:commandButton icon="fa fa-refresh" class="btn-primary" onclick="PF('dglDatosAcademicos').show();" update=":tabw1:frmDatosAcademicos" actionListener="#{fichaAdm.muestraDatosAcademicos(a)}" disabled="#{!(a.estudianteList.size() == 0)}"/>
-                                    <p:commandButton icon="fa fa-question" id="btnE" class="btn-primary" onclick="PF('dglEncuestaAspirante').show();" actionListener="#{fichaAdm.inicializarEncuesta(a)}" update=":tabw1:frmEncuestaA"/>
-                                    <p:tooltip id="toolTipGrow" for="btnE" value="#{fichaAdm.verificaEncuesta(a.idAspirante)}"
+                                    <p:commandButton icon="fa fa-refresh" class="btn-primary" onclick="PF('dglDatosAcademicos').show();" update=":tabw1:frmDatosAcademicos" actionListener="#{FichaAdmision.muestraDatosAcademicos(a)}" disabled="#{!(a.estudianteList.size() == 0)}"/>
+                                    <p:commandButton icon="fa fa-question" id="btnE" class="btn-primary" onclick="PF('dglEncuestaAspirante').show();" actionListener="#{FichaAdmision.inicializarEncuesta(a)}" update=":tabw1:frmEncuestaA"/>
+                                    <p:tooltip id="toolTipGrow" for="btnE" value="#{FichaAdmision.verificaEncuesta(a.idAspirante)}"
                                     showEffect="clip" hideEffect="explode" position="left"/>
                                 </p:column>
                             </p:dataTable>
@@ -214,57 +214,57 @@
                             <f:facet name="header">Carreras ficha de admisión</f:facet>
                             
                             <p:outputLabel for="folio" value="Folio Ficha"/>
-                            <p:outputLabel id="folio" value="#{fichaAdm.datosAcademicos.aspirante1.folioAspirante}"/>
+                            <p:outputLabel id="folio" value="#{FichaAdmision.datosAcademicos.aspirante1.folioAspirante}"/>
                             
                             <p:outputLabel for="nombre" value="Nombre"/>
-                            <p:outputLabel id="nombre" value="#{fichaAdm.datosAcademicos.aspirante1.idPersona.nombre} #{fichaAdm.datosAcademicos.aspirante1.idPersona.apellidoPaterno} #{fichaAdm.datosAcademicos.aspirante1.idPersona.apellidoMaterno}"/>
+                            <p:outputLabel id="nombre" value="#{FichaAdmision.datosAcademicos.aspirante1.idPersona.nombre} #{FichaAdmision.datosAcademicos.aspirante1.idPersona.apellidoPaterno} #{FichaAdmision.datosAcademicos.aspirante1.idPersona.apellidoMaterno}"/>
                             
                             <p:separator/><p:separator/>
                             
                             <p:outputLabel for="areaAPO" value="Área Academica Primera Opción"/>
-                            <p:selectOneMenu id="areaAPO" value="#{fichaAdm.areaAcademicaPO}" class="form-control" required="true" requiredMessage="Debe de indicar la divición academica de la carrera de primera opción">
+                            <p:selectOneMenu id="areaAPO" value="#{FichaAdmision.areaAcademicaPO}" class="form-control" required="true" requiredMessage="Debe de indicar la divición academica de la carrera de primera opción">
                                 <f:selectItem itemValue="#{null}"/>
-                                <f:selectItems value="#{fichaAdm.listaAreasSO}"/>
-                                <p:ajax listener="#{fichaAdm.selectPEPrincipal()}" update="pePO,sistemaPO"/>
+                                <f:selectItems value="#{FichaAdmision.listaAreasSO}"/>
+                                <p:ajax listener="#{FichaAdmision.selectPEPrincipal()}" update="pePO,sistema1"/>
                             </p:selectOneMenu>                            
                             
                             <p:outputLabel for="pePO" value="Programa Educativo Primera Opción"/>
-                            <p:selectOneMenu id="pePO" required="true" class="form-control" value="#{fichaAdm.datosAcademicos.primeraOpcion}" style="width:  375px" requiredMessage="Debe de indicar el programa educativo de la carrera de primera opción">
+                            <p:selectOneMenu id="pePO" required="true" class="form-control" value="#{FichaAdmision.datosAcademicos.primeraOpcion}" style="width:  375px" requiredMessage="Debe de indicar el programa educativo de la carrera de primera opción">
                                 <f:selectItem itemValue="#{null}"/>
-                                <f:selectItems value="#{fichaAdm.listaPEP}"/>
+                                <f:selectItems value="#{FichaAdmision.listaPEP}"/>
                             </p:selectOneMenu>
                             
-                            <p:outputLabel for="sistemaPO" value="Sistema Primera Opción"/>
-                            <p:selectOneMenu id="sistemaPO" required="true" class="form-control" value="#{fichaAdm.datosAcademicos.sistemaPrimeraOpcion}" converter="sistemaConverter" requiredMessage="Debe de indicar el turno del programa educativo">
+                            <p:outputLabel for="sistema1" value="Sistema Primera Opción"/>
+                            <p:selectOneMenu id="sistema1" required="true" class="form-control" value="#{FichaAdmision.datosAcademicos.sistemaPrimeraOpcion}" converter="entidadCEConverter" requiredMessage="Debe de indicar el turno del programa educativo">
                                 <f:selectItem itemValue="#{null}"/>
-                                <f:selectItems value="#{fichaAdm.listaSistema}" var="sistemaPO" itemValue="#{sistemaPO}" itemLabel="#{sistemaPO.nombre}" itemDisabled="#{(sistemaPO.idSistema == 2 and fichaAdm.areaAcademicaPO == 25)}"/>
+                                <f:selectItems value="#{FichaAdmision.listaSistema}" var="sistemaPO" itemValue="#{sistemaPO}" itemLabel="#{sistemaPO.nombre}" itemDisabled="#{(sistemaPO.idSistema == 2 and fichaAdm.areaAcademicaPO == 25)}"/>
                             </p:selectOneMenu>
                             
                             <p:separator/><p:separator/>
                             
                             <p:outputLabel for="areaASO" value="Área Academica Segunda Opción"/>
-                            <p:selectOneMenu id="areaASO" value="#{fichaAdm.areaAcademicaSO}" required="true" requiredMessage="Debe de indicar la divición academica de la carrera de primera opción">
+                            <p:selectOneMenu id="areaASO" value="#{FichaAdmision.areaAcademicaSO}" required="true" requiredMessage="Debe de indicar la divición academica de la carrera de primera opción">
                                 <f:selectItem itemValue="#{null}"/>
-                                <f:selectItems value="#{fichaAdm.listaAreasSO}"/>
-                                <p:ajax listener="#{fichaAdm.selectPEOpcional()}" update="peSO,sistemaSO"/>
+                                <f:selectItems value="#{FichaAdmision.listaAreasSO}"/>
+                                <p:ajax listener="#{FichaAdmision.selectPEOpcional()}" update="peSO,sistema2"/>
                             </p:selectOneMenu>                            
                             
                             <p:outputLabel for="peSO" value="Programa Educativo Segunda Opción"/>
-                            <p:selectOneMenu id="peSO" required="true" value="#{fichaAdm.datosAcademicos.segundaOpcion}" style="width:  375px" requiredMessage="Debe de indicar el programa educativo de la carrera de primera opción">
+                            <p:selectOneMenu id="peSO" required="true" value="#{FichaAdmision.datosAcademicos.segundaOpcion}" style="width:  375px" requiredMessage="Debe de indicar el programa educativo de la carrera de primera opción">
                                 <f:selectItem itemValue="#{null}"/>
-                                <f:selectItems value="#{fichaAdm.listaPES}"/>
+                                <f:selectItems value="#{FichaAdmision.listaPES}"/>
                             </p:selectOneMenu>
                             
-                            <p:outputLabel for="sistemaSO" value="Sistema Segunda Opción"/>
-                            <p:selectOneMenu id="sistemaSO" required="true" value="#{fichaAdm.datosAcademicos.sistemaSegundaOpcion}" converter="sistemaConverter" requiredMessage="Debe de indicar el turno del programa educativo">
+                            <p:outputLabel for="sistema2" value="Sistema Segunda Opción"/>
+                            <p:selectOneMenu id="sistema2" required="true" value="#{FichaAdmision.datosAcademicos.sistemaSegundaOpcion}" converter="entidadCEConverter" requiredMessage="Debe de indicar el turno del programa educativo">
                                 <f:selectItem itemValue="#{null}"/>
-                                <f:selectItems value="#{fichaAdm.listaSistema}" var="sistemaPO" itemValue="#{sistemaPO}" itemLabel="#{sistemaPO.nombre}" itemDisabled="#{(sistemaSO.idSistema == 2 and fichaAdm.areaAcademicaSO == 25)}"/>
+                                <f:selectItems value="#{FichaAdmision.listaSistema}" var="sistemaPO" itemValue="#{sistemaPO}" itemLabel="#{sistemaPO.nombre}" itemDisabled="#{(sistemaSO.idSistema == 2 and FichaAdmision.areaAcademicaSO == 25)}"/>
                             </p:selectOneMenu>
                             
                             <f:facet name="footer">
                                 <p:row>
                                     <p:column colspan="2" style="align-content: center">
-                                        <center><p:commandButton id="btn" value="Actualiza Datos" icon="fa fa-search" styleClass="btn-primary" style="width: 30%;" actionListener="#{fichaAdm.actualizaDatosAcademicos()}" update=":tabw1:frmListaA">
+                                        <center><p:commandButton id="btn" value="Actualiza Datos" icon="fa fa-search" styleClass="btn-primary" style="width: 30%;" actionListener="#{FichaAdmision.actualizaDatosAcademicos()}" update=":tabw1:frmListaA">
                                             </p:commandButton> </center>
                                     </p:column>
                                 </p:row>
@@ -291,10 +291,10 @@
                                                             Las preguntas marcadas con un <b><strong style="color : red;">*</strong></b> son obligatorias.
                                                         </span>
                                                     </h4>-->
-                                                    <c:if test="#{fichaAdm.finalizado}">
+                                                    <c:if test="#{FichaAdmision.finalizado}">
                                                         <h4><span class="label aceptado"><i class="fa fa-check" />Ha finalizado el cuestionario.</span></h4>                                 
                                                     </c:if>
-                                                    <c:if test="#{!fichaAdm.finalizado}">
+                                                    <c:if test="#{!FichaAdmision.finalizado}">
                                                         <h4><span class="label denegado" style="color: black;"><i class="fa fa-close" />Debe responder todas las preguntas.</span></h4>
                                                     </c:if>
                                                 </f:facet>
@@ -335,138 +335,138 @@
                                                 <table class="table table-striped table-responsive">
                                                     <tbody>
                                                         <c:set var="index" value="#{0}" />
-                                                        <c:set var="pregunta" value="#{fichaAdm.apartados[0].preguntas[index]}" />
+                                                        <c:set var="pregunta" value="#{FichaAdmision.apartados[0].preguntas[index]}" />
                                                         <tr>
                                                             <td>#{pregunta.numero}</td>
                                                             <td style="text-align: justify;">#{pregunta.titulo}</td>
                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                 <f:ajax execute="p#{index}">
-                                                                    <p:selectOneButton id="p#{index}" value="#{fichaAdm.resultado.r1Lenguaindigena}" valueChangeListener="#{fichaAdm.guardar}">
-                                                                        <f:selectItems value="#{fichaAdm.siNo}" />
+                                                                    <p:selectOneButton id="p#{index}" value="#{FichaAdmision.resultado.r1Lenguaindigena}" valueChangeListener="#{FichaAdmision.guardar}">
+                                                                        <f:selectItems value="#{FichaAdmision.siNo}" />
                                                                     </p:selectOneButton>
                                                                 </f:ajax>
                                                                 <c:set var="index" value="#{index+1}" />
                                                             </td>
                                                         </tr><!-- 1 -->
-                                                        <c:set var="pregunta" value="#{fichaAdm.apartados[0].preguntas[index]}" />
+                                                        <c:set var="pregunta" value="#{FichaAdmision.apartados[0].preguntas[index]}" />
                                                         <tr>
                                                             <td>#{pregunta.numero}</td>
                                                             <td style="text-align: justify;">#{pregunta.titulo}</td>
                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                 <f:ajax execute="p#{index}">
-                                                                    <p:selectOneMenu value="#{fichaAdm.resultado.r2tipoLenguaIndigena}" valueChangeListener="#{fichaAdm.guardar}" converter="lenguaIndigenaConverter" disabled="#{fichaAdm.mostrar}">
+                                                                    <p:selectOneMenu value="#{FichaAdmision.resultado.r2tipoLenguaIndigena}" id="li" valueChangeListener="#{FichaAdmision.guardar}" converter="entidadCEConverter" disabled="#{FichaAdmision.mostrar}">
                                                                         <f:selectItem itemValue="#{null}"/>
-                                                                        <f:selectItems value="#{fichaAdm.listaLenguasIndigenas}" var="li" itemLabel="#{li.nombre}" itemValue="#{li}"/>
+                                                                        <f:selectItems value="#{FichaAdmision.listaLenguasIndigenas}" var="li" itemLabel="#{li.nombre}" itemValue="#{li}"/>
                                                                     </p:selectOneMenu>
                                                                 </f:ajax>
                                                                 <c:set var="index" value="#{index+1}" />
                                                             </td>
                                                         </tr><!-- 2 -->
-                                                        <c:set var="pregunta" value="#{fichaAdm.apartados[0].preguntas[index]}" />
+                                                        <c:set var="pregunta" value="#{FichaAdmision.apartados[0].preguntas[index]}" />
                                                         <tr>
                                                             <td>#{pregunta.numero}</td>
                                                             <td style="text-align: justify;">#{pregunta.titulo}</td>
                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                 <f:ajax execute="p#{index}">
-                                                                    <p:selectOneButton id="p#{index}" value="#{fichaAdm.resultado.r3comunidadIndigena}" valueChangeListener="#{fichaAdm.guardar}" disabled="#{fichaAdm.mostrar}">
-                                                                        <f:selectItems value="#{fichaAdm.siNo}" />
+                                                                    <p:selectOneButton id="p#{index}" value="#{FichaAdmision.resultado.r3comunidadIndigena}" valueChangeListener="#{FichaAdmision.guardar}" disabled="#{FichaAdmision.mostrar}">
+                                                                        <f:selectItems value="#{FichaAdmision.siNo}" />
                                                                     </p:selectOneButton>
                                                                 </f:ajax>
                                                                 <c:set var="index" value="#{index+1}" />
                                                             </td>
                                                         </tr><!-- 3 -->
-                                                        <c:set var="pregunta" value="#{fichaAdm.apartados[0].preguntas[index]}" />
+                                                        <c:set var="pregunta" value="#{FichaAdmision.apartados[0].preguntas[index]}" />
                                                         <tr>
                                                             <td>#{pregunta.numero}</td>
                                                             <td style="text-align: justify;">#{pregunta.titulo}</td>
                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                 <f:ajax execute="p#{index}">
-                                                                    <p:selectOneButton id="p#{index}" value="#{fichaAdm.resultado.r4programaBienestar}" valueChangeListener="#{fichaAdm.guardar}">
-                                                                        <f:selectItems value="#{fichaAdm.siNo}" />
+                                                                    <p:selectOneButton id="p#{index}" value="#{FichaAdmision.resultado.r4programaBienestar}" valueChangeListener="#{FichaAdmision.guardar}">
+                                                                        <f:selectItems value="#{FichaAdmision.siNo}" />
                                                                     </p:selectOneButton>
                                                                 </f:ajax>
                                                                 <c:set var="index" value="#{index+1}" />
                                                             </td>
                                                         </tr><!-- 4 -->
-                                                        <c:set var="pregunta" value="#{fichaAdm.apartados[0].preguntas[index]}" />
+                                                        <c:set var="pregunta" value="#{FichaAdmision.apartados[0].preguntas[index]}" />
                                                         <tr>
                                                             <td>#{pregunta.numero}</td>
                                                             <td style="text-align: justify;">#{pregunta.titulo}</td>
                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                 <f:ajax execute="p#{index}">
-                                                                    <p:inputNumber value="#{fichaAdm.resultado.r5ingresoMensual}" valueChangeListener="#{fichaAdm.guardar}"/>
+                                                                    <p:inputNumber value="#{FichaAdmision.resultado.r5ingresoMensual}" valueChangeListener="#{FichaAdmision.guardar}"/>
                                                                 </f:ajax>
                                                                 <c:set var="index" value="#{index+1}" />
                                                             </td>
                                                         </tr><!-- 5 -->
-                                                        <c:set var="pregunta" value="#{fichaAdm.apartados[0].preguntas[index]}" />
+                                                        <c:set var="pregunta" value="#{FichaAdmision.apartados[0].preguntas[index]}" />
                                                         <tr>
                                                             <td>#{pregunta.numero}</td>
                                                             <td style="text-align: justify;">#{pregunta.titulo}</td>
                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                 <f:ajax execute="p#{index}">
-                                                                    <p:selectOneButton id="p#{index}" value="#{fichaAdm.resultado.r6dependesEconomicamnete}" valueChangeListener="#{fichaAdm.guardar}">
-                                                                        <f:selectItems value="#{fichaAdm.respuestasDependientesEconomicos}" />
+                                                                    <p:selectOneButton id="p#{index}" value="#{FichaAdmision.resultado.r6dependesEconomicamnete}" valueChangeListener="#{FichaAdmision.guardar}">
+                                                                        <f:selectItems value="#{FichaAdmision.respuestasDependientesEconomicos}" />
                                                                     </p:selectOneButton>
                                                                 </f:ajax>
                                                                 <c:set var="index" value="#{index+1}" />
                                                             </td>
                                                         </tr><!-- 6 -->
-                                                        <c:set var="pregunta" value="#{fichaAdm.apartados[0].preguntas[index]}" />
+                                                        <c:set var="pregunta" value="#{FichaAdmision.apartados[0].preguntas[index]}" />
                                                         <tr>
                                                             <td>#{pregunta.numero}</td>
                                                             <td style="text-align: justify;">#{pregunta.titulo}</td>
                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                 <f:ajax execute="p#{index}">
-                                                                    <p:inputNumber value="#{fichaAdm.resultado.r7ingresoFamiliar}" valueChangeListener="#{fichaAdm.guardar}"/>
+                                                                    <p:inputNumber value="#{FichaAdmision.resultado.r7ingresoFamiliar}" valueChangeListener="#{FichaAdmision.guardar}"/>
                                                                 </f:ajax>
                                                                 <c:set var="index" value="#{index+1}" />
                                                             </td>
                                                         </tr><!-- 7 -->
-                                                        <c:set var="pregunta" value="#{fichaAdm.apartados[0].preguntas[index]}" />
+                                                        <c:set var="pregunta" value="#{FichaAdmision.apartados[0].preguntas[index]}" />
                                                         <tr>
                                                             <td>#{pregunta.numero}</td>
                                                             <td style="text-align: justify;">#{pregunta.titulo}</td>
                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                 <f:ajax execute="p#{index}">
-                                                                    <p:selectOneButton id="p#{index}" value="#{fichaAdm.resultado.r8primerEstudiar}" valueChangeListener="#{fichaAdm.guardar}">
-                                                                       <f:selectItems value="#{fichaAdm.siNo}" />
+                                                                    <p:selectOneButton id="p#{index}" value="#{FichaAdmision.resultado.r8primerEstudiar}" valueChangeListener="#{FichaAdmision.guardar}">
+                                                                       <f:selectItems value="#{FichaAdmision.siNo}" />
                                                                     </p:selectOneButton>
                                                                 </f:ajax>
                                                                 <c:set var="index" value="#{index+1}" />
                                                             </td>
                                                         </tr><!-- 8 -->
-                                                        <c:set var="pregunta" value="#{fichaAdm.apartados[0].preguntas[index]}" />
+                                                        <c:set var="pregunta" value="#{FichaAdmision.apartados[0].preguntas[index]}" />
                                                         <tr>
                                                             <td>#{pregunta.numero}</td>
                                                             <td style="text-align: justify;">#{pregunta.titulo}</td>
                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                 <f:ajax execute="p#{index}">
-                                                                    <p:selectOneButton id="p#{index}" value="#{fichaAdm.resultado.r9nivelMaximoEstudios}" valueChangeListener="#{fichaAdm.guardar}">
-                                                                        <f:selectItems value="#{fichaAdm.respuestasPosiblesNivelEstudios}"/>
+                                                                    <p:selectOneButton id="p#{index}" value="#{FichaAdmision.resultado.r9nivelMaximoEstudios}" valueChangeListener="#{FichaAdmision.guardar}">
+                                                                        <f:selectItems value="#{FichaAdmision.respuestasPosiblesNivelEstudios}"/>
                                                                     </p:selectOneButton>
                                                                 </f:ajax>
                                                                 <c:set var="index" value="#{index+1}" />
                                                             </td>
                                                         </tr><!-- 9 -->
-                                                        <c:set var="pregunta" value="#{fichaAdm.apartados[0].preguntas[index]}" />
+                                                        <c:set var="pregunta" value="#{FichaAdmision.apartados[0].preguntas[index]}" />
                                                         <tr>
                                                             <td>#{pregunta.numero}</td>
                                                             <td style="text-align: justify;">#{pregunta.titulo}</td>
                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                 <f:ajax execute="p#{index}">
-                                                                    <p:spinner value="#{fichaAdm.resultado.r10numeroDependientes}" valueChangeListener="#{fichaAdm.guardar}"/>
+                                                                    <p:spinner value="#{FichaAdmision.resultado.r10numeroDependientes}" valueChangeListener="#{FichaAdmision.guardar}"/>
                                                                 </f:ajax>
                                                                 <c:set var="index" value="#{index+1}" />
                                                             </td>
                                                         </tr><!-- 10 -->
-                                                        <c:set var="pregunta" value="#{fichaAdm.apartados[0].preguntas[index]}" />
+                                                        <c:set var="pregunta" value="#{FichaAdmision.apartados[0].preguntas[index]}" />
                                                         <tr>
                                                             <td>#{pregunta.numero}</td>
                                                             <td style="text-align: justify;">#{pregunta.titulo}</td>
                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                 <f:ajax execute="p#{index}">
-                                                                    <p:selectOneButton id="p#{index}" value="#{fichaAdm.resultado.r11situacionEconomica}" valueChangeListener="#{fichaAdm.guardar}">
+                                                                    <p:selectOneButton id="p#{index}" value="#{FichaAdmision.resultado.r11situacionEconomica}" valueChangeListener="#{FichaAdmision.guardar}">
                                                                         <f:selectItem itemValue="Alta" itemLabel="Alta"/>
                                                                         <f:selectItem itemValue="Media" itemLabel="Media"/>
                                                                         <f:selectItem itemValue="Baja" itemLabel="Baja"/>
@@ -475,106 +475,106 @@
                                                                 <c:set var="index" value="#{index+1}" />
                                                             </td>
                                                         </tr><!-- 11 -->
-                                                        <c:set var="pregunta" value="#{fichaAdm.apartados[0].preguntas[index]}" />
+                                                        <c:set var="pregunta" value="#{FichaAdmision.apartados[0].preguntas[index]}" />
                                                         <tr>
                                                             <td>#{pregunta.numero}</td>
                                                             <td style="text-align: justify;">#{pregunta.titulo}</td>
                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                 <f:ajax execute="p#{index}">
-                                                                    <p:selectOneButton id="p#{index}" value="#{fichaAdm.resultado.r12hijoPemex}" valueChangeListener="#{fichaAdm.guardar}">
-                                                                        <f:selectItems value="#{fichaAdm.siNo}" />
+                                                                    <p:selectOneButton id="p#{index}" value="#{FichaAdmision.resultado.r12hijoPemex}" valueChangeListener="#{FichaAdmision.guardar}">
+                                                                        <f:selectItems value="#{FichaAdmision.siNo}" />
                                                                     </p:selectOneButton>
                                                                 </f:ajax>
                                                                 <c:set var="index" value="#{index+1}" />
                                                             </td>
                                                         </tr><!-- 12 -->
-                                                        <c:set var="pregunta" value="#{fichaAdm.apartados[0].preguntas[index]}" />
+                                                        <c:set var="pregunta" value="#{FichaAdmision.apartados[0].preguntas[index]}" />
                                                         <tr>
                                                             <td>#{pregunta.numero}</td>
                                                             <td style="text-align: justify;">#{pregunta.titulo}</td>
                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                 <f:ajax execute="p#{index}">
-                                                                    <p:selectOneButton id="p#{index}" value="#{fichaAdm.resultado.r13utxjPrimeraOpcion}" valueChangeListener="#{fichaAdm.guardar}">
-                                                                        <f:selectItems value="#{fichaAdm.siNo}" />
+                                                                    <p:selectOneButton id="p#{index}" value="#{FichaAdmision.resultado.r13utxjPrimeraOpcion}" valueChangeListener="#{FichaAdmision.guardar}">
+                                                                        <f:selectItems value="#{FichaAdmision.siNo}" />
                                                                     </p:selectOneButton>
                                                                 </f:ajax>
                                                                 <c:set var="index" value="#{index+1}" />
                                                             </td>
                                                         </tr><!-- 13 -->
-                                                        <c:set var="pregunta" value="#{fichaAdm.apartados[0].preguntas[index]}" />
+                                                        <c:set var="pregunta" value="#{FichaAdmision.apartados[0].preguntas[index]}" />
                                                         <tr>
                                                             <td>#{pregunta.numero}</td>
                                                             <td style="text-align: justify;">#{pregunta.titulo}</td>
                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                 <f:ajax execute="p#{index}">
-                                                                    <p:selectOneButton id="p#{index}" value="#{fichaAdm.resultado.r14examenAdmisionOU}" valueChangeListener="#{fichaAdm.guardar}">
-                                                                        <f:selectItems value="#{fichaAdm.siNo}" />
+                                                                    <p:selectOneButton id="p#{index}" value="#{FichaAdmision.resultado.r14examenAdmisionOU}" valueChangeListener="#{FichaAdmision.guardar}">
+                                                                        <f:selectItems value="#{FichaAdmision.siNo}" />
                                                                     </p:selectOneButton>
                                                                 </f:ajax>
                                                                 <c:set var="index" value="#{index+1}" />
                                                             </td>
                                                         </tr><!-- 14 -->
-                                                        <c:set var="pregunta" value="#{fichaAdm.apartados[0].preguntas[index]}" />
+                                                        <c:set var="pregunta" value="#{FichaAdmision.apartados[0].preguntas[index]}" />
                                                         <tr>
                                                             <td>#{pregunta.numero}</td>
                                                             <td style="text-align: justify;">#{pregunta.titulo}</td>
                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                 <f:ajax execute="p#{index}">
-                                                                    <p:selectOneMenu value="#{fichaAdm.resultado.r15medioImpacto}" valueChangeListener="#{fichaAdm.guardar}" converter="medioDifusionConverter">
+                                                                    <p:selectOneMenu value="#{FichaAdmision.resultado.r15medioImpacto}" id="md" valueChangeListener="#{FichaAdmision.guardar}" converter="entidadCEConverter">
                                                                         <f:selectItem itemValue="#{null}"/>
-                                                                        <f:selectItems value="#{fichaAdm.listaMedioDifusion}" var="mdifusion" itemLabel="#{mdifusion.descripcion}" itemValue="#{mdifusion}"/>
+                                                                        <f:selectItems value="#{FichaAdmision.listaMedioDifusion}" var="mdifusion" itemLabel="#{mdifusion.descripcion}" itemValue="#{mdifusion}"/>
                                                                     </p:selectOneMenu>
                                                                 </f:ajax>
                                                                 <c:set var="index" value="#{index+1}" />
                                                             </td>
                                                         </tr><!-- 15 -->
-                                                        <c:set var="pregunta" value="#{fichaAdm.apartados[0].preguntas[index]}" />
+                                                        <c:set var="pregunta" value="#{FichaAdmision.apartados[0].preguntas[index]}" />
                                                         <tr>
                                                             <td>#{pregunta.numero}</td>
                                                             <td style="text-align: justify;">#{pregunta.titulo}</td>
                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                 <f:ajax execute="p#{index}">
-                                                                    <p:selectOneButton id="p#{index}" value="#{fichaAdm.resultado.r16segundaCarrera}" valueChangeListener="#{fichaAdm.guardar}">
-                                                                        <f:selectItems value="#{fichaAdm.siNo}" />
+                                                                    <p:selectOneButton id="p#{index}" value="#{FichaAdmision.resultado.r16segundaCarrera}" valueChangeListener="#{FichaAdmision.guardar}">
+                                                                        <f:selectItems value="#{FichaAdmision.siNo}" />
                                                                     </p:selectOneButton>
                                                                 </f:ajax>
                                                                 <c:set var="index" value="#{index+1}" />
                                                             </td>
                                                         </tr><!-- 16 -->
-                                                        <c:set var="pregunta" value="#{fichaAdm.apartados[0].preguntas[index]}" />
+                                                        <c:set var="pregunta" value="#{FichaAdmision.apartados[0].preguntas[index]}" />
                                                         <tr>
                                                             <td>#{pregunta.numero}</td>
                                                             <td style="text-align: justify;">#{pregunta.titulo}</td>
                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                 <f:ajax execute="p#{index}">
-                                                                    <p:selectOneButton id="p#{index}" value="#{fichaAdm.resultado.r17Alergia}" valueChangeListener="#{fichaAdm.guardar}">
-                                                                        <f:selectItems value="#{fichaAdm.siNo}" />
+                                                                    <p:selectOneButton id="p#{index}" value="#{FichaAdmision.resultado.r17Alergia}" valueChangeListener="#{FichaAdmision.guardar}">
+                                                                        <f:selectItems value="#{FichaAdmision.siNo}" />
                                                                     </p:selectOneButton>
                                                                 </f:ajax>
                                                                 <c:set var="index" value="#{index+1}" />
                                                             </td>
                                                         </tr><!-- 17 -->
-                                                        <c:set var="pregunta" value="#{fichaAdm.apartados[0].preguntas[index]}" />
+                                                        <c:set var="pregunta" value="#{FichaAdmision.apartados[0].preguntas[index]}" />
                                                         <tr>
                                                             <td>#{pregunta.numero}</td>
                                                             <td style="text-align: justify;">#{pregunta.titulo}</td>
                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                 <f:ajax execute="p#{index}">
-                                                                    <p:selectOneButton id="p#{index}" value="#{fichaAdm.resultado.r18padecesEnfermedad}" valueChangeListener="#{fichaAdm.guardar}">
-                                                                        <f:selectItems value="#{fichaAdm.siNo}" />
+                                                                    <p:selectOneButton id="p#{index}" value="#{FichaAdmision.resultado.r18padecesEnfermedad}" valueChangeListener="#{FichaAdmision.guardar}">
+                                                                        <f:selectItems value="#{FichaAdmision.siNo}" />
                                                                     </p:selectOneButton>
                                                                 </f:ajax>
                                                                 <c:set var="index" value="#{index+1}" />
                                                             </td>
                                                         </tr><!-- 18 -->
-                                                        <c:set var="pregunta" value="#{fichaAdm.apartados[0].preguntas[index]}" />
+                                                        <c:set var="pregunta" value="#{FichaAdmision.apartados[0].preguntas[index]}" />
                                                         <tr>
                                                             <td>#{pregunta.numero}</td>
                                                             <td style="text-align: justify;">#{pregunta.titulo}</td>
                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                 <f:ajax execute="p#{index}">
-                                                                    <p:selectOneButton id="p#{index}" value="#{fichaAdm.resultado.r19tratamientoMedico}" valueChangeListener="#{fichaAdm.guardar}">
-                                                                        <f:selectItems value="#{fichaAdm.siNo}" />
+                                                                    <p:selectOneButton id="p#{index}" value="#{FichaAdmision.resultado.r19tratamientoMedico}" valueChangeListener="#{FichaAdmision.guardar}">
+                                                                        <f:selectItems value="#{FichaAdmision.siNo}" />
                                                                     </p:selectOneButton>
                                                                 </f:ajax>
                                                                 <c:set var="index" value="#{index+1}" />
@@ -632,9 +632,9 @@
                                                             </div>
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                 <p:outputLabel for="tipoS" style="font-size: large" value="Tipo Sangre*"/>
-                                                                <p:selectOneMenu id="tipoS" required="true" value="#{procesoInscripcion.personaValido.datosMedicos.cveTipoSangre}" converter="tipoSangreConverter" requiredMessage="Es nesesario que ingrese su tipo de sangre">
+                                                                <p:selectOneMenu id="tipoS" required="true" value="#{procesoInscripcion.personaValido.datosMedicos.cveTipoSangre}" converter="entidadCEConverter" requiredMessage="Es nesesario que ingrese su tipo de sangre">
                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                    <f:selectItems value="#{fichaAdm.listaTipoSangre}"/>
+                                                                    <f:selectItems value="#{FichaAdmision.listaTipoSangre}"/>
                                                                 </p:selectOneMenu>
                                                                 <p:message for="tipoS"><p:autoUpdate/></p:message>
                                                             </div>
@@ -750,12 +750,15 @@
                             <p:dataTable var="estudiantes" value="#{procesoInscripcion.listaEstudiantes}" expandableRowGroups="true" 
                                          emptyMessage="No hay estudiantes registrados para este proceso de inscripción" sortBy="#{estudiantes.carrera}">
                                 <p:headerRow>
-                                    <p:column colspan="7" style="background-color: #00b5ad;">
+                                    <p:column colspan="8" style="background-color: #00b5ad;">
                                         <h:outputText value="#{procesoInscripcion.nombrePE(estudiantes.carrera)}" />
                                     </p:column>
                                 </p:headerRow>
                                 <p:column headerText="Matrícula">
                                     <h:outputText value="#{estudiantes.matricula}"/>
+                                </p:column>
+                                <p:column headerText="Folio Ficha Admisión">
+                                    <h:outputText value="#{estudiantes.aspirante.folioAspirante}"/>
                                 </p:column>
                                 <p:column headerText="Apellido Paterno">
                                     <h:outputText value="#{estudiantes.aspirante.idPersona.apellidoPaterno}"/>
@@ -809,7 +812,7 @@
                             </p:selectOneMenu>
                             
                             <p:outputLabel for="grupo" value="Grupo"/>
-                            <p:selectOneMenu id="grupo" required="true" class="form-control" value="#{procesoInscripcion.estudiante.grupo}" converter="grupoConverter" requiredMessage="Debe de indicar el grupo del/la estudiante">
+                            <p:selectOneMenu id="grupo" required="true" class="form-control" value="#{procesoInscripcion.estudiante.grupo}" converter="entidadCEConverter" requiredMessage="Debe de indicar el grupo del/la estudiante">
                                 <f:selectItem itemValue="#{null}"/>
                                 <f:selectItems value="#{procesoInscripcion.listaGrupos}" var="g" itemLabel="#{g.literal}-#{g.idSistema.nombre}" itemValue="#{g}"/>
                             </p:selectOneMenu>

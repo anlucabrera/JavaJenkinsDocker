@@ -41,7 +41,7 @@ import org.primefaces.model.StreamedContent;
 @Named
 @ManagedBean
 @ViewScoped
-public class ControladorEvaluacionActividadesPyE implements Serializable {
+public class AdminPoaEvaluacion implements Serializable {
 
     private static final long serialVersionUID = -473305993584095094L;
 
@@ -129,7 +129,7 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
         });
          } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEvaluacionActividadesPyE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AdminPoaEvaluacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -144,7 +144,7 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
             consultarListasValidacionFinal();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEvaluacionActividadesPyE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AdminPoaEvaluacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
         
@@ -527,7 +527,7 @@ public class ControladorEvaluacionActividadesPyE implements Serializable {
             files.clear();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
-            Logger.getLogger(ControladorEvaluacionActividadesPyE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AdminPoaEvaluacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

@@ -10,15 +10,16 @@
 
     <ui:define name="head-end">
         <ui:param name="renderBreadCrumb" value="false"/>
-        <!--<link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
-         Inicio estilos par proceso electoral -->
-        <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
     <ui:define name="title">
         Estatus de Ficha de Admisión
     </ui:define>
-    
+
     <ui:define name="description">
         Verificar el estatus tu ficha de admisión
     </ui:define>
@@ -42,7 +43,7 @@
                                                 <div class="form-group">
                                                     <div class="col-sm-3 col-md-3 col-lg-3">
                                                         <p:outputLabel for="curp" style="font-size: large;text-align: right;" value="Ingresa tu CURP" />
-                                                        <p:inputText id="curp" class="form-control" placeholder="Ingresa tu CURP,para buscar tu registro" value="#{fichaAdm.curp}" required="true" requiredMessage="Es necesario que ingrese su CURP"/>
+                                                        <p:inputText id="curp" class="form-control" placeholder="Ingresa tu CURP,para buscar tu registro" value="#{FichaAdmision.curp}" required="true" requiredMessage="Es necesario que ingrese su CURP"/>
                                                         <p:message for="curp"><p:autoUpdate/></p:message>
                                                     </div>
                                                 </div>
@@ -53,7 +54,7 @@
                                                     <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                                         <p:commandButton id="btnBuscaFichaA" value="Buscar Registro" icon="fa fa-search"
-                                                                         class="btn-primary btn-block col-md-3" update="@form" process="@form" actionListener="#{fichaAdm.estatusRegistroFicha()}"/>
+                                                                         class="btn-primary btn-block col-md-3" update="@form" process="@form" actionListener="#{FichaAdmision.estatusRegistroFicha()}"/>
                                                     </div>
                                                 </div>
                                             </div>
@@ -68,7 +69,7 @@
                             <div class="box-header">
                                 <div class="well well-md">
                                     <p style="text-align: justify; font-size: larger;">
-                                        Estimado(a) #{fichaAdm.persona.nombre}
+                                        Estimado(a) #{FichaAdmision.persona.nombre}
                                         <br/>
                                         <br/>
                                         Se le informa que su ficha de admisión ha sido validada, es importante que realice su cuestionario de contexto para aplicación de examen EXANI II y su examen institucional:
@@ -76,18 +77,18 @@
                                         <br/>
                                         Datos de acceso a EXANI II
                                         <br/>
-                                        Usuario: #{fichaAdm.aspirante.folioAspirante}
+                                        Usuario: #{FichaAdmision.aspirante.folioAspirante}
                                         <br/>
-                                        Password: #{fichaAdm.aspirante.folioAspirante}
+                                        Password: #{FichaAdmision.aspirante.folioAspirante}
                                         <br/>
                                         <br/>
                                         Datos de acceso a exámen Institucional
                                         <br/>
                                         Url: <a href="http://escolar.utxj.edu.mx/utxj" target="_blank">Ir a Examen Institucional</a> 
                                         <br/>
-                                        Usuario: #{fichaAdm.aspirante.folioAspirante}
+                                        Usuario: #{FichaAdmision.aspirante.folioAspirante}
                                         <br/>
-                                        Password: #{fichaAdm.persona.curp} 
+                                        Password: #{FichaAdmision.persona.curp} 
                                         <br/>
                                         <br/>
                                         En cuanto estemos en fechas para inscripción deberá de ingresar al apartado Inscripción para poder realizar su trámite.
@@ -101,15 +102,15 @@
                             </div>
                         </p:panel>
                     </c:if>
-                    <c:if test="#{fichaAdm.estatusFicha == false}">
+                    <c:if test="#{FichaAdmision.estatusFicha == false}">
                         <p:panel id="aviso"  widgetVar="panel-solid" styleClass="box-danger box-info">
                             <div class="box-header">
                                 <div class="well well-md">
                                     <p style="text-align: justify; font-size: larger;">
-                                        Estimado(a) #{fichaAdm.persona.nombre}
+                                        Estimado(a) #{FichaAdmision.persona.nombre}
                                         <br/>
                                         <br/>
-                                        Se le informa que su ficha de admisión aún no ha sido validada, espere el correo de confirmación de validación o en su caso intente más tarde realizar la consulta.                                        <br/>
+                                        Se le informa que su ficha de admisión aún no ha sido validada, espere el correo de confirmación de validación o en su caso intente más tarde realizar la consulta.<br/>
                                         <br/>
                                         ATENTAMENTE
                                         <br/>

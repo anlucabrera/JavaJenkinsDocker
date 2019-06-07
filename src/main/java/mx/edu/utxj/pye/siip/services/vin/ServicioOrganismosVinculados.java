@@ -467,8 +467,9 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     @Override
     public List<OrganismosVinculados> getFiltroOrganismoVinculadoEjercicioMesArea(Short ejercicio, String mes, Short area){
         try {
-            return facadeProntuario.getEntityManager().createQuery("SELECT o FROM OrganismosVinculados o JOIN o.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND r.area = :area AND o.estatus = :estatus", OrganismosVinculados.class)
+            return facadeProntuario.getEntityManager().createQuery("SELECT o FROM OrganismosVinculados o JOIN o.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND e.mes = :mes AND r.area = :area AND o.estatus = :estatus", OrganismosVinculados.class)
                     .setParameter("anio", ejercicio)
+                    .setParameter("mes", mes)
                     .setParameter("area", area)
                     .setParameter("estatus", true)
                     .getResultList();

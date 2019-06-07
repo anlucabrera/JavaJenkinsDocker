@@ -11,7 +11,7 @@
     <ui:define name="head-end">
         <ui:param name="renderBreadCrumb" value="false"/>
         <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
         </c:if>        
         <!-- Fin estilos par proceso electoral -->
@@ -902,7 +902,7 @@
                                             </p:outputPanel>
                                         </h:form>
                                     </p:tab>
-                                    <p:tab title="Registro" titletip="#{controladorPersonal.total} registros nuevos" titleStyle="#{controladorPersonal.total eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}">
+                                    <p:tab title="Registro" titletip="#{controladorPersonal.total} registros nuevos" titleStyle="#{controladorPersonal.total eq 0 ?'':(utilidadesAcceso.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}">
                                         <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                             <div class="col-md-12">
                                                 <div class="box box-widget widget-user-2">
@@ -910,7 +910,7 @@
                                                         <div class="col-sm-12 border-right">
                                                             <div class="description-block">
                                                                 <p:tabView scrollable="true">
-                                                                    <p:tab title="Formación académica" titletip="#{controladorPersonal.tv1} registros nuevos" titleStyle="#{controladorPersonal.tv1 eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaFormacionAcademica.size() eq 0 ?false:true}">
+                                                                    <p:tab title="Formación académica" titletip="#{controladorPersonal.tv1} registros nuevos" titleStyle="#{controladorPersonal.tv1 eq 0 ?'':(utilidadesAcceso.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaFormacionAcademica.size() eq 0 ?false:true}">
                                                                         <h:form id="frmFA"> 
                                                                             <p:dataTable id="fAc" var="fac" value="#{controladorPersonal.listaFormacionAcademica}" editable="true" style="margin-bottom:20px" rowStyleClass="#{fac.estatus eq 'Denegado' ?'denegado':'aceptado'}"
                                                                                          paginator="true" rows="5"
@@ -978,7 +978,7 @@
 
                                                                         </h:form>
                                                                     </p:tab>
-                                                                    <p:tab title="Experiencia laboral" titletip="#{controladorPersonal.tv2} registros nuevos" titleStyle="#{controladorPersonal.tv2 eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaExperienciasLaborales.size() eq 0 ?false:true}">
+                                                                    <p:tab title="Experiencia laboral" titletip="#{controladorPersonal.tv2} registros nuevos" titleStyle="#{controladorPersonal.tv2 eq 0 ?'':(utilidadesAcceso.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaExperienciasLaborales.size() eq 0 ?false:true}">
                                                                         <h:form id="frmEL"> 
                                                                             <p:dataTable id="eLa" var="ela" value="#{controladorPersonal.listaExperienciasLaborales}" editable="true" style="margin-bottom:20px" rowStyleClass="#{ela.estatus eq 'Denegado' ?'denegado':'aceptado'}"
                                                                                          paginator="true" rows="5"
@@ -1038,7 +1038,7 @@
                                                                             </p:dataTable>  
                                                                         </h:form>
                                                                     </p:tab>
-                                                                    <p:tab title="Actualización profesional" titletip="#{controladorPersonal.tv3} registros nuevos" titleStyle="#{controladorPersonal.tv3 eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaCapacitacionespersonal.size() eq 0 ?false:true}">
+                                                                    <p:tab title="Actualización profesional" titletip="#{controladorPersonal.tv3} registros nuevos" titleStyle="#{controladorPersonal.tv3 eq 0 ?'':(utilidadesAcceso.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaCapacitacionespersonal.size() eq 0 ?false:true}">
                                                                         <h:form id="frmAcP"> 
                                                                             <p:dataTable id="acp" var="aP" value="#{controladorPersonal.listaCapacitacionespersonal}" editable="true" style="margin-bottom:20px" rowStyleClass="#{aP.estatus eq 'Denegado' ?'denegado':'aceptado'}"
                                                                                          paginator="true" rows="5"
@@ -1106,7 +1106,7 @@
                                                                             </p:dataTable>  
                                                                         </h:form>
                                                                     </p:tab>
-                                                                    <p:tab title="Idiomas" titletip="#{controladorPersonal.tv4} registros nuevos" titleStyle="#{controladorPersonal.tv4 eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaIdiomas.size() eq 0 ?false:true}">
+                                                                    <p:tab title="Idiomas" titletip="#{controladorPersonal.tv4} registros nuevos" titleStyle="#{controladorPersonal.tv4 eq 0 ?'':(utilidadesAcceso.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaIdiomas.size() eq 0 ?false:true}">
                                                                         <h:form id="frmLengIndi"> 
                                                                             <p:dataTable id="iDi" var="habidi" value="#{controladorPersonal.listaIdiomas}" editable="true" style="margin-bottom:20px" rowStyleClass="#{habidi.estatus eq 'Denegado' ?'denegado':'aceptado'}"
                                                                                          paginator="true" rows="5"
@@ -1172,7 +1172,7 @@
                                                                             </p:dataTable>  
                                                                         </h:form>
                                                                     </p:tab>
-                                                                    <p:tab title="Desarrollos tecnológicos" titletip="#{controladorPersonal.tv5} registros nuevos" titleStyle="#{controladorPersonal.tv5 eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaDesarrollosTecnologicos.size() eq 0 ?false:true}">
+                                                                    <p:tab title="Desarrollos tecnológicos" titletip="#{controladorPersonal.tv5} registros nuevos" titleStyle="#{controladorPersonal.tv5 eq 0 ?'':(utilidadesAcceso.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaDesarrollosTecnologicos.size() eq 0 ?false:true}">
                                                                         <h:form id="frmDT"> 
                                                                             <p:dataTable id="dTe" var="dte" value="#{controladorPersonal.listaDesarrollosTecnologicos}" editable="true" style="margin-bottom:20px" rowStyleClass="#{dte.estatus eq 'Denegado' ?'denegado':'aceptado'}"
                                                                                          paginator="true" rows="5"
@@ -1232,7 +1232,7 @@
                                                                             </p:dataTable>  
                                                                         </h:form>
                                                                     </p:tab>  
-                                                                    <p:tab title="Premios" titletip="#{controladorPersonal.tv6} registros nuevos" titleStyle="#{controladorPersonal.tv6 eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaDistinciones.size() eq 0 ?false:true}">
+                                                                    <p:tab title="Premios" titletip="#{controladorPersonal.tv6} registros nuevos" titleStyle="#{controladorPersonal.tv6 eq 0 ?'':(utilidadesAcceso.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaDistinciones.size() eq 0 ?false:true}">
                                                                         <h:form id="frmDP"> 
                                                                             <p:dataTable id="dP" var="dp" value="#{controladorPersonal.listaDistinciones}" editable="true" style="margin-bottom:20px" rowStyleClass="#{dp.estatus eq 'Denegado' ?'denegado':'aceptado'}"
                                                                                          paginator="true" rows="5"
@@ -1292,7 +1292,7 @@
                                                                             </p:dataTable>  
                                                                         </h:form>
                                                                     </p:tab>
-                                                                    <p:tab title="Libros publicados" titletip="#{controladorPersonal.tv7} registros nuevos" titleStyle="#{controladorPersonal.tv7 eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaLibrosPubs.size() eq 0 ?false:true}">
+                                                                    <p:tab title="Libros publicados" titletip="#{controladorPersonal.tv7} registros nuevos" titleStyle="#{controladorPersonal.tv7 eq 0 ?'':(utilidadesAcceso.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaLibrosPubs.size() eq 0 ?false:true}">
                                                                         <h:form id="frmLP"> 
                                                                             <p:dataTable id="lp" var="lp" value="#{controladorPersonal.listaLibrosPubs}" editable="true" style="margin-bottom:20px" rowStyleClass="#{lp.estatus eq 'Denegado' ?'denegado':'aceptado'}"
                                                                                          paginator="true" rows="5"
@@ -1352,7 +1352,7 @@
                                                                             </p:dataTable>  
                                                                         </h:form>
                                                                     </p:tab>
-                                                                    <p:tab title="Artículos publicados" titletip="#{controladorPersonal.tv8} registros nuevos" titleStyle="#{controladorPersonal.tv8 eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaArticulosp.size() eq 0 ?false:true}">
+                                                                    <p:tab title="Artículos publicados" titletip="#{controladorPersonal.tv8} registros nuevos" titleStyle="#{controladorPersonal.tv8 eq 0 ?'':(utilidadesAcceso.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaArticulosp.size() eq 0 ?false:true}">
                                                                         <h:form id="frmAP"> 
                                                                             <p:dataTable id="ape" var="ap" value="#{controladorPersonal.listaArticulosp}" editable="true" style="margin-bottom:20px" rowStyleClass="#{ap.estatus eq 'Denegado' ?'denegado':'aceptado'}"
                                                                                          paginator="true" rows="5"
@@ -1412,7 +1412,7 @@
                                                                             </p:dataTable>  
                                                                         </h:form>
                                                                     </p:tab>
-                                                                    <p:tab title="Memorias publicadas" titletip="#{controladorPersonal.tv9} registros nuevos" titleStyle="#{controladorPersonal.tv9 eq 0 ?'':(controladorEmpleado.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaMemoriaspub.size() eq 0 ?false:true}">
+                                                                    <p:tab title="Memorias publicadas" titletip="#{controladorPersonal.tv9} registros nuevos" titleStyle="#{controladorPersonal.tv9 eq 0 ?'':(utilidadesAcceso.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaMemoriaspub.size() eq 0 ?false:true}">
                                                                         <h:form id="frmMP"> 
                                                                             <p:dataTable id="mpe" var="mp" value="#{controladorPersonal.listaMemoriaspub}" editable="true" style="margin-bottom:20px" rowStyleClass="#{mp.estatus eq 'Denegado' ?'denegado':'aceptado'}"
                                                                                          paginator="true" rows="5" 
@@ -1516,35 +1516,35 @@
                                                                     <p:tab title="Acta de nacimiento" >
                                                                         <p:outputPanel id="evidenicas1" style="text-align:center;width: 100%;height: 100%" >
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaActa)}"/>       
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaActa)}"/>       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
                                                                     <p:tab title="Comprobante de domicilio" >
                                                                         <p:outputPanel id="evidenicas2" style="text-align:center;width: 100%;height: 100%" >
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaDomicilio)}"/>       
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaDomicilio)}"/>       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
                                                                     <p:tab title="CURP" >
                                                                         <p:outputPanel id="evidenicas3" style="text-align:center;width: 100%;height: 100%" >
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaCurp)}"/>       
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaCurp)}"/>       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
                                                                     <p:tab title="RFC" >
                                                                         <p:outputPanel id="evidenicas4" style="text-align:center;width: 100%;height: 100%" >
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaRfc)}"/>       
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaRfc)}"/>       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
                                                                     <p:tab title="INE" >
                                                                         <p:outputPanel id="evidenicas5" style="text-align:center;width: 100%;height: 100%" >
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{controladorEmpleado.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaIne)}"/>       
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaIne)}"/>       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>

@@ -120,7 +120,7 @@ public class cuadroMandoIntegralUniversidad implements Serializable {
                 calculosCMI(actividadesPoasFiltradas);
                 grafRA = initMeterGaugeModel();
                 grafRA.setTitle(mes);
-                grafRA.setSeriesColors("666666,808080,a0a0a0");
+                grafRA.setSeriesColors("FF0000,ffff00,66ff33");
                 grafRA.setGaugeLabel(df.format((realizadas.doubleValue() / programadas.doubleValue()) * 100D) + " % avance");
                 grafRA.setGaugeLabelPosition("bottom");
                 grafRA.setShowTickLabels(true);
@@ -162,7 +162,7 @@ public class cuadroMandoIntegralUniversidad implements Serializable {
         calculosCMI(actividadesPoasFiltradas);
         grafRA = initMeterGaugeModel();
         grafRA.setTitle(mes);
-        grafRA.setSeriesColors("666666,808080,a0a0a0");
+        grafRA.setSeriesColors("FF0000,ffff00,66ff33");
         grafRA.setGaugeLabelPosition("bottom");
         grafRA.setShowTickLabels(true);
         grafRA.setLabelHeightAdjust(10);

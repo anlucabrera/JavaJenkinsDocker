@@ -353,6 +353,7 @@ public class ServicioActividadesVarias implements EjbActividadesVarias {
             ActividadesVariasRegistro actVar = new ActividadesVariasRegistro();
             actVar = f.getEntityManager().createQuery("SELECT a FROM ActividadesVariasRegistro a WHERE a.nombre = :nombre AND a.registro <> :registro",ActividadesVariasRegistro.class)
                 .setParameter("nombre", actividadVaria.getNombre())
+                .setParameter("registro", actividadVaria.getRegistro())
                 .getSingleResult();
             if(actVar != null){
                 return true;
@@ -373,6 +374,16 @@ public class ServicioActividadesVarias implements EjbActividadesVarias {
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;
         }
+    }
+
+    @Override
+    public void guardaActividadVaria(ActividadesVariasRegistro actividadVaria, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
+        f.setEntityClass(ActividadesVariasRegistro.class);
+        Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
+        actividadVaria.setRegistro(registro.getRegistro());        
+        f.create(actividadVaria);    
+        f.flush();
+        Messages.addGlobalInfo("<b>Se ha agregado la Actividad Varia: " + actividadVaria.getNombre() + " correctamente.");
     }
 
 }

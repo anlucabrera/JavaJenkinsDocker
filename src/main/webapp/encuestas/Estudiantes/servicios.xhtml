@@ -8,7 +8,9 @@
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:define name="head-end">
-        <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
         <style type="text/css">
             .ui-datatable .ui-datatable-header {
                 text-align: right !important;
@@ -144,7 +146,7 @@
                                 </div>
                                 <p:separator style="max-width: 1000px;" />
                             </c:forEach>
-                            
+
                         </div>
                     </div>
                 </div>

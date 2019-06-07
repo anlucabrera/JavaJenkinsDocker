@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="true"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>  
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if> 
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Estudiante
+    </ui:define>
+    
+    <ui:define name="description">
+        Cédula de identificación de el/la estudiante
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Cédula de identificación"/>
+        <p:panel styleClass="card no-border" header="Cédula de identificación">
+            <h:form id="frm" prependId="false" class="form-inline">
+                <p:messages><p:autoUpdate/> </p:messages>
+                <div class="ui-g ui-fluid">
+                    <div class="ui-g-6 ui-sm-12">
+                        <div class="ui-material">
+                            <p:autoComplete id="matricula" placeholder="Ingresa Matrícula" required="true" value="#{utilToolAcademicas.estudiante}"
+                                            completeMethod="#{utilToolAcademicas.completeEstudiante}" var="estudiante" itemValue="#{estudiante}" itemLabel="#{estudiante.matricula}"
+                                            converter="entidadCEConverter">
+                                <p:column><h:outputText value="#{estudiante.matricula}" /></p:column>
+                                <p:column><h:outputText value="#{estudiante.aspirante.idPersona.apellidoPaterno}" /></p:column>
+                                <p:column><h:outputText value="#{estudiante.aspirante.idPersona.apellidoMaterno}" /></p:column>
+                                <p:column><h:outputText value="#{estudiante.aspirante.idPersona.nombre}" /></p:column>
+                                <p:ajax event="itemSelect" update="@form" listener="#{utilToolAcademicas.mostrarNombres()}"/>
+                            </p:autoComplete>
+                            <p:outputLabel for="matricula" value="Busca por Matrícula"/>
+                            <p:message for="matricula"/>
+                        </div>
+                    </div>
+                    <div class="ui-g-6 ui-sm-12">
+                        <div class="ui-material">
+                            <p:autoComplete id="nombreBusqueda" placeholder="Ingresa Nombre Empezando por Apellido Paterno" required="true" value="#{utilToolAcademicas.estudiante}"
+                                            completeMethod="#{utilToolAcademicas.completeEstudianteXApellidoPaterno}" var="estudianteName" itemValue="#{estudianteName}" itemLabel="#{estudianteName.aspirante.idPersona.apellidoPaterno} #{estudianteName.aspirante.idPersona.apellidoMaterno} #{estudianteName.aspirante.idPersona.nombre}"
+                                            forceSelection="true" minQueryLength="2" queryDelay="1000" converter="entidadCEConverter">
+                                <p:column><h:outputText value="#{estudianteName.aspirante.idPersona.apellidoPaterno}" /></p:column>
+                                <p:column><h:outputText value="#{estudianteName.aspirante.idPersona.apellidoMaterno}" /></p:column>
+                                <p:column><h:outputText value="#{estudianteName.aspirante.idPersona.nombre}" /></p:column>
+                                <p:ajax event="itemSelect" update="@form"/>
+                            </p:autoComplete>
+                            <p:outputLabel for="nombreBusqueda" value="Busca por Nombre"/>
+                            <p:message for="nombreBusqueda"/>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <p:panel header="Datos Personales" class="hidden-xs hidden-sm" styleClass="box box-primary">
+                    <div class="box box-widget widget-user-2">
+                        <div class="widget-user-header bg-aqua-active" style="text-align: center;">
+                            <div class="hidden-xs"><img id="j_idt20" class="img-circle"  style="width: 100px; height: 100px;" src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/287.jpg" /></div>
+                            <p>
+                                #{utilToolAcademicas.estudiante.aspirante.idPersona.apellidoPaterno} #{utilToolAcademicas.estudiante.aspirante.idPersona.apellidoPaterno} #{utilToolAcademicas.estudiante.aspirante.idPersona.nombre}
+                                <br/>
+                                <small> Número de Matrícula:  #{utilToolAcademicas.estudiante.matricula} </small>
+                                <br/>
+                                <small> #{utilToolAcademicas.nombreCarrera}  </small>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="ui-g ui-fluid">
+                        <div class="ui-g-6 ui-sm-12">
+                            <div class="ui-material">
+                                <p:inputText id="nombreCompleto" readonly="true" value="#{utilToolAcademicas.estudiante.aspirante.idPersona.apellidoPaterno} #{utilToolAcademicas.estudiante.aspirante.idPersona.apellidoPaterno} #{utilToolAcademicas.estudiante.aspirante.idPersona.nombre}"/>
+                                <p:outputLabel for="nombreCompleto" value="Nombre"/>
+                                <p:message for="nombreCompleto"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-6 ui-sm-12">
+                            <div class="ui-material">
+                                <p:inputText id="genero" readonly="true"/>
+                                <p:outputLabel for="genero" value="Género"/>
+                                <p:message for="genero"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-6 ui-sm-12">
+                            <div class="ui-material">
+                                <p:inputText id="curp" readonly="true" value="#{utilToolAcademicas.estudiante.aspirante.idPersona.curp}"/>
+                                <p:outputLabel for="curp" value="CURP"/>
+                                <p:message for="curp"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-6 ui-sm-12">
+                            <div class="ui-material">
+                                <p:inputText id="fechaNacimoento" readonly="true" value="#{utilToolAcademicas.estudiante.aspirante.idPersona.fechaNacimiento}">
+                                    <f:convertDateTime pattern="yyyy-MM-dd"/>
+                                </p:inputText>
+                                <p:outputLabel for="fechaNacimoento" value="Fecha de Nacimiento"/>
+                                <p:message for="fechaNacimoento"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-6 ui-sm-12">
+                            <div class="ui-material">
+                                <p:inputText id="edad" readonly="true" value="#{utilToolAcademicas.edad}"/>
+                                <p:outputLabel for="edad" value="Edad (años)"/>
+                                <p:message for="edad"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-6 ui-sm-12">
+                            <div class="ui-material">
+                                <p:inputText id="estadoCivil" readonly="true" value="#{utilToolAcademicas.estudiante.aspirante.idPersona.estadoCivil}"/>
+                                <p:outputLabel for="estadoCivil" value="Estado Civil"/>
+                                <p:message for="estadoCivil"/>
+                            </div>
+                        </div>
+                    </div>
+                </p:panel>
+                <hr/>
+                <p:panel header="Situación Académica Actual" class="hidden-xs hidden-sm" styleClass="box box-primary">
+                    <div class="ui-g ui-fluid">
+                        <div class="ui-g-6 ui-sm-12">
+                            <div class="ui-material">
+                                <p:inputText id="estatus" readonly="true" value="#{utilToolAcademicas.estudiante.tipoEstudiante.descripcion}"/>
+                                <p:outputLabel for="estatus" value="Estatus"/>
+                                <p:message for="estatus"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-6 ui-sm-12">
+                            <div class="ui-material">
+                                <p:inputText id="cuatrimestre" readonly="true" value="#{utilToolAcademicas.estudiante.grupo.grado}"/>
+                                <p:outputLabel for="cuatrimestre" value="Cuatrimestre"/>
+                                <p:message for="cuatrimestre"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-6 ui-sm-12">
+                            <div class="ui-material">
+                                <p:inputText id="grupo" readonly="true" value="#{utilToolAcademicas.estudiante.grupo.literal}"/>
+                                <p:outputLabel for="grupo" value="Grupo"/>
+                                <p:message for="grupo"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-6 ui-sm-12">
+                            <div class="ui-material">
+                                <p:inputText id="sistema" readonly="true" value="#{utilToolAcademicas.estudiante.grupo.idSistema.nombre}"/>
+                                <p:outputLabel for="sistema" value="Sistema"/>
+                                <p:message for="sistema"/>
+                            </div>
+                        </div>
+                    </div>
+                </p:panel>
+                <hr/>
+                <p:panel header="Datos Médicos" class="hidden-xs hidden-sm" styleClass="box box-primary">
+                    <div class="ui-g ui-fluid">
+                        <div class="ui-g-6 ui-sm-12">
+                            <div class="ui-material">
+                                <p:inputText id="estatura" readonly="true" value="#{utilToolAcademicas.estudiante.aspirante.idPersona.datosMedicos.estatura}"/>
+                                <p:outputLabel for="estatura" value="Estura"/>
+                                <p:message for="estatura"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-6 ui-sm-12">
+                            <div class="ui-material">
+                                <p:inputText id="peso" readonly="true" value="#{utilToolAcademicas.estudiante.aspirante.idPersona.datosMedicos.peso}"/>
+                                <p:outputLabel for="peso" value="Peso"/>
+                                <p:message for="peso"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-6 ui-sm-12">
+                            <div class="ui-material">
+                                <p:inputText id="tipoSangre" readonly="true" value="#{utilToolAcademicas.estudiante.aspirante.idPersona.datosMedicos.cveTipoSangre.nombre}"/>
+                                <p:outputLabel for="tipoSangre" value="Tipo Sangre"/>
+                                <p:message for="tipoSangre"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-6 ui-sm-12">
+                            <div class="ui-material">
+                                <p:inputText id="discapacidad" readonly="true" value="#{utilToolAcademicas.estudiante.aspirante.idPersona.datosMedicos.cveDiscapacidad.nombre}"/>
+                                <p:outputLabel for="discapacidad" value="Discapacidad"/>
+                                <p:message for="discapacidad"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-6 ui-sm-12">
+                            <div class="ui-material">
+                                <p:inputText id="nns" readonly="true" value="#{utilToolAcademicas.estudiante.aspirante.idPersona.datosMedicos.nss}"/>
+                                <p:outputLabel for="nns" value="Número Seguro Social"/>
+                                <p:message for="nns"/>
+                            </div>
+                        </div>
+                    </div>
+                </p:panel>
+                <hr/>
+                <p:panel header="Medios de Comunicación" class="hidden-xs hidden-sm" styleClass="box box-primary">
+                    <div class="ui-g ui-fluid">
+                        <div class="ui-g-6 ui-sm-12">
+                            <div class="ui-material">
+                                <p:inputText id="telFijo" readonly="true" value="#{utilToolAcademicas.estudiante.aspirante.idPersona.medioComunicacion.telefonoFijo}"/>
+                                <p:outputLabel for="telFijo" value="Teléfono Fijo"/>
+                                <p:message for="telFijo"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-6 ui-sm-12">
+                            <div class="ui-material">
+                                <p:inputText id="telCel" readonly="true" value="#{utilToolAcademicas.estudiante.aspirante.idPersona.medioComunicacion.telefonoMovil}"/>
+                                <p:outputLabel for="telCel" value="Teléfono Celular"/>
+                                <p:message for="telCel"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-6 ui-sm-12">
+                            <div class="ui-material">
+                                <p:inputText id="email" readonly="true" value="#{utilToolAcademicas.estudiante.aspirante.idPersona.medioComunicacion.email}"/>
+                                <p:outputLabel for="email" value="Correo Electrónico"/>
+                                <p:message for="email"/>
+                            </div>
+                        </div>
+                    </div>
+                </p:panel>
+                <hr/>
+                <p:panel header="Datos Académicos de Procedencia" class="hidden-xs hidden-sm" styleClass="box box-primary">
+                    <div class="ui-g ui-fluid">
+                        <div class="ui-g-6 ui-sm-12">
+                            <div class="ui-material">
+                                <p:inputText id="iems" readonly="true" value="#{utilToolAcademicas.nombreIems}"/>
+                                <p:outputLabel for="iems" value="Bachillerato Procedencia"/>
+                                <p:message for="iems"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-6 ui-sm-12">
+                            <div class="ui-material">
+                                <p:inputText id="especialidadIems" readonly="true" value="#{utilToolAcademicas.estudiante.aspirante.datosAcademicos.especialidadIems.nombre}"/>
+                                <p:outputLabel for="especialidadIems" value="Especialidad Bachillerato"/>
+                                <p:message for="especialidadIems"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-6 ui-sm-12">
+                            <div class="ui-material">
+                                <p:inputText id="promedio" readonly="true" value="#{utilToolAcademicas.estudiante.aspirante.datosAcademicos.promedio}"/>
+                                <p:outputLabel for="promedio" value="Promedio"/>
+                                <p:message for="promedio"/>
+                            </div>
+                        </div>
+                    </div>
+                </p:panel>
+            </h:form>
+        </p:panel>
+    </ui:define>
+</ui:composition>

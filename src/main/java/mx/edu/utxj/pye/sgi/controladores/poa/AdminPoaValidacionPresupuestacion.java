@@ -87,7 +87,7 @@ public class AdminPoaValidacionPresupuestacion implements Serializable {
             areasUniversidadsRegistros.addAll(ejbAreasLogeo.getAreasUniversidadConPoa());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEvaluacionActividadesPyE.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AdminPoaEvaluacion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

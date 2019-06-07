@@ -24,7 +24,7 @@
             }
         </script>
         <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
         </c:if>
         <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGeneralesPrint.css" media="screen" />
@@ -92,8 +92,8 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <c:forEach var="i" begin="0" end="#{consultarPOAReporte.ejeses.size()-1}">
-                                                    <c:set var="eje" value="#{consultarPOAReporte.ejeses.get(i)}"/>
+                                                <c:forEach var="i" begin="0" end="#{areaPoaReporte.ejeses.size()-1}">
+                                                    <c:set var="eje" value="#{areaPoaReporte.ejeses.get(i)}"/>
                                                     <div class="row">
                                                         <div class="col-sm-12 border-right">
                                                             <div class="description-block">

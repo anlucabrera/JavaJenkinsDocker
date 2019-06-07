@@ -32,6 +32,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.ca.DtoActividadesVarias;
 import mx.edu.utxj.pye.siip.dto.ca.DTOActividadVaria;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbActividadesVarias;
@@ -61,6 +62,7 @@ public class ControladorActividadesVariasPYE implements Serializable {
     @EJB    EjbCatalogos            ejbCatalogos;
 
     @Inject ControladorEmpleado         controladorEmpleado;
+    @Inject ControladorModulosRegistro  controladorModulosRegistro;
 
     @PostConstruct
     public void init() {
@@ -315,6 +317,7 @@ public class ControladorActividadesVariasPYE implements Serializable {
     }
     
     public void abrirEdicionActividadVaria(ActividadesVariasRegistro actividadVariaRegistroEditada) {
+        dto.setNuevoRegistro(Boolean.FALSE);
         DTOActividadVaria dtoAvre = new DTOActividadVaria();
         dtoAvre.setActividadVaria(actividadVariaRegistroEditada);
         dto.setRegistro(dtoAvre);
@@ -337,34 +340,67 @@ public class ControladorActividadesVariasPYE implements Serializable {
     }
     
     public void validaFechaInicio(ValueChangeEvent event) {
-        dto.getRegistro().getActividadVaria().setFechaInicio((Date)event.getNewValue());
-        if (dto.getRegistro().getActividadVaria().getFechaInicio().before(dto.getRegistro().getActividadVaria().getFechaFin())) {
+        if ((Date) event.getNewValue() != null && dto.getRegistro().getActividadVaria().getFechaFin() != null) {
+            dto.getRegistro().getActividadVaria().setFechaInicio((Date) event.getNewValue());
+            if (dto.getRegistro().getActividadVaria().getFechaInicio().before(dto.getRegistro().getActividadVaria().getFechaFin())) {
 //            System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() true");          
-        } else {
-            if (dto.getRegistro().getActividadVaria().getFechaFin().before(dto.getRegistro().getActividadVaria().getFechaInicio())) {
-//                System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() false");
-                dto.getRegistro().getActividadVaria().setFechaFin(null);
-                dto.getRegistro().getActividadVaria().setFechaFin(dto.getRegistro().getActividadVaria().getFechaInicio());
-//                Ajax.update("iptFechaTermino");
             } else {
+                if (dto.getRegistro().getActividadVaria().getFechaFin().before(dto.getRegistro().getActividadVaria().getFechaInicio())) {
+//                System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() false");
+                    dto.getRegistro().getActividadVaria().setFechaFin(null);
+                    dto.getRegistro().getActividadVaria().setFechaFin(dto.getRegistro().getActividadVaria().getFechaInicio());
+//                Ajax.update("iptFechaTermino");
+                } else {
 //                System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() true");               
+                }
             }
         }
     }
     
     public void validaFechaFin(ValueChangeEvent event) {
-        dto.getRegistro().getActividadVaria().setFechaFin((Date)event.getNewValue());
-        if (dto.getRegistro().getActividadVaria().getFechaFin().after(dto.getRegistro().getActividadVaria().getFechaInicio())) {
+       if ((Date) event.getNewValue() != null && dto.getRegistro().getActividadVaria().getFechaInicio() != null) {
+            dto.getRegistro().getActividadVaria().setFechaFin((Date) event.getNewValue());
+            if (dto.getRegistro().getActividadVaria().getFechaFin().after(dto.getRegistro().getActividadVaria().getFechaInicio())) {
 //            System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() true");
-        } else {
-            if (dto.getRegistro().getActividadVaria().getFechaInicio().after(dto.getRegistro().getActividadVaria().getFechaFin())) {
-//                System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() false");
-                dto.getRegistro().getActividadVaria().setFechaInicio(null);
-                dto.getRegistro().getActividadVaria().setFechaInicio(dto.getRegistro().getActividadVaria().getFechaFin());
-//                Ajax.update("iptFechaInicio");
             } else {
+                if (dto.getRegistro().getActividadVaria().getFechaInicio().after(dto.getRegistro().getActividadVaria().getFechaFin())) {
+//                System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() false");
+                    dto.getRegistro().getActividadVaria().setFechaInicio(null);
+                    dto.getRegistro().getActividadVaria().setFechaInicio(dto.getRegistro().getActividadVaria().getFechaFin());
+//                Ajax.update("iptFechaInicio");
+                } else {
 //                System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() true");
+                }
             }
+        }
+    }
+    
+    public void nuevoRegistro(){
+        if (dto.getAreaUniversidadPOA() != null) {
+            dto.setNuevoRegistro(Boolean.TRUE);
+            DTOActividadVaria dtoAvre = new DTOActividadVaria();
+            dtoAvre.setActividadVaria(new ActividadesVariasRegistro());
+            dto.setRegistro(dtoAvre);
+            dto.setMensaje("");
+            actualizaInterfazEdicionActividadVaria();
+        }else{
+            Messages.addGlobalWarn("Debes seleccionar un área para poder dar de alta una nueva actividad");
+        }
+    }
+    
+    public void guardarActividadVaria(ActividadesVariasRegistro actividadVaria){
+        ejbActividadesVarias.guardaActividadVaria(actividadVaria, dto.getRegistroTipoAV(), dto.getEjesRegistro(), dto.getAreaUniversidadPOA().getArea(), controladorModulosRegistro.getEventosRegistros());
+        dto.setMensaje("El registro ha sido guardado con exito en la base de datos");
+        buscaActividadesVarias();
+        actualizaInterfazEdicionActividadVaria();
+        Ajax.update("mensaje");
+    }
+    
+    public void accionActividadVaria(ActividadesVariasRegistro actividadVaria){
+        if(dto.getNuevoRegistro()){
+            guardarActividadVaria(actividadVaria);
+        }else{
+            editaActividadVaria(actividadVaria);
         }
     }
 }

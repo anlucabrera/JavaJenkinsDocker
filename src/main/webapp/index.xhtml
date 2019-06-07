@@ -23,17 +23,17 @@
                     plotBands: [{
                     from: 0.0,
                             to: 89.99,
-                            color: '#666666'
+                            color: '#FF0000'
                     },
                     {
                     from: 90.0,
                             to: 94.99,
-                            color: '#808080'
+                            color: '#ffff00'
                     },
                     {
                     from: 95.0,
                             to: 115.99,
-                            color: '#a0a0a0'
+                            color: '#66ff33'
                     }]
             };
             }
@@ -42,7 +42,9 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css"/>
         <!-- Inicio estilos par proceso electoral -->
 
-        <link rel="stylesheet" type="text/css" href="resources/css/procesoElectoral.css" media="screen" />
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
@@ -356,7 +358,7 @@
                                             <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
 
                                             <div class="info-box-content">
-                                                <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
                                                 <span class="info-box-number">#{controladorEmpleado.fechaLimiteCurriculumVitae}.</span>
                                             </div>
                                         </div>

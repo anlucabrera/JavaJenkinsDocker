@@ -762,4 +762,9 @@ public class ControladorCuerposAcademicosPYE implements Serializable{
         Ajax.update("mensaje");
     }
     
+    public void nuevoRegistro(){
+        System.out.println("mx.edu.utxj.pye.siip.controller.pye.ControladorCuerposAcademicosPYE.nuevoRegistro()");
+        dtoCuerposAcademicos.setNuevoRegistro(Boolean.TRUE);
+    }
+    
 }

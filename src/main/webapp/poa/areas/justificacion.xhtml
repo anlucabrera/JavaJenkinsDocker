@@ -24,7 +24,7 @@
             }
         </script>
         <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
         </c:if>        
         <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
@@ -55,7 +55,7 @@
                                             <div class="info-box">
                                                 <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
                                                 <div class="info-box-content">
-                                                    <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                    <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
                                                     <span class="info-box-number">En caso de que al guardar la justificación la información de la tabla se oculte solo presione la tecla F5 y de esta manera la información se volverá a mostrar.</span>
                                                 </div>
                                             </div>
@@ -82,18 +82,18 @@
                                 <div class="col-sm-12 col-md-3 col-lg-3">            
                                     <p:autoUpdate/>
                                     <p:outputLabel value="Eje rector:" />
-                                    <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorPOAJustificacion.asignarParametrosRegistro}">
-                                        <f:selectItems value="#{controladorPOAJustificacion.listaEjesRegistros}" var="eje" itemValue="#{eje.eje}" itemLabel="#{eje.eje} -- #{eje.nombre}" />
-                                        <p:ajax update="estra" listener="#{controladorPOAJustificacion.imprimirValores()}"/>
+                                    <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{areaPoaJustificacion.asignarParametrosRegistro}">
+                                        <f:selectItems value="#{areaPoaJustificacion.listaEjesRegistros}" var="eje" itemValue="#{eje.eje}" itemLabel="#{eje.eje} -- #{eje.nombre}" />
+                                        <p:ajax update="estra" listener="#{areaPoaJustificacion.imprimirValores()}"/>
                                     </p:selectOneMenu> 
                                     <p:message for="eje" display="tooltip" />
                                 </div>
                                 <div class="col-sm-12 col-md-9 col-lg-9">
                                     <p:outputPanel id="estra">
                                         <p:outputLabel value="Estrategia:" /> 
-                                        <p:selectOneMenu filter="true" filterMatchMode="contains" id="estrategia" value="#{controladorPOAJustificacion.estrategias.numero}" valueChangeListener="#{controladorPOAJustificacion.asignarParametrosRegistro}">
-                                            <f:selectItems value="#{controladorPOAJustificacion.listaEstrategias}" var="estrategia" itemValue="#{estrategia.estrategia}" itemLabel="#{estrategia.numero} -- #{estrategia.nombre}" />
-                                            <p:ajax update=":frm" listener="#{controladorPOAJustificacion.imprimirValores()}"/>
+                                        <p:selectOneMenu filter="true" filterMatchMode="contains" id="estrategia" value="#{areaPoaJustificacion.estrategias.numero}" valueChangeListener="#{areaPoaJustificacion.asignarParametrosRegistro}">
+                                            <f:selectItems value="#{areaPoaJustificacion.listaEstrategias}" var="estrategia" itemValue="#{estrategia.estrategia}" itemLabel="#{estrategia.numero} -- #{estrategia.nombre}" />
+                                            <p:ajax update=":frm" listener="#{areaPoaJustificacion.imprimirValores()}"/>
                                         </p:selectOneMenu>
                                     </p:outputPanel>
                                 </div>
@@ -111,10 +111,10 @@
                                 <!--p:commandButton value="Imprimir POA" icon="fa fa-print" class="btn-success">                                        
                                     <p:printer target="dtbBajas" />
                                 </p:commandButton-->
-                                <p:remoteCommand name="actualizarTabla2" actionListener="#{controladorPOAJustificacion.imprimirValores()}" update=":frm:dtbBajas" />
+                                <p:remoteCommand name="actualizarTabla2" actionListener="#{areaPoaJustificacion.imprimirValores()}" update=":frm:dtbBajas" />
 
                                 <p:dataTable id="dtbBajas" widgetVar="dtbBajas" var="ejesRegistro" sortBy="#{ejesRegistro.ejeA.eje}" expandableRowGroups="true"
-                                             value="#{controladorPOAJustificacion.ejesEsLaAp}">
+                                             value="#{areaPoaJustificacion.ejesEsLaAp}">
                                     <!--paginator="true" paginatorTemplate="{Exporters}" -->
 
                                     <!--f:facet name="{Exporters}">
@@ -234,14 +234,14 @@
                                                         <p:column>
                                                             <p:commandButton icon="fa fa-usd" styleClass="btn-primary" rendered="#{pOa.recursosActividadList.isEmpty()?false:true}"
                                                                              oncomplete="PF('dlgRecurso').show()" process="@this" update=":frmRecurso:pnlRecurso">
-                                                                <f:setPropertyActionListener target="#{controladorPOAJustificacion.actividadesPoa}" value="#{pOa}" />
+                                                                <f:setPropertyActionListener target="#{areaPoaJustificacion.actividadesPoa}" value="#{pOa}" />
                                                             </p:commandButton>
                                                         </p:column>
                                                         <p:spacer width="10px"/>
                                                         <p:column>
                                                             <p:commandButton icon="fa fa-comment" styleClass="btn-primary" rendered="#{pOa.recursosActividadList.isEmpty()?false:true}"
                                                                              oncomplete="PF('dlgComentario').show()" process="@this" update=":frmComentario:pnlAgregarComentario">
-                                                                <f:setPropertyActionListener target="#{controladorPOAJustificacion.actividadesPoa}" value="#{pOa}" />
+                                                                <f:setPropertyActionListener target="#{areaPoaJustificacion.actividadesPoa}" value="#{pOa}" />
                                                             </p:commandButton>
                                                         </p:column>
                                                     </p:column>
@@ -260,13 +260,13 @@
             <h:form id="frmComentario">
                 <p:dialog header="Agregar Justificación" widgetVar="dlgComentario" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
                     <p:panelGrid id="pnlAgregarComentario" style="text-align:justify;" columns="1">
-                        <p:outputLabel value="Actividad: #{controladorPOAJustificacion.actividadesPoa.denominacion}" />
-                        <p:inputTextarea id="txtComentario" value="#{controladorPOAJustificacion.actividadesPoa.descripcion}" 
+                        <p:outputLabel value="Actividad: #{areaPoaJustificacion.actividadesPoa.denominacion}" />
+                        <p:inputTextarea id="txtComentario" value="#{areaPoaJustificacion.actividadesPoa.descripcion}" 
                                          rows="5" cols="95" counter="display" maxlength="500" counterTemplate="{0} caracteres restantes." 
                                          styleClass="form-control" autoResize="true" />
                         <p:message for="txtComentario" />
                         <h:outputText id="display" />
-                        <p:commandButton id="btnAceptarComentario" value="Aceptar" actionListener="#{controladorPOAJustificacion.actualizarNuavActividad()}"
+                        <p:commandButton id="btnAceptarComentario" value="Aceptar" actionListener="#{areaPoaJustificacion.actualizarNuavActividad()}"
                                          icon="fa fa-chek" styleClass="btn-primary"  update=":frm:dtbBajas" onsuccess="actualizarTabla2()"
                                          oncomplete="PF('dlgComentario').hide()" />
                     </p:panelGrid>
@@ -278,7 +278,7 @@
                           hideEffect="fade" resizable="false" width="1000" closeOnEscape="true" position="center" >
                     <p:panelGrid id="pnlRecurso" style="text-align:justify;" columns="1">
                         <p:dataTable id="dtbBajas" var="recurso"  sortBy="#{recurso.productoArea.partida.partida}" expandableRowGroups="true" 
-                                     value="#{controladorPOAJustificacion.actividadesPoa.recursosActividadList}" emptyMessage="Sin recurso asignado">
+                                     value="#{areaPoaJustificacion.actividadesPoa.recursosActividadList}" emptyMessage="Sin recurso asignado">
 
                             <f:facet name="header"></f:facet>
 

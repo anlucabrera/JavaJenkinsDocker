@@ -194,4 +194,8 @@ public class Caster {
                 .toString();
 
     }
+    
+    public long getDocsTitulacionTamanioLimite() {
+        return 5 * 1024 * 1024;
+    }
 }

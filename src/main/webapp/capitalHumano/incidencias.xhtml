@@ -11,9 +11,12 @@
     <ui:define name="head-end">
         <ui:param name="renderBreadCrumb" value="false"/>
         <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
-        </c:if>  
+        </c:if>
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
@@ -164,11 +167,11 @@
                                                          rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{incidencia.estatus eq 'Aceptado'?'aceptado':incidencia.estatus eq 'Pendiente'?'pendiente':'denegado'}"
                                                          emptyMessage="No se encontraron Registros." rendered="true">
                                                 <f:facet name="header">
-                                                    <p:outputLabel value="Registro aceptado" style="background: #666666 !important; font-weight: bold"/>  
+                                                    <p:outputLabel value="Registro aceptado" style="background: #00a65a !important; font-weight: bold"/>  
                                                     <p:spacer width="15px"/>
-                                                    <p:outputLabel value="Registro pendiente" style="background: #cccccc !important; font-weight: bold"/> 
+                                                    <p:outputLabel value="Registro pendiente" style="background: #f39c12 !important; font-weight: bold"/> 
                                                     <p:spacer width="15px"/>
-                                                    <p:outputLabel value="Registro denegado" style="background: #ffffff !important; font-weight: bold"/> 
+                                                    <p:outputLabel value="Registro denegado" style="background: #dd4b39 !important; font-weight: bold"/> 
                                                 </f:facet>
 
                                                 <p:ajax event="rowEdit" listener="#{controladorIncidenciasPersonal.onRowEdit}" update="tblActividades" />

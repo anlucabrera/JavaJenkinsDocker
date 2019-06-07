@@ -14,10 +14,10 @@
             <f:viewParam name="activa" value="#{cvHabilidades.pestaniaActiva}"/>
         </f:metadata>
         <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
         </c:if>  
-        <c:if test="#{!controladorEmpleado.procesoElectoralActivo}">
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
         </c:if> 
         <!-- Fin estilos par proceso electoral -->
@@ -78,7 +78,7 @@
                                         <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
 
                                         <div class="info-box-content">
-                                            <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                            <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
                                             <span class="info-box-number">#{controladorEmpleado.fechaLimiteCurriculumVitae}.</span>
                                         </div>
                                     </div>
@@ -121,7 +121,7 @@
                                                                                     <p:outputLabel for="idioma" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Idioma" />
                                                                                     <p:selectOneMenu id="idioma" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.nuevOBJIdiomas.idiomaHablado}" >
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                                                                        <f:selectItems value="#{controladorEmpleado.listaIdiomas}" var="idioma" itemValue="#{idioma}" itemLabel="#{idioma}" />
+                                                                                        <f:selectItems value="#{utilidadesAcceso.listaIdiomas}" var="idioma" itemValue="#{idioma}" itemLabel="#{idioma}" />
                                                                                     </p:selectOneMenu> 
                                                                                     <p:message for="idioma" display="tooltip" />
                                                                                     <hr/>
@@ -262,8 +262,8 @@
                                                                 <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
 
                                                                 <div class="info-box-content">
-                                                                    <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -334,7 +334,7 @@
                                                         <f:facet name="input">
                                                             <h:selectOneMenu value="#{idiomas.idiomaHablado}" style="width:100%">
                                                                 <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
-                                                                <f:selectItems value="#{controladorEmpleado.listaIdiomas}" var="idioma" itemValue="#{idioma}" itemLabel="#{idioma}" />                                                                                    
+                                                                <f:selectItems value="#{utilidadesAcceso.listaIdiomas}" var="idioma" itemValue="#{idioma}" itemLabel="#{idioma}" />                                                                                    
                                                             </h:selectOneMenu>
                                                         </f:facet>
                                                     </p:cellEditor>
@@ -559,8 +559,8 @@
                                                                 <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
 
                                                                 <div class="info-box-content">
-                                                                    <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -661,7 +661,7 @@
                                                                                     <p:selectOneMenu id="lengua" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvHabilidades.nuevOBJLenguas.tipoLengua}">
                                                                                         <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                         <f:selectItem itemValue="#{'NA'}" itemLabel="No Aplica"/>
-                                                                                        <f:selectItems value="#{controladorEmpleado.listaLenguas}" var="idioma" itemValue="#{idioma}" itemLabel="#{idioma}" />
+                                                                                        <f:selectItems value="#{utilidadesAcceso.listaLenguas}" var="idioma" itemValue="#{idioma}" itemLabel="#{idioma}" />
                                                                                     </p:selectOneMenu> 
                                                                                     <p:message for="lengua" display="tooltip" />
                                                                                     <hr/>
@@ -747,8 +747,8 @@
                                                                 <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
 
                                                                 <div class="info-box-content">
-                                                                    <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -812,7 +812,7 @@
                                                         <f:facet name="input">
                                                             <h:selectOneMenu value="#{lenguas.tipoLengua}" style="width:100%">
                                                                 <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
-                                                                <f:selectItems value="#{controladorEmpleado.listaLenguas}" var="lengua" itemValue="#{lengua}" itemLabel="#{lengua}" />                                                                                    
+                                                                <f:selectItems value="#{utilidadesAcceso.listaLenguas}" var="lengua" itemValue="#{lengua}" itemLabel="#{lengua}" />                                                                                    
                                                             </h:selectOneMenu>
                                                         </f:facet>
                                                     </p:cellEditor>

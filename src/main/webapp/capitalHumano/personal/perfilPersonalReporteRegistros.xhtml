@@ -11,7 +11,7 @@
     <ui:define name="head-end">
         <ui:param name="renderBreadCrumb" value="false"/>
         <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
         </c:if>
         <!-- Fin estilos par proceso electoral -->
@@ -82,7 +82,7 @@
                                                 <p:dataTable id="dtbmandosMediosDyC" var="rdrDyC" paginator="true" rows="10" lazy="true"
                                                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                              rowsPerPageTemplate="5,10,15,20,25,30" value="#{controladorPersonalReporteRegistros.listareporteRegistrosDyC}"
-                                                             rowStyleClass="#{rdrDyC.tipo eq 'C'?'denegado':rdrDyC.tipo eq 'B'?'pendiente':'aceptado'}">
+                                                             rowStyleClass="#{rdrDyC.tipo eq 'C'?'aceptado':rdrDyC.tipo eq 'B'?'pendiente':'denegado'}">
                                                     <f:facet name="header">
                                                         FA=Formación Académica <p:spacer width="5px"/>
                                                         EL=Experiencia Laboral<p:spacer width="5px"/>
@@ -130,7 +130,7 @@
                                                 <p:dataTable id="dtbmandosMediosD" var="rdrD" paginator="true" rows="10" lazy="true"
                                                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                              rowsPerPageTemplate="5,10,15,20,25,30" value="#{controladorPersonalReporteRegistros.listareporteRegistrosD}"
-                                                             rowStyleClass="#{rdrD.tipo eq 'C'?'denegado':rdrD.tipo eq 'B'?'pendiente':'aceptado'}"
+                                                             rowStyleClass="#{rdrD.tipo eq 'C'?'aceptado':rdrD.tipo eq 'B'?'pendiente':'denegado'}"
                                                              sortBy="#{rdrD.persona.areaSuperior}" expandableRowGroups="true">
                                                     <f:facet name="header">
                                                         FA=Formación Académica <p:spacer width="5px"/>
@@ -183,7 +183,7 @@
                                                 <p:dataTable id="dtbmandosMediosA" var="rdrA" paginator="true" rows="10" lazy="true"
                                                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                              rowsPerPageTemplate="5,10,15,20,25,30" value="#{controladorPersonalReporteRegistros.listareporteRegistrosA}"
-                                                             rowStyleClass="#{rdrA.tipo eq 'C'?'denegado':rdrA.tipo eq 'B'?'pendiente':'aceptado'}"
+                                                             rowStyleClass="#{rdrA.tipo eq 'C'?'aceptado':rdrA.tipo eq 'B'?'pendiente':'denegado'}"
                                                              sortBy="#{rdrA.persona.areaOperativa}" expandableRowGroups="true">
                                                     <f:facet name="header">
                                                         FA=Formación Académica <p:spacer width="5px"/>

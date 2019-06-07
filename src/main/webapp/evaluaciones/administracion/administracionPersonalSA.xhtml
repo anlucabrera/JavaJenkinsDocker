@@ -11,7 +11,9 @@
 
     <ui:define name="head-end">
         <!-- Inicio estilos par proceso electoral -->
-        <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
         <!-- Fin estilos par proceso electoral -->
         <style type="text/css">
             .ui-datatable .ui-datatable-header {
@@ -104,8 +106,8 @@
                                                        var="area" itemValue="#{area.value}" itemLabel="#{area.label}" 
                                                        itemDescription="#{area.description}"  >
                                         </f:selectItems>
-<!--                                        <f:selectItem itemValue="47" itemLabel="Idiomas" itemDescription="Coordinacion de idiomas"/>
-                                        <f:selectItem itemValue="999" itemLabel="Otros" itemDescription="Personal que imparte clases"/>-->
+                                        <!--                                        <f:selectItem itemValue="47" itemLabel="Idiomas" itemDescription="Coordinacion de idiomas"/>
+                                                                                <f:selectItem itemValue="999" itemLabel="Otros" itemDescription="Personal que imparte clases"/>-->
                                     </p:selectOneMenu>
                                 </f:ajax>
                                 <p:spacer width="10"/>
@@ -440,14 +442,14 @@
                 </p:outputPanel>
             </h:form>
         </p:dialog>
-        
+
         <p:dialog widgetVar="modalGrafica" header="Grafica de respuesta de estudiantes">
             <h:form>
-            <p:outputPanel >
-                <p:growl autoUpdate="true" />
-                <hf:chart type="column" model="#{administrativoEvaluacion.utilAdmin.model}"  title="Respuesta de estudiantes por area"/>                
-            </p:outputPanel>
-        </h:form>
+                <p:outputPanel >
+                    <p:growl autoUpdate="true" />
+                    <hf:chart type="column" model="#{administrativoEvaluacion.utilAdmin.model}"  title="Respuesta de estudiantes por area"/>                
+                </p:outputPanel>
+            </h:form>
         </p:dialog>
     </ui:define>
 </ui:composition>
