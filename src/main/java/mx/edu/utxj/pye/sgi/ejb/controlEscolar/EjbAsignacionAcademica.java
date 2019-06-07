@@ -1,8 +1,11 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import edu.mx.utxj.pye.seut.util.dto.Dto;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateria;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
@@ -135,12 +138,15 @@ public class EjbAsignacionAcademica {
      * @param grupo Grupo al que deben pertenecer las materias
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<Materia>> getMateriasPorAsignar(AreasUniversidad programa, Grupo grupo){
+    public ResultadoEJB<List<DtoMateria>> getMateriasPorAsignar(AreasUniversidad programa, Grupo grupo){
         try{
-            //TODO: buscar lista de materias sin asignar que pertenecen al programa y grupo seleccionado
-            List<Materia> materiasSinAsignar = f.getEntityManager().createQuery("select m from Materia m inner join m.idPlan p left join m.cargaAcademicaList ca where p.idPe=:programaEducativo", Materia.class)
+            //buscar lista de materias sin asignar que pertenecen al programa y grupo seleccionado
+            List<DtoMateria> materiasSinAsignar = f.getEntityManager().createQuery("select m from Materia m inner join m.idPlan p left join m.cargaAcademicaList ca where p.idPe=:programaEducativo", Materia.class)
                     .setParameter("programaEducativo", programa.getArea())
-                    .getResultList();
+                    .getResultStream()
+                    .map(materia -> packMateria(grupo.getIdGrupo(), materia).getValor())
+                    .filter(dtoMateria -> dtoMateria != null)
+                    .collect(Collectors.toList());
             return ResultadoEJB.crearCorrecto(materiasSinAsignar, "Lista de materias sin asignar por grupo y programa");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias sin asignar por grupo y programa. (EjbAsignacionAcademica.getMateriasPorAsignar)", e, null);
@@ -157,7 +163,7 @@ public class EjbAsignacionAcademica {
      * @param operacion Operación a realizar, se permite persistir y eliminar
      * @return Resultado del proceso generando la instancia de carga académica obtenida
      */
-    public ResultadoEJB<CargaAcademica> asignarMateriaDocente(Materia materia, PersonalActivo docente, Grupo grupo, PeriodosEscolares periodo, Operacion operacion){
+    public ResultadoEJB<CargaAcademica> asignarMateriaDocente(Materia materia, PersonalActivo docente, Grupo grupo, PeriodosEscolares periodo, EventoEscolar evento, Operacion operacion){
         try{
             if(materia == null) return ResultadoEJB.crearErroneo(3, "La materia no debe ser nula.", CargaAcademica.class);
             if(grupo == null) return ResultadoEJB.crearErroneo(4, "El grupo no debe ser nulo.", CargaAcademica.class);
@@ -181,6 +187,7 @@ public class EjbAsignacionAcademica {
                         cargaAcademica.setCargaAcademicaPK(pk);
                         cargaAcademica.setGrupo(grupo);
                         cargaAcademica.setMateria(materia);
+                        cargaAcademica.setEvento(evento);
                         f.create(cargaAcademica);
                         return ResultadoEJB.crearCorrecto(cargaAcademica, "La asignación fué registrada correctamente.");
                     }else {//si ya existe se informa
@@ -210,13 +217,16 @@ public class EjbAsignacionAcademica {
      * @param periodo Periodo seleccionado en pantalla
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<CargaAcademica>> getCargaAcademicaPorDocente(PersonalActivo docente, PeriodosEscolares periodo){
+    public ResultadoEJB<List<DtoCargaAcademica>> getCargaAcademicaPorDocente(PersonalActivo docente, PeriodosEscolares periodo){
         try{
             //buscar lista de materias sin asignar que pertenecen al programa y grupo seleccionado
-            List<CargaAcademica> cargas = f.getEntityManager().createQuery("select c from CargaAcademica c inner join c.grupo g where c.cargaAcademicaPK.docente=:docente and g.periodo=:periodo order by g.idPe, g.grado, g.literal, c.materia.nombre", CargaAcademica.class)
+            List<DtoCargaAcademica> cargas = f.getEntityManager().createQuery("select c from CargaAcademica c inner join c.grupo g where c.cargaAcademicaPK.docente=:docente and g.periodo=:periodo order by g.idPe, g.grado, g.literal, c.materia.nombre", CargaAcademica.class)
                     .setParameter("docente", docente.getPersonal().getClave())
                     .setParameter("periodo", periodo.getPeriodo())
-                    .getResultList();
+                    .getResultStream()
+                    .map(ca -> pack(ca).getValor())
+                    .filter(dto -> dto != null)
+                    .collect(Collectors.toList());
             return ResultadoEJB.crearCorrecto(cargas, "Lista de cargas académicas por docente.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de cargas académicas por docente. (EjbAsignacionAcademica.getCargaAcademicaPorDocente)", e, null);
@@ -272,5 +282,60 @@ public class EjbAsignacionAcademica {
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener el total de horas sugeridas por semana. (EjbAsignacionAcademica.getTotalHorasSugeridasPorSemana)", e, Integer.class);
         }
+    }
+
+    /**
+     * Empaqueta una carga académica en su DTO Wrapper
+     * @param cargaAcademica Carga académica que se va a empaquetar
+     * @return Carga académica empaquetada
+     */
+    public ResultadoEJB<DtoCargaAcademica> pack(CargaAcademica cargaAcademica){
+        try{
+            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(2, "No se puede empaquetar una carga académica nula.", DtoCargaAcademica.class);
+            if(cargaAcademica.getCargaAcademicaPK() == null) return ResultadoEJB.crearErroneo(3, "No se puede empaquetar una carga académica con clave nula.", DtoCargaAcademica.class);
+
+            CargaAcademica cargaAcademicaBD = f.getEntityManager().find(CargaAcademica.class, cargaAcademica.getCargaAcademicaPK());
+            if(cargaAcademicaBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar una carga académica no registrada previamente en base de datos.", DtoCargaAcademica.class);
+
+            Grupo grupo = f.getEntityManager().find(Grupo.class, cargaAcademicaBD.getCargaAcademicaPK().getCveGrupo());
+            PeriodosEscolares periodo = f.getEntityManager().find(PeriodosEscolares.class, grupo.getPeriodo());
+            Materia materia = f.getEntityManager().find(Materia.class, cargaAcademicaBD.getCargaAcademicaPK().getCveMateria());
+            PersonalActivo docente = ejbPersonalBean.pack(cargaAcademicaBD.getCargaAcademicaPK().getDocente());
+            DtoCargaAcademica dto = new DtoCargaAcademica(cargaAcademicaBD, periodo, docente, grupo, materia);
+
+            return ResultadoEJB.crearCorrecto(dto, "Carga académica empaquetada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la carga académica (EjbAsignacionAcademica. pack).", e, DtoCargaAcademica.class);
+        }
+    }
+
+    public ResultadoEJB<DtoCargaAcademica> pack(Integer grupo, Integer materia, Integer docente){
+        try{
+            CargaAcademicaPK pk = new CargaAcademicaPK(grupo, materia, docente);
+            return pack(f.getEntityManager().find(CargaAcademica.class, pk));
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la carga académica con claves (EjbAsignacionAcademica. pack).", e, DtoCargaAcademica.class);
+        }
+    }
+
+    public  ResultadoEJB<DtoMateria> packMateria(Integer grupo, Materia materia){
+        try{
+            CargaAcademica cargaAcademica = f.getEntityManager().createQuery("select ca from CargaAcademica ca where ca.cargaAcademicaPK.cveMateria=:materia and ca.cargaAcademicaPK.cveGrupo=:grupo", CargaAcademica.class)
+                    .setParameter("materia", materia.getIdMateria())
+                    .setParameter("grupo", grupo)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+            if(cargaAcademica != null){
+                DtoMateria dto = new DtoMateria(materia, pack(cargaAcademica).getValor());
+                return ResultadoEJB.crearCorrecto(dto, "Materia empaquetada");
+            }else{
+                DtoMateria dto = new DtoMateria(materia, null);
+                return ResultadoEJB.crearCorrecto(dto, "Se empaquetó la materia pero no ha sido asignada.");
+            }
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la materia (EjbAsignacionAcademica.packMateria).", e, DtoMateria.class);
+        }
+
     }
 }

@@ -13,10 +13,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AsignacionAcademicaRolDirector extends AbstractRol {
@@ -57,6 +54,11 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
     @Getter @NonNull private PeriodosEscolares periodo;
 
     /**
+     * Representa la clave
+     */
+    @Getter @NonNull private Integer periodoActivo;
+
+    /**
      * Programa educativo seleccionado para asignar
      */
     @Getter @NonNull private AreasUniversidad programa;
@@ -69,7 +71,7 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
     /**
      * Materia seleccionada y que se va a asignar
      */
-    @Getter @NonNull private Materia materia;
+    @Getter @NonNull private DtoMateria materia;
 
     /**
      * Carga académica registrada o seleccionada para eliminar
@@ -109,7 +111,7 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
     /**
      * Lista de materias sin asignar
      */
-    @Getter @NonNull private List<Materia> materiasSinAsignar;
+    @Getter @NonNull private List<DtoMateria> materiasSinAsignar;
 
     /**
      * Lista de cargas académicas realizadas al docente seleccionado
@@ -145,6 +147,7 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
 
     public void setPeriodo(PeriodosEscolares periodo) {
         this.periodo = periodo;
+        if(periodoActivo != null) soloLectura = !Objects.equals(periodo.getPeriodo(), periodoActivo);
     }
 
     /**
@@ -168,7 +171,7 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
         this.grupo = grupo;
     }
 
-    public void setMateria(Materia materia) {
+    public void setMateria(DtoMateria materia) {
         this.materia = materia;
     }
 
@@ -195,7 +198,7 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
     public void setPeriodos(List<PeriodosEscolares> periodos) {
         this.periodos = periodos;
         if(periodos != null && !periodos.isEmpty()){
-            this.periodo = periodos.get(0);
+            this.setPeriodo(periodos.get(0));
         }
     }
 
@@ -216,7 +219,7 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
         }
     }
 
-    public void setMateriasSinAsignar(List<Materia> materiasSinAsignar) {
+    public void setMateriasSinAsignar(List<DtoMateria> materiasSinAsignar) {
         this.materiasSinAsignar = materiasSinAsignar;
     }
 
@@ -227,5 +230,17 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
     public Boolean getAsignable() {
         asignable = periodo != null && grupo != null && docente != null && materia != null;
         return asignable;
+    }
+
+    public void setAsignable(Boolean asignable) {
+        this.asignable = asignable;
+    }
+
+    public void setPeriodoActivo(Integer periodoActivo) {
+        this.periodoActivo = periodoActivo;
+    }
+
+    public void setProgramas(List<AreasUniversidad> programas) {
+        this.programas = programas;
     }
 }

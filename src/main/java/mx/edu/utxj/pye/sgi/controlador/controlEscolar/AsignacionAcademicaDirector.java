@@ -9,21 +9,21 @@ import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.AsignacionAcademicaRolDirector;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateria;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionAcademica;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
+import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
-import org.omnifaces.util.Faces;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -74,12 +74,16 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
             tieneAcceso = rol.tieneAcceso(director);
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
 
-            // ----------------------------------------------------------------------------------------------------------------------------------------------------------
-            if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
-
             rol.setDirector(director);
             ResultadoEJB<EventoEscolar> resEvento = ejb.verificarEvento(rol.getDirector());
+//            System.out.println("resEvento = " + resEvento);
+            if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
+            // ----------------------------------------------------------------------------------------------------------------------------------------------------------
+            if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
             if(!resEvento.getCorrecto()) mostrarMensajeResultadoEJB(resEvento);
+            rol.setNivelRol(NivelRol.OPERATIVO);
+            rol.setPeriodoActivo(resEvento.getValor().getPeriodo());
+
             rol.setEventoActivo(resEvento.getValor());
 
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
@@ -133,9 +137,9 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
      * Permite invocar la asignaciòn de la materia, para que se lleve acabo, se debió haber seleccionado un docente, una materia, un periodo y un grupo
      * @param materia
      */
-    public void asignarMateria(Materia materia){
+    public void asignarMateria(DtoMateria materia){
         rol.setMateria(materia);
-        ResultadoEJB<CargaAcademica> resAsignacion = ejb.asignarMateriaDocente(rol.getMateria(), rol.getDocente(), rol.getGrupo(), rol.getPeriodo(), Operacion.PERSISTIR);
+        ResultadoEJB<CargaAcademica> resAsignacion = ejb.asignarMateriaDocente(rol.getMateria().getMateria(), rol.getDocente(), rol.getGrupo(), rol.getPeriodo(), rol.getEventoActivo(), Operacion.PERSISTIR);
         mostrarMensajeResultadoEJB(resAsignacion);
     }
 
@@ -143,18 +147,20 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
      * Perimite invocar la eliminaciòn de una asignaciòn
      * @param materia
      */
-    public void eliminarAsignacion(Materia materia){
+    public void eliminarAsignacion(DtoMateria materia){
+        if(materia.getDtoCargaAcademica() == null) mostrarMensaje("No se puede eliminar una asignación que no existe.");
         rol.setMateria(materia);
-        ResultadoEJB<CargaAcademica> resAsignacion = ejb.asignarMateriaDocente(rol.getMateria(), rol.getDocente(), rol.getGrupo(), rol.getPeriodo(), Operacion.PERSISTIR);
+        ResultadoEJB<CargaAcademica> resAsignacion = ejb.asignarMateriaDocente(rol.getMateria().getMateria(), materia.getDtoCargaAcademica().getDocente(), rol.getGrupo(), rol.getPeriodo(), rol.getEventoActivo(), Operacion.ELIMINAR);
         mostrarMensajeResultadoEJB(resAsignacion);
     }
 
     public void actualizarMaterias(){
+        rol.setMateriasSinAsignar(Collections.EMPTY_LIST);
         if(rol.getPeriodo() == null) return;
         if(rol.getPrograma() == null) return;
         if(rol.getGrupo() == null) return;
 
-        ResultadoEJB<List<Materia>> res = ejb.getMateriasPorAsignar(rol.getPrograma(), rol.getGrupo());
+        ResultadoEJB<List<DtoMateria>> res = ejb.getMateriasPorAsignar(rol.getPrograma(), rol.getGrupo());
         if(res.getCorrecto()){
             rol.setMateriasSinAsignar(res.getValor());
         }else mostrarMensajeResultadoEJB(res);

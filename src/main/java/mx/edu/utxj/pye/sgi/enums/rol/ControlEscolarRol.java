@@ -7,16 +7,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ControlEscolarRol {
     ASPIRANTE("Aspirante"),
-    ESTUDIANTE(""),
-    DOCENTE(""),
-    TUTOR(""),
-    ASESOR(""),
-    DIRECTOR(""),
-    SECRETARIA_ACADEMICA(""),
-    SERVICIOS_ESTUDIANTILES(""),
-    PSICOPEDAGOGIA(""),
-    TITULACION(""),
-    ESCOLARES_OPERATIVO(""),
-    ESCOLARES_DIRECTIVO("");
+    ESTUDIANTE("Estudiante"),
+    DOCENTE("Docente"),
+    TUTOR("Tutor"),
+    ASESOR("Asesor"),
+    DIRECTOR("Director"),
+    SECRETARIA_ACADEMICA("Secretaría académica"),
+    SERVICIOS_ESTUDIANTILES("Servicios_estudiantiles"),
+    PSICOPEDAGOGIA("Psicopedagogía"),
+    TITULACION("Titulación"),
+    ESCOLARES_OPERATIVO("Escolares operativo"),
+    ESCOLARES_DIRECTIVO("Escolares directivo");
     @Getter @NonNull private final String label;
 }

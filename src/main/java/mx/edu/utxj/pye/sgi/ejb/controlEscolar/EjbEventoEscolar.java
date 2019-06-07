@@ -27,7 +27,7 @@ public class EjbEventoEscolar {
     public ResultadoEJB<EventoEscolar> verificarEventoAperturado(EventoEscolarTipo tipo){
         try{
             //verificar apertura del evento
-            EventoEscolar eventoEscolar = f.getEntityManager().createQuery("select e from EventoEscolar e where e.tipo=:tipo and current_time between e.inicio and e.fin", EventoEscolar.class)
+            EventoEscolar eventoEscolar = f.getEntityManager().createQuery("select e from EventoEscolar e where e.tipo=:tipo and current_timestamp between e.inicio and e.fin", EventoEscolar.class)
                     .setParameter("tipo", tipo.getLabel())
                     .getResultStream()
                     .findFirst()
@@ -51,7 +51,7 @@ public class EjbEventoEscolar {
     public ResultadoEJB<EventoEscolar> verificarAventoAperturadoPorArea(EventoEscolarTipo tipo, AreasUniversidad area){
         try{
             //verificar apertura del evento contemplando al area como filtro
-            EventoEscolar eventoEscolar = f.getEntityManager().createQuery("select e from EventoEscolar e inner join e.eventoEscolarDetalleList ed where e.tipo=:tipo and ed.area=:area and current_time between ed.inicio and ed.fin", EventoEscolar.class)
+            EventoEscolar eventoEscolar = f.getEntityManager().createQuery("select e from EventoEscolar e inner join e.eventoEscolarDetalleList ed where e.tipo=:tipo and ed.area=:area and current_timestamp between ed.inicio and ed.fin", EventoEscolar.class)
                     .setParameter("tipo", tipo.getLabel())
                     .setParameter("area", area.getArea())
                     .getResultStream()

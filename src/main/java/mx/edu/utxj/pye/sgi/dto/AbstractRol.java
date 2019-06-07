@@ -6,6 +6,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
+import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Rolable;
 
 import java.util.Objects;
@@ -13,6 +14,8 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public abstract class AbstractRol implements Rolable {
     @Getter @Setter @NonNull protected Filter<PersonalActivo> filtro;
+    @Getter @Setter @NonNull protected NivelRol nivelRol = NivelRol.CONSULTA;
+    @Getter @Setter @NonNull protected Boolean soloLectura = true;
 
     @Override
     public Boolean tieneAcceso(PersonalActivo personal) {
