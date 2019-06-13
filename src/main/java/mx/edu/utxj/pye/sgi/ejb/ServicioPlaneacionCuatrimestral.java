@@ -617,8 +617,9 @@ public class ServicioPlaneacionCuatrimestral implements EjbPlaneacionCuatrimestr
     }
 
     @Override
-    public List<VistaTotalAlumnosCarreraPye> mostraralumnosProximosAEstadia() {
-        TypedQuery<VistaTotalAlumnosCarreraPye> q = f2.getEntityManager().createQuery("SELECT v FROM VistaTotalAlumnosCarreraPye v", VistaTotalAlumnosCarreraPye.class);
+    public List<VistaTotalAlumnosCarreraPye> mostraralumnosProximosAEstadia(String numeroNomina) {
+        TypedQuery<VistaTotalAlumnosCarreraPye> q = f2.getEntityManager().createQuery("SELECT v FROM VistaTotalAlumnosCarreraPye v WHERE v.numeroNomina=:numeroNomina", VistaTotalAlumnosCarreraPye.class);
+        q.setParameter("numeroNomina", numeroNomina);
         if (q.getResultList() == null || q.getResultList().isEmpty()) {
             return null;
         } else {

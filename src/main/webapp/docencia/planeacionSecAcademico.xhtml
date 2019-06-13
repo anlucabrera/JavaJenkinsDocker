@@ -26,7 +26,10 @@
         <!-- Inicio estilos par proceso electoral -->
         <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
-        </c:if>        
+        </c:if> 
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />  
+        </c:if>
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
@@ -39,17 +42,6 @@
     </ui:define>
 
     <ui:define name="body">
-        <style>
-            .table-bordered{
-                border: 1px solid #000000;
-            }
-            body .ui-datatable th[role="columnheader"].ui-state-default, body .ui-treetable th[role="columnheader"].ui-state-default{
-                border: 1px solid #000000;
-            }
-            .table-bordered>thead>tr>th, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .table-bordered>tfoot>tr>td{
-                border: 1px solid #000000;
-            }
-        </style>
         <adm:breadcrumb title="Planeación cuatrimestral - Secretario/a Académico/a"/>
         <adm:sidebar collapsed="true"/>
         <h:form id="frm" prependId="false" class="form-inline">
@@ -74,26 +66,29 @@
                             <f:facet name="left">
                                 <p:outputPanel >
                                     <p:autoUpdate/>
+                                    <p:autoUpdate/>
                                     <p:outputLabel value="Total de colaboradores: #{planeacionCuatrimestral.planeaciones.size()}" />
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:outputLabel value="Correctos: #{planeacionCuatrimestral.secretarioAcademicoCorrectas}" />
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:outputLabel value="Validados: #{planeacionCuatrimestral.secretarioAcademicoValidados}" />
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:outputLabel value="Estudiantes en estadía: #{planeacionCuatrimestral.detalles.estudiantesEstadia}" />
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:outputLabel value="Estudiantes en estadía asignados: #{planeacionCuatrimestral.totalEstudiantesAsigandos}" />
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:outputLabel value="Proyectos de estadía: #{planeacionCuatrimestral.detalles.proyectosEstadia}" />
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:outputLabel value="Proyectos de estadía asignados: #{planeacionCuatrimestral.totalProyuectosAsigandos}"/>
+                                    <c:if test="#{planeacionCuatrimestral.proximosAEstadia}">
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Estudiantes en estadía: #{planeacionCuatrimestral.detalles.estudiantesEstadia}"/>
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Estudiantes en estadía asignados: #{planeacionCuatrimestral.totalEstudiantesAsigandos}"/>
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Proyectos de estadía: #{planeacionCuatrimestral.detalles.proyectosEstadia}"/>
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Proyectos de estadía asignados: #{planeacionCuatrimestral.totalProyuectosAsigandos}"/>
+                                    </c:if>
                                 </p:outputPanel>
                             </f:facet>
                             <f:facet name="right">
                                 <p:outputPanel >
                                     <p:autoUpdate/>
                                     <p:commandButton value="Reglas de validación" id="btnRdV" actionListener="#{planeacionCuatrimestral.agregarDocente()}"  oncomplete="PF('dlgRdVPC').show()" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" />
-                                    <p:commandButton value="Liberar planeación" id="btnLPC" actionListener="#{planeacionCuatrimestral.liberarPlaneacionesCuatrimestralesSecretarioAcademico()}" disabled="#{planeacionCuatrimestral.planeacionesliberadasS eq true?true:!planeacionCuatrimestral.planeacionesFinalizadas}" process="@this" icon="fa fa-check" styleClass="btn-primary" update="tblColaboradores" />
+                                    <p:commandButton value="Liberar planeación" id="btnLPC" actionListener="#{planeacionCuatrimestral.liberarPlaneacionesCuatrimestralesSecretarioAcademico()}" disabled="#{planeacionCuatrimestral.planeacionesliberadasS eq true?true:false}" process="@this" icon="fa fa-check" styleClass="btn-primary" update="tblColaboradores" />
                                     <p:commandButton value="Denegar planeación" id="btnDPC" actionListener="#{planeacionCuatrimestral.denegarPlaneacionesCuatrimestralesSecretarioAcademico()}" disabled="#{planeacionCuatrimestral.planeacionesliberadasS eq true?true:planeacionCuatrimestral.planeacionesFinalizadas}" process="@this" icon="fa fa-times" styleClass="btn-primary" update="tblColaboradores" />
                                 </p:outputPanel>
 
@@ -104,12 +99,15 @@
                     <div class="box box-solid">
                         <div class="box-header with-border">
                             <h3 class="box-title">
-                                <c:if test="#{!planeacionCuatrimestral.activa}">
-                                    Sin planeaciones activas
-                                </c:if>
-                                <c:if test="#{planeacionCuatrimestral.activa}">
-                                    Periodo: #{caster.periodoToString(planeacionCuatrimestral.periodo)} -- Director: #{planeacionCuatrimestral.director.nombre}
-                                </c:if>
+                                <p:outputPanel>
+                                    <p:autoUpdate/>
+                                    <c:if test="#{!planeacionCuatrimestral.activa}">
+                                        Sin planeaciones activas
+                                    </c:if>
+                                    <c:if test="#{planeacionCuatrimestral.activa}">
+                                        Periodo: #{caster.periodoToString(planeacionCuatrimestral.periodo)} -- Director: #{planeacionCuatrimestral.director.nombre}
+                                    </c:if>
+                                </p:outputPanel>
                             </h3>
 
                             <div class="box-tools pull-right">
@@ -117,6 +115,43 @@
                                 </button>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 text-info text-center">
+                                <p:outputPanel>
+                                    <p:autoUpdate/>
+                                    <div id="j_idt286" class="ui-steps ui-widget ui-helper-clearfix">
+                                        <ul role="tablist">
+                                            <li class="ui-steps-item ui-state-default ui-corner-all" role="tab">
+                                                <a tabindex="-1" class="ui-menuitem-link ui-corner-all #{planeacionCuatrimestral.planeacionesLiberadas.liberacionSistema ?'aceptado':'denegado'}" href="#">
+                                                    <span class="ui-steps-number"><i class="fa fa-laptop"></i></span>
+                                                    <span class="ui-steps-title">Sistema</span>
+                                                </a>
+                                            </li>
+                                            <li class="ui-steps-item ui-state-default ui-corner-all" role="tab">
+                                                <a tabindex="-1" class="ui-menuitem-link ui-corner-all #{planeacionCuatrimestral.planeacionesLiberadas.liberacionDirector ?'aceptado':'denegado'}" href="#">
+                                                    <span class="ui-steps-number"><i class="fa fa-user"></i></span>
+                                                    <span class="ui-steps-title">Director</span>
+                                                </a>
+                                            </li>
+                                            <li class="ui-steps-item ui-state-default ui-corner-all" role="tab">
+                                                <a tabindex="-1" class="ui-menuitem-link ui-corner-all #{planeacionCuatrimestral.planeacionesLiberadas.validacionSecretarioAcademico ?'aceptado':'denegado'}" href="#">
+                                                    <span class="ui-steps-number"><i class="fa fa-graduation-cap"></i></span>
+                                                    <span class="ui-steps-title">Secretario/a academico</span>
+                                                </a>
+                                            </li>
+                                            <li class="ui-steps-item ui-state-default ui-corner-all" role="tab">
+                                                <a tabindex="-1" class="ui-menuitem-link ui-corner-all #{planeacionCuatrimestral.planeacionesLiberadas.validacionJefePersonal ?'aceptado':'denegado'}" href="#">
+                                                    <span class="ui-steps-number"><i class="fa fa-users"></i></span>
+                                                    <span class="ui-steps-title">Jefe de Personal</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </p:outputPanel>
+                            </div>
+                        </div>
+
+
                         <div class="box-body">
                             <c:if test="#{!planeacionCuatrimestral.activa}">
                                 <div class="row">
@@ -132,18 +167,11 @@
                                     <div class="col-lg-12 col-md-12 text-info text-center">
                                         <p:remoteCommand name="actualizarTabla" actionListener="#{planeacionCuatrimestral.imprimirPlaneaciones()}" update=":tblColaboradores" />
                                         <p:dataTable id="tblColaboradores" value="#{planeacionCuatrimestral.planeaciones}" var="planeacion" rowKey="#{planeacion.planeacion}" widgetVar="tblColaboradores"
-                                                     rows="5" paginator="true" rowsPerPageTemplate="5,10,15,20" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
-                                                     tableStyleClass="table-condensed table-bordered table-hover table-responsive">
+                                                     sortBy="#{planeacion.docente.categoriaOficial.nombre}"
+                                                     rows="10" paginator="true" rowsPerPageTemplate="5,10,15,20" 
+                                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"                                                     >
                                             <f:facet name="header">
-                                                Lista de colaboradores
-                                                <hr/>
-                                                <p:outputLabel value="Validado por el Jefe de personal" style="font-weight: bold; background: #009688"/> 
-                                                <p:spacer width="50px"/>
-                                                <p:outputLabel value="Validado por el Secretario Académico" style="font-weight: bold; background: #FEF200"/>  
-                                                <p:spacer width="50px"/> 
-                                                <p:outputLabel value="Validado por el Director" style="font-weight: bold; background: #f0ad4e"/>   
-                                                <p:spacer width="50px"/>
-                                                <p:outputLabel value="Validado por el Sistema" style="font-weight: bold; background: #EF5350"/>   
+                                                Lista de colaboradores                                               
                                             </f:facet>
                                             <f:facet name="{Exporters}">
                                                 <p:commandLink ajax="false">
@@ -151,36 +179,37 @@
                                                     <pe:exporter type="xlsx" target="tblColaboradores" fileName="planeacion" orientation="Landscape"  />
                                                 </p:commandLink>
                                             </f:facet>
+                                            <p:headerRow>
+                                                <p:column colspan="#{planeacionCuatrimestral.proximosAEstadia ?'16':'13'}" styleClass="lac" style="text-align: left">
+                                                    <h:outputText value="#{planeacion.docente.categoriaOficial.nombre}"/>
+                                                </p:column>
+                                            </p:headerRow> 
                                             <p:columnGroup type="header">
                                                 <p:row class="success">
-                                                    <p:column rowspan="2" headerText="Tipo" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column rowspan="2" headerText="Nombre" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column colspan="2" headerText="Horas clase" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column colspan="3" headerText="Estadías" style=" font-weight: bold; font-size: medium"/>     
-                                                    <p:column rowspan="2" headerText="Proyecto de investigación" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column rowspan="2" headerText="Asesorías clase" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column colspan="2" headerText="Tutoría" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column rowspan="2" headerText="Reunión de academia" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column rowspan="2" headerText="Actividades varias" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column rowspan="2" headerText="Total" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column rowspan="2" headerText="Comentarios sistema" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column rowspan="2" headerText="Validar" style="width: 60px; font-weight: bold; font-size: medium"  />
-                                                    <p:column rowspan="2" headerText="" style="width: 60px;"  />
-                                                    <p:column rowspan="2" headerText="" style="width: 30px;"  />
+                                                    <p:column rowspan="2" headerText="Nombre" style="width: 10%; font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                    <p:column colspan="2" headerText="Horas clase" style="width: 8%;  font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                    <p:column colspan="3" headerText="Estadías" style="width: 24%;  font-weight: bold; font-size: medium" styleClass="hederTablesTitle" rendered="#{planeacionCuatrimestral.proximosAEstadia}"/>                                                    
+                                                    <p:column rowspan="2" headerText="Proyecto de investigación" style="width: 8%;  font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                    <p:column rowspan="2" headerText="Asesorías clase" style="width: 6%;  font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                    <p:column colspan="2" headerText="Tutoría" style="width: 14%;  font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                    <p:column rowspan="2" headerText="Reunión de academia" style="width: 6%;  font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                    <p:column rowspan="2" headerText="Actividades varias" style="width: 8%;  font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                    <p:column rowspan="2" headerText="Total" style="width: 5%;  font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                    <p:column rowspan="2" headerText="Comentarios sistema" style="width: 15%;  font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                    <p:column rowspan="2" headerText="Validar" style="width: 5%;  font-weight: bold; font-size: medium"  styleClass="hederTablesTitle"/>
+                                                    <p:column rowspan="2" headerText="Opciones" style="width: 5%; "   styleClass="hederTablesTitle"/>
                                                 </p:row>
                                                 <p:row class="success">
-                                                    <p:column headerText="TSU" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column headerText="ING" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column headerText="Horas" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column headerText="Estudiantes asignados" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column headerText="Proyectos asignados" style=" font-weight: bold; font-size: medium"/>  
-                                                    <p:column headerText="Individual" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column headerText="Grupal" style=" font-weight: bold; font-size: medium"/>
+                                                    <p:column headerText="TSU" style=" font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                    <p:column headerText="ING" style=" font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                    <p:column headerText="Horas" style=" font-weight: bold; font-size: medium" styleClass="hederTablesTitle" rendered="#{planeacionCuatrimestral.proximosAEstadia}"/>
+                                                    <p:column headerText="Estudiantes asignados" style=" font-weight: bold; font-size: medium" styleClass="hederTablesTitle" rendered="#{planeacionCuatrimestral.proximosAEstadia}"/>
+                                                    <p:column headerText="Proyectos asignados" style=" font-weight: bold; font-size: medium" styleClass="hederTablesTitle" rendered="#{planeacionCuatrimestral.proximosAEstadia}"/>                                                
+                                                    <p:column headerText="Individual" style=" font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                    <p:column headerText="Grupal" style=" font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
                                                 </p:row>
                                             </p:columnGroup>
-                                            <p:column>
-                                                <h:outputText value="#{planeacion.docente.categoriaOficial.nombre}" />
-                                            </p:column>
+
                                             <p:column>
                                                 <h:outputText value="#{planeacion.docente.nombre}" />
                                             </p:column>
@@ -190,13 +219,13 @@
                                             <p:column>
                                                 <h:outputText value="#{planeacion.horasClaseIng}" />
                                             </p:column>
-                                            <p:column>
+                                            <p:column rendered="#{planeacionCuatrimestral.proximosAEstadia}">
                                                 <h:outputText value="#{planeacion.estadias}" />
                                             </p:column>
-                                            <p:column>
+                                            <p:column rendered="#{planeacionCuatrimestral.proximosAEstadia}">
                                                 <h:outputText value="#{planeacion.estudiantesEstadia}" />
                                             </p:column>
-                                            <p:column>
+                                            <p:column rendered="#{planeacionCuatrimestral.proximosAEstadia}">
                                                 <h:outputText value="#{planeacion.proyectosEstadia}" />
                                             </p:column>
                                             <p:column>
@@ -216,7 +245,8 @@
                                             </p:column>
                                             <p:column>
                                                 <h:outputText value="#{planeacion.actividadesVarias}" />
-                                                <p:commandButton value="Detalles" icon="fa fa-ellipsis-v" class="btn-primary" disabled="#{planeacion.validacionSecretarioAdemico}" 
+                                                <p:spacer width="15px"/>
+                                                <p:commandButton title="Detalles" icon="fa fa-info-circle" class="btn-primary" disabled="#{planeacion.validacionSecretarioAdemico}" 
                                                                  oncomplete="PF('dlg1').show()" process="@this" update="dlg1" actionListener="#{planeacionCuatrimestral.buscarActividadesVariasPlaneacionCuatrimestral(planeacion)}">
                                                     <f:setPropertyActionListener target="#{planeacionCuatrimestral.editando}" value="#{planeacion}" />
                                                 </p:commandButton>
@@ -228,7 +258,8 @@
                                                 <h:outputText value="#{planeacion.comentariosSistema}" style="color: #{planeacion.validacionSistema?'#000':'red'};"  />
                                             </p:column>
                                             <p:column>
-                                                <p:selectBooleanCheckbox id="validar" value="#{planeacion.validacionSecretarioAdemico}" disabled="#{planeacionCuatrimestral.planeacionesliberadasS eq true?true:!planeacion.validacionSistema}"
+                                                <p:selectBooleanCheckbox id="validar" value="#{planeacion.validacionSecretarioAdemico}" 
+                                                                         disabled="#{planeacionCuatrimestral.planeacionesliberadasS eq true?true:false}"
                                                                          valueChangeListener="#{planeacionCuatrimestral.validarSecretarioAcademico}"
                                                                          title="Activa la casilla para indicar al Jefe de personal que has validado los valores." >
                                                     <p:ajax update=":tblColaboradores" />
@@ -239,13 +270,6 @@
                                                                  oncomplete="PF('dlgComentario').show()" process="@this" update=":frmComentario:pnlAgregarComentario">
                                                     <f:setPropertyActionListener target="#{planeacionCuatrimestral.editando}" value="#{planeacion}" />
                                                 </p:commandButton>
-                                            </p:column>
-
-                                            <p:column style="#{planeacion.validacionSistema eq true ?
-                                                               planeacion.validacionDirector eq true ?
-                                                               planeacion.validacionSecretarioAdemico eq true ?
-                                                               planeacion.validacionJefePersonal eq true ?'background: #009688':'background: #FEF200':'background: #f0ad4e'
-                                                               :'background: #EF5350':''}">
                                             </p:column>
 
                                         </p:dataTable>

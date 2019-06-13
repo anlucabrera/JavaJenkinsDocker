@@ -190,5 +190,5 @@ public interface EjbPlaneacionCuatrimestral extends AbstractEjb {
 
     public void agregarPlaneacionesDetalles(PlaneacionesDetalles nuevaPlaneacionesDetalles);
     
-    public List<VistaTotalAlumnosCarreraPye> mostraralumnosProximosAEstadia();
+    public List<VistaTotalAlumnosCarreraPye> mostraralumnosProximosAEstadia(String numeroNomina);
 }

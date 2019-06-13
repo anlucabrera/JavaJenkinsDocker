@@ -413,7 +413,19 @@
                                         <i class="fa fa-map"/>
                                     </div>
                                 </div>
-                            </div>       
+                            </div>   
+                            <div class="col-lg-3 col-md-6 col-xs-12">
+                                <div class="small-box bg-yellow">
+                                    <div class="inner">
+                                        <h3>Prontuario</h3>
+                                        <p>Ya se encuentra disponible la nueva versión del Prontuario 2019</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fa fa-bar-chart-o"/>
+                                    </div>
+                                    <a href="http://siip.utxj.edu.mx/prontuario-service2" target="_blank" class="small-box-footer">Consultar</a>
+                                </div>
+                            </div> 
                             <div class="col-lg-3 col-md-6 col-xs-12">
                                 <div class="small-box bg-yellow">
                                     <div class="inner">
@@ -577,28 +589,6 @@
                                         </div>
                                     </div>
                                 </c:if>
-                                <!--c:if test="#{planeacionCuatrimestral.activa}">
-                                    <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-sm-12'}" />
-                                    <div class="#{claseResumen}" style="max-height: 154px;">
-                                        <div class="small-box bg-blue">
-                                            <div class="inner" style="cursor: pointer;" onclick="planeacionCuatrimestral();">
-                                                <h3>
-                                                    <h:outputLabel value="#{planeacionCuatrimestral.mensajeStattusPlaneacion}">
-                                                    </h:outputLabel>
-                                                    <sup style="font-size: 20px"></sup>
-                                                </h3>
-                                                <p>Planeación cuatrimestral<br/>Periodo: # {caster.periodoToString(planeacionCuatrimestral.periodo)}</p>
-                                            </div>                                        
-                                            <div class="icon">
-                                                <i class="fa fa-calendar-check-o"></i>
-                                            </div>                                        
-                                            <p:link outcome="#{planeacionCuatrimestral.outcome}"  class="small-box-footer">
-                                                Ingresar <i class="fa fa-arrow-circle-right"></i>
-                                            </p:link>
-                                            <h:form><p:remoteCommand name="planeacionCuatrimestral" action="#{planeacionCuatrimestral.abrir()}" /></h:form>
-                                        </div>
-                                    </div>
-                                </c:if-->
                                 <c:if test="#{climaLaboral.cargada}">
                                     <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-sm-12'}" />
                                     <div class="col-md-4" style="max-height: 154px;">
@@ -654,7 +644,7 @@
                     </div>
                 </div>
             </c:if>
-            <!--c:if test="#{planeacionCuatrimestral.activa}">
+            <c:if test="#{planeacionCuatrimestral.activa}">
                 <div class="box box-primary">
                     <div class="box box-solid">
                         <div class="box-header with-border">
@@ -676,7 +666,7 @@
                                                     </h:outputLabel>
                                                     <sup style="font-size: 20px"></sup>
                                                 </h3>
-                                                <p>Planeación cuatrimestral<br/>Periodo: # {caster.periodoToString(planeacionCuatrimestral.periodo)}</p>
+                                                <p>Planeación cuatrimestral<br/>Periodo: #{caster.periodoToString(planeacionCuatrimestral.periodo)}</p>
                                             </div>                                        
                                             <div class="icon">
                                                 <i class="fa fa-calendar-check-o"></i>
@@ -692,7 +682,7 @@
                         </div>
                     </div>
                 </div>
-            </c:if-->
+            </c:if>
             <!--c:if test="#{premios.aplica}">
                 <div class="box box-primary">
                     <div class="box box-solid">

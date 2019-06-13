@@ -89,7 +89,7 @@
                     <h:form id="fr1">
                         <p:outputPanel>
                             <p:dataTable id="tblResEncIngTer" value="#{administracionEncuestaServicios.dto.listaEvaCompleta}"
-                                         paginator="true" rows="10" emptyMessage="No se encontraron registros"
+                                         paginator="true" rows="10" emptyMessage="No se encontraron registros" paginatorPosition="top"
                                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                          rowsPerPageTemplate="10,20,30,40,50"
                                          var="encuestaRes" filteredValue="#{administracionEncuestaServicios.dto.listaFiltrado}">
@@ -159,11 +159,11 @@
 
                     </h:form>
                 </p:tab>
-                <p:tab id="noCompletos" title="Resultado encuestas no terminadas">
+                <p:tab id="noCompletos" title="Estudiantes con encuesta no terminada">
                     <h:form id="fr2">
                         <p:outputPanel>
                             <p:dataTable id="tblResEncIngIncom" value="#{administracionEncuestaServicios.dto.listaEvaIncompleta}"
-                                         paginator="true" rows="10" emptyMessage="No se encontraron registros"
+                                         paginator="true" rows="10" emptyMessage="No se encontraron registros" paginatorPosition="top"
                                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                                          rowsPerPageTemplate="10,20,30,40,50"
                                          var="encuestaRes" filteredValue="#{administracionEncuestaServicios.dto.listaFiltrado}">
@@ -218,11 +218,64 @@
                     </h:form>
                 </p:tab>
             </c:if>
-            <c:if test="#{!administracionEncuesta.dto.tutor}">
+
+            <c:if test="#{administracionEncuesta.dto.tutor}">
+                <p:tab title="Porcentaje de avance por grupo">
+                    <h:form id="fr45">
+                        <p:outputPanel>
+                            <p:dataTable id="avanceEncServicios" lazy="false" value="#{administracionAvanceEncuestas.dto.dtoAESPG}" var="datosEncSer" paginator="true" rows="10"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorPosition="top"
+                                         rowsPerPageTemplate="10,20,30,40,50" emptyMessage="No se encontraron registros" filteredValue="#{administracionAvanceEncuestas.dto.dtoAESPGFilter}">
+                                <f:facet name="footer">
+                                    <p:commandButton id="actualizar1" value="Actualizar tabla" icon="fa fa-refresh" class="btn btn-primary"
+                                                     actionListener="#{administracionAvanceEncuestas.mostrarAvanceEncuestaServiciosPorGrupoTutor()}" update="@form" process="@form"/>
+                                </f:facet>
+                                <p:column headerText="Carrera" sortBy="#{datosEncSer.siglas}" filterBy="#{datosEncSer.siglas}" filterMatchMode="contains">
+                                    <h:outputText value="#{datosEncSer.siglas}"/>
+                                </p:column>
+                                <p:column headerText="Grupo">
+                                    <h:outputText value="#{datosEncSer.cveGrupo}"/>
+                                </p:column>
+                                <p:column headerText="Grado">
+                                    <h:outputText value="#{datosEncSer.grado}"/>
+                                </p:column>
+                                <p:column headerText="Total matrícula">
+                                    <h:outputText value="#{datosEncSer.totalPorCarrera}"/>
+                                </p:column>
+                                <p:column headerText="Estudiantes con encuesta completa">
+                                    <h:outputText value="#{datosEncSer.totalAlumnoEncTer}"/>
+                                </p:column>
+                                <p:column headerText="Estudiantes con encuesta incompleta">
+                                    <h:outputText value="#{datosEncSer.faltantesPorCont}"/>
+                                </p:column>
+                                <p:column headerText="Porcentaje de avance: Meta 100%" exportable="false">
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                                             aria-valuenow="#{datosEncSer.porcentaje}" aria-valuemin="0" aria-valuemax="100"
+                                             style="background-color: #00a65a; width:#{datosEncSer.porcentaje}%">
+                                            <span class="progress-completed">
+                                                <h:outputText value="#{datosEncSer.porcentaje}" style="color: #0E0000; font-weight: bold">
+                                                    <f:convertNumber type="number" pattern="0.00"/>
+                                                </h:outputText>
+                                            </span>
+                                        </div>
+
+                                    </div>
+                                </p:column>
+
+
+                            </p:dataTable>
+                        </p:outputPanel>
+
+                    </h:form>
+                </p:tab>
+            </c:if>
+
+            <c:if test="#{administracionEncuesta.dto.planeacion or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.director or administracionEncuesta.dto.esDeIyE}">
                 <p:tab title="Porcentaje de avance por Programa Educativo">
                     <h:form id="fr4">
                         <p:outputPanel>
-                            <p:dataTable id="avanceEncIng" lazy="false" value="#{administracionAvanceEncuestas.dto.avanceEncServ}" var="datosEncEgre"
+                            <p:dataTable id="avanceEncIng" lazy="false" value="#{administracionAvanceEncuestas.dto.dtoLDAES}" var="datosEncEgre" paginatorPosition="top" paginator="true" rows="10"
                                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                                          rowsPerPageTemplate="10,20,30,40,50"
                                          emptyMessage="No se encontraron registros"  >
@@ -262,6 +315,21 @@
                         </p:outputPanel>
 
                     </h:form>
+                </p:tab>
+            </c:if>
+
+            <c:if test="#{logonMB.usuarioTipo eq 'ESTUDIANTE'}">
+                <p:tab title="Información no disponible">
+                    <p:outputPanel>
+                        <div class="row">
+                            <center><span><i style="align-content: center" class="fa fa-exclamation-triangle fa-5x"></i></span></center>
+                        </div>
+                        <div class="row">
+                            <center><h2>Información no disponible</h2></center>
+                        </div>
+
+
+                    </p:outputPanel>
                 </p:tab>
             </c:if>
         </p:tabView>

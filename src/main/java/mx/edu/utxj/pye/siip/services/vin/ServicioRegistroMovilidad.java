@@ -787,9 +787,15 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
         List<RegistrosMovilidad> entities = new ArrayList<>();
       
         areas = ejbModulos.getAreasDependientes(claveArea);
+        if(claveArea==6 || claveArea==9){
+        entities = f.getEntityManager().createQuery("SELECT r FROM RegistrosMovilidad r", RegistrosMovilidad.class)
+                .getResultList();
+        }
+        else{
         entities = f.getEntityManager().createQuery("SELECT r FROM RegistrosMovilidad r INNER JOIN r.registros reg INNER JOIN reg.eventoRegistro er WHERE reg.area IN :areas", RegistrosMovilidad.class)
                 .setParameter("areas", areas)
                 .getResultList();
+        }
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
             Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
@@ -820,10 +826,16 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
         List<RegistroMovilidadDocente> entities = new ArrayList<>();
       
         areas = ejbModulos.getAreasDependientes(claveArea);
+        
+        if(claveArea==6 || claveArea==9){
+         entities = f.getEntityManager().createQuery("SELECT d FROM RegistroMovilidadDocente d", RegistroMovilidadDocente.class)
+                .getResultList();
+         
+        }else{
         entities = f.getEntityManager().createQuery("SELECT d FROM RegistroMovilidadDocente d INNER JOIN d.registroMovilidad r INNER JOIN d.registros reg INNER JOIN reg.eventoRegistro er WHERE reg.area IN :areas", RegistroMovilidadDocente.class)
                 .setParameter("areas", areas)
                 .getResultList();
-      
+        }
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
             Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
@@ -848,10 +860,15 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
         List<RegistroMovilidadEstudiante> entities = new ArrayList<>();
       
         areas = ejbModulos.getAreasDependientes(claveArea);
+        if(claveArea==6 || claveArea==9){
+        entities = f.getEntityManager().createQuery("SELECT e FROM RegistroMovilidadEstudiante e INNER JOIN e.registroMovilidad r", RegistroMovilidadEstudiante.class)
+                .getResultList();
+         
+        }else{
         entities = f.getEntityManager().createQuery("SELECT e FROM RegistroMovilidadEstudiante e INNER JOIN e.registroMovilidad r INNER JOIN e.registros reg INNER JOIN reg.eventoRegistro er WHERE reg.area IN :areas", RegistroMovilidadEstudiante.class)
                 .setParameter("areas", areas)
                 .getResultList();
-  
+        }
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
             Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());

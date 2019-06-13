@@ -644,18 +644,18 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
         List<DTOActFormacionIntegral> l = new ArrayList<>();
         List<ActividadesFormacionIntegral> entities = new ArrayList<>();
       
-//        if(claveArea==6 || claveArea==9){
-//        entities = f.getEntityManager().createQuery("SELECT a FROM ActividadesFormacionIntegral a", ActividadesFormacionIntegral.class)
-//                .getResultList();
-//        }
-//        else{
+        if(claveArea==6 || claveArea==9){
+        entities = f.getEntityManager().createQuery("SELECT a FROM ActividadesFormacionIntegral a", ActividadesFormacionIntegral.class)
+                .getResultList();
+        }
+        else{
             
         areas = ejbModulos.getAreasDependientes(claveArea);
         
         entities = f.getEntityManager().createQuery("SELECT a FROM ActividadesFormacionIntegral a INNER JOIN a.registros reg WHERE reg.area IN :areas", ActividadesFormacionIntegral.class)
                 .setParameter("areas", areas)
                 .getResultList();
-//        }
+        }
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
             
@@ -685,11 +685,19 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
 
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         List<DTOParticipantesActFormInt> l = new ArrayList<>();
-        List<ParticipantesActividadesFormacionIntegral> entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p INNER JOIN p.actividadFormacionIntegral a INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE reg.area IN :areas ORDER BY p.matriculaPeriodosEscolares.matricula ASC", ParticipantesActividadesFormacionIntegral.class)
+        List<ParticipantesActividadesFormacionIntegral> entities = new ArrayList<>();
+        
+        if(claveArea==6 || claveArea==9){
+        entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p ORDER BY p.matriculaPeriodosEscolares.matricula ASC", ParticipantesActividadesFormacionIntegral.class)
+                .getResultList();
+        }
+        else{
+        
+        entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p INNER JOIN p.actividadFormacionIntegral a INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE reg.area IN :areas ORDER BY p.matriculaPeriodosEscolares.matricula ASC", ParticipantesActividadesFormacionIntegral.class)
                 .setParameter("areas", areas)
                 .getResultList();
      
-
+         }
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
             Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());

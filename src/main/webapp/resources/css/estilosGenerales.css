@@ -33,6 +33,20 @@ ui-datatable-header ui-widget-header ui-corner-top{
 .denegado{
     background-color: #f39c12 !important;
 }
+
+.validadoSistema{
+    background: #f0ad4e !important;
+}
+.validadoDirector{
+    background: #FEF200 !important;
+}
+.validadoSecAca{
+    background: #00a7d0 !important;
+}
+.validadoDirPer{
+    background: #009688 !important;
+}
+
 .ui-progressbar{
     position: relative;
     height: 2em;

@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author HOME
  */
 @Entity
 @Table(name = "planeaciones_liberaciones", catalog = "capital_humano", schema = "")
@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "PlaneacionesLiberaciones.findAll", query = "SELECT p FROM PlaneacionesLiberaciones p")
     , @NamedQuery(name = "PlaneacionesLiberaciones.findByPeriodo", query = "SELECT p FROM PlaneacionesLiberaciones p WHERE p.planeacionesLiberacionesPK.periodo = :periodo")
     , @NamedQuery(name = "PlaneacionesLiberaciones.findByDirector", query = "SELECT p FROM PlaneacionesLiberaciones p WHERE p.planeacionesLiberacionesPK.director = :director")
+    , @NamedQuery(name = "PlaneacionesLiberaciones.findByLiberacionSistema", query = "SELECT p FROM PlaneacionesLiberaciones p WHERE p.liberacionSistema = :liberacionSistema")
     , @NamedQuery(name = "PlaneacionesLiberaciones.findByLiberacionDirector", query = "SELECT p FROM PlaneacionesLiberaciones p WHERE p.liberacionDirector = :liberacionDirector")
     , @NamedQuery(name = "PlaneacionesLiberaciones.findByLiberacionDirectorFecha", query = "SELECT p FROM PlaneacionesLiberaciones p WHERE p.liberacionDirectorFecha = :liberacionDirectorFecha")
     , @NamedQuery(name = "PlaneacionesLiberaciones.findByValidacionSecretarioAcademico", query = "SELECT p FROM PlaneacionesLiberaciones p WHERE p.validacionSecretarioAcademico = :validacionSecretarioAcademico")
@@ -47,6 +48,8 @@ public class PlaneacionesLiberaciones implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected PlaneacionesLiberacionesPK planeacionesLiberacionesPK;
+    @Column(name = "liberacion_sistema")
+    private Boolean liberacionSistema;
     @Basic(optional = false)
     @NotNull
     @Column(name = "liberacion_director")
@@ -112,6 +115,14 @@ public class PlaneacionesLiberaciones implements Serializable {
 
     public void setPlaneacionesLiberacionesPK(PlaneacionesLiberacionesPK planeacionesLiberacionesPK) {
         this.planeacionesLiberacionesPK = planeacionesLiberacionesPK;
+    }
+
+    public Boolean getLiberacionSistema() {
+        return liberacionSistema;
+    }
+
+    public void setLiberacionSistema(Boolean liberacionSistema) {
+        this.liberacionSistema = liberacionSistema;
     }
 
     public boolean getLiberacionDirector() {

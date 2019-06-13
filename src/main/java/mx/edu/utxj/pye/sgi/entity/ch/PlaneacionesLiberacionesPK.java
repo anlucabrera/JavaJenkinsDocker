@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  *
- * @author UTXJ
+ * @author HOME
  */
 @Embeddable
 public class PlaneacionesLiberacionesPK implements Serializable {
