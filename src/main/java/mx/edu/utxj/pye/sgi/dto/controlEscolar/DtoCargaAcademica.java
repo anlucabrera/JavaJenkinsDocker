@@ -19,4 +19,5 @@ public class DtoCargaAcademica implements Serializable {
     @Getter @Setter @NonNull PersonalActivo docente;
     @Getter @Setter @NonNull Grupo grupo;
     @Getter @Setter @NonNull Materia materia;
+    @Getter @Setter @NonNull AreasUniversidad programa;
 }

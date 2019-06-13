@@ -9,6 +9,8 @@ import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Rolable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @RequiredArgsConstructor
@@ -16,6 +18,7 @@ public abstract class AbstractRol implements Rolable {
     @Getter @Setter @NonNull protected Filter<PersonalActivo> filtro;
     @Getter @Setter @NonNull protected NivelRol nivelRol = NivelRol.CONSULTA;
     @Getter @Setter @NonNull protected Boolean soloLectura = true;
+    @Getter protected List<String> instrucciones = new ArrayList<>();
 
     @Override
     public Boolean tieneAcceso(PersonalActivo personal) {

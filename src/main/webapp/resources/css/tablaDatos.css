@@ -36,8 +36,9 @@ table[role="grid"]{
     text-align: center;
 }
 
-.ui-dialog-titlebar-close{
-    margin-top: 25px !important;
+.ui-dialog-titlebar-icon{
+    margin-top: 15px !important;
+    display: inline;
 }
 
 .ui-selectonemenu{
@@ -58,4 +59,10 @@ table[role="grid"]{
 
 .campoRecursosObtenidos input{
     width: 45.5em
+}
+
+.alert{
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-bottom: 5px;
 }

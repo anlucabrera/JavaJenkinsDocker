@@ -15,6 +15,7 @@ import mx.edu.utxj.pye.sgi.enums.Operacion;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class AsignacionAcademicaRolDirector extends AbstractRol {
 
@@ -108,6 +109,8 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
      */
     @Getter @NonNull private Map<AreasUniversidad, List<Grupo>> programasGruposMap;
 
+    @Getter @NonNull private List<Integer> grados = IntStream.rangeClosed(1, 11).boxed().collect(Collectors.toList());
+
     /**
      * Lista de materias sin asignar
      */
@@ -116,7 +119,7 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
     /**
      * Lista de cargas académicas realizadas al docente seleccionado
      */
-    @Getter @NonNull private List<CargaAcademica> cargas;
+    @Getter @NonNull private List<DtoCargaAcademica> cargas;
 
     public AsignacionAcademicaRolDirector(Filter<PersonalActivo> filtro, PersonalActivo director, AreasUniversidad programa) {
         super(filtro);
@@ -223,7 +226,7 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
         this.materiasSinAsignar = materiasSinAsignar;
     }
 
-    public void setCargas(List<CargaAcademica> cargas) {
+    public void setCargas(List<DtoCargaAcademica> cargas) {
         this.cargas = cargas;
     }
 

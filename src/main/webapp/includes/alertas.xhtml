@@ -8,12 +8,9 @@
     <h:form id="frmAlertas">
         <p:panel id="horizontal" header="Sistema" toggleable="true" toggleOrientation="horizontal" collapsed="#{empty alertas}">
             <p:autoUpdate />
-            -#{alertas}-
-            <h:panelGrid columns="2" cellpadding="10">
-                <p:graphicImage name="demo/images/godfather1.jpg"/>
-                <h:outputText
-                        value="The story begins as Don Vito Corleone..."/>
-            </h:panelGrid>
+            <c:forEach items="#{alertas}" var="alerta">
+                <div class="#{alerta.tipo.label}" role="alert">#{alerta.mensaje}</div>
+            </c:forEach>
         </p:panel>
     </h:form>
 </ui:composition>
