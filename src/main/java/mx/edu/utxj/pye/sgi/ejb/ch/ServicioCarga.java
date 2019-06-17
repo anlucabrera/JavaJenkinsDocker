@@ -45,7 +45,6 @@ public class ServicioCarga implements EjbCarga {
 
     @Override
     public String subir(Part file, File rutaRelativa) {
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServicioCarga.subir(): " + rutaRelativa);
         try {
             byte[] content = Utils.toByteArray(file.getInputStream());
             File carpeta = new File("C:/archivos/evidenciasCapitalHumano/".concat(rutaRelativa.toString()));
@@ -76,7 +75,6 @@ public class ServicioCarga implements EjbCarga {
                 FileOutputStream fos = new FileOutputStream(name);
                 FileCopyUtils.copy(content, fos);
                 aleatorio = ""; 
-                System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServicioCarga.subir(fin)");
                 return name;
         } catch (IOException ex) {
             Logger.getLogger(ServicioCarga.class.getName()).log(Level.SEVERE, null, ex);

@@ -73,7 +73,7 @@ public interface EjbPlaneacionCuatrimestral extends AbstractEjb {
      * @param director Datos del director que realiza la planeación
      * @return Lista de docentes que colaboran con el director.
      */
-    public List<Personal> getPersonalDocenteColaborador(List<Personal> docentes, Personal director);
+    public List<Personal> getPersonalDocenteColaborador(List<Personal> docentes, Personal director, Integer periodo);
 
     /**
      * Inicializa la lista de planeaciones cuatrimestrales de un director de
@@ -162,9 +162,9 @@ public interface EjbPlaneacionCuatrimestral extends AbstractEjb {
 
     public List<PlaneacionesLiberaciones> buscarPlaneacionLiberada(Integer periodo, Integer director);
 
-    public List<PlaneacionesLiberaciones> buscarPlaneacionesLiberadasParaValidarSecretarioAcademico();
+    public List<PlaneacionesLiberaciones> buscarPlaneacionesLiberadasParaValidarSecretarioAcademico(Integer periodo);
 
-    public List<PlaneacionesLiberaciones> buscarPlaneacionesLiberadasParaValidarJefePersonal();
+    public List<PlaneacionesLiberaciones> buscarPlaneacionesLiberadasParaValidarJefePersonal(Integer periodo);
 
     public void actualizarPlaneacionLiberada(PlaneacionesLiberaciones planaeacionLiberadaActualizada);
 

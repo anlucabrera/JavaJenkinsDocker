@@ -204,6 +204,24 @@ public class ControladorIncidenciasPersonal implements Serializable {
                             }
                             break;
                     }
+                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearIncidencia()"+utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getDayOfMonth());
+                    if (utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getDayOfMonth() <= 15) {
+                        System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearIncidencia(verdadero)");
+                        fechaI = LocalDate.of(utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getYear(), utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getMonthValue(), 01);
+                        fechaF = LocalDate.of(utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getYear(), utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getMonthValue(), 15);
+                    } else {
+                        System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearIncidencia(Falso)");
+                        fechaI = LocalDate.of(utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getYear(), utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getMonthValue(), 16);
+                        fechaF = LocalDate.of(utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getYear(), utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getMonthValue(), LocalDate.of(utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getYear(), utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getMonthValue(), 01).lengthOfMonth());
+                    }
+                    
+                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearIncidencia(fechaI)"+fechaI);
+                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearIncidencia(fechaF)"+fechaF);
+                    
+                    if(ejbNotificacionesIncidencias.mostrarIncidenciasReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF)).size()==2){
+                        Messages.addGlobalWarn("¡Solo puede registrar 2 incidencias por quincena y ya las ha registrado!");
+                        return;
+                    }
                     nuevOBJIncidencias.setTiempo(utilidadesCH.castearLDTaD(actual));
                     if (utilidadesCH.editarIncidencias(fechaActual, nuevOBJIncidencias.getFecha(), 2)) {
                         nuevOBJIncidencias = ejbNotificacionesIncidencias.agregarIncidencias(nuevOBJIncidencias);
@@ -233,11 +251,17 @@ public class ControladorIncidenciasPersonal implements Serializable {
     }
 
     public void agregarEvidenciaIncidenciaDesfasada() {
-        archivoSC = true;
-        //Se invoca el método agregarEvidencias en el cual se envía ciertos parámetros (descritos dentro del método) el cual regresara la ruta del archivo ya almacenado en el servidor.
-        nuevOBJIncidenciasEditada.setEvidencia(utilidadesCH.agregarEvidencias(file, usuario.toString(), "Incidencia", ""));
-        //Se bacía el valor de la variable file
-        file = null;
+        try {
+            archivoSC = true;
+            //Se invoca el método agregarEvidencias en el cual se envía ciertos parámetros (descritos dentro del método) el cual regresara la ruta del archivo ya almacenado en el servidor.
+            nuevOBJIncidenciasEditada.setEvidencia(utilidadesCH.agregarEvidencias(file, usuario.toString(), "Incidencia", ""));
+            ejbNotificacionesIncidencias.actualizarIncidencias(nuevOBJIncidenciasEditada);
+            //Se bacía el valor de la variable file
+            file = null;
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void eliminarIncidencia(Incidencias incidencias) {

@@ -271,12 +271,14 @@
                                 <o:form id="frmComentario"  enctype="multipart/form-data"> 
 
                                     <p:panelGrid id="pnlAgregarComentario" style="text-align:justify;" columns="1">
-                                        <p:outputLabel value="Incidencia #{controladorIncidenciasPersonal.nuevOBJIncidenciasEditada.tipo}" />
+                                        <p:outputLabel value="Numero: #{controladorIncidenciasPersonal.nuevOBJIncidenciasEditada.numeroOficio}" />
+                                        <p:outputLabel value="Tipo: #{controladorIncidenciasPersonal.nuevOBJIncidenciasEditada.tipo}" />
 
                                         <p:outputPanel>            
                                             <p:autoUpdate/>
                                             <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large; color: #dd4b39" value="* En caso de contar con algún documento que compruebe su incidencia puede anexarlo" />
-                                            <p:outputPanel autoUpdate="true">
+                                            <p:outputPanel >                                                      
+                                                <p:autoUpdate/>
                                                 <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia:#{controladorIncidenciasPersonal.nuevOBJIncidenciasEditada.evidencia eq null?'':'(ya cuenta con el archivo cargado)'}" />
                                             </p:outputPanel>
                                             <o:inputFile id="file" value="#{controladorIncidenciasPersonal.file}" accept="image/png||image/jpeg||image/pjpeg||application/pdf" acceptMessage="Solo se permiten archivos PDF e imagenes JPEG, PJPEG y PNG" maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
@@ -286,7 +288,7 @@
                                             <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{controladorIncidenciasPersonal.agregarEvidenciaIncidenciaDesfasada()}"/>
                                         </p:outputPanel>
                                         <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" class="btn-primary btn-block col-md-3" rendered="false"
-                                                         icon="fa fa-pencil-square-o" update="@form" process="@form" oncomplete="PF('frmListaIncidencias').update();"/> 
+                                                         icon="fa fa-pencil-square-o" update="@form" process="@form" oncomplete="PF('dlgComentario').hide();"/> 
 
                                     </p:panelGrid>
                                     <p:autoUpdate/>
